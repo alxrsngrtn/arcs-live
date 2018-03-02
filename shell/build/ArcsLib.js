@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 95);
+/******/ 	return __webpack_require__(__webpack_require__.s = 94);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -909,7 +909,7 @@ Walker.Independent = __WEBPACK_IMPORTED_MODULE_1__walker_base_js__["a" /* defaul
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(92);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(91);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -2123,11 +2123,15 @@ class SlotSpec {
     this.isRequired = slotModel.isRequired;
     this.isSet = slotModel.isSet;
     this.tags = slotModel.tags;
-    this.formFactor = slotModel.formFactor;
+    this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
     this.providedSlots = [];
     slotModel.providedSlots.forEach(ps => {
       this.providedSlots.push(new ProvidedSlotSpec(ps.name, ps.isSet, ps.tags, ps.formFactor, ps.views));
     });
+  }
+
+  getProvidedSlotSpec(name) {
+    return this.providedSlots.find(ps => ps.name == name);
   }
 }
 
@@ -2136,7 +2140,7 @@ class ProvidedSlotSpec {
     this.name = name;
     this.isSet = isSet;
     this.tags = tags;
-    this.formFactor = formFactor;
+    this.formFactor = formFactor; // TODO: deprecate form factors?
     this.views = views;
   }
 }
@@ -2247,10 +2251,37 @@ class ParticleSpec {
     this.affordance.filter(a => a != 'mock').forEach(a => results.push(`  affordance ${a}`));
     // TODO: support form factors
     this.slots.forEach(s => {
-    results.push(`  ${s.isRequired ? 'must ' : ''}consume ${s.isSet ? 'set of ' : ''}${s.name}`);
+      // Consume slot.
+      let consume = [];
+      if (s.isRequired) {
+        consume.push('must');
+      }
+      consume.push('consume');
+      if (s.isSet) {
+        consume.push('set of');
+      }
+      consume.push(s.name);
+      if (s.tags.length > 0) {
+        consume.push(s.tags.join(' '));
+      }
+      results.push(`  ${consume.join(' ')}`);
+      if (s.formFactor) {
+        results.push(`    formFactor ${s.formFactor}`);
+      }
+      // Provided slots.
       s.providedSlots.forEach(ps => {
-        results.push(`    provide ${ps.isSet ? 'set of ' : ''}${ps.name}`);
-        // TODO: support form factors
+        let provide = ['provide'];
+        if (ps.isSet) {
+          provide.push('set of');
+        }
+        provide.push(ps.name);
+        if (ps.tags.length > 0) {
+          provide.push(ps.tags.join(' '));
+        }
+        results.push(`    ${provide.join(' ')}`);
+        if (ps.formFactor) {
+          results.push(`      formFactor ${ps.formFactor}`);
+        }
         ps.views.forEach(psv => results.push(`      view ${psv}`));
       });
     });
@@ -2728,9 +2759,10 @@ class DescriptionFormatter {
   }
 
   static sort(p1, p2) {
+    let isRoot = (slotSpec) => slotSpec.name == 'root' || slotSpec.tags.includes('#root');
     // Root slot comes first.
-    let hasRoot1 = [...p1._particle.spec.slots.keys()].indexOf('root') >= 0;
-    let hasRoot2 = [...p2._particle.spec.slots.keys()].indexOf('root') >= 0;
+    let hasRoot1 = Boolean([...p1._particle.spec.slots.values()].find(slotSpec => isRoot(slotSpec)));
+    let hasRoot2 = Boolean([...p2._particle.spec.slots.values()].find(slotSpec => isRoot(slotSpec)));
     if (hasRoot1 != hasRoot2) {
       return hasRoot1 ? -1 : 1;
     }
@@ -3486,7 +3518,7 @@ ${e.message}
               `Consumed slot '${slotConnectionItem.param}' is not defined by '${particle.name}'`);
         }
         slotConnectionItem.providedSlots.forEach(ps => {
-          if (!particle.spec.slots.get(slotConnectionItem.param).providedSlots.find(specPs => specPs.name == ps.param)) {
+          if (!particle.spec.slots.get(slotConnectionItem.param).getProvidedSlotSpec(ps.param)) {
             throw new ManifestError(
                 ps.location,
                 `Provided slot '${ps.param}' is not defined by '${particle.name}'`);
@@ -3841,7 +3873,7 @@ class Scheduler {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(93);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(92);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5199,7 +5231,7 @@ let instance = null;
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DomContext; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return SetDomContext; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shell_components_xen_xen_template_js__ = __webpack_require__(94);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shell_components_xen_xen_template_js__ = __webpack_require__(93);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5296,7 +5328,7 @@ class DomContext {
         return;
       }
       let slotId = s.getAttribute('slotid');
-      let providedSlotSpec = slotSpec.providedSlots.find(ps => ps.name == slotId);
+      let providedSlotSpec = slotSpec.getProvidedSlotSpec(slotId);
       if (providedSlotSpec) { // Skip non-declared slots
         let subId = s.subid;
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!subId || providedSlotSpec.isSet,
@@ -6931,6 +6963,7 @@ ${this.activeRecipe.toString()}`;
     }
     let {views, particles, slots} = recipe.mergeInto(currentArc.activeRecipe);
     currentArc.recipes.push({particles, views, slots, innerArcs: new Map()});
+    slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
 
     for (let recipeView of views) {
       if (['copy', 'create'].includes(recipeView.fate)) {
@@ -7138,30 +7171,28 @@ ${this.activeRecipe.toString()}`;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__strategies_copy_remote_views_js__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__strategies_assign_views_by_tag_and_type_js__ = __webpack_require__(77);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_init_population_js__ = __webpack_require__(84);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_map_consumed_slots_js__ = __webpack_require__(86);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_map_remote_slots_js__ = __webpack_require__(87);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_match_particle_by_verb_js__ = __webpack_require__(88);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__strategies_match_recipe_by_verb_js__ = __webpack_require__(89);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__strategies_name_unnamed_connections_js__ = __webpack_require__(90);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__strategies_add_use_views_js__ = __webpack_require__(75);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__strategies_create_description_handle_js__ = __webpack_require__(81);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__manifest_js__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__strategies_init_search_js__ = __webpack_require__(85);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__strategies_search_tokens_to_particles_js__ = __webpack_require__(91);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__strategies_fallback_fate_js__ = __webpack_require__(82);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__strategies_group_handle_connections_js__ = __webpack_require__(83);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__strategies_combined_strategy_js__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__speculator_js__ = __webpack_require__(72);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__description_js__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__tracelib_trace_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__debug_strategy_explorer_adapter_js__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_map_slots_js__ = __webpack_require__(86);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_match_particle_by_verb_js__ = __webpack_require__(87);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_match_recipe_by_verb_js__ = __webpack_require__(88);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__strategies_name_unnamed_connections_js__ = __webpack_require__(89);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__strategies_add_use_views_js__ = __webpack_require__(75);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__strategies_create_description_handle_js__ = __webpack_require__(81);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__manifest_js__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__strategies_init_search_js__ = __webpack_require__(85);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__strategies_search_tokens_to_particles_js__ = __webpack_require__(90);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__strategies_fallback_fate_js__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__strategies_group_handle_connections_js__ = __webpack_require__(83);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__strategies_combined_strategy_js__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__speculator_js__ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__description_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__tracelib_trace_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__debug_strategy_explorer_adapter_js__ = __webpack_require__(51);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 
 
@@ -7227,24 +7258,23 @@ class Planner {
     this._arc = arc;
     let strategies = [
       new __WEBPACK_IMPORTED_MODULE_10__strategies_init_population_js__["a" /* default */](arc),
-      new __WEBPACK_IMPORTED_MODULE_19__strategies_init_search_js__["a" /* default */](arc),
-      new __WEBPACK_IMPORTED_MODULE_23__strategies_combined_strategy_js__["a" /* default */]([
-        new __WEBPACK_IMPORTED_MODULE_20__strategies_search_tokens_to_particles_js__["a" /* default */](arc),
-        new __WEBPACK_IMPORTED_MODULE_22__strategies_group_handle_connections_js__["a" /* default */](),
+      new __WEBPACK_IMPORTED_MODULE_18__strategies_init_search_js__["a" /* default */](arc),
+      new __WEBPACK_IMPORTED_MODULE_22__strategies_combined_strategy_js__["a" /* default */]([
+        new __WEBPACK_IMPORTED_MODULE_19__strategies_search_tokens_to_particles_js__["a" /* default */](arc),
+        new __WEBPACK_IMPORTED_MODULE_21__strategies_group_handle_connections_js__["a" /* default */](),
       ]),
-      new __WEBPACK_IMPORTED_MODULE_21__strategies_fallback_fate_js__["a" /* default */](),
+      new __WEBPACK_IMPORTED_MODULE_20__strategies_fallback_fate_js__["a" /* default */](),
       new CreateViews(),
       new __WEBPACK_IMPORTED_MODULE_9__strategies_assign_views_by_tag_and_type_js__["a" /* default */](arc),
       new __WEBPACK_IMPORTED_MODULE_6__strategies_convert_constraints_to_connections_js__["a" /* default */](arc),
-      new __WEBPACK_IMPORTED_MODULE_11__strategies_map_consumed_slots_js__["a" /* default */](),
+      new __WEBPACK_IMPORTED_MODULE_11__strategies_map_slots_js__["a" /* default */](arc),
       new __WEBPACK_IMPORTED_MODULE_7__strategies_assign_remote_views_js__["a" /* default */](arc),
       new __WEBPACK_IMPORTED_MODULE_8__strategies_copy_remote_views_js__["a" /* default */](arc),
-      new __WEBPACK_IMPORTED_MODULE_12__strategies_map_remote_slots_js__["a" /* default */](arc),
-      new __WEBPACK_IMPORTED_MODULE_13__strategies_match_particle_by_verb_js__["a" /* default */](arc),
-      new __WEBPACK_IMPORTED_MODULE_14__strategies_match_recipe_by_verb_js__["a" /* default */](arc),
-      new __WEBPACK_IMPORTED_MODULE_15__strategies_name_unnamed_connections_js__["a" /* default */](arc),
-      new __WEBPACK_IMPORTED_MODULE_16__strategies_add_use_views_js__["a" /* default */](),
-      new __WEBPACK_IMPORTED_MODULE_17__strategies_create_description_handle_js__["a" /* default */](),
+      new __WEBPACK_IMPORTED_MODULE_12__strategies_match_particle_by_verb_js__["a" /* default */](arc),
+      new __WEBPACK_IMPORTED_MODULE_13__strategies_match_recipe_by_verb_js__["a" /* default */](arc),
+      new __WEBPACK_IMPORTED_MODULE_14__strategies_name_unnamed_connections_js__["a" /* default */](arc),
+      new __WEBPACK_IMPORTED_MODULE_15__strategies_add_use_views_js__["a" /* default */](),
+      new __WEBPACK_IMPORTED_MODULE_16__strategies_create_description_handle_js__["a" /* default */](),
     ];
     this.strategizer = new __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["b" /* Strategizer */](strategies, [], {
       maxPopulation: 100,
@@ -7259,7 +7289,7 @@ class Planner {
   }
 
   async plan(timeout, generations) {
-    let trace = __WEBPACK_IMPORTED_MODULE_26__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::plan', args: {timeout}});
+    let trace = __WEBPACK_IMPORTED_MODULE_25__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::plan', args: {timeout}});
     timeout = timeout || NaN;
     let allResolved = [];
     let now = () => (typeof performance == 'object') ? performance.now() : process.hrtime();
@@ -7330,11 +7360,11 @@ class Planner {
   }
   async suggest(timeout, generations) {
     if (!generations && this._arc._debugging) generations = [];
-    let trace = __WEBPACK_IMPORTED_MODULE_26__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::suggest', args: {timeout}});
+    let trace = __WEBPACK_IMPORTED_MODULE_25__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::suggest', args: {timeout}});
     let plans = await trace.wait(() => this.plan(timeout, generations));
     trace.resume();
     let suggestions = [];
-    let speculator = new __WEBPACK_IMPORTED_MODULE_24__speculator_js__["a" /* default */]();
+    let speculator = new __WEBPACK_IMPORTED_MODULE_23__speculator_js__["a" /* default */]();
     // We don't actually know how many threads the VM will decide to use to
     // handle the parallel speculation, but at least we know we won't kick off
     // more than this number and so can somewhat limit resource utilization.
@@ -7400,7 +7430,7 @@ class Planner {
     trace.end();
 
     if (this._arc._debugging) {
-      __WEBPACK_IMPORTED_MODULE_27__debug_strategy_explorer_adapter_js__["a" /* default */].processGenerations(generations);
+      __WEBPACK_IMPORTED_MODULE_26__debug_strategy_explorer_adapter_js__["a" /* default */].processGenerations(generations);
     }
 
     return results;
@@ -7459,13 +7489,18 @@ class SlotComposer {
     this._slotClass = this.getSlotClass();
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._slotClass);
 
-    this._contextById = this._slotClass.findRootSlots(options.rootContext) || {};
-    if (Object.keys(this._contextById).length == 0) {
+    let slotContextByName = this._slotClass.findRootSlots(options.rootContext) || {};
+    if (Object.keys(slotContextByName).length == 0) {
       // fallback to single 'root' slot using the rootContext.
-      this._contextById['root'] = options.rootContext;
+      slotContextByName['root'] = options.rootContext;
     }
 
-    this._suggestionsContext = options.suggestionsContext || this._contextById['suggestions'];
+    this._suggestionsContext = options.suggestionsContext || slotContextByName['suggestions'];
+
+    this._contextSlots = [];
+    Object.keys(slotContextByName).forEach(slotName => {
+      this._contextSlots.push({id: `rootslotid-${slotName}`, name: slotName, tags: [`#${slotName}`], context: slotContextByName[slotName], handleConnections: [], views: 0, getProvidedSlotSpec: () => { return {isSet: false}; }});
+    });
 
     this._slots = [];
   }
@@ -7537,6 +7572,13 @@ class SlotComposer {
     return this._slots.find(s => s.consumeConn.particle == particle && s.consumeConn.name == slotName);
   }
 
+  _findContext(slotId) {
+    let contextSlot = this._contextSlots.find(slot => slot.id == slotId);
+    if (contextSlot) {
+      return contextSlot.context;
+    }
+  }
+
   createHostedSlot(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName) {
     let hostedSlotId = this.arc.generateID();
 
@@ -7598,7 +7640,7 @@ class SlotComposer {
           context = sourceConnSlot.getInnerContext(s.consumeConn.name);
         }
       } else { // External slots provided at SlotComposer ctor (eg 'root')
-        context = this._contextById[s.consumeConn.name];
+        context = this._findContext(s.consumeConn.targetSlot.id);
       }
 
       this._slots.push(s);
@@ -7662,30 +7704,12 @@ class SlotComposer {
   }
 
   getAvailableSlots() {
-    let availableSlots = {};
-    this._slots.forEach(slot => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slot.consumeConn.targetSlot);
-      Object.values(slot.consumeConn.providedSlots).forEach(ps => {
-        if (!availableSlots[ps.name]) {
-          availableSlots[ps.name] = [];
-        }
-        let psId = ps.id || `slotid-${this.arc.generateID()}`;
-        ps.id = psId;
-        let providedSlotSpec = slot.consumeConn.slotSpec.providedSlots.find(psSpec => psSpec.name == ps.name);
-        availableSlots[ps.name].push({
-          id: psId,
-          count: ps.consumeConnections.length,
-          providedSlotSpec,
-          views: ps.handleConnections.map(hc => hc.view)
-        });
-      });
-    });
+    let availableSlots = this.arc.activeRecipe.slots.slice();
 
-    Object.keys(this._contextById).forEach(slotid => {
-      if (!availableSlots[slotid]) {
-        availableSlots[slotid] = [];
+    this._contextSlots.forEach(contextSlot => {
+      if (!availableSlots.find(s => s.id == contextSlot.id)) {
+        availableSlots.push(contextSlot);
       }
-      availableSlots[slotid].push({id: `rootslotid-${slotid}`, count: 0, views: [], providedSlotSpec: {isSet: false}});
     });
     return availableSlots;
   }
@@ -17267,7 +17291,7 @@ class SlotConnection {
       let providedSlot = this.providedSlots[psName];
       let provideRes = [];
       provideRes.push('  provide');
-      let providedSlotSpec = this.slotSpec.providedSlots.find(ps => ps.name == psName);
+      let providedSlotSpec = this.slotSpec.getProvidedSlotSpec(psName);
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
       provideRes.push(`${psName} as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);
       result.push(provideRes.join(' '));
@@ -17327,6 +17351,9 @@ class Slot {
   get sourceConnection() { return this._sourceConnection; }
   set sourceConnection(sourceConnection) { this._sourceConnection = sourceConnection; }
   get consumeConnections() { return this._consumerConnections; }
+  getProvidedSlotSpec() {
+    return this.sourceConnection ? this.sourceConnection.slotSpec.getProvidedSlotSpec(this.name) : {isSet: false, tags: []};
+  }
 
   _copyInto(recipe, cloneMap) {
     let slot = undefined;
@@ -17337,6 +17364,7 @@ class Slot {
       slot._id = this.id;
       slot._formFactor = this.formFactor;
       slot._localName = this._localName;
+      slot._tags = [...this._tags];
       // the connections are re-established when Particles clone their attached SlotConnection objects.
       slot._sourceConnection = cloneMap.get(this._sourceConnection);
       if (slot.sourceConnection)
@@ -17349,6 +17377,7 @@ class Slot {
 
   _startNormalize() {
     this.localName = null;
+    this._tags.sort();
   }
 
   _finishNormalize() {
@@ -17363,6 +17392,7 @@ class Slot {
     if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* default */].compareStrings(this.id, other.id)) != 0) return cmp;
     if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* default */].compareStrings(this.localName, other.localName)) != 0) return cmp;
     if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* default */].compareStrings(this.formFactor, other.formFactor)) != 0) return cmp;
+    if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* default */].compareArrays(this._tags, other._tags, __WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* default */].compareStrings)) != 0) return cmp;
     return 0;
   }
 
@@ -17390,18 +17420,22 @@ class Slot {
 
   toString(nameMap, options) {
     let result = [];
+    result.push('slot');
     if (this.id) {
-      result.push(`slot '${this.id}' as ${(nameMap && nameMap.get(this)) || this.localName}`);
-      if (options && options.showUnresolved) {
-        if (!this.isResolved(options)) {
-          result.push(`// unresolved slot: ${options.details}`);
-        }
-      }
+      result.push(`'${this.id}'`);
     }
-    else if (options && options.showUnresolved && !this.isResolved(options)) {
-      result.push(`slot as ${(nameMap && nameMap.get(this)) || this.localName} // unresolved slot: ${options.details}`);
+    if (this.tags.length > 0) {
+      result.push(this.tags.join(' '));
     }
-    return result.join(' ');
+    result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
+    let includeUnresolved = options && options.showUnresolved && !this.isResolved(options);
+    if (includeUnresolved) {
+      result.push(`// unresolved slot: ${options.details}`);
+    }
+
+    if (this.id || includeUnresolved) {
+      return result.join(' ');
+    }
   }
 }
 
@@ -18900,6 +18934,7 @@ class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -18912,148 +18947,132 @@ class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
 
 
 
-class MapConsumedSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["a" /* Strategy */] {
+
+class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["a" /* Strategy */] {
+  constructor(arc) {
+    super();
+    this._arc = arc;
+  }
   async generate(strategizer) {
+    let arc = this._arc;
+
     let results = __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
       onSlotConnection(recipe, slotConnection) {
-        if (slotConnection.targetSlot)
+        let selectedSlot;
+        if (slotConnection.targetSlot) {
+          if (!!slotConnection.targetSlot.sourceConnection) {
+            // Target slot assigned within the current recipe.
+            return;
+          }
+          if (!!slotConnection.targetSlot.id) {
+            // Target slot assigned from preexisting slots in the arc.
+            return;
+          }
+        } else {
+          // Attempt to match the slot connection with a slot within the recipe.
+          selectedSlot = this._findSlotCandidate(slotConnection, recipe.slots);
+        }
+
+        if (!selectedSlot) {
+          // Attempt to fetch the slot connection with a preexiting slot.
+          let candidates = arc.pec.slotComposer.getAvailableSlots();
+          selectedSlot = this._findSlotCandidate(slotConnection, candidates);
+        }
+
+        if (!selectedSlot) {
           return;
-        let potentialSlots = recipe.slots.filter(slot => {
-          if (slotConnection.name != slot.name)
-            return false;
+        }
 
-          if (!slot.sourceConnection) {
-            return;
+        return (recipe, slotConnection) => {
+          if (!slotConnection.targetSlot) {
+            let clonedSlot = recipe.updateToClone({selectedSlot}).selectedSlot;
+
+            if (!clonedSlot) {
+              clonedSlot = recipe.slots.find(s => selectedSlot.id && selectedSlot.id == s.id);
+              if (clonedSlot == undefined) {
+                clonedSlot = recipe.newSlot(selectedSlot.name);
+                clonedSlot.id = selectedSlot.id;
+              }
+            }
+            slotConnection.connectToSlot(clonedSlot);
           }
 
-          let providedSlotSpec =
-              slot.sourceConnection.slotSpec.providedSlots.find(ps => ps.name == slotConnection.name);
-          if (slotConnection.slotSpec.isSet != providedSlotSpec.isSet)
-            return;
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id == slotConnection.targetSlot.id),
+                 `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
+          slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
 
-          // Verify view connections match.
-          let views = slot.handleConnections.map(connection => connection.view);
-          if (views.length == 0) {
-            return true;
-          }
-          let particle = slotConnection.particle;
-          for (let name in particle.connections) {
-            let connection = particle.connections[name];
-            if (views.includes(connection.view))
-              return true;
-          }
+          // TODO: need to concat to existing tags and dedup?
+          slotConnection.targetSlot.tags = [...selectedSlot.tags];
+          return 1;
+        };
+      }
+
+      // Helper methods.
+      // Chooses the best slot out of the given slot candidates.
+      _findSlotCandidate(slotConnection, slots) {
+        let possibleSlots = slots.filter(s => this._filterSlot(slotConnection, s));
+        if (possibleSlots.length >= 0) {
+          possibleSlots.sort(this._sortSlots);
+          return possibleSlots[0];
+        }
+      }
+
+      // Returns true, if the given slot is a viable candidate for the slotConnection.
+      _filterSlot(slotConnection, slot) {
+        if (slotConnection.slotSpec.isSet != slot.getProvidedSlotSpec().isSet) {
           return false;
+        }
+
+        // Match by tag on slot name.
+        if (!this._tagsMatch(slotConnection, slot)) {
+          // For backward compatibility support explicit slot names matching.
+          if (slotConnection.name !== slot.name) {
+            return false;
+          }
+        }
+
+        // Match handles of the provided slot with the slot-connection particle's handles.
+        if (!this._handlesMatch(slotConnection.particle, slot.handleConnections.map(connection => connection.view))) {
+          return false;
+        }
+
+        return true;
+      }
+
+      // Returns true, if the slot connection's tags intersection with slot's tags is nonempty.
+      _tagsMatch(slotConnection, slot) {
+        let consumeConnTags = slotConnection.slotSpec.tags || [];
+        let slotTags = new Set([].concat(slot.tags, slot.getProvidedSlotSpec().tags || []));
+        // Consume connection tags aren't empty and intersection with the slot isn't empty.
+        return consumeConnTags.length > 0 && consumeConnTags.filter(t => slotTags.has(t)).length > 0;
+      }
+
+      // Returns true, if the providing slot handle restrictions are satisfied by the consuming slot connection.
+      _handlesMatch(consumingParticle, providingSlotHandles) {
+        if (providingSlotHandles.length == 0) {
+          return true; // slot is not limited to specific handles
+        }
+        return Object.values(consumingParticle.connections).find(handleConn => {
+          return providingSlotHandles.includes(handleConn.view) ||
+                 (handleConn.view && handleConn.view.id && providingSlotHandles.map(sh => sh.id).includes(handleConn.view.id));
         });
-        return potentialSlots.map(slot => {
-          return (recipe, slotConnection) => {
-            let clonedSlot = recipe.updateToClone({slot});
-            slotConnection.connectToSlot(clonedSlot.slot);
-            return 1;
-          };
-        });
+      }
+
+      _sortSlots(slot1, slot2) {
+        // TODO: implement.
+        return slot1.name < slot2.name;
       }
     }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */].Permuted), this);
 
     return {results, generate: null};
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = MapConsumedSlots;
+/* harmony export (immutable) */ __webpack_exports__["a"] = MapSlots;
 
 
 
 /***/ }),
 /* 87 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-class MapRemoteSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["a" /* Strategy */] {
-  constructor(arc) {
-    super();
-    this.remoteSlots = arc.pec.slotComposer ? arc.pec.slotComposer.getAvailableSlots() : {};
-  }
-  async generate(strategizer) {
-    let remoteSlots = this.remoteSlots;
-    let results = __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
-      onSlotConnection(recipe, slotConnection) {
-        if (slotConnection.targetSlot && slotConnection.targetSlot.id)
-          return;
-        if (remoteSlots[slotConnection.name] == undefined)
-          return;
-
-        let matchingSlots = remoteSlots[slotConnection.name].filter(remoteSlot => {
-          if (slotConnection.slotSpec.isSet != remoteSlot.providedSlotSpec.isSet) {
-            return false;
-          }
-
-          let views = remoteSlot.views;
-          let viewsMatch = false;
-          if (views.length == 0) {
-            return true;
-          } else {
-            let particle = slotConnection.particle;
-            for (let name in particle.connections) {
-              let connection = particle.connections[name];
-              if (!connection.view)
-                continue;
-              if (views.find(v => v.id == connection.view.id)) {
-                return true;
-              }
-            }
-          }
-          return false;
-        });
-        if (matchingSlots.length == 0) {
-          return;
-        }
-        matchingSlots.sort((s1, s2) => {
-          let score1 = 1 - s1.count;
-          let score2 = 1 - s2.count;
-          return score2 - score1;
-        });
-        let remoteSlotId = matchingSlots[0].id;
-        let score = 1 - matchingSlots[0].count;
-
-        return (recipe, slotConnection) => {
-          if (!slotConnection.targetSlot) {
-            let slot = recipe.slots.find(slot => {
-              return (slot.id == remoteSlotId) || (!slot.id && (slot.name == slotConnection.name));
-            });
-            if (!slot) {
-              slot = recipe.newSlot(slotConnection.name);
-            }
-            slotConnection.connectToSlot(slot);
-          }
-          slotConnection.targetSlot.id = remoteSlotId;
-          return score;
-        };
-      }
-    }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */].Permuted), this);
-
-    return {results, generate: null};
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = MapRemoteSlots;
-
-
-
-/***/ }),
-/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19110,7 +19129,7 @@ class MatchParticleByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strat
 
 
 /***/ }),
-/* 89 */
+/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19170,7 +19189,7 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
 
 
 /***/ }),
-/* 90 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19222,7 +19241,7 @@ class NameUnnamedConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_st
 
 
 /***/ }),
-/* 91 */
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19326,7 +19345,7 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
 
 
 /***/ }),
-/* 92 */
+/* 91 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19374,7 +19393,7 @@ class TupleFields {
 
 
 /***/ }),
-/* 93 */
+/* 92 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19487,7 +19506,7 @@ const nob = () => Object.create(null);
 
 
 /***/ }),
-/* 94 */
+/* 93 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19859,7 +19878,7 @@ const createTemplate = innerHTML => {
 
 
 /***/ }),
-/* 95 */
+/* 94 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
