@@ -1,7 +1,5 @@
-commit 9ec830a30e801b265ab08351a0069110b9f7151e
+commit 4d2ec62bbccf03147658d321c1b9afb94fa68b66
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri Mar 2 10:34:10 2018 -0800
+Date:   Fri Mar 2 11:24:13 2018 -0800
 
-    Lint VR. Follow-up to:
-    
-    https://github.com/PolymerLabs/arcs/commit/22cb45f7eb3ad011d19092bea2ca4388b58b7a00
+    Fix deprecated comment prefix in VideoPlayer recipe.
