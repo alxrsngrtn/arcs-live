@@ -1,5 +1,7 @@
-commit fa4931a50ab94270999da490630732b569ec6412
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Feb 22 12:05:03 2018 -0800
+commit 9ec830a30e801b265ab08351a0069110b9f7151e
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Fri Mar 2 10:34:10 2018 -0800
 
-    Slot tags matching support in unified map-slots strategy, replacing  map-consumed-slots and map-remote-slots
+    Lint VR. Follow-up to:
+    
+    https://github.com/PolymerLabs/arcs/commit/22cb45f7eb3ad011d19092bea2ca4388b58b7a00
