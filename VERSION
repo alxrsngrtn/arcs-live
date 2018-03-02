@@ -1,5 +1,5 @@
-commit 933eb0ef9a9155fa21c7fa70a234966b43d58d6a
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Mar 1 11:00:58 2018 +1100
+commit 486b08bc84bf57351b1016fb92be929b4e73a1c7
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Mar 1 22:43:55 2018 -0800
 
-    Avoids SE refreshing if there's no changes to generations
+    allow multiplexer only pass some of its connections to hosted particles
