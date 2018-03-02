@@ -1,5 +1,5 @@
-commit 4d2ec62bbccf03147658d321c1b9afb94fa68b66
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri Mar 2 11:24:13 2018 -0800
+commit 6e83bf7558c854f3e8cb46163caeac63c0aaeca2
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Mar 2 13:09:44 2018 -0800
 
-    Fix deprecated comment prefix in VideoPlayer recipe.
+    Rename recipe views to handles.

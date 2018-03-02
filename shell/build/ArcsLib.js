@@ -218,8 +218,8 @@ class Recipe {
   set localName(name) { this._localName = name; }
   get particles() { return this._particles; } // Particle*
   set particles(particles) { this._particles = particles; }
-  get views() { return this._handles; } // Handle*
-  set views(handles) { this._handles = handles; }
+  get handles() { return this._handles; } // Handle*
+  set handles(handles) { this._handles = handles; }
   get slots() { return this._slots; } // Slot*
   set slots(slots) { this._slots = slots; }
   get connectionConstraints() { return this._connectionConstraints; }
@@ -253,15 +253,15 @@ class Recipe {
 
   isEmpty() {
     return this.particles.length == 0 &&
-           this.views.length == 0 &&
+           this.handles.length == 0 &&
            this.slots.length == 0 &&
            this._connectionConstraints.length == 0;
   }
 
   findView(id) {
-    for (let view of this.views) {
-      if (view.id == id)
-        return view;
+    for (let handle of this.handles) {
+      if (handle.id == id)
+        return handle;
     }
   }
 
@@ -417,7 +417,7 @@ class Recipe {
     let numSlots = recipe._slots.length;
     this._copyInto(recipe, cloneMap);
     return {
-      views: recipe._handles.slice(numHandles),
+      handles: recipe._handles.slice(numHandles),
       particles: recipe._particles.slice(numParticles),
       slots: recipe._slots.slice(numSlots)
     };
@@ -453,8 +453,8 @@ class Recipe {
     for (let particle of this.particles) {
       names.add(particle.localName);
     }
-    for (let view of this.views) {
-      names.add(view.localName);
+    for (let handle of this.handles) {
+      names.add(handle.localName);
     }
     for (let slot of this.slots) {
       names.add(slot.localName);
@@ -473,14 +473,14 @@ class Recipe {
     }
 
     i = 0;
-    for (let view of this.views) {
-      let localName = view.localName;
+    for (let handle of this.handles) {
+      let localName = handle.localName;
       if (!localName) {
         do {
           localName = `view${i++}`;
         } while (names.has(localName));
       }
-      nameMap.set(view, localName);
+      nameMap.set(handle, localName);
     }
 
     i = 0;
@@ -514,8 +514,8 @@ class Recipe {
       }
       result.push(constraintStr);
     }
-    for (let view of this.views) {
-      result.push(view.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
+    for (let handle of this.handles) {
+      result.push(handle.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
     }
     for (let slot of this.slots) {
       let slotString = slot.toString(nameMap, options);
@@ -868,7 +868,7 @@ class Walker extends __WEBPACK_IMPORTED_MODULE_1__walker_base_js__["a" /* defaul
           updateList.push({continuation: result, context: handleConnection});
       }
     }
-    for (let view of recipe.views) {
+    for (let view of recipe.handles) {
       if (this.onView) {
         let result = this.onView(recipe, view);
         if (!this.isEmptyResult(result))
@@ -1568,7 +1568,7 @@ class RecipeUtil {
     let id = 0;
     recipe.particles.forEach(particle => particles[particle.name] = particle);
     let views = {};
-    recipe.views.forEach(view => views['v' + id++] = view);
+    recipe.handles.forEach(view => views['v' + id++] = view);
     let hcs = {};
     recipe.handleConnections.forEach(hc => hcs[hc.particle.name + ':' + hc.name] = hc);
     return new Shape(recipe, particles, views, hcs);
@@ -1740,7 +1740,7 @@ class RecipeUtil {
       matches = newMatches;
     }
 
-    let emptyViews = recipe.views.filter(view => view.connections.length == 0);
+    let emptyViews = recipe.handles.filter(view => view.connections.length == 0);
 
     if (emptyViews.length > 0) {
       let newMatches = [];
@@ -4749,7 +4749,7 @@ class ViewMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategize
 
         let responses = views.map(newView =>
           ((recipe, clonedView) => {
-            for (let existingView of recipe.views)
+            for (let existingView of recipe.handles)
               // TODO: Why don't we link the view connections to the existingView?
               if (existingView.id == newView.id)
                 return 0;
@@ -6737,7 +6737,7 @@ class Arc {
     let id = 0;
     let schemaSet = new Set();
     let importSet = new Set();
-    for (let handle of this._activeRecipe.views) {
+    for (let handle of this._activeRecipe.handles) {
       if (handle.fate == 'map')
         importSet.add(this.context.findManifestUrlForHandleId(handle.id));
     }
@@ -6903,10 +6903,10 @@ ${this.activeRecipe.toString()}`;
       value.handles.forEach(handle => arc.particleHandleMaps.get(key).handles.set(handle.name, handleMap.get(handle)));
     });
 
-   let {particles, views, slots} = this._activeRecipe.mergeInto(arc._activeRecipe);
-   let particleIndex = 0, viewIndex = 0, slotIndex = 0;
+   let {particles, handles, slots} = this._activeRecipe.mergeInto(arc._activeRecipe);
+   let particleIndex = 0, handleIndex = 0, slotIndex = 0;
    this._recipes.forEach(recipe => {
-     let arcRecipe = {particles: [], views: [], slots: [], innerArcs: new Map()};
+     let arcRecipe = {particles: [], handles: [], slots: [], innerArcs: new Map()};
      recipe.particles.forEach(p => {
        arcRecipe.particles.push(particles[particleIndex++]);
        if (recipe.innerArcs.has(p)) {
@@ -6915,14 +6915,14 @@ ${this.activeRecipe.toString()}`;
          let innerArc = {activeRecipe: new __WEBPACK_IMPORTED_MODULE_7__recipe_recipe_js__["a" /* default */](), recipes: []};
          let innerTuples = thisInnerArc.activeRecipe.mergeInto(innerArc.activeRecipe);
          thisInnerArc.recipes.forEach(thisInnerArcRecipe => {
-           let innerArcRecipe = {particles: [], views: [], slots: [], innerArcs: new Map()};
+           let innerArcRecipe = {particles: [], handles: [], slots: [], innerArcs: new Map()};
            let innerIndex = 0;
            thisInnerArcRecipe.particles.forEach(thisInnerArcRecipeParticle => {
              innerArcRecipe.particles.push(innerTuples.particles[innerIndex++]);
            });
            innerIndex = 0;
-           thisInnerArcRecipe.views.forEach(thisInnerArcRecipeParticle => {
-             innerArcRecipe.views.push(innerTuples.views[innerIndex++]);
+           thisInnerArcRecipe.handles.forEach(thisInnerArcRecipeParticle => {
+             innerArcRecipe.handles.push(innerTuples.handles[innerIndex++]);
            });
            innerIndex = 0;
            thisInnerArcRecipe.slots.forEach(thisInnerArcRecipeParticle => {
@@ -6933,8 +6933,8 @@ ${this.activeRecipe.toString()}`;
          arcRecipe.innerArcs.set(transformationParticle, innerArc);
        }
      });
-     recipe.views.forEach(p => {
-       arcRecipe.views.push(views[viewIndex++]);
+     recipe.handles.forEach(p => {
+       arcRecipe.handles.push(handles[handleIndex++]);
      });
      recipe.slots.forEach(p => {
        arcRecipe.slots.push(slots[slotIndex++]);
@@ -6961,37 +6961,37 @@ ${this.activeRecipe.toString()}`;
       }
       currentArc = innerArcs.get(innerArc.particle);
     }
-    let {views, particles, slots} = recipe.mergeInto(currentArc.activeRecipe);
-    currentArc.recipes.push({particles, views, slots, innerArcs: new Map()});
+    let {handles, particles, slots} = recipe.mergeInto(currentArc.activeRecipe);
+    currentArc.recipes.push({particles, handles, slots, innerArcs: new Map()});
     slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
 
-    for (let recipeView of views) {
-      if (['copy', 'create'].includes(recipeView.fate)) {
-        let type = recipeView.type;
+    for (let recipeHandle of handles) {
+      if (['copy', 'create'].includes(recipeHandle.fate)) {
+        let type = recipeHandle.type;
         if (type.isVariable)
           type = type.resolvedType();
-        let view = await this.createHandle(type, /* name= */ null, this.generateID(), recipeView.tags);
-        if (recipeView.fate === 'copy') {
-          let copiedView = this.findHandleById(recipeView.id);
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(copiedView._version !== null);
-          await view.cloneFrom(copiedView);
-          let copiedViewDesc = this.getHandleDescription(copiedView);
-          if (copiedViewDesc) {
-            this._handleDescriptions.set(view, copiedViewDesc);
+        let handle = await this.createHandle(type, /* name= */ null, this.generateID(), recipeHandle.tags);
+        if (recipeHandle.fate === 'copy') {
+          let copiedHandle = this.findHandleById(recipeHandle.id);
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(copiedHandle._version !== null);
+          await handle.cloneFrom(copiedHandle);
+          let copiedHandleDesc = this.getHandleDescription(copiedHandle);
+          if (copiedHandleDesc) {
+            this._handleDescriptions.set(handle, copiedHandleDesc);
           }
         }
-        recipeView.id = view.id;
-        recipeView.fate = 'use';
-        recipeView.storageKey = view.storageKey;
+        recipeHandle.id = handle.id;
+        recipeHandle.fate = 'use';
+        recipeHandle.storageKey = handle.storageKey;
         // TODO: move the call to OuterPEC's DefineView to here
       }
       
-      let storageKey = recipeView.storageKey;
+      let storageKey = recipeHandle.storageKey;
       if (!storageKey)
-        storageKey = this.keyForId(recipeView.id);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(storageKey, `couldn't find storage key for view '${recipeView}'`);
-      let view = await this._storageProviderFactory.connect(recipeView.id, recipeView.type, storageKey);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(view, `view '${recipeView.id}' was not found`);
+        storageKey = this.keyForId(recipeHandle.id);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
+      let handle = await this._storageProviderFactory.connect(recipeHandle.id, recipeHandle.type, storageKey);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(handle, `handle '${recipeHandle.id}' was not found`);
     }
 
     particles.forEach(recipeParticle => this._instantiateParticle(recipeParticle));
@@ -7077,7 +7077,7 @@ ${this.activeRecipe.toString()}`;
 
   findHandlesByType(type, options) {
     let typeKey = Arc._viewKey(type);
-    let views = [...this._handlesById.values()].filter(handle => {
+    let handles = [...this._handlesById.values()].filter(handle => {
       if (typeKey) {
         let handleKey = Arc._viewKey(handle.type);
         if (typeKey === handleKey) {
@@ -7094,9 +7094,9 @@ ${this.activeRecipe.toString()}`;
     });
 
     if (options && options.tags) {
-      views = views.filter(view => options.tags.filter(tag => !this._handleTags.get(view).has(tag)).length == 0);
+      handles = handles.filter(handle => options.tags.filter(tag => !this._handleTags.get(handle).has(tag)).length == 0);
     }
-    return views;
+    return handles;
   }
 
   findHandleById(id) {
@@ -16296,7 +16296,7 @@ class OuterPEC extends __WEBPACK_IMPORTED_MODULE_0__particle_execution_context_j
       let error = undefined;
       let recipe0 = manifest.recipes[0];
       if (recipe0) {
-        for (let handle of recipe0.views) {
+        for (let handle of recipe0.handles) {
           handle.mapToView(this._arc.findHandleById(handle.id));
         }
         if (recipe0.normalize()) {
@@ -18250,12 +18250,12 @@ class AddUseViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
   async generate(strategizer) {
     let results = __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
       onRecipe(recipe) {
-        // Don't add use views while there are outstanding constraints
+        // Don't add use handles while there are outstanding constraints
         if (recipe.connectionConstraints.length > 0)
           return;
-        // Don't add use views to a recipe with free views
-        let freeViews = recipe.views.filter(view => view.connections.length == 0);
-        if (freeViews.length > 0)
+        // Don't add use handles to a recipe with free handles
+        let freeHandles = recipe.handles.filter(handle => handle.connections.length == 0);
+        if (freeHandles.length > 0)
           return;
 
         // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
@@ -18265,9 +18265,9 @@ class AddUseViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
         return recipe => {
           disconnectedConnections.forEach(hc => {
             let clonedHC = recipe.updateToClone({hc}).hc;
-            let view = recipe.newHandle();
-            view.fate = 'use';
-            clonedHC.connectToView(view);
+            let handle = recipe.newHandle();
+            handle.fate = 'use';
+            clonedHC.connectToView(handle);
           });
           return 0;
         };
