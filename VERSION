@@ -1,5 +1,5 @@
-commit 22cb45f7eb3ad011d19092bea2ca4388b58b7a00
-Author: Bernhard A. M. Seefeld <seefeld@gmail.com>
-Date:   Thu Mar 1 18:33:22 2018 -0800
+commit c3eabdc7e6a24a00feb92f50e5237edcadecd641
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Thu Mar 1 17:42:55 2018 -0800
 
-    move vr & mustaches demos
+    value set to field `participants` must be Number

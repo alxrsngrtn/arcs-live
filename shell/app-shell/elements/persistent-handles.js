@@ -52,12 +52,11 @@ class PersistentHandles extends Xen.Base {
     });
     let remoteHandle = remoteHandleMeta.child('values');
     if (localHandle.type.isSetView) {
-      PersistentHandles.log(`Syncing set ${handleId}`);
+      PersistentHandles.log(`Syncing set [${handleId}]`);
       return this._syncSet(arc, localHandle, remoteHandle);
     }
     if (localHandle.type.isEntity) {
-      //PersistentHandles.log(`[disabled] Syncing variable ${handleId}`);
-      PersistentHandles.log(`Syncing variable ${handleId}`);
+      PersistentHandles.log(`Syncing variable [${handleId}]`);
       return this._syncVariable(arc, localHandle, remoteHandle);
     }
   }
@@ -77,7 +76,7 @@ class PersistentHandles extends Xen.Base {
         // local changes and applying those to the remote variable.
         initialLoad = false;
         localVariable.on('change', change => {
-          if (change.data && change.data.id.startsWith(arc.id)) {
+          if (change.data && JSON.stringify(change.data) !== JSON.stringify(remoteValue)) {
             remoteVariable.set(ArcsUtils.removeUndefined(change.data));
           } else if (change.data === undefined) {
             remoteVariable.remove();

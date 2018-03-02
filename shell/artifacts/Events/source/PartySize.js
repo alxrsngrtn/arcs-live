@@ -72,30 +72,29 @@ ${styles}
     get template() {
       return template;
     }
-    _willReceiveProps(props, state) {
-      const event = Object.assign({}, props.event.rawData || {participants: 2});
-
-      this._setState({currentEvent: event});
+    _willReceiveProps({event}, state) {
+      if (event && !event.participants) {
+        this._setParticipants(2);
+      }
     }
-    _shouldRender(props, state) {
-      return Boolean(state.currentEvent);
+    _setParticipants(size) {
+      const event = this._props.event;
+      event.participants = Number(size);
+      this._views.get('event').set(event);
     }
-    _render(props, state) {
-      const partySize = parseInt(state.currentEvent.participants);
+    _shouldRender({event}) {
+      return Boolean(event);
+    }
+    _render({event}) {
+      const partySize = event.participants;
       const selected = {};
       for (let i = 1; i <= 21; ++i) {
         selected[`selected${i}`] = Boolean(partySize == i);
       }
       return selected;
     }
-    _onPartySizeChanged(e, state) {
-      let newEvent = Object.assign({}, state.currentEvent || {});
-      newEvent.participants = e.data.value;
-      this._storeNewEvent(newEvent);
-    }
-    _storeNewEvent(newEvent) {
-      const event = this._views.get('event');
-      event.set(new event.entityClass(newEvent));
+    _onPartySizeChanged(e) {
+      this._setParticipants(e.data.value);
     }
   };
 
