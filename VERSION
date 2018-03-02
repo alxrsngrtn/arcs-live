@@ -1,5 +1,5 @@
-commit c3eabdc7e6a24a00feb92f50e5237edcadecd641
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Thu Mar 1 17:42:55 2018 -0800
+commit 933eb0ef9a9155fa21c7fa70a234966b43d58d6a
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Mar 1 11:00:58 2018 +1100
 
-    value set to field `participants` must be Number
+    Avoids SE refreshing if there's no changes to generations
