@@ -1,9 +1,5 @@
-commit 703511c346575fa5c042f6e6680980005e25a842
-Author: Matt Small <mbsmall@google.com>
-Date:   Mon Mar 5 12:42:58 2018 -0800
+commit 75db252e11370cae781e210c45826c5121d03d12
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon Mar 5 14:52:01 2018 -0800
 
-    Revert "skip the restaurant demo temporarily"
-    
-    This reverts commit 7671a0344d9c2148d587d96c7ecdf801a8ea74de.
-    
-    > git revert 7671a0344d9c2148d587d96c7ecdf801a8ea74de
+    Remove accidental trailing html comment from app shell header.
