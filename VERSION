@@ -1,5 +1,5 @@
-commit 6e83bf7558c854f3e8cb46163caeac63c0aaeca2
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Mar 2 13:09:44 2018 -0800
+commit 6d2ef49421b292b174f5654c607cb767a38f2226
+Author: Matt Small <mbsmall@google.com>
+Date:   Mon Mar 5 11:33:07 2018 -0800
 
-    Rename recipe views to handles.
+    skip the restaurant demo temporarily

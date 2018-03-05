@@ -193,9 +193,9 @@ class Recipe {
         });
   }
 
-  _findDuplicateHandle() {
+  _findDuplicate(items, options) {
     let seenHandles = new Set();
-    return this._handles.find(handle => {
+    let duplicateHandle = items.find(handle => {
       if (handle.id) {
         if (seenHandles.has(handle.id)) {
           return handle;
@@ -203,15 +203,21 @@ class Recipe {
         seenHandles.add(handle.id);
       }
     });
+    if (duplicateHandle && options && options.errors) {
+      options.errors.set(duplicateHandle, `Has Duplicate ${duplicateHandle instanceof __WEBPACK_IMPORTED_MODULE_6__handle_js__["a" /* default */] ? 'Handle' : 'Slot'} '${duplicateHandle.id}'`);
+    }
+    return duplicateHandle;
   }
 
-  _isValid() {
-    return !this._findDuplicateHandle() && this._handles.every(handle => handle._isValid())
-        && this._particles.every(particle => particle._isValid())
-        && this._slots.every(slot => slot._isValid())
-        && this.handleConnections.every(connection => connection._isValid())
-        && this.slotConnections.every(connection => connection._isValid())
-        && (!this.search || this.search.isValid());
+  _isValid(options) {
+    return !this._findDuplicate(this._handles, options)
+        && !this._findDuplicate(this._slots, options)
+        && this._handles.every(handle => handle._isValid(options))
+        && this._particles.every(particle => particle._isValid(options))
+        && this._slots.every(slot => slot._isValid(options))
+        && this.handleConnections.every(connection => connection._isValid(options))
+        && this.slotConnections.every(connection => connection._isValid(options))
+        && (!this.search || this.search.isValid(options));
   }
 
   get localName() { return this._localName; }
@@ -276,25 +282,22 @@ class Recipe {
     return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__digest_web_js__["a" /* default */])(this.toString());
   }
 
-  normalize() {
+  normalize(options) {
     if (Object.isFrozen(this)) {
+      if (options && options.errors) {
+        options.errors.set(this, 'already normalized');
+      }
       return;
     }
     if (!this._isValid()) {
-      let duplicateHandle = this._findDuplicateHandle();
-      if (duplicateHandle)
-        console.log(`Has Duplicate Handle ${duplicateHandle.id}`);
-
-      let checkForInvalid = (name, list, f) => {
-        let invalids = list.filter(item => !item._isValid());
-        if (invalids.length > 0)
-          console.log(`Has Invalid ${name} ${invalids.map(f)}`);
-      };
-      checkForInvalid('Handles', this._handles, handle => `'${handle.toString()}'`);
-      checkForInvalid('Particles', this._particles, particle => particle.name);
-      checkForInvalid('Slots', this._slots, slot => slot.name);
-      checkForInvalid('HandleConnections', this.handleConnections, handleConnection => `${handleConnection.particle.name}::${handleConnection.name}`);
-      checkForInvalid('SlotConnections', this.slotConnections, slotConnection => slotConnection.name);
+      this._findDuplicate(this._handles, options);
+      this._findDuplicate(this._slots, options);
+      let checkForInvalid = (list) => list.forEach(item => !item._isValid(options));
+      checkForInvalid(this._handles);
+      checkForInvalid(this._particles);
+      checkForInvalid(this._slots);
+      checkForInvalid(this.handleConnections);
+      checkForInvalid(this.slotConnections);
       return false;
     }
     // Get handles and particles ready to sort connections.
@@ -6831,7 +6834,8 @@ ${this.activeRecipe.toString()}`;
     // TODO: pass tags through too
     manifest.views.forEach(view => arc._registerHandle(view, []));
     let recipe = manifest.activeRecipe.clone();
-    recipe.normalize();
+    let options = {errors: new Map()};
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(recipe.normalize(options), `Couldn't normalize recipe ${recipe.toString()}:\n${[...options.errors.values()].join('\n')}`);
     await arc.instantiate(recipe);
     return arc;
   }
@@ -7288,9 +7292,10 @@ class Planner {
     return this.strategizer.generated;
   }
 
+  // Specify a timeout value less than zero to disable timeouts.
   async plan(timeout, generations) {
     let trace = __WEBPACK_IMPORTED_MODULE_25__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::plan', args: {timeout}});
-    timeout = timeout || NaN;
+    timeout = timeout || -1;
     let allResolved = [];
     let now = () => (typeof performance == 'object') ? performance.now() : process.hrtime();
     let start = now();
@@ -7307,8 +7312,9 @@ class Planner {
           .map(individual => individual.result)
           .filter(recipe => recipe.isResolved());
       allResolved.push(...resolved);
-      if (now() - start > timeout) {
-        console.warn('Planner.plan timed out.');
+      const elapsed = now() - start;
+      if (timeout >= 0 && elapsed > timeout) {
+        console.warn(`Planner.plan timed out [elapsed=${Math.floor(elapsed)}ms, timeout=${timeout}ms].`);
         break;
       }
     } while (this.strategizer.generated.length > 0);
@@ -16299,14 +16305,15 @@ class OuterPEC extends __WEBPACK_IMPORTED_MODULE_0__particle_execution_context_j
         for (let handle of recipe0.handles) {
           handle.mapToView(this._arc.findHandleById(handle.id));
         }
-        if (recipe0.normalize()) {
+        let options = {errors: new Map()};
+        if (recipe0.normalize(options)) {
           if (recipe0.isResolved()) {
             this._arc.instantiate(recipe0, arc);
           } else {
             error = `Recipe is not resolvable ${recipe0.toString({showUnresolved: true})}`;
           }
         } else {
-          error = `Recipe ${recipe0.toString()} could not be normalized`;
+          error = `Recipe ${recipe0.toString()} could not be normalized:\n${[...options.errors.values()].join('\n')}`;
         }
       } else {
         error = 'No recipe defined';
@@ -16595,8 +16602,11 @@ class HandleConnection {
     return this.spec.isOptional;
   }
 
-  _isValid() {
+  _isValid(options) {
     if (this.direction && !['in', 'out', 'inout', 'host'].includes(this.direction)) {
+      if (options && options.errors) {
+        options.errors.set(this, `Invalid direction '${this.direction}' for handle connection '${this.particle.name}::${this.name}'`);
+      }
       return false;
     }
     if (this.type && this.particle && this.particle.spec) {
@@ -16604,9 +16614,15 @@ class HandleConnection {
       if (connectionSpec) {
         // TODO: this shouldn't be a direct equals comparison
         if (!this.rawType.equals(connectionSpec.type)) {
+          if (options && options.errors) {
+            options.errors.set(this, `Type '${this.rawType} for handle connection '${this.particle.name}::${this.name}' doesn't match particle spec's type '${connectionSpec.type}'`);
+          }
           return false;
         }
         if (this.direction != connectionSpec.direction) {
+          if (options && options.errors) {
+            options.errors.set(this, `Direction '${this.direction}' for handle connection '${this.particle.name}::${this.name}' doesn't match particle spec's direction '${connectionSpec.direction}'`);
+          }
           return false;
         }
       }
@@ -16796,7 +16812,7 @@ class Handle {
   get storageKey() { return this._storageKey; }
   set storageKey(key) { this._storageKey = key; }
 
-  _isValid() {
+  _isValid(options) {
     let typeSet = [];
     if (this._mappedType)
       typeSet.push({type: this._mappedType});
@@ -16804,6 +16820,9 @@ class Handle {
     for (let connection of this._connections) {
       // A remote view cannot be connected to an output param.
       if (this.fate == 'map' && ['out', 'inout'].includes(connection.direction)) {
+        if (options && options.errors) {
+          options.errors.set(this, `Invalid fate '${this.fate}' for handle '${this.id || this.name || this.localName || this.tags.join(' ')}'; it is used for '${connection.direction}' ${connection.particle.name}::${connection.name} connection`);
+        }
         return false;
       }
       if (connection.type)
@@ -16815,6 +16834,9 @@ class Handle {
       this._type = type.type;
       this._tags.forEach(tag => tags.add(tag));
       this._tags = [...tags];
+    } else if (options && options.errors) {
+      // TODO: pass options to TypeChecker.processTypeList for better error.
+      options.errors.set(this, `Type validations failed for handle '${this.id || this.name || this.localName || this.tags.join(' ')}'`);
     }
     return valid;
   }
@@ -16970,12 +16992,15 @@ class Particle {
     return 0;
   }
 
-  _isValid() {
+  _isValid(options) {
     if (!this.spec) {
       return true;
     }
     if (!this.name && !this.primaryVerb) {
       // Must have either name of a verb
+      if (options && options.errors) {
+        options.errors.set(this, `Particle has no name and no verb`);
+      }
       return false;
     }
     // TODO: What
@@ -17237,9 +17262,12 @@ class SlotConnection {
     return 0;
   }
 
-  _isValid() {
+  _isValid(options) {
     if (this._targetSlot && this._targetSlot.sourceConnection &&
         this._targetSlot != this._targetSlot.sourceConnection.providedSlots[this._targetSlot.name]) {
+      if (options && options.errors) {
+        options.errors.set(this, `Invalid target slot '${this._targetSlot.name}' for slot connection '${this.name}' of particle ${this.particle.name}`);
+      }
       return false;
     }
 
@@ -17413,7 +17441,7 @@ class Slot {
     return this._sourceConnection || this.id;
   }
 
-  _isValid() {
+  _isValid(options) {
     // TODO: implement
     return true;
   }
@@ -18842,8 +18870,9 @@ class InitPopulation extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategize
         }
       }
       recipe = recipe.clone();
-      if (!recipe.normalize()) {
-        console.warn('could not normalize a context recipe');
+      let options = {errors: new Map()};
+      if (!recipe.normalize(options)) {
+        console.warn(`could not normalize a context recipe: ${[...options.errors.values()].join('\n')}.\n${recipe.toString()}`);
       } else {
         this._recipes.push(recipe);
       }
