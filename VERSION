@@ -1,5 +1,5 @@
-commit ab8c62106e6a1f056cf8b98cc01a8feb50757392
-Author: Yuin Chien <yuin@google.com>
-Date:   Mon Mar 5 16:01:56 2018 -0800
+commit cadb0e8fa3f2d5d5c91cbd3b3cdca3b8e952d223
+Author: Bernhard A. M. Seefeld <seefeld@gmail.com>
+Date:   Mon Mar 5 16:41:17 2018 -0800
 
-    Refine type and spacing in calendar and restaurants demo.
+    fix mapping of favorite food
