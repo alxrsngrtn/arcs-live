@@ -1,5 +1,5 @@
-commit 75db252e11370cae781e210c45826c5121d03d12
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Mar 5 14:52:01 2018 -0800
+commit 4b35b6ad7f49ac8e2bfc26272e9b2f78a318af39
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Mar 5 10:56:13 2018 -0800
 
-    Remove accidental trailing html comment from app shell header.
+    fix schema serialization (fixes demo-flow-test), and fix recipe-test
