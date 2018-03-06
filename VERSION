@@ -1,5 +1,6 @@
-commit cadb0e8fa3f2d5d5c91cbd3b3cdca3b8e952d223
-Author: Bernhard A. M. Seefeld <seefeld@gmail.com>
-Date:   Mon Mar 5 16:41:17 2018 -0800
+commit fd6f23fd7493e186b8ac05191147a9b34acbc58b
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Mar 6 13:16:20 2018 +1100
 
-    fix mapping of favorite food
+    Fix sigh devtools for windows.
+    Fix sigh lint for everything?
