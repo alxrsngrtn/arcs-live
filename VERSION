@@ -1,5 +1,5 @@
-commit be87e00c04bd8e39c5bb2b1196abd2af3c87f39a
+commit ab8c62106e6a1f056cf8b98cc01a8feb50757392
 Author: Yuin Chien <yuin@google.com>
-Date:   Mon Mar 5 15:58:34 2018 -0800
+Date:   Mon Mar 5 16:01:56 2018 -0800
 
-    Change mobile width from 512px to 400px.
+    Refine type and spacing in calendar and restaurants demo.
