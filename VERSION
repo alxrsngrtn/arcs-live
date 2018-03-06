@@ -1,5 +1,5 @@
-commit 4b35b6ad7f49ac8e2bfc26272e9b2f78a318af39
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Mar 5 10:56:13 2018 -0800
+commit be87e00c04bd8e39c5bb2b1196abd2af3c87f39a
+Author: Yuin Chien <yuin@google.com>
+Date:   Mon Mar 5 15:58:34 2018 -0800
 
-    fix schema serialization (fixes demo-flow-test), and fix recipe-test
+    Change mobile width from 512px to 400px.
