@@ -1,5 +1,5 @@
-commit 2329a66d09d951f70b7aad5e64306d3c827f67cd
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Mar 6 16:50:06 2018 +1100
+commit 836706c5e10f6e8424eeae8623147b8a28c4774b
+Author: Bernhard A. M. Seefeld <seefeld@gmail.com>
+Date:   Tue Mar 6 14:25:07 2018 -0800
 
-    Deep links in devtools and navigation from overview to dataflow
+    Fix 'food food' description bug
