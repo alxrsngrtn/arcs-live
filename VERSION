@@ -1,7 +1,5 @@
-commit 2e3317ad22498d4ba1f851def6a28d2db9af6e8b
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Mar 7 13:27:19 2018 -0800
+commit d8525b58013287b045fdd44df372288249e75fca
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Wed Mar 7 14:53:06 2018 -0800
 
-    Comment out 16px padding.
-    
-    Breaks arcs sizing in launcher.
+    Restore handle-description generation (why not done in runtime?)
