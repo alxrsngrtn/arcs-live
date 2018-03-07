@@ -1,5 +1,5 @@
-commit 9775524f9c2617952677f44b08e9bdb118d8e6bf
-Author: Yuin Chien <yuin@google.com>
-Date:   Wed Mar 7 10:31:17 2018 -0800
+commit 6a6f3c8af115c5765c756dc41b1b8b9435bd031f
+Author: Bernhard A. M. Seefeld <seefeld@gmail.com>
+Date:   Wed Mar 7 12:30:03 2018 -0800
 
-    Commented out console.log & prevented error for undefined restaurant detail
+    remove npm dependency
