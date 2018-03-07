@@ -1,5 +1,5 @@
-commit d9c586c8a5ec348a35ede252f2ce5c6e24730a89
-Author: mykmartin <mykmartin@google.com>
-Date:   Wed Mar 7 14:55:29 2018 +1100
+commit 9775524f9c2617952677f44b08e9bdb118d8e6bf
+Author: Yuin Chien <yuin@google.com>
+Date:   Wed Mar 7 10:31:17 2018 -0800
 
-    Tweak sigh.js to show possible commands on invalid input
+    Commented out console.log & prevented error for undefined restaurant detail
