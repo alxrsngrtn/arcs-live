@@ -1,5 +1,7 @@
-commit 6a6f3c8af115c5765c756dc41b1b8b9435bd031f
-Author: Bernhard A. M. Seefeld <seefeld@gmail.com>
-Date:   Wed Mar 7 12:30:03 2018 -0800
+commit 2e3317ad22498d4ba1f851def6a28d2db9af6e8b
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Mar 7 13:27:19 2018 -0800
 
-    remove npm dependency
+    Comment out 16px padding.
+    
+    Breaks arcs sizing in launcher.
