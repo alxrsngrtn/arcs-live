@@ -1,5 +1,5 @@
-commit 76b445795cf8ed0c974238562f21fbcdbe1f9e70
+commit d9c586c8a5ec348a35ede252f2ce5c6e24730a89
 Author: mykmartin <mykmartin@google.com>
-Date:   Tue Mar 6 13:08:28 2018 +1100
+Date:   Wed Mar 7 14:55:29 2018 +1100
 
-    Remove gulp; sigh.js now handles the required webpack functionality
+    Tweak sigh.js to show possible commands on invalid input
