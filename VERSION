@@ -1,5 +1,7 @@
-commit 310ea7e0feab1bddcfeea5f57da12f566db41d97
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Mar 7 15:23:33 2018 +1100
+commit e1698a218d3e80faa037b8bf94ba089bbf81f435
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Wed Mar 7 09:51:04 2018 +1100
 
-    Error messaging
+    Make manifest import failures not be fatal
+    
+    For #889
