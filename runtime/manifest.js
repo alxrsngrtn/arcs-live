@@ -20,7 +20,6 @@ import util from './recipe/util.js';
 import StorageProviderFactory from './storage/storage-provider-factory.js';
 import scheduler from './scheduler.js';
 import ManifestMeta from './manifest-meta.js';
-import TypeVariable from './type-variable.js';
 import TypeChecker from './recipe/type-checker.js';
 
 class ManifestError extends Error {
@@ -362,6 +361,8 @@ ${e.message}
         super();
       }
       visit(node, visitChildren) {
+        // TODO(dstockwell): set up a scope and merge type variables here, so that
+        //     errors relating to failed merges can reference the manifest source.
         visitChildren();
         switch (node.kind) {
         case 'schema-inline':
@@ -384,7 +385,7 @@ ${e.message}
             }
             if (externalSchema) {
               let externalType = externalSchema.normative[name] || externalSchema.optional[name];
-              if (externalType != type) {
+              if (!Schema.typesEqual(externalType, type)) {
                 throw new ManifestError(
                     node.location,
                     `Type of '${name}' does not match schema (${type} vs ${externalType})`);
@@ -402,7 +403,8 @@ ${e.message}
           }));
           return;
         case 'variable-type':
-          node.model = Type.newVariableReference(node.name);
+          let constraint = node.constraint && node.constraint.model;
+          node.model = Type.newVariable({name: node.name, constraint});
           return;
         case 'reference-type':
           let resolved = manifest.resolveReference(node.name);

@@ -909,10 +909,11 @@ Walker.Independent = __WEBPACK_IMPORTED_MODULE_1__walker_base_js__["a" /* defaul
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(91);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(13);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -923,8 +924,6 @@ Walker.Independent = __WEBPACK_IMPORTED_MODULE_1__walker_base_js__["a" /* defaul
 
 
 
-
-let nextVariableId = 0;
 
 function addType(name, arg) {
   let lowerName = name[0].toLowerCase() + name.substring(1);
@@ -957,6 +956,11 @@ class Type {
         data = new Type(data.tag, data.data);
       }
     }
+    if (tag == 'Variable') {
+      if (!(data instanceof __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* default */])) {
+        data = new __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* default */](data.name, data.constraint);
+      }
+    }
     this.tag = tag;
     this.data = data;
   }
@@ -986,36 +990,43 @@ class Type {
     return this.manifestReference;
   }
 
-  get variableReferenceName() {
-    console.warn('Type.variableReferenceName is deprecated. Please use Type.variableReference instead');
-    return this.variableReference;
-  }
-
   get variableVariable() {
     console.warn('Type.variableVariable is deprecated. Please use Type.variable instead');
     return this.variable;
   }
 
-  // Replaces variableReference types with variable types .
-  assignVariableIds(variableMap) {
-    if (this.isVariableReference) {
-      let name = this.data;
-      let sharedVariable = variableMap.get(name);
-      if (sharedVariable == undefined) {
-        let id = nextVariableId++;
-        sharedVariable = new __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* default */](name, id);
-        variableMap.set(name, sharedVariable);
+  mergeTypeVariablesByName(variableMap) {
+    if (this.isVariable) {
+      let name = this.variable.name;
+      let variable = variableMap.get(name);
+      if (!variable) {
+        variable = this;
+        variableMap.set(name, this);
+      } else {
+        if (variable.variable.constraint || this.variable.constraint) {
+          let mergedConstraint = __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* default */].maybeMergeConstraints(variable.variable, this.variable);
+          if (!mergedConstraint) {
+            throw new Error('could not merge type variables');
+          }
+          variable.variable.constraint = mergedConstraint;
+        }
       }
-      return Type.newVariable(sharedVariable);
+      return variable;
     }
 
     if (this.isSetView) {
-      return this.primitiveType().assignVariableIds(variableMap).setViewOf();
+      let primitiveType = this.primitiveType();
+      let result = primitiveType.mergeTypeVariablesByName(variableMap);
+      if (result === primitiveType) {
+        return this;
+      }
+      return result.setViewOf();
     }
 
     if (this.isInterface) {
       let shape = this.interfaceShape.clone();
-      shape._typeVars.map(({object, field}) => object[field] = object[field].assignVariableIds(variableMap));
+      shape._typeVars.map(({object, field}) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
+      // TODO: only build a new type when a variable is modified
       return Type.newInterface(shape);
     }
 
@@ -1026,28 +1037,14 @@ class Type {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(type1 instanceof Type);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(type2 instanceof Type);
     if (type1.isSetView && type2.isSetView)
-      return [type1.primitiveType(), type2.primitiveType()];
+      return Type.unwrapPair(type1.primitiveType(), type2.primitiveType());
     return [type1, type2];
   }
 
+  // TODO: update call sites to use the type checker instead (since they will
+  // have additional information about direction etc.)
   equals(type) {
-    if (this.tag !== type.tag)
-      return false;
-    if (this.tag == 'Entity') {
-      return this.data.equals(type.data);
-    }
-    if (this.isSetView) {
-      return this.data.equals(type.data);
-    }
-    if (this.isInterface) {
-      return this.data.equals(type.data);
-    }
-    if (this.isVariable) {
-      return this.data.equals(type.data);
-    }
-    // TODO: this doesn't always work with the way the parser keeps kind
-    // information around
-    return JSON.stringify(this.data) == JSON.stringify(type.data);
+    return __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__["a" /* default */].compareTypes({type: this}, {type}, false).valid;
   }
 
   _applyExistenceTypeTest(test) {
@@ -1063,28 +1060,28 @@ class Type {
   }
 
   get hasUnresolvedVariable() {
-    return this._applyExistenceTypeTest(type => type.isVariable && !type.variable.isResolved);
+    return this._applyExistenceTypeTest(type => type.isVariable && !type.variable.isResolved());
   }
 
   get hasVariableReference() {
     return this._applyExistenceTypeTest(type => type.isVariableReference);
   }
 
+  // TODO: remove this in favor of a renamed setViewType
   primitiveType() {
-    let type = this.setViewType;
-    return new Type(type.tag, type.data);
+    return this.setViewType;
   }
 
   resolvedType() {
     if (this.isSetView) {
-      let resolvedPrimitiveType = this.primitiveType().resolvedType();
-      return resolvedPrimitiveType ? resolvedPrimitiveType.setViewOf() : this;
+      let primitiveType = this.primitiveType();
+      let resolvedPrimitiveType = primitiveType.resolvedType();
+      return primitiveType !== resolvedPrimitiveType ? resolvedPrimitiveType.setViewOf() : this;
     }
-    if (this.isVariable && this.data.isResolved) {
-      return this.data.resolution.resolvedType();
-    }
-    if (this.isTypeVariable && this.data.isResolved) {
-      return this.data.resolution.resolvedType();
+    if (this.isVariable) {
+      let resolution = this.variable.resolution;
+      if (resolution)
+        return resolution;
     }
     if (this.isInterface) {
       return Type.newInterface(this.data.resolvedType());
@@ -1093,16 +1090,14 @@ class Type {
   }
 
   isResolved() {
-    if (this.isSetView) {
-      return this.primitiveType().isResolved();
-    }
-    if (this.isVariable) {
-      return this.data.isResolved;
-    }
-    return true;
+    // TODO: one of these should not exist.
+    return !this.hasUnresolvedVariable;
   }
 
   toLiteral() {
+    if (this.isVariable && this.isResolved()) {
+      return this.resolvedType().toLiteral();
+    }
     if (this.data.toLiteral)
       return {tag: this.tag, data: this.data.toLiteral()};
     return this;
@@ -1133,6 +1128,7 @@ class Type {
     return Type.newSetView(this);
   }
 
+  // TODO: is this the same as _applyExistenceTypeTest
   hasProperty(property) {
     if (property(this))
       return true;
@@ -1166,9 +1162,7 @@ class Type {
       return `${this.primitiveType().toPrettyString()} List`;
     }
     if (this.isVariable)
-      return this.data.isResolved ? this.data.resolution.toPrettyString() : `[~${this.name}]`;
-    if (this.isVariableReference)
-      return `[${this.variableReferenceName}]`;
+      return this.variable.isResolved() ? this.resolvedType().toPrettyString() : `[~${this.name}]`;
     if (this.isEntity) {
       // Spit MyTypeFOO to My Type FOO
       if (this.entitySchema.name) {
@@ -1184,7 +1178,6 @@ class Type {
 }
 
 addType('Entity', 'schema');
-addType('VariableReference');
 addType('Variable');
 addType('SetView', 'type');
 addType('Relation', 'entities');
@@ -1192,6 +1185,7 @@ addType('Interface', 'shape');
 addType('Tuple', 'fields');
 
 /* harmony default export */ __webpack_exports__["a"] = (Type);
+
 
 
 
@@ -1521,6 +1515,362 @@ init();
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(12);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class Schema {
+  constructor(model) {
+    this._model = model;
+    this.name = model.name;
+    this.parents = (model.parents || []).map(parent => new Schema(parent));
+    this._normative = {};
+    this._optional = {};
+
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.sections, `${JSON.stringify(model)} should have sections`);
+    for (let section of model.sections) {
+      let into = section.sectionType == 'normative' ? this._normative : this._optional;
+      for (let field in section.fields) {
+        // TODO normalize field types here?
+        into[field] = section.fields[field];
+      }
+    }
+  }
+
+  toLiteral() {
+    return this._model;
+  }
+
+  static fromLiteral(data) {
+    return new Schema(data);
+  }
+
+  * _fields() {
+    for (let field in this.normative) {
+      yield {field, type: this.normative[field]};
+    }
+    for (let field in this.optional) {
+      yield {field, type: this.optional[field]};
+    }
+  }
+
+  static typesEqual(fieldType1, fieldType2) {
+    // TODO: structural check instead of JSON.
+    return JSON.stringify(fieldType1) == JSON.stringify(fieldType2);
+  }
+
+  static maybeMerge(schema1, schema2) {
+    if (!schema1.hasCommonName(schema2)) {
+      return null;
+    }
+
+    let names = [...new Set(...schema1._names(), ...schema2._names())];
+    let fields = {};
+
+    for (let {field, type} of [...schema1._fields(), ...schema2._fields()]) {
+      if (fields[field]) {
+        if (!Schema.typesEqual(fields[field], type)) {
+          return null;
+        }
+      } else {
+        fields[field] = type;
+      }
+    }
+
+    return new Schema({
+      name: names.length ? names[0] : null,
+      fields,
+      parents: names.slice(1).map(name => ({
+        name,
+        parents: [],
+        sections: [],
+      })),
+      sections: [{
+        sectionType: 'optional',
+        fields: {},
+      }],
+    });
+  }
+
+  equals(otherSchema) {
+    return this === otherSchema || (this.name == otherSchema.name
+       // TODO: Check equality without calling contains.
+       && this.contains(otherSchema)
+       && otherSchema.contains(this));
+  }
+
+  contains(otherSchema) {
+    if (!this._containsNames(otherSchema)) {
+      return false;
+    }
+    for (let section of ['normative', 'optional']) {
+      let thisSection = this[section];
+      let otherSection = otherSchema[section];
+      for (let field in otherSection) {
+        if (!Schema.typesEqual(thisSection[field], otherSection[field])) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  * _names() {
+    if (this.name)
+      yield this.name;
+    for (let parent of this.parents) {
+      yield* parent._names();
+    }
+  }
+
+  _containsNames(schema) {
+    // TODO: backwards?
+    let names = new Set(this._names());
+    for (let name of schema._names()) {
+      if (!names.has(name)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  hasCommonName(otherSchema) {
+    if (!this.name || !otherSchema.name)
+      return true;
+    let otherNames = new Set(names(otherSchema));
+    for (let name of names(this)) {
+      if (otherNames.has(name)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  get type() {
+    return __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */].newEntity(this);
+  }
+
+  get normative() {
+    let normative = {};
+    for (let parent of this.parents)
+      Object.assign(normative, parent.normative);
+    Object.assign(normative, this._normative);
+    return normative;
+  }
+
+  get optional() {
+    let optional = {};
+    for (let parent of this.parents)
+      Object.assign(optional, parent.optional);
+    Object.assign(optional, this._optional);
+    return optional;
+  }
+
+  entityClass() {
+    let schema = this;
+    let className = this.name;
+    let normative = this.normative;
+    let optional = this.optional;
+    let classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
+
+    let convertToJsType = fieldType => {
+      switch (fieldType) {
+        case 'Text':
+          return 'string';
+        case 'URL':
+          return 'string';
+        case 'Number':
+          return 'number';
+        case 'Boolean':
+          return 'boolean';
+        case 'Object':
+          return 'object';
+        default:
+          throw new Error(`Unknown field type ${fieldType} in schema ${className}`);
+      }
+    };
+
+    let validateFieldAndTypes = (op, name, value) => {
+      let fieldType = normative[name] || optional[name];
+      if (fieldType === undefined) {
+        throw new Error(`Can't ${op} field ${name}; not in schema ${className}`);
+      }
+      if (value === undefined || value === null) {
+        return;
+      }
+
+      if (typeof(fieldType) !== 'object') {
+        // Primitive fields.
+        if (typeof(value) !== convertToJsType(fieldType)) {
+          throw new TypeError(
+              `Type mismatch ${op}ting field ${name} (type ${fieldType}); ` +
+              `value '${value}' is type ${typeof(value)}`);
+        }
+        return;
+      }
+
+      switch (fieldType.kind) {
+        case 'schema-union':
+          // Value must be a primitive that matches one of the union types.
+          for (let innerType of fieldType.types) {
+            if (typeof(value) === convertToJsType(innerType)) {
+              return;
+            }
+          }
+          throw new TypeError(
+              `Type mismatch ${op}ting field ${name} (union [${fieldType.types}]); ` +
+              `value '${value}' is type ${typeof(value)}`);
+          break;
+
+        case 'schema-tuple':
+          // Value must be an array whose contents match each of the tuple types.
+          if (!Array.isArray(value)) {
+            throw new TypeError(`Cannot ${op} tuple ${name} with non-array value '${value}'`);
+          }
+          if (value.length != fieldType.types.length) {
+            throw new TypeError(`Length mismatch ${op}ting tuple ${name} ` +
+                                `[${fieldType.types}] with value '${value}'`);
+          }
+          fieldType.types.map((innerType, i) => {
+            if (value[i] !== undefined && value[i] !== null &&
+                typeof(value[i]) !== convertToJsType(innerType)) {
+              throw new TypeError(
+                  `Type mismatch ${op}ting field ${name} (tuple [${fieldType.types}]); ` +
+                  `value '${value}' has type ${typeof(value[i])} at index ${i}`);
+            }
+          });
+          break;
+
+        default:
+          throw new Error(`Unknown kind ${kind} in schema ${className}`);
+      }
+    };
+
+    let clazz = class extends __WEBPACK_IMPORTED_MODULE_2__entity_js__["a" /* default */] {
+      constructor(data, userIDComponent) {
+        super(userIDComponent);
+        this.rawData = new Proxy({}, {
+          get: (target, name) => {
+            if (classJunk.includes(name) || name.constructor == Symbol) {
+              return undefined;
+            }
+            let value = target[name];
+            validateFieldAndTypes('get', name, value);
+            return value;
+          },
+          set: (target, name, value) => {
+            validateFieldAndTypes('set', name, value);
+            target[name] = value;
+            return true;
+          }
+        });
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data, `can't construct entity with null data`);
+        for (let [name, value] of Object.entries(data)) {
+          this.rawData[name] = value;
+        }
+      }
+
+      dataClone() {
+        let clone = {};
+        for (let propertyList of [normative, optional]) {
+          Object.keys(propertyList).forEach(prop => {
+            if (this.rawData[prop] !== undefined)
+              clone[prop] = this.rawData[prop];
+          });
+        }
+        return clone;
+      }
+
+      static get key() {
+        return {
+          tag: 'entity',
+          schema: schema.toLiteral(),
+        };
+      }
+    };
+
+    Object.defineProperty(clazz, 'type', {value: this.type});
+    Object.defineProperty(clazz, 'name', {value: this.name});
+    // TODO: make a distinction between normative and optional properties.
+    // TODO: add query / getter functions for user properties
+    for (let propertyList of [normative, optional]) {
+      for (let property in propertyList) {
+        Object.defineProperty(clazz.prototype, property, {
+          get: function() {
+            return this.rawData[property];
+          },
+          set: function(v) {
+            this.rawData[property] = v;
+          }
+        });
+      }
+    }
+    return clazz;
+  }
+
+  toString() {
+    let results = [];
+    this.parents.forEach(parent => results.push(parent.toString()));
+    results.push(`schema ${this.name}`.concat(this.parents.length > 0 ? ` extends ${this.parents.map(p => p.name).join(',')}` : ''));
+
+    let propertiesToString = (properties, keyword) => {
+      if (Object.keys(properties).length > 0) {
+        results.push(`  ${keyword}`);
+        Object.keys(properties).forEach(name => {
+          let property = properties[name];
+          let schemaType;
+          if (typeof(property) === 'object') {
+            switch (property.kind) {
+              case 'schema-union':
+                schemaType = `(${property.types.join(' or ')})`;
+                break;
+              case 'schema-tuple':
+                schemaType = `(${property.types.join(', ')})`;
+                break;
+              default:
+                throw new Error(`Unknown kind ${property.kind} in schema ${this.name}`);
+            }
+          } else {
+            schemaType = property;
+          }
+          results.push(`    ${schemaType} ${name}`);
+        });
+      }
+    };
+
+    // TODO: skip properties that already written as part of parent schema serialization?
+    propertiesToString(this.normative, 'normative');
+    propertiesToString(this.optional, 'optional');
+    return results.join('\n');
+  }
+
+  toManifestString() {
+    return this.toString();
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Schema);
+
+
+
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1782,312 +2132,13 @@ class RecipeUtil {
 
 
 /***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(12);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-class Schema {
-  constructor(model) {
-    this._model = model;
-    this.name = model.name;
-    this.parents = (model.parents || []).map(parent => new Schema(parent));
-    this._normative = {};
-    this._optional = {};
-
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.sections, `${JSON.stringify(model)} should have sections`);
-    for (let section of model.sections) {
-      let into = section.sectionType == 'normative' ? this._normative : this._optional;
-      for (let field in section.fields) {
-        // TODO normalize field types here?
-        into[field] = section.fields[field];
-      }
-    }
-  }
-
-  toLiteral() {
-    return this._model;
-  }
-
-  static fromLiteral(data) {
-    return new Schema(data);
-  }
-
-  equals(otherSchema) {
-    return this === otherSchema || (this.name == otherSchema.name
-       // TODO: Check equality without calling contains.
-       && this.contains(otherSchema)
-       && otherSchema.contains(this));
-  }
-
-  contains(otherSchema) {
-    if (!this.containsAncestry(otherSchema)) {
-      return false;
-    }
-    for (let section of ['normative', 'optional']) {
-      let thisSection = this[section];
-      let otherSection = otherSchema[section];
-      for (let field in otherSection) {
-        if (thisSection[field] != otherSection[field]) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-  containsAncestry(otherSchema) {
-    if (this.name == otherSchema.name || otherSchema.name == null) {
-      nextOtherParent: for (let otherParent of otherSchema.parents) {
-        for (let parent of this.parents) {
-          if (parent.containsAncestry(otherParent)) {
-            continue nextOtherParent;
-          }
-        }
-        return false;
-      }
-      return true;
-    } else {
-      for (let parent of this.parents) {
-        if (parent.containsAncestry(otherSchema)) {
-          return true;
-        }
-      }
-      return false;
-    }
-  }
-
-  get type() {
-    return __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */].newEntity(this);
-  }
-
-  get normative() {
-    let normative = {};
-    for (let parent of this.parents)
-      Object.assign(normative, parent.normative);
-    Object.assign(normative, this._normative);
-    return normative;
-  }
-
-  get optional() {
-    let optional = {};
-    for (let parent of this.parents)
-      Object.assign(optional, parent.optional);
-    Object.assign(optional, this._optional);
-    return optional;
-  }
-
-  entityClass() {
-    let schema = this;
-    let className = this.name;
-    let normative = this.normative;
-    let optional = this.optional;
-    let classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
-
-    let convertToJsType = fieldType => {
-      switch (fieldType) {
-        case 'Text':
-          return 'string';
-        case 'URL':
-          return 'string';
-        case 'Number':
-          return 'number';
-        case 'Boolean':
-          return 'boolean';
-        case 'Object':
-          return 'object';
-        default:
-          throw new Error(`Unknown field type ${fieldType} in schema ${className}`);
-      }
-    };
-
-    let validateFieldAndTypes = (op, name, value) => {
-      let fieldType = normative[name] || optional[name];
-      if (fieldType === undefined) {
-        throw new Error(`Can't ${op} field ${name}; not in schema ${className}`);
-      }
-      if (value === undefined || value === null) {
-        return;
-      }
-
-      if (typeof(fieldType) !== 'object') {
-        // Primitive fields.
-        if (typeof(value) !== convertToJsType(fieldType)) {
-          throw new TypeError(
-              `Type mismatch ${op}ting field ${name} (type ${fieldType}); ` +
-              `value '${value}' is type ${typeof(value)}`);
-        }
-        return;
-      }
-
-      switch (fieldType.kind) {
-        case 'schema-union':
-          // Value must be a primitive that matches one of the union types.
-          for (let innerType of fieldType.types) {
-            if (typeof(value) === convertToJsType(innerType)) {
-              return;
-            }
-          }
-          throw new TypeError(
-              `Type mismatch ${op}ting field ${name} (union [${fieldType.types}]); ` +
-              `value '${value}' is type ${typeof(value)}`);
-          break;
-
-        case 'schema-tuple':
-          // Value must be an array whose contents match each of the tuple types.
-          if (!Array.isArray(value)) {
-            throw new TypeError(`Cannot ${op} tuple ${name} with non-array value '${value}'`);
-          }
-          if (value.length != fieldType.types.length) {
-            throw new TypeError(`Length mismatch ${op}ting tuple ${name} ` +
-                                `[${fieldType.types}] with value '${value}'`);
-          }
-          fieldType.types.map((innerType, i) => {
-            if (value[i] !== undefined && value[i] !== null &&
-                typeof(value[i]) !== convertToJsType(innerType)) {
-              throw new TypeError(
-                  `Type mismatch ${op}ting field ${name} (tuple [${fieldType.types}]); ` +
-                  `value '${value}' has type ${typeof(value[i])} at index ${i}`);
-            }
-          });
-          break;
-
-        default:
-          throw new Error(`Unknown kind ${kind} in schema ${className}`);
-      }
-    };
-
-    let clazz = class extends __WEBPACK_IMPORTED_MODULE_2__entity_js__["a" /* default */] {
-      constructor(data, userIDComponent) {
-        super(userIDComponent);
-        this.rawData = new Proxy({}, {
-          get: (target, name) => {
-            if (classJunk.includes(name) || name.constructor == Symbol) {
-              return undefined;
-            }
-            let value = target[name];
-            validateFieldAndTypes('get', name, value);
-            return value;
-          },
-          set: (target, name, value) => {
-            validateFieldAndTypes('set', name, value);
-            target[name] = value;
-            return true;
-          }
-        });
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data, `can't construct entity with null data`);
-        for (let [name, value] of Object.entries(data)) {
-          this.rawData[name] = value;
-        }
-      }
-
-      dataClone() {
-        let clone = {};
-        for (let propertyList of [normative, optional]) {
-          Object.keys(propertyList).forEach(prop => {
-            if (this.rawData[prop] !== undefined)
-              clone[prop] = this.rawData[prop];
-          });
-        }
-        return clone;
-      }
-
-      static get key() {
-        return {
-          tag: 'entity',
-          schema: schema.toLiteral(),
-        };
-      }
-    };
-
-    Object.defineProperty(clazz, 'type', {value: this.type});
-    Object.defineProperty(clazz, 'name', {value: this.name});
-    // TODO: make a distinction between normative and optional properties.
-    // TODO: add query / getter functions for user properties
-    for (let propertyList of [normative, optional]) {
-      for (let property in propertyList) {
-        Object.defineProperty(clazz.prototype, property, {
-          get: function() {
-            return this.rawData[property];
-          },
-          set: function(v) {
-            this.rawData[property] = v;
-          }
-        });
-      }
-    }
-    return clazz;
-  }
-
-  toString() {
-    let results = [];
-    this.parents.forEach(parent => results.push(parent.toString()));
-    results.push(`schema ${this.name}`.concat(this.parents.length > 0 ? ` extends ${this.parents.map(p => p.name).join(',')}` : ''));
-
-    let propertiesToString = (properties, keyword) => {
-      if (Object.keys(properties).length > 0) {
-        results.push(`  ${keyword}`);
-        Object.keys(properties).forEach(name => {
-          let property = properties[name];
-          let schemaType;
-          if (typeof(property) === 'object') {
-            switch (property.kind) {
-              case 'schema-union':
-                schemaType = `(${property.types.join(' or ')})`;
-                break;
-              case 'schema-tuple':
-                schemaType = `(${property.types.join(', ')})`;
-                break;
-              default:
-                throw new Error(`Unknown kind ${property.kind} in schema ${this.name}`);
-            }
-          } else {
-            schemaType = property;
-          }
-          results.push(`    ${schemaType} ${name}`);
-        });
-      }
-    };
-
-    // TODO: skip properties that already written as part of parent schema serialization?
-    propertiesToString(this.normative, 'normative');
-    propertiesToString(this.optional, 'optional');
-    return results.join('\n');
-  }
-
-  toManifestString() {
-    return this.toString();
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Schema);
-
-
-
-
-
-/***/ }),
 /* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2097,7 +2148,6 @@ class Schema {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -2108,7 +2158,7 @@ class ConnectionSpec {
     this.rawData = rawData;
     this.direction = rawData.direction;
     this.name = rawData.name;
-    this.type = rawData.type.assignVariableIds(typeVarMap);
+    this.type = rawData.type.mergeTypeVariablesByName(typeVarMap);
     this.isOptional = rawData.isOptional;
   }
 
@@ -2179,7 +2229,7 @@ class ParticleSpec {
     // Verify provided slots use valid view connection names.
     this.slots.forEach(slot => {
       slot.providedSlots.forEach(ps => {
-        ps.views.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
+        ps.views.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
       });
     });
   }
@@ -2232,7 +2282,7 @@ class ParticleSpec {
 
   validateDescription(description) {
     Object.keys(description || []).forEach(d => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
     });
   }
 
@@ -2243,9 +2293,9 @@ class ParticleSpec {
   _toShape() {
     const views = this._model.args;
     // TODO: wat do?
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(!this.slots.length, 'please implement slots toShape');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(!this.slots.length, 'please implement slots toShape');
     const slots = [];
-    return new __WEBPACK_IMPORTED_MODULE_2__shape_js__["a" /* default */](views, slots);
+    return new __WEBPACK_IMPORTED_MODULE_1__shape_js__["a" /* default */](views, slots);
   }
 
   toString() {
@@ -2797,16 +2847,15 @@ class DescriptionFormatter {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__build_manifest_parser_js__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__schema_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__schema_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_search_js__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__shape_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__shape_js__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__recipe_util_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__storage_storage_provider_factory_js__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__scheduler_js__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__storage_storage_provider_factory_js__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__scheduler_js__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__manifest_meta_js__ = __webpack_require__(59);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__type_variable_js__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__recipe_type_checker_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__recipe_type_checker_js__ = __webpack_require__(13);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2816,7 +2865,6 @@ class DescriptionFormatter {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -3171,6 +3219,8 @@ ${e.message}
         super();
       }
       visit(node, visitChildren) {
+        // TODO(dstockwell): set up a scope and merge type variables here, so that
+        //     errors relating to failed merges can reference the manifest source.
         visitChildren();
         switch (node.kind) {
         case 'schema-inline':
@@ -3193,7 +3243,7 @@ ${e.message}
             }
             if (externalSchema) {
               let externalType = externalSchema.normative[name] || externalSchema.optional[name];
-              if (externalType != type) {
+              if (!__WEBPACK_IMPORTED_MODULE_4__schema_js__["a" /* default */].typesEqual(externalType, type)) {
                 throw new ManifestError(
                     node.location,
                     `Type of '${name}' does not match schema (${type} vs ${externalType})`);
@@ -3211,7 +3261,8 @@ ${e.message}
           }));
           return;
         case 'variable-type':
-          node.model = __WEBPACK_IMPORTED_MODULE_7__type_js__["a" /* default */].newVariableReference(node.name);
+          let constraint = node.constraint && node.constraint.model;
+          node.model = __WEBPACK_IMPORTED_MODULE_7__type_js__["a" /* default */].newVariable({name: node.name, constraint});
           return;
         case 'reference-type':
           let resolved = manifest.resolveReference(node.name);
@@ -3488,7 +3539,7 @@ ${e.message}
                 `Could not find hosted particle '${connectionItem.target.particle}'`);
           }
           __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!connection.type.hasVariableReference);
-          let type = __WEBPACK_IMPORTED_MODULE_13__recipe_type_checker_js__["a" /* default */].restrictType(connection.type, hostedParticle);
+          let type = __WEBPACK_IMPORTED_MODULE_12__recipe_type_checker_js__["a" /* default */].restrictType(connection.type, hostedParticle);
           if (!type) {
             throw new ManifestError(
                 connectionItem.target.location,
@@ -3694,7 +3745,7 @@ ${e.message}
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(4);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3766,6 +3817,144 @@ class Entity {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+class TypeChecker {
+
+  // list: [{type, direction, connection}]
+  static processTypeList(list) {
+    if (list.length == 0) {
+      return {type: {type: undefined}, valid: true};
+    }
+    let baseType = list[0];
+    for (let i = 1; i < list.length; i++) {
+      let result = TypeChecker.compareTypes(baseType, list[i]);
+      baseType = result.type;
+      if (!result.valid) {
+        return {valid: false};
+      }
+    }
+
+    return {type: baseType, valid: true};
+  }
+
+  static restrictType(type, instance) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(type.isInterface, `restrictType not implemented for ${type}`);
+
+    let shape = type.interfaceShape.restrictType(instance);
+    if (shape == false)
+      return false;
+    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newInterface(shape);
+  }
+
+  // left, right: {type, direction, connection}
+  static compareTypes(left, right, resolve=true) {
+    let resolvedLeft = left.type.resolvedType();
+    let resolvedRight = right.type.resolvedType();
+    let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(resolvedLeft, resolvedRight);
+
+    if (leftType.isVariable || rightType.isVariable) {
+      if (leftType.isVariable && rightType.isVariable) {
+        if (leftType.variable === rightType.variable) {
+          return {type: left, valid: true};
+        }
+        if (leftType.variable.constraint || rightType.variable.constraint) {
+          let mergedConstraint = __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* default */].maybeMergeConstraints(leftType.variable, rightType.variable);
+          if (!mergedConstraint) {
+            return {valid: false};
+          }
+          if (resolve) {
+            leftType.constraint = mergedConstraint;
+            rightType.variable.resolution = leftType;
+          }
+        };
+        return {type: left, valid: true};
+      } else if (leftType.isVariable) {
+        if (!leftType.variable.isSatisfiedBy(rightType)) {
+          return {valid: false};
+        }
+        if (resolve) {
+          leftType.variable.resolution = rightType;
+        }
+        return {type: right, valid: true};
+      } else if (rightType.isVariable) {
+        if (!rightType.variable.isSatisfiedBy(leftType)) {
+          return {valid: false};
+        }
+        if (resolve) {
+          rightType.variable.resolution = leftType;
+        }
+        return {type: left, valid: true};
+      }
+    }
+
+    if (leftType.type != rightType.type) {
+      return {valid: false};
+    }
+
+    // TODO: we need a generic way to evaluate type compatibility
+    //       shapes + entities + etc
+    if (leftType.isInterface && rightType.isInterface) {
+      if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
+        return {type: left, valid: true};
+      }
+    }
+
+    if (!leftType.isEntity || !rightType.isEntity) {
+      return {valid: false};
+    }
+
+    let isSub = leftType.entitySchema.contains(rightType.entitySchema);
+    let isSuper = rightType.entitySchema.contains(leftType.entitySchema);
+    if (isSuper && isSub) {
+       return {type: left, valid: true};
+    }
+    if (!isSuper && !isSub) {
+      return {valid: false};
+    }
+    let [superclass, subclass] = isSuper ? [left, right] : [right, left];
+
+    // TODO: this arbitrarily chooses type restriction when
+    // super direction is 'in' and sub direction is 'out'. Eventually
+    // both possibilities should be encoded so we can maximise resolution
+    // opportunities
+
+    // treat view types as if they were 'inout' connections. Note that this
+    // guarantees that the view's type will be preserved, and that the fact
+    // that the type comes from a view rather than a connection will also
+    // be preserved.
+    let superDirection = superclass.connection ? superclass.connection.direction : 'inout';
+    let subDirection = subclass.connection ? subclass.connection.direction : 'inout';
+    if (superDirection == 'in') {
+      return {type: subclass, valid: true};
+    }
+    if (subDirection == 'out') {
+      return {type: superclass, valid: true};
+    }
+    return {valid: false};
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (TypeChecker);
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -3779,7 +3968,7 @@ class Entity {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3890,12 +4079,12 @@ class Scheduler {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(92);
 /**
  * @license
@@ -4034,7 +4223,7 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4042,9 +4231,9 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__transformation_dom_particle_js__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__transformation_dom_particle_js__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__converters_jsonldToManifest_js__ = __webpack_require__(48);
 /**
  * @license
@@ -4145,15 +4334,15 @@ class Loader {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_js__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_js__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tracelib_trace_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__schema_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__schema_js__ = __webpack_require__(7);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4400,14 +4589,14 @@ class StateChanges {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__entity_js__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__symbols_js__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__symbols_js__ = __webpack_require__(14);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -4441,7 +4630,7 @@ class Relation extends __WEBPACK_IMPORTED_MODULE_1__entity_js__["a" /* default *
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4598,7 +4787,7 @@ ${this._slotsToManifestString()}
   }
 
   static isTypeVar(reference) {
-    return (reference instanceof __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */]) && reference.hasProperty(r => r.isVariable || r.isVariableReference);
+    return (reference instanceof __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */]) && reference.hasProperty(r => r.isVariable);
   }
 
   static mustMatch(reference) {
@@ -4689,7 +4878,8 @@ ${this._slotsToManifestString()}
       return false;
 
     for (let constraint of viewOptions)
-      constraint.var.variable.resolution = constraint.value;
+      if (!constraint.var.variable.resolution)
+        constraint.var.variable.resolution = constraint.value;
 
     return this;
   }
@@ -4701,14 +4891,14 @@ ${this._slotsToManifestString()}
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -4796,54 +4986,6 @@ class ViewMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategize
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ViewMapperBase;
 
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-class TypeVariable {
-  constructor(name, id) {
-    this.name = name;
-    this.id = id;
-    this.resolution = null;
-  }
-
-  // this shouldn't be called on a 
-  // resolved TypeVariable.. how do we
-  // pass a resolution across the PEC?
-  toLiteral() {
-    assert(this.resolution == null);
-    return this;
-  }
-
-  static fromLiteral(data) {
-    return new TypeVariable(data.name, data.id);
-  }
-
-  get isResolved() {
-    return !!this.resolution;
-  }
-
-  equals(other) {
-    if (this.isResolved && other.isResolved) {
-      return this.resolution.equals(other.resolution);
-    }
-    return this.name == other.name;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (TypeVariable);
 
 
 /***/ }),
@@ -5683,8 +5825,8 @@ class SetDomContext {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__identifier_js__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__entity_js__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__relation_js__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__symbols_js__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__relation_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__symbols_js__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__particle_spec_js__ = __webpack_require__(9);
 /** @license
@@ -6020,160 +6162,12 @@ class Search {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-class TypeChecker {
-
-  // list: [{type, direction, connection}]
-  static processTypeList(list) {
-    if (list.length == 0) {
-      return {type: {type: undefined}, valid: true};
-    }
-    let baseType = list[0];
-    let variableResolutions = [];
-    for (let i = 1; i < list.length; i++) {
-      let result = TypeChecker.compareTypes(baseType, list[i], variableResolutions);
-      baseType = result.type;
-      if (!result.valid) {
-        return {valid: false};
-      }
-    }
-
-    return {type: baseType, valid: true};
-  }
-
-  static restrictType(type, instance) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(type.isInterface, `restrictType not implemented for ${type}`);
-
-    let shape = type.interfaceShape.restrictType(instance);
-    if (shape == false)
-      return false;
-    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newInterface(shape);
-  }
-
-  static _coerceTypes(left, right) {
-    let leftType = left.type;
-    let rightType = right.type;
-
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!leftType.hasVariableReference);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!rightType.hasVariableReference);
-
-    while (leftType.isSetView && rightType.isSetView) {
-      leftType = leftType.primitiveType();
-      rightType = rightType.primitiveType();
-    }
-
-    leftType = leftType.resolvedType();
-    rightType = rightType.resolvedType();
-
-    if (leftType.equals(rightType))
-      return left;
-
-    // TODO: direction?
-    let type;
-    if (leftType.isVariable) {
-      leftType.variable.resolution = rightType;
-      type = right;
-    } else if (rightType.isVariable) {
-      rightType.variable.resolution = leftType;
-      type = left;
-    } else {
-      return null;
-    }
-    return type;
-  }
-
-  static isSubclass(subclass, superclass) {
-    let subtype = subclass.type;
-    let supertype = superclass.type;
-    while (subtype.isSetView && supertype.isSetView) {
-      subtype = subtype.primitiveType();
-      supertype = supertype.primitiveType();
-    }
-
-    if (!(subtype.isEntity && supertype.isEntity))
-      return false;
-
-    return subtype.entitySchema.contains(supertype.entitySchema);
-  }
-
-  // left, right: {type, direction, connection}
-  static compareTypes(left, right) {
-    if (left.type.equals(right.type)) {
-      return {type: left, valid: true};
-    }
-
-    let subclass;
-    let superclass;
-    if (TypeChecker.isSubclass(left, right)) {
-      subclass = left;
-      superclass = right;
-    } else if (TypeChecker.isSubclass(right, left)) {
-      subclass = right;
-      superclass = left;
-    }
-
-    // TODO: this arbitrarily chooses type restriction when
-    // super direction is 'in' and sub direction is 'out'. Eventually
-    // both possibilities should be encoded so we can maximise resolution
-    // opportunities
-    if (superclass) {
-      // treat view types as if they were 'inout' connections. Note that this
-      // guarantees that the view's type will be preserved, and that the fact
-      // that the type comes from a view rather than a connection will also
-      // be preserved.
-      let superDirection = superclass.connection ? superclass.connection.direction : 'inout';
-      let subDirection = subclass.connection ? subclass.connection.direction : 'inout';
-      if (superDirection == 'in') {
-        return {type: subclass, valid: true};
-      }
-      if (subDirection == 'out') {
-        return {type: superclass, valid: true};
-      }
-      return {valid: false};
-    }
-
-    let result = TypeChecker._coerceTypes(left, right);
-    if (result == null) {
-      return {valid: false};
-    }
-    // TODO: direction?
-    return {type: result, valid: true};
-  }
-
-  static substitute(type, variable, value) {
-    if (type.equals(variable))
-      return value;
-    if (type.isSetView)
-      return TypeChecker.substitute(type.primitiveType(), variable, value).setViewOf();
-    return type;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (TypeChecker);
-
-
-/***/ }),
-/* 31 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__schema_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__schema_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__relation_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__relation_js__ = __webpack_require__(19);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6219,7 +6213,7 @@ let BasicEntity = testEntityClass('BasicEntity');
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6344,7 +6338,7 @@ class Slot {
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6366,7 +6360,7 @@ class KeyBase {
 
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6489,7 +6483,7 @@ class StorageProviderBase {
 
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6539,12 +6533,12 @@ class StorageProviderFactory {
 
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dom_particle_js__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dom_particle_js__ = __webpack_require__(16);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6610,15 +6604,133 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 
 
 /***/ }),
+/* 36 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(7);
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+
+class TypeVariable {
+  constructor(name, constraint) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(typeof name == 'string');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(constraint == null || constraint instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */]);
+    this.name = name;
+    this._constraint = constraint;
+    this._resolution = null;
+  }
+
+
+  static maybeMergeConstraints(variable1, variable2) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(variable1 instanceof TypeVariable);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(variable2 instanceof TypeVariable);
+
+    let constraint1 = variable1.constraint;
+    let constraint2 = variable2.constraint;
+
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(constraint1 || constraint2);
+
+    if (constraint1 && constraint2) {
+      if (!constraint1.isEntity || !constraint2.isEntity) {
+        throw new Error('merging constraints not implemented for ${constraint1.type} and ${constraint2.type}');
+      }
+  
+      let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */].maybeMerge(constraint1.entitySchema, constraint2.entitySchema);
+      if (!mergedSchema) {
+        return null;
+      }
+      return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newEntity(mergedSchema);
+    } else {
+      return constraint1 || constraint2;
+    }
+  }
+
+  isSatisfiedBy(type) {
+    let constraint = this.constraint;
+    if (!constraint) {
+      return true;
+    }
+    if (!constraint.isEntity || !type.isEntity) {
+      throw new Error('constraint checking not implemented for ${constraint1.type} and ${constraint2.type}');
+    }
+    return type.entitySchema.contains(constraint.entitySchema);
+  }
+
+  get resolution() {
+    if (this._resolution) {
+      return this._resolution.resolvedType();
+    }
+    return null;
+  }
+
+  set resolution(value) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(value instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
+    this._resolution = value;
+    this._constraint = null;
+  }
+
+  get constraint() {
+    if (this._resolution) {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._constraint);
+      if (this._resolution.isVariable) {
+        return this._resolution.variable.constraint;
+      }
+      return null;
+    }
+    return this._constraint;
+  }
+
+  set constraint(value) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
+    this._constraint = value;
+  }
+
+  toLiteral() {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(this.resolution == null);
+    return {
+      name: this.name,
+      constraint: this._constraint && this._constraint.toLiteral(),
+    };
+  }
+
+  static fromLiteral(data) {
+    return new TypeVariable(
+        data.name,
+        data.constraint ? __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(data.constraint) : null);
+  }
+
+  isResolved() {
+    return this._resolution && this._resolution.isResolved();
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (TypeVariable);
+
+
+/***/ }),
 /* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_js__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_js__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tracelib_trace_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__relation_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__relation_js__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__handle_js__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__outer_PEC_js__ = __webpack_require__(61);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__recipe_recipe_js__ = __webpack_require__(1);
@@ -6626,8 +6738,8 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__description_js__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__recipe_util_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__fake_pec_factory_js__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__storage_storage_provider_factory_js__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__scheduler_js__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__storage_storage_provider_factory_js__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__scheduler_js__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__devtools_shared_arc_registry_js__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__id_js__ = __webpack_require__(56);
 /**
@@ -7094,12 +7206,13 @@ ${this.activeRecipe.toString()}`;
       // TODO we need to fix this too, otherwise all views of shape type will
       // be of the 'same type' when searching by type.
       return type.shapeShape;
-    } else if (type.isVariable && type.data.isResolved) {
-      return Arc._viewKey(type.data.resolution);
+    } else if (type.isVariable && type.isResolved()) {
+      return Arc._viewKey(type.resolvedType());
     }
   }
 
   findHandlesByType(type, options) {
+    // TODO: dstockwell to rewrite this to use constraints and more
     let typeKey = Arc._viewKey(type);
     let handles = [...this._handlesById.values()].filter(handle => {
       if (typeKey) {
@@ -7108,9 +7221,9 @@ ${this.activeRecipe.toString()}`;
           return true;
         }
       } else {
-        if (type.isVariable && !type.data.isResolved && handle.type.isEntity) {
+        if (type.isVariable && !type.isResolved() && handle.type.isEntity) {
           return true;
-        } else if (type.isSetView && type.primitiveType().isVariable && !type.primitiveType().data.isResolved && handle.type.isSetView) {
+        } else if (type.isSetView && type.primitiveType().isVariable && !type.primitiveType().isResolved() && handle.type.isSetView) {
           return true;
         }
       }
@@ -7188,7 +7301,7 @@ ${this.activeRecipe.toString()}`;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_deviceinfo_web_js__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_recipe_util_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_recipe_util_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__strategies_convert_constraints_to_connections_js__ = __webpack_require__(79);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__strategies_assign_remote_views_js__ = __webpack_require__(76);
@@ -7484,7 +7597,7 @@ class Planner {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_js__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_js__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom_slot_js__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dom_context_js__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__description_dom_formatter_js__ = __webpack_require__(52);
@@ -7506,6 +7619,14 @@ class Planner {
 
 
 class SlotComposer {
+  /**
+   * |options| must contain:
+   * - affordance: the UI affordance the slots composer render to (for example: dom).
+   * - rootContext: the context containing top level context to be used for slots.
+   * and may contain:
+   * - containerKind: the type of container wrapping each slot's context (for example, div).
+   * - suggestionsContext: the context for rendering suggestions.
+   */
   constructor(options) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(options.affordance, 'Affordance is mandatory');
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(options.rootContext, 'Root context is mandatory');
@@ -7749,10 +7870,10 @@ class SlotComposer {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__arcs_runtime_loader_js__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__arcs_runtime_particle_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__arcs_runtime_dom_particle_js__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__arcs_runtime_transformation_dom_particle_js__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__arcs_runtime_loader_js__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__arcs_runtime_particle_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__arcs_runtime_dom_particle_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__arcs_runtime_transformation_dom_particle_js__ = __webpack_require__(35);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8381,41 +8502,44 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           },
         peg$c88 = "~",
         peg$c89 = peg$literalExpectation("~", false),
-        peg$c90 = function(name) {
+        peg$c90 = "with",
+        peg$c91 = peg$literalExpectation("with", false),
+        peg$c92 = function(name, constraint) {
             return {
               kind: 'variable-type',
               location: location(),
               name,
+              constraint: optional(constraint, constraint => constraint[3], null),
             };
           },
-        peg$c91 = function(name) {
+        peg$c93 = function(name) {
             return {
               kind: 'reference-type',
               location: location(),
               name,
             };
           },
-        peg$c92 = function(head, tail) {
+        peg$c94 = function(head, tail) {
             return [head, ...tail.map(a => a[2])];
           },
-        peg$c93 = "affordance",
-        peg$c94 = peg$literalExpectation("affordance", false),
-        peg$c95 = "dom-touch",
-        peg$c96 = peg$literalExpectation("dom-touch", false),
-        peg$c97 = "dom",
-        peg$c98 = peg$literalExpectation("dom", false),
-        peg$c99 = "vr",
-        peg$c100 = peg$literalExpectation("vr", false),
-        peg$c101 = "voice",
-        peg$c102 = peg$literalExpectation("voice", false),
-        peg$c103 = function(affordance) {
+        peg$c95 = "affordance",
+        peg$c96 = peg$literalExpectation("affordance", false),
+        peg$c97 = "dom-touch",
+        peg$c98 = peg$literalExpectation("dom-touch", false),
+        peg$c99 = "dom",
+        peg$c100 = peg$literalExpectation("dom", false),
+        peg$c101 = "vr",
+        peg$c102 = peg$literalExpectation("vr", false),
+        peg$c103 = "voice",
+        peg$c104 = peg$literalExpectation("voice", false),
+        peg$c105 = function(affordance) {
             return {
               kind: 'particle-affordance',
               location: location(),
               affordance,
             };
           },
-        peg$c104 = function(isRequired, isSet, name, tags, items) {
+        peg$c106 = function(isRequired, isSet, name, tags, items) {
             let formFactor = null;
             let providedSlots = [];
             items = optional(items, extractIndented, []);
@@ -8441,24 +8565,24 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               providedSlots
             };
           },
-        peg$c105 = "formFactor",
-        peg$c106 = peg$literalExpectation("formFactor", false),
-        peg$c107 = "fullscreen",
-        peg$c108 = peg$literalExpectation("fullscreen", false),
-        peg$c109 = "big",
-        peg$c110 = peg$literalExpectation("big", false),
-        peg$c111 = "medium",
-        peg$c112 = peg$literalExpectation("medium", false),
-        peg$c113 = "small",
-        peg$c114 = peg$literalExpectation("small", false),
-        peg$c115 = function(formFactor) {
+        peg$c107 = "formFactor",
+        peg$c108 = peg$literalExpectation("formFactor", false),
+        peg$c109 = "fullscreen",
+        peg$c110 = peg$literalExpectation("fullscreen", false),
+        peg$c111 = "big",
+        peg$c112 = peg$literalExpectation("big", false),
+        peg$c113 = "medium",
+        peg$c114 = peg$literalExpectation("medium", false),
+        peg$c115 = "small",
+        peg$c116 = peg$literalExpectation("small", false),
+        peg$c117 = function(formFactor) {
             return {
               kind: 'form-factor',
               location: location(),
               formFactor
             };
           },
-        peg$c116 = function(isSet, name, tags, items) {
+        peg$c118 = function(isSet, name, tags, items) {
             let formFactor = null;
             let views = [];
             items = items ? extractIndented(items) : [];
@@ -8481,14 +8605,14 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               views
             };
           },
-        peg$c117 = function(view) {
+        peg$c119 = function(view) {
             return {
               kind: 'particle-provided-slot-view',
               location: location(),
               view,
             };
           },
-        peg$c118 = function(pattern, viewDescriptions) {
+        peg$c120 = function(pattern, viewDescriptions) {
             return {
               kind: 'description',
               location: location(),
@@ -8504,7 +8628,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               ],
             };
           },
-        peg$c119 = function(name, pattern) {
+        peg$c121 = function(name, pattern) {
             return {
               kind: 'view-description',
               location: location(),
@@ -8512,9 +8636,9 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               pattern,
             };
           },
-        peg$c120 = "recipe",
-        peg$c121 = peg$literalExpectation("recipe", false),
-        peg$c122 = function(name, tags, items) {
+        peg$c122 = "recipe",
+        peg$c123 = peg$literalExpectation("recipe", false),
+        peg$c124 = function(name, tags, items) {
             return {
               kind: 'recipe',
               location: location(),
@@ -8523,12 +8647,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               items: optional(items, extractIndented, []),
             };
           },
-        peg$c123 = "as",
-        peg$c124 = peg$literalExpectation("as", false),
-        peg$c125 = function(name) {
+        peg$c125 = "as",
+        peg$c126 = peg$literalExpectation("as", false),
+        peg$c127 = function(name) {
             return name;
           },
-        peg$c126 = function(ref, name, connections) {
+        peg$c128 = function(ref, name, connections) {
             let handleConnections = [];
             let slotConnections = [];
             if (connections) {
@@ -8549,9 +8673,9 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               slotConnections: slotConnections,
             };
           },
-        peg$c127 = "*",
-        peg$c128 = peg$literalExpectation("*", false),
-        peg$c129 = function(param, dir, target) {
+        peg$c129 = "*",
+        peg$c130 = peg$literalExpectation("*", false),
+        peg$c131 = function(param, dir, target) {
             return {
               kind: 'handle-connection',
               location: location(),
@@ -8560,7 +8684,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               target: optional(target, target => target[1], null),
             };
           },
-        peg$c130 = function(param, name, providedSlots) {
+        peg$c132 = function(param, name, providedSlots) {
             return {
               kind: 'slot-connection',
               location: location(),
@@ -8569,7 +8693,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               providedSlots: optional(providedSlots, extractIndented, [])
             };
           },
-        peg$c131 = function(param, name) {
+        peg$c133 = function(param, name) {
             return {
               kind: 'provided-slot',
               location: location(),
@@ -8577,7 +8701,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               name: optional(name, name=>name[1], null)
             };
           },
-        peg$c132 = function(from, dir, to) {
+        peg$c134 = function(from, dir, to) {
             return {
               kind: 'connection',
               location: location(),
@@ -8586,11 +8710,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               to,
             };
           },
-        peg$c133 = "search",
-        peg$c134 = peg$literalExpectation("search", false),
-        peg$c135 = "tokens",
-        peg$c136 = peg$literalExpectation("tokens", false),
-        peg$c137 = function(phrase, tokens) {
+        peg$c135 = "search",
+        peg$c136 = peg$literalExpectation("search", false),
+        peg$c137 = "tokens",
+        peg$c138 = peg$literalExpectation("tokens", false),
+        peg$c139 = function(phrase, tokens) {
             return {
               kind: 'search',
               location: location(),
@@ -8598,15 +8722,15 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               tokens: optional(tokens, tokens => tokens[1][2].map(t => t[1]), null)
             };
           },
-        peg$c138 = "<-",
-        peg$c139 = peg$literalExpectation("<-", false),
-        peg$c140 = "->",
-        peg$c141 = peg$literalExpectation("->", false),
-        peg$c142 = "=",
-        peg$c143 = peg$literalExpectation("=", false),
-        peg$c144 = ".",
-        peg$c145 = peg$literalExpectation(".", false),
-        peg$c146 = function(ident, param, tags) {
+        peg$c140 = "<-",
+        peg$c141 = peg$literalExpectation("<-", false),
+        peg$c142 = "->",
+        peg$c143 = peg$literalExpectation("->", false),
+        peg$c144 = "=",
+        peg$c145 = peg$literalExpectation("=", false),
+        peg$c146 = ".",
+        peg$c147 = peg$literalExpectation(".", false),
+        peg$c148 = function(ident, param, tags) {
             let particle = null;
             let name = null;
             if (ident) {
@@ -8626,22 +8750,22 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               tags: optional(tags, tags => tags[1], []),
             }
           },
-        peg$c147 = function(tags) {
+        peg$c149 = function(tags) {
             return {
               kind: 'connection-target',
               location: location(),
               tags,
             };
           },
-        peg$c148 = "use",
-        peg$c149 = peg$literalExpectation("use", false),
-        peg$c150 = "map",
-        peg$c151 = peg$literalExpectation("map", false),
-        peg$c152 = "create",
-        peg$c153 = peg$literalExpectation("create", false),
-        peg$c154 = "copy",
-        peg$c155 = peg$literalExpectation("copy", false),
-        peg$c156 = function(type, ref, name) {
+        peg$c150 = "use",
+        peg$c151 = peg$literalExpectation("use", false),
+        peg$c152 = "map",
+        peg$c153 = peg$literalExpectation("map", false),
+        peg$c154 = "create",
+        peg$c155 = peg$literalExpectation("create", false),
+        peg$c156 = "copy",
+        peg$c157 = peg$literalExpectation("copy", false),
+        peg$c158 = function(type, ref, name) {
             return {
               kind: 'view',
               location: location(),
@@ -8650,16 +8774,16 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               fate: type
             }
           },
-        peg$c157 = "#",
-        peg$c158 = peg$literalExpectation("#", false),
-        peg$c159 = /^[a-zA-Z]/,
-        peg$c160 = peg$classExpectation([["a", "z"], ["A", "Z"]], false, false),
-        peg$c161 = /^[a-zA-Z0-9_]/,
-        peg$c162 = peg$classExpectation([["a", "z"], ["A", "Z"], ["0", "9"], "_"], false, false),
-        peg$c163 = function() {return text()},
-        peg$c164 = function(head, tail) { return [head, ...(tail && tail[1] || [])]; },
-        peg$c165 = function(tags) { return tags; },
-        peg$c166 = function(name, tags) {
+        peg$c159 = "#",
+        peg$c160 = peg$literalExpectation("#", false),
+        peg$c161 = /^[a-zA-Z]/,
+        peg$c162 = peg$classExpectation([["a", "z"], ["A", "Z"]], false, false),
+        peg$c163 = /^[a-zA-Z0-9_]/,
+        peg$c164 = peg$classExpectation([["a", "z"], ["A", "Z"], ["0", "9"], "_"], false, false),
+        peg$c165 = function() {return text()},
+        peg$c166 = function(head, tail) { return [head, ...(tail && tail[1] || [])]; },
+        peg$c167 = function(tags) { return tags; },
+        peg$c168 = function(name, tags) {
             return {
               kind: 'particle-ref',
               location: location(),
@@ -8668,7 +8792,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               verbs: [],
             };
           },
-        peg$c167 = function(tags) {
+        peg$c169 = function(tags) {
             return {
               kind: 'particle-ref',
               location: location(),
@@ -8676,9 +8800,9 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               verbs: [],
             };
           },
-        peg$c168 = "particle can",
-        peg$c169 = peg$literalExpectation("particle can", false),
-        peg$c170 = function(verb, tags) {
+        peg$c170 = "particle can",
+        peg$c171 = peg$literalExpectation("particle can", false),
+        peg$c172 = function(verb, tags) {
             return {
               kind: 'particle-ref',
               location: location(),
@@ -8686,7 +8810,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               tags: tags || [],
             };
           },
-        peg$c171 = function(id, tags) {
+        peg$c173 = function(id, tags) {
             return {
               kind: 'view-ref',
               location: location(),
@@ -8694,7 +8818,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               tags: tags || [],
             };
           },
-        peg$c172 = function(name, tags) {
+        peg$c174 = function(name, tags) {
             return {
               kind: 'view-ref',
               location: location(),
@@ -8702,16 +8826,16 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               tags: tags || [],
             };
           },
-        peg$c173 = function(tags) {
+        peg$c175 = function(tags) {
             return {
               kind: 'view-ref',
               location: location(),
               tags,
             };
           },
-        peg$c174 = "slot",
-        peg$c175 = peg$literalExpectation("slot", false),
-        peg$c176 = function(ref, name) {
+        peg$c176 = "slot",
+        peg$c177 = peg$literalExpectation("slot", false),
+        peg$c178 = function(ref, name) {
             return {
               kind: 'slot',
               location: location(),
@@ -8719,20 +8843,20 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               name: optional(name, name => name[1], '')
             }
           },
-        peg$c177 = "extends",
-        peg$c178 = peg$literalExpectation("extends", false),
-        peg$c179 = function(first, rest) {
+        peg$c179 = "extends",
+        peg$c180 = peg$literalExpectation("extends", false),
+        peg$c181 = function(first, rest) {
           var list = [first];
           for (let item of rest) {
             list.push(item[3]);
           }
           return list;
         },
-        peg$c180 = "{",
-        peg$c181 = peg$literalExpectation("{", false),
-        peg$c182 = "}",
-        peg$c183 = peg$literalExpectation("}", false),
-        peg$c184 = function(name, fields) {
+        peg$c182 = "{",
+        peg$c183 = peg$literalExpectation("{", false),
+        peg$c184 = "}",
+        peg$c185 = peg$literalExpectation("}", false),
+        peg$c186 = function(name, fields) {
             return {
               kind: 'schema-inline',
               location: location(),
@@ -8740,7 +8864,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               fields: optional(fields, fields => [fields[0], ...fields[1].map(tail => tail[2])], []),
             }
           },
-        peg$c185 = function(type, name) {
+        peg$c187 = function(type, name) {
             return {
               kind: 'schema-inline-field',
               location: location(),
@@ -8748,9 +8872,9 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               type: optional(type, type => type[0], null),
             };
           },
-        peg$c186 = "schema",
-        peg$c187 = peg$literalExpectation("schema", false),
-        peg$c188 = function(name, parent, sections) {
+        peg$c188 = "schema",
+        peg$c189 = peg$literalExpectation("schema", false),
+        peg$c190 = function(name, parent, sections) {
             return {
               kind: 'schema',
               location: location(),
@@ -8759,11 +8883,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               sections: optional(sections, extractIndented, []),
             };
           },
-        peg$c189 = "normative",
-        peg$c190 = peg$literalExpectation("normative", false),
-        peg$c191 = "optional",
-        peg$c192 = peg$literalExpectation("optional", false),
-        peg$c193 = function(sectionType, fields) {
+        peg$c191 = "normative",
+        peg$c192 = peg$literalExpectation("normative", false),
+        peg$c193 = "optional",
+        peg$c194 = peg$literalExpectation("optional", false),
+        peg$c195 = function(sectionType, fields) {
             return {
               kind: 'schema-section',
               location: location(),
@@ -8771,7 +8895,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               fields: extractIndented(fields),
             };
           },
-        peg$c194 = function(type, name) {
+        peg$c196 = function(type, name) {
             return {
               kind: 'schema-field',
               location: location(),
@@ -8779,42 +8903,42 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               name,
             };
           },
-        peg$c195 = "Text",
-        peg$c196 = peg$literalExpectation("Text", false),
-        peg$c197 = "URL",
-        peg$c198 = peg$literalExpectation("URL", false),
-        peg$c199 = "Number",
-        peg$c200 = peg$literalExpectation("Number", false),
-        peg$c201 = "Boolean",
-        peg$c202 = peg$literalExpectation("Boolean", false),
-        peg$c203 = "Bytes",
-        peg$c204 = peg$literalExpectation("Bytes", false),
-        peg$c205 = "Object",
-        peg$c206 = peg$literalExpectation("Object", false),
-        peg$c207 = "or",
-        peg$c208 = peg$literalExpectation("or", false),
-        peg$c209 = function(first, rest) {
+        peg$c197 = "Text",
+        peg$c198 = peg$literalExpectation("Text", false),
+        peg$c199 = "URL",
+        peg$c200 = peg$literalExpectation("URL", false),
+        peg$c201 = "Number",
+        peg$c202 = peg$literalExpectation("Number", false),
+        peg$c203 = "Boolean",
+        peg$c204 = peg$literalExpectation("Boolean", false),
+        peg$c205 = "Bytes",
+        peg$c206 = peg$literalExpectation("Bytes", false),
+        peg$c207 = "Object",
+        peg$c208 = peg$literalExpectation("Object", false),
+        peg$c209 = "or",
+        peg$c210 = peg$literalExpectation("or", false),
+        peg$c211 = function(first, rest) {
             let types = [first];
             for (let type of rest) {
               types.push(type[3]);
             }
             return {kind: 'schema-union', location: location(), types};
           },
-        peg$c210 = function(first, rest) {
+        peg$c212 = function(first, rest) {
             let types = [first];
             for (let type of rest) {
               types.push(type[3]);
             }
             return {kind: 'schema-tuple', location: location(), types};
           },
-        peg$c211 = /^[0-9]/,
-        peg$c212 = peg$classExpectation([["0", "9"]], false, false),
-        peg$c213 = function(version) {
+        peg$c213 = /^[0-9]/,
+        peg$c214 = peg$classExpectation([["0", "9"]], false, false),
+        peg$c215 = function(version) {
             return Number(version.join(''));
           },
-        peg$c214 = " ",
-        peg$c215 = peg$literalExpectation(" ", false),
-        peg$c216 = function(i) {
+        peg$c216 = " ",
+        peg$c217 = peg$literalExpectation(" ", false),
+        peg$c218 = function(i) {
           i = i.join('');
           if (i.length > indent.length) {
             indents.push(indent);
@@ -8822,7 +8946,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             return true;
           }
         },
-        peg$c217 = function(i) {
+        peg$c219 = function(i) {
           i = i.join('');
           if (i.length == indent.length) {
             return true;
@@ -8831,7 +8955,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             return false;
           }
         },
-        peg$c218 = function(i) {
+        peg$c220 = function(i) {
           i = i.join('');
           if (i.length >= indent.length) {
             return true;
@@ -8840,38 +8964,38 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             return false;
           }
         },
-        peg$c219 = function() {
+        peg$c221 = function() {
             let fixed = text();
             fixed = fixed.replace(/^(.)/, l => l.toUpperCase());
             expected(`a top level identifier (e.g. "${fixed}")`);
           },
-        peg$c220 = "`",
-        peg$c221 = peg$literalExpectation("`", false),
-        peg$c222 = /^[^`]/,
-        peg$c223 = peg$classExpectation(["`"], true, false),
-        peg$c224 = function(pattern) { return pattern.join(''); },
-        peg$c225 = "'",
-        peg$c226 = peg$literalExpectation("'", false),
-        peg$c227 = /^[^']/,
-        peg$c228 = peg$classExpectation(["'"], true, false),
-        peg$c229 = function(id) {return id.join('')},
-        peg$c230 = /^[A-Z]/,
-        peg$c231 = peg$classExpectation([["A", "Z"]], false, false),
-        peg$c232 = /^[a-z0-9_]/i,
-        peg$c233 = peg$classExpectation([["a", "z"], ["0", "9"], "_"], false, true),
-        peg$c234 = function(ident) {return text()},
-        peg$c235 = /^[a-z]/,
-        peg$c236 = peg$classExpectation([["a", "z"]], false, false),
-        peg$c237 = /^[ ]/,
-        peg$c238 = peg$classExpectation([" "], false, false),
-        peg$c239 = peg$anyExpectation(),
-        peg$c240 = "\r",
-        peg$c241 = peg$literalExpectation("\r", false),
-        peg$c242 = "\n",
-        peg$c243 = peg$literalExpectation("\n", false),
-        peg$c244 = "//",
-        peg$c245 = peg$literalExpectation("//", false),
-        peg$c246 = function(marker) {
+        peg$c222 = "`",
+        peg$c223 = peg$literalExpectation("`", false),
+        peg$c224 = /^[^`]/,
+        peg$c225 = peg$classExpectation(["`"], true, false),
+        peg$c226 = function(pattern) { return pattern.join(''); },
+        peg$c227 = "'",
+        peg$c228 = peg$literalExpectation("'", false),
+        peg$c229 = /^[^']/,
+        peg$c230 = peg$classExpectation(["'"], true, false),
+        peg$c231 = function(id) {return id.join('')},
+        peg$c232 = /^[A-Z]/,
+        peg$c233 = peg$classExpectation([["A", "Z"]], false, false),
+        peg$c234 = /^[a-z0-9_]/i,
+        peg$c235 = peg$classExpectation([["a", "z"], ["0", "9"], "_"], false, true),
+        peg$c236 = function(ident) {return text()},
+        peg$c237 = /^[a-z]/,
+        peg$c238 = peg$classExpectation([["a", "z"]], false, false),
+        peg$c239 = /^[ ]/,
+        peg$c240 = peg$classExpectation([" "], false, false),
+        peg$c241 = peg$anyExpectation(),
+        peg$c242 = "\r",
+        peg$c243 = peg$literalExpectation("\r", false),
+        peg$c244 = "\n",
+        peg$c245 = peg$literalExpectation("\n", false),
+        peg$c246 = "//",
+        peg$c247 = peg$literalExpectation("//", false),
+        peg$c248 = function(marker) {
             if (marker === '#' && !deprecatedCommentWarningShown) {
               console.warn("'#' for comments is deprecated. Please use '//' instead");
               deprecatedCommentWarningShown = true;
@@ -11018,7 +11142,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
     }
 
     function peg$parseVariableType() {
-      var s0, s1, s2;
+      var s0, s1, s2, s3, s4, s5, s6, s7;
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 126) {
@@ -11031,9 +11155,50 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       if (s1 !== peg$FAILED) {
         s2 = peg$parselowerIdent();
         if (s2 !== peg$FAILED) {
-          peg$savedPos = s0;
-          s1 = peg$c90(s2);
-          s0 = s1;
+          s3 = peg$currPos;
+          s4 = peg$parsewhiteSpace();
+          if (s4 !== peg$FAILED) {
+            if (input.substr(peg$currPos, 4) === peg$c90) {
+              s5 = peg$c90;
+              peg$currPos += 4;
+            } else {
+              s5 = peg$FAILED;
+              if (peg$silentFails === 0) { peg$fail(peg$c91); }
+            }
+            if (s5 !== peg$FAILED) {
+              s6 = peg$parsewhiteSpace();
+              if (s6 !== peg$FAILED) {
+                s7 = peg$parseParticleArgumentType();
+                if (s7 !== peg$FAILED) {
+                  s4 = [s4, s5, s6, s7];
+                  s3 = s4;
+                } else {
+                  peg$currPos = s3;
+                  s3 = peg$FAILED;
+                }
+              } else {
+                peg$currPos = s3;
+                s3 = peg$FAILED;
+              }
+            } else {
+              peg$currPos = s3;
+              s3 = peg$FAILED;
+            }
+          } else {
+            peg$currPos = s3;
+            s3 = peg$FAILED;
+          }
+          if (s3 === peg$FAILED) {
+            s3 = null;
+          }
+          if (s3 !== peg$FAILED) {
+            peg$savedPos = s0;
+            s1 = peg$c92(s2, s3);
+            s0 = s1;
+          } else {
+            peg$currPos = s0;
+            s0 = peg$FAILED;
+          }
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;
@@ -11053,7 +11218,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s1 = peg$parseupperIdent();
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c91(s1);
+        s1 = peg$c93(s1);
       }
       s0 = s1;
 
@@ -11126,7 +11291,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c92(s1, s2);
+          s1 = peg$c94(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -11144,46 +11309,46 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 10) === peg$c93) {
-        s1 = peg$c93;
+      if (input.substr(peg$currPos, 10) === peg$c95) {
+        s1 = peg$c95;
         peg$currPos += 10;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c94); }
+        if (peg$silentFails === 0) { peg$fail(peg$c96); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 9) === peg$c95) {
-            s3 = peg$c95;
+          if (input.substr(peg$currPos, 9) === peg$c97) {
+            s3 = peg$c97;
             peg$currPos += 9;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c96); }
+            if (peg$silentFails === 0) { peg$fail(peg$c98); }
           }
           if (s3 === peg$FAILED) {
-            if (input.substr(peg$currPos, 3) === peg$c97) {
-              s3 = peg$c97;
+            if (input.substr(peg$currPos, 3) === peg$c99) {
+              s3 = peg$c99;
               peg$currPos += 3;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c98); }
+              if (peg$silentFails === 0) { peg$fail(peg$c100); }
             }
             if (s3 === peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c99) {
-                s3 = peg$c99;
+              if (input.substr(peg$currPos, 2) === peg$c101) {
+                s3 = peg$c101;
                 peg$currPos += 2;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c100); }
+                if (peg$silentFails === 0) { peg$fail(peg$c102); }
               }
               if (s3 === peg$FAILED) {
-                if (input.substr(peg$currPos, 5) === peg$c101) {
-                  s3 = peg$c101;
+                if (input.substr(peg$currPos, 5) === peg$c103) {
+                  s3 = peg$c103;
                   peg$currPos += 5;
                 } else {
                   s3 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c102); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c104); }
                 }
               }
             }
@@ -11192,7 +11357,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c103(s3);
+              s1 = peg$c105(s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -11354,7 +11519,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                     }
                     if (s8 !== peg$FAILED) {
                       peg$savedPos = s0;
-                      s1 = peg$c104(s1, s4, s5, s6, s8);
+                      s1 = peg$c106(s1, s4, s5, s6, s8);
                       s0 = s1;
                     } else {
                       peg$currPos = s0;
@@ -11407,46 +11572,46 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 10) === peg$c105) {
-        s1 = peg$c105;
+      if (input.substr(peg$currPos, 10) === peg$c107) {
+        s1 = peg$c107;
         peg$currPos += 10;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c106); }
+        if (peg$silentFails === 0) { peg$fail(peg$c108); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 10) === peg$c107) {
-            s3 = peg$c107;
+          if (input.substr(peg$currPos, 10) === peg$c109) {
+            s3 = peg$c109;
             peg$currPos += 10;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c108); }
+            if (peg$silentFails === 0) { peg$fail(peg$c110); }
           }
           if (s3 === peg$FAILED) {
-            if (input.substr(peg$currPos, 3) === peg$c109) {
-              s3 = peg$c109;
+            if (input.substr(peg$currPos, 3) === peg$c111) {
+              s3 = peg$c111;
               peg$currPos += 3;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c110); }
+              if (peg$silentFails === 0) { peg$fail(peg$c112); }
             }
             if (s3 === peg$FAILED) {
-              if (input.substr(peg$currPos, 6) === peg$c111) {
-                s3 = peg$c111;
+              if (input.substr(peg$currPos, 6) === peg$c113) {
+                s3 = peg$c113;
                 peg$currPos += 6;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c112); }
+                if (peg$silentFails === 0) { peg$fail(peg$c114); }
               }
               if (s3 === peg$FAILED) {
-                if (input.substr(peg$currPos, 5) === peg$c113) {
-                  s3 = peg$c113;
+                if (input.substr(peg$currPos, 5) === peg$c115) {
+                  s3 = peg$c115;
                   peg$currPos += 5;
                 } else {
                   s3 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c114); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c116); }
                 }
               }
             }
@@ -11455,7 +11620,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c115(s3);
+              s1 = peg$c117(s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -11592,7 +11757,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                   }
                   if (s7 !== peg$FAILED) {
                     peg$savedPos = s0;
-                    s1 = peg$c116(s3, s4, s5, s7);
+                    s1 = peg$c118(s3, s4, s5, s7);
                     s0 = s1;
                   } else {
                     peg$currPos = s0;
@@ -11656,7 +11821,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c117(s3);
+              s1 = peg$c119(s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -11753,7 +11918,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c118(s3, s5);
+                s1 = peg$c120(s3, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -11792,7 +11957,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c119(s1, s3);
+              s1 = peg$c121(s1, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -11818,12 +11983,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c120) {
-        s1 = peg$c120;
+      if (input.substr(peg$currPos, 6) === peg$c122) {
+        s1 = peg$c122;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c121); }
+        if (peg$silentFails === 0) { peg$fail(peg$c123); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -11922,7 +12087,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c122(s2, s3, s5);
+                s1 = peg$c124(s2, s3, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -11972,12 +12137,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c123) {
-        s1 = peg$c123;
+      if (input.substr(peg$currPos, 2) === peg$c125) {
+        s1 = peg$c125;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c124); }
+        if (peg$silentFails === 0) { peg$fail(peg$c126); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
@@ -11985,7 +12150,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           s3 = peg$parselowerIdent();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c125(s3);
+            s1 = peg$c127(s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -12083,7 +12248,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             }
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c126(s1, s2, s4);
+              s1 = peg$c128(s1, s2, s4);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -12123,11 +12288,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s1 = peg$parselowerIdent();
       if (s1 === peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 42) {
-          s1 = peg$c127;
+          s1 = peg$c129;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c128); }
+          if (peg$silentFails === 0) { peg$fail(peg$c130); }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -12157,7 +12322,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               s5 = peg$parseeolWhiteSpace();
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c129(s1, s3, s4);
+                s1 = peg$c131(s1, s3, s4);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -12273,7 +12438,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 }
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c130(s3, s4, s6);
+                  s1 = peg$c132(s3, s4, s6);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -12341,7 +12506,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               s5 = peg$parseeolWhiteSpace();
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c131(s3, s4);
+                s1 = peg$c133(s3, s4);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -12384,7 +12549,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 s6 = peg$parseeolWhiteSpace();
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c132(s1, s3, s5);
+                  s1 = peg$c134(s1, s3, s5);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -12418,12 +12583,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c133) {
-        s1 = peg$c133;
+      if (input.substr(peg$currPos, 6) === peg$c135) {
+        s1 = peg$c135;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c134); }
+        if (peg$silentFails === 0) { peg$fail(peg$c136); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
@@ -12438,12 +12603,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 s7 = peg$currPos;
                 s8 = peg$parseSameIndent();
                 if (s8 !== peg$FAILED) {
-                  if (input.substr(peg$currPos, 6) === peg$c135) {
-                    s9 = peg$c135;
+                  if (input.substr(peg$currPos, 6) === peg$c137) {
+                    s9 = peg$c137;
                     peg$currPos += 6;
                   } else {
                     s9 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c136); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c138); }
                   }
                   if (s9 !== peg$FAILED) {
                     s10 = [];
@@ -12521,7 +12686,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c137(s3, s5);
+                s1 = peg$c139(s3, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -12550,28 +12715,28 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
     function peg$parseDirection() {
       var s0;
 
-      if (input.substr(peg$currPos, 2) === peg$c138) {
-        s0 = peg$c138;
+      if (input.substr(peg$currPos, 2) === peg$c140) {
+        s0 = peg$c140;
         peg$currPos += 2;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c139); }
+        if (peg$silentFails === 0) { peg$fail(peg$c141); }
       }
       if (s0 === peg$FAILED) {
-        if (input.substr(peg$currPos, 2) === peg$c140) {
-          s0 = peg$c140;
+        if (input.substr(peg$currPos, 2) === peg$c142) {
+          s0 = peg$c142;
           peg$currPos += 2;
         } else {
           s0 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c141); }
+          if (peg$silentFails === 0) { peg$fail(peg$c143); }
         }
         if (s0 === peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 61) {
-            s0 = peg$c142;
+            s0 = peg$c144;
             peg$currPos++;
           } else {
             s0 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c143); }
+            if (peg$silentFails === 0) { peg$fail(peg$c145); }
           }
         }
       }
@@ -12590,11 +12755,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 46) {
-          s3 = peg$c144;
+          s3 = peg$c146;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c145); }
+          if (peg$silentFails === 0) { peg$fail(peg$c147); }
         }
         if (s3 !== peg$FAILED) {
           s4 = peg$parselowerIdent();
@@ -12633,7 +12798,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c146(s1, s2, s3);
+            s1 = peg$c148(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -12652,7 +12817,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         s1 = peg$parseTagList();
         if (s1 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c147(s1);
+          s1 = peg$c149(s1);
         }
         s0 = s1;
       }
@@ -12672,36 +12837,36 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         if (peg$silentFails === 0) { peg$fail(peg$c74); }
       }
       if (s1 === peg$FAILED) {
-        if (input.substr(peg$currPos, 3) === peg$c148) {
-          s1 = peg$c148;
+        if (input.substr(peg$currPos, 3) === peg$c150) {
+          s1 = peg$c150;
           peg$currPos += 3;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c149); }
+          if (peg$silentFails === 0) { peg$fail(peg$c151); }
         }
         if (s1 === peg$FAILED) {
-          if (input.substr(peg$currPos, 3) === peg$c150) {
-            s1 = peg$c150;
+          if (input.substr(peg$currPos, 3) === peg$c152) {
+            s1 = peg$c152;
             peg$currPos += 3;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c151); }
+            if (peg$silentFails === 0) { peg$fail(peg$c153); }
           }
           if (s1 === peg$FAILED) {
-            if (input.substr(peg$currPos, 6) === peg$c152) {
-              s1 = peg$c152;
+            if (input.substr(peg$currPos, 6) === peg$c154) {
+              s1 = peg$c154;
               peg$currPos += 6;
             } else {
               s1 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c153); }
+              if (peg$silentFails === 0) { peg$fail(peg$c155); }
             }
             if (s1 === peg$FAILED) {
-              if (input.substr(peg$currPos, 4) === peg$c154) {
-                s1 = peg$c154;
+              if (input.substr(peg$currPos, 4) === peg$c156) {
+                s1 = peg$c156;
                 peg$currPos += 4;
               } else {
                 s1 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c155); }
+                if (peg$silentFails === 0) { peg$fail(peg$c157); }
               }
             }
           }
@@ -12749,7 +12914,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c156(s1, s2, s3);
+              s1 = peg$c158(s1, s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -12776,42 +12941,42 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 35) {
-        s1 = peg$c157;
+        s1 = peg$c159;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c158); }
+        if (peg$silentFails === 0) { peg$fail(peg$c160); }
       }
       if (s1 !== peg$FAILED) {
-        if (peg$c159.test(input.charAt(peg$currPos))) {
+        if (peg$c161.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c160); }
+          if (peg$silentFails === 0) { peg$fail(peg$c162); }
         }
         if (s2 !== peg$FAILED) {
           s3 = [];
-          if (peg$c161.test(input.charAt(peg$currPos))) {
+          if (peg$c163.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c162); }
+            if (peg$silentFails === 0) { peg$fail(peg$c164); }
           }
           while (s4 !== peg$FAILED) {
             s3.push(s4);
-            if (peg$c161.test(input.charAt(peg$currPos))) {
+            if (peg$c163.test(input.charAt(peg$currPos))) {
               s4 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c162); }
+              if (peg$silentFails === 0) { peg$fail(peg$c164); }
             }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c163();
+            s1 = peg$c165();
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -12855,7 +13020,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c164(s1, s2);
+          s1 = peg$c166(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -12878,7 +13043,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         s2 = peg$parseTagList();
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c165(s2);
+          s1 = peg$c167(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -12904,7 +13069,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c166(s1, s2);
+          s1 = peg$c168(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -12919,17 +13084,17 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         s1 = peg$parseTagList();
         if (s1 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c167(s1);
+          s1 = peg$c169(s1);
         }
         s0 = s1;
         if (s0 === peg$FAILED) {
           s0 = peg$currPos;
-          if (input.substr(peg$currPos, 12) === peg$c168) {
-            s1 = peg$c168;
+          if (input.substr(peg$currPos, 12) === peg$c170) {
+            s1 = peg$c170;
             peg$currPos += 12;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c169); }
+            if (peg$silentFails === 0) { peg$fail(peg$c171); }
           }
           if (s1 !== peg$FAILED) {
             s2 = peg$parsewhiteSpace();
@@ -12942,7 +13107,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 }
                 if (s4 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c170(s3, s4);
+                  s1 = peg$c172(s3, s4);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -12978,7 +13143,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c171(s1, s2);
+          s1 = peg$c173(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -12998,7 +13163,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           }
           if (s2 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c172(s1, s2);
+            s1 = peg$c174(s1, s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -13013,7 +13178,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           s1 = peg$parseTagList();
           if (s1 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c173(s1);
+            s1 = peg$c175(s1);
           }
           s0 = s1;
         }
@@ -13026,12 +13191,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4, s5;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c174) {
-        s1 = peg$c174;
+      if (input.substr(peg$currPos, 4) === peg$c176) {
+        s1 = peg$c176;
         peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c175); }
+        if (peg$silentFails === 0) { peg$fail(peg$c177); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -13075,7 +13240,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c176(s2, s3);
+              s1 = peg$c178(s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -13103,12 +13268,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s0 = peg$currPos;
       s1 = peg$parsewhiteSpace();
       if (s1 !== peg$FAILED) {
-        if (input.substr(peg$currPos, 7) === peg$c177) {
-          s2 = peg$c177;
+        if (input.substr(peg$currPos, 7) === peg$c179) {
+          s2 = peg$c179;
           peg$currPos += 7;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c178); }
+          if (peg$silentFails === 0) { peg$fail(peg$c180); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parsewhiteSpace();
@@ -13193,7 +13358,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c179(s4, s5);
+                s1 = peg$c181(s4, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -13226,22 +13391,22 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s1 = peg$parseupperIdent();
       if (s1 === peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 42) {
-          s1 = peg$c127;
+          s1 = peg$c129;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c128); }
+          if (peg$silentFails === 0) { peg$fail(peg$c130); }
         }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 123) {
-            s3 = peg$c180;
+            s3 = peg$c182;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c181); }
+            if (peg$silentFails === 0) { peg$fail(peg$c183); }
           }
           if (s3 !== peg$FAILED) {
             s4 = peg$currPos;
@@ -13321,15 +13486,15 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             }
             if (s4 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 125) {
-                s5 = peg$c182;
+                s5 = peg$c184;
                 peg$currPos++;
               } else {
                 s5 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c183); }
+                if (peg$silentFails === 0) { peg$fail(peg$c185); }
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c184(s1, s4);
+                s1 = peg$c186(s1, s4);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -13381,7 +13546,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         s2 = peg$parselowerIdent();
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c185(s1, s2);
+          s1 = peg$c187(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -13399,12 +13564,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c186) {
-        s1 = peg$c186;
+      if (input.substr(peg$currPos, 6) === peg$c188) {
+        s1 = peg$c188;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c187); }
+        if (peg$silentFails === 0) { peg$fail(peg$c189); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
@@ -13471,7 +13636,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 }
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c188(s3, s4, s6);
+                  s1 = peg$c190(s3, s4, s6);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -13505,20 +13670,20 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 9) === peg$c189) {
-        s1 = peg$c189;
+      if (input.substr(peg$currPos, 9) === peg$c191) {
+        s1 = peg$c191;
         peg$currPos += 9;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c190); }
+        if (peg$silentFails === 0) { peg$fail(peg$c192); }
       }
       if (s1 === peg$FAILED) {
-        if (input.substr(peg$currPos, 8) === peg$c191) {
-          s1 = peg$c191;
+        if (input.substr(peg$currPos, 8) === peg$c193) {
+          s1 = peg$c193;
           peg$currPos += 8;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c192); }
+          if (peg$silentFails === 0) { peg$fail(peg$c194); }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -13590,7 +13755,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c193(s1, s3);
+            s1 = peg$c195(s1, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -13619,7 +13784,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           s3 = peg$parselowerIdent();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c194(s1, s3);
+            s1 = peg$c196(s1, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -13654,52 +13819,52 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
     function peg$parseSchemaPrimitiveType() {
       var s0;
 
-      if (input.substr(peg$currPos, 4) === peg$c195) {
-        s0 = peg$c195;
+      if (input.substr(peg$currPos, 4) === peg$c197) {
+        s0 = peg$c197;
         peg$currPos += 4;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c196); }
+        if (peg$silentFails === 0) { peg$fail(peg$c198); }
       }
       if (s0 === peg$FAILED) {
-        if (input.substr(peg$currPos, 3) === peg$c197) {
-          s0 = peg$c197;
+        if (input.substr(peg$currPos, 3) === peg$c199) {
+          s0 = peg$c199;
           peg$currPos += 3;
         } else {
           s0 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c198); }
+          if (peg$silentFails === 0) { peg$fail(peg$c200); }
         }
         if (s0 === peg$FAILED) {
-          if (input.substr(peg$currPos, 6) === peg$c199) {
-            s0 = peg$c199;
+          if (input.substr(peg$currPos, 6) === peg$c201) {
+            s0 = peg$c201;
             peg$currPos += 6;
           } else {
             s0 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c200); }
+            if (peg$silentFails === 0) { peg$fail(peg$c202); }
           }
           if (s0 === peg$FAILED) {
-            if (input.substr(peg$currPos, 7) === peg$c201) {
-              s0 = peg$c201;
+            if (input.substr(peg$currPos, 7) === peg$c203) {
+              s0 = peg$c203;
               peg$currPos += 7;
             } else {
               s0 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c202); }
+              if (peg$silentFails === 0) { peg$fail(peg$c204); }
             }
             if (s0 === peg$FAILED) {
-              if (input.substr(peg$currPos, 5) === peg$c203) {
-                s0 = peg$c203;
+              if (input.substr(peg$currPos, 5) === peg$c205) {
+                s0 = peg$c205;
                 peg$currPos += 5;
               } else {
                 s0 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c204); }
+                if (peg$silentFails === 0) { peg$fail(peg$c206); }
               }
               if (s0 === peg$FAILED) {
-                if (input.substr(peg$currPos, 6) === peg$c205) {
-                  s0 = peg$c205;
+                if (input.substr(peg$currPos, 6) === peg$c207) {
+                  s0 = peg$c207;
                   peg$currPos += 6;
                 } else {
                   s0 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c206); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c208); }
                 }
               }
             }
@@ -13733,12 +13898,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s5 = peg$currPos;
             s6 = peg$parsewhiteSpace();
             if (s6 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c207) {
-                s7 = peg$c207;
+              if (input.substr(peg$currPos, 2) === peg$c209) {
+                s7 = peg$c209;
                 peg$currPos += 2;
               } else {
                 s7 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c208); }
+                if (peg$silentFails === 0) { peg$fail(peg$c210); }
               }
               if (s7 !== peg$FAILED) {
                 s8 = peg$parsewhiteSpace();
@@ -13769,12 +13934,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 s5 = peg$currPos;
                 s6 = peg$parsewhiteSpace();
                 if (s6 !== peg$FAILED) {
-                  if (input.substr(peg$currPos, 2) === peg$c207) {
-                    s7 = peg$c207;
+                  if (input.substr(peg$currPos, 2) === peg$c209) {
+                    s7 = peg$c209;
                     peg$currPos += 2;
                   } else {
                     s7 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c208); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c210); }
                   }
                   if (s7 !== peg$FAILED) {
                     s8 = peg$parsewhiteSpace();
@@ -13818,7 +13983,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 }
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c209(s3, s4);
+                  s1 = peg$c211(s3, s4);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -13964,7 +14129,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 }
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c210(s3, s4);
+                  s1 = peg$c212(s3, s4);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -14007,22 +14172,22 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c211.test(input.charAt(peg$currPos))) {
+        if (peg$c213.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c212); }
+          if (peg$silentFails === 0) { peg$fail(peg$c214); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c211.test(input.charAt(peg$currPos))) {
+            if (peg$c213.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c212); }
+              if (peg$silentFails === 0) { peg$fail(peg$c214); }
             }
           }
         } else {
@@ -14030,7 +14195,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c213(s2);
+          s1 = peg$c215(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -14052,21 +14217,21 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s1 = peg$currPos;
       s2 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s3 = peg$c214;
+        s3 = peg$c216;
         peg$currPos++;
       } else {
         s3 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c215); }
+        if (peg$silentFails === 0) { peg$fail(peg$c217); }
       }
       if (s3 !== peg$FAILED) {
         while (s3 !== peg$FAILED) {
           s2.push(s3);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s3 = peg$c214;
+            s3 = peg$c216;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c215); }
+            if (peg$silentFails === 0) { peg$fail(peg$c217); }
           }
         }
       } else {
@@ -14074,7 +14239,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       }
       if (s2 !== peg$FAILED) {
         peg$savedPos = peg$currPos;
-        s3 = peg$c216(s2);
+        s3 = peg$c218(s2);
         if (s3) {
           s3 = void 0;
         } else {
@@ -14111,25 +14276,25 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s2 = peg$currPos;
       s3 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s4 = peg$c214;
+        s4 = peg$c216;
         peg$currPos++;
       } else {
         s4 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c215); }
+        if (peg$silentFails === 0) { peg$fail(peg$c217); }
       }
       while (s4 !== peg$FAILED) {
         s3.push(s4);
         if (input.charCodeAt(peg$currPos) === 32) {
-          s4 = peg$c214;
+          s4 = peg$c216;
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c215); }
+          if (peg$silentFails === 0) { peg$fail(peg$c217); }
         }
       }
       if (s3 !== peg$FAILED) {
         peg$savedPos = peg$currPos;
-        s4 = peg$c217(s3);
+        s4 = peg$c219(s3);
         if (s4) {
           s4 = void 0;
         } else {
@@ -14156,20 +14321,20 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       if (s1 !== peg$FAILED) {
         s2 = [];
         if (input.charCodeAt(peg$currPos) === 32) {
-          s3 = peg$c214;
+          s3 = peg$c216;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c215); }
+          if (peg$silentFails === 0) { peg$fail(peg$c217); }
         }
         while (s3 !== peg$FAILED) {
           s2.push(s3);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s3 = peg$c214;
+            s3 = peg$c216;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c215); }
+            if (peg$silentFails === 0) { peg$fail(peg$c217); }
           }
         }
         if (s2 !== peg$FAILED) {
@@ -14196,25 +14361,25 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s2 = peg$currPos;
       s3 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s4 = peg$c214;
+        s4 = peg$c216;
         peg$currPos++;
       } else {
         s4 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c215); }
+        if (peg$silentFails === 0) { peg$fail(peg$c217); }
       }
       while (s4 !== peg$FAILED) {
         s3.push(s4);
         if (input.charCodeAt(peg$currPos) === 32) {
-          s4 = peg$c214;
+          s4 = peg$c216;
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c215); }
+          if (peg$silentFails === 0) { peg$fail(peg$c217); }
         }
       }
       if (s3 !== peg$FAILED) {
         peg$savedPos = peg$currPos;
-        s4 = peg$c218(s3);
+        s4 = peg$c220(s3);
         if (s4) {
           s4 = void 0;
         } else {
@@ -14241,20 +14406,20 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       if (s1 !== peg$FAILED) {
         s2 = [];
         if (input.charCodeAt(peg$currPos) === 32) {
-          s3 = peg$c214;
+          s3 = peg$c216;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c215); }
+          if (peg$silentFails === 0) { peg$fail(peg$c217); }
         }
         while (s3 !== peg$FAILED) {
           s2.push(s3);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s3 = peg$c214;
+            s3 = peg$c216;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c215); }
+            if (peg$silentFails === 0) { peg$fail(peg$c217); }
           }
         }
         if (s2 !== peg$FAILED) {
@@ -14282,7 +14447,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         s1 = peg$parselowerIdent();
         if (s1 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c219();
+          s1 = peg$c221();
         }
         s0 = s1;
       }
@@ -14295,30 +14460,30 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 96) {
-        s1 = peg$c220;
+        s1 = peg$c222;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c221); }
+        if (peg$silentFails === 0) { peg$fail(peg$c223); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c222.test(input.charAt(peg$currPos))) {
+        if (peg$c224.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c223); }
+          if (peg$silentFails === 0) { peg$fail(peg$c225); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c222.test(input.charAt(peg$currPos))) {
+            if (peg$c224.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c223); }
+              if (peg$silentFails === 0) { peg$fail(peg$c225); }
             }
           }
         } else {
@@ -14326,15 +14491,15 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 96) {
-            s3 = peg$c220;
+            s3 = peg$c222;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c221); }
+            if (peg$silentFails === 0) { peg$fail(peg$c223); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c224(s2);
+            s1 = peg$c226(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -14357,30 +14522,30 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 39) {
-        s1 = peg$c225;
+        s1 = peg$c227;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c226); }
+        if (peg$silentFails === 0) { peg$fail(peg$c228); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c227.test(input.charAt(peg$currPos))) {
+        if (peg$c229.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c228); }
+          if (peg$silentFails === 0) { peg$fail(peg$c230); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c227.test(input.charAt(peg$currPos))) {
+            if (peg$c229.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c228); }
+              if (peg$silentFails === 0) { peg$fail(peg$c230); }
             }
           }
         } else {
@@ -14388,15 +14553,15 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 39) {
-            s3 = peg$c225;
+            s3 = peg$c227;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c226); }
+            if (peg$silentFails === 0) { peg$fail(peg$c228); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c229(s2);
+            s1 = peg$c231(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -14419,30 +14584,30 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       s1 = peg$currPos;
-      if (peg$c230.test(input.charAt(peg$currPos))) {
+      if (peg$c232.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c231); }
+        if (peg$silentFails === 0) { peg$fail(peg$c233); }
       }
       if (s2 !== peg$FAILED) {
         s3 = [];
-        if (peg$c232.test(input.charAt(peg$currPos))) {
+        if (peg$c234.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c233); }
+          if (peg$silentFails === 0) { peg$fail(peg$c235); }
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c232.test(input.charAt(peg$currPos))) {
+          if (peg$c234.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c233); }
+            if (peg$silentFails === 0) { peg$fail(peg$c235); }
           }
         }
         if (s3 !== peg$FAILED) {
@@ -14458,7 +14623,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c234(s1);
+        s1 = peg$c236(s1);
       }
       s0 = s1;
 
@@ -14470,30 +14635,30 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       s1 = peg$currPos;
-      if (peg$c235.test(input.charAt(peg$currPos))) {
+      if (peg$c237.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c236); }
+        if (peg$silentFails === 0) { peg$fail(peg$c238); }
       }
       if (s2 !== peg$FAILED) {
         s3 = [];
-        if (peg$c232.test(input.charAt(peg$currPos))) {
+        if (peg$c234.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c233); }
+          if (peg$silentFails === 0) { peg$fail(peg$c235); }
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c232.test(input.charAt(peg$currPos))) {
+          if (peg$c234.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c233); }
+            if (peg$silentFails === 0) { peg$fail(peg$c235); }
           }
         }
         if (s3 !== peg$FAILED) {
@@ -14509,7 +14674,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c234(s1);
+        s1 = peg$c236(s1);
       }
       s0 = s1;
 
@@ -14521,21 +14686,21 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s1 = peg$c214;
+        s1 = peg$c216;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c215); }
+        if (peg$silentFails === 0) { peg$fail(peg$c217); }
       }
       if (s1 !== peg$FAILED) {
         while (s1 !== peg$FAILED) {
           s0.push(s1);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s1 = peg$c214;
+            s1 = peg$c216;
             peg$currPos++;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c215); }
+            if (peg$silentFails === 0) { peg$fail(peg$c217); }
           }
         }
       } else {
@@ -14550,21 +14715,21 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       s1 = [];
-      if (peg$c237.test(input.charAt(peg$currPos))) {
+      if (peg$c239.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c238); }
+        if (peg$silentFails === 0) { peg$fail(peg$c240); }
       }
       while (s2 !== peg$FAILED) {
         s1.push(s2);
-        if (peg$c237.test(input.charAt(peg$currPos))) {
+        if (peg$c239.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c238); }
+          if (peg$silentFails === 0) { peg$fail(peg$c240); }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -14575,7 +14740,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c239); }
+          if (peg$silentFails === 0) { peg$fail(peg$c241); }
         }
         peg$silentFails--;
         if (s3 === peg$FAILED) {
@@ -14598,21 +14763,21 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
         s1 = [];
-        if (peg$c237.test(input.charAt(peg$currPos))) {
+        if (peg$c239.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c238); }
+          if (peg$silentFails === 0) { peg$fail(peg$c240); }
         }
         while (s2 !== peg$FAILED) {
           s1.push(s2);
-          if (peg$c237.test(input.charAt(peg$currPos))) {
+          if (peg$c239.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c238); }
+            if (peg$silentFails === 0) { peg$fail(peg$c240); }
           }
         }
         if (s1 !== peg$FAILED) {
@@ -14650,30 +14815,30 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 13) {
-        s1 = peg$c240;
+        s1 = peg$c242;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c241); }
+        if (peg$silentFails === 0) { peg$fail(peg$c243); }
       }
       if (s1 === peg$FAILED) {
         s1 = null;
       }
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 10) {
-          s2 = peg$c242;
+          s2 = peg$c244;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c243); }
+          if (peg$silentFails === 0) { peg$fail(peg$c245); }
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 13) {
-            s3 = peg$c240;
+            s3 = peg$c242;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c241); }
+            if (peg$silentFails === 0) { peg$fail(peg$c243); }
           }
           if (s3 === peg$FAILED) {
             s3 = null;
@@ -14702,38 +14867,38 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       s1 = [];
-      if (peg$c237.test(input.charAt(peg$currPos))) {
+      if (peg$c239.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c238); }
+        if (peg$silentFails === 0) { peg$fail(peg$c240); }
       }
       while (s2 !== peg$FAILED) {
         s1.push(s2);
-        if (peg$c237.test(input.charAt(peg$currPos))) {
+        if (peg$c239.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c238); }
+          if (peg$silentFails === 0) { peg$fail(peg$c240); }
         }
       }
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 35) {
-          s2 = peg$c157;
+          s2 = peg$c159;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c158); }
+          if (peg$silentFails === 0) { peg$fail(peg$c160); }
         }
         if (s2 === peg$FAILED) {
-          if (input.substr(peg$currPos, 2) === peg$c244) {
-            s2 = peg$c244;
+          if (input.substr(peg$currPos, 2) === peg$c246) {
+            s2 = peg$c246;
             peg$currPos += 2;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c245); }
+            if (peg$silentFails === 0) { peg$fail(peg$c247); }
           }
         }
         if (s2 !== peg$FAILED) {
@@ -14759,7 +14924,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c246(s2);
+              s1 = peg$c248(s2);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -15501,7 +15666,7 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_js__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_js__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom_context_js__ = __webpack_require__(27);
 /**
  * @license
@@ -15651,7 +15816,7 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* default */] 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__inner_PEC_js__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__message_channel_js__ = __webpack_require__(60);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__loader_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__loader_js__ = __webpack_require__(17);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -15822,7 +15987,7 @@ class Identifier {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_channel_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(7);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -16256,7 +16421,7 @@ class MessageChannel {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_channel_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__manifest_js__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__loader_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__loader_js__ = __webpack_require__(17);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -16550,12 +16715,14 @@ class ConnectionConstraint {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_checker_js__ = __webpack_require__(13);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -16661,8 +16828,10 @@ class HandleConnection {
     if (this.type && this.particle && this.particle.spec) {
       let connectionSpec = this.particle.spec.connectionMap.get(this.name);
       if (connectionSpec) {
-        // TODO: this shouldn't be a direct equals comparison
-        if (!this.rawType.equals(connectionSpec.type)) {
+        let specType = {type: connectionSpec.type, direction: this.direction};
+        let rawType = {type: this.rawType};
+        let result = __WEBPACK_IMPORTED_MODULE_2__type_checker_js__["a" /* default */].compareTypes(rawType, specType, false);
+        if (!result.valid) {
           if (options && options.errors) {
             options.errors.set(this, `Type '${this.rawType} for handle connection '${this.particle.name}::${this.name}' doesn't match particle spec's type '${connectionSpec.type}'`);
           }
@@ -16750,7 +16919,7 @@ class HandleConnection {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_checker_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_checker_js__ = __webpack_require__(13);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -16874,8 +17043,9 @@ class Handle {
         }
         return false;
       }
-      if (connection.type)
+      if (connection.type) {
         typeSet.push({type: connection.type, direction: connection.direction, connection});
+      }
       connection.tags.forEach(tag => tags.add(tag));
     }
     let {type, valid} = __WEBPACK_IMPORTED_MODULE_2__type_checker_js__["a" /* default */].processTypeList(typeSet);
@@ -16895,6 +17065,12 @@ class Handle {
     if (!this._type) {
       if (options) {
         options.details = 'missing type';
+      }
+      return false;
+    }
+    if (!this.type.isResolved()) {
+      if (options) {
+        options.details = 'unresolved type';
       }
       return false;
     }
@@ -17777,10 +17953,10 @@ class Speculator {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__storage_provider_base_js__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__storage_provider_base_js__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base_js__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_btoa_web_js__ = __webpack_require__(42);
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -18082,8 +18258,8 @@ class FirebaseCollection extends FirebaseStorageProvider {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_util_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__storage_provider_base_js__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__key_base_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__storage_provider_base_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__key_base_js__ = __webpack_require__(32);
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -18366,9 +18542,9 @@ class AddUseViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -18409,8 +18585,8 @@ class AssignRemoteViews extends __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -18525,7 +18701,7 @@ class CombinedStrategy extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategi
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(8);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -18625,9 +18801,9 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -19011,7 +19187,7 @@ class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -19899,9 +20075,9 @@ const stamp = function(template, opts) {
   let map = locateNodes(root, notes.locator);
   // return dom manager
   let dom = {
-    root: root,
-    notes: notes,
-    map: map,
+    root,
+    notes,
+    map,
     $(slctr) {
       return this.root.querySelector(slctr);
     },
@@ -19969,7 +20145,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__arcs_runtime_type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__browser_loader_js__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__arcs_tracelib_trace_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__arcs_runtime_scheduler_js__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__arcs_runtime_scheduler_js__ = __webpack_require__(15);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.

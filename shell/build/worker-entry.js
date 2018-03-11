@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 31);
+/******/ 	return __webpack_require__(__webpack_require__.s = 32);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -94,9 +94,10 @@ function assert(test, message) {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(28);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -107,8 +108,6 @@ function assert(test, message) {
 
 
 
-
-let nextVariableId = 0;
 
 function addType(name, arg) {
   let lowerName = name[0].toLowerCase() + name.substring(1);
@@ -141,6 +140,11 @@ class Type {
         data = new Type(data.tag, data.data);
       }
     }
+    if (tag == 'Variable') {
+      if (!(data instanceof __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* default */])) {
+        data = new __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* default */](data.name, data.constraint);
+      }
+    }
     this.tag = tag;
     this.data = data;
   }
@@ -170,36 +174,43 @@ class Type {
     return this.manifestReference;
   }
 
-  get variableReferenceName() {
-    console.warn('Type.variableReferenceName is deprecated. Please use Type.variableReference instead');
-    return this.variableReference;
-  }
-
   get variableVariable() {
     console.warn('Type.variableVariable is deprecated. Please use Type.variable instead');
     return this.variable;
   }
 
-  // Replaces variableReference types with variable types .
-  assignVariableIds(variableMap) {
-    if (this.isVariableReference) {
-      let name = this.data;
-      let sharedVariable = variableMap.get(name);
-      if (sharedVariable == undefined) {
-        let id = nextVariableId++;
-        sharedVariable = new __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* default */](name, id);
-        variableMap.set(name, sharedVariable);
+  mergeTypeVariablesByName(variableMap) {
+    if (this.isVariable) {
+      let name = this.variable.name;
+      let variable = variableMap.get(name);
+      if (!variable) {
+        variable = this;
+        variableMap.set(name, this);
+      } else {
+        if (variable.variable.constraint || this.variable.constraint) {
+          let mergedConstraint = __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* default */].maybeMergeConstraints(variable.variable, this.variable);
+          if (!mergedConstraint) {
+            throw new Error('could not merge type variables');
+          }
+          variable.variable.constraint = mergedConstraint;
+        }
       }
-      return Type.newVariable(sharedVariable);
+      return variable;
     }
 
     if (this.isSetView) {
-      return this.primitiveType().assignVariableIds(variableMap).setViewOf();
+      let primitiveType = this.primitiveType();
+      let result = primitiveType.mergeTypeVariablesByName(variableMap);
+      if (result === primitiveType) {
+        return this;
+      }
+      return result.setViewOf();
     }
 
     if (this.isInterface) {
       let shape = this.interfaceShape.clone();
-      shape._typeVars.map(({object, field}) => object[field] = object[field].assignVariableIds(variableMap));
+      shape._typeVars.map(({object, field}) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
+      // TODO: only build a new type when a variable is modified
       return Type.newInterface(shape);
     }
 
@@ -210,28 +221,14 @@ class Type {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(type1 instanceof Type);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(type2 instanceof Type);
     if (type1.isSetView && type2.isSetView)
-      return [type1.primitiveType(), type2.primitiveType()];
+      return Type.unwrapPair(type1.primitiveType(), type2.primitiveType());
     return [type1, type2];
   }
 
+  // TODO: update call sites to use the type checker instead (since they will
+  // have additional information about direction etc.)
   equals(type) {
-    if (this.tag !== type.tag)
-      return false;
-    if (this.tag == 'Entity') {
-      return this.data.equals(type.data);
-    }
-    if (this.isSetView) {
-      return this.data.equals(type.data);
-    }
-    if (this.isInterface) {
-      return this.data.equals(type.data);
-    }
-    if (this.isVariable) {
-      return this.data.equals(type.data);
-    }
-    // TODO: this doesn't always work with the way the parser keeps kind
-    // information around
-    return JSON.stringify(this.data) == JSON.stringify(type.data);
+    return __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__["a" /* default */].compareTypes({type: this}, {type}, false).valid;
   }
 
   _applyExistenceTypeTest(test) {
@@ -247,28 +244,28 @@ class Type {
   }
 
   get hasUnresolvedVariable() {
-    return this._applyExistenceTypeTest(type => type.isVariable && !type.variable.isResolved);
+    return this._applyExistenceTypeTest(type => type.isVariable && !type.variable.isResolved());
   }
 
   get hasVariableReference() {
     return this._applyExistenceTypeTest(type => type.isVariableReference);
   }
 
+  // TODO: remove this in favor of a renamed setViewType
   primitiveType() {
-    let type = this.setViewType;
-    return new Type(type.tag, type.data);
+    return this.setViewType;
   }
 
   resolvedType() {
     if (this.isSetView) {
-      let resolvedPrimitiveType = this.primitiveType().resolvedType();
-      return resolvedPrimitiveType ? resolvedPrimitiveType.setViewOf() : this;
+      let primitiveType = this.primitiveType();
+      let resolvedPrimitiveType = primitiveType.resolvedType();
+      return primitiveType !== resolvedPrimitiveType ? resolvedPrimitiveType.setViewOf() : this;
     }
-    if (this.isVariable && this.data.isResolved) {
-      return this.data.resolution.resolvedType();
-    }
-    if (this.isTypeVariable && this.data.isResolved) {
-      return this.data.resolution.resolvedType();
+    if (this.isVariable) {
+      let resolution = this.variable.resolution;
+      if (resolution)
+        return resolution;
     }
     if (this.isInterface) {
       return Type.newInterface(this.data.resolvedType());
@@ -277,16 +274,14 @@ class Type {
   }
 
   isResolved() {
-    if (this.isSetView) {
-      return this.primitiveType().isResolved();
-    }
-    if (this.isVariable) {
-      return this.data.isResolved;
-    }
-    return true;
+    // TODO: one of these should not exist.
+    return !this.hasUnresolvedVariable;
   }
 
   toLiteral() {
+    if (this.isVariable && this.isResolved()) {
+      return this.resolvedType().toLiteral();
+    }
     if (this.data.toLiteral)
       return {tag: this.tag, data: this.data.toLiteral()};
     return this;
@@ -317,6 +312,7 @@ class Type {
     return Type.newSetView(this);
   }
 
+  // TODO: is this the same as _applyExistenceTypeTest
   hasProperty(property) {
     if (property(this))
       return true;
@@ -350,9 +346,7 @@ class Type {
       return `${this.primitiveType().toPrettyString()} List`;
     }
     if (this.isVariable)
-      return this.data.isResolved ? this.data.resolution.toPrettyString() : `[~${this.name}]`;
-    if (this.isVariableReference)
-      return `[${this.variableReferenceName}]`;
+      return this.variable.isResolved() ? this.resolvedType().toPrettyString() : `[~${this.name}]`;
     if (this.isEntity) {
       // Spit MyTypeFOO to My Type FOO
       if (this.entitySchema.name) {
@@ -368,7 +362,6 @@ class Type {
 }
 
 addType('Entity', 'schema');
-addType('VariableReference');
 addType('Variable');
 addType('SetView', 'type');
 addType('Relation', 'entities');
@@ -382,318 +375,15 @@ addType('Tuple', 'fields');
 
 
 
+
 /***/ }),
 /* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-class Entity {
-  constructor(userIDComponent) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = undefined;
-    this._userIDComponent = userIDComponent;
-  }
-  get data() {
-    return undefined;
-  }
-
-  getUserID() {
-    return this._userIDComponent;
-  }
-
-  isIdentified() {
-    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] !== undefined;
-  }
-  // TODO: entity should not be exposing its IDs.
-  get id() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!this.isIdentified());
-    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier];
-  }
-  identify(identifier) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = identifier;
-    let components = identifier.split(':');
-    if (components[components.length - 2] == 'uid')
-      this._userIDComponent = components[components.length - 1];
-  }
-  createIdentity(components) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
-    let id;
-    if (this._userIDComponent)
-      id = `${components.base}:uid:${this._userIDComponent}`;
-    else
-      id = `${components.base}:${components.component()}`;
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = id;
-  }
-  toLiteral() {
-    return this.rawData;
-  }
-
-  static get type() {
-    // TODO: should the entity's key just be its type?
-    // Should it just be called type in that case?
-    return __WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */].newEntity(this.key.schema);
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Entity);
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-class ConnectionSpec {
-  constructor(rawData, typeVarMap) {
-    this.rawData = rawData;
-    this.direction = rawData.direction;
-    this.name = rawData.name;
-    this.type = rawData.type.assignVariableIds(typeVarMap);
-    this.isOptional = rawData.isOptional;
-  }
-
-  get isInput() {
-    // TODO: we probably don't really want host to be here.
-    return this.direction == 'in' || this.direction == 'inout' || this.direction == 'host';
-  }
-
-  get isOutput() {
-    return this.direction == 'out' || this.direction == 'inout';
-  }
-}
-
-class SlotSpec {
-  constructor(slotModel) {
-    this.name = slotModel.name;
-    this.isRequired = slotModel.isRequired;
-    this.isSet = slotModel.isSet;
-    this.tags = slotModel.tags;
-    this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
-    this.providedSlots = [];
-    slotModel.providedSlots.forEach(ps => {
-      this.providedSlots.push(new ProvidedSlotSpec(ps.name, ps.isSet, ps.tags, ps.formFactor, ps.views));
-    });
-  }
-
-  getProvidedSlotSpec(name) {
-    return this.providedSlots.find(ps => ps.name == name);
-  }
-}
-
-class ProvidedSlotSpec {
-  constructor(name, isSet, tags, formFactor, views) {
-    this.name = name;
-    this.isSet = isSet;
-    this.tags = tags;
-    this.formFactor = formFactor; // TODO: deprecate form factors?
-    this.views = views;
-  }
-}
-
-class ParticleSpec {
-  constructor(model) {
-    this._model = model;
-    this.name = model.name;
-    this.verbs = model.verbs;
-    let typeVarMap = new Map();
-    this.connections = model.args.map(a => new ConnectionSpec(a, typeVarMap));
-    this.connectionMap = new Map();
-    this.connections.forEach(a => this.connectionMap.set(a.name, a));
-    this.inputs = this.connections.filter(a => a.isInput);
-    this.outputs = this.connections.filter(a => a.isOutput);
-    this.transient = model.transient;
-
-    // initialize descriptions patterns.
-    model.description = model.description || {};
-    this.validateDescription(model.description);
-    this.pattern = model.description['pattern'];
-    this.connections.forEach(connectionSpec => {
-      connectionSpec.pattern = model.description[connectionSpec.name];
-    });
-
-    this.implFile = model.implFile;
-    this.affordance = model.affordance;
-    this.slots = new Map();
-    if (model.slots)
-      model.slots.forEach(s => this.slots.set(s.name, new SlotSpec(s)));
-    // Verify provided slots use valid view connection names.
-    this.slots.forEach(slot => {
-      slot.providedSlots.forEach(ps => {
-        ps.views.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
-      });
-    });
-  }
-
-  isInput(param) {
-    for (let input of this.inputs) if (input.name == param) return true;
-  }
-
-  isOutput(param) {
-    for (let outputs of this.outputs) if (outputs.name == param) return true;
-  }
-
-  getSlotSpec(slotName) {
-    return this.slots.get(slotName);
-  }
-
-  get primaryVerb() {
-    if (this.verbs.length > 0) {
-      return this.verbs[0];
-    }
-  }
-
-  matchAffordance(affordance) {
-    return this.slots.size <= 0 || this.affordance.includes(affordance);
-  }
-
-  toLiteral() {
-    let {args, name, verbs, transient, description, implFile, affordance, slots} = this._model;
-    args = args.map(a => {
-      let {type, direction, name, isOptional} = a;
-      type = type.toLiteral();
-      return {type, direction, name, isOptional};
-    });
-    return {args, name, verbs, transient, description, implFile, affordance, slots};
-  }
-
-  static fromLiteral(literal) {
-    let {args, name, verbs, transient, description, implFile, affordance, slots} = literal;
-    args = args.map(({type, direction, name, isOptional}) => ({type: __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(type), direction, name, isOptional}));
-    return new ParticleSpec({args, name, verbs, transient, description, implFile, affordance, slots});
-  }
-
-  clone() {
-    return ParticleSpec.fromLiteral(this.toLiteral());
-  }
-
-  equals(other) {
-    return JSON.stringify(this.toLiteral()) === JSON.stringify(other.toLiteral());
-  }
-
-  validateDescription(description) {
-    Object.keys(description || []).forEach(d => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
-    });
-  }
-
-  toInterface() {
-    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newInterface(this._toShape());
-  }
-
-  _toShape() {
-    const views = this._model.args;
-    // TODO: wat do?
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(!this.slots.length, 'please implement slots toShape');
-    const slots = [];
-    return new __WEBPACK_IMPORTED_MODULE_2__shape_js__["a" /* default */](views, slots);
-  }
-
-  toString() {
-    let results = [];
-    results.push(`particle ${this.name} in '${this.implFile}'`);
-    let connRes = this.connections.map(cs => `${cs.direction} ${cs.type.toString()}${cs.isOptional ? '?' : ''} ${cs.name}`);
-    results.push(`  ${this.primaryVerb}(${connRes.join(', ')})`);
-    this.affordance.filter(a => a != 'mock').forEach(a => results.push(`  affordance ${a}`));
-    // TODO: support form factors
-    this.slots.forEach(s => {
-      // Consume slot.
-      let consume = [];
-      if (s.isRequired) {
-        consume.push('must');
-      }
-      consume.push('consume');
-      if (s.isSet) {
-        consume.push('set of');
-      }
-      consume.push(s.name);
-      if (s.tags.length > 0) {
-        consume.push(s.tags.join(' '));
-      }
-      results.push(`  ${consume.join(' ')}`);
-      if (s.formFactor) {
-        results.push(`    formFactor ${s.formFactor}`);
-      }
-      // Provided slots.
-      s.providedSlots.forEach(ps => {
-        let provide = ['provide'];
-        if (ps.isSet) {
-          provide.push('set of');
-        }
-        provide.push(ps.name);
-        if (ps.tags.length > 0) {
-          provide.push(ps.tags.join(' '));
-        }
-        results.push(`    ${provide.join(' ')}`);
-        if (ps.formFactor) {
-          results.push(`      formFactor ${ps.formFactor}`);
-        }
-        ps.views.forEach(psv => results.push(`      view ${psv}`));
-      });
-    });
-    // Description
-    if (!!this.pattern) {
-      results.push(`  description \`${this.pattern}\``);
-      this.connections.forEach(cs => {
-        if (!!cs.pattern) {
-          results.push(`    ${cs.name} \`${cs.pattern}\``);
-        }
-      });
-    }
-    return results.join('\n');
-  }
-
-  toManifestString() {
-    return this.toString();
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (ParticleSpec);
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(3);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -732,6 +422,53 @@ class Schema {
     return new Schema(data);
   }
 
+  * _fields() {
+    for (let field in this.normative) {
+      yield {field, type: this.normative[field]};
+    }
+    for (let field in this.optional) {
+      yield {field, type: this.optional[field]};
+    }
+  }
+
+  static typesEqual(fieldType1, fieldType2) {
+    // TODO: structural check instead of JSON.
+    return JSON.stringify(fieldType1) == JSON.stringify(fieldType2);
+  }
+
+  static maybeMerge(schema1, schema2) {
+    if (!schema1.hasCommonName(schema2)) {
+      return null;
+    }
+
+    let names = [...new Set(...schema1._names(), ...schema2._names())];
+    let fields = {};
+
+    for (let {field, type} of [...schema1._fields(), ...schema2._fields()]) {
+      if (fields[field]) {
+        if (!Schema.typesEqual(fields[field], type)) {
+          return null;
+        }
+      } else {
+        fields[field] = type;
+      }
+    }
+
+    return new Schema({
+      name: names.length ? names[0] : null,
+      fields,
+      parents: names.slice(1).map(name => ({
+        name,
+        parents: [],
+        sections: [],
+      })),
+      sections: [{
+        sectionType: 'optional',
+        fields: {},
+      }],
+    });
+  }
+
   equals(otherSchema) {
     return this === otherSchema || (this.name == otherSchema.name
        // TODO: Check equality without calling contains.
@@ -740,39 +477,50 @@ class Schema {
   }
 
   contains(otherSchema) {
-    if (!this.containsAncestry(otherSchema)) {
+    if (!this._containsNames(otherSchema)) {
       return false;
     }
     for (let section of ['normative', 'optional']) {
       let thisSection = this[section];
       let otherSection = otherSchema[section];
       for (let field in otherSection) {
-        if (thisSection[field] != otherSection[field]) {
+        if (!Schema.typesEqual(thisSection[field], otherSection[field])) {
           return false;
         }
       }
     }
     return true;
   }
-  containsAncestry(otherSchema) {
-    if (this.name == otherSchema.name || otherSchema.name == null) {
-      nextOtherParent: for (let otherParent of otherSchema.parents) {
-        for (let parent of this.parents) {
-          if (parent.containsAncestry(otherParent)) {
-            continue nextOtherParent;
-          }
-        }
+
+  * _names() {
+    if (this.name)
+      yield this.name;
+    for (let parent of this.parents) {
+      yield* parent._names();
+    }
+  }
+
+  _containsNames(schema) {
+    // TODO: backwards?
+    let names = new Set(this._names());
+    for (let name of schema._names()) {
+      if (!names.has(name)) {
         return false;
       }
-      return true;
-    } else {
-      for (let parent of this.parents) {
-        if (parent.containsAncestry(otherSchema)) {
-          return true;
-        }
-      }
-      return false;
     }
+    return true;
+  }
+
+  hasCommonName(otherSchema) {
+    if (!this.name || !otherSchema.name)
+      return true;
+    let otherNames = new Set(names(otherSchema));
+    for (let name of names(this)) {
+      if (otherNames.has(name)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   get type() {
@@ -985,6 +733,308 @@ class Schema {
 
 
 /***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+
+class Entity {
+  constructor(userIDComponent) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = undefined;
+    this._userIDComponent = userIDComponent;
+  }
+  get data() {
+    return undefined;
+  }
+
+  getUserID() {
+    return this._userIDComponent;
+  }
+
+  isIdentified() {
+    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] !== undefined;
+  }
+  // TODO: entity should not be exposing its IDs.
+  get id() {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!this.isIdentified());
+    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier];
+  }
+  identify(identifier) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = identifier;
+    let components = identifier.split(':');
+    if (components[components.length - 2] == 'uid')
+      this._userIDComponent = components[components.length - 1];
+  }
+  createIdentity(components) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
+    let id;
+    if (this._userIDComponent)
+      id = `${components.base}:uid:${this._userIDComponent}`;
+    else
+      id = `${components.base}:${components.component()}`;
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = id;
+  }
+  toLiteral() {
+    return this.rawData;
+  }
+
+  static get type() {
+    // TODO: should the entity's key just be its type?
+    // Should it just be called type in that case?
+    return __WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */].newEntity(this.key.schema);
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Entity);
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+class ConnectionSpec {
+  constructor(rawData, typeVarMap) {
+    this.rawData = rawData;
+    this.direction = rawData.direction;
+    this.name = rawData.name;
+    this.type = rawData.type.mergeTypeVariablesByName(typeVarMap);
+    this.isOptional = rawData.isOptional;
+  }
+
+  get isInput() {
+    // TODO: we probably don't really want host to be here.
+    return this.direction == 'in' || this.direction == 'inout' || this.direction == 'host';
+  }
+
+  get isOutput() {
+    return this.direction == 'out' || this.direction == 'inout';
+  }
+}
+
+class SlotSpec {
+  constructor(slotModel) {
+    this.name = slotModel.name;
+    this.isRequired = slotModel.isRequired;
+    this.isSet = slotModel.isSet;
+    this.tags = slotModel.tags;
+    this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
+    this.providedSlots = [];
+    slotModel.providedSlots.forEach(ps => {
+      this.providedSlots.push(new ProvidedSlotSpec(ps.name, ps.isSet, ps.tags, ps.formFactor, ps.views));
+    });
+  }
+
+  getProvidedSlotSpec(name) {
+    return this.providedSlots.find(ps => ps.name == name);
+  }
+}
+
+class ProvidedSlotSpec {
+  constructor(name, isSet, tags, formFactor, views) {
+    this.name = name;
+    this.isSet = isSet;
+    this.tags = tags;
+    this.formFactor = formFactor; // TODO: deprecate form factors?
+    this.views = views;
+  }
+}
+
+class ParticleSpec {
+  constructor(model) {
+    this._model = model;
+    this.name = model.name;
+    this.verbs = model.verbs;
+    let typeVarMap = new Map();
+    this.connections = model.args.map(a => new ConnectionSpec(a, typeVarMap));
+    this.connectionMap = new Map();
+    this.connections.forEach(a => this.connectionMap.set(a.name, a));
+    this.inputs = this.connections.filter(a => a.isInput);
+    this.outputs = this.connections.filter(a => a.isOutput);
+    this.transient = model.transient;
+
+    // initialize descriptions patterns.
+    model.description = model.description || {};
+    this.validateDescription(model.description);
+    this.pattern = model.description['pattern'];
+    this.connections.forEach(connectionSpec => {
+      connectionSpec.pattern = model.description[connectionSpec.name];
+    });
+
+    this.implFile = model.implFile;
+    this.affordance = model.affordance;
+    this.slots = new Map();
+    if (model.slots)
+      model.slots.forEach(s => this.slots.set(s.name, new SlotSpec(s)));
+    // Verify provided slots use valid view connection names.
+    this.slots.forEach(slot => {
+      slot.providedSlots.forEach(ps => {
+        ps.views.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
+      });
+    });
+  }
+
+  isInput(param) {
+    for (let input of this.inputs) if (input.name == param) return true;
+  }
+
+  isOutput(param) {
+    for (let outputs of this.outputs) if (outputs.name == param) return true;
+  }
+
+  getSlotSpec(slotName) {
+    return this.slots.get(slotName);
+  }
+
+  get primaryVerb() {
+    if (this.verbs.length > 0) {
+      return this.verbs[0];
+    }
+  }
+
+  matchAffordance(affordance) {
+    return this.slots.size <= 0 || this.affordance.includes(affordance);
+  }
+
+  toLiteral() {
+    let {args, name, verbs, transient, description, implFile, affordance, slots} = this._model;
+    args = args.map(a => {
+      let {type, direction, name, isOptional} = a;
+      type = type.toLiteral();
+      return {type, direction, name, isOptional};
+    });
+    return {args, name, verbs, transient, description, implFile, affordance, slots};
+  }
+
+  static fromLiteral(literal) {
+    let {args, name, verbs, transient, description, implFile, affordance, slots} = literal;
+    args = args.map(({type, direction, name, isOptional}) => ({type: __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(type), direction, name, isOptional}));
+    return new ParticleSpec({args, name, verbs, transient, description, implFile, affordance, slots});
+  }
+
+  clone() {
+    return ParticleSpec.fromLiteral(this.toLiteral());
+  }
+
+  equals(other) {
+    return JSON.stringify(this.toLiteral()) === JSON.stringify(other.toLiteral());
+  }
+
+  validateDescription(description) {
+    Object.keys(description || []).forEach(d => {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
+    });
+  }
+
+  toInterface() {
+    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newInterface(this._toShape());
+  }
+
+  _toShape() {
+    const views = this._model.args;
+    // TODO: wat do?
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(!this.slots.length, 'please implement slots toShape');
+    const slots = [];
+    return new __WEBPACK_IMPORTED_MODULE_1__shape_js__["a" /* default */](views, slots);
+  }
+
+  toString() {
+    let results = [];
+    results.push(`particle ${this.name} in '${this.implFile}'`);
+    let connRes = this.connections.map(cs => `${cs.direction} ${cs.type.toString()}${cs.isOptional ? '?' : ''} ${cs.name}`);
+    results.push(`  ${this.primaryVerb}(${connRes.join(', ')})`);
+    this.affordance.filter(a => a != 'mock').forEach(a => results.push(`  affordance ${a}`));
+    // TODO: support form factors
+    this.slots.forEach(s => {
+      // Consume slot.
+      let consume = [];
+      if (s.isRequired) {
+        consume.push('must');
+      }
+      consume.push('consume');
+      if (s.isSet) {
+        consume.push('set of');
+      }
+      consume.push(s.name);
+      if (s.tags.length > 0) {
+        consume.push(s.tags.join(' '));
+      }
+      results.push(`  ${consume.join(' ')}`);
+      if (s.formFactor) {
+        results.push(`    formFactor ${s.formFactor}`);
+      }
+      // Provided slots.
+      s.providedSlots.forEach(ps => {
+        let provide = ['provide'];
+        if (ps.isSet) {
+          provide.push('set of');
+        }
+        provide.push(ps.name);
+        if (ps.tags.length > 0) {
+          provide.push(ps.tags.join(' '));
+        }
+        results.push(`    ${provide.join(' ')}`);
+        if (ps.formFactor) {
+          results.push(`      formFactor ${ps.formFactor}`);
+        }
+        ps.views.forEach(psv => results.push(`      view ${psv}`));
+      });
+    });
+    // Description
+    if (!!this.pattern) {
+      results.push(`  description \`${this.pattern}\``);
+      this.connections.forEach(cs => {
+        if (!!cs.pattern) {
+          results.push(`    ${cs.name} \`${cs.pattern}\``);
+        }
+      });
+    }
+    return results.join('\n');
+  }
+
+  toManifestString() {
+    return this.toString();
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (ParticleSpec);
+
+
+/***/ }),
 /* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1008,7 +1058,7 @@ class Schema {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(31);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1150,11 +1200,11 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_js__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tracelib_trace_js__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_js__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tracelib_trace_js__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__schema_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__schema_js__ = __webpack_require__(2);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1421,7 +1471,7 @@ class StateChanges {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__entity_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__entity_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__symbols_js__ = __webpack_require__(5);
 // @license
@@ -1614,7 +1664,7 @@ ${this._slotsToManifestString()}
   }
 
   static isTypeVar(reference) {
-    return (reference instanceof __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */]) && reference.hasProperty(r => r.isVariable || r.isVariableReference);
+    return (reference instanceof __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */]) && reference.hasProperty(r => r.isVariable);
   }
 
   static mustMatch(reference) {
@@ -1705,7 +1755,8 @@ ${this._slotsToManifestString()}
       return false;
 
     for (let constraint of viewOptions)
-      constraint.var.variable.resolution = constraint.value;
+      if (!constraint.var.variable.resolution)
+        constraint.var.variable.resolution = constraint.value;
 
     return this;
   }
@@ -1792,6 +1843,9 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(2);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -1801,34 +1855,101 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 // http://polymer.github.io/PATENTS.txt
 
 
+
+
+
+
 class TypeVariable {
-  constructor(name, id) {
+  constructor(name, constraint) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(typeof name == 'string');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(constraint == null || constraint instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */]);
     this.name = name;
-    this.id = id;
-    this.resolution = null;
+    this._constraint = constraint;
+    this._resolution = null;
   }
 
-  // this shouldn't be called on a 
-  // resolved TypeVariable.. how do we
-  // pass a resolution across the PEC?
+
+  static maybeMergeConstraints(variable1, variable2) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(variable1 instanceof TypeVariable);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(variable2 instanceof TypeVariable);
+
+    let constraint1 = variable1.constraint;
+    let constraint2 = variable2.constraint;
+
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(constraint1 || constraint2);
+
+    if (constraint1 && constraint2) {
+      if (!constraint1.isEntity || !constraint2.isEntity) {
+        throw new Error('merging constraints not implemented for ${constraint1.type} and ${constraint2.type}');
+      }
+  
+      let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */].maybeMerge(constraint1.entitySchema, constraint2.entitySchema);
+      if (!mergedSchema) {
+        return null;
+      }
+      return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newEntity(mergedSchema);
+    } else {
+      return constraint1 || constraint2;
+    }
+  }
+
+  isSatisfiedBy(type) {
+    let constraint = this.constraint;
+    if (!constraint) {
+      return true;
+    }
+    if (!constraint.isEntity || !type.isEntity) {
+      throw new Error('constraint checking not implemented for ${constraint1.type} and ${constraint2.type}');
+    }
+    return type.entitySchema.contains(constraint.entitySchema);
+  }
+
+  get resolution() {
+    if (this._resolution) {
+      return this._resolution.resolvedType();
+    }
+    return null;
+  }
+
+  set resolution(value) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(value instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
+    this._resolution = value;
+    this._constraint = null;
+  }
+
+  get constraint() {
+    if (this._resolution) {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._constraint);
+      if (this._resolution.isVariable) {
+        return this._resolution.variable.constraint;
+      }
+      return null;
+    }
+    return this._constraint;
+  }
+
+  set constraint(value) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
+    this._constraint = value;
+  }
+
   toLiteral() {
-    assert(this.resolution == null);
-    return this;
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(this.resolution == null);
+    return {
+      name: this.name,
+      constraint: this._constraint && this._constraint.toLiteral(),
+    };
   }
 
   static fromLiteral(data) {
-    return new TypeVariable(data.name, data.id);
+    return new TypeVariable(
+        data.name,
+        data.constraint ? __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(data.constraint) : null);
   }
 
-  get isResolved() {
-    return !!this.resolution;
-  }
-
-  equals(other) {
-    if (this.isResolved && other.isResolved) {
-      return this.resolution.equals(other.resolution);
-    }
-    return this.name == other.name;
+  isResolved() {
+    return this._resolution && this._resolution.isResolved();
   }
 }
 
@@ -1844,8 +1965,8 @@ class TypeVariable {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__handle_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_channel_js__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(2);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2537,7 +2658,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 /* unused harmony export PECOuterPort */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PECInnerPort; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__debug_outer_port_attachment_js__ = __webpack_require__(23);
 /**
@@ -3255,11 +3376,11 @@ class OuterPortAttachment {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__identifier_js__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__entity_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__entity_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__relation_js__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__symbols_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__particle_spec_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__particle_spec_js__ = __webpack_require__(4);
 /** @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -3632,10 +3753,148 @@ class Loader {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+class TypeChecker {
+
+  // list: [{type, direction, connection}]
+  static processTypeList(list) {
+    if (list.length == 0) {
+      return {type: {type: undefined}, valid: true};
+    }
+    let baseType = list[0];
+    for (let i = 1; i < list.length; i++) {
+      let result = TypeChecker.compareTypes(baseType, list[i]);
+      baseType = result.type;
+      if (!result.valid) {
+        return {valid: false};
+      }
+    }
+
+    return {type: baseType, valid: true};
+  }
+
+  static restrictType(type, instance) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(type.isInterface, `restrictType not implemented for ${type}`);
+
+    let shape = type.interfaceShape.restrictType(instance);
+    if (shape == false)
+      return false;
+    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newInterface(shape);
+  }
+
+  // left, right: {type, direction, connection}
+  static compareTypes(left, right, resolve=true) {
+    let resolvedLeft = left.type.resolvedType();
+    let resolvedRight = right.type.resolvedType();
+    let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(resolvedLeft, resolvedRight);
+
+    if (leftType.isVariable || rightType.isVariable) {
+      if (leftType.isVariable && rightType.isVariable) {
+        if (leftType.variable === rightType.variable) {
+          return {type: left, valid: true};
+        }
+        if (leftType.variable.constraint || rightType.variable.constraint) {
+          let mergedConstraint = __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* default */].maybeMergeConstraints(leftType.variable, rightType.variable);
+          if (!mergedConstraint) {
+            return {valid: false};
+          }
+          if (resolve) {
+            leftType.constraint = mergedConstraint;
+            rightType.variable.resolution = leftType;
+          }
+        };
+        return {type: left, valid: true};
+      } else if (leftType.isVariable) {
+        if (!leftType.variable.isSatisfiedBy(rightType)) {
+          return {valid: false};
+        }
+        if (resolve) {
+          leftType.variable.resolution = rightType;
+        }
+        return {type: right, valid: true};
+      } else if (rightType.isVariable) {
+        if (!rightType.variable.isSatisfiedBy(leftType)) {
+          return {valid: false};
+        }
+        if (resolve) {
+          rightType.variable.resolution = leftType;
+        }
+        return {type: left, valid: true};
+      }
+    }
+
+    if (leftType.type != rightType.type) {
+      return {valid: false};
+    }
+
+    // TODO: we need a generic way to evaluate type compatibility
+    //       shapes + entities + etc
+    if (leftType.isInterface && rightType.isInterface) {
+      if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
+        return {type: left, valid: true};
+      }
+    }
+
+    if (!leftType.isEntity || !rightType.isEntity) {
+      return {valid: false};
+    }
+
+    let isSub = leftType.entitySchema.contains(rightType.entitySchema);
+    let isSuper = rightType.entitySchema.contains(leftType.entitySchema);
+    if (isSuper && isSub) {
+       return {type: left, valid: true};
+    }
+    if (!isSuper && !isSub) {
+      return {valid: false};
+    }
+    let [superclass, subclass] = isSuper ? [left, right] : [right, left];
+
+    // TODO: this arbitrarily chooses type restriction when
+    // super direction is 'in' and sub direction is 'out'. Eventually
+    // both possibilities should be encoded so we can maximise resolution
+    // opportunities
+
+    // treat view types as if they were 'inout' connections. Note that this
+    // guarantees that the view's type will be preserved, and that the fact
+    // that the type comes from a view rather than a connection will also
+    // be preserved.
+    let superDirection = superclass.connection ? superclass.connection.direction : 'inout';
+    let subDirection = subclass.connection ? subclass.connection.direction : 'inout';
+    if (superDirection == 'in') {
+      return {type: subclass, valid: true};
+    }
+    if (subDirection == 'out') {
+      return {type: superclass, valid: true};
+    }
+    return {valid: false};
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (TypeChecker);
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__schema_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__schema_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__type_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__relation_js__ = __webpack_require__(9);
 /**
@@ -3683,7 +3942,7 @@ let BasicEntity = testEntityClass('BasicEntity');
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3731,7 +3990,7 @@ class TupleFields {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3844,7 +4103,7 @@ const nob = () => Object.create(null);
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3873,7 +4132,7 @@ self.onmessage = function(e) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

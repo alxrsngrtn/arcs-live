@@ -6,6 +6,7 @@
 // http://polymer.github.io/PATENTS.txt
 
 import Type from '../type.js';
+import TypeVariable from '../type-variable.js';
 import assert from '../../platform/assert-web.js';
 
 class TypeChecker {
@@ -16,9 +17,8 @@ class TypeChecker {
       return {type: {type: undefined}, valid: true};
     }
     let baseType = list[0];
-    let variableResolutions = [];
     for (let i = 1; i < list.length; i++) {
-      let result = TypeChecker.compareTypes(baseType, list[i], variableResolutions);
+      let result = TypeChecker.compareTypes(baseType, list[i]);
       baseType = result.type;
       if (!result.valid) {
         return {valid: false};
@@ -37,102 +37,91 @@ class TypeChecker {
     return Type.newInterface(shape);
   }
 
-  static _coerceTypes(left, right) {
-    let leftType = left.type;
-    let rightType = right.type;
-
-    assert(!leftType.hasVariableReference);
-    assert(!rightType.hasVariableReference);
-
-    while (leftType.isSetView && rightType.isSetView) {
-      leftType = leftType.primitiveType();
-      rightType = rightType.primitiveType();
-    }
-
-    leftType = leftType.resolvedType();
-    rightType = rightType.resolvedType();
-
-    if (leftType.equals(rightType))
-      return left;
-
-    // TODO: direction?
-    let type;
-    if (leftType.isVariable) {
-      leftType.variable.resolution = rightType;
-      type = right;
-    } else if (rightType.isVariable) {
-      rightType.variable.resolution = leftType;
-      type = left;
-    } else {
-      return null;
-    }
-    return type;
-  }
-
-  static isSubclass(subclass, superclass) {
-    let subtype = subclass.type;
-    let supertype = superclass.type;
-    while (subtype.isSetView && supertype.isSetView) {
-      subtype = subtype.primitiveType();
-      supertype = supertype.primitiveType();
-    }
-
-    if (!(subtype.isEntity && supertype.isEntity))
-      return false;
-
-    return subtype.entitySchema.contains(supertype.entitySchema);
-  }
-
   // left, right: {type, direction, connection}
-  static compareTypes(left, right) {
-    if (left.type.equals(right.type)) {
-      return {type: left, valid: true};
+  static compareTypes(left, right, resolve=true) {
+    let resolvedLeft = left.type.resolvedType();
+    let resolvedRight = right.type.resolvedType();
+    let [leftType, rightType] = Type.unwrapPair(resolvedLeft, resolvedRight);
+
+    if (leftType.isVariable || rightType.isVariable) {
+      if (leftType.isVariable && rightType.isVariable) {
+        if (leftType.variable === rightType.variable) {
+          return {type: left, valid: true};
+        }
+        if (leftType.variable.constraint || rightType.variable.constraint) {
+          let mergedConstraint = TypeVariable.maybeMergeConstraints(leftType.variable, rightType.variable);
+          if (!mergedConstraint) {
+            return {valid: false};
+          }
+          if (resolve) {
+            leftType.constraint = mergedConstraint;
+            rightType.variable.resolution = leftType;
+          }
+        };
+        return {type: left, valid: true};
+      } else if (leftType.isVariable) {
+        if (!leftType.variable.isSatisfiedBy(rightType)) {
+          return {valid: false};
+        }
+        if (resolve) {
+          leftType.variable.resolution = rightType;
+        }
+        return {type: right, valid: true};
+      } else if (rightType.isVariable) {
+        if (!rightType.variable.isSatisfiedBy(leftType)) {
+          return {valid: false};
+        }
+        if (resolve) {
+          rightType.variable.resolution = leftType;
+        }
+        return {type: left, valid: true};
+      }
     }
 
-    let subclass;
-    let superclass;
-    if (TypeChecker.isSubclass(left, right)) {
-      subclass = left;
-      superclass = right;
-    } else if (TypeChecker.isSubclass(right, left)) {
-      subclass = right;
-      superclass = left;
+    if (leftType.type != rightType.type) {
+      return {valid: false};
     }
+
+    // TODO: we need a generic way to evaluate type compatibility
+    //       shapes + entities + etc
+    if (leftType.isInterface && rightType.isInterface) {
+      if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
+        return {type: left, valid: true};
+      }
+    }
+
+    if (!leftType.isEntity || !rightType.isEntity) {
+      return {valid: false};
+    }
+
+    let isSub = leftType.entitySchema.contains(rightType.entitySchema);
+    let isSuper = rightType.entitySchema.contains(leftType.entitySchema);
+    if (isSuper && isSub) {
+       return {type: left, valid: true};
+    }
+    if (!isSuper && !isSub) {
+      return {valid: false};
+    }
+    let [superclass, subclass] = isSuper ? [left, right] : [right, left];
 
     // TODO: this arbitrarily chooses type restriction when
     // super direction is 'in' and sub direction is 'out'. Eventually
     // both possibilities should be encoded so we can maximise resolution
     // opportunities
-    if (superclass) {
-      // treat view types as if they were 'inout' connections. Note that this
-      // guarantees that the view's type will be preserved, and that the fact
-      // that the type comes from a view rather than a connection will also
-      // be preserved.
-      let superDirection = superclass.connection ? superclass.connection.direction : 'inout';
-      let subDirection = subclass.connection ? subclass.connection.direction : 'inout';
-      if (superDirection == 'in') {
-        return {type: subclass, valid: true};
-      }
-      if (subDirection == 'out') {
-        return {type: superclass, valid: true};
-      }
-      return {valid: false};
-    }
 
-    let result = TypeChecker._coerceTypes(left, right);
-    if (result == null) {
-      return {valid: false};
+    // treat view types as if they were 'inout' connections. Note that this
+    // guarantees that the view's type will be preserved, and that the fact
+    // that the type comes from a view rather than a connection will also
+    // be preserved.
+    let superDirection = superclass.connection ? superclass.connection.direction : 'inout';
+    let subDirection = subclass.connection ? subclass.connection.direction : 'inout';
+    if (superDirection == 'in') {
+      return {type: subclass, valid: true};
     }
-    // TODO: direction?
-    return {type: result, valid: true};
-  }
-
-  static substitute(type, variable, value) {
-    if (type.equals(variable))
-      return value;
-    if (type.isSetView)
-      return TypeChecker.substitute(type.primitiveType(), variable, value).setViewOf();
-    return type;
+    if (subDirection == 'out') {
+      return {type: superclass, valid: true};
+    }
+    return {valid: false};
   }
 }
 

@@ -7,34 +7,101 @@
 // http://polymer.github.io/PATENTS.txt
 'use strict';
 
+import Type from './type.js';
+import assert from '../platform/assert-web.js';
+import Schema from './schema.js';
+
 class TypeVariable {
-  constructor(name, id) {
+  constructor(name, constraint) {
+    assert(typeof name == 'string');
+    assert(constraint == null || constraint instanceof Type);
     this.name = name;
-    this.id = id;
-    this.resolution = null;
+    this._constraint = constraint;
+    this._resolution = null;
   }
 
-  // this shouldn't be called on a 
-  // resolved TypeVariable.. how do we
-  // pass a resolution across the PEC?
+
+  static maybeMergeConstraints(variable1, variable2) {
+    assert(variable1 instanceof TypeVariable);
+    assert(variable2 instanceof TypeVariable);
+
+    let constraint1 = variable1.constraint;
+    let constraint2 = variable2.constraint;
+
+    assert(constraint1 || constraint2);
+
+    if (constraint1 && constraint2) {
+      if (!constraint1.isEntity || !constraint2.isEntity) {
+        throw new Error('merging constraints not implemented for ${constraint1.type} and ${constraint2.type}');
+      }
+  
+      let mergedSchema = Schema.maybeMerge(constraint1.entitySchema, constraint2.entitySchema);
+      if (!mergedSchema) {
+        return null;
+      }
+      return Type.newEntity(mergedSchema);
+    } else {
+      return constraint1 || constraint2;
+    }
+  }
+
+  isSatisfiedBy(type) {
+    let constraint = this.constraint;
+    if (!constraint) {
+      return true;
+    }
+    if (!constraint.isEntity || !type.isEntity) {
+      throw new Error('constraint checking not implemented for ${constraint1.type} and ${constraint2.type}');
+    }
+    return type.entitySchema.contains(constraint.entitySchema);
+  }
+
+  get resolution() {
+    if (this._resolution) {
+      return this._resolution.resolvedType();
+    }
+    return null;
+  }
+
+  set resolution(value) {
+    assert(value instanceof Type);
+    assert(!this._resolution);
+    this._resolution = value;
+    this._constraint = null;
+  }
+
+  get constraint() {
+    if (this._resolution) {
+      assert(!this._constraint);
+      if (this._resolution.isVariable) {
+        return this._resolution.variable.constraint;
+      }
+      return null;
+    }
+    return this._constraint;
+  }
+
+  set constraint(value) {
+    assert(!this._resolution);
+    this._constraint = value;
+  }
+
   toLiteral() {
     assert(this.resolution == null);
-    return this;
+    return {
+      name: this.name,
+      constraint: this._constraint && this._constraint.toLiteral(),
+    };
   }
 
   static fromLiteral(data) {
-    return new TypeVariable(data.name, data.id);
+    return new TypeVariable(
+        data.name,
+        data.constraint ? Type.fromLiteral(data.constraint) : null);
   }
 
-  get isResolved() {
-    return !!this.resolution;
-  }
-
-  equals(other) {
-    if (this.isResolved && other.isResolved) {
-      return this.resolution.equals(other.resolution);
-    }
-    return this.name == other.name;
+  isResolved() {
+    return this._resolution && this._resolution.isResolved();
   }
 }
 

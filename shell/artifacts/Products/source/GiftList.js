@@ -33,21 +33,19 @@ defineParticle(({DomParticle}) => {
     get template() {
       return template;
     }
-    _render(props, state) {
-      let {person} = props;
+    _shouldRender({person}) { return Boolean(person); }
+    _render({person}) {
       let name = (person && person.name) || 'n/a';
+      let occasion = (person && person.occasion) || 'n/a';
       let inOneWeek =
         new Date(new Date().setHours(21*24)) // Advance time by three weeks
           .toISOString().substr(0, 10);
       return {
         person: name,
-        occasion: 'Birthday',
+        occasion,
         occasionDate: inOneWeek,
         date: inOneWeek
-        //people: [{value: name}],
-        //occasions: [{value: 'Birthday'}]
       };
     }
   };
-
 });

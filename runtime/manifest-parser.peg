@@ -337,12 +337,13 @@ ListType
   }
 
 VariableType
-  = '~' name:lowerIdent
+  = '~' name:lowerIdent constraint:(whiteSpace 'with' whiteSpace type:ParticleArgumentType)?
   {
     return {
       kind: 'variable-type',
       location: location(),
       name,
+      constraint: optional(constraint, constraint => constraint[3], null),
     };
   }
 

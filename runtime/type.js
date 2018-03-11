@@ -9,8 +9,6 @@
 
 import assert from '../platform/assert-web.js';
 
-let nextVariableId = 0;
-
 function addType(name, arg) {
   let lowerName = name[0].toLowerCase() + name.substring(1);
   Object.defineProperty(Type, `new${name}`, {
@@ -42,6 +40,11 @@ class Type {
         data = new Type(data.tag, data.data);
       }
     }
+    if (tag == 'Variable') {
+      if (!(data instanceof TypeVariable)) {
+        data = new TypeVariable(data.name, data.constraint);
+      }
+    }
     this.tag = tag;
     this.data = data;
   }
@@ -71,36 +74,43 @@ class Type {
     return this.manifestReference;
   }
 
-  get variableReferenceName() {
-    console.warn('Type.variableReferenceName is deprecated. Please use Type.variableReference instead');
-    return this.variableReference;
-  }
-
   get variableVariable() {
     console.warn('Type.variableVariable is deprecated. Please use Type.variable instead');
     return this.variable;
   }
 
-  // Replaces variableReference types with variable types .
-  assignVariableIds(variableMap) {
-    if (this.isVariableReference) {
-      let name = this.data;
-      let sharedVariable = variableMap.get(name);
-      if (sharedVariable == undefined) {
-        let id = nextVariableId++;
-        sharedVariable = new TypeVariable(name, id);
-        variableMap.set(name, sharedVariable);
+  mergeTypeVariablesByName(variableMap) {
+    if (this.isVariable) {
+      let name = this.variable.name;
+      let variable = variableMap.get(name);
+      if (!variable) {
+        variable = this;
+        variableMap.set(name, this);
+      } else {
+        if (variable.variable.constraint || this.variable.constraint) {
+          let mergedConstraint = TypeVariable.maybeMergeConstraints(variable.variable, this.variable);
+          if (!mergedConstraint) {
+            throw new Error('could not merge type variables');
+          }
+          variable.variable.constraint = mergedConstraint;
+        }
       }
-      return Type.newVariable(sharedVariable);
+      return variable;
     }
 
     if (this.isSetView) {
-      return this.primitiveType().assignVariableIds(variableMap).setViewOf();
+      let primitiveType = this.primitiveType();
+      let result = primitiveType.mergeTypeVariablesByName(variableMap);
+      if (result === primitiveType) {
+        return this;
+      }
+      return result.setViewOf();
     }
 
     if (this.isInterface) {
       let shape = this.interfaceShape.clone();
-      shape._typeVars.map(({object, field}) => object[field] = object[field].assignVariableIds(variableMap));
+      shape._typeVars.map(({object, field}) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
+      // TODO: only build a new type when a variable is modified
       return Type.newInterface(shape);
     }
 
@@ -111,28 +121,14 @@ class Type {
     assert(type1 instanceof Type);
     assert(type2 instanceof Type);
     if (type1.isSetView && type2.isSetView)
-      return [type1.primitiveType(), type2.primitiveType()];
+      return Type.unwrapPair(type1.primitiveType(), type2.primitiveType());
     return [type1, type2];
   }
 
+  // TODO: update call sites to use the type checker instead (since they will
+  // have additional information about direction etc.)
   equals(type) {
-    if (this.tag !== type.tag)
-      return false;
-    if (this.tag == 'Entity') {
-      return this.data.equals(type.data);
-    }
-    if (this.isSetView) {
-      return this.data.equals(type.data);
-    }
-    if (this.isInterface) {
-      return this.data.equals(type.data);
-    }
-    if (this.isVariable) {
-      return this.data.equals(type.data);
-    }
-    // TODO: this doesn't always work with the way the parser keeps kind
-    // information around
-    return JSON.stringify(this.data) == JSON.stringify(type.data);
+    return TypeChecker.compareTypes({type: this}, {type}, false).valid;
   }
 
   _applyExistenceTypeTest(test) {
@@ -148,28 +144,28 @@ class Type {
   }
 
   get hasUnresolvedVariable() {
-    return this._applyExistenceTypeTest(type => type.isVariable && !type.variable.isResolved);
+    return this._applyExistenceTypeTest(type => type.isVariable && !type.variable.isResolved());
   }
 
   get hasVariableReference() {
     return this._applyExistenceTypeTest(type => type.isVariableReference);
   }
 
+  // TODO: remove this in favor of a renamed setViewType
   primitiveType() {
-    let type = this.setViewType;
-    return new Type(type.tag, type.data);
+    return this.setViewType;
   }
 
   resolvedType() {
     if (this.isSetView) {
-      let resolvedPrimitiveType = this.primitiveType().resolvedType();
-      return resolvedPrimitiveType ? resolvedPrimitiveType.setViewOf() : this;
+      let primitiveType = this.primitiveType();
+      let resolvedPrimitiveType = primitiveType.resolvedType();
+      return primitiveType !== resolvedPrimitiveType ? resolvedPrimitiveType.setViewOf() : this;
     }
-    if (this.isVariable && this.data.isResolved) {
-      return this.data.resolution.resolvedType();
-    }
-    if (this.isTypeVariable && this.data.isResolved) {
-      return this.data.resolution.resolvedType();
+    if (this.isVariable) {
+      let resolution = this.variable.resolution;
+      if (resolution)
+        return resolution;
     }
     if (this.isInterface) {
       return Type.newInterface(this.data.resolvedType());
@@ -178,16 +174,14 @@ class Type {
   }
 
   isResolved() {
-    if (this.isSetView) {
-      return this.primitiveType().isResolved();
-    }
-    if (this.isVariable) {
-      return this.data.isResolved;
-    }
-    return true;
+    // TODO: one of these should not exist.
+    return !this.hasUnresolvedVariable;
   }
 
   toLiteral() {
+    if (this.isVariable && this.isResolved()) {
+      return this.resolvedType().toLiteral();
+    }
     if (this.data.toLiteral)
       return {tag: this.tag, data: this.data.toLiteral()};
     return this;
@@ -218,6 +212,7 @@ class Type {
     return Type.newSetView(this);
   }
 
+  // TODO: is this the same as _applyExistenceTypeTest
   hasProperty(property) {
     if (property(this))
       return true;
@@ -251,9 +246,7 @@ class Type {
       return `${this.primitiveType().toPrettyString()} List`;
     }
     if (this.isVariable)
-      return this.data.isResolved ? this.data.resolution.toPrettyString() : `[~${this.name}]`;
-    if (this.isVariableReference)
-      return `[${this.variableReferenceName}]`;
+      return this.variable.isResolved() ? this.resolvedType().toPrettyString() : `[~${this.name}]`;
     if (this.isEntity) {
       // Spit MyTypeFOO to My Type FOO
       if (this.entitySchema.name) {
@@ -269,7 +262,6 @@ class Type {
 }
 
 addType('Entity', 'schema');
-addType('VariableReference');
 addType('Variable');
 addType('SetView', 'type');
 addType('Relation', 'entities');
@@ -282,3 +274,4 @@ import Shape from './shape.js';
 import Schema from './schema.js';
 import TypeVariable from './type-variable.js';
 import TupleFields from './tuple-fields.js';
+import TypeChecker from './recipe/type-checker.js';

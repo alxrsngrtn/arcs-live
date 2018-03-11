@@ -1,7 +1,5 @@
-commit e1698a218d3e80faa037b8bf94ba089bbf81f435
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Wed Mar 7 09:51:04 2018 +1100
+commit 9b500b0bdd0de26d862e7723301ebade705f0e1e
+Author: Matt Small <mbsmall@google.com>
+Date:   Fri Mar 9 16:09:33 2018 -0800
 
-    Make manifest import failures not be fatal
-    
-    For #889
+    potential fix for gh pages deploy
