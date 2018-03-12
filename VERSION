@@ -1,6 +1,5 @@
-commit 2a7be19447bef138c404ba42a74d4cbf6e3873e9
-Author: Matt Small <mbsmall@google.com>
-Date:   Fri Mar 9 11:39:13 2018 -0800
+commit 2ffd557baa49f435a2a200900177141cd1fc722d
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Mon Mar 12 13:07:26 2018 -0700
 
-    consolidate the extension's package.json up into the root package.json
-    Also run the extension unit tests automatically
+    Show how to use firebase-upload in EditPost.js
