@@ -1,7 +1,7 @@
-commit f2e68b95fd69142bdd1c933f7ca5312c2745d7e1
-Author: Matt Small <mbsmall@google.com>
-Date:   Fri Mar 9 16:33:46 2018 -0800
+commit 77a004dee0688f3f13e8a9e132823a611a37ea5a
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon Mar 12 15:04:52 2018 -0700
 
-    invoke `bower install` from `npm install`
-    Also removes the reliances on a globally-installed bower, since the
-    script can use a locally installed version.
+    Store image urls in posts and render in feed.
+    
+    Also fixes save button active state display.
