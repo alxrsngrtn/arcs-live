@@ -19381,7 +19381,7 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
         }
 
         // Match handles of the provided slot with the slot-connection particle's handles.
-        if (!this._handlesMatch(slotConnection.particle, slot.handleConnections.map(connection => connection.handle))) {
+        if (!this._handlesMatch(slotConnection.particle, slot.handleConnections.map(connection => connection.handle).filter(a => a !== undefined))) {
           return false;
         }
 

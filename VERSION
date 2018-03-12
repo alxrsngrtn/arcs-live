@@ -1,7 +1,5 @@
-commit 77a004dee0688f3f13e8a9e132823a611a37ea5a
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Mar 12 15:04:52 2018 -0700
+commit 03ed4e03400c0ebf52cc654102e01eadd60bb1c8
+Author: shans <shane.stephens@gmail.com>
+Date:   Mon Mar 12 22:47:25 2018 +1100
 
-    Store image urls in posts and render in feed.
-    
-    Also fixes save button active state display.
+    Prevent exception when connections don't reference a handle.
