@@ -1,5 +1,7 @@
-commit 2ffd557baa49f435a2a200900177141cd1fc722d
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Mon Mar 12 13:07:26 2018 -0700
+commit f2e68b95fd69142bdd1c933f7ca5312c2745d7e1
+Author: Matt Small <mbsmall@google.com>
+Date:   Fri Mar 9 16:33:46 2018 -0800
 
-    Show how to use firebase-upload in EditPost.js
+    invoke `bower install` from `npm install`
+    Also removes the reliances on a globally-installed bower, since the
+    script can use a locally installed version.
