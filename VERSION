@@ -1,5 +1,5 @@
-commit 39f1f6ecf6b22a5a86a0a7117a9a8b7212349473
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Mar 12 21:38:51 2018 +1100
+commit 3ce9f1a17cbc5fca90c1d7b091629e8e070719f2
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Mon Mar 12 22:26:20 2018 +1100
 
-    use public getter on recipe connection rather than _handle.
+    Continue to support previous literal format for schema

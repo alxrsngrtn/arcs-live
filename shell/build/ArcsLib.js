@@ -1849,6 +1849,16 @@ class RecipeUtil {
 
 class Schema {
   constructor(model) {
+    // TODO: remove this (remnants of normative/optional)
+    if (model.sections) {
+      console.warn(`Schema ${model.name} was serialized with legacy format`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!model.fields);
+      model.fields = {};
+      for (let section of model.sections) {
+        Object.assign(model.fields, section.fields);
+      }
+      delete model.sections;
+    }
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.fields);
     this._model = model;
     this.name = model.name;
