@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 94);
+/******/ 	return __webpack_require__(__webpack_require__.s = 95);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -934,9 +934,9 @@ Walker.Independent = __WEBPACK_IMPORTED_MODULE_1__walker_base_js__["a" /* defaul
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(91);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(92);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(13);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1567,6 +1567,271 @@ init();
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__recipe_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+class Shape {
+  constructor(recipe, particles, views, hcs) {
+    this.recipe = recipe;
+    this.particles = particles;
+    this.views = views;
+    this.reverse = new Map();
+    for (let p in particles)
+      this.reverse.set(particles[p], p);
+    for (let v in views)
+      this.reverse.set(views[v], v);
+    for (let hc in hcs)
+      this.reverse.set(hcs[hc], hc);
+  }
+}
+
+class RecipeUtil {
+  static makeShape(particles, views, map, recipe) {
+    recipe = recipe || new __WEBPACK_IMPORTED_MODULE_0__recipe_js__["a" /* default */]();
+    let pMap = {};
+    let vMap = {};
+    let hcMap = {};
+    particles.forEach(particle => pMap[particle] = recipe.newParticle(particle));
+    views.forEach(view => vMap[view] = recipe.newHandle());
+    Object.keys(map).forEach(key => {
+      Object.keys(map[key]).forEach(name => {
+        let view = map[key][name];
+        pMap[key].addConnectionName(name).connectToView(vMap[view]);
+        hcMap[key + ':' + name] = pMap[key].connections[name];
+      });
+    });
+    return new Shape(recipe, pMap, vMap, hcMap);
+  }
+
+  static recipeToShape(recipe) {
+    let particles = {};
+    let id = 0;
+    recipe.particles.forEach(particle => particles[particle.name] = particle);
+    let views = {};
+    recipe.handles.forEach(view => views['v' + id++] = view);
+    let hcs = {};
+    recipe.handleConnections.forEach(hc => hcs[hc.particle.name + ':' + hc.name] = hc);
+    return new Shape(recipe, particles, views, hcs);
+  }
+
+  static find(recipe, shape) {
+
+    function _buildNewHCMatches(recipe, shapeHC, match, outputList) {
+      let {forward, reverse, score} = match;
+      let matchFound = false;
+      for (let recipeHC of recipe.handleConnections) {
+        // TODO are there situations where multiple handleConnections should
+        // be allowed to point to the same one in the recipe?
+        if (reverse.has(recipeHC))
+          continue;
+
+        // TODO support unnamed shape particles.
+        if (recipeHC.particle.name != shapeHC.particle.name)
+          continue;
+
+        if (shapeHC.name && shapeHC.name != recipeHC.name)
+          continue;
+
+        // recipeHC is a candidate for shapeHC. shapeHC references a
+        // particle, so recipeHC must reference the matching particle,
+        // or a particle that isn't yet mapped from shape.
+        if (reverse.has(recipeHC.particle)) {
+          if (reverse.get(recipeHC.particle) != shapeHC.particle)
+            continue;
+        } else if (forward.has(shapeHC.particle)) {
+          // we've already mapped the particle referenced by shapeHC
+          // and it doesn't match recipeHC's particle as recipeHC's
+          // particle isn't mapped
+          continue;
+        }
+
+        // shapeHC doesn't necessarily reference a handle, but if it does
+        // then recipeHC needs to reference the matching handle, or one
+        // that isn't yet mapped, or no handle yet.
+        if (shapeHC.view && recipeHC.view) {
+          if (reverse.has(recipeHC.view)) {
+            if (reverse.get(recipeHC.view) != shapeHC.view)
+              continue;
+          } else if (forward.has(shapeHC.view) && forward.get(shapeHC.view) !== null) {
+            continue;
+          }
+          // Check whether shapeHC and recipeHC reference the same view.
+          // Note: the id of a view with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
+          // Skip the check if views have 'create' fate (their ids are arbitrary).
+          if ((shapeHC.view.fate != 'create' || (recipeHC.view.fate != 'create' && recipeHC.view.originalFate != 'create')) &&
+              shapeHC.view.id != recipeHC.view.id && shapeHC.view.id != recipeHC.view.originalId) {
+            // this is a different view.
+            continue;
+          }
+        }
+
+        // clone forward and reverse mappings and establish new components.
+        let newMatch = {forward: new Map(forward), reverse: new Map(reverse), score};
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) == recipeHC.particle);
+        newMatch.forward.set(shapeHC.particle, recipeHC.particle);
+        newMatch.reverse.set(recipeHC.particle, shapeHC.particle);
+        if (shapeHC.view) {
+          if (!recipeHC.view) {
+            if (!newMatch.forward.has(shapeHC.view)) {
+              newMatch.forward.set(shapeHC.view, null);
+              newMatch.score -= 2;
+            }
+          } else {
+            newMatch.forward.set(shapeHC.view, recipeHC.view);
+            newMatch.reverse.set(recipeHC.view, shapeHC.view);
+          }
+        }
+        newMatch.forward.set(shapeHC, recipeHC);
+        newMatch.reverse.set(recipeHC, shapeHC);
+        outputList.push(newMatch);
+        matchFound = true;
+      }
+      if (matchFound == false) {
+        let newMatches = [];
+        _buildNewParticleMatches(recipe, shapeHC.particle, match, newMatches);
+        newMatches.forEach(newMatch => {
+          if (shapeHC.view && !newMatch.forward.has(shapeHC.view)) {
+            newMatch.forward.set(shapeHC.view, null);
+            newMatch.score -= 2;
+          }
+          newMatch.forward.set(shapeHC, null);
+          newMatch.score -= 1;
+          outputList.push(newMatch);
+        });
+      }
+    }
+
+    function _buildNewParticleMatches(recipe, shapeParticle, match, newMatches) {
+      let {forward, reverse, score} = match;
+      let matchFound = false;
+      for (let recipeParticle of recipe.particles) {
+        if (reverse.has(recipeParticle))
+          continue;
+
+        if (recipeParticle.name != shapeParticle.name)
+          continue;
+        let newMatch = {forward: new Map(forward), reverse: new Map(reverse), score};
+        newMatch.forward.set(shapeParticle, recipeParticle);
+        newMatch.reverse.set(recipeParticle, shapeParticle);
+        newMatches.push(newMatch);
+        matchFound = true;
+      }
+      if (matchFound == false) {
+        let newMatch = {forward: new Map(), reverse: new Map(), score: 0};
+        forward.forEach((value, key) => newMatch.forward.set(key, value));
+        reverse.forEach((value, key) => newMatch.reverse.set(key, value));
+        if (!newMatch.forward.has(shapeParticle)) {
+          newMatch.forward.set(shapeParticle, null);
+          newMatch.score = match.score - 1;
+        }
+        newMatches.push(newMatch);
+      }
+    }
+
+    function _assignViewsToEmptyPosition(match, emptyViews, nullViews) {
+      if (emptyViews.length == 1) {
+        let matches = [];
+        let {forward, reverse, score} = match;
+        for (let nullView of nullViews) {
+          let newMatch = {forward: new Map(forward), reverse: new Map(reverse), score: score + 1};
+          newMatch.forward.set(nullView, emptyViews[0]);
+          newMatch.reverse.set(emptyViews[0], nullView);
+          matches.push(newMatch);
+        }
+        return matches;
+      }
+      let thisView = emptyViews.pop();
+      let matches = _assignViewsToEmptyPosition(match, emptyViews, nullViews);
+      let newMatches = [];
+      for (let match of matches) {
+        let nullViews = Object.values(shape.views).filter(view => match.forward.get(view) == null);
+        if (nullViews.length > 0)
+          newMatches = newMatches.concat(_assignViewsToEmptyPosition(match, [thisView], nullViews));
+        else
+          newMatches.concat(match);
+      }
+      return newMatches;
+    }
+
+    // Particles and Views are initially stored by a forward map from
+    // shape component to recipe component.
+    // View connections, particles and views are also stored by a reverse map
+    // from recipe component to shape component.
+
+    // Start with a single, empty match
+    let matches = [{forward: new Map(), reverse: new Map(), score: 0}];
+    for (let shapeHC of shape.recipe.handleConnections) {
+      let newMatches = [];
+      for (let match of matches) {
+        // collect matching view connections into a new matches list
+        _buildNewHCMatches(recipe, shapeHC, match, newMatches);
+      }
+      matches = newMatches;
+    }
+
+    for (let shapeParticle of shape.recipe.particles) {
+      if (Object.keys(shapeParticle.connections).length > 0)
+        continue;
+      if (shapeParticle.unnamedConnections.length > 0)
+        continue;
+      let newMatches = [];
+      for (let match of matches)
+        _buildNewParticleMatches(recipe, shapeParticle, match, newMatches);
+      matches = newMatches;
+    }
+
+    let emptyViews = recipe.handles.filter(view => view.connections.length == 0);
+
+    if (emptyViews.length > 0) {
+      let newMatches = [];
+      for (let match of matches) {
+        let nullViews = Object.values(shape.views).filter(view => match.forward.get(view) == null);
+        if (nullViews.length > 0)
+          newMatches = newMatches.concat(_assignViewsToEmptyPosition(match, emptyViews, nullViews));
+        else
+          newMatches.concat(match);
+      }
+      matches = newMatches;
+    }
+
+    return matches.map(({forward, score}) => {
+      let match = {};
+      forward.forEach((value, key) => match[shape.reverse.get(key)] = value);
+      return {match, score};
+    });
+  }
+
+  static directionCounts(view) {
+    let counts = {'in': 0, 'out': 0, 'inout': 0, 'unknown': 0};
+    for (let connection of view.connections) {
+      let direction = connection.direction;
+      if (counts[direction] == undefined)
+        direction = 'unknown';
+      counts[direction]++;
+    }
+    counts.in += counts.inout;
+    counts.out += counts.inout;
+    return counts;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (RecipeUtil);
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(12);
@@ -1889,271 +2154,6 @@ class Schema {
 
 
 
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-class Shape {
-  constructor(recipe, particles, views, hcs) {
-    this.recipe = recipe;
-    this.particles = particles;
-    this.views = views;
-    this.reverse = new Map();
-    for (let p in particles)
-      this.reverse.set(particles[p], p);
-    for (let v in views)
-      this.reverse.set(views[v], v);
-    for (let hc in hcs)
-      this.reverse.set(hcs[hc], hc);
-  }
-}
-
-class RecipeUtil {
-  static makeShape(particles, views, map, recipe) {
-    recipe = recipe || new __WEBPACK_IMPORTED_MODULE_0__recipe_js__["a" /* default */]();
-    let pMap = {};
-    let vMap = {};
-    let hcMap = {};
-    particles.forEach(particle => pMap[particle] = recipe.newParticle(particle));
-    views.forEach(view => vMap[view] = recipe.newHandle());
-    Object.keys(map).forEach(key => {
-      Object.keys(map[key]).forEach(name => {
-        let view = map[key][name];
-        pMap[key].addConnectionName(name).connectToView(vMap[view]);
-        hcMap[key + ':' + name] = pMap[key].connections[name];
-      });
-    });
-    return new Shape(recipe, pMap, vMap, hcMap);
-  }
-
-  static recipeToShape(recipe) {
-    let particles = {};
-    let id = 0;
-    recipe.particles.forEach(particle => particles[particle.name] = particle);
-    let views = {};
-    recipe.handles.forEach(view => views['v' + id++] = view);
-    let hcs = {};
-    recipe.handleConnections.forEach(hc => hcs[hc.particle.name + ':' + hc.name] = hc);
-    return new Shape(recipe, particles, views, hcs);
-  }
-
-  static find(recipe, shape) {
-
-    function _buildNewHCMatches(recipe, shapeHC, match, outputList) {
-      let {forward, reverse, score} = match;
-      let matchFound = false;
-      for (let recipeHC of recipe.handleConnections) {
-        // TODO are there situations where multiple handleConnections should
-        // be allowed to point to the same one in the recipe?
-        if (reverse.has(recipeHC))
-          continue;
-
-        // TODO support unnamed shape particles.
-        if (recipeHC.particle.name != shapeHC.particle.name)
-          continue;
-
-        if (shapeHC.name && shapeHC.name != recipeHC.name)
-          continue;
-
-        // recipeHC is a candidate for shapeHC. shapeHC references a
-        // particle, so recipeHC must reference the matching particle,
-        // or a particle that isn't yet mapped from shape.
-        if (reverse.has(recipeHC.particle)) {
-          if (reverse.get(recipeHC.particle) != shapeHC.particle)
-            continue;
-        } else if (forward.has(shapeHC.particle)) {
-          // we've already mapped the particle referenced by shapeHC
-          // and it doesn't match recipeHC's particle as recipeHC's
-          // particle isn't mapped
-          continue;
-        }
-
-        // shapeHC doesn't necessarily reference a handle, but if it does
-        // then recipeHC needs to reference the matching handle, or one
-        // that isn't yet mapped, or no handle yet.
-        if (shapeHC.view && recipeHC.view) {
-          if (reverse.has(recipeHC.view)) {
-            if (reverse.get(recipeHC.view) != shapeHC.view)
-              continue;
-          } else if (forward.has(shapeHC.view) && forward.get(shapeHC.view) !== null) {
-            continue;
-          }
-          // Check whether shapeHC and recipeHC reference the same view.
-          // Note: the id of a view with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
-          // Skip the check if views have 'create' fate (their ids are arbitrary).
-          if ((shapeHC.view.fate != 'create' || (recipeHC.view.fate != 'create' && recipeHC.view.originalFate != 'create')) &&
-              shapeHC.view.id != recipeHC.view.id && shapeHC.view.id != recipeHC.view.originalId) {
-            // this is a different view.
-            continue;
-          }
-        }
-
-        // clone forward and reverse mappings and establish new components.
-        let newMatch = {forward: new Map(forward), reverse: new Map(reverse), score};
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) == recipeHC.particle);
-        newMatch.forward.set(shapeHC.particle, recipeHC.particle);
-        newMatch.reverse.set(recipeHC.particle, shapeHC.particle);
-        if (shapeHC.view) {
-          if (!recipeHC.view) {
-            if (!newMatch.forward.has(shapeHC.view)) {
-              newMatch.forward.set(shapeHC.view, null);
-              newMatch.score -= 2;
-            }
-          } else {
-            newMatch.forward.set(shapeHC.view, recipeHC.view);
-            newMatch.reverse.set(recipeHC.view, shapeHC.view);
-          }
-        }
-        newMatch.forward.set(shapeHC, recipeHC);
-        newMatch.reverse.set(recipeHC, shapeHC);
-        outputList.push(newMatch);
-        matchFound = true;
-      }
-      if (matchFound == false) {
-        let newMatches = [];
-        _buildNewParticleMatches(recipe, shapeHC.particle, match, newMatches);
-        newMatches.forEach(newMatch => {
-          if (shapeHC.view && !newMatch.forward.has(shapeHC.view)) {
-            newMatch.forward.set(shapeHC.view, null);
-            newMatch.score -= 2;
-          }
-          newMatch.forward.set(shapeHC, null);
-          newMatch.score -= 1;
-          outputList.push(newMatch);
-        });
-      }
-    }
-
-    function _buildNewParticleMatches(recipe, shapeParticle, match, newMatches) {
-      let {forward, reverse, score} = match;
-      let matchFound = false;
-      for (let recipeParticle of recipe.particles) {
-        if (reverse.has(recipeParticle))
-          continue;
-
-        if (recipeParticle.name != shapeParticle.name)
-          continue;
-        let newMatch = {forward: new Map(forward), reverse: new Map(reverse), score};
-        newMatch.forward.set(shapeParticle, recipeParticle);
-        newMatch.reverse.set(recipeParticle, shapeParticle);
-        newMatches.push(newMatch);
-        matchFound = true;
-      }
-      if (matchFound == false) {
-        let newMatch = {forward: new Map(), reverse: new Map(), score: 0};
-        forward.forEach((value, key) => newMatch.forward.set(key, value));
-        reverse.forEach((value, key) => newMatch.reverse.set(key, value));
-        if (!newMatch.forward.has(shapeParticle)) {
-          newMatch.forward.set(shapeParticle, null);
-          newMatch.score = match.score - 1;
-        }
-        newMatches.push(newMatch);
-      }
-    }
-
-    function _assignViewsToEmptyPosition(match, emptyViews, nullViews) {
-      if (emptyViews.length == 1) {
-        let matches = [];
-        let {forward, reverse, score} = match;
-        for (let nullView of nullViews) {
-          let newMatch = {forward: new Map(forward), reverse: new Map(reverse), score: score + 1};
-          newMatch.forward.set(nullView, emptyViews[0]);
-          newMatch.reverse.set(emptyViews[0], nullView);
-          matches.push(newMatch);
-        }
-        return matches;
-      }
-      let thisView = emptyViews.pop();
-      let matches = _assignViewsToEmptyPosition(match, emptyViews, nullViews);
-      let newMatches = [];
-      for (let match of matches) {
-        let nullViews = Object.values(shape.views).filter(view => match.forward.get(view) == null);
-        if (nullViews.length > 0)
-          newMatches = newMatches.concat(_assignViewsToEmptyPosition(match, [thisView], nullViews));
-        else
-          newMatches.concat(match);
-      }
-      return newMatches;
-    }
-
-    // Particles and Views are initially stored by a forward map from
-    // shape component to recipe component.
-    // View connections, particles and views are also stored by a reverse map
-    // from recipe component to shape component.
-
-    // Start with a single, empty match
-    let matches = [{forward: new Map(), reverse: new Map(), score: 0}];
-    for (let shapeHC of shape.recipe.handleConnections) {
-      let newMatches = [];
-      for (let match of matches) {
-        // collect matching view connections into a new matches list
-        _buildNewHCMatches(recipe, shapeHC, match, newMatches);
-      }
-      matches = newMatches;
-    }
-
-    for (let shapeParticle of shape.recipe.particles) {
-      if (Object.keys(shapeParticle.connections).length > 0)
-        continue;
-      if (shapeParticle.unnamedConnections.length > 0)
-        continue;
-      let newMatches = [];
-      for (let match of matches)
-        _buildNewParticleMatches(recipe, shapeParticle, match, newMatches);
-      matches = newMatches;
-    }
-
-    let emptyViews = recipe.handles.filter(view => view.connections.length == 0);
-
-    if (emptyViews.length > 0) {
-      let newMatches = [];
-      for (let match of matches) {
-        let nullViews = Object.values(shape.views).filter(view => match.forward.get(view) == null);
-        if (nullViews.length > 0)
-          newMatches = newMatches.concat(_assignViewsToEmptyPosition(match, emptyViews, nullViews));
-        else
-          newMatches.concat(match);
-      }
-      matches = newMatches;
-    }
-
-    return matches.map(({forward, score}) => {
-      let match = {};
-      forward.forEach((value, key) => match[shape.reverse.get(key)] = value);
-      return {match, score};
-    });
-  }
-
-  static directionCounts(view) {
-    let counts = {'in': 0, 'out': 0, 'inout': 0, 'unknown': 0};
-    for (let connection of view.connections) {
-      let direction = connection.direction;
-      if (counts[direction] == undefined)
-        direction = 'unknown';
-      counts[direction]++;
-    }
-    counts.in += counts.inout;
-    counts.out += counts.inout;
-    return counts;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (RecipeUtil);
 
 
 /***/ }),
@@ -2872,7 +2872,7 @@ class DescriptionFormatter {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__build_manifest_parser_js__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__schema_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__schema_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_search_js__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__shape_js__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__type_js__ = __webpack_require__(4);
@@ -4136,7 +4136,7 @@ class Scheduler {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(92);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(93);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4393,7 +4393,7 @@ class Loader {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tracelib_trace_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__schema_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__schema_js__ = __webpack_require__(8);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4949,7 +4949,7 @@ ${this._slotsToManifestString()}
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -5664,7 +5664,7 @@ let instance = null;
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DomContext; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return SetDomContext; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shell_components_xen_xen_template_js__ = __webpack_require__(93);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shell_components_xen_xen_template_js__ = __webpack_require__(94);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6216,7 +6216,7 @@ class Search {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__schema_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__schema_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__relation_js__ = __webpack_require__(19);
 /**
@@ -6660,7 +6660,7 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(8);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -7351,7 +7351,7 @@ ${this.activeRecipe.toString()}`;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_deviceinfo_web_js__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_recipe_util_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_recipe_util_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__strategies_convert_constraints_to_connections_js__ = __webpack_require__(79);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__strategies_assign_remote_views_js__ = __webpack_require__(76);
@@ -7359,27 +7359,29 @@ ${this.activeRecipe.toString()}`;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__strategies_assign_views_by_tag_and_type_js__ = __webpack_require__(77);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_init_population_js__ = __webpack_require__(84);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_map_slots_js__ = __webpack_require__(86);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_match_particle_by_verb_js__ = __webpack_require__(87);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_match_recipe_by_verb_js__ = __webpack_require__(88);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__strategies_name_unnamed_connections_js__ = __webpack_require__(89);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_match_particle_by_verb_js__ = __webpack_require__(88);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_match_recipe_by_verb_js__ = __webpack_require__(89);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__strategies_name_unnamed_connections_js__ = __webpack_require__(90);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__strategies_add_use_views_js__ = __webpack_require__(75);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__strategies_create_description_handle_js__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__manifest_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__strategies_init_search_js__ = __webpack_require__(85);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__strategies_search_tokens_to_particles_js__ = __webpack_require__(90);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__strategies_search_tokens_to_particles_js__ = __webpack_require__(91);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__strategies_fallback_fate_js__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__strategies_group_handle_connections_js__ = __webpack_require__(83);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__strategies_combined_strategy_js__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__speculator_js__ = __webpack_require__(72);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__description_js__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__tracelib_trace_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__debug_strategy_explorer_adapter_js__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__strategies_match_free_handles_to_connections_js__ = __webpack_require__(87);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__speculator_js__ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__description_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__tracelib_trace_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__debug_strategy_explorer_adapter_js__ = __webpack_require__(51);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -7462,6 +7464,7 @@ class Planner {
       new __WEBPACK_IMPORTED_MODULE_14__strategies_name_unnamed_connections_js__["a" /* default */](arc),
       new __WEBPACK_IMPORTED_MODULE_15__strategies_add_use_views_js__["a" /* default */](),
       new __WEBPACK_IMPORTED_MODULE_16__strategies_create_description_handle_js__["a" /* default */](),
+      new __WEBPACK_IMPORTED_MODULE_23__strategies_match_free_handles_to_connections_js__["a" /* default */]()
     ];
     this.strategizer = new __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["b" /* Strategizer */](strategies, [], {
       maxPopulation: 100,
@@ -7477,7 +7480,7 @@ class Planner {
 
   // Specify a timeout value less than zero to disable timeouts.
   async plan(timeout, generations) {
-    let trace = __WEBPACK_IMPORTED_MODULE_25__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::plan', args: {timeout}});
+    let trace = __WEBPACK_IMPORTED_MODULE_26__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::plan', args: {timeout}});
     timeout = timeout || -1;
     let allResolved = [];
     let now = () => (typeof performance == 'object') ? performance.now() : process.hrtime();
@@ -7549,11 +7552,11 @@ class Planner {
   }
   async suggest(timeout, generations) {
     if (!generations && this._arc._debugging) generations = [];
-    let trace = __WEBPACK_IMPORTED_MODULE_25__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::suggest', args: {timeout}});
+    let trace = __WEBPACK_IMPORTED_MODULE_26__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::suggest', args: {timeout}});
     let plans = await trace.wait(() => this.plan(timeout, generations));
     trace.resume();
     let suggestions = [];
-    let speculator = new __WEBPACK_IMPORTED_MODULE_23__speculator_js__["a" /* default */]();
+    let speculator = new __WEBPACK_IMPORTED_MODULE_24__speculator_js__["a" /* default */]();
     // We don't actually know how many threads the VM will decide to use to
     // handle the parallel speculation, but at least we know we won't kick off
     // more than this number and so can somewhat limit resource utilization.
@@ -7619,7 +7622,7 @@ class Planner {
     trace.end();
 
     if (this._arc._debugging) {
-      __WEBPACK_IMPORTED_MODULE_26__debug_strategy_explorer_adapter_js__["a" /* default */].processGenerations(generations);
+      __WEBPACK_IMPORTED_MODULE_27__debug_strategy_explorer_adapter_js__["a" /* default */].processGenerations(generations);
     }
 
     return results;
@@ -16047,7 +16050,7 @@ class Identifier {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_channel_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(8);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -18605,9 +18608,9 @@ class AddUseViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -18648,7 +18651,7 @@ class AssignRemoteViews extends __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -18764,7 +18767,7 @@ class CombinedStrategy extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategi
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -18864,9 +18867,9 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -19250,7 +19253,7 @@ class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -19394,6 +19397,61 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+
+
+/*
+ * Match free handles (i.e. handles that aren't connected to any connections)
+ * to connections.
+ */
+class MatchFreeHandlesToConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["a" /* Strategy */] {
+  async generate(strategizer) {
+    let self = this;
+
+    let results = __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */] {
+      onView(recipe, handle) {
+        if (handle.connections.length > 0)
+          return;
+
+        let matchingConnections = recipe.handleConnections.filter(connection => connection.view == undefined);
+           
+        return matchingConnections.map(connection => {
+          return (recipe, handle) => {
+            let newConnection = recipe.updateToClone({connection}).connection;
+            newConnection.connectToView(handle);
+            return 1;
+          };
+        });
+      }
+    }(__WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */].Permuted), this);
+
+    return {results, generate: null};
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = MatchFreeHandlesToConnections;
+
+
+
+/***/ }),
+/* 88 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -19446,7 +19504,7 @@ class MatchParticleByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strat
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19506,7 +19564,7 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19558,7 +19616,7 @@ class NameUnnamedConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_st
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19662,7 +19720,7 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19710,7 +19768,7 @@ class TupleFields {
 
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19823,7 +19881,7 @@ const nob = () => Object.create(null);
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20195,7 +20253,7 @@ const createTemplate = innerHTML => {
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
