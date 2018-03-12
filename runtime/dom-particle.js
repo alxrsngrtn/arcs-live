@@ -34,23 +34,44 @@ class DomParticle extends XenStateMixin(Particle) {
     // TODO: only supports a single template for now. add multiple templates support.
     return this.template;
   }
-  /** @method _shouldRender(props, state)
+  /** @method willReceiveProps(props, state, oldProps, oldState)
+   * Override if necessary, to do things when props change.
+   */
+  willReceiveProps() {
+  }
+  /** @method update(props, state, oldProps, oldState)
+   * Override if necessary, to modify superclass config.
+   */
+  update() {
+  }
+  /** @method shouldRender(props, state, oldProps, oldState)
    * Override to return false if the Particle won't use
    * it's slot.
    */
-  _shouldRender(props, state) {
+  shouldRender() {
     return true;
   }
-  /** @method _render(props, state)
+  /** @method render(props, state, oldProps, oldState)
    * Override to return a dictionary to map into the template.
    */
-  _render(props, state) {
+  render() {
     return {};
   }
-  /** @method _willReceiveProps(props)
-   * Override if necessary, to do things when props change.
-   */
-  _willReceiveProps(props) {
+  setState(state) {
+    this._setState(state);
+  }
+  setIfDirty(state) {
+    this._setIfDirty(state);
+  }
+  _willReceiveProps(...args) {
+    this.willReceiveProps(...args);
+  }
+  _update(...args) {
+    this.update(...args);
+    if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
+      this.relevance = 1; // TODO: improve relevance signal.
+    }
+    this.config.slotNames.forEach(s => this.renderSlot(s, ['model']));
   }
   /** @method get config()
    * Override if necessary, to modify superclass config.
@@ -59,7 +80,7 @@ class DomParticle extends XenStateMixin(Particle) {
     // TODO(sjmiles): getter that does work is a bad idea, this is temporary
     return {
       views: this.spec.inputs.map(i => i.name),
-      // TODO(mmandlis): this.spec needs to be replace with a particle-spec loaded from
+      // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
       // .manifest files, instead of .ptcl ones.
       slotNames: [...this.spec.slots.values()].map(s => s.name)
     };
@@ -70,15 +91,13 @@ class DomParticle extends XenStateMixin(Particle) {
   async setViews(views) {
     this._views = views;
     let config = this.config;
-    //let readableViews = config.views.filter(name => views.get(name).canRead);
-    //this.when([new ViewChanges(views, readableViews, 'change')], async () => {
     this.when([new ViewChanges(views, config.views, 'change')], async () => {
-      await this._updateAllViews(views, config);
+      await this._handlesToProps(views, config);
     });
     // make sure we invalidate once, even if there are no incoming views
     this._setState({});
   }
-  async _updateAllViews(views, config) {
+  async _handlesToProps(views, config) {
     // acquire (async) list data from views
     let data = await Promise.all(
       config.views
@@ -92,26 +111,21 @@ class DomParticle extends XenStateMixin(Particle) {
     });
     this._setProps(props);
   }
-  _update(props, state) {
-    if (this._shouldRender(this._props, this._state)) { // TODO: should _shouldRender be slot specific?
-      this.relevance = 1; // TODO: improve relevance signal.
-    }
-    this.config.slotNames.forEach(s => this.render(s, ['model']));
-  }
-
-  render(slotName, contentTypes) {
+  renderSlot(slotName, contentTypes) {
+    const stateArgs = [this._props, this._state, this._lastProps, this._lastState];
     let slot = this.getSlot(slotName);
     if (!slot) {
       return; // didn't receive StartRender.
     }
     contentTypes.forEach(ct => slot._requestedContentTypes.add(ct));
-    if (this._shouldRender(this._props, this._state)) {
+    // TODO(sjmiles): redundant, same answer for every
+    if (this.shouldRender(...stateArgs)) {
       let content = {};
       if (slot._requestedContentTypes.has('template')) {
         content['template'] = this.getTemplate(slot.slotName);
       }
       if (slot._requestedContentTypes.has('model')) {
-        content['model'] = this._render(this._props, this._state);
+        content['model'] = this.render(...stateArgs);
       }
       slot.render(content);
     } else if (slot.isRendered) {
@@ -121,6 +135,7 @@ class DomParticle extends XenStateMixin(Particle) {
   }
   fireEvent(slotName, {handler, data}) {
     if (this[handler]) {
+      // TODO(sjmiles): remove `this._state` parameter
       this[handler]({data}, this._state);
     }
   }

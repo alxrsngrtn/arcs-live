@@ -126,11 +126,11 @@ recipe
         }
 
         // Update props of all particle's views.
-        this._updateAllViews(views, this.config);
+        this._handlesToProps(views, this.config);
       });
 
     }
-    _willReceiveProps(props) {
+    willReceiveProps(props) {
       let propsItems = TransformationDomParticle.propsToItems(props.collection);
 
       this._updateRenderModel(propsItems, this._state.hostedItems || []);

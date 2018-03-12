@@ -1103,23 +1103,44 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     // TODO: only supports a single template for now. add multiple templates support.
     return this.template;
   }
-  /** @method _shouldRender(props, state)
+  /** @method willReceiveProps(props, state, oldProps, oldState)
+   * Override if necessary, to do things when props change.
+   */
+  willReceiveProps() {
+  }
+  /** @method update(props, state, oldProps, oldState)
+   * Override if necessary, to modify superclass config.
+   */
+  update() {
+  }
+  /** @method shouldRender(props, state, oldProps, oldState)
    * Override to return false if the Particle won't use
    * it's slot.
    */
-  _shouldRender(props, state) {
+  shouldRender() {
     return true;
   }
-  /** @method _render(props, state)
+  /** @method render(props, state, oldProps, oldState)
    * Override to return a dictionary to map into the template.
    */
-  _render(props, state) {
+  render() {
     return {};
   }
-  /** @method _willReceiveProps(props)
-   * Override if necessary, to do things when props change.
-   */
-  _willReceiveProps(props) {
+  setState(state) {
+    this._setState(state);
+  }
+  setIfDirty(state) {
+    this._setIfDirty(state);
+  }
+  _willReceiveProps(...args) {
+    this.willReceiveProps(...args);
+  }
+  _update(...args) {
+    this.update(...args);
+    if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
+      this.relevance = 1; // TODO: improve relevance signal.
+    }
+    this.config.slotNames.forEach(s => this.renderSlot(s, ['model']));
   }
   /** @method get config()
    * Override if necessary, to modify superclass config.
@@ -1128,7 +1149,7 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     // TODO(sjmiles): getter that does work is a bad idea, this is temporary
     return {
       views: this.spec.inputs.map(i => i.name),
-      // TODO(mmandlis): this.spec needs to be replace with a particle-spec loaded from
+      // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
       // .manifest files, instead of .ptcl ones.
       slotNames: [...this.spec.slots.values()].map(s => s.name)
     };
@@ -1139,15 +1160,13 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
   async setViews(views) {
     this._views = views;
     let config = this.config;
-    //let readableViews = config.views.filter(name => views.get(name).canRead);
-    //this.when([new ViewChanges(views, readableViews, 'change')], async () => {
     this.when([new __WEBPACK_IMPORTED_MODULE_1__particle_js__["c" /* ViewChanges */](views, config.views, 'change')], async () => {
-      await this._updateAllViews(views, config);
+      await this._handlesToProps(views, config);
     });
     // make sure we invalidate once, even if there are no incoming views
     this._setState({});
   }
-  async _updateAllViews(views, config) {
+  async _handlesToProps(views, config) {
     // acquire (async) list data from views
     let data = await Promise.all(
       config.views
@@ -1161,26 +1180,21 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     });
     this._setProps(props);
   }
-  _update(props, state) {
-    if (this._shouldRender(this._props, this._state)) { // TODO: should _shouldRender be slot specific?
-      this.relevance = 1; // TODO: improve relevance signal.
-    }
-    this.config.slotNames.forEach(s => this.render(s, ['model']));
-  }
-
-  render(slotName, contentTypes) {
+  renderSlot(slotName, contentTypes) {
+    const stateArgs = [this._props, this._state, this._lastProps, this._lastState];
     let slot = this.getSlot(slotName);
     if (!slot) {
       return; // didn't receive StartRender.
     }
     contentTypes.forEach(ct => slot._requestedContentTypes.add(ct));
-    if (this._shouldRender(this._props, this._state)) {
+    // TODO(sjmiles): redundant, same answer for every
+    if (this.shouldRender(...stateArgs)) {
       let content = {};
       if (slot._requestedContentTypes.has('template')) {
         content['template'] = this.getTemplate(slot.slotName);
       }
       if (slot._requestedContentTypes.has('model')) {
-        content['model'] = this._render(this._props, this._state);
+        content['model'] = this.render(...stateArgs);
       }
       slot.render(content);
     } else if (slot.isRendered) {
@@ -1190,6 +1204,7 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
   }
   fireEvent(slotName, {handler, data}) {
     if (this[handler]) {
+      // TODO(sjmiles): remove `this._state` parameter
       this[handler]({data}, this._state);
     }
   }
@@ -1809,10 +1824,10 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
   getTemplate(slotName) {
     return this._state.template;
   }
-  _render(props, state) {
+  render(props, state) {
     return state.renderModel;
   }
-  _shouldRender(props, state) {
+  shouldRender(props, state) {
     return Boolean(state.template && state.renderModel);
   }
 
@@ -2172,7 +2187,7 @@ class InnerPEC {
       }
 
       particle._slotByName.set(slotName, new Slotlet(this, particle, slotName));
-      particle.render(slotName, contentTypes);
+      particle.renderSlot(slotName, contentTypes);
     };
 
     this._apiPort.onStopRender = ({particle, slotName}) => {
@@ -4042,7 +4057,7 @@ const nob = () => Object.create(null);
     return (typeof value === 'object') || (this._props[name] !== value);
   }
   _setProps(props) {
-    // TODO(sjmiles): should this be a replace instead of a merge?
+    // TODO(sjmiles): should be a replace instead of a merge
     Object.assign(this._pendingProps, props);
     this._invalidateProps();
   }
@@ -4054,59 +4069,70 @@ const nob = () => Object.create(null);
     Object.assign(this._state, state);
     this._invalidate();
   }
+  _setIfDirty(object) {
+    let dirty = false;
+    const state = this._state;
+    for (const property in object) {
+      const value = object[property];
+      if (state[property] !== value) {
+        dirty = true;
+        state[property] = value;
+      }
+    }
+    if (dirty) {
+      this._invalidate();
+      return true;
+    }
+  }
   _async(fn) {
-    // TODO(sjmiles): SystemJS throws unless `Promise` is `window.Promise`
     return Promise.resolve().then(fn.bind(this));
     //return setTimeout(fn.bind(this), 10);
   }
   _invalidate() {
     if (!this._validator) {
-      //this._log('register _async validate');
-      //console.log(this.localName + (this.id ? '#' + this.id : '') + ': invalidated');
       this._validator = this._async(this._validate);
     }
   }
+  _getStateArgs() {
+    return [this._props, this._state, this._lastProps, this._lastState];
+  }
   _validate() {
+    const stateArgs = this._getStateArgs();
     // try..catch to ensure we nullify `validator` before return
     try {
-      // TODO(sjmiles): should this be a replace instead of a merge?
+      // TODO(sjmiles): should be a replace instead of a merge
       Object.assign(this._props, this._pendingProps);
       if (this._propsInvalid) {
         // TODO(sjmiles): should/can have different timing from rendering?
-        this._willReceiveProps(this._props, this._state, this._lastProps, this._lastState);
+        this._willReceiveProps(...stateArgs);
         this._propsInvalid = false;
       }
-      if (this._shouldUpdate(this._props, this._state, this._lastProps, this._lastState)) {
+      if (this._shouldUpdate(...stateArgs)) {
         // TODO(sjmiles): consider throttling render to rAF
         this._ensureMount();
-        this._update(this._props, this._state, this._lastProps, this._lastState);
+        this._update(...stateArgs);
+        // affordance for post-render tasks
+        this._didUpdate(...stateArgs);
       }
     } catch (x) {
       console.error(x);
     }
     // nullify validator _after_ methods so state changes don't reschedule validation
-    // TODO(sjmiles): can/should there ever be state changes fom inside _update()? In React no, in Xen yes (until I have a good reason not too).
     this._validator = null;
     // save the old props and state
-    // TODO(sjmiles): don't need to create these for default _shouldUpdate
     this._lastProps = Object.assign(nob(), this._props);
     this._lastState = Object.assign(nob(), this._state);
-    this._didUpdate(this._props, this._state, this._lastProps, this._lastState);
   }
   _ensureMount() {
   }
-  _willReceiveProps(props, state) {
+  _willReceiveProps() {
   }
-  /*
-  _willReceiveState(props, state) {
-  }
-  */
-  _shouldUpdate(props, state, lastProps, lastState) {
+  _shouldUpdate() {
     return true;
   }
-  _update(props, state, lastProps, lastState) {
+  _update() {
   }
-  _didUpdate(props, state, lastProps, lastState) {
+  _didUpdate() {
   }
 });
 

@@ -1,5 +1,5 @@
-commit 124a822c630a4319ff1c5cf2157dc7bc6792fee1
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Mar 12 10:18:14 2018 -0700
+commit 9488d37577c79f16f9c0288318b3a4987aa70e49
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Mon Mar 12 11:51:10 2018 -0700
 
-    rename view to hande in new strategy and remove debug assert
+    fewer underscores
