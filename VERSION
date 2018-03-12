@@ -1,5 +1,5 @@
-commit 3ce9f1a17cbc5fca90c1d7b091629e8e070719f2
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Mon Mar 12 22:26:20 2018 +1100
+commit 4e25512a6ea73031b7cd800a97c2afcdd0a91a28
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Sat Mar 10 11:24:40 2018 -0800
 
-    Continue to support previous literal format for schema
+    fix ShowCollection - rename items to hostedItems
