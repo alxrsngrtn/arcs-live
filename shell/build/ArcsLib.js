@@ -7920,10 +7920,10 @@ class SlotComposer {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__arcs_runtime_loader_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__arcs_runtime_particle_js__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__arcs_runtime_dom_particle_js__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__arcs_runtime_transformation_dom_particle_js__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_transformation_dom_particle_js__ = __webpack_require__(35);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7943,7 +7943,7 @@ const logFactory = (preamble, color, log='log') => console[log].bind(console, `P
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 const dumbCache = {};
 
-class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__arcs_runtime_loader_js__["a" /* default */] {
+class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a" /* default */] {
   constructor(urlMap) {
     super();
     this._urlMap = urlMap;
@@ -7997,7 +7997,7 @@ class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__arcs_runtime_loader_js_
     //  _resolve method allows particles to request remapping of assets paths
     //  for use in DOM
     let resolver = this._resolve.bind(this);
-    return particleWrapper({particle: __WEBPACK_IMPORTED_MODULE_1__arcs_runtime_particle_js__["a" /* default */], Particle: __WEBPACK_IMPORTED_MODULE_1__arcs_runtime_particle_js__["a" /* default */].Particle, DomParticle: __WEBPACK_IMPORTED_MODULE_2__arcs_runtime_dom_particle_js__["a" /* default */], TransformationDomParticle: __WEBPACK_IMPORTED_MODULE_3__arcs_runtime_transformation_dom_particle_js__["a" /* default */], resolver, log, html});
+    return particleWrapper({particle: __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__["a" /* default */], Particle: __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__["a" /* default */].Particle, DomParticle: __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__["a" /* default */], TransformationDomParticle: __WEBPACK_IMPORTED_MODULE_3__runtime_transformation_dom_particle_js__["a" /* default */], resolver, log, html});
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = BrowserLoader;
@@ -20200,15 +20200,15 @@ const createTemplate = innerHTML => {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__arcs_runtime_arc_js__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__arcs_runtime_description_js__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__arcs_runtime_manifest_js__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__arcs_runtime_planner_js__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__arcs_runtime_slot_composer_js__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__arcs_runtime_type_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_arc_js__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_description_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_manifest_js__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_planner_js__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_slot_composer_js__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__runtime_type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__browser_loader_js__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__arcs_tracelib_trace_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__arcs_runtime_scheduler_js__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__tracelib_trace_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__runtime_scheduler_js__ = __webpack_require__(15);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -20233,15 +20233,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 window.Arcs = {
   version: '0.3',
-  Arc: __WEBPACK_IMPORTED_MODULE_0__arcs_runtime_arc_js__["a" /* default */],
-  Description: __WEBPACK_IMPORTED_MODULE_1__arcs_runtime_description_js__["a" /* default */],
-  Manifest: __WEBPACK_IMPORTED_MODULE_2__arcs_runtime_manifest_js__["a" /* default */],
-  Planner: __WEBPACK_IMPORTED_MODULE_3__arcs_runtime_planner_js__["a" /* default */],
-  SlotComposer: __WEBPACK_IMPORTED_MODULE_4__arcs_runtime_slot_composer_js__["a" /* default */],
-  Type: __WEBPACK_IMPORTED_MODULE_5__arcs_runtime_type_js__["a" /* default */],
+  Arc: __WEBPACK_IMPORTED_MODULE_0__runtime_arc_js__["a" /* default */],
+  Description: __WEBPACK_IMPORTED_MODULE_1__runtime_description_js__["a" /* default */],
+  Manifest: __WEBPACK_IMPORTED_MODULE_2__runtime_manifest_js__["a" /* default */],
+  Planner: __WEBPACK_IMPORTED_MODULE_3__runtime_planner_js__["a" /* default */],
+  SlotComposer: __WEBPACK_IMPORTED_MODULE_4__runtime_slot_composer_js__["a" /* default */],
+  Type: __WEBPACK_IMPORTED_MODULE_5__runtime_type_js__["a" /* default */],
   BrowserLoader: __WEBPACK_IMPORTED_MODULE_6__browser_loader_js__["a" /* default */],
-  Tracing: __WEBPACK_IMPORTED_MODULE_7__arcs_tracelib_trace_js__["a" /* default */],
-  scheduler: __WEBPACK_IMPORTED_MODULE_8__arcs_runtime_scheduler_js__["a" /* default */]
+  Tracing: __WEBPACK_IMPORTED_MODULE_7__tracelib_trace_js__["a" /* default */],
+  scheduler: __WEBPACK_IMPORTED_MODULE_8__runtime_scheduler_js__["a" /* default */]
 };
 
 

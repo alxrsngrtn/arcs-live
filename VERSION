@@ -1,5 +1,5 @@
-commit b464ba193f2bcc2427e0a71c05142894a43bff2b
+commit c337ce087bdbc290f635138288d44387bc3e11d4
 Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Mon Mar 12 12:42:36 2018 +1100
+Date:   Mon Mar 12 14:49:21 2018 +1100
 
-    Lint
+    Dont assume we are serving from a directory called arcs/
