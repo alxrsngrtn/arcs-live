@@ -1,5 +1,7 @@
-commit 03ed4e03400c0ebf52cc654102e01eadd60bb1c8
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Mar 12 22:47:25 2018 +1100
+commit 806f6f2de14fb6ea7c3a2bf8fbcd1a5f8a684fe6
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Tue Mar 13 09:41:32 2018 +1100
 
-    Prevent exception when connections don't reference a handle.
+    Put back index.debug.html
+    
+    Accidently removed in #934
