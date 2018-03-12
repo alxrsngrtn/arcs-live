@@ -1,5 +1,5 @@
-commit 4e25512a6ea73031b7cd800a97c2afcdd0a91a28
+commit 124a822c630a4319ff1c5cf2157dc7bc6792fee1
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Sat Mar 10 11:24:40 2018 -0800
+Date:   Mon Mar 12 10:18:14 2018 -0700
 
-    fix ShowCollection - rename items to hostedItems
+    rename view to hande in new strategy and remove debug assert

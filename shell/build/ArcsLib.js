@@ -266,7 +266,7 @@ class Recipe {
            this._connectionConstraints.length == 0;
   }
 
-  findView(id) {
+  findHandle(id) {
     for (let handle of this.handles) {
       if (handle.id == id)
         return handle;
@@ -367,9 +367,9 @@ class Recipe {
         particles.push(connection.particle);
         seenParticles.add(connection.particle);
       }
-      if (connection.view && !seenHandles.has(connection.view)) {
-        handles.push(connection.view);
-        seenHandles.add(connection.view);
+      if (connection.handle && !seenHandles.has(connection.handle)) {
+        handles.push(connection.handle);
+        seenHandles.add(connection.handle);
       }
     }
 
@@ -1580,47 +1580,47 @@ init();
 
 
 class Shape {
-  constructor(recipe, particles, views, hcs) {
+  constructor(recipe, particles, handles, hcs) {
     this.recipe = recipe;
     this.particles = particles;
-    this.views = views;
+    this.handles = handles;
     this.reverse = new Map();
     for (let p in particles)
       this.reverse.set(particles[p], p);
-    for (let v in views)
-      this.reverse.set(views[v], v);
+    for (let h in handles)
+      this.reverse.set(handles[h], h);
     for (let hc in hcs)
       this.reverse.set(hcs[hc], hc);
   }
 }
 
 class RecipeUtil {
-  static makeShape(particles, views, map, recipe) {
+  static makeShape(particles, handles, map, recipe) {
     recipe = recipe || new __WEBPACK_IMPORTED_MODULE_0__recipe_js__["a" /* default */]();
     let pMap = {};
-    let vMap = {};
+    let hMap = {};
     let hcMap = {};
     particles.forEach(particle => pMap[particle] = recipe.newParticle(particle));
-    views.forEach(view => vMap[view] = recipe.newHandle());
+    handles.forEach(handle => hMap[handle] = recipe.newHandle());
     Object.keys(map).forEach(key => {
       Object.keys(map[key]).forEach(name => {
-        let view = map[key][name];
-        pMap[key].addConnectionName(name).connectToView(vMap[view]);
+        let handle = map[key][name];
+        pMap[key].addConnectionName(name).connectToHandle(hMap[handle]);
         hcMap[key + ':' + name] = pMap[key].connections[name];
       });
     });
-    return new Shape(recipe, pMap, vMap, hcMap);
+    return new Shape(recipe, pMap, hMap, hcMap);
   }
 
   static recipeToShape(recipe) {
     let particles = {};
     let id = 0;
     recipe.particles.forEach(particle => particles[particle.name] = particle);
-    let views = {};
-    recipe.handles.forEach(view => views['v' + id++] = view);
+    let handles = {};
+    recipe.handles.forEach(handle => handles['h' + id++] = handle);
     let hcs = {};
     recipe.handleConnections.forEach(hc => hcs[hc.particle.name + ':' + hc.name] = hc);
-    return new Shape(recipe, particles, views, hcs);
+    return new Shape(recipe, particles, handles, hcs);
   }
 
   static find(recipe, shape) {
@@ -1657,19 +1657,19 @@ class RecipeUtil {
         // shapeHC doesn't necessarily reference a handle, but if it does
         // then recipeHC needs to reference the matching handle, or one
         // that isn't yet mapped, or no handle yet.
-        if (shapeHC.view && recipeHC.view) {
-          if (reverse.has(recipeHC.view)) {
-            if (reverse.get(recipeHC.view) != shapeHC.view)
+        if (shapeHC.handle && recipeHC.handle) {
+          if (reverse.has(recipeHC.handle)) {
+            if (reverse.get(recipeHC.handle) != shapeHC.handle)
               continue;
-          } else if (forward.has(shapeHC.view) && forward.get(shapeHC.view) !== null) {
+          } else if (forward.has(shapeHC.handle) && forward.get(shapeHC.handle) !== null) {
             continue;
           }
-          // Check whether shapeHC and recipeHC reference the same view.
-          // Note: the id of a view with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
-          // Skip the check if views have 'create' fate (their ids are arbitrary).
-          if ((shapeHC.view.fate != 'create' || (recipeHC.view.fate != 'create' && recipeHC.view.originalFate != 'create')) &&
-              shapeHC.view.id != recipeHC.view.id && shapeHC.view.id != recipeHC.view.originalId) {
-            // this is a different view.
+          // Check whether shapeHC and recipeHC reference the same handle.
+          // Note: the id of a handle with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
+          // Skip the check if handles have 'create' fate (their ids are arbitrary).
+          if ((shapeHC.handle.fate != 'create' || (recipeHC.handle.fate != 'create' && recipeHC.handle.originalFate != 'create')) &&
+              shapeHC.handle.id != recipeHC.handle.id && shapeHC.handle.id != recipeHC.handle.originalId) {
+            // this is a different handle.
             continue;
           }
         }
@@ -1679,15 +1679,15 @@ class RecipeUtil {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) == recipeHC.particle);
         newMatch.forward.set(shapeHC.particle, recipeHC.particle);
         newMatch.reverse.set(recipeHC.particle, shapeHC.particle);
-        if (shapeHC.view) {
-          if (!recipeHC.view) {
-            if (!newMatch.forward.has(shapeHC.view)) {
-              newMatch.forward.set(shapeHC.view, null);
+        if (shapeHC.handle) {
+          if (!recipeHC.handle) {
+            if (!newMatch.forward.has(shapeHC.handle)) {
+              newMatch.forward.set(shapeHC.handle, null);
               newMatch.score -= 2;
             }
           } else {
-            newMatch.forward.set(shapeHC.view, recipeHC.view);
-            newMatch.reverse.set(recipeHC.view, shapeHC.view);
+            newMatch.forward.set(shapeHC.handle, recipeHC.handle);
+            newMatch.reverse.set(recipeHC.handle, shapeHC.handle);
           }
         }
         newMatch.forward.set(shapeHC, recipeHC);
@@ -1699,8 +1699,8 @@ class RecipeUtil {
         let newMatches = [];
         _buildNewParticleMatches(recipe, shapeHC.particle, match, newMatches);
         newMatches.forEach(newMatch => {
-          if (shapeHC.view && !newMatch.forward.has(shapeHC.view)) {
-            newMatch.forward.set(shapeHC.view, null);
+          if (shapeHC.handle && !newMatch.forward.has(shapeHC.handle)) {
+            newMatch.forward.set(shapeHC.handle, null);
             newMatch.score -= 2;
           }
           newMatch.forward.set(shapeHC, null);
@@ -1737,34 +1737,34 @@ class RecipeUtil {
       }
     }
 
-    function _assignViewsToEmptyPosition(match, emptyViews, nullViews) {
-      if (emptyViews.length == 1) {
+    function _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles) {
+      if (emptyHandles.length == 1) {
         let matches = [];
         let {forward, reverse, score} = match;
-        for (let nullView of nullViews) {
+        for (let nullHandle of nullHandles) {
           let newMatch = {forward: new Map(forward), reverse: new Map(reverse), score: score + 1};
-          newMatch.forward.set(nullView, emptyViews[0]);
-          newMatch.reverse.set(emptyViews[0], nullView);
+          newMatch.forward.set(nullHandle, emptyHandles[0]);
+          newMatch.reverse.set(emptyHandles[0], nullHandle);
           matches.push(newMatch);
         }
         return matches;
       }
-      let thisView = emptyViews.pop();
-      let matches = _assignViewsToEmptyPosition(match, emptyViews, nullViews);
+      let thisHandle = emptyHandles.pop();
+      let matches = _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles);
       let newMatches = [];
       for (let match of matches) {
-        let nullViews = Object.values(shape.views).filter(view => match.forward.get(view) == null);
-        if (nullViews.length > 0)
-          newMatches = newMatches.concat(_assignViewsToEmptyPosition(match, [thisView], nullViews));
+        let nullHandles = Object.values(shape.handle).filter(handle => match.forward.get(handle) == null);
+        if (nullHandles.length > 0)
+          newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, [thisHandle], nullHandles));
         else
           newMatches.concat(match);
       }
       return newMatches;
     }
 
-    // Particles and Views are initially stored by a forward map from
+    // Particles and Handles are initially stored by a forward map from
     // shape component to recipe component.
-    // View connections, particles and views are also stored by a reverse map
+    // Handle connections, particles and handles are also stored by a reverse map
     // from recipe component to shape component.
 
     // Start with a single, empty match
@@ -1772,7 +1772,7 @@ class RecipeUtil {
     for (let shapeHC of shape.recipe.handleConnections) {
       let newMatches = [];
       for (let match of matches) {
-        // collect matching view connections into a new matches list
+        // collect matching handle connections into a new matches list
         _buildNewHCMatches(recipe, shapeHC, match, newMatches);
       }
       matches = newMatches;
@@ -1789,14 +1789,14 @@ class RecipeUtil {
       matches = newMatches;
     }
 
-    let emptyViews = recipe.handles.filter(view => view.connections.length == 0);
+    let emptyHandles = recipe.handles.filter(handle => handle.connections.length == 0);
 
-    if (emptyViews.length > 0) {
+    if (emptyHandles.length > 0) {
       let newMatches = [];
       for (let match of matches) {
-        let nullViews = Object.values(shape.views).filter(view => match.forward.get(view) == null);
-        if (nullViews.length > 0)
-          newMatches = newMatches.concat(_assignViewsToEmptyPosition(match, emptyViews, nullViews));
+        let nullHandles = Object.values(shape.handles).filter(handle => match.forward.get(handle) == null);
+        if (nullHandles.length > 0)
+          newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, emptyHandles, nullHandles));
         else
           newMatches.concat(match);
       }
@@ -1810,9 +1810,9 @@ class RecipeUtil {
     });
   }
 
-  static directionCounts(view) {
+  static directionCounts(handle) {
     let counts = {'in': 0, 'out': 0, 'inout': 0, 'unknown': 0};
-    for (let connection of view.connections) {
+    for (let connection of handle.connections) {
       let direction = connection.direction;
       if (counts[direction] == undefined)
         direction = 'unknown';
@@ -2443,12 +2443,12 @@ class Description {
     return this._arc.activeRecipe.name;
   }
 
-  async getHandleDescription(recipeView) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(recipeView.connections.length > 0, 'view has no connections?');
+  async getHandleDescription(recipeHandle) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(recipeHandle.connections.length > 0, 'handle has no connections?');
 
     let formatter = new DescriptionFormatter(this);
     formatter.excludeValues = true;
-    return await formatter.getHandleDescription(recipeView);
+    return await formatter.getHandleDescription(recipeHandle);
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Description;
@@ -2460,7 +2460,7 @@ class DescriptionFormatter {
     this._arc = description._arc;
     this._particleDescriptions = [];
 
-    this.seenViews = new Set();
+    this.seenHandles = new Set();
     this.seenParticles = new Set();
     this.excludeValues = false;
   }
@@ -2487,12 +2487,12 @@ class DescriptionFormatter {
     return !!desc.pattern;
   }
 
-  async getHandleDescription(recipeView) {
+  async getHandleDescription(recipeHandle) {
     await this._updateDescriptionHandles(this._description);
 
-    let handleConnection = this._selectHandleConnection(recipeView) || recipeView.connections[0];
-    let view = this._arc.findHandleById(recipeView.id);
-    return this._formatDescription(handleConnection, view);
+    let handleConnection = this._selectHandleConnection(recipeHandle) || recipeHandle.connections[0];
+    let handle = this._arc.findHandleById(recipeHandle.id);
+    return this._formatDescription(handleConnection, handle);
   }
 
   async _updateDescriptionHandles(description) {
@@ -2530,12 +2530,12 @@ class DescriptionFormatter {
 
     let descByName = await this._getPatternByNameFromDescriptionHandle(particle) || {};
     pDesc = Object.assign(pDesc, this._populateParticleDescription(particle, descByName));
-    Object.values(particle.connections).forEach(viewConn => {
-      let specConn = particle.spec.connectionMap.get(viewConn.name);
-      let pattern = descByName[viewConn.name] || specConn.pattern;
+    Object.values(particle.connections).forEach(handleConn => {
+      let specConn = particle.spec.connectionMap.get(handleConn.name);
+      let pattern = descByName[handleConn.name] || specConn.pattern;
       if (pattern) {
-        let viewDescription = {pattern: pattern, _viewConn: viewConn, _view: this._arc.findHandleById(viewConn.view.id)};
-        pDesc._connections[viewConn.name] = viewDescription;
+        let handleDescription = {pattern: pattern, _handleConn: handleConn, _handle: this._arc.findHandleById(handleConn.handle.id)};
+        pDesc._connections[handleConn.name] = handleDescription;
       }
     });
     return pDesc;
@@ -2543,10 +2543,10 @@ class DescriptionFormatter {
 
   async _getPatternByNameFromDescriptionHandle(particle) {
     let descriptionConn = particle.connections['descriptions'];
-    if (descriptionConn && descriptionConn.view && descriptionConn.view.id) {
-      let descView = this._arc.findHandleById(descriptionConn.view.id);
-      if (descView) {
-        let descList = await descView.toList();
+    if (descriptionConn && descriptionConn.handle && descriptionConn.handle.id) {
+      let descHandle = this._arc.findHandleById(descriptionConn.handle.id);
+      if (descHandle) {
+        let descList = await descHandle.toList();
         let descByName = {};
         descList.forEach(d => descByName[d.rawData.key] = d.rawData.value);
         return descByName;
@@ -2629,16 +2629,16 @@ class DescriptionFormatter {
     let handleNames = valueTokens[1].split('.');
     let extra = valueTokens.length == 3 ? valueTokens[2] : undefined;
     let valueToken;
-    let viewConn = particle.connections[handleNames[0]];
-    if (viewConn) { // view connection
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(viewConn.view && viewConn.view.id, 'Missing id???');
+    let handleConn = particle.connections[handleNames[0]];
+    if (handleConn) { // handle connection
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handleConn.handle && handleConn.handle.id, 'Missing id???');
       return {
         fullName: valueTokens[0],
-        viewName: viewConn.name,
+        handleName: handleConn.name,
         properties: handleNames.splice(1),
         extra,
-        _viewConn: viewConn,
-        _view: this._arc.findHandleById(viewConn.view.id)};
+        _handleConn: handleConn,
+        _handle: this._arc.findHandleById(handleConn.handle.id)};
     }
 
     // slot connection
@@ -2652,59 +2652,59 @@ class DescriptionFormatter {
     if (token.text) {
       return token.text;
     }
-    if (token.viewName) {
-      return this._viewTokenToString(token);
+    if (token.handleName) {
+      return this._handleTokenToString(token);
     } else if (token.consumeSlotName && token.provideSlotName) {
       return this._slotTokenToString(token);
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, 'no view or slot name');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, 'no handle or slot name');
   }
 
-  async _viewTokenToString(token) {
+  async _handleTokenToString(token) {
     switch (token.extra) {
       case '_type_':
-        return token._viewConn.type.toPrettyString().toLowerCase();
+        return token._handleConn.type.toPrettyString().toLowerCase();
       case '_values_':
-        return this._formatViewValue(token.viewName, token._view);
+        return this._formatHandleValue(token.handleName, token._handle);
       case '_name_':
-        return this._formatDescription(token._viewConn, token._view);
+        return this._formatDescription(token._handleConn, token._handle);
       default:
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!token.extra, `Unrecognized extra ${token.extra}`);
 
         // Transformation's hosted particle.
-        if (token._viewConn.type.isInterface) {
-          let particleSpec = __WEBPACK_IMPORTED_MODULE_2__particle_spec_js__["a" /* default */].fromLiteral(await token._view.get());
+        if (token._handleConn.type.isInterface) {
+          let particleSpec = __WEBPACK_IMPORTED_MODULE_2__particle_spec_js__["a" /* default */].fromLiteral(await token._handle.get());
           // TODO: call this.patternToSuggestion(...) to resolved expressions in the pattern template.
           return particleSpec.pattern;
         }
 
-        // singleton view property.
+        // singleton handle property.
         if (token.properties && token.properties.length > 0) {
-          return this._propertyTokenToString(token.viewName, token._view, token.properties);
+          return this._propertyTokenToString(token.handleName, token._handle, token.properties);
         }
 
-        // full view description
-        let description = (await this._formatDescriptionPattern(token._viewConn)) ||
-                          this._formatViewDescription(token._viewConn, token._view);
-        let viewValue = await this._formatViewValue(token.viewName, token._view);
+        // full handle description
+        let description = (await this._formatDescriptionPattern(token._handleConn)) ||
+                          this._formatHandleDescription(token._handleConn, token._handle);
+        let handleValue = await this._formatHandleValue(token.handleName, token._handle);
         if (!description) {
-          // For singleton view, if there is no real description (the type was used), use the plain value for description.
-          if (viewValue && !token._view.type.isSetView && !this.excludeValues) {
-            return viewValue;
+          // For singleton handle, if there is no real description (the type was used), use the plain value for description.
+          if (handleValue && !token._handle.type.isSetView && !this.excludeValues) {
+            return handleValue;
           }
         }
 
-        description = description || this._formatViewType(token._viewConn);
-        if (viewValue && !this.excludeValues && !this.seenViews.has(token._view.id)) {
-          this.seenViews.add(token._view.id);
-          return this._combineDescriptionAndValue(token, description, viewValue);
+        description = description || this._formatHandleType(token._handleConn);
+        if (handleValue && !this.excludeValues && !this.seenHandles.has(token._handle.id)) {
+          this.seenHandles.add(token._handle.id);
+          return this._combineDescriptionAndValue(token, description, handleValue);
         }
         return description;
     }
   }
 
-  _combineDescriptionAndValue(token, description, viewValue) {
-    return `${description} (${viewValue})`;
+  _combineDescriptionAndValue(token, description, handleValue) {
+    return `${description} (${handleValue})`;
   }
 
   async _slotTokenToString(token) {
@@ -2726,65 +2726,65 @@ class DescriptionFormatter {
     return this._joinDescriptions(results);
   }
 
-  async _propertyTokenToString(viewName, view, properties) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!view.type.isSetView, `Cannot return property ${properties.join(',')} for set-view`);
+  async _propertyTokenToString(handleName, handle, properties) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!handle.type.isSetView, `Cannot return property ${properties.join(',')} for set-view`);
     // Use singleton value's property (eg. "09/15" for person's birthday)
-    let viewVar = await view.get();
-    if (viewVar) {
-      let value = viewVar.rawData;
+    let handleVar = await handle.get();
+    if (handleVar) {
+      let value = handleVar.rawData;
       properties.forEach(p => {
         if (value) {
           value = value[p];
         }
       });
       if (value) {
-        return this._formatEntityProperty(viewName, properties, value);
+        return this._formatEntityProperty(handleName, properties, value);
       }
     }
   }
 
-  _formatEntityProperty(viewName, properties, value) {
+  _formatEntityProperty(handleName, properties, value) {
     return value;
   }
 
-  async _formatViewValue(viewName, view) {
-    if (!view) {
+  async _formatHandleValue(handleName, handle) {
+    if (!handle) {
       return;
     }
-    if (view.type.isSetView) {
-      let viewList = await view.toList();
-      if (viewList && viewList.length > 0) {
-        return this._formatSetView(viewName, viewList);
+    if (handle.type.isSetView) {
+      let handleList = await handle.toList();
+      if (handleList && handleList.length > 0) {
+        return this._formatSetHandle(handleName, handleList);
       }
     } else {
-      let viewVar = await view.get();
-      if (viewVar) {
-        return this._formatSingleton(viewName, viewVar);
+      let handleVar = await handle.get();
+      if (handleVar) {
+        return this._formatSingleton(handleName, handleVar);
       }
     }
   }
 
-  _formatSetView(viewName, viewList) {
-    if (viewList[0].rawData.name) {
-      if (viewList.length > 2) {
-        return `${viewList[0].rawData.name} plus ${viewList.length-1} other items`;
+  _formatSetHandle(handleName, handleList) {
+    if (handleList[0].rawData.name) {
+      if (handleList.length > 2) {
+        return `${handleList[0].rawData.name} plus ${handleList.length-1} other items`;
       }
-      return viewList.map(v => v.rawData.name).join(', ');
+      return handleList.map(v => v.rawData.name).join(', ');
     } else {
-      return `${viewList.length} items`;
+      return `${handleList.length} items`;
     }
   }
 
-  _formatSingleton(viewName, viewVar) {
-    if (viewVar.rawData.name) {
-      return viewVar.rawData.name;
+  _formatSingleton(handleName, handleVar) {
+    if (handleVar.rawData.name) {
+      return handleVar.rawData.name;
     }
   }
 
-  async _formatDescription(handleConnection, view) {
+  async _formatDescription(handleConnection, handle) {
     return (await this._formatDescriptionPattern(handleConnection)) ||
-           this._formatViewDescription(handleConnection, view) ||
-           this._formatViewType(handleConnection);
+           this._formatHandleDescription(handleConnection, handle) ||
+           this._formatHandleType(handleConnection);
   }
 
   async _formatDescriptionPattern(handleConnection) {
@@ -2793,36 +2793,36 @@ class DescriptionFormatter {
     // For "out" connection, use its own description
     // For "in" connection, use description of the highest ranked out connection with description.
     if (!chosenConnection.spec.isOutput) {
-      let otherConnection = this._selectHandleConnection(handleConnection.view);
+      let otherConnection = this._selectHandleConnection(handleConnection.handle);
       if (otherConnection) {
         chosenConnection = otherConnection;
       }
     }
 
     let chosenParticleDescription = this._particleDescriptions.find(desc => desc._particle == chosenConnection.particle);
-    let viewDescription = chosenParticleDescription ? chosenParticleDescription._connections[chosenConnection.name] : null;
+    let handleDescription = chosenParticleDescription ? chosenParticleDescription._connections[chosenConnection.name] : null;
     // Add description to result array.
-    if (viewDescription) {
+    if (handleDescription) {
       // Add the connection spec's description pattern.
-      return await this.patternToSuggestion(viewDescription.pattern, chosenParticleDescription);
+      return await this.patternToSuggestion(handleDescription.pattern, chosenParticleDescription);
     }
   }
-  _formatViewDescription(viewConn, view) {
-    if (view) {
-      let viewDescription = this._arc.getHandleDescription(view);
-      let viewType = this._formatViewType(viewConn);
-      // Use the view description available in the arc (if it is different than type name).
-      if (!!viewDescription && viewDescription != viewType) {
-        return viewDescription;
+  _formatHandleDescription(handleConn, handle) {
+    if (handle) {
+      let handleDescription = this._arc.getHandleDescription(handle);
+      let handleType = this._formatHandleType(handleConn);
+      // Use the handle description available in the arc (if it is different than type name).
+      if (!!handleDescription && handleDescription != handleType) {
+        return handleDescription;
       }
     }
   }
-  _formatViewType(handleConnection) {
+  _formatHandleType(handleConnection) {
     return handleConnection.type.toPrettyString().toLowerCase();
   }
 
-  _selectHandleConnection(recipeView) {
-    let possibleConnections = recipeView.connections.filter(connection => {
+  _selectHandleConnection(recipeHandle) {
+    let possibleConnections = recipeHandle.connections.filter(connection => {
       // Choose connections with patterns (manifest-based or dynamic).
       let connectionSpec = connection.spec;
       let particleDescription = this._particleDescriptions.find(desc => desc._particle == connection.particle);
@@ -3009,7 +3009,7 @@ class Manifest {
   get fileName() {
     return this._fileName;
   }
-  get views() {
+  get handles() {
     return this._handles;
   }
   get scheduler() {
@@ -3086,7 +3086,7 @@ class Manifest {
   findParticlesByVerb(verb) {
     return [...this._findAll(manifest => Object.values(manifest._particles).filter(particle => particle.primaryVerb == verb))];
   }
-  findViewByName(name) {
+  findHandleByName(name) {
     return this._find(manifest => manifest._handles.find(handle => handle.name == name));
   }
   findHandleById(id) {
@@ -3232,14 +3232,14 @@ ${e.message}
       // processing meta sections should come first as this contains identifying
       // information that might need to be used in other sections. For example,
       // the meta.name, if present, becomes the manifest id which is relevant
-      // when constructing manifest views.
+      // when constructing manifest handles.
       await processItems('meta', meta => manifest.applyMeta(meta.items));
       // similarly, resources may be referenced from other parts of the manifest.
       await processItems('resource', item => this._processResource(manifest, item));
       await processItems('schema', item => this._processSchema(manifest, item));
       await processItems('shape', item => this._processShape(manifest, item));
       await processItems('particle', item => this._processParticle(manifest, item, loader));
-      await processItems('view', item => this._processView(manifest, item, loader));
+      await processItems('store', item => this._processStore(manifest, item, loader));
       await processItems('recipe', item => this._processRecipe(manifest, item, loader));
     } catch (e) {
       dumpWarnings(manifest);
@@ -3400,7 +3400,7 @@ ${e.message}
         arg.type = arg.type.model;
       }
     }
-    let views = shapeItem.interface.args;
+    let handles = shapeItem.interface.args;
     let slots = [];
     for (let slotItem of shapeItem.slots) {
       slots.push({
@@ -3411,7 +3411,7 @@ ${e.message}
       });
     }
     // TODO: move shape to recipe/ and add shape builder?
-    let shape = new __WEBPACK_IMPORTED_MODULE_6__shape_js__["a" /* default */](shapeItem.name, views, slots);
+    let shape = new __WEBPACK_IMPORTED_MODULE_6__shape_js__["a" /* default */](shapeItem.name, handles, slots);
     manifest._shapes.push(shape);
   }
   static async _processRecipe(manifest, recipeItem, loader) {
@@ -3419,8 +3419,8 @@ ${e.message}
     let recipe = manifest._newRecipe(recipeItem.name);
     recipe.annotation = recipeItem.annotation;
     let items = {
-      views: recipeItem.items.filter(item => item.kind == 'view'),
-      byView: new Map(),
+      handles: recipeItem.items.filter(item => item.kind == 'handle'),
+      byHandle: new Map(),
       particles: recipeItem.items.filter(item => item.kind == 'particle'),
       byParticle: new Map(),
       slots: recipeItem.items.filter(item => item.kind == 'slot'),
@@ -3454,28 +3454,28 @@ ${e.message}
       recipe.search = new __WEBPACK_IMPORTED_MODULE_5__recipe_search_js__["a" /* default */](items.search.phrase, items.search.tokens);
     }
 
-    for (let item of items.views) {
-      let view = recipe.newHandle();
+    for (let item of items.handles) {
+      let handle = recipe.newHandle();
       let ref = item.ref || {tags: []};
       if (ref.id) {
-        view.id = ref.id;
-        let targetView = manifest.findHandleById(view.id);
-        if (targetView)
-          view.mapToView(targetView);
+        handle.id = ref.id;
+        let targetHandle = manifest.findHandleById(handle.id);
+        if (targetHandle)
+          handle.mapToView(targetHandle);
       } else if (ref.name) {
-        let targetView = manifest.findViewByName(ref.name);
+        let targetHandle = manifest.findHandleByName(ref.name);
         // TODO: Error handling.
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(targetView, `Could not find view ${ref.name}`);
-        view.mapToView(targetView);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(targetHandle, `Could not find handle ${ref.name}`);
+        handle.mapToView(targetHandle);
       }
-      view.tags = ref.tags;
+      handle.tags = ref.tags;
       if (item.name) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!items.byName.has(item.name));
-        view.localName = item.name;
-        items.byName.set(item.name, {item: item, view: view});
+        handle.localName = item.name;
+        items.byName.set(item.name, {item, handle});
       }
-      view.fate = item.fate;
-      items.byView.set(view, item);
+      handle.fate = item.fate;
+      items.byHandle.set(handle, item);
     }
 
     for (let item of items.slots) {
@@ -3509,7 +3509,7 @@ ${e.message}
         // TODO: errors.
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!items.byName.has(item.name));
         particle.localName = item.name;
-        items.byName.set(item.name, {item: item, particle: particle});
+        items.byName.set(item.name, {item, particle});
       }
       items.byParticle.set(particle, item);
 
@@ -3568,7 +3568,7 @@ ${e.message}
           connection.direction = direction;
         }
 
-        let targetView;
+        let targetHandle;
         let targetParticle;
 
         if (connectionItem.target && connectionItem.target.name) {
@@ -3578,8 +3578,8 @@ ${e.message}
                 connectionItem.location,
                 `Could not find handle '${connectionItem.target.name}'`);
           }
-          if (entry.item.kind == 'view') {
-            targetView = entry.view;
+          if (entry.item.kind == 'handle') {
+            targetHandle = entry.handle;
           } else if (entry.item.kind == 'particle') {
             targetParticle = entry.particle;
           } else {
@@ -3587,7 +3587,7 @@ ${e.message}
           }
         }
 
-        // Handle implicit view connections in the form `param = SomeParticle`
+        // Handle implicit handle connections in the form `param = SomeParticle`
         if (connectionItem.target && connectionItem.target.particle) {
           let hostedParticle = manifest.findParticleByName(connectionItem.target.particle);
           if (!hostedParticle) {
@@ -3604,15 +3604,15 @@ ${e.message}
           }
           let id = `${manifest.generateID()}:immediate${hostedParticle.name}`;
           // TODO: Mark as immediate.
-          targetView = recipe.newHandle();
-          targetView.fate = 'copy';
+          targetHandle = recipe.newHandle();
+          targetHandle.fate = 'copy';
           let handle = await manifest.newHandle(type, null, id, []);
           // TODO: loader should not be optional.
           if (hostedParticle.implFile && loader) {
             hostedParticle.implFile = loader.join(manifest.fileName, hostedParticle.implFile);
           }
           handle.set(hostedParticle.clone().toLiteral());
-          targetView.mapToView(handle);
+          targetHandle.mapToView(handle);
         }
 
         if (targetParticle) {
@@ -3628,16 +3628,16 @@ ${e.message}
             // TODO: direction?
           }
 
-          targetView = targetConnection.view;
-          if (!targetView) {
+          targetHandle = targetConnection.handle;
+          if (!targetHandle) {
             // TODO: tags?
-            targetView = recipe.newHandle();
-            targetConnection.connectToView(targetView);
+            targetHandle = recipe.newHandle();
+            targetConnection.connectToHandle(targetHandle);
           }
         }
 
-        if (targetView) {
-          connection.connectToView(targetView);
+        if (targetHandle) {
+          connection.connectToHandle(targetHandle);
         }
       }
 
@@ -3689,7 +3689,7 @@ ${e.message}
     }
     return null;
   }
-  static async _processView(manifest, item, loader) {
+  static async _processStore(manifest, item, loader) {
     let name = item.name;
     let id = item.id;
     let type = item.type.model;
@@ -3788,9 +3788,9 @@ ${e.message}
       results.push(r.toString(options));
     });
 
-    let views = [...this.views].sort(__WEBPACK_IMPORTED_MODULE_8__recipe_util_js__["a" /* default */].compareComparables);
-    views.forEach(v => {
-      results.push(v.toString(this._handleTags.get(v)));
+    let handles = [...this.handles].sort(__WEBPACK_IMPORTED_MODULE_8__recipe_util_js__["a" /* default */].compareComparables);
+    handles.forEach(h => {
+      results.push(h.toString(this._handleTags.get(h)));
     });
 
     return results.join('\n');
@@ -4709,7 +4709,7 @@ class Relation extends __WEBPACK_IMPORTED_MODULE_1__entity_js__["a" /* default *
 
 
 
-// ShapeView {name, direction, type}
+// ShapeHandle {name, direction, type}
 // Slot {name, direction, isRequired, isSet}
 
 function _fromLiteral(member) {
@@ -4728,18 +4728,18 @@ const handleFields = ['type', 'name', 'direction'];
 const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
 
 class Shape {
-  constructor(name, views, slots) {
+  constructor(name, handles, slots) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(name);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(views !== undefined);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handles !== undefined);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slots !== undefined);
     this.name = name;
-    this.views = views;
+    this.handles = handles;
     this.slots = slots;
     this._typeVars = [];
-    for (let view of views)
+    for (let handle of handles)
       for (let field of handleFields)
-        if (Shape.isTypeVar(view[field]))
-          this._typeVars.push({object: view, field});
+        if (Shape.isTypeVar(handle[field]))
+          this._typeVars.push({object: handle, field});
 
     for (let slot of slots)
       for (let field of slotFields)
@@ -4761,7 +4761,7 @@ class Shape {
   }
 
   _handlesToManifestString() {
-    return this.views
+    return this.handles
       .map(handle => {
         let type = handle.type.resolvedType();
         return `${handle.direction ? handle.direction + ' ': ''}${type.toString()}${handle.name ? ' ' + handle.name : ''}`;
@@ -4784,21 +4784,21 @@ ${this._slotsToManifestString()}
   }
 
   static fromLiteral(data) {
-    let views = data.views.map(view => ({type: _fromLiteral(view.type), name: _fromLiteral(view.name), direction: _fromLiteral(view.direction)}));
+    let handles = data.handles.map(handle => ({type: _fromLiteral(handle.type), name: _fromLiteral(handle.name), direction: _fromLiteral(handle.direction)}));
     let slots = data.slots.map(slot => ({name: _fromLiteral(slot.name), direction: _fromLiteral(slot.direction), isRequired: _fromLiteral(slot.isRequired), isSet: _fromLiteral(slot.isSet)}));
-    return new Shape(data.name, views, slots);
+    return new Shape(data.name, handles, slots);
   }
 
   toLiteral() {
-    let views = this.views.map(view => ({type: _toLiteral(view.type), name: _toLiteral(view.name), direction: _toLiteral(view.direction)}));
+    let handles = this.handles.map(handle => ({type: _toLiteral(handle.type), name: _toLiteral(handle.name), direction: _toLiteral(handle.direction)}));
     let slots = this.slots.map(slot => ({name: _toLiteral(slot.name), direction: _toLiteral(slot.direction), isRequired: _toLiteral(slot.isRequired), isSet: _toLiteral(slot.isSet)}));
-    return {name: this.name, views, slots};
+    return {name: this.name, handles, slots};
   }
 
   clone() {
-    let views = this.views.map(({name, direction, type}) => ({name, direction, type}));
+    let handles = this.handles.map(({name, direction, type}) => ({name, direction, type}));
     let slots = this.slots.map(({name, direction, isRequired, isSet}) => ({name, direction, isRequired, isSet}));
-    return new Shape(this.name, views, slots);
+    return new Shape(this.name, handles, slots);
   }
 
   resolvedType() {
@@ -4809,11 +4809,11 @@ ${this._slotsToManifestString()}
   }
 
   equals(other) {
-    if (this.views.length !== other.views.length)
+    if (this.handles.length !== other.handles.length)
       return false;
 
     // TODO: this isn't quite right as it doesn't deal with duplicates properly
-    if (!this._equalItems(other.views, this.views, this._equalView)) {
+    if (!this._equalItems(other.handles, this.handles, this._equalHandle)) {
       return false;
     }
 
@@ -4823,8 +4823,8 @@ ${this._slotsToManifestString()}
     return true;
   }
 
-  _equalView(view, otherView) {
-    return view.name == otherView.name && view.direction == otherView.direction && view.type.equals(otherView.type);
+  _equalHandle(handle, otherHandle) {
+    return handle.name == otherHandle.name && handle.direction == otherHandle.direction && handle.type.equals(otherHandle.type);
   }
 
   _equalSlot(slot, otherSlot) {
@@ -4855,17 +4855,17 @@ ${this._slotsToManifestString()}
     return !(reference == undefined || Shape.isTypeVar(reference));
   }
 
-  static viewsMatch(shapeView, particleView) {
-    if (Shape.mustMatch(shapeView.name) && shapeView.name !== particleView.name)
+  static handlesMatch(shapeHandle, particleHandle) {
+    if (Shape.mustMatch(shapeHandle.name) && shapeHandle.name !== particleHandle.name)
       return false;
     // TODO: direction subsetting?
-    if (Shape.mustMatch(shapeView.direction) && shapeView.direction !== particleView.direction)
+    if (Shape.mustMatch(shapeHandle.direction) && shapeHandle.direction !== particleHandle.direction)
       return false;
-    if (shapeView.type == undefined)
+    if (shapeHandle.type == undefined)
       return true;
-    if (shapeView.type.isVariableReference)
+    if (shapeHandle.type.isVariableReference)
       return false;
-    let [left, right] = __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */].unwrapPair(shapeView.type, particleView.type);
+    let [left, right] = __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */].unwrapPair(shapeHandle.type, particleHandle.type);
     if (left.isVariable) {
       return [{var: left, value: right}];
     } else {
@@ -4897,8 +4897,8 @@ ${this._slotsToManifestString()}
 
   _restrictThis(particleSpec) {
 
-    let viewMatches = this.views.map(
-      view => particleSpec.connections.map(connection => ({match: connection, result: Shape.viewsMatch(view, connection)}))
+    let handleMatches = this.handles.map(
+      handle => particleSpec.connections.map(connection => ({match: connection, result: Shape.handlesMatch(handle, connection)}))
                                       .filter(a => a.result !== false));
 
     let particleSlots = [];
@@ -4932,13 +4932,13 @@ ${this._slotsToManifestString()}
       return false;
     }
     
-    let viewOptions = choose(viewMatches, []);
+    let handleOptions = choose(handleMatches, []);
     let slotOptions = choose(slotMatches, []);
 
-    if (viewOptions === false || slotOptions === false)
+    if (handleOptions === false || slotOptions === false)
       return false;
 
-    for (let constraint of viewOptions)
+    for (let constraint of handleOptions)
       if (!constraint.var.variable.resolution)
         constraint.var.variable.resolution = constraint.value;
 
@@ -6350,11 +6350,11 @@ class Slot {
     }
   }
 
-  async populateViewDescriptions() {
+  async populateHandleDescriptions() {
     let descriptions = {};
-    await Promise.all(Object.values(this.consumeConn.particle.connections).map(async viewConn => {
-      if (viewConn.view) {
-        descriptions[`${viewConn.name}.description`] = (await this._arc.description.getHandleDescription(viewConn.view)).toString();
+    await Promise.all(Object.values(this.consumeConn.particle.connections).map(async handleConn => {
+      if (handleConn.handle) {
+        descriptions[`${handleConn.name}.description`] = (await this._arc.description.getHandleDescription(handleConn.handle)).toString();
       }
     }));
     return descriptions;
@@ -7024,7 +7024,7 @@ ${this.activeRecipe.toString()}`;
       context: manifest
     });
     // TODO: pass tags through too
-    manifest.views.forEach(view => arc._registerHandle(view, []));
+    manifest.handles.forEach(handle => arc._registerHandle(handle, []));
     let recipe = manifest.activeRecipe.clone();
     let options = {errors: new Map()};
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(recipe.normalize(options), `Couldn't normalize recipe ${recipe.toString()}:\n${[...options.errors.values()].join('\n')}`);
@@ -7049,12 +7049,12 @@ ${this.activeRecipe.toString()}`;
     this.particleHandleMaps.set(id, handleMap);
 
     for (let [name, connection] of Object.entries(recipeParticle.connections)) {
-      if (!connection.view) {
+      if (!connection.handle) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(connection.isOptional);
         continue;
       }
-      let handle = this.findHandleById(connection.view.id);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(handle, `can't find handle of id ${connection.view.id}`);
+      let handle = this.findHandleById(connection.handle.id);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(handle, `can't find handle of id ${connection.handle.id}`);
       this._connectParticleToHandle(id, recipeParticle, name, handle);
     }
 
@@ -8363,7 +8363,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         peg$c20 = function(name, type, id, version, tags, source, items) {
             items = optional(items, extractIndented, []);
             return {
-              kind: 'view',
+              kind: 'store',
               location: location(),
               name,
               type,
@@ -8830,7 +8830,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         peg$c157 = peg$literalExpectation("copy", false),
         peg$c158 = function(type, ref, name) {
             return {
-              kind: 'view',
+              kind: 'handle',
               location: location(),
               name: optional(name, name => name[1], null),
               ref: optional(ref, ref => ref[1], null),
@@ -8875,7 +8875,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           },
         peg$c173 = function(id, tags) {
             return {
-              kind: 'view-ref',
+              kind: 'handle-ref',
               location: location(),
               id,
               tags: tags || [],
@@ -8883,7 +8883,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           },
         peg$c174 = function(name, tags) {
             return {
-              kind: 'view-ref',
+              kind: 'handle-ref',
               location: location(),
               name,
               tags: tags || [],
@@ -8891,7 +8891,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           },
         peg$c175 = function(tags) {
             return {
-              kind: 'view-ref',
+              kind: 'handle-ref',
               location: location(),
               tags,
             };
@@ -15608,7 +15608,7 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
     tokens.forEach((token, i) => {
       if (token.text) {
         template = template.concat(`${index == 0 && i == 0 ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
-      } else { // view or slot handle.
+      } else { // handle or slot handle.
         let sanitizedFullName = token.fullName.replace(/[.{}_\$]/g, '');
         let attribute = '';
         // TODO(mmandlis): capitalize the data in the model instead.
@@ -15679,52 +15679,52 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
     };
   }
 
-  _combineDescriptionAndValue(token, description, viewValue) {
+  _combineDescriptionAndValue(token, description, handleValue) {
     if (!!description.template && !!description.model) {
       return {
-        template: `${description.template} (${viewValue.template})`,
-        model: Object.assign(description.model, viewValue.model)
+        template: `${description.template} (${handleValue.template})`,
+        model: Object.assign(description.model, handleValue.model)
       };
     }
-    let descKey = `${token.viewName}Description${++this._nextID}`;
+    let descKey = `${token.handleName}Description${++this._nextID}`;
     return {
-      template: `<span>{{${descKey}}}</span> (${viewValue.template})`,
-      model: Object.assign({[descKey]: description}, viewValue.model)
+      template: `<span>{{${descKey}}}</span> (${handleValue.template})`,
+      model: Object.assign({[descKey]: description}, handleValue.model)
     };
   }
 
-  _formatEntityProperty(viewName, properties, value) {
-    let key = `${viewName}${properties.join('')}Value${++this._nextID}`;
+  _formatEntityProperty(handleName, properties, value) {
+    let key = `${handleName}${properties.join('')}Value${++this._nextID}`;
     return {
       template: `<b>{{${key}}}</b>`,
       model: {[`${key}`]: value}
     };
   }
 
-  _formatSetView(viewName, viewList) {
-    let viewKey = `${viewName}${++this._nextID}`;
-    if (viewList[0].rawData.name) {
-      if (viewList.length > 2) {
+  _formatSetHandle(handleName, handleList) {
+    let handleKey = `${handleName}${++this._nextID}`;
+    if (handleList[0].rawData.name) {
+      if (handleList.length > 2) {
         return {
-          template: `<b>{{${viewKey}FirstName}}</b> plus <b>{{${viewKey}OtherCount}}</b> other items`,
-          model: {[`${viewKey}FirstName`]: viewList[0].rawData.name, [`${viewKey}OtherCount`]: viewList.length - 1}
+          template: `<b>{{${handleKey}FirstName}}</b> plus <b>{{${handleKey}OtherCount}}</b> other items`,
+          model: {[`${handleKey}FirstName`]: handleList[0].rawData.name, [`${handleKey}OtherCount`]: handleList.length - 1}
         };
       }
       return {
-        template: viewList.map((v, i) => `<b>{{${viewKey}${i}}}</b>`).join(', '),
-        model: Object.assign(...viewList.map((v, i) => ({[`${viewKey}${i}`]: v.rawData.name} )))
+        template: handleList.map((v, i) => `<b>{{${handleKey}${i}}}</b>`).join(', '),
+        model: Object.assign(...handleList.map((v, i) => ({[`${handleKey}${i}`]: v.rawData.name} )))
       };
     }
     return {
-      template: `<b>{{${viewKey}Length}}</b> items`,
-      model: {[`${viewKey}Length`]: viewList.length}
+      template: `<b>{{${handleKey}Length}}</b> items`,
+      model: {[`${handleKey}Length`]: handleList.length}
     };
   }
-  _formatSingleton(viewName, viewVar) {
-    if (viewVar.rawData.name) {
+  _formatSingleton(handleName, handleVar) {
+    if (handleVar.rawData.name) {
       return {
-        template: `<b>{{${viewName}Var}}</b>`,
-        model: {[`${viewName}Var`]: viewVar.rawData.name}
+        template: `<b>{{${handleName}Var}}</b>`,
+        model: {[`${handleName}Var`]: handleVar.rawData.name}
       };
     }
   }
@@ -15762,7 +15762,7 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* default */] 
   constructor(consumeConn, arc, containerKind) {
     super(consumeConn, arc);
     this._templateName = [this.consumeConn.particle.name, this.consumeConn.name].concat(
-        Object.values(this.consumeConn.particle.connections).filter(conn => conn.type.isInterface).map(conn => conn.view.id)).join('::');
+        Object.values(this.consumeConn.particle.connections).filter(conn => conn.type.isInterface).map(conn => conn.handle.id)).join('::');
     this._model = null;
     this._observer = this._initMutationObserver();
     this._containerKind = containerKind;
@@ -15839,7 +15839,7 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* default */] 
     this.eventHandler = handler;
     if (Object.keys(content).indexOf('model') >= 0) {
       if (content.model) {
-        this._model = Object.assign(content.model, await this.populateViewDescriptions());
+        this._model = Object.assign(content.model, await this.populateHandleDescriptions());
       } else {
         this._model = undefined;
       }
@@ -16868,19 +16868,19 @@ class HandleConnection {
   get isOutput() {
     return this.direction == 'out' || this.direction == 'inout';
   }
-  get view() { return this._handle; } // View?
+  get handle() { return this._handle; } // Handle?
   get particle() { return this._particle; } // never null
 
   set tags(tags) { this._tags = tags; }
   set type(type) {
     this._rawType = type;
     this._type = undefined;
-    this._resetViewType();
+    this._resetHandleType();
   }
 
   set direction(direction) {
     this._direction = direction;
-    this._resetViewType();
+    this._resetHandleType();
   }
 
   get spec() {
@@ -16941,24 +16941,24 @@ class HandleConnection {
       }
       return false;
     }
-    if (!this.view) {
+    if (!this.handle) {
       if (options) {
-        options.details = 'missing view';
+        options.details = 'missing handle';
       }
       return false;
     }
     return true;
   }
 
-  _resetViewType() {
+  _resetHandleType() {
     if (this._handle)
       this._handle._type = undefined;
   }
 
-  connectToView(handle) {
+  connectToHandle(handle) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handle.recipe == this.recipe);
     this._handle = handle;
-    this._resetViewType();
+    this._resetHandleType();
     this._handle.connections.push(this);
   }
 
@@ -16967,8 +16967,8 @@ class HandleConnection {
     result.push(this.name || '*');
     // TODO: better deal with unspecified direction.
     result.push({'in': '<-', 'out': '->', 'inout': '=', 'host': '='}[this.direction] || this.direction || '=');
-    if (this.view) {
-      result.push(`${(nameMap && nameMap.get(this.view)) || this.view.localName}`);
+    if (this.handle) {
+      result.push(`${(nameMap && nameMap.get(this.handle)) || this.handle.localName}`);
     }
     result.push(...this.tags);
 
@@ -17026,7 +17026,7 @@ class Handle {
   _copyInto(recipe) {
     let handle = undefined;
     if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate))
-      handle = recipe.findView(this._id);
+      handle = recipe.findHandle(this._id);
 
     if (handle == undefined) {
       handle = recipe.newHandle();
@@ -17401,7 +17401,7 @@ class Particle {
   }
 
   nameConnection(connection, name) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this._connections[name].view, `Connection "${name}" already has a view`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this._connections[name].handle, `Connection "${name}" already has a handle`);
 
     let idx = this._unnamedConnections.indexOf(connection);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(idx >= 0, `Cannot name '${name}' nonexistent unnamed connection.`);
@@ -18589,14 +18589,14 @@ class AddUseViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
 
         // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
         // not being properly supported in arc instantiation). For now just hardcode skiping them.
-        let disconnectedConnections = recipe.handleConnections.filter(hc => hc.view == null && !hc.isOptional && hc.name != 'descriptions');
+        let disconnectedConnections = recipe.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name != 'descriptions');
 
         return recipe => {
           disconnectedConnections.forEach(hc => {
             let clonedHC = recipe.updateToClone({hc}).hc;
             let handle = recipe.newHandle();
             handle.fate = 'use';
-            clonedHC.connectToView(handle);
+            clonedHC.connectToHandle(handle);
           });
           return 0;
         };
@@ -18851,8 +18851,8 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
                   recipeView.fate = 'create';
                   recipeMap[view] = recipeView;
                 }
-                if (recipeHandleConnection.view == null)
-                  recipeHandleConnection.connectToView(recipeView);
+                if (recipeHandleConnection.handle == null)
+                  recipeHandleConnection.connectToHandle(recipeView);
               }
             }
             recipe.clearConnectionConstraints();
@@ -18937,15 +18937,15 @@ class CreateDescriptionHandle extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
   async generate(strategizer) {
     let results = __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */] {
       onHandleConnection(recipe, handleConnection) {
-        if (handleConnection.view)
+        if (handleConnection.handle)
           return;
         if (handleConnection.name != 'descriptions')
           return;
 
         return (recipe, handleConnection) => {
-          let view = recipe.newHandle();
-          view.fate = 'create';
-          handleConnection.connectToView(view);
+          let handle = recipe.newHandle();
+          handle.fate = 'create';
+          handleConnection.connectToHandle(handle);
           return 1;
         };
       }
@@ -19051,7 +19051,7 @@ class GroupHandleConnections extends __WEBPACK_IMPORTED_MODULE_1__strategizer_st
         // Find all unique types used in the recipe that have unbound handle connections.
         let types = new Set();
         recipe.handleConnections.forEach(hc => {
-          if (!hc.isOptional && !hc.view && !Array.from(types).find(t => t.equals(hc.type))) {
+          if (!hc.isOptional && !hc.handle && !Array.from(types).find(t => t.equals(hc.type))) {
             types.add(hc.type);
           }
         });
@@ -19060,20 +19060,20 @@ class GroupHandleConnections extends __WEBPACK_IMPORTED_MODULE_1__strategizer_st
         types.forEach(type => {
           // Find the particle with the largest number of unbound connections of the same type.
           let countConnectionsByType = (connections) => Object.values(connections).filter(conn => {
-            return !conn.isOptional && !conn.view && type.equals(conn.type);
+            return !conn.isOptional && !conn.handle && type.equals(conn.type);
           }).length;
           let sortedParticles = [...recipe.particles].sort((p1, p2) => {
             return countConnectionsByType(p2.connections) - countConnectionsByType(p1.connections);
           }).filter(p => countConnectionsByType(p.connections) > 0);
           __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(sortedParticles.length > 0);
 
-          // View connections of the same particle cannot be bound to the same view. Iterate on view connections of the particle
-          // with the most connections of the given type, and group each of them with same typed view connections of other particles.
+          // HJandle connections of the same particle cannot be bound to the same handle. Iterate on handle connections of the particle
+          // with the most connections of the given type, and group each of them with same typed handle connections of other particles.
           let particleWithMostConnectionsOfType = sortedParticles[0];
           let groups = new Map();
           groupsByType.set(type, groups);
           let allTypeHandleConnections = recipe.handleConnections.filter(c => {
-            return !c.isOptional && !c.view && type.equals(c.type) && (c.particle != particleWithMostConnectionsOfType);
+            return !c.isOptional && !c.handle && type.equals(c.type) && (c.particle != particleWithMostConnectionsOfType);
           });
 
           let iteration = 0;
@@ -19091,7 +19091,7 @@ class GroupHandleConnections extends __WEBPACK_IMPORTED_MODULE_1__strategizer_st
               let possibleConnections = allTypeHandleConnections.filter(c => !group.find(gc => gc.particle == c.particle));
               let selectedConn = possibleConnections.find(c => handleConnection.isInput != c.isInput || handleConnection.isOutput != c.isOutput);
               // TODO: consider tags.
-              // TODO: Slots view restrictions should also be accounted for when grouping.
+              // TODO: Slots handle restrictions should also be accounted for when grouping.
               if (!selectedConn) {
                 if (possibleConnections.length == 0 || iteration == 0) {
                   // During first iteration only bind opposite direction connections ("in" with "out" and vice versa)
@@ -19118,10 +19118,10 @@ class GroupHandleConnections extends __WEBPACK_IMPORTED_MODULE_1__strategizer_st
         return recipe => {
           groupsByType.forEach((groups, type) => {
             groups.forEach(group => {
-              let recipeView = recipe.newHandle();
+              let recipeHandle = recipe.newHandle();
               group.forEach(conn => {
                 let cloneConn = recipe.updateToClone({conn}).conn;
-                cloneConn.connectToView(recipeView);
+                cloneConn.connectToHandle(recipeHandle);
               });
             });
           });
@@ -19362,7 +19362,7 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
         }
 
         // Match handles of the provided slot with the slot-connection particle's handles.
-        if (!this._handlesMatch(slotConnection.particle, slot.handleConnections.map(connection => connection.view))) {
+        if (!this._handlesMatch(slotConnection.particle, slot.handleConnections.map(connection => connection.handle))) {
           return false;
         }
 
@@ -19383,8 +19383,8 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
           return true; // slot is not limited to specific handles
         }
         return Object.values(consumingParticle.connections).find(handleConn => {
-          return providingSlotHandles.includes(handleConn.view) ||
-                 (handleConn.view && handleConn.view.id && providingSlotHandles.map(sh => sh.id).includes(handleConn.view.id));
+          return providingSlotHandles.includes(handleConn.handle) ||
+                 (handleConn.handle && handleConn.handle.id && providingSlotHandles.map(sh => sh.id).includes(handleConn.handle.id));
         });
       }
 
@@ -19437,12 +19437,12 @@ class MatchFreeHandlesToConnections extends __WEBPACK_IMPORTED_MODULE_0__strateg
         if (handle.connections.length > 0)
           return;
 
-        let matchingConnections = recipe.handleConnections.filter(connection => connection.view == undefined);
+        let matchingConnections = recipe.handleConnections.filter(connection => connection.handle == undefined);
            
         return matchingConnections.map(connection => {
           return (recipe, handle) => {
             let newConnection = recipe.updateToClone({connection}).connection;
-            newConnection.connectToView(handle);
+            newConnection.connectToHandle(handle);
             return 1;
           };
         });
@@ -19603,10 +19603,10 @@ class NameUnnamedConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_st
           return; // the particle doesn't have spec yet.
 
         let possibleSpecConns = handleConnection.particle.spec.connections.filter(specConn => {
-          // filter specs with matching types that don't have views bound to the corresponding view connection.
+          // filter specs with matching types that don't have handles bound to the corresponding handle connection.
           return !specConn.isOptional &&
-                 handleConnection.view.type.equals(specConn.type) &&
-                 !handleConnection.particle.getConnectionByName(specConn.name).view;
+                 handleConnection.handle.type.equals(specConn.type) &&
+                 !handleConnection.particle.getConnectionByName(specConn.name).handle;
         });
 
         return possibleSpecConns.map(specConn => {
