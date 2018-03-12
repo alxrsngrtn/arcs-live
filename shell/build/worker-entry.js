@@ -426,23 +426,13 @@ addType('Tuple', 'fields');
 
 class Schema {
   constructor(model) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.fields);
     this._model = model;
     this.name = model.name;
     this.parents = (model.parents || []).map(parent => new Schema(parent));
-    this._normative = {};
-    this._optional = {};
     this.description = {};
     if (model.description) {
       model.description.description.forEach(desc => this.description[desc.name] = desc.pattern);
-    }
-
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.sections, `${JSON.stringify(model)} should have sections`);
-    for (let section of model.sections) {
-      let into = section.sectionType == 'normative' ? this._normative : this._optional;
-      for (let field in section.fields) {
-        // TODO normalize field types here?
-        into[field] = section.fields[field];
-      }
     }
   }
 
@@ -454,13 +444,17 @@ class Schema {
     return new Schema(data);
   }
 
-  * _fields() {
-    for (let field in this.normative) {
-      yield {field, type: this.normative[field]};
+  _buildFields(result) {
+    Object.assign(result, this._model.fields);
+    for (let parent of this.parents) {
+      parent._buildFields(result);
     }
-    for (let field in this.optional) {
-      yield {field, type: this.optional[field]};
-    }
+  }
+
+  get fields() {
+    let result = {};
+    this._buildFields(result);
+    return result;
   }
 
   static typesEqual(fieldType1, fieldType2) {
@@ -476,7 +470,7 @@ class Schema {
     let names = [...new Set(...schema1._names(), ...schema2._names())];
     let fields = {};
 
-    for (let {field, type} of [...schema1._fields(), ...schema2._fields()]) {
+    for (let [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
       if (fields[field]) {
         if (!Schema.typesEqual(fields[field], type)) {
           return null;
@@ -494,10 +488,6 @@ class Schema {
         parents: [],
         sections: [],
       })),
-      sections: [{
-        sectionType: 'optional',
-        fields: {},
-      }],
     });
   }
 
@@ -512,13 +502,13 @@ class Schema {
     if (!this._containsNames(otherSchema)) {
       return false;
     }
-    for (let section of ['normative', 'optional']) {
-      let thisSection = this[section];
-      let otherSection = otherSchema[section];
-      for (let field in otherSection) {
-        if (!Schema.typesEqual(thisSection[field], otherSection[field])) {
-          return false;
-        }
+    let fields = {};
+    for (let [name, type] of Object.entries(this.fields)) {
+      fields[name] = type;
+    }
+    for (let [name, type] of Object.entries(otherSchema.fields)) {
+      if (!Schema.typesEqual(fields[name], type)) {
+        return false;
       }
     }
     return true;
@@ -559,27 +549,9 @@ class Schema {
     return __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */].newEntity(this);
   }
 
-  get normative() {
-    let normative = {};
-    for (let parent of this.parents)
-      Object.assign(normative, parent.normative);
-    Object.assign(normative, this._normative);
-    return normative;
-  }
-
-  get optional() {
-    let optional = {};
-    for (let parent of this.parents)
-      Object.assign(optional, parent.optional);
-    Object.assign(optional, this._optional);
-    return optional;
-  }
-
   entityClass() {
     let schema = this;
     let className = this.name;
-    let normative = this.normative;
-    let optional = this.optional;
     let classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
 
     let convertToJsType = fieldType => {
@@ -599,8 +571,9 @@ class Schema {
       }
     };
 
+    const fieldTypes = this.fields;
     let validateFieldAndTypes = (op, name, value) => {
-      let fieldType = normative[name] || optional[name];
+      let fieldType = fieldTypes[name];
       if (fieldType === undefined) {
         throw new Error(`Can't ${op} field ${name}; not in schema ${className}`);
       }
@@ -681,11 +654,9 @@ class Schema {
 
       dataClone() {
         let clone = {};
-        for (let propertyList of [normative, optional]) {
-          Object.keys(propertyList).forEach(prop => {
-            if (this.rawData[prop] !== undefined)
-              clone[prop] = this.rawData[prop];
-          });
+        for (let name of Object.keys(schema.fields)) {
+          if (this.rawData[name] !== undefined)
+            clone[name] = this.rawData[name];
         }
         return clone;
       }
@@ -700,19 +671,16 @@ class Schema {
 
     Object.defineProperty(clazz, 'type', {value: this.type});
     Object.defineProperty(clazz, 'name', {value: this.name});
-    // TODO: make a distinction between normative and optional properties.
     // TODO: add query / getter functions for user properties
-    for (let propertyList of [normative, optional]) {
-      for (let property in propertyList) {
-        Object.defineProperty(clazz.prototype, property, {
-          get: function() {
-            return this.rawData[property];
-          },
-          set: function(v) {
-            this.rawData[property] = v;
-          }
-        });
-      }
+    for (let name of Object.keys(this.fields)) {
+      Object.defineProperty(clazz.prototype, name, {
+        get: function() {
+          return this.rawData[name];
+        },
+        set: function(v) {
+          this.rawData[name] = v;
+        }
+      });
     }
     return clazz;
   }
@@ -722,34 +690,25 @@ class Schema {
     this.parents.forEach(parent => results.push(parent.toString()));
     results.push(`schema ${this.name}`.concat(this.parents.length > 0 ? ` extends ${this.parents.map(p => p.name).join(',')}` : ''));
 
-    let propertiesToString = (properties, keyword) => {
-      if (Object.keys(properties).length > 0) {
-        results.push(`  ${keyword}`);
-        Object.keys(properties).forEach(name => {
-          let property = properties[name];
-          let schemaType;
-          if (typeof(property) === 'object') {
-            switch (property.kind) {
-              case 'schema-union':
-                schemaType = `(${property.types.join(' or ')})`;
-                break;
-              case 'schema-tuple':
-                schemaType = `(${property.types.join(', ')})`;
-                break;
-              default:
-                throw new Error(`Unknown kind ${property.kind} in schema ${this.name}`);
-            }
-          } else {
-            schemaType = property;
-          }
-          results.push(`    ${schemaType} ${name}`);
-        });
+    for (let [name, type] of Object.entries(this.fields)) {
+      let typeString;
+      if (typeof(type) == 'object') {
+        switch (type.kind) {
+          case 'schema-union':
+            typeString = `(${type.types.join(' or ')})`;
+            break;
+          case 'schema-tuple':
+            typeString = `(${type.types.join(', ')})`;
+            break;
+          default:
+            throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
+        }
+      } else {
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(typeof type == 'string');
+        typeString = type;
       }
+      results.push(`  ${typeString} ${name}`);
     };
-
-    // TODO: skip properties that already written as part of parent schema serialization?
-    propertiesToString(this.normative, 'normative');
-    propertiesToString(this.optional, 'optional');
 
     if (Object.keys(this.description).length > 0) {
       results.push(`  description \`${this.description.pattern}\``);
@@ -759,6 +718,7 @@ class Schema {
         }
       });
     }
+
     return results.join('\n');
   }
 
@@ -3144,14 +3104,13 @@ class JsonldToManifest {
       s += ` extends ${superNames.join(', ')}`;
 
     if (relevantProperties.length > 0) {
-      s += '\n  optional';
       for (let property of relevantProperties) {
         let type;
         if (property.type.length > 1)
           type = '(' + property.type.join(' or ') + ')';
         else
           type = property.type[0];
-        s += `\n    ${type} ${property.name}`;
+        s += `\n  ${type} ${property.name}`;
       }
     }
     s += '\n';
@@ -3958,10 +3917,10 @@ class TypeChecker {
 function testEntityClass(type) {
   return new __WEBPACK_IMPORTED_MODULE_3__schema_js__["a" /* default */]({
     name: type,
-    sections: [{
-      sectionType: 'normative',
-      fields: {'id': 'Number', 'value': 'Text'}
-    }],
+    fields: {
+      id: 'Number',
+      value: 'Text',
+    },
     parents: [],
   }).entityClass();
 }
@@ -3970,7 +3929,6 @@ let BasicEntity = testEntityClass('BasicEntity');
 
 /* unused harmony default export */ var _unused_webpack_default_export = ({
   Entity: __WEBPACK_IMPORTED_MODULE_2__entity_js__["a" /* default */],
-  BasicEntity,
   Relation: __WEBPACK_IMPORTED_MODULE_5__relation_js__["a" /* default */],
   testing: {
     testEntityClass,

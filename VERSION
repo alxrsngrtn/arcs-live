@@ -1,5 +1,5 @@
-commit 14e8c4ecb69231c098bf85582d66677e00f4e3f7
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Mar 8 19:10:39 2018 -0800
+commit b464ba193f2bcc2427e0a71c05142894a43bff2b
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Mon Mar 12 12:42:36 2018 +1100
 
-    Add description to recipe and schema manifests, parse and serialize.
+    Lint
