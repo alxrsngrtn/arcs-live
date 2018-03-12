@@ -1,5 +1,6 @@
-commit 9488d37577c79f16f9c0288318b3a4987aa70e49
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Mon Mar 12 11:51:10 2018 -0700
+commit 2a7be19447bef138c404ba42a74d4cbf6e3873e9
+Author: Matt Small <mbsmall@google.com>
+Date:   Fri Mar 9 11:39:13 2018 -0800
 
-    fewer underscores
+    consolidate the extension's package.json up into the root package.json
+    Also run the extension unit tests automatically
