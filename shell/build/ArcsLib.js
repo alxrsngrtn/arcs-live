@@ -133,6 +133,8 @@ class Recipe {
 
     // TODO: Change to array, if needed for search strings of merged recipes.
     this._search = null;
+
+    this._pattern = null;
   }
 
   newConnectionConstraint(from, fromConnection, to, toConnection) {
@@ -276,6 +278,20 @@ class Recipe {
       if (slot.id == id)
         return slot;
     }
+  }
+  get pattern() { return this._pattern; }
+  set description(description) {
+    let pattern = description.find(desc => desc.name == 'pattern');
+    if (pattern) {
+      this._pattern = pattern.pattern;
+    }
+    description.forEach(desc => {
+      if (desc.name != 'pattern') {
+        let handle = this.handles.find(handle => handle.localName == desc.name);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handle, `Cannot set description pattern for nonexistent handle ${desc.name}.`);
+        handle.pattern = desc.pattern;
+      }
+    });
   }
 
   async digest() {
@@ -528,6 +544,14 @@ class Recipe {
     }
     for (let particle of this.particles) {
       result.push(particle.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
+    }
+    if (this.pattern || this.handles.find(h => h.pattern)) {
+      result.push(`  description \`${this.pattern}\``);
+      this.handles.forEach(h => {
+        if (h.pattern) {
+          result.push(`    ${h.localName} \`${h.pattern}\``);
+        }
+      });
     }
     return result.join('\n');
   }
@@ -1155,9 +1179,35 @@ class Type {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `Add support to serializing type: ${JSON.stringify(this)}`);
   }
 
+  getEntitySchema() {
+    if (this.isSetView) {
+      return this.primitiveType().getEntitySchema();
+    }
+    if (this.isEntity) {
+      return this.entitySchema;
+    }
+    if (this.isVariable) {
+      if (this.variable.isResolved()) {
+        return this.resolvedType().getEntitySchema();
+      }
+    }
+  }
+
   toPrettyString() {
-    if (this.isRelation)
+    // Try extract the description from schema spec.
+    let entitySchema = this.getEntitySchema();
+    if (entitySchema) {
+      if (this.isSetView && entitySchema.description.plural) {
+        return entitySchema.description.plural;
+      }
+      if (this.isEntity && entitySchema.description.pattern) {
+        return entitySchema.description.pattern;
+      }
+    }
+
+    if (this.isRelation) {
       return JSON.stringify(this.data);
+    }
     if (this.isSetView) {
       return `${this.primitiveType().toPrettyString()} List`;
     }
@@ -1185,6 +1235,8 @@ addType('Interface', 'shape');
 addType('Tuple', 'fields');
 
 /* harmony default export */ __webpack_exports__["a"] = (Type);
+
+
 
 
 
@@ -1537,6 +1589,10 @@ class Schema {
     this.parents = (model.parents || []).map(parent => new Schema(parent));
     this._normative = {};
     this._optional = {};
+    this.description = {};
+    if (model.description) {
+      model.description.description.forEach(desc => this.description[desc.name] = desc.pattern);
+    }
 
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.sections, `${JSON.stringify(model)} should have sections`);
     for (let section of model.sections) {
@@ -1852,6 +1908,15 @@ class Schema {
     // TODO: skip properties that already written as part of parent schema serialization?
     propertiesToString(this.normative, 'normative');
     propertiesToString(this.optional, 'optional');
+
+    if (Object.keys(this.description).length > 0) {
+      results.push(`  description \`${this.description.pattern}\``);
+      Object.keys(this.description).forEach(name => {
+        if (name != 'pattern') {
+          results.push(`    ${name} \`${this.description[name]}\``);
+        }
+      });
+    }
     return results.join('\n');
   }
 
@@ -3290,6 +3355,10 @@ ${e.message}
     visitor.traverse(items);
   }
   static _processSchema(manifest, schemaItem) {
+    let items = {
+      sections: schemaItem.items.filter(item => item.kind == 'schema-section'),
+      description: schemaItem.items.find(item => item.kind == 'description')
+    };
     manifest._schemas[schemaItem.name] = new __WEBPACK_IMPORTED_MODULE_4__schema_js__["a" /* default */]({
       name: schemaItem.name,
       parents: schemaItem.parents.map(parent => {
@@ -3301,7 +3370,7 @@ ${e.message}
         }
         return result.toLiteral();
       }),
-      sections: schemaItem.sections.map(section => {
+      sections: items.sections.map(section => {
         let fields = {};
         for (let field of section.fields) {
           fields[field.name] = field.type;
@@ -3311,6 +3380,7 @@ ${e.message}
           fields,
         };
       }),
+      description: items.description
     });
   }
   static _processResource(manifest, schemaItem) {
@@ -3371,7 +3441,8 @@ ${e.message}
       bySlot: new Map(),
       byName: new Map(),
       connections: recipeItem.items.filter(item => item.kind == 'connection'),
-      search: recipeItem.items.find(item => item.kind == 'search')
+      search: recipeItem.items.find(item => item.kind == 'search'),
+      description: recipeItem.items.find(item => item.kind == 'description')
     };
 
     for (let connection of items.connections) {
@@ -3615,6 +3686,10 @@ ${e.message}
         }
         particle.consumedSlotConnections[slotConnectionItem.param].connectToSlot(targetSlot);
       }
+    }
+
+    if (items.description && items.description.description) {
+      recipe.description = items.description.description;
     }
   }
   resolveReference(name) {
@@ -8874,13 +8949,13 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           },
         peg$c188 = "schema",
         peg$c189 = peg$literalExpectation("schema", false),
-        peg$c190 = function(name, parent, sections) {
+        peg$c190 = function(name, parent, items) {
             return {
               kind: 'schema',
               location: location(),
               name: name,
               parents: optional(parent, parent => parent, []),
-              sections: optional(sections, extractIndented, []),
+              items: optional(items, extractIndented, []),
             };
           },
         peg$c191 = "normative",
@@ -10833,7 +10908,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         if (s0 === peg$FAILED) {
           s0 = peg$parseParticleSlot();
           if (s0 === peg$FAILED) {
-            s0 = peg$parseParticleDescription();
+            s0 = peg$parseDescription();
           }
         }
       }
@@ -11843,7 +11918,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       return s0;
     }
 
-    function peg$parseParticleDescription() {
+    function peg$parseDescription() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
       s0 = peg$currPos;
@@ -11868,7 +11943,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 s8 = peg$currPos;
                 s9 = peg$parseSameIndent();
                 if (s9 !== peg$FAILED) {
-                  s10 = peg$parseParticleViewDescription();
+                  s10 = peg$parseParticleHandleDescription();
                   if (s10 !== peg$FAILED) {
                     s9 = [s9, s10];
                     s8 = s9;
@@ -11886,7 +11961,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                     s8 = peg$currPos;
                     s9 = peg$parseSameIndent();
                     if (s9 !== peg$FAILED) {
-                      s10 = peg$parseParticleViewDescription();
+                      s10 = peg$parseParticleHandleDescription();
                       if (s10 !== peg$FAILED) {
                         s9 = [s9, s10];
                         s8 = s9;
@@ -11944,7 +12019,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       return s0;
     }
 
-    function peg$parseParticleViewDescription() {
+    function peg$parseParticleHandleDescription() {
       var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
@@ -12125,6 +12200,9 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s0 = peg$parseRecipeConnection();
             if (s0 === peg$FAILED) {
               s0 = peg$parseRecipeSearch();
+              if (s0 === peg$FAILED) {
+                s0 = peg$parseDescription();
+              }
             }
           }
         }
@@ -13590,7 +13668,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                   s9 = peg$currPos;
                   s10 = peg$parseSameIndent();
                   if (s10 !== peg$FAILED) {
-                    s11 = peg$parseSchemaSection();
+                    s11 = peg$parseSchemaItem();
                     if (s11 !== peg$FAILED) {
                       s10 = [s10, s11];
                       s9 = s10;
@@ -13607,7 +13685,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                     s9 = peg$currPos;
                     s10 = peg$parseSameIndent();
                     if (s10 !== peg$FAILED) {
-                      s11 = peg$parseSchemaSection();
+                      s11 = peg$parseSchemaItem();
                       if (s11 !== peg$FAILED) {
                         s10 = [s10, s11];
                         s9 = s10;
@@ -13661,6 +13739,17 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       } else {
         peg$currPos = s0;
         s0 = peg$FAILED;
+      }
+
+      return s0;
+    }
+
+    function peg$parseSchemaItem() {
+      var s0;
+
+      s0 = peg$parseSchemaSection();
+      if (s0 === peg$FAILED) {
+        s0 = peg$parseDescription();
       }
 
       return s0;
@@ -16947,6 +17036,7 @@ class Handle {
     this._connections = [];
     this._mappedType = undefined;
     this._storageKey = undefined;
+    this._pattern = undefined;
   }
 
   _copyInto(recipe) {
@@ -17029,6 +17119,8 @@ class Handle {
   get connections() { return this._connections; } // HandleConnection*
   get storageKey() { return this._storageKey; }
   set storageKey(key) { this._storageKey = key; }
+  get pattern() { return this._pattern; }
+  set pattern(pattern) { this._pattern = pattern; }
 
   _isValid(options) {
     let typeSet = [];
@@ -17111,7 +17203,7 @@ class Handle {
     result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
     if (this.type) {
       result.push('//');
-      result.push(this.type.toPrettyString());
+      result.push(this.type.toString());
     }
     if (options && options.showUnresolved) {
       let options = {};

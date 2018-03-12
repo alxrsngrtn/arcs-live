@@ -339,9 +339,35 @@ class Type {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `Add support to serializing type: ${JSON.stringify(this)}`);
   }
 
+  getEntitySchema() {
+    if (this.isSetView) {
+      return this.primitiveType().getEntitySchema();
+    }
+    if (this.isEntity) {
+      return this.entitySchema;
+    }
+    if (this.isVariable) {
+      if (this.variable.isResolved()) {
+        return this.resolvedType().getEntitySchema();
+      }
+    }
+  }
+
   toPrettyString() {
-    if (this.isRelation)
+    // Try extract the description from schema spec.
+    let entitySchema = this.getEntitySchema();
+    if (entitySchema) {
+      if (this.isSetView && entitySchema.description.plural) {
+        return entitySchema.description.plural;
+      }
+      if (this.isEntity && entitySchema.description.pattern) {
+        return entitySchema.description.pattern;
+      }
+    }
+
+    if (this.isRelation) {
       return JSON.stringify(this.data);
+    }
     if (this.isSetView) {
       return `${this.primitiveType().toPrettyString()} List`;
     }
@@ -376,6 +402,8 @@ addType('Tuple', 'fields');
 
 
 
+
+
 /***/ }),
 /* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -403,6 +431,10 @@ class Schema {
     this.parents = (model.parents || []).map(parent => new Schema(parent));
     this._normative = {};
     this._optional = {};
+    this.description = {};
+    if (model.description) {
+      model.description.description.forEach(desc => this.description[desc.name] = desc.pattern);
+    }
 
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.sections, `${JSON.stringify(model)} should have sections`);
     for (let section of model.sections) {
@@ -718,6 +750,15 @@ class Schema {
     // TODO: skip properties that already written as part of parent schema serialization?
     propertiesToString(this.normative, 'normative');
     propertiesToString(this.optional, 'optional');
+
+    if (Object.keys(this.description).length > 0) {
+      results.push(`  description \`${this.description.pattern}\``);
+      Object.keys(this.description).forEach(name => {
+        if (name != 'pattern') {
+          results.push(`    ${name} \`${this.description[name]}\``);
+        }
+      });
+    }
     return results.join('\n');
   }
 

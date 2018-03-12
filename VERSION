@@ -1,5 +1,5 @@
-commit 9b500b0bdd0de26d862e7723301ebade705f0e1e
-Author: Matt Small <mbsmall@google.com>
-Date:   Fri Mar 9 16:09:33 2018 -0800
+commit 14e8c4ecb69231c098bf85582d66677e00f4e3f7
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Mar 8 19:10:39 2018 -0800
 
-    potential fix for gh pages deploy
+    Add description to recipe and schema manifests, parse and serialize.
