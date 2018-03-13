@@ -1,5 +1,5 @@
-commit 559617b6e86742ca7c953b08f51dda2dcd8e739c
+commit a8129ecc84aefe29d242e29397b914170b4a4117
 Author: Matt Small <mbsmall@google.com>
-Date:   Tue Mar 13 11:02:09 2018 -0700
+Date:   Tue Mar 13 09:18:49 2018 -0700
 
-    remove normative from Restaurant.schema
+    per travis-ci/travis-ci#9312 the issue is fixed
