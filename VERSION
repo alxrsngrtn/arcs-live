@@ -1,5 +1,5 @@
-commit b6c3042ea7167500425ec5c0c2ed3605bfd43e08
-Author: Yuin Chien <yuin@google.com>
-Date:   Mon Mar 12 15:43:49 2018 -0700
+commit 559617b6e86742ca7c953b08f51dda2dcd8e739c
+Author: Matt Small <mbsmall@google.com>
+Date:   Tue Mar 13 11:02:09 2018 -0700
 
-    [Restaurant demo] Updated styling for favorite food and detail view.
+    remove normative from Restaurant.schema
