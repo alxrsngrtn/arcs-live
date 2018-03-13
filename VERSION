@@ -1,7 +1,5 @@
-commit 806f6f2de14fb6ea7c3a2bf8fbcd1a5f8a684fe6
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Tue Mar 13 09:41:32 2018 +1100
+commit 1f1ce98a1b9d7c6810422270d1cb09735d32c548
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Sat Mar 10 11:21:46 2018 -0800
 
-    Put back index.debug.html
-    
-    Accidently removed in #934
+    Recipe description implementation.

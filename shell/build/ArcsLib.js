@@ -280,6 +280,7 @@ class Recipe {
     }
   }
   get pattern() { return this._pattern; }
+  set pattern(pattern) { this._pattern = pattern; }
   set description(description) {
     let pattern = description.find(desc => desc.name == 'pattern');
     if (pattern) {
@@ -454,6 +455,13 @@ class Recipe {
     this._connectionConstraints.forEach(cloneTheThing);
     if (this.search) {
       this.search._copyInto(recipe);
+    }
+    if (this.pattern) {
+      if (recipe.pattern) {
+        // TODO(mmandlis): Join |this.pattern| with the pattern already existing in the recipe.
+      } else {
+        recipe.pattern = this.pattern;
+      }
     }
   }
 
@@ -2428,14 +2436,14 @@ class Description {
   set relevance(relevance) { this._relevance = relevance; }
 
   async getArcDescription(formatterClass) {
-    let desc = await new (formatterClass || DescriptionFormatter)(this).getDescription(this._arc.activeRecipe.particles);
+    let desc = await new (formatterClass || DescriptionFormatter)(this).getDescription(this._arc.activeRecipe);
     if (desc) {
       return desc;
     }
   }
 
   async getRecipeSuggestion(formatterClass) {
-    let desc = await new (formatterClass || DescriptionFormatter)(this).getDescription(this._arc.recipes[this._arc.recipes.length - 1].particles);
+    let desc = await new (formatterClass || DescriptionFormatter)(this).getDescription(this._arc.recipes[this._arc.recipes.length - 1]);
     if (desc) {
       return desc;
     }
@@ -2465,11 +2473,18 @@ class DescriptionFormatter {
     this.excludeValues = false;
   }
 
-  async getDescription(particles) {
+  async getDescription(recipe) {
     await this._updateDescriptionHandles(this._description);
 
+    if (recipe.pattern) {
+      let recipeDesc = this.patternToSuggestion(recipe.pattern);
+      if (recipeDesc) {
+        return recipeDesc;
+      }
+    }
+
     // Choose particles, sort them by rank and generate suggestions.
-    let particlesSet = new Set(particles);
+    let particlesSet = new Set(recipe.particles);
     let selectedDescriptions = this._particleDescriptions
       .filter(desc => (particlesSet.has(desc._particle) && this._isSelectedDescription(desc)));
     // Prefer particles that render UI, if any.
@@ -2590,7 +2605,7 @@ class DescriptionFormatter {
   }
 
   async patternToSuggestion(pattern, particleDescription) {
-    let tokens = this._initTokens(pattern, particleDescription._particle);
+    let tokens = this._initTokens(pattern, particleDescription);
     let tokenPromises = tokens.map(async token => await this.tokenToString(token));
     let tokenResults = await Promise.all(tokenPromises);
     if (tokenResults.filter(res => res == undefined).length == 0) {
@@ -2598,7 +2613,7 @@ class DescriptionFormatter {
     }
   }
 
-  _initTokens(pattern, particle) {
+  _initTokens(pattern, particleDescription) {
     pattern = pattern.replace(/</g, '&lt;');
     let results = [];
     while (pattern.length > 0) {
@@ -2617,18 +2632,34 @@ class DescriptionFormatter {
       if (nextToken.length > 0)
         results.push({text: nextToken});
       if (firstToken.length > 0) {
-        results.push(this._initHandleToken(firstToken, particle));
+        results.push(this._initHandleToken(firstToken, particleDescription));
       }
       pattern = pattern.substring(tokenIndex + firstToken.length);
     }
     return results;
   }
 
-  _initHandleToken(pattern, particle) {
+  _initHandleToken(pattern, particleDescription) {
     let valueTokens = pattern.match(/\${([a-zA-Z0-9\.]+)}(?:\.([_a-zA-Z]+))?/);
     let handleNames = valueTokens[1].split('.');
     let extra = valueTokens.length == 3 ? valueTokens[2] : undefined;
     let valueToken;
+
+    // Fetch the particle description by name from the value token - if it wasn't passed, this is a recipe description.
+    if (!particleDescription) {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handleNames.length > 1, `'${valueTokens[1]}' must contain dot-separated particle and handle connection name.`);
+      let particleName = handleNames.shift();
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particleName[0] === particleName[0].toUpperCase(), `Expected particle name, got '${particleName}' instead.`);
+      let particleDescriptions = this._particleDescriptions.filter(desc => desc._particle.name == particleName);
+      debugger;
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particleDescriptions.length > 0, `Cannot find particles with name ${particleName}.`);
+      if (particleDescriptions.length > 1) {
+        console.warn(`Multiple particles with name ${particleName}.`);
+      }
+      particleDescription = particleDescriptions[0];
+    }
+    let particle = particleDescription._particle;
+
     let handleConn = particle.connections[handleNames[0]];
     if (handleConn) { // handle connection
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handleConn.handle && handleConn.handle.id, 'Missing id???');
@@ -6862,7 +6893,7 @@ class Arc {
     this._speculative = !!speculative; // undefined => false
     this._nextLocalID = 0;
     this._activeRecipe = new __WEBPACK_IMPORTED_MODULE_7__recipe_recipe_js__["a" /* default */]();
-    // TODO: rename: this are just tuples of {particles, handles, slots} of instantiated recipes merged into active recipe..
+    // TODO: rename: this are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
     this._recipes = [];
     this._loader = loader;
     this._scheduler = __WEBPACK_IMPORTED_MODULE_13__scheduler_js__["a" /* default */];
@@ -7121,7 +7152,7 @@ ${this.activeRecipe.toString()}`;
    let {particles, handles, slots} = this._activeRecipe.mergeInto(arc._activeRecipe);
    let particleIndex = 0, handleIndex = 0, slotIndex = 0;
    this._recipes.forEach(recipe => {
-     let arcRecipe = {particles: [], handles: [], slots: [], innerArcs: new Map()};
+     let arcRecipe = {particles: [], handles: [], slots: [], innerArcs: new Map(), pattern: recipe.pattern};
      recipe.particles.forEach(p => {
        arcRecipe.particles.push(particles[particleIndex++]);
        if (recipe.innerArcs.has(p)) {
@@ -7177,7 +7208,7 @@ ${this.activeRecipe.toString()}`;
       currentArc = innerArcs.get(innerArc.particle);
     }
     let {handles, particles, slots} = recipe.mergeInto(currentArc.activeRecipe);
-    currentArc.recipes.push({particles, handles, slots, innerArcs: new Map()});
+    currentArc.recipes.push({particles, handles, slots, innerArcs: new Map(), pattern: recipe.pattern});
     slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
 
     for (let recipeHandle of handles) {
@@ -15575,7 +15606,7 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
       let {template, model} = this._retrieveTemplateAndModel(particleDesc, index);
 
       let success = await Promise.all(Object.keys(model).map(async tokenKey => {
-        let token = this._initHandleToken(model[tokenKey], particleDesc._particle);
+        let token = this._initHandleToken(model[tokenKey], particleDesc);
         let tokenValue = await this.tokenToString(token);
 
         if (tokenValue == undefined) {
@@ -15622,7 +15653,7 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particleDesc.pattern, 'Description must contain template and model, or pattern');
     let template = '';
     let model = {};
-    let tokens = this._initTokens(particleDesc.pattern, particleDesc._particle);
+    let tokens = this._initTokens(particleDesc.pattern, particleDesc);
 
     tokens.forEach((token, i) => {
       if (token.text) {
@@ -17061,6 +17092,7 @@ class Handle {
       // the connections are re-established when Particles clone their
       // attached HandleConnection objects.
       handle._connections = [];
+      handle._pattern = this._pattern;
     }
     return handle;
   }
