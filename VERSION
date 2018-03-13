@@ -1,5 +1,5 @@
-commit 1f1ce98a1b9d7c6810422270d1cb09735d32c548
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Sat Mar 10 11:21:46 2018 -0800
+commit b6c3042ea7167500425ec5c0c2ed3605bfd43e08
+Author: Yuin Chien <yuin@google.com>
+Date:   Mon Mar 12 15:43:49 2018 -0700
 
-    Recipe description implementation.
+    [Restaurant demo] Updated styling for favorite food and detail view.
