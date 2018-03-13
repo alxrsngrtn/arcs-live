@@ -1,5 +1,7 @@
-commit a8129ecc84aefe29d242e29397b914170b4a4117
-Author: Matt Small <mbsmall@google.com>
-Date:   Tue Mar 13 09:18:49 2018 -0700
+commit 06492a447d2fa4c1cd9ea785335d3d735175f04b
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Tue Mar 13 15:57:04 2018 -0700
 
-    per travis-ci/travis-ci#9312 the issue is fixed
+    Add a recipe field to Post entity.
+    
+    To allow polymorphic display of and interaction with Posts.
