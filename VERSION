@@ -1,5 +1,5 @@
-commit 6f2d7cd330a39f7277f922d15af130f254520256
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Mar 13 16:15:48 2018 -0700
+commit 52d0f4e410221c26d1dfec9f5f5235d00dc6722e
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Mar 14 13:10:42 2018 -0700
 
-    address comment
+    Update README (remove reference to `arcs-cdn`)
