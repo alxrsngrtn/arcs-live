@@ -1,11 +1,5 @@
-commit e953dab605107fec02020578339684e6f809c7cf
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed Mar 14 17:45:34 2018 +1100
+commit 6f2d7cd330a39f7277f922d15af130f254520256
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Mar 13 16:15:48 2018 -0700
 
-    1) Add a strategy that resolves handles when there's only one choice.
-    2) Stop view mapper strategies from resolving when there's only one choice.
-    3) Add some very simple metrics to the strategy explorer.
-    
-    Splitting just view resolution like this (deterministic vs. non-deterministic) reduces
-    the total number of generated recipes (on current front-end environment) from 190 to 108.
-    Most savings are early on in the generation.
+    address comment

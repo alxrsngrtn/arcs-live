@@ -79,35 +79,36 @@ defineParticle(({TransformationDomParticle, resolver}) => {
       this._views = views;
       this._template = null;
       let arc = await this.constructInnerArc();
+      let hostedParticle = await views.get('hostedParticle').get();
 
-      this.on(views, 'collection', 'change', async (e) => {
-        let collectionHandle = views.get('collection');
-        let collection = await collectionHandle.toList();
+      this.relevance = 0.1;
 
-        this.relevance = 0.1;
+      this._setState({arc, hostedParticle, type: views.get('collection').type});
+      super.setViews(views);
+    }
 
-        let hostedParticle = await views.get('hostedParticle').get();
-        for (let [index, item] of collection.entries()) {
-          if (this.handleIds[item.id]) {
-            let itemView = await this.handleIds[item.id];
-            itemView.set(item);
-            continue;
-          }
+    async willReceiveProps({collection}, {arc, hostedParticle, type}) {
+      for (let [index, item] of collection.entries()) {
+        if (this.handleIds[item.id]) {
+          let itemView = await this.handleIds[item.id];
+          itemView.set(item);
+          continue;
+        }
 
-          let itemViewPromise = arc.createHandle(collectionHandle.type.primitiveType(), 'item' + index);
-          this.handleIds[item.id] = itemViewPromise;
-          let itemView = await itemViewPromise;
+        let itemViewPromise = arc.createHandle(type.primitiveType(), 'item' + index);
+        this.handleIds[item.id] = itemViewPromise;
+        let itemView = await itemViewPromise;
 
-          let hostedSlotName = [...hostedParticle.slots.keys()][0];
-          let slotName = [...this.spec.slots.values()][0].name;
-          let slotId = await arc.createSlot(this, slotName, hostedParticle.name, hostedSlotName);
-          if (!slotId) {
-            continue;
-          }
+        let hostedSlotName = [...hostedParticle.slots.keys()][0];
+        let slotName = [...this.spec.slots.values()][0].name;
+        let slotId = await arc.createSlot(this, slotName, hostedParticle.name, hostedSlotName);
+        if (!slotId) {
+          continue;
+        }
 
-          this._itemSubIdByHostedSlotId.set(slotId, item.id);
+        this._itemSubIdByHostedSlotId.set(slotId, item.id);
 
-          let recipe = `
+        let recipe = `
 ${this.serializeSchema(hostedParticle)}
 recipe
   use '${itemView._id}' as v1
@@ -115,23 +116,17 @@ recipe
   ${hostedParticle.name}
     ${hostedParticle.connections[0].name} <- v1
     consume ${hostedSlotName} as s1
-          `;
+    `;
 
-          try {
-            itemView.set(item);
-            await arc.loadRecipe(recipe, this);
-          } catch (e) {
-            console.log(e);
-          }
+        try {
+          itemView.set(item);
+          await arc.loadRecipe(recipe, this);
+        } catch (e) {
+          console.log(e);
         }
+      }
 
-        // Update props of all particle's views.
-        this._handlesToProps(views, this.config);
-      });
-
-    }
-    willReceiveProps(props) {
-      let propsItems = TransformationDomParticle.propsToItems(props.collection);
+      let propsItems = TransformationDomParticle.propsToItems(collection);
 
       this._updateRenderModel(propsItems, this._state.hostedItems || []);
 
