@@ -1,8 +1,11 @@
-commit e37ccb0e8752b009f0d6dfa8c0575d5007ff2e57
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Wed Mar 14 13:29:26 2018 +1100
+commit e953dab605107fec02020578339684e6f809c7cf
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Mar 14 17:45:34 2018 +1100
 
-    Allow inline schemas to specify multiple names
+    1) Add a strategy that resolves handles when there's only one choice.
+    2) Stop view mapper strategies from resolving when there's only one choice.
+    3) Add some very simple metrics to the strategy explorer.
     
-    This is intended to support serialization in the short term. We'll
-    probably add additional syntax to support proper hierarchies soon.
+    Splitting just view resolution like this (deterministic vs. non-deterministic) reduces
+    the total number of generated recipes (on current front-end environment) from 190 to 108.
+    Most savings are early on in the generation.
