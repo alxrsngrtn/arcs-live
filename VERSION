@@ -1,5 +1,5 @@
-commit e43075323097757017dc3965a327ecd6a5ae071d
+commit 1191da41784e92804deb67834685cc0ad95b0202
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Mar 14 13:39:06 2018 -0700
+Date:   Wed Mar 14 16:02:41 2018 -0700
 
-    rename method and connection
+    update assert to not enforce slot name equality

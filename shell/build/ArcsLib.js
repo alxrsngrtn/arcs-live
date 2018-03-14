@@ -3844,8 +3844,8 @@ ${e.message}
           if (!targetSlot.name) {
             targetSlot.name = slotConnectionItem.param;
           }
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(targetSlot.name == slotConnectionItem.param,
-                 `Target slot name ${targetSlot.name} doesn't match slot connection name ${slotConnectionItem.param}`);
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(targetSlot == items.byName.get(slotConnectionItem.name),
+                 `Target slot ${targetSlot.name} doesn't match slot connection ${slotConnectionItem.param}`);
         } else {
           targetSlot = recipe.newSlot(slotConnectionItem.param);
           targetSlot.localName = slotConnectionItem.name;
