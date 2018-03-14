@@ -3290,36 +3290,44 @@ ${e.message}
         visitChildren();
         switch (node.kind) {
         case 'schema-inline':
-          let externalSchema;
-          if (node.name != null) {
-            let resolved = manifest.resolveReference(node.name);
+          let externalSchemas = [];
+          for (let name of node.names) {
+            let resolved = manifest.resolveReference(name);
             if (resolved && resolved.schema) {
-              externalSchema = resolved.schema;
+              externalSchemas.push(resolved.schema);
             }
           }
           let fields = {};
           for (let {name, type} of node.fields) {
-            if (!type) {
-              if (!externalSchema) {
-                throw new ManifestError(
-                    node.location,
-                    `Could not infer type of '${name}' field`);
+            for (let schema of externalSchemas) {
+              if (!type) {
+                // If we don't have a type, try to infer one from the schema.
+                type = schema.fields[name];
+              } else {
+                // Validate that the specified or inferred type matches the schema.
+                let externalType = schema.fields[name];
+                if (externalType && !__WEBPACK_IMPORTED_MODULE_4__schema_js__["a" /* default */].typesEqual(externalType, type)) {
+                  throw new ManifestError(
+                      node.location,
+                      `Type of '${name}' does not match schema (${type} vs ${externalType})`);
+                }
               }
-              type = externalSchema.fields[name];
             }
-            if (externalSchema) {
-              let externalType = externalSchema.fields[name];
-              if (!__WEBPACK_IMPORTED_MODULE_4__schema_js__["a" /* default */].typesEqual(externalType, type)) {
-                throw new ManifestError(
-                    node.location,
-                    `Type of '${name}' does not match schema (${type} vs ${externalType})`);
-              }
+            if (!type) {
+              throw new ManifestError(
+                  node.location,
+                  `Could not infer type of '${name}' field`);
             }
             fields[name] = type;
           }
-          node.model = __WEBPACK_IMPORTED_MODULE_7__type_js__["a" /* default */].newEntity(new __WEBPACK_IMPORTED_MODULE_4__schema_js__["a" /* default */]({
-            name: node.name,
+          let parents = node.names.slice(1).map(name => ({
+            name,
             parents: [],
+            fields: {},
+          }));
+          node.model = __WEBPACK_IMPORTED_MODULE_7__type_js__["a" /* default */].newEntity(new __WEBPACK_IMPORTED_MODULE_4__schema_js__["a" /* default */]({
+            name: node.names[0] || null,
+            parents,
             fields,
           }));
           return;
@@ -8969,11 +8977,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         peg$c183 = peg$literalExpectation("{", false),
         peg$c184 = "}",
         peg$c185 = peg$literalExpectation("}", false),
-        peg$c186 = function(name, fields) {
+        peg$c186 = function(names, fields) {
             return {
               kind: 'schema-inline',
               location: location(),
-              name: name == '*' ? null : name,
+              names: optional(names, names => names.map(name => name[0]).filter(name => name != '*'), []),
               fields: optional(fields, fields => [fields[0], ...fields[1].map(tail => tail[2])], []),
             }
           },
@@ -13501,121 +13509,161 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
     }
 
     function peg$parseSchemaInline() {
-      var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
+      var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
       s0 = peg$currPos;
-      s1 = peg$parseupperIdent();
-      if (s1 === peg$FAILED) {
+      s1 = [];
+      s2 = peg$currPos;
+      s3 = peg$parseupperIdent();
+      if (s3 === peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 42) {
-          s1 = peg$c129;
+          s3 = peg$c129;
           peg$currPos++;
         } else {
-          s1 = peg$FAILED;
+          s3 = peg$FAILED;
           if (peg$silentFails === 0) { peg$fail(peg$c130); }
         }
       }
-      if (s1 !== peg$FAILED) {
-        s2 = peg$parsewhiteSpace();
-        if (s2 !== peg$FAILED) {
-          if (input.charCodeAt(peg$currPos) === 123) {
-            s3 = peg$c182;
-            peg$currPos++;
-          } else {
-            s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c183); }
+      if (s3 !== peg$FAILED) {
+        s4 = peg$parsewhiteSpace();
+        if (s4 !== peg$FAILED) {
+          s3 = [s3, s4];
+          s2 = s3;
+        } else {
+          peg$currPos = s2;
+          s2 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s2;
+        s2 = peg$FAILED;
+      }
+      if (s2 !== peg$FAILED) {
+        while (s2 !== peg$FAILED) {
+          s1.push(s2);
+          s2 = peg$currPos;
+          s3 = peg$parseupperIdent();
+          if (s3 === peg$FAILED) {
+            if (input.charCodeAt(peg$currPos) === 42) {
+              s3 = peg$c129;
+              peg$currPos++;
+            } else {
+              s3 = peg$FAILED;
+              if (peg$silentFails === 0) { peg$fail(peg$c130); }
+            }
           }
           if (s3 !== peg$FAILED) {
-            s4 = peg$currPos;
-            s5 = peg$parseSchemaInlineField();
-            if (s5 !== peg$FAILED) {
-              s6 = [];
-              s7 = peg$currPos;
-              if (input.charCodeAt(peg$currPos) === 44) {
-                s8 = peg$c45;
-                peg$currPos++;
-              } else {
-                s8 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c46); }
-              }
+            s4 = peg$parsewhiteSpace();
+            if (s4 !== peg$FAILED) {
+              s3 = [s3, s4];
+              s2 = s3;
+            } else {
+              peg$currPos = s2;
+              s2 = peg$FAILED;
+            }
+          } else {
+            peg$currPos = s2;
+            s2 = peg$FAILED;
+          }
+        }
+      } else {
+        s1 = peg$FAILED;
+      }
+      if (s1 !== peg$FAILED) {
+        if (input.charCodeAt(peg$currPos) === 123) {
+          s2 = peg$c182;
+          peg$currPos++;
+        } else {
+          s2 = peg$FAILED;
+          if (peg$silentFails === 0) { peg$fail(peg$c183); }
+        }
+        if (s2 !== peg$FAILED) {
+          s3 = peg$currPos;
+          s4 = peg$parseSchemaInlineField();
+          if (s4 !== peg$FAILED) {
+            s5 = [];
+            s6 = peg$currPos;
+            if (input.charCodeAt(peg$currPos) === 44) {
+              s7 = peg$c45;
+              peg$currPos++;
+            } else {
+              s7 = peg$FAILED;
+              if (peg$silentFails === 0) { peg$fail(peg$c46); }
+            }
+            if (s7 !== peg$FAILED) {
+              s8 = peg$parsewhiteSpace();
               if (s8 !== peg$FAILED) {
-                s9 = peg$parsewhiteSpace();
+                s9 = peg$parseSchemaInlineField();
                 if (s9 !== peg$FAILED) {
-                  s10 = peg$parseSchemaInlineField();
-                  if (s10 !== peg$FAILED) {
-                    s8 = [s8, s9, s10];
-                    s7 = s8;
-                  } else {
-                    peg$currPos = s7;
-                    s7 = peg$FAILED;
-                  }
+                  s7 = [s7, s8, s9];
+                  s6 = s7;
                 } else {
-                  peg$currPos = s7;
-                  s7 = peg$FAILED;
+                  peg$currPos = s6;
+                  s6 = peg$FAILED;
                 }
               } else {
-                peg$currPos = s7;
-                s7 = peg$FAILED;
-              }
-              while (s7 !== peg$FAILED) {
-                s6.push(s7);
-                s7 = peg$currPos;
-                if (input.charCodeAt(peg$currPos) === 44) {
-                  s8 = peg$c45;
-                  peg$currPos++;
-                } else {
-                  s8 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c46); }
-                }
-                if (s8 !== peg$FAILED) {
-                  s9 = peg$parsewhiteSpace();
-                  if (s9 !== peg$FAILED) {
-                    s10 = peg$parseSchemaInlineField();
-                    if (s10 !== peg$FAILED) {
-                      s8 = [s8, s9, s10];
-                      s7 = s8;
-                    } else {
-                      peg$currPos = s7;
-                      s7 = peg$FAILED;
-                    }
-                  } else {
-                    peg$currPos = s7;
-                    s7 = peg$FAILED;
-                  }
-                } else {
-                  peg$currPos = s7;
-                  s7 = peg$FAILED;
-                }
-              }
-              if (s6 !== peg$FAILED) {
-                s5 = [s5, s6];
-                s4 = s5;
-              } else {
-                peg$currPos = s4;
-                s4 = peg$FAILED;
+                peg$currPos = s6;
+                s6 = peg$FAILED;
               }
             } else {
-              peg$currPos = s4;
-              s4 = peg$FAILED;
+              peg$currPos = s6;
+              s6 = peg$FAILED;
             }
-            if (s4 === peg$FAILED) {
-              s4 = null;
-            }
-            if (s4 !== peg$FAILED) {
-              if (input.charCodeAt(peg$currPos) === 125) {
-                s5 = peg$c184;
+            while (s6 !== peg$FAILED) {
+              s5.push(s6);
+              s6 = peg$currPos;
+              if (input.charCodeAt(peg$currPos) === 44) {
+                s7 = peg$c45;
                 peg$currPos++;
               } else {
-                s5 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c185); }
+                s7 = peg$FAILED;
+                if (peg$silentFails === 0) { peg$fail(peg$c46); }
               }
-              if (s5 !== peg$FAILED) {
-                peg$savedPos = s0;
-                s1 = peg$c186(s1, s4);
-                s0 = s1;
+              if (s7 !== peg$FAILED) {
+                s8 = peg$parsewhiteSpace();
+                if (s8 !== peg$FAILED) {
+                  s9 = peg$parseSchemaInlineField();
+                  if (s9 !== peg$FAILED) {
+                    s7 = [s7, s8, s9];
+                    s6 = s7;
+                  } else {
+                    peg$currPos = s6;
+                    s6 = peg$FAILED;
+                  }
+                } else {
+                  peg$currPos = s6;
+                  s6 = peg$FAILED;
+                }
               } else {
-                peg$currPos = s0;
-                s0 = peg$FAILED;
+                peg$currPos = s6;
+                s6 = peg$FAILED;
               }
+            }
+            if (s5 !== peg$FAILED) {
+              s4 = [s4, s5];
+              s3 = s4;
+            } else {
+              peg$currPos = s3;
+              s3 = peg$FAILED;
+            }
+          } else {
+            peg$currPos = s3;
+            s3 = peg$FAILED;
+          }
+          if (s3 === peg$FAILED) {
+            s3 = null;
+          }
+          if (s3 !== peg$FAILED) {
+            if (input.charCodeAt(peg$currPos) === 125) {
+              s4 = peg$c184;
+              peg$currPos++;
+            } else {
+              s4 = peg$FAILED;
+              if (peg$silentFails === 0) { peg$fail(peg$c185); }
+            }
+            if (s4 !== peg$FAILED) {
+              peg$savedPos = s0;
+              s1 = peg$c186(s1, s3);
+              s0 = s1;
             } else {
               peg$currPos = s0;
               s0 = peg$FAILED;

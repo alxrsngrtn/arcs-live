@@ -1,7 +1,8 @@
-commit 06492a447d2fa4c1cd9ea785335d3d735175f04b
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Tue Mar 13 15:57:04 2018 -0700
+commit e37ccb0e8752b009f0d6dfa8c0575d5007ff2e57
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Wed Mar 14 13:29:26 2018 +1100
 
-    Add a recipe field to Post entity.
+    Allow inline schemas to specify multiple names
     
-    To allow polymorphic display of and interaction with Posts.
+    This is intended to support serialization in the short term. We'll
+    probably add additional syntax to support proper hierarchies soon.
