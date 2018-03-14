@@ -1,7 +1,11 @@
-commit bf065ecc206e76548e14496ab59f0a964ec52048
+commit 8b9dea51b8efcff7b30690eb5db6c1e5f7365576
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Mar 14 14:23:04 2018 -0700
+Date:   Wed Mar 14 15:04:35 2018 -0700
 
-    Initial simple particle to display a single Post.
+    Initial simple particle to display a single game Stats record.
     
-    Intended to render amidst a containing aggregated feed of posts.
+    This is likely just a temporary placeholder to simplify our lives
+    while we wire up the muxing and polymorphic bits. We plan to shift to
+    a particle that renders the full board, potentially with full
+    interactivity, perhaps via GamePane itself, or a tweaked variant
+    thereof.
