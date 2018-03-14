@@ -1,5 +1,7 @@
-commit 52d0f4e410221c26d1dfec9f5f5235d00dc6722e
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Mar 14 13:10:42 2018 -0700
+commit bf065ecc206e76548e14496ab59f0a964ec52048
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Mar 14 14:23:04 2018 -0700
 
-    Update README (remove reference to `arcs-cdn`)
+    Initial simple particle to display a single Post.
+    
+    Intended to render amidst a containing aggregated feed of posts.
