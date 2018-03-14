@@ -1,11 +1,5 @@
-commit 8b9dea51b8efcff7b30690eb5db6c1e5f7365576
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Mar 14 15:04:35 2018 -0700
+commit e43075323097757017dc3965a327ecd6a5ae071d
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Mar 14 13:39:06 2018 -0700
 
-    Initial simple particle to display a single game Stats record.
-    
-    This is likely just a temporary placeholder to simplify our lives
-    while we wire up the muxing and polymorphic bits. We plan to shift to
-    a particle that renders the full board, potentially with full
-    interactivity, perhaps via GamePane itself, or a tweaked variant
-    thereof.
+    rename method and connection

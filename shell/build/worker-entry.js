@@ -93,11 +93,11 @@ function assert(test, message) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(9);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -822,8 +822,9 @@ class Entity {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -833,6 +834,7 @@ class Entity {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -854,6 +856,10 @@ class ConnectionSpec {
 
   get isOutput() {
     return this.direction == 'out' || this.direction == 'inout';
+  }
+
+  isCompatibleType(type) {
+    return __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__["a" /* default */].compareTypes({type}, {type: this.type, direction: this.direction}, false).valid;
   }
 }
 
@@ -914,7 +920,7 @@ class ParticleSpec {
     // Verify provided slots use valid view connection names.
     this.slots.forEach(slot => {
       slot.providedSlots.forEach(ps => {
-        ps.views.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
+        ps.views.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
       });
     });
   }
@@ -967,7 +973,7 @@ class ParticleSpec {
 
   validateDescription(description) {
     Object.keys(description || []).forEach(d => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
     });
   }
 
@@ -978,9 +984,9 @@ class ParticleSpec {
   _toShape() {
     const views = this._model.args;
     // TODO: wat do?
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(!this.slots.length, 'please implement slots toShape');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(!this.slots.length, 'please implement slots toShape');
     const slots = [];
-    return new __WEBPACK_IMPORTED_MODULE_1__shape_js__["a" /* default */](views, slots);
+    return new __WEBPACK_IMPORTED_MODULE_2__shape_js__["a" /* default */](views, slots);
   }
 
   toString() {
@@ -1496,6 +1502,144 @@ class StateChanges {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+class TypeChecker {
+
+  // list: [{type, direction, connection}]
+  static processTypeList(list) {
+    if (list.length == 0) {
+      return {type: {type: undefined}, valid: true};
+    }
+    let baseType = list[0];
+    for (let i = 1; i < list.length; i++) {
+      let result = TypeChecker.compareTypes(baseType, list[i]);
+      baseType = result.type;
+      if (!result.valid) {
+        return {valid: false};
+      }
+    }
+
+    return {type: baseType, valid: true};
+  }
+
+  static restrictType(type, instance) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(type.isInterface, `restrictType not implemented for ${type}`);
+
+    let shape = type.interfaceShape.restrictType(instance);
+    if (shape == false)
+      return false;
+    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newInterface(shape);
+  }
+
+  // left, right: {type, direction, connection}
+  static compareTypes(left, right, resolve=true) {
+    let resolvedLeft = left.type.resolvedType();
+    let resolvedRight = right.type.resolvedType();
+    let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(resolvedLeft, resolvedRight);
+
+    if (leftType.isVariable || rightType.isVariable) {
+      if (leftType.isVariable && rightType.isVariable) {
+        if (leftType.variable === rightType.variable) {
+          return {type: left, valid: true};
+        }
+        if (leftType.variable.constraint || rightType.variable.constraint) {
+          let mergedConstraint = __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* default */].maybeMergeConstraints(leftType.variable, rightType.variable);
+          if (!mergedConstraint) {
+            return {valid: false};
+          }
+          if (resolve) {
+            leftType.constraint = mergedConstraint;
+            rightType.variable.resolution = leftType;
+          }
+        };
+        return {type: left, valid: true};
+      } else if (leftType.isVariable) {
+        if (!leftType.variable.isSatisfiedBy(rightType)) {
+          return {valid: false};
+        }
+        if (resolve) {
+          leftType.variable.resolution = rightType;
+        }
+        return {type: right, valid: true};
+      } else if (rightType.isVariable) {
+        if (!rightType.variable.isSatisfiedBy(leftType)) {
+          return {valid: false};
+        }
+        if (resolve) {
+          rightType.variable.resolution = leftType;
+        }
+        return {type: left, valid: true};
+      }
+    }
+
+    if (leftType.type != rightType.type) {
+      return {valid: false};
+    }
+
+    // TODO: we need a generic way to evaluate type compatibility
+    //       shapes + entities + etc
+    if (leftType.isInterface && rightType.isInterface) {
+      if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
+        return {type: left, valid: true};
+      }
+    }
+
+    if (!leftType.isEntity || !rightType.isEntity) {
+      return {valid: false};
+    }
+
+    let isSub = leftType.entitySchema.contains(rightType.entitySchema);
+    let isSuper = rightType.entitySchema.contains(leftType.entitySchema);
+    if (isSuper && isSub) {
+       return {type: left, valid: true};
+    }
+    if (!isSuper && !isSub) {
+      return {valid: false};
+    }
+    let [superclass, subclass] = isSuper ? [left, right] : [right, left];
+
+    // TODO: this arbitrarily chooses type restriction when
+    // super direction is 'in' and sub direction is 'out'. Eventually
+    // both possibilities should be encoded so we can maximise resolution
+    // opportunities
+
+    // treat view types as if they were 'inout' connections. Note that this
+    // guarantees that the view's type will be preserved, and that the fact
+    // that the type comes from a view rather than a connection will also
+    // be preserved.
+    let superDirection = superclass.direction || (superclass.connection ? superclass.connection.direction : 'inout');
+    let subDirection = subclass.direction || (subclass.connection ? subclass.connection.direction : 'inout');
+    if (superDirection == 'in') {
+      return {type: subclass, valid: true};
+    }
+    if (subDirection == 'out') {
+      return {type: superclass, valid: true};
+    }
+    return {valid: false};
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (TypeChecker);
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__entity_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
@@ -1533,7 +1677,7 @@ class Relation extends __WEBPACK_IMPORTED_MODULE_1__entity_js__["a" /* default *
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1794,7 +1938,7 @@ ${this._slotsToManifestString()}
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1865,7 +2009,7 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1983,14 +2127,14 @@ class TypeVariable {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__handle_js__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__handle_js__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_channel_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_channel_js__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(2);
 /**
@@ -2320,17 +2464,17 @@ class InnerPEC {
 
 /* harmony default export */ __webpack_exports__["a"] = (InnerPEC);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(16)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(17)))
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_transformation_dom_particle_js__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_transformation_dom_particle_js__ = __webpack_require__(12);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2412,7 +2556,7 @@ class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a"
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -2602,7 +2746,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 var g;
@@ -2629,11 +2773,11 @@ module.exports = g;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__ = __webpack_require__(22);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -2662,7 +2806,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2677,7 +2821,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2686,7 +2830,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__debug_outer_port_attachment_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__debug_outer_port_attachment_js__ = __webpack_require__(24);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3034,7 +3178,7 @@ class PECInnerPort extends APIPort {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3148,7 +3292,7 @@ class JsonldToManifest {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3193,11 +3337,11 @@ class AbstractDevtoolsChannel {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__ = __webpack_require__(18);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -3221,11 +3365,11 @@ let instance = null;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__devtools_channel_provider_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__devtools_channel_provider_js__ = __webpack_require__(23);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -3381,7 +3525,7 @@ class OuterPortAttachment {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3396,13 +3540,13 @@ class OuterPortAttachment {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__identifier_js__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__identifier_js__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__entity_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__relation_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__relation_js__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__symbols_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__particle_spec_js__ = __webpack_require__(4);
@@ -3625,7 +3769,7 @@ function handleFor(proxy, isSet, particleId, canRead = true, canWrite = true) {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3663,18 +3807,18 @@ class Identifier {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__transformation_dom_particle_js__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__converters_jsonldToManifest_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__transformation_dom_particle_js__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__converters_jsonldToManifest_js__ = __webpack_require__(21);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3774,144 +3918,6 @@ class Loader {
 
 
 /***/ }),
-/* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-class TypeChecker {
-
-  // list: [{type, direction, connection}]
-  static processTypeList(list) {
-    if (list.length == 0) {
-      return {type: {type: undefined}, valid: true};
-    }
-    let baseType = list[0];
-    for (let i = 1; i < list.length; i++) {
-      let result = TypeChecker.compareTypes(baseType, list[i]);
-      baseType = result.type;
-      if (!result.valid) {
-        return {valid: false};
-      }
-    }
-
-    return {type: baseType, valid: true};
-  }
-
-  static restrictType(type, instance) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(type.isInterface, `restrictType not implemented for ${type}`);
-
-    let shape = type.interfaceShape.restrictType(instance);
-    if (shape == false)
-      return false;
-    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newInterface(shape);
-  }
-
-  // left, right: {type, direction, connection}
-  static compareTypes(left, right, resolve=true) {
-    let resolvedLeft = left.type.resolvedType();
-    let resolvedRight = right.type.resolvedType();
-    let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(resolvedLeft, resolvedRight);
-
-    if (leftType.isVariable || rightType.isVariable) {
-      if (leftType.isVariable && rightType.isVariable) {
-        if (leftType.variable === rightType.variable) {
-          return {type: left, valid: true};
-        }
-        if (leftType.variable.constraint || rightType.variable.constraint) {
-          let mergedConstraint = __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* default */].maybeMergeConstraints(leftType.variable, rightType.variable);
-          if (!mergedConstraint) {
-            return {valid: false};
-          }
-          if (resolve) {
-            leftType.constraint = mergedConstraint;
-            rightType.variable.resolution = leftType;
-          }
-        };
-        return {type: left, valid: true};
-      } else if (leftType.isVariable) {
-        if (!leftType.variable.isSatisfiedBy(rightType)) {
-          return {valid: false};
-        }
-        if (resolve) {
-          leftType.variable.resolution = rightType;
-        }
-        return {type: right, valid: true};
-      } else if (rightType.isVariable) {
-        if (!rightType.variable.isSatisfiedBy(leftType)) {
-          return {valid: false};
-        }
-        if (resolve) {
-          rightType.variable.resolution = leftType;
-        }
-        return {type: left, valid: true};
-      }
-    }
-
-    if (leftType.type != rightType.type) {
-      return {valid: false};
-    }
-
-    // TODO: we need a generic way to evaluate type compatibility
-    //       shapes + entities + etc
-    if (leftType.isInterface && rightType.isInterface) {
-      if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
-        return {type: left, valid: true};
-      }
-    }
-
-    if (!leftType.isEntity || !rightType.isEntity) {
-      return {valid: false};
-    }
-
-    let isSub = leftType.entitySchema.contains(rightType.entitySchema);
-    let isSuper = rightType.entitySchema.contains(leftType.entitySchema);
-    if (isSuper && isSub) {
-       return {type: left, valid: true};
-    }
-    if (!isSuper && !isSub) {
-      return {valid: false};
-    }
-    let [superclass, subclass] = isSuper ? [left, right] : [right, left];
-
-    // TODO: this arbitrarily chooses type restriction when
-    // super direction is 'in' and sub direction is 'out'. Eventually
-    // both possibilities should be encoded so we can maximise resolution
-    // opportunities
-
-    // treat view types as if they were 'inout' connections. Note that this
-    // guarantees that the view's type will be preserved, and that the fact
-    // that the type comes from a view rather than a connection will also
-    // be preserved.
-    let superDirection = superclass.connection ? superclass.connection.direction : 'inout';
-    let subDirection = subclass.connection ? subclass.connection.direction : 'inout';
-    if (superDirection == 'in') {
-      return {type: subclass, valid: true};
-    }
-    if (subDirection == 'out') {
-      return {type: superclass, valid: true};
-    }
-    return {valid: false};
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (TypeChecker);
-
-
-/***/ }),
 /* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3921,7 +3927,7 @@ class TypeChecker {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__schema_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__relation_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__relation_js__ = __webpack_require__(10);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4143,8 +4149,8 @@ const nob = () => Object.create(null);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_inner_PEC_js__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__browser_loader_js__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_inner_PEC_js__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__browser_loader_js__ = __webpack_require__(15);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -4416,7 +4422,7 @@ function init() {
 
 init();
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(15)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(16)))
 
 /***/ })
 /******/ ]);
