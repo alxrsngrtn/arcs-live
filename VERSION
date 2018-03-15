@@ -1,5 +1,5 @@
-commit 97ba3e3446bf5c869246efc2cbcd8a269696a8d1
+commit 7b60a812818c2584b6d2fd18a3ef2c354dd6bc16
 Author: Scott J Miles <sjmiles@google.com>
-Date:   Wed Mar 14 21:12:49 2018 -0700
+Date:   Wed Mar 14 21:10:15 2018 -0700
 
-    name shell's synthetic manifest `./computed.manifest` instead of `./`
+    fix Xen.Template.html
