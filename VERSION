@@ -1,5 +1,5 @@
-commit 227e8d15992e52f9fe45c8963712c8577de220ff
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Mar 15 10:19:08 2018 -0700
+commit e3ea9d45f712632319c44d5c7c079112027703df
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Thu Mar 15 13:48:48 2018 -0700
 
-    remove "only" from test and redundant "debugger;" statements
+    collapse `if`
