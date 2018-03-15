@@ -1,5 +1,5 @@
-commit 0eb6d2f1c9a3dfa6f64fb9a68fb3edb01a465490
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Thu Mar 15 16:48:56 2018 +1100
+commit 52ed6f24d26f1b21e73280ddf320d5974a90db63
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Mar 15 10:01:53 2018 -0700
 
-    Trigger imported manifest loads in parallel
+    address comments.
