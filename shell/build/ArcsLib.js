@@ -2795,7 +2795,6 @@ class DescriptionFormatter {
       let particleName = handleNames.shift();
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particleName[0] === particleName[0].toUpperCase(), `Expected particle name, got '${particleName}' instead.`);
       let particleDescriptions = this._particleDescriptions.filter(desc => desc._particle.name == particleName);
-      debugger;
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particleDescriptions.length > 0, `Cannot find particles with name ${particleName}.`);
       if (particleDescriptions.length > 1) {
         console.warn(`Multiple particles with name ${particleName}.`);
