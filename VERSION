@@ -1,5 +1,5 @@
-commit e3ea9d45f712632319c44d5c7c079112027703df
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Thu Mar 15 13:48:48 2018 -0700
+commit 2e829ce78d0f5698ebb043d453e623995add183f
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Thu Mar 15 14:10:59 2018 -0700
 
-    collapse `if`
+    Include handle type in the handle explorer.
