@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import Xen from '../../components/xen/xen.js';
+import Const from '../constants.js';
 
 class ArcConfig extends Xen.Base {
   static get observedAttributes() { return ['rootpath']; }
@@ -17,27 +18,17 @@ class ArcConfig extends Xen.Base {
       this._fire('config', this._configure(props.rootpath));
     }
   }
-  _getPlannerTimeout(params) {
-    const DEFAULT_PLANNER_TIMEOUT = 5000;
-    const timeout = params.get('plannertimeout');
-    return timeout ? parseInt(timeout) : DEFAULT_PLANNER_TIMEOUT;
-  }
   _configure(rootPath) {
     let params = (new URL(document.location)).searchParams;
     return {
       affordance: 'dom',
       root: params.get('root') || rootPath,
-      //manifests: ['arc.manifest'],
       manifestPath: params.get('manifest'),
       soloPath: params.get('solo'),
-      user: params.get('user') || localStorage.getItem('0-3-currentUser'),
+      user: params.get('user') || localStorage.getItem(Const.LOCALSTORAGE.user),
       key: params.get('arc') || null,
-      //nokey: params.has('nokey'),
-      //nosync: params.has('nosync'),
-      //shared: params.getAll('shared'),
       search: params.get('search'),
-      arcsToolsVisible: localStorage.getItem('0-3-arcs-dev-tools') === 'open',
-      plannerTimeout: this._getPlannerTimeout(params),
+      arcsToolsVisible: localStorage.getItem(Const.LOCALSTORAGE.tools) === 'open',
       urls: {}
     };
   }

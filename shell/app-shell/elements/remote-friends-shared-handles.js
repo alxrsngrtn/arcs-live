@@ -22,9 +22,9 @@ class RemoteFriendsSharedHandles extends Xen.Base {
       boxes: {}
     };
   }
-  _update(props, state, lastProps) {
-    if (props.arc && props.user && props.friends && props.friends !== lastProps.friends) {
-      state.group.watches = this._watchFriends(state.db, state.group, props.arc, props.friends, props.user);
+  _update({arc, user, friends}, state, lastProps) {
+    if (arc && user && friends && friends !== lastProps.friends) {
+      state.group.watches = this._watchFriends(state.db, state.group, arc, friends, user);
     }
   }
   //
@@ -107,7 +107,7 @@ class RemoteFriendsSharedHandles extends Xen.Base {
       // acquire type record for a Set of the base type
       const setType = arcsType.isSetView ? arcsType : arcsType.setViewOf();
       // combine the data into a box
-      this._addToBox(arc, boxId, setType, name, [`#${boxId}`], data);
+      this._addToBox(arc, boxId, setType, name, [`#${boxId}`], data, friend);
     }
   }
   // convert firebase format to handle-data format, embed friend id as owner
@@ -131,17 +131,19 @@ class RemoteFriendsSharedHandles extends Xen.Base {
   async _updateHandle(arc, id, type, name, tags, data, friend) {
     const handle = await this._requireHandle(arc, id, type, name, tags);
     const typeName = handle.type.toPrettyString().toLowerCase();
+    this._addHandleData(handle, data, friend);
     handle.description = ArcsUtils._getHandleDescription(typeName, handle.tags, this._props.user.name, friend.name);
-    this._addHandleData(handle, data);
   }
-  async _addToBox(arc, id, type, name, tags, data) {
-    // find a pre-existing box construct for this id
+  async _addToBox(arc, id, type, name, tags, data, friend) {
     const {boxes} = this._state;
+    // find a pre-existing box construct for this id
     let box = boxes[id];
     // if box exists, install the values if we have a handle, otherwise cache them
     if (box) {
       if (box.handle) {
-        this._addHandleData(box.handle, data);
+        this._addHandleData(box.handle, data, friend);
+        // inform owner that we updated this handle
+        this._fire('handle', box.handle);
       } else {
         //RemoteFriendsSharedHandles.log(`caching friend's shared handle for boxing as [${id}]`);
         box.pending.push({data});
@@ -154,15 +156,17 @@ class RemoteFriendsSharedHandles extends Xen.Base {
         pending: [{data}]
       };
       box.handle = await this._requireHandle(arc, id, type, name, tags);
-      box.pending.forEach(m => this._addHandleData(box.handle, m.data));
+      box.pending.forEach(m => this._addHandleData(box.handle, m.data, friend));
+      // inform owner that we updated this handle
+      this._fire('handle', box.handle);
     }
   }
   async _requireHandle(arc, id, type, name, tags) {
     return arc.context.findHandleById(id) || await arc.context.newHandle(type, name, id, tags);
   }
-  _addHandleData(handle, data) {
+  _addHandleData(handle, data, friend) {
     ArcsUtils.addHandleData(handle, data);
-    RemoteFriendsSharedHandles.log(`added friend's shared data to handle [${handle.id}]`, data);
+    RemoteFriendsSharedHandles.log(`added [${friend.name}'s] shared data to handle [${handle.id}]`, data);
   }
 }
 

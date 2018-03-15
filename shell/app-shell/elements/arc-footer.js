@@ -13,8 +13,8 @@ import Xen from '../../components/xen/xen.js';
 import '../../components/dancing-dots.js';
 import '../../components/x-toast.js';
 
-const template = Xen.Template.createTemplate(
-  `<style>
+const template = Xen.html`
+  <style>
     :host {
       display: block;
     }
@@ -58,12 +58,16 @@ const template = Xen.Template.createTemplate(
       <i class="material-icons" on-click="_onSearchClick">add</i>
     </div>
     <slot></slot>
-  </x-toast>`
-);
+  </x-toast>
+`;
 
 class ArcFooter extends Xen.Base {
-  static get observedAttributes() { return ['dots', 'open', 'search']; }
-  get template() { return template; }
+  static get observedAttributes() {
+    return ['dots', 'open', 'search'];
+  }
+  get template() {
+    return template;
+  }
   _getInitialState() {
     return {
       open: false,
@@ -99,14 +103,14 @@ class ArcFooter extends Xen.Base {
     this.host.querySelector('input').focus();
   }
   _onPlanSelected(e, suggestion) {
-    this._fire('suggest', suggestion);
+    this._fire('suggest', suggestion.plan);
     this._commitSearch('');
     this._setState({open: false});
   }
   // three user actions can affect search
   // 1: clicking the search icon (sets search to '*')
   _onSearchClick() {
-    this._commitSearch('*');
+    this._commitSearch(this._state.search === '*' ? '' : '*');
   }
   // 2. typing in the search box (w/debouncing)
   _onSearchChange(e) {

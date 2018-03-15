@@ -4249,10 +4249,12 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     return {};
   }
   setState(state) {
-    this._setState(state);
+    return this._setState(state);
   }
+  // TODO(sjmiles): deprecated, just use setState
   setIfDirty(state) {
-    this._setIfDirty(state);
+    console.warn('DomParticle: `setIfDirty` is deprecated, please use `setState` instead');
+    return this._setState(state);
   }
   _willReceiveProps(...args) {
     this.willReceiveProps(...args);
@@ -4280,13 +4282,14 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     return `---------- DomParticle::[${this.spec.name}]`;
   }
   async setViews(views) {
+    this.handles = views;
     this._views = views;
     let config = this.config;
     this.when([new __WEBPACK_IMPORTED_MODULE_1__particle_js__["c" /* ViewChanges */](views, config.views, 'change')], async () => {
       await this._handlesToProps(views, config);
     });
     // make sure we invalidate once, even if there are no incoming views
-    this._setState({});
+    this._invalidate();
   }
   async _handlesToProps(views, config) {
     // acquire (async) list data from views
@@ -4303,7 +4306,7 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     this._setProps(props);
   }
   renderSlot(slotName, contentTypes) {
-    const stateArgs = [this._props, this._state, this._lastProps, this._lastState];
+    const stateArgs = this._getStateArgs();
     let slot = this.getSlot(slotName);
     if (!slot) {
       return; // didn't receive StartRender.
@@ -8021,6 +8024,7 @@ class SlotComposer {
 
 const logFactory = (preamble, color, log='log') => console[log].bind(console, `Ptcl:%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 4px;`);
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
+
 const dumbCache = {};
 
 class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a" /* default */] {
@@ -8029,11 +8033,10 @@ class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a"
     this._urlMap = urlMap;
   }
   _loadURL(url) {
-    const resource = dumbCache[url];
-    if (resource) {
-      //console.warn('dumbCache hit for', url);
-    }
-    return resource || (dumbCache[url] = super._loadURL(url));
+    // use URL to normalize the path for deduping
+    const cacheKey = new URL(url, document.URL).href;
+    const resource = dumbCache[cacheKey];
+    return resource || (dumbCache[cacheKey] = super._loadURL(url));
   }
   _resolve(path) {
     //return new URL(path, this._base).href;
@@ -20039,11 +20042,7 @@ const nob = () => Object.create(null);
     this._propsInvalid = true;
     this._invalidate();
   }
-  _setState(state) {
-    Object.assign(this._state, state);
-    this._invalidate();
-  }
-  _setIfDirty(object) {
+  _setState(object) {
     let dirty = false;
     const state = this._state;
     for (const property in object) {
@@ -20057,6 +20056,10 @@ const nob = () => Object.create(null);
       this._invalidate();
       return true;
     }
+  }
+  // TODO(sjmiles): deprecated
+  _setIfDirty(object) {
+    return this._setState(object);
   }
   _async(fn) {
     return Promise.resolve().then(fn.bind(this));
@@ -20082,11 +20085,9 @@ const nob = () => Object.create(null);
         this._propsInvalid = false;
       }
       if (this._shouldUpdate(...stateArgs)) {
-        // TODO(sjmiles): consider throttling render to rAF
+        // TODO(sjmiles): consider throttling update to rAF
         this._ensureMount();
-        this._update(...stateArgs);
-        // affordance for post-render tasks
-        this._didUpdate(...stateArgs);
+        this._doUpdate(...stateArgs);
       }
     } catch (x) {
       console.error(x);
@@ -20096,6 +20097,10 @@ const nob = () => Object.create(null);
     // save the old props and state
     this._lastProps = Object.assign(nob(), this._props);
     this._lastState = Object.assign(nob(), this._state);
+  }
+  _doUpdate(...stateArgs) {
+    this._update(...stateArgs);
+    this._didUpdate(...stateArgs);
   }
   _ensureMount() {
   }

@@ -13,6 +13,8 @@ import ArcsUtils from '../lib/arcs-utils.js';
 import Xen from '../../components/xen/xen.js';
 const db = window.db;
 
+const log = Xen.Base.logFactory('PersistentArc', '#a30000');
+
 class PersistentArc extends Xen.Base {
   static get observedAttributes() { return ['key', 'metadata']; }
   _getInitialState() {
@@ -31,15 +33,15 @@ class PersistentArc extends Xen.Base {
     // only see one or the other.
     return params.get('solo') || params.get('manifest');
   }
-  _update(props, state, lastProps) {
-    if (props.key === '*' && lastProps.key != props.key) {
+  _update({key, metadata}, state, lastProps) {
+    if (key === '*' && lastProps.key != key) {
       this._createKey(state.db);
     }
-    if (props.key && props.key !== '*') {
-      if (props.key !== lastProps.key) {
-        state.watch.watches = [this._watchKey(state.db, props.key)];
+    if (key && key !== '*') {
+      if (key !== lastProps.key) {
+        state.watch.watches = [this._watchKey(state.db, key)];
       }
-      if (props.metadata) {
+      if (metadata) {
         // Typical developer workflow involves creating a new arc and
         // subsequently modifying the url to include a specific recipe via a
         // solo or manifest query param, thus we have to look for such a param
@@ -47,20 +49,27 @@ class PersistentArc extends Xen.Base {
         // include the param in the main launcher page and have the app shell
         // pass it along to the 'New Arc' url, but that is not the current
         // state of the world.
-        props.metadata['externalManifest'] = this._getExternalManifest();
-        if (this._hasMetadataChanged(props.metadata)) {
-          let arcMetadata = state.db.child(props.key).child('metadata');
-          PersistentArc.log('WRITING (update) metadata for', String(arcMetadata), props.metadata);
-          arcMetadata.update(props.metadata);
+        const externalManifest = this._getExternalManifest();
+        if (externalManifest != metadata.externalManifest) {
+          metadata.externalManifest = externalManifest;
+        }
+        if (this._hasMetadataChanged(metadata)) {
+          log('WRITING (update) metadata', metadata);
+          state.db.child(key).child('metadata').update(metadata);
         }
       }
+      this._fire('key', key);
     }
   }
   _hasMetadataChanged(metadata) {
     const state = this._state;
     const serial = JSON.stringify(metadata);
     if (serial !== state.serial) {
-      PersistentArc.log('metadata changed', metadata);
+      log('metadata changed');
+      //PersistentArc.groupCollapsed('metadata changed');
+      //  log('new meta:', metadata); //serial);
+      //  log('old meta:', state.serial ? JSON.parse(state.serial) : state.serial);
+      console.groupEnd();
       state.serial = serial;
       return true;
     }
@@ -73,7 +82,7 @@ class PersistentArc extends Xen.Base {
     this._assignColors(data);
     let key = db.push({'metadata': data}).key;
     this._setState({key});
-    PersistentArc.log('providing key (_createKey)', key);
+    log('providing key (_createKey)', key);
     this._fire('key', key);
   }
   _assignColors(metadata) {
@@ -85,11 +94,12 @@ class PersistentArc extends Xen.Base {
   }
   _watchKey(db, key) {
     let arcMetadata = db.child(key).child('metadata');
-    PersistentArc.log('watching', String(arcMetadata));
+    log('watching', String(arcMetadata));
     const state = this._state;
     return {
       node: arcMetadata,
       handler: snap => {
+        log('READING', String(arcMetadata));
         let metadata = snap.val();
         if (this._hasMetadataChanged(metadata)) {
           this._fire('metadata', metadata);
@@ -98,5 +108,4 @@ class PersistentArc extends Xen.Base {
     };
   }
 }
-PersistentArc.log = Xen.Base.logFactory('PersistentArc', '#a30000');
 customElements.define('persistent-arc', PersistentArc);

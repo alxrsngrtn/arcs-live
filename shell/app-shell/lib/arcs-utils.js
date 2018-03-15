@@ -43,21 +43,23 @@ const ArcsUtils = {
     //const lib = document.URL.includes('debug') ? 'source' : 'build';
     const lib = 'build';
     return {
-      // TODO(sjmiles): mapping root and dot-root allows browser-loader to replace right-hand
+      // TODO(sjmiles): mapping root and dot-root allows browser-cdn-loader to replace right-hand
       // side with fully-qualified URL when loading from worker context
       '/': '/',
       './': './',
       'assets': `${cdnRoot}/assets`,
       'https://$cdn': `${cdnRoot}`,
-      // TODO(sjmiles): map must always contain (explicitly, no prefixing) a mapping for `worker-entry.js`
-      'worker-entry.js': `${cdnRoot}/${lib}/worker-entry.js`
+      // TODO(sjmiles): map must always contain (explicitly, no prefixing) a mapping for `worker-entry-cdn.js`
+      'worker-entry.js': `${cdnRoot}/${lib}/worker-entry.js`,
+      // TODO(sjmiles): make this conditional somehow
+      'https://sjmiles.github.io': `https://localhost/projects/arcs`
     };
   },
   async makePlans(arc, timeout) {
-    let generations = [];
-    let planner = new Arcs.Planner();
+    const generations = [];
+    const planner = new Arcs.Planner();
     planner.init(arc);
-    let plans = await planner.suggest(timeout || 5000, generations);
+    const plans = await planner.suggest(timeout || 5000, generations);
     plans.generations = generations;
     return plans;
   },
@@ -188,7 +190,7 @@ const ArcsUtils = {
   html(strings, ...values) {
     return (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
   },
-  log: Xen.Base.logFactory('ArcsUtils', '#4a148c')
+  log: Xen.Base.logFactory('ArcsUtils', '#4a148c'),
 };
 
 export default ArcsUtils;

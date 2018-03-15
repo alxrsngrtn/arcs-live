@@ -11,46 +11,45 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 import Xen from '../../components/xen/xen.js';
 
 class ArcSteps extends Xen.Base {
-  static get observedAttributes() { return ['plans', 'plan', 'steps', 'step']; }
   _getInitialState() {
     return {
       steps: [],
       applied: []
     };
   }
-  _update(props, state, lastProps) {
-    if (props.plans && props.plan !== lastProps.plan) {
+  static get observedAttributes() {
+    return ['plans', 'steps', 'step', 'plan'];
+  }
+  _update({plans, plan, steps, step}, state, lastProps) {
+    if (steps) {
+      state.steps = steps;
+    }
+    if (plans && plan !== lastProps.plan) {
       ArcSteps.log('adding step from host');
-      this._addStep(props.plan, props.plans.generations, state.steps, state.applied);
+      // `plan` has been instantiated into host, record it into `steps`
+      this._addStep(plan, plans.generations, state.steps, state.applied);
     }
-    if (props.steps) {
-      state.steps = props.steps;
-    }
-    if (state.steps && props.plans) {
-      this._providePlanStep(state.steps, props.plans, state.applied);
-    }
-    if (props.step) {
-      ArcSteps.log('host consumed a step');
-      state.applied[props.step.hash] = true;
+    if (state.steps && plans) {
+      // find a step from `steps` that correspondes to a plan in `plans` but hasn't been `applied`
+      this._providePlanStep(plans, state.steps, state.applied);
     }
   }
   _addStep(plan, generations, steps, applied) {
-    let step = this._createStep(plan, generations);
+    const step = this._createStep(plan, generations);
     if (step && !steps.find(s => s.hash === step.hash)) {
-      //ArcSteps.log('createStep', step);
       steps.push(step);
       applied[step.hash] = true;
       this._fire('steps', steps);
     }
-    return this._state.steps;
+    return steps;
   }
-  _providePlanStep(steps, plans, applied) {
-    let candidates = steps.filter(s => !applied[s.hash]);
+  _providePlanStep(plans, steps, applied) {
+    const candidates = steps.filter(s => !applied[s.hash]);
     for (let step of candidates) {
-      let planStep = this._findPlanForStep(step, plans);
+      const planStep = this._findPlanForStep(step, plans);
       if (planStep) {
         ArcSteps.log('found suggestion for step'); //, planStep);
-        this._state.applied[step.hash] = true;
+        applied[step.hash] = true;
         this._fire('step', planStep);
         return;
       } else {
@@ -77,6 +76,8 @@ class ArcSteps extends Xen.Base {
       // do something smarter than literal matching anyway...
       // Find all mapped handles to be remembered.
       // Store as string, as we'll only use it to find exact matches later. (String is easier to compare)
+      // TODO(wkorman): Rename `views` below to `handles` which may
+      // necessitate revising the launcher.
       let mappedHandles = plan.handles
         .filter(v => (v.fate == 'map') && (v.id.substr(0, 7) == 'shared:'))
         .map(v => v.id)

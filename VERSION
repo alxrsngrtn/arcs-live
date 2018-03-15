@@ -1,5 +1,5 @@
-commit 1191da41784e92804deb67834685cc0ad95b0202
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Mar 14 16:02:41 2018 -0700
+commit ab89f166939965d9bcd2a4c04394d6548467ca67
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Wed Mar 14 16:22:26 2018 -0700
 
-    update assert to not enforce slot name equality
+    callers of _setState must forward the return value

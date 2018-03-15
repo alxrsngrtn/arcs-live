@@ -12,51 +12,52 @@ import ArcsUtils from '../lib/arcs-utils.js';
 import Xen from '../../components/xen/xen.js';
 const Arcs = window.Arcs;
 
+const log = Xen.Base.logFactory('ArcHandle', '#c6a700');
+
 class ArcHandle extends Xen.Base {
   static get observedAttributes() { return ['arc', 'options', 'data']; }
-  async _update(props, state, lastProps) {
-    let lastData = lastProps.data;
+  async _update(props, state) {
     let {arc, options, data} = props;
-    if (arc && !state.handle) {
+    if (arc && !state.handle && !state.working) {
+      state.working = true;
+      if (options && options.manifest) {
+        state.manifest = options.manifest;
+      }
       if (!state.manifest && options && options.schemas) {
-        Arcs.Manifest.load(options.schemas, arc.loader).then(manifest => this._setState({manifest}));
+        state.manifest = await Arcs.Manifest.load(options.schemas, arc.loader);
       }
       if (state.manifest && options) {
         state.handle = await this._createHandle(arc, state.manifest, options);
       }
-      lastData = null;
+      state.working = false;
     }
-    if (state.handle && data != lastData) {
+    if (state.handle && data != state.data) {
+      state.data = data;
       // (re)populate
       this._updateHandle(state.handle, data, arc);
-      //this._fire('handle', state.handle);
     }
   }
   async _createHandle(arc, manifest, {name, tags, type, id, asContext}) {
-    let handleOf = false;
+    let setOf = false;
     if (type[0] == '[') {
-      handleOf = true;
+      setOf = true;
       type = type.slice(1, -1);
     }
-    let schema = manifest.findSchemaByName(type);
-    let typeOf = handleOf ? schema.type.setViewOf() : schema.type;
+    const schema = manifest.findSchemaByName(type);
+    const typeOf = setOf ? schema.type.setViewOf() : schema.type;
     tags = tags.concat(['#nosync']);
     id = id || arc.generateID();
-    let handle;
-    if (asContext) {
-      // manifest-handle, for `map`, `copy`, `?`
-      handle = await arc.context.newHandle(typeOf, name, id, tags);
-    } else {
-      // arc-handle, suitable for `use`, `?`
-      handle = await arc.createHandle(typeOf, name, id, tags);
-    }
+    // context-handles are for `map`, `copy`, `?`
+    // arc-handles are for `use`, `?`
+    const factory = asContext ? arc.context.newHandle.bind(arc.context) : arc.createHandle.bind(arc);
+    const handle = await factory(typeOf, name, id, tags);
     // observe handle
     handle.on('change', () => this._handleChanged(handle), arc);
-    ArcHandle.log('created handle', name, tags);
+    log('created handle', name, tags);
     return handle;
   }
   _updateHandle(handle, data, arc) {
-    ArcHandle.log('updating handle', handle.name, data);
+    log('updating handle', handle.name, data);
     if (handle.toList) {
       data = Object.keys(data).map(key => {
         return {id: arc.generateID(), rawData: data[key]};
@@ -70,5 +71,4 @@ class ArcHandle extends Xen.Base {
     handle.debouncer = ArcsUtils.debounce(handle.debouncer, () => this._fire('change', handle), 500);
   }
 }
-ArcHandle.log = Xen.Base.logFactory('ArcHandle', '#c6a700');
 customElements.define('arc-handle', ArcHandle);

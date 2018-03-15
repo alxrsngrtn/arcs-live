@@ -12,6 +12,8 @@ import Xen from '../../components/xen/xen.js';
 import ArcsUtils from '../lib/arcs-utils.js';
 
 const Arcs = window.Arcs;
+const log = Xen.Base.logFactory('ArcHost', '#007ac1');
+const error = Xen.Base.logFactory('ArcHost', '#007ac1', 'error');
 
 const template = Xen.Template.createTemplate(
   `<style>
@@ -30,49 +32,55 @@ class ArcHost extends Xen.Base {
   get template() { return template; }
   _getInitialState() {
     return {
+      pendingPlans: [],
       invalid: 0
     };
   }
+  _setState(state) {
+    if (super._setState(state)) {
+      log(state);
+    }
+  }
   _willReceiveProps(props, state, lastProps) {
     const changed = name => props[name] !== lastProps[name];
-    if (props.manifests && props.exclusions) {
+    const {manifests, exclusions, config, plan, suggestions} = props;
+    if (manifests && exclusions) {
       state.effectiveManifests = this._intersectManifests(props.manifests, props.exclusions);
     }
-    if (props.config && (props.config !== state.config) && state.effectiveManifests) {
-      state.config = props.config;
+    if (config && (config !== state.config) && state.effectiveManifests) {
+      state.config = config;
       state.config.manifests = state.effectiveManifests;
       this._applyConfig(state.config);
-    } else if (state.arc && (changed('manifests') || changed('exclusions'))) {
-      state.config.manifests = state.effectiveManifests;
-      ArcHost.log('reloading');
+    }
+    else if (state.arc && (changed('manifests') || changed('exclusions'))) {
+      log('reloading');
       this._reloadManifests();
     }
-    if (props.plan && changed('plan')) {
-      this._applySuggestion(state.arc, props.plan);
+    if (plan && changed('plan')) {
+      state.pendingPlans.push(plan);
     }
-    if (props.suggestions && changed('suggestions')) {
-      state.slotComposer.setSuggestions(props.suggestions);
+    if (suggestions && changed('suggestions')) {
+      state.slotComposer.setSuggestions(suggestions);
+    }
+  }
+  _update({plans}, {arc, pendingPlans}) {
+    if (arc && pendingPlans.length) {
+      this._instantiatePlan(arc, pendingPlans.shift());
+    }
+    if (arc && !plans) {
+      this._schedulePlanning();
     }
   }
   _intersectManifests(manifests, exclusions) {
     return manifests.filter(m => !exclusions.includes(m));
   }
-  _update(props, state) {
-    if (state.arc && !props.plans) {
-      this._schedulePlanning();
-    }
-  }
   async _applyConfig(config) {
     let arc = await this._createArc(config);
     // TODO(sjmiles): IIUC callback that is invoked by runtime onIdle event
     arc.makeSuggestions = () => this._runtimeHandlesUpdated();
-    ArcHost.log('instantiated', arc);
+    log('created arc', arc);
     this._setState({arc});
     this._fire('arc', arc);
-  }
-  _runtimeHandlesUpdated() {
-    ArcHost.log('_runtimeHandlesUpdated');
-    this._schedulePlanning();
   }
   async _createArc(config) {
     // make an id
@@ -83,7 +91,7 @@ class ArcHost extends Xen.Base {
     let context = await this._loadManifest(config, loader);
     // composer
     let slotComposer = new Arcs.SlotComposer({
-      rootContext: this.parentElement,
+      rootContext: document.body, //this.parentElement,
       affordance: config.affordance,
       containerKind: config.containerKind,
       // TODO(sjmiles): typically resolved via `slotid="suggestions"`, but override is allowed here via config
@@ -134,56 +142,50 @@ class ArcHost extends Xen.Base {
       content: manifests.map(u => `import '${u}'`).join('\n')
     };
   }
-  _schedulePlanning() {
+  async _reloadManifests() {
+    let {arc} = this._state;
+    arc._context = await this._loadManifest(this._props.config, arc.loader);
+    this._fire('plans', null);
+  }
+  _runtimeHandlesUpdated() {
+    !this._state.planning && log('runtimeHandlesUpdated');
+    this._schedulePlanning();
+  }
+  async _schedulePlanning() {
     const state = this._state;
     // results obtained before now are invalid
     state.invalid = true;
     // only wait for one _beginPlanning at a time
     if (!state.planning) {
       state.planning = true;
-      // old plans are stale, evacipate them
-      //ArcHost.log('clearing old plans');
-      //this._fire('plans', null);
-      // TODO(sjmiles): primitive attempt to throttle planning
-      setTimeout(async () => {
-        await this._beginPlanning(state);
-        state.planning = false;
-      }, 500); //this._lastProps.plans ? 10000 : 0);
+      try {
+        await this.__beginPlanning(state);
+      } catch (x) {
+        error(x);
+      }
+      state.planning = false;
     }
   }
-  async _beginPlanning(state) {
-    ArcHost.log(`planning...`);
+  // TODO(sjmiles): only to be called from _schedulePlanning which protects re-entrancy
+  async __beginPlanning(state) {
+    log(`planning...`);
     let time = Date.now();
     let plans;
     while (state.invalid) {
       state.invalid = false;
-      plans = await this._plan(state.arc, state.config.plannerTimeout);
+      plans = await ArcsUtils.makePlans(state.arc, state.config.plannerTimeout) || [];
     }
     time = ((Date.now() - time) / 1000).toFixed(2);
-    ArcHost.log(`plans`, plans, `${time}s`);
+    log(`plans`, plans, `${time}s`);
     this._fire('plans', plans);
   }
-  async _plan(arc, timeout) {
-    return await ArcsUtils.makePlans(arc, timeout) || [];
-  }
-  async _applySuggestion(arc, plan) {
+  async _instantiatePlan(arc, plan) {
     // aggressively remove old suggestions when a suggestion is applied
     this._setState({suggestions: []});
-    // TODO(sjmiles): instantiation takes some non-deterministic amount of time to complete,
-    // we need some additional signals in combination with a more robust system for invalidating
-    // suggestions. Currently, most of the asynchrony is _short-term_, such that a simple
-    // timeout here is likely to catch the vast majority of the work. This is just a temporary solution,
-    // since it's a just another race-condition in actuality (I've merely slowed one of the racers).
-    // The timeout value is a magic number.
+    log('instantiated plan', plan);
     await arc.instantiate(plan);
-    setTimeout(() => this._fire('applied', plan), 200);
-  }
-  async _reloadManifests() {
-    let {arc} = this._state;
-    arc._context = await this._loadManifest(this._state.config, arc.loader);
-    this._fire('plans', null);
+    this._fire('plan', plan);
   }
 }
-ArcHost.log = Xen.Base.logFactory('ArcHost', '#007ac1');
 ArcHost.groupCollapsed = Xen.Base.logFactory('ArcHost', '#007ac1', 'groupCollapsed');
 customElements.define('arc-host', ArcHost);

@@ -45,11 +45,7 @@ export default Base => class extends Base {
     this._propsInvalid = true;
     this._invalidate();
   }
-  _setState(state) {
-    Object.assign(this._state, state);
-    this._invalidate();
-  }
-  _setIfDirty(object) {
+  _setState(object) {
     let dirty = false;
     const state = this._state;
     for (const property in object) {
@@ -63,6 +59,10 @@ export default Base => class extends Base {
       this._invalidate();
       return true;
     }
+  }
+  // TODO(sjmiles): deprecated
+  _setIfDirty(object) {
+    return this._setState(object);
   }
   _async(fn) {
     return Promise.resolve().then(fn.bind(this));
@@ -88,11 +88,9 @@ export default Base => class extends Base {
         this._propsInvalid = false;
       }
       if (this._shouldUpdate(...stateArgs)) {
-        // TODO(sjmiles): consider throttling render to rAF
+        // TODO(sjmiles): consider throttling update to rAF
         this._ensureMount();
-        this._update(...stateArgs);
-        // affordance for post-render tasks
-        this._didUpdate(...stateArgs);
+        this._doUpdate(...stateArgs);
       }
     } catch (x) {
       console.error(x);
@@ -102,6 +100,10 @@ export default Base => class extends Base {
     // save the old props and state
     this._lastProps = Object.assign(nob(), this._props);
     this._lastState = Object.assign(nob(), this._state);
+  }
+  _doUpdate(...stateArgs) {
+    this._update(...stateArgs);
+    this._didUpdate(...stateArgs);
   }
   _ensureMount() {
   }

@@ -58,10 +58,12 @@ class DomParticle extends XenStateMixin(Particle) {
     return {};
   }
   setState(state) {
-    this._setState(state);
+    return this._setState(state);
   }
+  // TODO(sjmiles): deprecated, just use setState
   setIfDirty(state) {
-    this._setIfDirty(state);
+    console.warn('DomParticle: `setIfDirty` is deprecated, please use `setState` instead');
+    return this._setState(state);
   }
   _willReceiveProps(...args) {
     this.willReceiveProps(...args);
@@ -89,13 +91,14 @@ class DomParticle extends XenStateMixin(Particle) {
     return `---------- DomParticle::[${this.spec.name}]`;
   }
   async setViews(views) {
+    this.handles = views;
     this._views = views;
     let config = this.config;
     this.when([new ViewChanges(views, config.views, 'change')], async () => {
       await this._handlesToProps(views, config);
     });
     // make sure we invalidate once, even if there are no incoming views
-    this._setState({});
+    this._invalidate();
   }
   async _handlesToProps(views, config) {
     // acquire (async) list data from views
@@ -112,7 +115,7 @@ class DomParticle extends XenStateMixin(Particle) {
     this._setProps(props);
   }
   renderSlot(slotName, contentTypes) {
-    const stateArgs = [this._props, this._state, this._lastProps, this._lastState];
+    const stateArgs = this._getStateArgs();
     let slot = this.getSlot(slotName);
     if (!slot) {
       return; // didn't receive StartRender.
