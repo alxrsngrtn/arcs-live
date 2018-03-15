@@ -19577,7 +19577,7 @@ class MatchFreeHandlesToConnections extends __WEBPACK_IMPORTED_MODULE_0__strateg
         if (handle.connections.length > 0)
           return;
 
-        let matchingConnections = recipe.handleConnections.filter(connection => connection.handle == undefined);
+        let matchingConnections = recipe.handleConnections.filter(connection => connection.handle == undefined && connection.name !== 'descriptions');
            
         return matchingConnections.map(connection => {
           return (recipe, handle) => {
