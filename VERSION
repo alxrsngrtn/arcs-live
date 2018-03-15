@@ -1,5 +1,5 @@
-commit ab89f166939965d9bcd2a4c04394d6548467ca67
+commit 97ba3e3446bf5c869246efc2cbcd8a269696a8d1
 Author: Scott J Miles <sjmiles@google.com>
-Date:   Wed Mar 14 16:22:26 2018 -0700
+Date:   Wed Mar 14 21:12:49 2018 -0700
 
-    callers of _setState must forward the return value
+    name shell's synthetic manifest `./computed.manifest` instead of `./`
