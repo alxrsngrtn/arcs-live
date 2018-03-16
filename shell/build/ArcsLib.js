@@ -2729,14 +2729,15 @@ class DescriptionFormatter {
   }
 
   _joinDescriptions(strings) {
-    let nonEmptyStrings = strings.filter(str => !!str);
+    let nonEmptyStrings = strings.filter(str => str);
     let count = nonEmptyStrings.length;
     // Combine descriptions into a sentence:
     // "A."
     // "A and b."
     // "A, b, ..., and z." (Oxford comma ftw)
     let delim = ['', '', ' and ', ', and '][Math.min(3, count)];
-    return nonEmptyStrings.slice(0, -1).join(', ') + delim + strings.pop();
+    const lastString = nonEmptyStrings.pop();
+    return `${nonEmptyStrings.join(', ')}${delim}${lastString}`;
   }
 
   _joinTokens(tokens) {
@@ -4380,6 +4381,7 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
 
 
 
+const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 
 function schemaLocationFor(name) {
   return `../entities/${name}.schema`;
@@ -4452,7 +4454,7 @@ class Loader {
   }
 
   unwrapParticle(particleWrapper) {
-    return particleWrapper({particle: __WEBPACK_IMPORTED_MODULE_4__particle_js__["a" /* default */], Particle: __WEBPACK_IMPORTED_MODULE_4__particle_js__["a" /* default */].Particle, DomParticle: __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__["a" /* default */], TransformationDomParticle: __WEBPACK_IMPORTED_MODULE_6__transformation_dom_particle_js__["a" /* default */]});
+    return particleWrapper({particle: __WEBPACK_IMPORTED_MODULE_4__particle_js__["a" /* default */], Particle: __WEBPACK_IMPORTED_MODULE_4__particle_js__["a" /* default */].Particle, DomParticle: __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__["a" /* default */], TransformationDomParticle: __WEBPACK_IMPORTED_MODULE_6__transformation_dom_particle_js__["a" /* default */], html});
   }
 
 }

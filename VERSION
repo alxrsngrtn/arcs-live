@@ -1,5 +1,5 @@
-commit 64118642dddcc3d0cf244c3a16d35fb3cb372298
-Author: Matt Small <mbsmall@google.com>
-Date:   Fri Mar 16 11:28:58 2018 -0700
+commit af373be6f48b18af7c09458b1a6a9156e6b3f649
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Mar 16 12:31:31 2018 -0700
 
-    more recent `package-lock.json` changes
+    Address comments, fix test-helper and add more debug logs.

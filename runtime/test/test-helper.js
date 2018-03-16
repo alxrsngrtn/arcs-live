@@ -111,9 +111,15 @@ export default class TestHelper {
       if (options.expectedSuggestions) {
         let suggestions = await Promise.all(this.plans.map(async p => await p.description.getRecipeSuggestion()));
         let missingSuggestions = options.expectedSuggestions.filter(expectedSuggestion => !suggestions.find(s => s === expectedSuggestion));
-        assert.equal(0, missingSuggestions.length, `Missing suggestions: ${missingSuggestions.join('\n')}`);
         let unexpectedSuggestions = suggestions.filter(suggestion => !options.expectedSuggestions.find(s => s === suggestion));
-        assert.equal(0, unexpectedSuggestions.length, `Unexpected suggestions: ${unexpectedSuggestions.join('\n')}`);
+        let errors = [];
+        if (missingSuggestions.length > 0) {
+          errors.push(`Missing suggestions:\n\t ${missingSuggestions.join('\n\t')}`);
+        }
+        if (unexpectedSuggestions.length > 0) {
+          errors.push(`Unexpected suggestions:\n\t ${unexpectedSuggestions.join('\n\t')}`);
+        }
+        assert.equal(0, missingSuggestions.length + unexpectedSuggestions.length, errors.join('\n'));
       }
       if (options.verify) {
         await options.verify(this.plans);
@@ -143,6 +149,10 @@ export default class TestHelper {
     if (!plan) {
       plan = this.plan;
     }
+    await this.instantiatePlan(plan);
+  }
+
+  async instantiatePlan(plan) {
     assert(plan, `Cannot accept suggestion, no plan could be selected.`);
     await this.arc.instantiate(plan);
     await this.idle();
@@ -186,17 +196,23 @@ export default class TestHelper {
     let handle = this.arc.findHandleById(handleId);
     assert(handle, `Handle '${handleId}' (${particleName}::${connectionName}) not found in active recipe`);
 
-    // TODO: setTimeout is needed, because pec becomes idle before hosted particles complete. Get rid of it.
-    setTimeout(async () => {
-      await expectationHandler(handle);
-    }, 100);
+    return new Promise((resolve, reject) => {
+      // TODO: setTimeout is needed, because pec becomes idle before hosted particles complete. Get rid of it.
+      setTimeout(async () => {
+        await expectationHandler(handle);
+        resolve();
+      }, 100);
+    });
   }
 
   /** @method verifySetSize(particleName, connectionName, expectedSetSize)
    * Verifies the size of data collection in handle |connectionName| of |particleName|.
    */
   async verifySetSize(particleName, connectionName, expectedSetSize) {
-    return this.verifyData(particleName, connectionName, async (handle) => assert.equal(expectedSetSize, (await handle.toList()).length));
+    this.log(`Verifying ${particleName}:${connectionName} size is: ${expectedSetSize}`);
+    return this.verifyData(particleName, connectionName, async (handle) => {
+      assert.equal(expectedSetSize, (await handle.toList()).length, `${particleName}:${connectionName} expected size ${expectedSetSize}`);
+    });
   };
 
   // TODO: add more helper methods to verify data and slots.

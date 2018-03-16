@@ -8,11 +8,11 @@
 
 'use strict';
 
-defineParticle(({DomParticle, resolver}) => {
+defineParticle(({DomParticle, resolver, html}) => {
 
   let host = `[show-product]`;
 
-  let styles = `
+  let styles = html`
 <style>
   ${host} [item] {
     padding: 4px 8px;
@@ -64,7 +64,7 @@ defineParticle(({DomParticle, resolver}) => {
 </style>
   `;
 
-  let template = `
+  let template = html`
 ${styles}
   <div item show-product>
     <div row>
@@ -78,7 +78,6 @@ ${styles}
         <img src="{{resolvedImage}}">
       </div>
     </div>
-    <div slotid="annotation" subid="{{subId}}">
     </div>
   </div>
   `;
@@ -90,8 +89,7 @@ ${styles}
     shouldRender(props) {
       return !!props.product;
     }
-    render(props) {
-      let {product} = props;
+    render({product}) {
       if (product) {
         let item = Object.assign({}, product.rawData);
         item.resolvedImage = resolver ? resolver(product.image) : product.image;
