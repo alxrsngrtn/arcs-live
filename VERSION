@@ -1,5 +1,5 @@
-commit c568a59e8dde4b5dcd49c702f93009a70bd09ad4
+commit 960bc5aecb60cd39137ad796aa885ba2f9ed4a99
 Author: Scott J Miles <sjmiles@google.com>
-Date:   Thu Mar 15 14:11:50 2018 -0700
+Date:   Thu Mar 15 15:56:58 2018 -0700
 
-    spelling!
+    untangle delete and select events
