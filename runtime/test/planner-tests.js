@@ -280,6 +280,22 @@ describe('ConvertConstraintsToConnections', async () => {
     d = view0`);
   });
 
+  it('does not cause an input only handle to be created', async () => {
+    let recipe = (await Manifest.parse(`
+      schema S
+      particle A
+        A(in S b)
+      particle C
+        C(in S d)
+
+      recipe
+        A.b -> C.d`)).recipes[0];
+    let strategizer = {generated: [{result: recipe, score: 1}]};
+    let cctc = new ConvertConstraintsToConnections({pec: {}});
+    let {results} = await cctc.generate(strategizer);
+    assert(results.length == 0);
+  });
+
   it('fills out a constraint, reusing a single particle', async () => {
     let recipe = (await Manifest.parse(`
       schema S
@@ -445,7 +461,7 @@ describe('ConvertConstraintsToConnections', async () => {
     let recipes = (await Manifest.parse(`
       schema S
       particle A in 'A.js'
-        A(in S b)
+        A(out S b)
         affordance voice
         consume root
       particle C in 'C.js'

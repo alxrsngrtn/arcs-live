@@ -19087,6 +19087,9 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
         let map = {};
         let particlesByName = {};
         let viewCount = 0;
+        if (recipe.connectionConstraints.length == 0) {
+          return;
+        }
         for (let constraint of recipe.connectionConstraints) {
           if (affordance && (!constraint.fromParticle.matchAffordance(affordance) || !constraint.toParticle.matchAffordance(affordance))) {
             return;
@@ -19112,7 +19115,26 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
         let shape = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* default */].makeShape([...particles.values()], [...views.values()], map);
         let results = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* default */].find(recipe, shape);
 
-        return results.map(match => {
+        return results.filter(match => {
+          // Ensure that every handle is either matched, or an input of at least one
+          // connected particle in the constraints.
+          let resolvedHandles = {};
+          for (let particle in map) {
+            for (let connection in map[particle]) {
+              let handle = map[particle][connection];
+              if (resolvedHandles[handle]) {
+                continue;
+              }
+              if (match[handle]) {
+                resolvedHandles[handle] = true;
+              } else {
+                let spec = particlesByName[particle];
+                resolvedHandles[handle] = spec.isOutput(connection);
+              }
+            }
+          }
+          return Object.values(resolvedHandles).every(value => value);
+        }).map(match => {
           return (recipe) => {
             let score = recipe.connectionConstraints.length + match.score;
             let recipeMap = recipe.updateToClone(match.match);
