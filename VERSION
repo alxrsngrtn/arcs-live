@@ -1,5 +1,5 @@
-commit be5409a4991e5c1bf2e4f5ca30a178b553c4f6f2
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Thu Mar 15 17:31:52 2018 -0700
+commit 2d6a8d45a01c50c7427ea3d3f153df169a2a38b4
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri Mar 16 14:28:10 2018 +1100
 
-    repair sharing state logic in menu
+    Review comments + tests

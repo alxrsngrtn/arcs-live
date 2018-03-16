@@ -22,6 +22,7 @@ export default class MapSlots extends Strategy {
     let results = Recipe.over(this.getResults(strategizer), new class extends RecipeWalker {
       onSlotConnection(recipe, slotConnection) {
         let selectedSlot;
+        let internalSlots = [];
         if (slotConnection.targetSlot) {
           if (!!slotConnection.targetSlot.sourceConnection) {
             // Target slot assigned within the current recipe.
@@ -32,19 +33,16 @@ export default class MapSlots extends Strategy {
             return;
           }
         } else {
-          // Attempt to match the slot connection with a slot within the recipe.
-          selectedSlot = this._findSlotCandidate(slotConnection, recipe.slots);
+          internalSlots = MapSlots._findSlotCandidates(slotConnection, recipe.slots);
         }
+        let candidates = arc.pec.slotComposer.getAvailableSlots();
+        let arcSlots = MapSlots._findSlotCandidates(slotConnection, candidates);
 
-        if (!selectedSlot) {
-          // Attempt to fetch the slot connection with a preexiting slot.
-          let candidates = arc.pec.slotComposer.getAvailableSlots();
-          selectedSlot = this._findSlotCandidate(slotConnection, candidates);
-        }
-
-        if (!selectedSlot) {
+        if (internalSlots.length + arcSlots.length < 2)
           return;
-        }
+
+        selectedSlot = internalSlots[0] ? internalSlots[0] : arcSlots[0];
+        assert(selectedSlot);
 
         return (recipe, slotConnection) => {
           if (!slotConnection.targetSlot) {
@@ -70,57 +68,6 @@ export default class MapSlots extends Strategy {
         };
       }
 
-      // Helper methods.
-      // Chooses the best slot out of the given slot candidates.
-      _findSlotCandidate(slotConnection, slots) {
-        let possibleSlots = slots.filter(s => this._filterSlot(slotConnection, s));
-        if (possibleSlots.length >= 0) {
-          possibleSlots.sort(this._sortSlots);
-          return possibleSlots[0];
-        }
-      }
-
-      // Returns true, if the given slot is a viable candidate for the slotConnection.
-      _filterSlot(slotConnection, slot) {
-        if (slotConnection.slotSpec.isSet != slot.getProvidedSlotSpec().isSet) {
-          return false;
-        }
-
-        // Match by tag on slot name.
-        if (!this._tagsMatch(slotConnection, slot)) {
-          // For backward compatibility support explicit slot names matching.
-          if (slotConnection.name !== slot.name) {
-            return false;
-          }
-        }
-
-        // Match handles of the provided slot with the slot-connection particle's handles.
-        if (!this._handlesMatch(slotConnection.particle, slot.handleConnections.map(connection => connection.handle).filter(a => a !== undefined))) {
-          return false;
-        }
-
-        return true;
-      }
-
-      // Returns true, if the slot connection's tags intersection with slot's tags is nonempty.
-      _tagsMatch(slotConnection, slot) {
-        let consumeConnTags = slotConnection.slotSpec.tags || [];
-        let slotTags = new Set([].concat(slot.tags, slot.getProvidedSlotSpec().tags || []));
-        // Consume connection tags aren't empty and intersection with the slot isn't empty.
-        return consumeConnTags.length > 0 && consumeConnTags.filter(t => slotTags.has(t)).length > 0;
-      }
-
-      // Returns true, if the providing slot handle restrictions are satisfied by the consuming slot connection.
-      _handlesMatch(consumingParticle, providingSlotHandles) {
-        if (providingSlotHandles.length == 0) {
-          return true; // slot is not limited to specific handles
-        }
-        return Object.values(consumingParticle.connections).find(handleConn => {
-          return providingSlotHandles.includes(handleConn.handle) ||
-                 (handleConn.handle && handleConn.handle.id && providingSlotHandles.map(sh => sh.id).includes(handleConn.handle.id));
-        });
-      }
-
       _sortSlots(slot1, slot2) {
         // TODO: implement.
         return slot1.name < slot2.name;
@@ -128,5 +75,56 @@ export default class MapSlots extends Strategy {
     }(RecipeWalker.Permuted), this);
 
     return {results, generate: null};
+  }
+
+  // Helper methods.
+  // Returns the given slot candidates, sorted by "quality".
+  static _findSlotCandidates(slotConnection, slots) {
+    let possibleSlots = slots.filter(s => this._filterSlot(slotConnection, s));
+    possibleSlots.sort(this._sortSlots);
+    return possibleSlots;
+  }
+
+  // Returns true, if the given slot is a viable candidate for the slotConnection.
+  static _filterSlot(slotConnection, slot) {
+    if (slotConnection.slotSpec.isSet != slot.getProvidedSlotSpec().isSet) {
+      return false;
+    }
+
+    // Match by tag on slot name.
+    if (!MapSlots._tagsMatch(slotConnection, slot)) {
+      // For backward compatibility support explicit slot names matching.
+      if (slotConnection.name !== slot.name) {
+        return false;
+      }
+    }
+
+    // Match handles of the provided slot with the slot-connection particle's handles.
+    if (!MapSlots._handlesMatch(slotConnection.particle, slot.handleConnections.map(connection => connection.handle).filter(a => a !== undefined))) {
+      return false;
+    }
+
+    return true;
+  }
+
+  // Returns true, if the slot connection's tags intersection with slot's tags is nonempty.
+  // TODO: replace with generic tag matcher      
+  static _tagsMatch(slotConnection, slot) {
+    let consumeConnTags = slotConnection.slotSpec.tags || [];
+    let slotTags = new Set([].concat(slot.tags, slot.getProvidedSlotSpec().tags || []));
+    // Consume connection tags aren't empty and intersection with the slot isn't empty.
+    return consumeConnTags.length > 0 && consumeConnTags.filter(t => slotTags.has(t)).length > 0;
+  }
+
+  // Returns true, if the providing slot handle restrictions are satisfied by the consuming slot connection.
+      // TODO: should we move some of this logic to the recipe? Or type matching?  
+  static _handlesMatch(consumingParticle, providingSlotHandles) {
+    if (providingSlotHandles.length == 0) {
+      return true; // slot is not limited to specific handles
+    }
+    return Object.values(consumingParticle.connections).find(handleConn => {
+      return providingSlotHandles.includes(handleConn.handle) ||
+              (handleConn.handle && handleConn.handle.id && providingSlotHandles.map(sh => sh.id).includes(handleConn.handle.id));
+    });
   }
 }
