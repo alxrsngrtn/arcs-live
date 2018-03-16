@@ -1,5 +1,5 @@
-commit f2e665e8271ea86dfed4ea9b5512672bb7981ed5
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Mar 15 17:52:49 2018 -0700
+commit 64118642dddcc3d0cf244c3a16d35fb3cb372298
+Author: Matt Small <mbsmall@google.com>
+Date:   Fri Mar 16 11:28:58 2018 -0700
 
-    Turn off user-select for the menu panel.
+    more recent `package-lock.json` changes
