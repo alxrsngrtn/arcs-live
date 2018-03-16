@@ -1,5 +1,5 @@
-commit 960bc5aecb60cd39137ad796aa885ba2f9ed4a99
+commit be5409a4991e5c1bf2e4f5ca30a178b553c4f6f2
 Author: Scott J Miles <sjmiles@google.com>
-Date:   Thu Mar 15 15:56:58 2018 -0700
+Date:   Thu Mar 15 17:31:52 2018 -0700
 
-    untangle delete and select events
+    repair sharing state logic in menu
