@@ -20596,7 +20596,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 //Tracing.enable();
 
-window.Arcs = {
+const Arcs = {
   version: '0.3',
   Arc: __WEBPACK_IMPORTED_MODULE_0__runtime_arc_js__["a" /* default */],
   Description: __WEBPACK_IMPORTED_MODULE_1__runtime_description_js__["a" /* default */],
@@ -20608,6 +20608,13 @@ window.Arcs = {
   Tracing: __WEBPACK_IMPORTED_MODULE_7__tracelib_trace_js__["a" /* default */],
   scheduler: __WEBPACK_IMPORTED_MODULE_8__runtime_scheduler_js__["a" /* default */]
 };
+
+// TODO(sjmiles): can't export because WebPack can't/doesn't make a built version with a module export
+// Instead we fall back to populating a global (possibly already created in app-shell/lib/arcs.js).
+//export default Arcs;
+
+window.Arcs = window.Arcs ? Object.assign(window.Arcs, Arcs) : Arcs;
+
 
 
 /***/ })
