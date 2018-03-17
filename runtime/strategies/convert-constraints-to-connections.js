@@ -27,6 +27,7 @@ export default class ConvertConstraintsToConnections extends Strategy {
         if (recipe.connectionConstraints.length == 0) {
           return;
         }
+
         for (let constraint of recipe.connectionConstraints) {
           if (affordance && (!constraint.fromParticle.matchAffordance(affordance) || !constraint.toParticle.matchAffordance(affordance))) {
             return;
@@ -41,12 +42,12 @@ export default class ConvertConstraintsToConnections extends Strategy {
             map[constraint.toParticle.name] = {};
             particlesByName[constraint.toParticle.name] = constraint.toParticle;
           }
-          let view = map[constraint.fromParticle.name][constraint.fromConnection];
+          let view = map[constraint.fromParticle.name][constraint.fromConnection] || map[constraint.toParticle.name][constraint.toConnection];
           if (view == undefined) {
             view = 'v' + viewCount++;
-            map[constraint.fromParticle.name][constraint.fromConnection] = view;
             views.add(view);
           }
+          map[constraint.fromParticle.name][constraint.fromConnection] = view;
           map[constraint.toParticle.name][constraint.toConnection] = view;
         }
         let shape = RecipeUtil.makeShape([...particles.values()], [...views.values()], map);
@@ -62,7 +63,7 @@ export default class ConvertConstraintsToConnections extends Strategy {
               if (resolvedHandles[handle]) {
                 continue;
               }
-              if (match[handle]) {
+              if (match.match[handle]) {
                 resolvedHandles[handle] = true;
               } else {
                 let spec = particlesByName[particle];

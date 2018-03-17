@@ -19092,6 +19092,7 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
         if (recipe.connectionConstraints.length == 0) {
           return;
         }
+
         for (let constraint of recipe.connectionConstraints) {
           if (affordance && (!constraint.fromParticle.matchAffordance(affordance) || !constraint.toParticle.matchAffordance(affordance))) {
             return;
@@ -19106,12 +19107,12 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
             map[constraint.toParticle.name] = {};
             particlesByName[constraint.toParticle.name] = constraint.toParticle;
           }
-          let view = map[constraint.fromParticle.name][constraint.fromConnection];
+          let view = map[constraint.fromParticle.name][constraint.fromConnection] || map[constraint.toParticle.name][constraint.toConnection];
           if (view == undefined) {
             view = 'v' + viewCount++;
-            map[constraint.fromParticle.name][constraint.fromConnection] = view;
             views.add(view);
           }
+          map[constraint.fromParticle.name][constraint.fromConnection] = view;
           map[constraint.toParticle.name][constraint.toConnection] = view;
         }
         let shape = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* default */].makeShape([...particles.values()], [...views.values()], map);
@@ -19127,7 +19128,7 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
               if (resolvedHandles[handle]) {
                 continue;
               }
-              if (match[handle]) {
+              if (match.match[handle]) {
                 resolvedHandles[handle] = true;
               } else {
                 let spec = particlesByName[particle];

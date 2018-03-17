@@ -269,7 +269,7 @@ describe('ConvertConstraintsToConnections', async () => {
     let strategizer = {generated: [{result: recipe, score: 1}]};
     let cctc = new ConvertConstraintsToConnections({pec: {}});
     let {results} = await cctc.generate(strategizer);
-    assert(results.length == 1);
+    assert.equal(1, results.length);
     let {result, score} = results[0];
     assert.deepEqual(result.toString(),
 `recipe
@@ -293,7 +293,58 @@ describe('ConvertConstraintsToConnections', async () => {
     let strategizer = {generated: [{result: recipe, score: 1}]};
     let cctc = new ConvertConstraintsToConnections({pec: {}});
     let {results} = await cctc.generate(strategizer);
-    assert(results.length == 0);
+    assert.equal(0, results.length);
+  });
+
+  it('can resolve input only handle connection with a mapped handle', async () => {
+    let recipe = (await Manifest.parse(`
+      schema S
+      particle A
+        A(in S b)
+      particle C
+        C(in S d)
+
+      recipe
+        map as v0
+        A.b -> C.d`)).recipes[0];
+    let strategizer = {generated: [{result: recipe, score: 1}]};
+    let cctc = new ConvertConstraintsToConnections({pec: {}});
+    let {results} = await cctc.generate(strategizer);
+    assert.equal(1, results.length);
+  });
+
+  it('can create handle for input and output handle', async () => {
+    let createRecipe = async (constraint1, constraint2) => (await Manifest.parse(`
+      schema S
+      particle A
+        A(in S b)
+      particle C
+        C(in S d)
+      particle E
+        E(out S f)
+
+      recipe
+        ${constraint1}
+        ${constraint2}`)).recipes[0];
+    let verify = async (constraint1, constraint2) => {
+      let recipe = await createRecipe(constraint1, constraint2);
+      let strategizer = {generated: [{result: recipe, score: 1}]};
+      let cctc = new ConvertConstraintsToConnections({pec: {}});
+      let {results} = await cctc.generate(strategizer);
+      assert.equal(1, results.length, `Failed to resolve ${constraint1} & ${constraint2}`);
+    };
+    // Test for all possible combination of connection constraints with 3 particles.
+    let constraints = [['A.b -> C.d', 'C.d -> A.b'], ['A.b -> E.f', 'E.f -> A.b'], ['C.d -> E.f', 'E.f -> C.d']];
+    for (let i = 0; i < constraints.length; ++i) {
+      for (let j = 0; j < constraints.length; ++j) {
+        if (i == j) continue;
+        for (let ii = 0; ii <= 1; ++ii) {
+          for (let jj = 0; jj <= 1; ++jj) {
+            await verify(constraints[i][ii], constraints[j][jj]);
+          }
+        }
+      }
+    }
   });
 
   it('fills out a constraint, reusing a single particle', async () => {
@@ -310,7 +361,7 @@ describe('ConvertConstraintsToConnections', async () => {
     let strategizer = {generated: [{result: recipe, score: 1}]};
     let cctc = new ConvertConstraintsToConnections({pec: {}});
     let {results} = await cctc.generate(strategizer);
-    assert(results.length == 1);
+    assert.equal(1, results.length);
     let {result, score} = results[0];
     assert.deepEqual(result.toString(),
 `recipe

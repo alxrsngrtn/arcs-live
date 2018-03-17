@@ -1,5 +1,5 @@
-commit 83cf1a0d3c8a582d95f54d2999e4793df0d01415
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Fri Mar 16 15:20:49 2018 -0700
+commit 3717417532f4ebb4a0d6f61fb6d42b09f213af43
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Mar 16 17:58:07 2018 -0700
 
-    fewer structural-dependencies in starter-test (test for attribute regardless of owning element type)
+    Address comment
