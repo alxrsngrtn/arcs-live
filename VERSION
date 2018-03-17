@@ -1,5 +1,5 @@
-commit 3717417532f4ebb4a0d6f61fb6d42b09f213af43
+commit 01026607d016e884adab9c35cd05dbf8b5637de6
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Mar 16 17:58:07 2018 -0700
+Date:   Fri Mar 16 16:24:06 2018 -0700
 
-    Address comment
+    Update handle type serialization and avoid unnecessary add-use-view strategy output.

@@ -17447,7 +17447,7 @@ class Handle {
     result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
     if (this.type) {
       result.push('//');
-      result.push(this.type.toString());
+      result.push(this.type.resolvedType().toString());
     }
     if (options && options.showUnresolved) {
       let options = {};
@@ -18875,6 +18875,9 @@ class AddUseViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
         // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
         // not being properly supported in arc instantiation). For now just hardcode skiping them.
         let disconnectedConnections = recipe.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name != 'descriptions');
+        if (disconnectedConnections.length == 0) {
+          return;
+        }
 
         return recipe => {
           disconnectedConnections.forEach(hc => {
