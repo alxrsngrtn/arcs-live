@@ -1,5 +1,5 @@
-commit 09a938a2bb9505c046e47a12f13afe6b25590cbb
+commit 94905945dbea343f22ab1b60cb381fe2a70b79b4
 Author: Scott J Miles <sjmiles@google.com>
-Date:   Fri Mar 16 20:21:27 2018 -0700
+Date:   Sat Mar 17 08:34:06 2018 -0700
 
-    don't need BC debug file for VR app
+    default value of _wouldChangeProp should be false
