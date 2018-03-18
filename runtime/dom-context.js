@@ -86,6 +86,11 @@ class DomContext {
     }
     assert(false);
   }
+  // get a value from node that could be an attribute, if not a property
+  getNodeValue(node, name) {
+    // TODO(sjmiles): remember that attribute names from HTML are lower-case
+    return node[name] || node.getAttribute(name);
+  }
   initInnerContexts(slotSpec) {
     this._innerContextBySlotName = {};
     Array.from(this._context.querySelectorAll('[slotid]')).forEach(s => {
@@ -93,10 +98,10 @@ class DomContext {
         // Skip inner slots of an inner slot of the given slot.
         return;
       }
-      let slotId = s.getAttribute('slotid');
-      let providedSlotSpec = slotSpec.getProvidedSlotSpec(slotId);
+      const slotId = this.getNodeValue(s, 'slotid');
+      const providedSlotSpec = slotSpec.getProvidedSlotSpec(slotId);
       if (providedSlotSpec) { // Skip non-declared slots
-        let subId = s.subid;
+        const subId = this.getNodeValue(s, 'subid');
         assert(!subId || providedSlotSpec.isSet,
             `Slot provided in ${slotSpec.name} sub-id ${subId} doesn't match set spec: ${providedSlotSpec.isSet}`);
         if (providedSlotSpec.isSet) {
