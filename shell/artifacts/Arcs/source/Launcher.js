@@ -14,11 +14,6 @@ defineParticle(({DomParticle, log, html}) => {
 
   const style = html`
 <style>
-  [${host}] a {
-    display: block;
-    color: inherit;
-    text-decoration: none;
-  }
   [${host}] [chip] {
     position: relative;
     display: flex;
@@ -28,6 +23,11 @@ defineParticle(({DomParticle, log, html}) => {
     font-size: 18px;
     color: whitesmoke;
     border-radius: 9px;
+  }
+  [${host}] a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
     min-height: 64px;
   }
   [${host}] [delete] {
@@ -60,17 +60,17 @@ ${style}
 </div>
 
 <template column>
-  <a href="{{href}}">
-    <div chip style="{{chipStyle}}">
-      <icon delete key="{{arcId}}" on-click="_onDelete">remove_circle_outline</icon>
-        <div description title="{{description}}" unsafe-html="{{blurb}}"></div>
-        <div style="flex: 1;"></div>
-        <div share>
-          <icon show$="{{self}}">account_circle</icon>
-          <icon show$="{{friends}}">people</icon>
-        </div>
-    </div>
-  </a>
+  <div chip style="{{chipStyle}}">
+    <icon delete key="{{arcId}}" on-click="_onDelete">remove_circle_outline</icon>
+    <a href="{{href}}">
+      <div description title="{{description}}" unsafe-html="{{blurb}}"></div>
+      <div style="flex: 1;"></div>
+      <div share>
+        <icon show$="{{self}}">account_circle</icon>
+        <icon show$="{{friends}}">people</icon>
+      </div>
+    </a>
+  </div>
 </template>
 `;
 

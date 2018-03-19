@@ -1,5 +1,5 @@
-commit f2264f77b1df75ba42eda4bf827b36b85ec4ffbc
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Mar 19 11:02:03 2018 -0700
+commit e672fdcbf8599785438fe4a8b239f5b9ae7f19e0
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Mon Mar 19 12:38:02 2018 -0700
 
-    Update Social icons to work with recent shell icon changes.
+    make the anchor-area larger
