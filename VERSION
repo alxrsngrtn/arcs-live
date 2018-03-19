@@ -1,5 +1,5 @@
-commit e672fdcbf8599785438fe4a8b239f5b9ae7f19e0
+commit 1957e45462b7c8f912136ca98ddbddd3fac9102e
 Author: Scott J Miles <sjmiles@google.com>
-Date:   Mon Mar 19 12:38:02 2018 -0700
+Date:   Mon Mar 19 12:47:28 2018 -0700
 
-    make the anchor-area larger
+    don't treat steps as immutable, dirty checking is performed upstream
