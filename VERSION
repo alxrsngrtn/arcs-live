@@ -1,5 +1,5 @@
-commit 7e4663aa9b55c7e0dfb374cb527b220e9f360d2f
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Sun Mar 18 17:24:00 2018 -0700
+commit f2264f77b1df75ba42eda4bf827b36b85ec4ffbc
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon Mar 19 11:02:03 2018 -0700
 
-    ArcsLib.js must be loaded as a module
+    Update Social icons to work with recent shell icon changes.
