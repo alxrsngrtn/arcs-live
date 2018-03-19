@@ -1,5 +1,5 @@
-commit 25496fd9d774c75164cd42de1dedf9e7ee4598cf
+commit 7e4663aa9b55c7e0dfb374cb527b220e9f360d2f
 Author: Scott J Miles <sjmiles@google.com>
-Date:   Sun Mar 18 14:59:39 2018 -0700
+Date:   Sun Mar 18 17:24:00 2018 -0700
 
-    make `slotid` flexible against property or attribute, to be parallel with `subid`
+    ArcsLib.js must be loaded as a module
