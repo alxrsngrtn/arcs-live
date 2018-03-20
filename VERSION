@@ -1,5 +1,5 @@
-commit beafe71772e17197cad447a4a8b2544ec67052ce
+commit a19f47489725e332d5fe96067323d7c68a27e9bd
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Mar 19 18:27:44 2018 -0700
+Date:   Fri Mar 16 11:58:27 2018 -0700
 
-    complete support for particle consuming multiple slots
+    refactor map-slots and resolve-recipe slots resolution to avoid duplicate code

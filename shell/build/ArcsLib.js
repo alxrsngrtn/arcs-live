@@ -6722,56 +6722,21 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
 
     let results = __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
       onSlotConnection(recipe, slotConnection) {
-        let selectedSlot;
-        let internalSlots = [];
-        if (slotConnection.targetSlot) {
-          if (slotConnection.targetSlot.sourceConnection) {
-            // Target slot assigned within the current recipe.
-            return;
-          }
-          if (slotConnection.targetSlot.id) {
-            // Target slot assigned from preexisting slots in the arc.
-            return;
-          }
-        } else {
-          internalSlots = MapSlots._findSlotCandidates(slotConnection, recipe.slots);
-        }
-        let candidates = arc.pec.slotComposer.getAvailableSlots();
-        let arcSlots = MapSlots._findSlotCandidates(slotConnection, candidates);
-
-        if (internalSlots.length + arcSlots.length < 2)
+        if (slotConnection.isConnected()) {
           return;
+        }
 
-        selectedSlot = internalSlots[0] ? internalSlots[0] : arcSlots[0];
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(selectedSlot);
+        let selectedSlots = MapSlots.findAllSlotCandidates(slotConnection, arc);
+        if (selectedSlots.length < 2) {
+          return;
+        }
+
+        let selectedSlot = selectedSlots[0]; // TODO: return combinatorial results?
 
         return (recipe, slotConnection) => {
-          if (!slotConnection.targetSlot) {
-            let clonedSlot = recipe.updateToClone({selectedSlot}).selectedSlot;
-
-            if (!clonedSlot) {
-              clonedSlot = recipe.slots.find(s => selectedSlot.id && selectedSlot.id == s.id);
-              if (clonedSlot == undefined) {
-                clonedSlot = recipe.newSlot(selectedSlot.name);
-                clonedSlot.id = selectedSlot.id;
-              }
-            }
-            slotConnection.connectToSlot(clonedSlot);
-          }
-
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id == slotConnection.targetSlot.id),
-                 `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
-          slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
-
-          // TODO: need to concat to existing tags and dedup?
-          slotConnection.targetSlot.tags = [...selectedSlot.tags];
+          MapSlots.connectSlotConnection(slotConnection, selectedSlot);
           return 1;
         };
-      }
-
-      _sortSlots(slot1, slot2) {
-        // TODO: implement.
-        return slot1.name < slot2.name;
       }
     }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */].Permuted), this);
 
@@ -6779,10 +6744,49 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
   }
 
   // Helper methods.
+  // Connect the given slot connection to the selectedSlot, create the slot, if needed.
+  static connectSlotConnection(slotConnection, selectedSlot) {
+    let recipe = slotConnection.recipe;
+    if (!slotConnection.targetSlot) {
+      let clonedSlot = recipe.updateToClone({selectedSlot}).selectedSlot;
+
+      if (!clonedSlot) {
+        clonedSlot = recipe.slots.find(s => selectedSlot.id && selectedSlot.id == s.id);
+        if (clonedSlot == undefined) {
+          clonedSlot = recipe.newSlot(selectedSlot.name);
+          clonedSlot.id = selectedSlot.id;
+        }
+      }
+      slotConnection.connectToSlot(clonedSlot);
+    }
+
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id == slotConnection.targetSlot.id),
+           `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
+    slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
+
+    // TODO: need to concat to existing tags and dedup?
+    slotConnection.targetSlot.tags = [...selectedSlot.tags];
+  }
+
+  // Returns all possible slot candidates, sorted by "quality"
+  static findAllSlotCandidates(slotConnection, arc) {
+    let selectedSlots = [];
+    if (!slotConnection.targetSlot) {
+      // Note: during manfiest parsing, target slot is only set in slot connection, if the slot exists in the recipe.
+      // If this slot is internal to the recipe, it has the sourceConnection set to the providing connection
+      // (and hence the consuming connection is considered connected already). Otherwise, this may only be a remote slot.
+      selectedSlots = MapSlots._findSlotCandidates(slotConnection, slotConnection.recipe.slots);
+    }
+    return selectedSlots.concat(MapSlots._findSlotCandidates(slotConnection, arc.pec.slotComposer.getAvailableSlots()));
+  }
+
   // Returns the given slot candidates, sorted by "quality".
   static _findSlotCandidates(slotConnection, slots) {
     let possibleSlots = slots.filter(s => this._filterSlot(slotConnection, s));
-    possibleSlots.sort(this._sortSlots);
+    possibleSlots.sort((slot1, slot2) => {
+        // TODO: implement.
+        return slot1.name < slot2.name;
+    });
     return possibleSlots;
   }
 
@@ -17880,6 +17884,16 @@ class SlotConnection {
     return true;
   }
 
+  isConnectedToInternalSlot() {
+    return this.targetSlot && (!!this.targetSlot.sourceConnection);
+  }
+  isConnectedToRemoteSlot() {
+    return this.targetSlot && (!!this.targetSlot.id);
+  }
+  isConnected() {
+    return this.isConnectedToInternalSlot() || this.isConnectedToRemoteSlot();
+  }
+
   toString(nameMap, options) {
     let consumeRes = [];
     consumeRes.push('consume');
@@ -19884,48 +19898,22 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
       }
 
       onSlotConnection(recipe, slotConnection) {
-        if (this._slotIsConnected(slotConnection))
+        if (slotConnection.isConnected()) {
           return;
+        }
         
-        let selectedSlots = [];
-        if (!slotConnection.targetSlot)
-          selectedSlots = __WEBPACK_IMPORTED_MODULE_5__map_slots_js__["a" /* default */]._findSlotCandidates(slotConnection, recipe.slots);
-        
-        selectedSlots = selectedSlots.concat(__WEBPACK_IMPORTED_MODULE_5__map_slots_js__["a" /* default */]._findSlotCandidates(slotConnection, arc.pec.slotComposer.getAvailableSlots()));
-      
-        if (selectedSlots.length !== 1)
+        let selectedSlots = __WEBPACK_IMPORTED_MODULE_5__map_slots_js__["a" /* default */].findAllSlotCandidates(slotConnection, arc);
+        if (selectedSlots.length !== 1) {
           return;
+        }
         
         let selectedSlot = selectedSlots[0];
 
         return (recipe, slotConnection) => {
-          if (!slotConnection.targetSlot) {
-            let clonedSlot = recipe.updateToClone({selectedSlot}).selectedSlot;
-
-            if (!clonedSlot) {
-              clonedSlot = recipe.slots.find(s => selectedSlot.id && selectedSlot.id == s.id);
-              if (clonedSlot == undefined)
-                clonedSlot = recipe.newSlot(selectedSlot.name);
-                clonedSlot.id = selectedSlot.id;
-            }
-            slotConnection.connectToSlot(clonedSlot);
-          }
-
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id == slotConnection.targetSlot.id),
-            `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
-          slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
-
-          // TODO: need to concat to existing tags and dedup?
-          slotConnection.targetSlot.tags = [...selectedSlot.tags];
+          __WEBPACK_IMPORTED_MODULE_5__map_slots_js__["a" /* default */].connectSlotConnection(slotConnection, selectedSlot);
           return 1;
         };
       }
-
-      // TODO: move to SlotConnection.
-      _slotIsConnected(slotConnection) {
-        return slotConnection.targetSlot && ((!!slotConnection.targetSlot.sourceConnection) || (!!slotConnection.targetSlot.id));
-      }
-
     }(__WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */].Permuted), this);
 
     return {results, generate: null};
