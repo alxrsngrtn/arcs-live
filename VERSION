@@ -1,5 +1,5 @@
-commit cbc74a9b36835d2584e03bbae05f5271095757b4
-Author: Matt Small <mbsmall@google.com>
-Date:   Tue Mar 20 14:50:21 2018 -0700
+commit a7da309d51f213ce92cacfcef7803fe55b49d2b7
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Tue Mar 20 14:32:01 2018 -0700
 
-    update extension redirect for new location of package.json
+    clean up comments
