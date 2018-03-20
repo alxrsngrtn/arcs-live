@@ -81,10 +81,10 @@
 
 function assert(test, message) {
   if (!test) {
-    debugger;
+    debugger; // eslint-disable-line no-debugger
     throw new Error(message);
   }
-};
+}
 
 
 /***/ }),
@@ -612,7 +612,6 @@ class Schema {
           throw new TypeError(
               `Type mismatch ${op}ting field ${name} (union [${fieldType.types}]); ` +
               `value '${value}' is type ${typeof(value)}`);
-          break;
 
         case 'schema-tuple':
           // Value must be an array whose contents match each of the tuple types.
@@ -634,7 +633,7 @@ class Schema {
           break;
 
         default:
-          throw new Error(`Unknown kind ${kind} in schema ${className}`);
+          throw new Error(`Unknown kind ${fieldType.kind} in schema ${className}`);
       }
     };
 
@@ -718,7 +717,7 @@ class Schema {
         typeString = type;
       }
       results.push(`  ${typeString} ${name}`);
-    };
+    }
 
     if (Object.keys(this.description).length > 0) {
       results.push(`  description \`${this.description.pattern}\``);
@@ -1032,10 +1031,10 @@ class ParticleSpec {
       });
     });
     // Description
-    if (!!this.pattern) {
+    if (this.pattern) {
       results.push(`  description \`${this.pattern}\``);
       this.connections.forEach(cs => {
-        if (!!cs.pattern) {
+        if (cs.pattern) {
           results.push(`    ${cs.name} \`${cs.pattern}\``);
         }
       });
@@ -1567,7 +1566,7 @@ class TypeChecker {
             leftType.constraint = mergedConstraint;
             rightType.variable.resolution = leftType;
           }
-        };
+        }
         return {type: left, valid: true};
       } else if (leftType.isVariable) {
         if (!leftType.variable.isSatisfiedBy(rightType)) {
@@ -2153,7 +2152,6 @@ class TypeVariable {
 
 
 
-// import {define} from './particle.js';
 
 
 
@@ -2259,11 +2257,6 @@ class InnerPEC {
 
     this._apiPort.onInnerArcRender = ({transformationParticle, transformationSlotName, hostedSlotId, content}) => {
       transformationParticle.renderHostedSlot(transformationSlotName, hostedSlotId, content);
-    };
-
-    this._apiPort.onDefineParticle = ({particleDefinition, particleFunction}) => {
-      let particle = define(particleDefinition, eval(particleFunction));
-      this._loader.registerParticle(particle);
     };
 
     this._apiPort.onStop = () => {
@@ -3088,8 +3081,6 @@ class PECOuterPort extends APIPort {
     super(messagePort, 'o');
 
     this.registerCall('Stop', {});
-    this.registerCall('DefineParticle',
-      {particleDefinition: this.Direct, particleFunction: this.Stringify});
     this.registerRedundantInitializer('DefineHandle', {type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */]), name: this.Direct});
     this.registerInitializer('InstantiateParticle',
       {id: this.Direct, spec: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* default */]), handles: this.Map(this.Direct, this.Mapped)}, 'id');
@@ -3981,6 +3972,7 @@ let BasicEntity = testEntityClass('BasicEntity');
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(1);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3993,13 +3985,14 @@ let BasicEntity = testEntityClass('BasicEntity');
 
 
 
+
 class TupleFields {
   constructor(fieldList) {
     this.fieldList = fieldList;
   }
 
   static fromLiteral(literal) {
-    return new TupleFields(literal.map(a => Type.fromLiteral(a)));
+    return new TupleFields(literal.map(a => __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */].fromLiteral(a)));
   }
 
   toLiteral() {
@@ -4323,12 +4316,7 @@ function init() {
     let n = 0;
     return {
       async wait(v) {
-        let result;
-        if (v instanceof Promise) {
-          result = f;
-        } else {
-          result = v();
-        }
+        let result = await v;
         if (!flow) {
           flow = module.exports.flow(baseInfo).start();
         }
@@ -4414,9 +4402,6 @@ function init() {
       }
     });
     return {traceEvents: events};
-  };
-  module.exports.dump = function() {
-    __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__["a" /* default */].writeFileSync(options.traceFile, module.exports.save());
   };
   module.exports.download = function() {
     let a = document.createElement('a');

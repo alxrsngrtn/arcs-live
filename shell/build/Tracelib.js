@@ -211,12 +211,7 @@ function init() {
     let n = 0;
     return {
       async wait(v) {
-        let result;
-        if (v instanceof Promise) {
-          result = f;
-        } else {
-          result = v();
-        }
+        let result = await v;
         if (!flow) {
           flow = module.exports.flow(baseInfo).start();
         }
@@ -302,9 +297,6 @@ function init() {
       }
     });
     return {traceEvents: events};
-  };
-  module.exports.dump = function() {
-    __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__["a" /* default */].writeFileSync(options.traceFile, module.exports.save());
   };
   module.exports.download = function() {
     let a = document.createElement('a');
@@ -520,7 +512,7 @@ process.umask = function() { return 0; };
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-/* harmony default export */ __webpack_exports__["a"] = ({});
+/* unused harmony default export */ var _unused_webpack_default_export = ({});
 
 
 /***/ }),

@@ -198,7 +198,6 @@ class Schema {
           throw new TypeError(
               `Type mismatch ${op}ting field ${name} (union [${fieldType.types}]); ` +
               `value '${value}' is type ${typeof(value)}`);
-          break;
 
         case 'schema-tuple':
           // Value must be an array whose contents match each of the tuple types.
@@ -220,7 +219,7 @@ class Schema {
           break;
 
         default:
-          throw new Error(`Unknown kind ${kind} in schema ${className}`);
+          throw new Error(`Unknown kind ${fieldType.kind} in schema ${className}`);
       }
     };
 
@@ -304,7 +303,7 @@ class Schema {
         typeString = type;
       }
       results.push(`  ${typeString} ${name}`);
-    };
+    }
 
     if (Object.keys(this.description).length > 0) {
       results.push(`  description \`${this.description.pattern}\``);

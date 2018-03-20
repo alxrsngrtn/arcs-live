@@ -81,10 +81,10 @@
 
 function assert(test, message) {
   if (!test) {
-    debugger;
+    debugger; // eslint-disable-line no-debugger
     throw new Error(message);
   }
-};
+}
 
 
 /***/ }),
@@ -1728,12 +1728,7 @@ function init() {
     let n = 0;
     return {
       async wait(v) {
-        let result;
-        if (v instanceof Promise) {
-          result = f;
-        } else {
-          result = v();
-        }
+        let result = await v;
         if (!flow) {
           flow = module.exports.flow(baseInfo).start();
         }
@@ -1819,9 +1814,6 @@ function init() {
       }
     });
     return {traceEvents: events};
-  };
-  module.exports.dump = function() {
-    __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__["a" /* default */].writeFileSync(options.traceFile, module.exports.save());
   };
   module.exports.download = function() {
     let a = document.createElement('a');
@@ -2043,7 +2035,6 @@ class Schema {
           throw new TypeError(
               `Type mismatch ${op}ting field ${name} (union [${fieldType.types}]); ` +
               `value '${value}' is type ${typeof(value)}`);
-          break;
 
         case 'schema-tuple':
           // Value must be an array whose contents match each of the tuple types.
@@ -2065,7 +2056,7 @@ class Schema {
           break;
 
         default:
-          throw new Error(`Unknown kind ${kind} in schema ${className}`);
+          throw new Error(`Unknown kind ${fieldType.kind} in schema ${className}`);
       }
     };
 
@@ -2149,7 +2140,7 @@ class Schema {
         typeString = type;
       }
       results.push(`  ${typeString} ${name}`);
-    };
+    }
 
     if (Object.keys(this.description).length > 0) {
       results.push(`  description \`${this.description.pattern}\``);
@@ -2390,10 +2381,10 @@ class ParticleSpec {
       });
     });
     // Description
-    if (!!this.pattern) {
+    if (this.pattern) {
       results.push(`  description \`${this.pattern}\``);
       this.connections.forEach(cs => {
-        if (!!cs.pattern) {
+        if (cs.pattern) {
           results.push(`    ${cs.name} \`${cs.pattern}\``);
         }
       });
@@ -2476,7 +2467,7 @@ class TypeChecker {
             leftType.constraint = mergedConstraint;
             rightType.variable.resolution = leftType;
           }
-        };
+        }
         return {type: left, valid: true};
       } else if (leftType.isVariable) {
         if (!leftType.variable.isSatisfiedBy(rightType)) {
@@ -2843,7 +2834,7 @@ class DescriptionFormatter {
         return this._formatHandleValue(token.handleName, token._handle);
       case '_name_':
         return this._formatDescription(token._handleConn, token._handle);
-      default:
+      default: {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!token.extra, `Unrecognized extra ${token.extra}`);
 
         // Transformation's hosted particle.
@@ -2875,6 +2866,7 @@ class DescriptionFormatter {
           return this._combineDescriptionAndValue(token, description, handleValue);
         }
         return description;
+      }
     }
   }
 
@@ -3342,7 +3334,7 @@ class Manifest {
     }
 
     function processError(e, parseError) {
-      if (!e instanceof ManifestError || !e.location) {
+      if (!((e instanceof ManifestError) || e.location)) {
         return e;
       }
       let lines = content.split('\n');
@@ -3437,7 +3429,7 @@ ${e.message}
         //     errors relating to failed merges can reference the manifest source.
         visitChildren();
         switch (node.kind) {
-        case 'schema-inline':
+        case 'schema-inline': {
           let externalSchemas = [];
           for (let name of node.names) {
             let resolved = manifest.resolveReference(name);
@@ -3479,11 +3471,13 @@ ${e.message}
             fields,
           }));
           return;
-        case 'variable-type':
+        }
+        case 'variable-type': {
           let constraint = node.constraint && node.constraint.model;
           node.model = __WEBPACK_IMPORTED_MODULE_7__type_js__["a" /* default */].newVariable({name: node.name, constraint});
           return;
-        case 'reference-type':
+        }
+        case 'reference-type': {
           let resolved = manifest.resolveReference(node.name);
           if (!resolved) {
             throw new ManifestError(
@@ -3498,6 +3492,7 @@ ${e.message}
             throw new Error('Expected {shape} or {schema}');
           }
           return;
+        }
         case 'list-type':
           node.model = __WEBPACK_IMPORTED_MODULE_7__type_js__["a" /* default */].newSetView(node.type.model);
           return;
@@ -3582,7 +3577,7 @@ ${e.message}
   // TODO: Move this to a generic pass over the AST and merge with resolveReference.
   static _processShape(manifest, shapeItem) {
     for (let arg of shapeItem.interface.args) {
-      if (!!arg.type) {
+      if (arg.type) {
         // TODO: we should copy rather than mutate the AST like this
         arg.type = arg.type.model;
       }
@@ -5614,8 +5609,6 @@ class PECOuterPort extends APIPort {
     super(messagePort, 'o');
 
     this.registerCall('Stop', {});
-    this.registerCall('DefineParticle',
-      {particleDefinition: this.Direct, particleFunction: this.Stringify});
     this.registerRedundantInitializer('DefineHandle', {type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */]), name: this.Direct});
     this.registerInitializer('InstantiateParticle',
       {id: this.Direct, spec: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* default */]), handles: this.Map(this.Direct, this.Mapped)}, 'id');
@@ -6705,11 +6698,11 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
         let selectedSlot;
         let internalSlots = [];
         if (slotConnection.targetSlot) {
-          if (!!slotConnection.targetSlot.sourceConnection) {
+          if (slotConnection.targetSlot.sourceConnection) {
             // Target slot assigned within the current recipe.
             return;
           }
-          if (!!slotConnection.targetSlot.id) {
+          if (slotConnection.targetSlot.id) {
             // Target slot assigned from preexisting slots in the arc.
             return;
           }
@@ -7179,7 +7172,7 @@ class Arc {
         case 'firebase':
           handles += `view View${id++} of ${handle.type.toString()} '${handle.id}' @${handle._version} at '${handle.storageKey}'\n`;
           break;
-        case 'in-memory':
+        case 'in-memory': {
           resources += `resource View${id}Resource\n`;
           let indent = '  ';
           resources += indent + 'start\n';
@@ -7202,6 +7195,7 @@ class Arc {
           resources += '\n';
           handles += `view View${id} of ${handle.type.toString()} '${handle.id}' @${handle._version} in View${id++}Resource\n`;
           break;
+        }
       }
     }
 
@@ -7311,7 +7305,7 @@ ${this.activeRecipe.toString()}`;
       if (this._handleDescriptions.has(handle)) {
         arc._handleDescriptions.set(clone, this._handleDescriptions.get(handle));
       }
-    };
+    }
     this.particleHandleMaps.forEach((value, key) => {
       arc.particleHandleMaps.set(key, {
         spec: value.spec,
@@ -7829,7 +7823,7 @@ class Planner {
         if (this._arc.search) {
           if (!plan.search) {
             // This plan wasn't constructed based on the provided search terms.
-            if (description.toLowerCase().indexOf(arc.search) < 0) {
+            if (description.toLowerCase().indexOf(this._arc.search) < 0) {
               // Description must contain the full search string.
               // TODO: this could be a strategy, if description was already available during strategies execution.
               continue;
@@ -8336,7 +8330,7 @@ class DeviceInfo {
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = DeviceInfo;
-;
+
 
 
 /***/ }),
@@ -16174,7 +16168,7 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* default */] 
   let channel = new __WEBPACK_IMPORTED_MODULE_1__message_channel_js__["a" /* default */]();
   new __WEBPACK_IMPORTED_MODULE_0__inner_PEC_js__["a" /* default */](channel.port1, `${id}:inner`, new __WEBPACK_IMPORTED_MODULE_2__loader_js__["a" /* default */]());
   return channel.port2;
-});;
+});
 
 
 /***/ }),
@@ -16338,7 +16332,6 @@ class Identifier {
 
 
 
-// import {define} from './particle.js';
 
 
 
@@ -16444,11 +16437,6 @@ class InnerPEC {
 
     this._apiPort.onInnerArcRender = ({transformationParticle, transformationSlotName, hostedSlotId, content}) => {
       transformationParticle.renderHostedSlot(transformationSlotName, hostedSlotId, content);
-    };
-
-    this._apiPort.onDefineParticle = ({particleDefinition, particleFunction}) => {
-      let particle = define(particleDefinition, eval(particleFunction));
-      this._loader.registerParticle(particle);
     };
 
     this._apiPort.onStop = () => {
@@ -17042,7 +17030,7 @@ class ConnectionConstraint {
   let buffer = new TextEncoder('utf-8').encode(str);
   let digest = await crypto.subtle.digest('SHA-1', buffer);
   return Array.from(new Uint8Array(digest)).map(x => ('00' + x.toString(16)).slice(-2)).join('');
-});;
+});
 
 
 /***/ }),
@@ -17935,8 +17923,8 @@ class Slot {
   set id(id) { this._id = id; }
   get localName() { return this._localName; }
   set localName(localName) { this._localName = localName; }
-  get name() { return this._name; };
-  set name(name) { this._name = name; };
+  get name() { return this._name; }
+  set name(name) { this._name = name; }
   get tags() { return this._tags; }
   set tags(tags) { this._tags = tags; }
   get formFactor() { return this._formFactor; }
@@ -18091,7 +18079,7 @@ class WalkerBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
     let newRecipes = [];
     if (updateList.length) {
       switch (this.tactic) {
-        case WalkerBase.Permuted:
+        case WalkerBase.Permuted: {
           let permutations = [[]];
           updateList.forEach(({continuation, context}) => {
             let newResults = [];
@@ -18121,6 +18109,7 @@ class WalkerBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
             newRecipes.push({recipe: newRecipe, score});
           }
           break;
+        }
         case WalkerBase.Independent:
           updateList.forEach(({continuation, context}) => {
             if (typeof continuation == 'function')
@@ -19059,7 +19048,7 @@ class CombinedStrategy extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategi
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = CombinedStrategy;
-;
+
 
 
 /***/ }),
@@ -19457,7 +19446,7 @@ class GroupHandleConnections extends __WEBPACK_IMPORTED_MODULE_1__strategizer_st
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = GroupHandleConnections;
-;
+
 
 
 /***/ }),
@@ -19568,7 +19557,7 @@ class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = InitSearch;
-;
+
 
 
 /***/ }),
@@ -19680,7 +19669,7 @@ class MatchParticleByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strat
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = MatchParticleByVerb;
-;
+
 
 
 /***/ }),
@@ -19740,7 +19729,7 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = MatchRecipeByVerb;
-;
+
 
 
 /***/ }),
@@ -19992,7 +19981,7 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
           };
         });
       }
-    };
+    }
     this._walker = new Walker(__WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */].Permuted);
   }
 
@@ -20019,7 +20008,7 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = SearchTokensToParticles;
-;
+
 
 
 /***/ }),
@@ -20028,6 +20017,7 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(4);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -20040,13 +20030,14 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
 
 
 
+
 class TupleFields {
   constructor(fieldList) {
     this.fieldList = fieldList;
   }
 
   static fromLiteral(literal) {
-    return new TupleFields(literal.map(a => Type.fromLiteral(a)));
+    return new TupleFields(literal.map(a => __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */].fromLiteral(a)));
   }
 
   toLiteral() {
