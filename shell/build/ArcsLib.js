@@ -2614,7 +2614,7 @@ class DescriptionFormatter {
     if (recipe.pattern) {
       let recipeDesc = await this.patternToSuggestion(recipe.pattern);
       if (recipeDesc) {
-        return recipeDesc;
+        return this._combineSelectedDescriptions([{pattern: recipeDesc}]);
       }
     }
 
@@ -2736,8 +2736,9 @@ class DescriptionFormatter {
   }
 
   _capitalizeAndPunctuate(sentence) {
-    // "Capitalize, punctuate."
-    return sentence[0].toUpperCase() + sentence.slice(1) + '.';
+    // "Capitalize, punctuate." (if the sentence doesn't end with a punctuation character).
+    let last = sentence.length - 1;
+    return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9\(\)'>\]]/i) ? '.' : ''}`;
   }
 
   async patternToSuggestion(pattern, particleDescription) {
@@ -4310,6 +4311,11 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     if (!slot) {
       return; // didn't receive StartRender.
     }
+
+    // Set this to support multiple slots consumed by a particle, without needing
+    // to pass slotName to particle's render method, where it useless in most cases.
+    this.currentSlotName = slotName;
+
     contentTypes.forEach(ct => slot._requestedContentTypes.add(ct));
     // TODO(sjmiles): redundant, same answer for every
     if (this.shouldRender(...stateArgs)) {
@@ -4325,6 +4331,8 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
       // Send empty object, to clear rendered slot contents.
       slot.render({});
     }
+
+    this.currentSlotName = undefined;
   }
   fireEvent(slotName, {handler, data}) {
     if (this[handler]) {
@@ -5760,7 +5768,7 @@ class DomContext {
   }
   static createContext(context, content) {
     let domContext = new DomContext(context);
-    domContext.stampTemplate(DomContext.createTemplateElement(content.template), () => {});
+    domContext.stampTemplate(domContext.createTemplateElement(content.template), () => {});
     domContext.updateModel(content.model);
     return domContext;
   }
@@ -5793,6 +5801,9 @@ class DomContext {
   }
   static createTemplateElement(template) {
     return Object.assign(document.createElement('template'), {innerHTML: template});
+  }
+  createTemplateElement(template) {
+    return DomContext.createTemplateElement(template);
   }
   stampTemplate(template, eventHandler) {
     if (!this._liveDom) {
@@ -5928,8 +5939,24 @@ class SetDomContext {
   clear() {
     Object.values(this._contextBySubId).forEach(context => context.clear());
   }
+  createTemplateElement(template) {
+    let templates = {};
+    if (typeof template === 'string') {
+      templates[''] = DomContext.createTemplateElement(template);
+    } else {
+      Object.keys(template).forEach(subId => {
+        templates[subId] = this._contextBySubId[subId].createTemplateElement(template[subId]);
+      });
+    }
+    return templates;
+  }
   stampTemplate(template, eventHandler, eventMapper) {
-    Object.values(this._contextBySubId).forEach(context => context.stampTemplate(template, eventHandler, eventMapper));
+    Object.keys(this._contextBySubId).forEach(subId => {
+      let templateForSubId = template[subId] || template[''];
+      if (templateForSubId) {
+        this._contextBySubId[subId].stampTemplate(templateForSubId, eventHandler, eventMapper);
+      }
+    });
   }
   observe(observer) {
     Object.values(this._contextBySubId).forEach(context => context.observe(observer));
@@ -16092,7 +16119,7 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* default */] 
         // Template is being replaced.
         this.getContext().clear();
       }
-      templates.set(this._templateName, __WEBPACK_IMPORTED_MODULE_2__dom_context_js__["a" /* DomContext */].createTemplateElement(content.template));
+      templates.set(this._templateName, this.getContext().createTemplateElement(content.template));
     }
     this.eventHandler = handler;
     if (Object.keys(content).indexOf('model') >= 0) {

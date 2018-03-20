@@ -1194,6 +1194,11 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     if (!slot) {
       return; // didn't receive StartRender.
     }
+
+    // Set this to support multiple slots consumed by a particle, without needing
+    // to pass slotName to particle's render method, where it useless in most cases.
+    this.currentSlotName = slotName;
+
     contentTypes.forEach(ct => slot._requestedContentTypes.add(ct));
     // TODO(sjmiles): redundant, same answer for every
     if (this.shouldRender(...stateArgs)) {
@@ -1209,6 +1214,8 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
       // Send empty object, to clear rendered slot contents.
       slot.render({});
     }
+
+    this.currentSlotName = undefined;
   }
   fireEvent(slotName, {handler, data}) {
     if (this[handler]) {
