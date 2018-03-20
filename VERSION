@@ -1,5 +1,5 @@
-commit a9919300438c7eafe50759e3ef7551554c76c22f
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Tue Mar 20 17:16:56 2018 +1100
+commit cbc74a9b36835d2584e03bbae05f5271095757b4
+Author: Matt Small <mbsmall@google.com>
+Date:   Tue Mar 20 14:50:21 2018 -0700
 
-    Fix test
+    update extension redirect for new location of package.json
