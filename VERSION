@@ -1,5 +1,5 @@
-commit 4a4150f8203c827d789151e91c01deac3efe3fd2
+commit 098c090b63c87735b1a2de6dd20fa2c55ca29245
 Author: Scott J Miles <sjmiles@google.com>
-Date:   Tue Mar 20 18:38:29 2018 -0700
+Date:   Tue Mar 20 16:51:42 2018 -0700
 
-    use revision counting instead of magic cookies, only modify rev when actual changes have occured
+    override _setProperty instead of _wouldChangeProp for consistent debug logging
