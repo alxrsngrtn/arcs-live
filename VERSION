@@ -1,5 +1,5 @@
-commit 08c03a5905f0e2d75c30766c27635a3bc1f93e53
+commit 4a4150f8203c827d789151e91c01deac3efe3fd2
 Author: Scott J Miles <sjmiles@google.com>
-Date:   Tue Mar 20 15:46:51 2018 -0700
+Date:   Tue Mar 20 18:38:29 2018 -0700
 
-    move resetting metadata cache to inside conditional
+    use revision counting instead of magic cookies, only modify rev when actual changes have occured
