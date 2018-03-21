@@ -627,7 +627,13 @@ class Strategizer {
     let generation = this.generation + 1;
     let individualsPerStrategy = Math.floor(this._options.generationSize / this._strategies.length);
     let generated = await Promise.all(this._strategies.map(strategy => {
-      return strategy.generate(this, individualsPerStrategy);
+      return strategy.generate({
+        generation: this.generation,
+        generated: this.generated,
+        terminal: this.terminal,
+        population: this.population,
+        outputLimit: individualsPerStrategy
+      });
     }));
 
     let record = {};
@@ -635,10 +641,9 @@ class Strategizer {
     record.sizeOfLastGeneration = this.generated.length;
     record.outputSizesOfStrategies = {};
     for (let i = 0; i < this._strategies.length; i++) {
-      record.outputSizesOfStrategies[this._strategies[i].constructor.name] = generated[i].results.length;
+      record.outputSizesOfStrategies[this._strategies[i].constructor.name] = generated[i].length;
     }
 
-    generated = generated.map(({results}) => results);
     generated = [].concat(...generated);
 
     // TODO: get rid of this additional asynchrony
@@ -842,10 +847,10 @@ class Strategy {
     // generated individuals and evaluations.
     return {generate: 0, evaluate: 0};
   }
-  getResults(strategizer) {
-    return strategizer.generated;
+  getResults(inputParams) {
+    return inputParams.generated;
   }
-  async generate(strategizer, n) {
+  async generate(inputParams) {
     return [];
   }
   discard(individuals) {
@@ -5046,10 +5051,10 @@ ${this._slotsToManifestString()}
 
 
 class ViewMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["a" /* Strategy */] {
-  async generate(strategizer) {
+  async generate(inputParams) {
     let self = this;
 
-    let results = __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */] {
+    return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */] {
       onView(recipe, view) {
         if (view.fate !== self.fate)
           return;
@@ -5112,8 +5117,6 @@ class ViewMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategize
         return responses;
       }
     }(__WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */].Permuted), this);
-
-    return {results, generate: null};
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ViewMapperBase;
@@ -6717,10 +6720,10 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
     super();
     this._arc = arc;
   }
-  async generate(strategizer) {
+  async generate(inputParams) {
     let arc = this._arc;
 
-    let results = __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
+    return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
       onSlotConnection(recipe, slotConnection) {
         if (slotConnection.isConnected()) {
           return;
@@ -6739,8 +6742,6 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
         };
       }
     }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */].Permuted), this);
-
-    return {results, generate: null};
   }
 
   // Helper methods.
@@ -6813,7 +6814,7 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
   }
 
   // Returns true, if the slot connection's tags intersection with slot's tags is nonempty.
-  // TODO: replace with generic tag matcher      
+  // TODO: replace with generic tag matcher
   static _tagsMatch(slotConnection, slot) {
     let consumeConnTags = slotConnection.slotSpec.tags || [];
     let slotTags = new Set([].concat(slot.tags, slot.getProvidedSlotSpec().tags || []));
@@ -6822,7 +6823,7 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
   }
 
   // Returns true, if the providing slot handle restrictions are satisfied by the consuming slot connection.
-      // TODO: should we move some of this logic to the recipe? Or type matching?  
+      // TODO: should we move some of this logic to the recipe? Or type matching?
   static _handlesMatch(consumingParticle, providingSlotHandles) {
     if (providingSlotHandles.length == 0) {
       return true; // slot is not limited to specific handles
@@ -7673,8 +7674,8 @@ ${this.activeRecipe.toString()}`;
 
 class CreateViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["a" /* Strategy */] {
   // TODO: move generation to use an async generator.
-  async generate(strategizer) {
-    let results = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_5__recipe_walker_js__["a" /* default */] {
+  async generate(inputParams) {
+    return __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_5__recipe_walker_js__["a" /* default */] {
       onView(recipe, view) {
         let counts = __WEBPACK_IMPORTED_MODULE_4__recipe_recipe_util_js__["a" /* default */].directionCounts(view);
 
@@ -7693,8 +7694,6 @@ class CreateViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
         }
       }
     }(__WEBPACK_IMPORTED_MODULE_5__recipe_walker_js__["a" /* default */].Permuted), this);
-
-    return {results, generate: null};
   }
 }
 
@@ -18896,8 +18895,8 @@ class InMemoryVariable extends InMemoryStorageProvider {
 
 class AddUseViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["a" /* Strategy */] {
   // TODO: move generation to use an async generator.
-  async generate(strategizer) {
-    let results = __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
+  async generate(inputParams) {
+    return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
       onRecipe(recipe) {
         // Don't add use handles while there are outstanding constraints
         if (recipe.connectionConstraints.length > 0)
@@ -18925,8 +18924,6 @@ class AddUseViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
         };
       }
     }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */].Permuted), this);
-
-    return {results, generate: null};
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = AddUseViews;
@@ -19066,8 +19063,8 @@ class CombinedStrategy extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategi
     });
     return resultsList.filter(r => !recipeByParent.has(r));
   }
-  async generate(strategizer) {
-    let results = this._strategies[0].getResults(strategizer);
+  async generate(inputParams) {
+    let results = this._strategies[0].getResults(inputParams);
     let totalResults = new Map();
     for (let strategy of this._strategies) {
       results = __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(results, strategy.walker, strategy);
@@ -19085,7 +19082,7 @@ class CombinedStrategy extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategi
       results = this._getLeaves(totalResults);
     }
 
-    return {results, generate: null};
+    return results;
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = CombinedStrategy;
@@ -19118,9 +19115,9 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
     super();
     this.affordance = arc.pec.slotComposer ? arc.pec.slotComposer.affordance : null;
   }
-  async generate(strategizer) {
+  async generate(inputParams) {
     let affordance = this.affordance;
-    let results = __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
+    return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
       onRecipe(recipe) {
         let particles = new Set();
         let views = new Set();
@@ -19207,8 +19204,6 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
         });
       }
     }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */].Independent), this);
-
-    return {results, generate: null};
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ConvertConstraintsToConnections;
@@ -19280,8 +19275,8 @@ class CopyRemoteViews extends __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__
 
 
 class CreateDescriptionHandle extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__["a" /* Strategy */] {
-  async generate(strategizer) {
-    let results = __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */] {
+  async generate(inputParams) {
+    return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */] {
       onHandleConnection(recipe, handleConnection) {
         if (handleConnection.handle)
           return;
@@ -19296,8 +19291,6 @@ class CreateDescriptionHandle extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
         };
       }
     }(__WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */].Permuted), this);
-
-    return {results, generate: null};
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = CreateDescriptionHandle;
@@ -19327,11 +19320,15 @@ class CreateDescriptionHandle extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
 
 
 class FallbackFate extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__["a" /* Strategy */] {
-  async generate(strategizer) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(strategizer);
-    let generated = strategizer.generated.filter(result => !result.result.isResolved());
-    let terminal = strategizer.terminal;
-    let results = __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over([...generated, ...terminal], new class extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */] {
+  getResults(inputParams) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(inputParams);
+    let generated = inputParams.generated.filter(result => !result.result.isResolved());
+    let terminal = inputParams.terminal;
+    return [...generated, ...terminal];
+  }
+
+  async generate(inputParams) {
+    return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */] {
       onView(recipe, view) {
         // Only apply this strategy only to user query based recipes with resolved tokens.
         if (!recipe.search || (recipe.search.resolvedTokens.length == 0)) {
@@ -19355,8 +19352,6 @@ class FallbackFate extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_
         };
       }
     }(__WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */].Permuted), this);
-
-    return {results, generate: null};
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = FallbackFate;
@@ -19479,11 +19474,8 @@ class GroupHandleConnections extends __WEBPACK_IMPORTED_MODULE_1__strategizer_st
   get walker() {
     return this._walker;
   }
-  async generate(strategizer) {
-    return {
-      results: __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), this.walker, this),
-      generate: null,
-    };
+  async generate(inputParams) {
+    return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), this.walker, this);
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = GroupHandleConnections;
@@ -19526,22 +19518,17 @@ class InitPopulation extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategize
     }
     this._loadedParticles = new Set(arc.loadedParticles().map(spec => spec.implFile));
   }
-  async generate(strategizer) {
-    if (strategizer.generation != 0) {
-      return {results: [], generate: null};
+  async generate({generation}) {
+    if (generation != 0) {
+      return [];
     }
-    let results = this._recipes.map(recipe => ({
+    return this._recipes.map(recipe => ({
       result: recipe,
       score: 1 - recipe.particles.filter(particle => particle.spec && this._loadedParticles.has(particle.spec.implFile)).length,
       derivation: [{strategy: this, parent: undefined}],
       hash: recipe.digest(),
       valid: Object.isFrozen(recipe),
     }));
-
-    return {
-      results: results,
-      generate: null,
-    };
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = InitPopulation;
@@ -19573,12 +19560,9 @@ class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
     // TODO: Figure out where this should really come from.
     this._search = arc.search;
   }
-  async generate(strategizer) {
-    if (this._search == null || strategizer.generation != 0) {
-      return {
-        results: [],
-        generate: null,
-      };
+  async generate({generation}) {
+    if (this._search == null || generation != 0) {
+      return [];
     }
 
     let recipe = new __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */]();
@@ -19586,15 +19570,12 @@ class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(recipe.normalize());
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(!recipe.isResolved());
 
-    return {
-      results: [{
-        result: recipe,
-        score: 0,
-        derivation: [{strategy: this, parent: undefined}],
-        hash: recipe.digest(),
-      }],
-      generate: null,
-    };
+    return [{
+      result: recipe,
+      score: 0,
+      derivation: [{strategy: this, parent: undefined}],
+      hash: recipe.digest(),
+    }];
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = InitSearch;
@@ -19629,16 +19610,16 @@ class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
  * to connections.
  */
 class MatchFreeHandlesToConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["a" /* Strategy */] {
-  async generate(strategizer) {
+  async generate(inputParams) {
     let self = this;
 
-    let results = __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */] {
+    return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */] {
       onView(recipe, handle) {
         if (handle.connections.length > 0)
           return;
 
         let matchingConnections = recipe.handleConnections.filter(connection => connection.handle == undefined && connection.name !== 'descriptions');
-           
+
         return matchingConnections.map(connection => {
           return (recipe, handle) => {
             let newConnection = recipe.updateToClone({connection}).connection;
@@ -19648,8 +19629,6 @@ class MatchFreeHandlesToConnections extends __WEBPACK_IMPORTED_MODULE_0__strateg
         });
       }
     }(__WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */].Permuted), this);
-
-    return {results, generate: null};
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = MatchFreeHandlesToConnections;
@@ -19681,9 +19660,9 @@ class MatchParticleByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strat
     this._arc = arc;
   }
 
-  async generate(strategizer) {
+  async generate(inputParams) {
     let arc = this._arc;
-    let results = __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
+    return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
       onParticle(recipe, particle) {
         if (particle.name) {
           // Particle already has explicit name.
@@ -19705,8 +19684,6 @@ class MatchParticleByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strat
         });
       }
     }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */].Permuted), this);
-
-    return {results, generate: null};
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = MatchParticleByVerb;
@@ -19738,9 +19715,9 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
     this._arc = arc;
   }
 
-  async generate(strategizer) {
+  async generate(inputParams) {
     let arc = this._arc;
-    let results = __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
+    return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
       onParticle(recipe, particle) {
         if (particle.name) {
           // Particle already has explicit name.
@@ -19765,8 +19742,6 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
         });
       }
     }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */].Permuted), this);
-
-    return {results, generate: null};
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = MatchRecipeByVerb;
@@ -19793,8 +19768,8 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
 
 
 class NameUnnamedConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["a" /* Strategy */] {
-  async generate(strategizer) {
-    let results = __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
+  async generate(inputParams) {
+    return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
       onHandleConnection(recipe, handleConnection) {
         if (handleConnection.name)
           return; // it is already named.
@@ -19817,8 +19792,6 @@ class NameUnnamedConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_st
         });
       }
     }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */].Permuted), this);
-
-    return {results, generate: null};
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = NameUnnamedConnections;
@@ -19856,9 +19829,9 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
     this._arc = arc;
   }
 
-  async generate(strategizer) {
+  async generate(inputParams) {
     let arc = this._arc;
-    let results = __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */] {
+    return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */] {
       onView(recipe, handle) {
         if (handle.connections.length == 0 || handle.id || (!handle.type) || (!handle.fate))
           return;
@@ -19893,7 +19866,7 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
         if (mappable.length == 1) {
           return (recipe, handle) => {
             handle.mapToView(mappable[0]);
-          };            
+          };
         }
       }
 
@@ -19901,12 +19874,12 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
         if (slotConnection.isConnected()) {
           return;
         }
-        
+
         let selectedSlots = __WEBPACK_IMPORTED_MODULE_5__map_slots_js__["a" /* default */].findAllSlotCandidates(slotConnection, arc);
         if (selectedSlots.length !== 1) {
           return;
         }
-        
+
         let selectedSlot = selectedSlots[0];
 
         return (recipe, slotConnection) => {
@@ -19915,11 +19888,10 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
         };
       }
     }(__WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */].Permuted), this);
-
-    return {results, generate: null};
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ResolveRecipe;
+
 
 
 /***/ }),
@@ -20004,10 +19976,10 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
     return this._walker;
   }
 
-  getResults(strategizer) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(strategizer);
-    let generated = super.getResults(strategizer).filter(result => !result.result.isResolved());
-    let terminal = strategizer.terminal;
+  getResults(inputParams) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(inputParams);
+    let generated = super.getResults(inputParams).filter(result => !result.result.isResolved());
+    let terminal = inputParams.terminal;
     return [...generated, ...terminal];
   }
 
@@ -20015,11 +19987,8 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
     this._byToken[token] = this._byToken[token] || [];
     this._byToken[token].push(particle);
   }
-  async generate(strategizer) {
-    return {
-      results: __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(strategizer), this.walker, this),
-      generate: null,
-    };
+  async generate(inputParams) {
+    return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), this.walker, this);
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = SearchTokensToParticles;
