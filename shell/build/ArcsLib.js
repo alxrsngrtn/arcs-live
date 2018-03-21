@@ -5779,6 +5779,7 @@ class DomContext {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(context);
     if (!this._context) {
       this._context = document.createElement(this._containerKind || 'div');
+      this._context.setAttribute('particle-host', '');
       context.appendChild(this._context);
     } else {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._context.parentNode == context,
