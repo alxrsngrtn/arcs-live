@@ -1,5 +1,5 @@
-commit a19f47489725e332d5fe96067323d7c68a27e9bd
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Mar 16 11:58:27 2018 -0700
+commit 08c03a5905f0e2d75c30766c27635a3bc1f93e53
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Tue Mar 20 15:46:51 2018 -0700
 
-    refactor map-slots and resolve-recipe slots resolution to avoid duplicate code
+    move resetting metadata cache to inside conditional
