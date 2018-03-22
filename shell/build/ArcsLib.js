@@ -5930,11 +5930,9 @@ class SetDomContext {
   updateModel(model) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.items, `Model must contain items`);
     model.items.forEach(item => {
-      Object.keys(model).forEach(key => {
-        if (key != 'items') {
-          item[key] = model[key];
-        }
-      });
+      // Properties from item override properties from model.
+      item = Object.assign(Object.assign({}, model), item);
+      delete item.items;
       if (this._contextBySubId[item.subId]) {
         this._contextBySubId[item.subId].updateModel(item);
       }

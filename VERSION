@@ -1,5 +1,5 @@
-commit 7a12ce217bc3af528d4a9f2b655be17a15bbac86
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Mar 22 10:56:11 2018 +1100
+commit ba756c299f4fd8954932d4359b5f7af3b6d8d457
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Thu Mar 22 08:06:33 2018 +1100
 
-    Adds devtools to default sigh command
+    Revert formatting changes in dom-context

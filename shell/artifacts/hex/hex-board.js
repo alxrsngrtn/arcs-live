@@ -9,6 +9,7 @@ defineParticle(({DomParticle}) => {
   const size = 8;
   const padding = (size - 1) / 2 |0;
   const template = `
+    hex-board
     <style>
     hex-board {
       --hex-side: 26px;
@@ -72,10 +73,6 @@ defineParticle(({DomParticle}) => {
         var(--0) var(--25));
       background: black;
     }
-    
-    hexa-gon:hover {
-      background: #F44336;
-    }
     </style>
     <hex-board>
       ${(() => {
@@ -98,7 +95,7 @@ defineParticle(({DomParticle}) => {
             result.push(`<hexa-gon padding${offset ? ' offset' : ''}></hexa-gon>`);
           }
           for (let col = 0; col < size; col++) {
-            result.push(`<hexa-gon${offset ? ' offset' : ''}></hexa-gon>`);
+            result.push(`<hexa-gon${offset ? ' offset' : ''} slotid="cell" subid="${col}-${row}"></hexa-gon>`);
           }
           for (let i = (row - offset) / 2; i < padding; i++) {
             result.push(`<hexa-gon padding${offset ? ' offset' : ''}></hexa-gon>`);
