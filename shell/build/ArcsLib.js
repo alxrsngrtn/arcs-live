@@ -8233,17 +8233,18 @@ class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a"
     return this._loadURL(this._resolve(name));
   }
   requireParticle(fileName) {
-    let path = this._resolve(fileName);
+    const path = this._resolve(fileName);
     // inject path to this particle into the UrlMap,
     // allows "foo.js" particle to invoke `importScripts(resolver('foo/othermodule.js'))`
     this.mapParticleUrl(path);
-    let result = [];
+    const result = [];
     self.defineParticle = function(particleWrapper) {
       result.push(particleWrapper);
     };
     importScripts(path);
     delete self.defineParticle;
-    return this.unwrapParticle(result[0], logFactory(fileName.split('/').pop(), 'blue'));
+    const logger = logFactory(fileName.split('/').pop(), 'blue');
+    return this.unwrapParticle(result[0], logger);
   }
   mapParticleUrl(path) {
     let parts = path.split('/');
@@ -8257,7 +8258,16 @@ class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a"
     //  _resolve method allows particles to request remapping of assets paths
     //  for use in DOM
     let resolver = this._resolve.bind(this);
-    return particleWrapper({particle: __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__["a" /* default */], Particle: __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__["a" /* default */].Particle, DomParticle: __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__["a" /* default */], TransformationDomParticle: __WEBPACK_IMPORTED_MODULE_3__runtime_transformation_dom_particle_js__["a" /* default */], resolver, log, html});
+    return particleWrapper({
+      particle: __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__["a" /* default */],
+      Particle: __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__["a" /* default */].Particle,
+      DomParticle: __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__["a" /* default */],
+      SimpleParticle: __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__["a" /* default */],
+      TransformationDomParticle: __WEBPACK_IMPORTED_MODULE_3__runtime_transformation_dom_particle_js__["a" /* default */],
+      resolver,
+      log,
+      html
+    });
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = BrowserLoader;

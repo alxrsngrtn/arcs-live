@@ -1,5 +1,9 @@
-commit ba756c299f4fd8954932d4359b5f7af3b6d8d457
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Thu Mar 22 08:06:33 2018 +1100
+commit a575e599dda936c59cf711c62a0dee047a4d0639
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Wed Mar 21 19:48:26 2018 -0700
 
-    Revert formatting changes in dom-context
+    ensure AppShell is the Source Of Truth for description, user, share, and metadata;
+    use an explicit cache for consumedPlan;
+    surface `clone` shallow-copy method from Xen;
+    clone metadata when modifying it (immutability contract);
+    prevent prop-check for persistent-handles, so it always updates;
