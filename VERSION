@@ -1,9 +1,5 @@
-commit a575e599dda936c59cf711c62a0dee047a4d0639
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Wed Mar 21 19:48:26 2018 -0700
+commit 3630a4cec9ed9616a254223f29d3709298b6acdd
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Mar 22 16:24:21 2018 +1100
 
-    ensure AppShell is the Source Of Truth for description, user, share, and metadata;
-    use an explicit cache for consumedPlan;
-    surface `clone` shallow-copy method from Xen;
-    clone metadata when modifying it (immutability contract);
-    prevent prop-check for persistent-handles, so it always updates;
+    Seeds random() for tests to ensure stable recipe hashes etc.
