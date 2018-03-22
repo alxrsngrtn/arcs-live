@@ -1,5 +1,5 @@
-commit 03e5d3c43f5cbd1183b19a8f6d7de174486c384d
+commit 7a12ce217bc3af528d4a9f2b655be17a15bbac86
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Mar 22 10:38:07 2018 +1100
+Date:   Thu Mar 22 10:56:11 2018 +1100
 
-    Adds a summary of all generations to se-stats
+    Adds devtools to default sigh command
