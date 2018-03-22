@@ -1,5 +1,5 @@
-commit c13a7e83273c9c7ab894fbba74e517532f328c98
-Author: mykmartin <mykmartin@google.com>
-Date:   Thu Mar 22 16:21:35 2018 +1100
+commit e9281df841b5c839cb8d3aa9a64f14dd2c7bfc02
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Mar 22 10:38:07 2018 +1100
 
-    Fix indenting.
+    Adds a summary of all generations to se-stats
