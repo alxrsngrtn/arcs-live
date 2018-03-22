@@ -1,5 +1,7 @@
-commit b79ff3165d0a74b17977a61cd2c71b9778f9e06c
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Wed Mar 21 21:28:33 2018 -0700
+commit 9440b16d1a1eb34b39d6f9b950317cf7618aef8d
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Mar 21 17:40:19 2018 -0700
 
-    fix buttons on reservation form, prevent style-leakage out of MasterDetail
+    Set particle host attribute slot and particle name in runtime.
+    
+    Does not yet cover slot sets or inner slots.

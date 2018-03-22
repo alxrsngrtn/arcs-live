@@ -5779,12 +5779,18 @@ class DomContext {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(context);
     if (!this._context) {
       this._context = document.createElement(this._containerKind || 'div');
-      this._context.setAttribute('particle-host', '');
+      this._setParticleName('');
       context.appendChild(this._context);
     } else {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._context.parentNode == context,
              'TODO: add support for moving slot to different context');
     }
+  }
+  updateParticleName(slotName, particleName) {
+    this._setParticleName(`${slotName}::${particleName}`);
+  }
+  _setParticleName(name) {
+    this._context.setAttribute('particle-host', name);
   }
   get context() { return this._context; }
   isEqual(context) {
@@ -6427,8 +6433,14 @@ class Slot {
   }
   startRender() {
     if (this.startRenderCallback) {
-      let contentTypes = this.constructRenderRequest();
-      this.startRenderCallback({particle: this.consumeConn.particle, slotName: this.consumeConn.name, contentTypes});
+      const slotName = this.consumeConn.name;
+      const particle = this.consumeConn.particle;
+      const context = this.getContext();
+      if (context.updateParticleName) {
+        context.updateParticleName(slotName, particle.name);
+      }
+      const contentTypes = this.constructRenderRequest();
+      this.startRenderCallback({particle, slotName, contentTypes});
 
       for (let hostedSlot of this._hostedSlotById.values()) {
         if (hostedSlot.particle) {
@@ -6486,14 +6498,14 @@ class Slot {
     }
   }
 
-  // absract
+  // Abstract methods.
   async setContent(content, handler) {}
   getInnerContext(slotName) {}
   constructRenderRequest() {}
   static findRootSlots(context) { }
 }
+/* harmony export (immutable) */ __webpack_exports__["a"] = Slot;
 
-/* harmony default export */ __webpack_exports__["a"] = (Slot);
 
 
 /***/ }),
