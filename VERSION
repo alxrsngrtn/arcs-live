@@ -1,7 +1,5 @@
-commit 9440b16d1a1eb34b39d6f9b950317cf7618aef8d
+commit 94894e304fa8672e056714499cfed2c16a5c3024
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Mar 21 17:40:19 2018 -0700
+Date:   Thu Mar 22 15:50:54 2018 -0700
 
-    Set particle host attribute slot and particle name in runtime.
-    
-    Does not yet cover slot sets or inner slots.
+    Skip restaurant demo test.
