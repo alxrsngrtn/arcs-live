@@ -1,5 +1,5 @@
-commit 2b7587b68db2dda46b6f78fab3bfb5624f221082
+commit b79ff3165d0a74b17977a61cd2c71b9778f9e06c
 Author: Scott J Miles <sjmiles@google.com>
-Date:   Wed Mar 21 21:29:52 2018 -0700
+Date:   Wed Mar 21 21:28:33 2018 -0700
 
-    fix race between `plans` and `plan` in step recording
+    fix buttons on reservation form, prevent style-leakage out of MasterDetail
