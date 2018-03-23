@@ -1,5 +1,7 @@
-commit ac3886d839bfd69bca274dda113eff60e1cb5c0e
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Mar 23 10:49:24 2018 +1100
+commit debbac7d7bef63d8422d792aaf7e334a19751cf5
+Author: Matt Small <mbsmall@google.com>
+Date:   Fri Mar 23 09:07:58 2018 -0700
 
-    Improves geolocation with Restaurants demo
+    Revert "Skip restaurant demo test."
+    
+    This reverts commit 94894e304fa8672e056714499cfed2c16a5c3024.
