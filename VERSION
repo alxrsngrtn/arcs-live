@@ -1,5 +1,5 @@
-commit 94894e304fa8672e056714499cfed2c16a5c3024
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Mar 22 15:50:54 2018 -0700
+commit 52b17b81824ced6dba2fa1f67530c5814007b8ed
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Mar 23 11:42:36 2018 +1100
 
-    Skip restaurant demo test.
+    moves create-views to its own file
