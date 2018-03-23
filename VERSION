@@ -1,5 +1,5 @@
-commit 52b17b81824ced6dba2fa1f67530c5814007b8ed
+commit ac3886d839bfd69bca274dda113eff60e1cb5c0e
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Mar 23 11:42:36 2018 +1100
+Date:   Fri Mar 23 10:49:24 2018 +1100
 
-    moves create-views to its own file
+    Improves geolocation with Restaurants demo
