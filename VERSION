@@ -1,5 +1,5 @@
-commit 39c2d74a065431e51ef9f33e953e9930df860172
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Mar 23 16:28:01 2018 +1100
+commit d4d40ceee7bb76533a6c1f14e547907f296b0505
+Author: Matt Small <mbsmall@google.com>
+Date:   Fri Mar 23 14:15:40 2018 -0700
 
-    Adds ability to compare planner runs in SE
+    install latest npm for travis

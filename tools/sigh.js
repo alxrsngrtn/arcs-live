@@ -11,6 +11,7 @@ const path = require('path');
 const spawn = require('child_process').spawnSync;
 const minimist = require('minimist');
 const chokidar = require('chokidar');
+const semver = require('semver');
 
 const projectRoot = path.resolve(__dirname, '..');
 process.chdir(projectRoot);
@@ -35,7 +36,8 @@ const steps = {
   devtools: [devtools],
   watch: [watch],
   lint: [lint],
-  default: [peg, railroad, test, devtools, webpack, lint],
+  check: [check],
+  default: [check, peg, railroad, test, devtools, webpack, lint],
 };
 
 // Paths to `watch` for the `watch` step.
@@ -85,6 +87,23 @@ function targetIsUpToDate(relativeTarget, relativeDeps) {
   }
 
   console.log(`Skipping step; '${relativeTarget}' is up-to-date`);
+  return true;
+}
+
+function check() {
+  const nodeRequiredVersion = '>=9.2.0';
+  const npmRequiredVersion = '>=5.7.1';
+
+  if (!semver.satisfies(process.version, nodeRequiredVersion)) {
+    throw new Error(`at least node ${nodeRequiredVersion} is required, you have ${process.version}`);
+  }
+
+  const npmCmd = spawn('npm', ['-v']);
+  const npmVersion = String(npmCmd.stdout);
+  if (!semver.satisfies(npmVersion, npmRequiredVersion)) {
+    throw new Error(`at least npm ${npmRequiredVersion} is required, you have ${npmVersion}`);
+  }
+
   return true;
 }
 
@@ -375,12 +394,6 @@ async function watch([arg, ...moreArgs]) {
   forever();
   // Never resolved.
   return new Promise(() => {});
-}
-
-async function defaultSteps() {
-  return await peg() &&
-      await test() &&
-      await webpack();
 }
 
 // Runs a chain of `[[fun, args]]` by calling `fun(args)`, logs emoji, and returns whether
