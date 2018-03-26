@@ -15,6 +15,7 @@ import '../../components/arc-tools/handle-explorer.js';
 import '../../components/arc-tools/local-data.js';
 import '../../components/arc-tools/xen-explorer.js';
 import '../../components/arc-tools/manifest-data.js';
+import '../../components/mic-input.js';
 
 // strings
 import Css from './shell-ui.css.js';
@@ -25,6 +26,8 @@ import AppIcon from './icon.svg.js';
 
 // templates
 const Main = Xen.html`
+
+<mic-input on-start="_onMicStart" on-end="_onMicEnd"></mic-input>
 
 <app-modal shown$="{{modalShown}}" on-click="_onScrimClick">
 
@@ -54,9 +57,10 @@ const Main = Xen.html`
   <toolbar>
     <!-- app-toolbar is position-fixed -->
     <app-toolbar style="{{shellStyle}}">
-      <a href="{{launcherUrl}}" title="Go to Launcher">${AppIcon}</a>
+      <a trigger="launcher" href="{{launcherUrl}}" title="Go to Launcher">${AppIcon}</a>
       <arc-title style="{{titleStatic}}" on-click="_onStartEditingTitle" unsafe-html="{{description}}"></arc-title>
       <toolbar-buttons>
+        <icon hidden$="{{micHidden}}">mic</icon>
         <icon on-click="_onMenuClick">more_vert</icon>
       </toolbar-buttons>
     </app-toolbar>
@@ -67,7 +71,7 @@ const Main = Xen.html`
   <!-- footer is here only to reserve space in the static flow (see also: toolbar) -->
   <footer>
     <!-- arc-footer is position-fixed -->
-    <arc-footer dots="{{dots}}" on-suggest="_onSuggest" on-search="_onSearch">
+    <arc-footer dots="{{dots}}" search="{{search}}" on-suggest="_onSuggest" on-search="_onSearch">
       <slot name="suggestions"></slot>
     </arc-footer>
   </footer>
@@ -113,7 +117,8 @@ class ShellUi extends Xen.Debug(Xen.Base, log) {
       shellPath,
       userPickerOpen: false,
       sharePickerOpen: false,
-      launcherUrl: `${location.origin}${location.pathname}`
+      launcherUrl: `${location.origin}${location.pathname}`,
+      micHidden: true
     };
   }
   _update(props, state, lastProps, lastState) {
@@ -164,11 +169,6 @@ class ShellUi extends Xen.Debug(Xen.Base, log) {
   _didRender(props, {toolsVisible}) {
     Xen.Template.setBoolAttribute(this, 'expanded', Boolean(toolsVisible));
   }
-  _setState(state) {
-    if (super._setState(state)) {
-      log(state);
-    }
-  }
   _onData(e, data) {
     if (this._setState({[e.type]: data})) {
       log(data);
@@ -187,6 +187,7 @@ class ShellUi extends Xen.Debug(Xen.Base, log) {
   }
   // TODO(sjmiles): need to collapse (at least some) logic into update to handle arc correctly
   _onSearch(e, {search}) {
+    this._setState({search});
     this._fire('search', search);
   }
   _onMenuClick(e) {
@@ -209,6 +210,78 @@ class ShellUi extends Xen.Debug(Xen.Base, log) {
   }
   _onShare(e, share) {
     this._fire('share', share);
+  }
+  _onMicStart() {
+    this._setState({micHidden: false});
+  }
+  _onMicEnd(e, finalTranscript) {
+    const lettersOnly = s => s.toLowerCase().replace(/[^A-Za-z0-9 ]/g, '');
+    this._setState({micHidden: true});
+    finalTranscript = lettersOnly(finalTranscript);
+    if (!finalTranscript) {
+      return;
+    }
+    log(`voice trigger: [${finalTranscript}]`);
+    // see if `node` is a better match for `search` than `match`
+    const findMatch = (node, trigger, search, match) => {
+      //log(`node "${node.localName}" has trigger "${trigger}"`);
+      if (trigger.includes(search)) {
+        const diff = trigger.length - search.length;
+        if (!match || match.diff > diff) {
+          log(`matched "${trigger}"`);
+          match = {diff, node};
+        }
+      }
+      return match;
+    };
+    // find all nodes with `trigger` attribute
+    let nodes = document.querySelectorAll('[trigger]');
+    nodes = Array.from(nodes).concat(Array.from(this.host.querySelectorAll('[trigger]')));
+    // find the node that contains `finalTranscript` with the least number of non-matching characters
+    let match;
+    for (const node of nodes) {
+      const trigger = lettersOnly(node.getAttribute('trigger'));
+      match = findMatch(node, trigger, finalTranscript, match);
+    }
+    // if we matched, value is the transcript
+    if (match) {
+      match.value = finalTranscript;
+    }
+    // if not, look for a prefix-match
+    else {
+      for (const node of nodes) {
+        const trigger = lettersOnly(node.getAttribute('trigger'));
+        if (finalTranscript.startsWith(trigger)) {
+          match = {
+            node,
+            value: finalTranscript.slice(trigger.length).trim(),
+          };
+          log(`matched prefix "${trigger}"`);
+          break;
+        }
+      }
+    }
+    // if there is a matching node, install value and click it
+    if (match) {
+      match.node.value = match.value;
+      match.node.click();
+      return;
+    }
+    // find a suggestion matching finalTranscript?
+    const suggestions = document.querySelectorAll('suggestion-element');
+    match = null;
+    for (const suggestion of suggestions) {
+      const trigger = suggestion.textContent.toLowerCase();
+      match = findMatch(suggestion, trigger, finalTranscript, match);
+    }
+    // if there is a matching suggestion, click it
+    if (match) {
+      log(`voice: matched suggestion "${match.node.textContent}"`);
+      match.node.click();
+      return;
+    }
+    // if all else fails, use finalTranscript as suggestions search
+    this._setState({search: finalTranscript});
   }
 }
 

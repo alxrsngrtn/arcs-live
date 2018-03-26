@@ -1,5 +1,5 @@
-commit d4d40ceee7bb76533a6c1f14e547907f296b0505
-Author: Matt Small <mbsmall@google.com>
-Date:   Fri Mar 23 14:15:40 2018 -0700
+commit e9fbebd7ee2e28679edc23324a941945b896191b
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Mon Mar 26 11:33:35 2018 -0700
 
-    install latest npm for travis
+    address review comments
