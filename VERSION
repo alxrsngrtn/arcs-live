@@ -1,5 +1,5 @@
-commit e9fbebd7ee2e28679edc23324a941945b896191b
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Mon Mar 26 11:33:35 2018 -0700
+commit b13d3a4126146c873fef107ebe3452d8dd4bdf49
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon Mar 26 11:43:40 2018 -0700
 
-    address review comments
+    Preserve post editing state on props update.
