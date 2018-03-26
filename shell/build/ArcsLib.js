@@ -4217,6 +4217,11 @@ class Scheduler {
  * Particle that does stuff with DOM.
  */
 class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_1__particle_js__["b" /* Particle */]) {
+  constructor() {
+    super();
+    this.state = this._state;
+    this.props = this._props;
+  }
   /** @method get template()
    * Override to return a String defining primary markup.
    */
@@ -4326,10 +4331,10 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     if (this.shouldRender(...stateArgs)) {
       let content = {};
       if (slot._requestedContentTypes.has('template')) {
-        content['template'] = this.getTemplate(slot.slotName);
+        content.template = this.getTemplate(slot.slotName);
       }
       if (slot._requestedContentTypes.has('model')) {
-        content['model'] = this.render(...stateArgs);
+        content.model = this.render(...stateArgs);
       }
       slot.render(content);
     } else if (slot.isRendered) {
@@ -20184,7 +20189,7 @@ const nob = () => Object.create(null);
     return this._wouldChangeValue(this._state, name, value);
   }
   _setProps(props) {
-    // TODO(sjmiles): should be a replace instead of a merge
+    // TODO(sjmiles): should be a replace instead of a merge?
     Object.assign(this._pendingProps, props);
     this._invalidateProps();
   }
