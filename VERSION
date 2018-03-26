@@ -1,9 +1,5 @@
-commit df2d5e8cdb49eec2ec9c7ddc4d3fa0456998bb06
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Mar 26 13:43:10 2018 -0700
+commit af4dee6af800f50aefde8fd2bc76dcdcb0735775
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Tue Mar 27 09:38:57 2018 +1100
 
-    Move footer element to static rather than relative positioning.
-    
-    It's role is purely to reserve space for scrolling. Relative position
-    creates a new composited layer which appears to cause a hit-testing
-    issue and interferes with interaction with content in the modal slot.
+    Review fixes
