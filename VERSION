@@ -1,7 +1,5 @@
-commit debbac7d7bef63d8422d792aaf7e334a19751cf5
-Author: Matt Small <mbsmall@google.com>
-Date:   Fri Mar 23 09:07:58 2018 -0700
+commit 39c2d74a065431e51ef9f33e953e9930df860172
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Mar 23 16:28:01 2018 +1100
 
-    Revert "Skip restaurant demo test."
-    
-    This reverts commit 94894e304fa8672e056714499cfed2c16a5c3024.
+    Adds ability to compare planner runs in SE
