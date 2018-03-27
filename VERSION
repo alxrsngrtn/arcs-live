@@ -1,5 +1,5 @@
-commit a3ff1d71ac61bcfb2db46e48395c680435459360
+commit 58178aa21af3ed5760cf0271386ff857a61389e0
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Mar 23 16:42:52 2018 +1100
+Date:   Tue Mar 27 12:07:53 2018 +1100
 
-    restrictive create
+    Addresses comments from the previous PR
