@@ -19667,18 +19667,16 @@ class CreateViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
       onView(recipe, view) {
         let counts = __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_util_js__["a" /* default */].directionCounts(view);
 
-        let score = 1;
-        if (counts.in == 0 || counts.out == 0) {
-          if (counts.unknown > 0)
-            return;
-          if (counts.in == 0)
-            score = -1;
-          else
-            score = 0;
+        // Don't make a 'create' handle, unless there is someone reading,
+        // someone writing and at least 2 particles invloved.
+        if (counts.in == 0 || counts.out == 0
+            // TODO: Allow checking number of particles without touching privates.
+            || new Set(view.connections.map(hc => hc._particle)).size <= 1) {
+          return;
         }
 
         if (!view.id && view.fate == '?') {
-          return (recipe, view) => {view.fate = 'create'; return score;};
+          return (recipe, view) => {view.fate = 'create'; return 1;};
         }
       }
     }(__WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */].Permuted), this);

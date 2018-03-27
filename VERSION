@@ -1,11 +1,5 @@
-commit 12e1402482d21f717124e912e66f8f69076d8577
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Mar 27 11:14:56 2018 +1100
+commit a3ff1d71ac61bcfb2db46e48395c680435459360
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Mar 23 16:42:52 2018 +1100
 
-    Rewrite the type system, a little. (#1052)
-    
-    Our type system used to take the following set of types: [out Product], [in Thing], [in ~a] and assign ~a to either Thing or Product depending on the order in which the types were provided.
-    
-    This in turn was causing recipes to mysteriously fail to pass through certain stages of the planner, as type ordering dependence generated strategy ordering dependence.
-    
-    This rewrite uses upper and lower bound constraints instead of assigning concrete types to type variables. In the case above, ~a would be "at least" Thing and "at most" Product as a result of this resolution.
+    restrictive create
