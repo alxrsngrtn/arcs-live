@@ -1,5 +1,8 @@
-commit 58178aa21af3ed5760cf0271386ff857a61389e0
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Mar 27 12:07:53 2018 +1100
+commit 1427cb0ddd68ddeca3d415bd26bdb353abff6ba0
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Mar 27 16:37:58 2018 +1100
 
-    Addresses comments from the previous PR
+    Make ./tools/sigh check work on windows. (#1062)
+    
+    Also stop this sort of thing from happening in the future,
+    hopefully.
