@@ -97,7 +97,7 @@ function assert(test, message) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(8);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -225,10 +225,11 @@ class Type {
     return [type1, type2];
   }
 
+
   // TODO: update call sites to use the type checker instead (since they will
   // have additional information about direction etc.)
   equals(type) {
-    return __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__["a" /* default */].compareTypes({type: this}, {type}, false).valid;
+    return __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__["a" /* default */].compareTypes({type: this}, {type});
   }
 
   _applyExistenceTypeTest(test) {
@@ -276,6 +277,85 @@ class Type {
   isResolved() {
     // TODO: one of these should not exist.
     return !this.hasUnresolvedVariable;
+  }
+
+  canEnsureResolved() {
+    if (this.isResolved())
+      return true;
+    if (this.isInterface)
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `canEnsureResolved not implemented for ${this}`);
+    if (this.isVariable)
+      return this.variable.canEnsureResolved();
+    if (this.isSetView)
+      return this.primitiveType().canEnsureResolved();
+    return true; 
+  }
+
+  maybeEnsureResolved() {
+    if (this.isInterface)
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `maybeEnsureResolved not implemented for ${this}`);
+    if (this.isVariable)
+      return this.variable.maybeEnsureResolved();
+    if (this.isSetView)
+      return this.primitiveType().maybeEnsureResolved();
+    return true;
+  }
+
+  get canWriteSuperset() {
+    if (this.isVariable)
+      return this.variable.canWriteSuperset;
+    if (this.isEntity)
+      return this;
+    if (this.isInterface)
+      return Type.newInterface(this.interfaceShape.canWriteSuperset);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `canWriteSuperset not implemented for ${this}`);
+  }
+
+  get canReadSubset() {
+    if (this.isVariable)
+      return this.variable.canReadSubset;
+    if (this.isEntity)
+      return this;
+    if (this.isInterface)
+      return Type.newInterface(this.interfaceShape.canReadSubset);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `canReadSubset not implemented for ${this}`);
+  }
+
+  isMoreSpecificThan(type) {
+    if (this.tag !== type.tag)
+      return false;
+    if (this.isEntity)
+      return this.entitySchema.isMoreSpecificThan(type.entitySchema);
+    if (this.isInterface)
+      return this.interfaceShape.isMoreSpecificThan(type.interfaceShape);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, 'contains not implemented for ${this}');
+  }
+
+  static _canMergeCanReadSubset(type1, type2) {
+    if (type1.canReadSubset && type2.canReadSubset) {
+      if (type1.canReadSubset.tag !== type2.canReadSubset.tag)
+        return false;
+      if (type1.canReadSubset.isEntity)
+        return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */].intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
+    }
+    return true;
+  }
+
+  static _canMergeCanWriteSuperset(type1, type2) {
+    if (type1.canWriteSuperset && type2.canWriteSuperset) {
+      if (type1.canWriteSuperset.tag !== type2.canWriteSuperset.tag)
+        return false;
+      if (type1.canWriteSuperset.isEntity)
+        return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */].union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
+      
+    }
+    return true;
+  }
+
+  // Tests whether two types' constraints are compatible with each other
+  static canMergeConstraints(type1, type2) {
+    return Type._canMergeCanReadSubset(type1, type2) && Type._canMergeCanWriteSuperset(type1, type2);
   }
 
   toLiteral() {
@@ -472,12 +552,8 @@ class Schema {
     return JSON.stringify(fieldType1) == JSON.stringify(fieldType2);
   }
 
-  static maybeMerge(schema1, schema2) {
-    if (!schema1.hasCommonName(schema2)) {
-      return null;
-    }
-
-    let names = [...new Set(...schema1._names(), ...schema2._names())];
+  static union(schema1, schema2) {
+    let names = [...new Set([...schema1._names()].concat(...schema2._names()))];
     let fields = {};
 
     for (let [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
@@ -496,19 +572,30 @@ class Schema {
       parents: names.slice(1).map(name => ({
         name,
         parents: [],
-        sections: [],
+        fields: [],
       })),
     });
+  }
+
+  static intersect(schema1, schema2) {
+    if (schema1.isMoreSpecificThan(schema2))
+      return schema2;
+    else if (schema2.isMoreSpecificThan(schema1))
+      return schema1;
+    
+    // TODO: Don't be lazy
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, 'non-trivial intersection of schemas not implemented.');
+    return null;
   }
 
   equals(otherSchema) {
     return this === otherSchema || (this.name == otherSchema.name
        // TODO: Check equality without calling contains.
-       && this.contains(otherSchema)
-       && otherSchema.contains(this));
+       && this.isMoreSpecificThan(otherSchema)
+       && otherSchema.isMoreSpecificThan(this));
   }
 
-  contains(otherSchema) {
+  isMoreSpecificThan(otherSchema) {
     if (!this._containsNames(otherSchema)) {
       return false;
     }
@@ -546,8 +633,8 @@ class Schema {
   hasCommonName(otherSchema) {
     if (!this.name || !otherSchema.name)
       return true;
-    let otherNames = new Set(names(otherSchema));
-    for (let name of names(this)) {
+    let otherNames = new Set(otherSchema._names());
+    for (let name of this._names()) {
       if (otherNames.has(name)) {
         return true;
       }
@@ -821,7 +908,7 @@ class Entity {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /**
@@ -858,7 +945,7 @@ class ConnectionSpec {
   }
 
   isCompatibleType(type) {
-    return __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__["a" /* default */].compareTypes({type}, {type: this.type, direction: this.direction}, false).valid;
+    return __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__["a" /* default */].compareTypes({type}, {type: this.type, direction: this.direction});
   }
 }
 
@@ -1501,21 +1588,6 @@ class StateChanges {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-/* harmony default export */ __webpack_exports__["a"] = ({});
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
@@ -1532,23 +1604,160 @@ class StateChanges {
 
 class TypeChecker {
 
-  // list: [{type, direction, connection}]
-  static processTypeList(list) {
-    if (list.length == 0) {
-      return {type: {type: undefined}, valid: true};
-    }
-    let baseType = list[0];
-    for (let i = 1; i < list.length; i++) {
-      let result = TypeChecker.compareTypes(baseType, list[i]);
-      baseType = result.type;
-      if (!result.valid) {
-        return {valid: false};
+  // resolve a list of handleConnection types against a handle
+  // base type. This is the core type resolution mechanism, but should only
+  // be used when types can actually be associated with each other / constrained.
+  //
+  // By design this function is called exactly once per handle in a recipe during
+  // normalization, and should provide the same final answers regardless of the 
+  // ordering of handles within that recipe
+  //
+  // NOTE: you probably don't want to call this function, if you think you
+  // do, talk to shans@.
+  static processTypeList(baseType, list) {
+    if (baseType == undefined)
+      baseType = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* default */]('a'));
+
+    let concreteTypes = [];
+
+    // baseType might be a variable (and is definitely a variable if no baseType was available).
+    // Some of the list might contain variables too.
+    
+    // First attempt to merge all the variables into the baseType
+    //
+    // If the baseType is a variable then this results in a single place to manipulate the constraints
+    // of all the other connected variables at the same time.
+    for (let item of list) {
+      if (item.type.resolvedType().hasVariable) {
+        baseType = TypeChecker._tryMergeTypeVariable(baseType, item.type);
+        if (baseType == null)
+          return null;
+      } else {
+        concreteTypes.push(item);
       }
     }
 
-    return {type: baseType, valid: true};
+    for (let item of concreteTypes) {
+      let success = TypeChecker._tryMergeConstraints(baseType, item);
+      if (!success)
+        return null;
+    }
+
+    let getResolution = candidate => {
+      if (candidate.isVariable == false)
+        return candidate;
+      if (candidate.canReadSubset == null || candidate.canWriteSuperset == null)
+        return candidate;
+      if (candidate.canReadSubset.isMoreSpecificThan(candidate.canWriteSuperset)) {
+        if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset))
+          candidate.variable.resolution = candidate.canReadSubset;
+        return candidate;
+      }  
+      return null;
+    };
+
+    let candidate = baseType.resolvedType();
+
+    if (candidate.isSetView) {
+      candidate = candidate.primitiveType();
+      let resolution = getResolution(candidate);
+      if (resolution == null)
+        return null;
+      return resolution.setViewOf();
+    }
+
+    return getResolution(candidate);
   }
 
+  static _tryMergeTypeVariable(base, onto) {
+    let [primitiveBase, primitiveOnto] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(base.resolvedType(), onto.resolvedType());
+
+    if (primitiveBase.isVariable) {
+      if (primitiveOnto.isVariable) {
+        // base, onto both variables.
+        let result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
+        if (result == false)
+          return null;
+        primitiveOnto.variable.resolution = primitiveBase;
+      } else {
+        // base variable, onto not.
+        primitiveBase.variable.resolution = primitiveOnto;
+      }
+    } else if (primitiveOnto.isVariable) {
+      // onto variable, base not.
+      primitiveOnto.variable.resolution = primitiveBase;
+      return onto;
+    } else {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(false, 'tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
+    }
+    
+    return base;
+  }
+
+  static _tryMergeConstraints(handleType, {type, direction}) {
+    let [primitiveHandleType, primitiveConnectionType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(handleType.resolvedType(), type.resolvedType());
+    if (primitiveHandleType.isVariable) {
+      // if this is an undifferentiated variable then we need to create structure to match against. That's
+      // allowed because this variable could represent anything, and it needs to represent this structure
+      // in order for type resolution to succeed.
+      if (primitiveConnectionType.isSetView) {
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(primitiveHandleType.variable.resolution == null && primitiveHandleType.variable.canReadSubset == null && primitiveHandleType.variable.canWriteSuperset == null);
+        primitiveHandleType.variable.resolution = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newSetView(__WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* default */]('a')));
+        let unwrap = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
+        primitiveHandleType = unwrap[0];
+        primitiveConnectionType = unwrap[1];
+      }
+
+      if (direction == 'out' || direction == 'inout') {
+        // the canReadSubset of the handle represents the maximal type that can be read from the
+        // handle, so we need to intersect out any type that is more specific than the maximal type
+        // that could be written.
+        if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset))
+          return false;
+      }
+      if (direction == 'in' || direction == 'inout') {
+        // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
+        // so we need to union it with the type that wants to be read here.
+        if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset))
+          return false;
+      }
+    } else {
+      if (direction == 'out' || direction == 'inout')
+        if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType))
+          return false;
+      if (direction == 'in' || direction == 'inout')
+        if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType))
+          return false;
+    }
+
+    return true;
+  }
+
+  static _writeConstraintsApply(handleType, connectionType) {
+    // this connection wants to write to this handle. If the written type is
+    // more specific than the canReadSubset then it isn't violating the maximal type
+    // that can be read.
+    let writtenType = connectionType.canWriteSuperset;
+    if (writtenType == null || handleType.canReadSubset == null)
+      return true;
+    if (writtenType.isMoreSpecificThan(handleType.canReadSubset))
+      return true;
+    return false;
+  }
+
+  static _readConstraintsApply(handleType, connectionType) {
+    // this connection wants to read from this handle. If the read type
+    // is less specific than the canWriteSuperset, then it isn't violating
+    // the maximum lower-bound read type.
+    let readType = connectionType.canReadSubset;
+    if (readType == null|| handleType.canWriteSuperset == null)
+      return true;
+    if (handleType.canWriteSuperset.isMoreSpecificThan(readType))
+      return true;
+    return false;
+  }
+
+  // TODO: what is this? Does it still belong here?
   static restrictType(type, instance) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(type.isInterface, `restrictType not implemented for ${type}`);
 
@@ -1558,77 +1767,50 @@ class TypeChecker {
     return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newInterface(shape);
   }
 
+  // Compare two types to see if they could be potentially resolved (in the absence of other
+  // information). This is used as a filter when selecting compatible handles or checking 
+  // validity of recipes. This function returning true never implies that full type resolution
+  // will succeed, but if the function returns false for a pair of types that are associated
+  // then type resolution is guaranteed to fail.
+  //
   // left, right: {type, direction, connection}
-  static compareTypes(left, right, resolve=true) {
+  static compareTypes(left, right) {
     let resolvedLeft = left.type.resolvedType();
     let resolvedRight = right.type.resolvedType();
     let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(resolvedLeft, resolvedRight);
 
     if (leftType.isVariable || rightType.isVariable) {
-      if (leftType.isVariable && rightType.isVariable) {
-        if (leftType.variable === rightType.variable) {
-          return {type: left, valid: true};
-        }
-        if (leftType.variable.constraint || rightType.variable.constraint) {
-          let mergedConstraint = __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* default */].maybeMergeConstraints(leftType.variable, rightType.variable);
-          if (!mergedConstraint) {
-            return {valid: false};
-          }
-          if (resolve) {
-            leftType.constraint = mergedConstraint;
-            rightType.variable.resolution = leftType;
-          }
-        }
-        return {type: left, valid: true};
-      } else if (leftType.isVariable) {
-        if (!leftType.variable.isSatisfiedBy(rightType)) {
-          return {valid: false};
-        }
-        if (resolve) {
-          leftType.variable.resolution = rightType;
-        }
-        return {type: right, valid: true};
-      } else if (rightType.isVariable) {
-        if (!rightType.variable.isSatisfiedBy(leftType)) {
-          return {valid: false};
-        }
-        if (resolve) {
-          rightType.variable.resolution = leftType;
-        }
-        return {type: left, valid: true};
-      }
+      // TODO: everything should use this, eventually. Need to implement the
+      // right functionality in Shapes first, though.
+      return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].canMergeConstraints(leftType, rightType);
     }
 
     if (leftType.type != rightType.type) {
-      return {valid: false};
+      return false;
     }
 
     // TODO: we need a generic way to evaluate type compatibility
     //       shapes + entities + etc
     if (leftType.isInterface && rightType.isInterface) {
       if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
-        return {type: left, valid: true};
+        return true;
       }
     }
 
     if (!leftType.isEntity || !rightType.isEntity) {
-      return {valid: false};
+      return false;
     }
 
-    let isSub = leftType.entitySchema.contains(rightType.entitySchema);
-    let isSuper = rightType.entitySchema.contains(leftType.entitySchema);
-    if (isSuper && isSub) {
-       return {type: left, valid: true};
-    }
-    if (!isSuper && !isSub) {
-      return {valid: false};
-    }
-    let [superclass, subclass] = isSuper ? [left, right] : [right, left];
+    let leftIsSub = leftType.entitySchema.isMoreSpecificThan(rightType.entitySchema);
+    let leftIsSuper = rightType.entitySchema.isMoreSpecificThan(leftType.entitySchema);
 
-    // TODO: this arbitrarily chooses type restriction when
-    // super direction is 'in' and sub direction is 'out'. Eventually
-    // both possibilities should be encoded so we can maximise resolution
-    // opportunities
+    if (leftIsSuper && leftIsSub) {
+       return true;
+    }
+    if (!leftIsSuper && !leftIsSub) {
+      return false;
+    }
+    let [superclass, subclass] = leftIsSuper ? [left, right] : [right, left];
 
     // treat view types as if they were 'inout' connections. Note that this
     // guarantees that the view's type will be preserved, and that the fact
@@ -1637,16 +1819,31 @@ class TypeChecker {
     let superDirection = superclass.direction || (superclass.connection ? superclass.connection.direction : 'inout');
     let subDirection = subclass.direction || (subclass.connection ? subclass.connection.direction : 'inout');
     if (superDirection == 'in') {
-      return {type: subclass, valid: true};
+      return true;
     }
     if (subDirection == 'out') {
-      return {type: superclass, valid: true};
+      return true;
     }
-    return {valid: false};
+    return false;
   }
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (TypeChecker);
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+/* harmony default export */ __webpack_exports__["a"] = ({});
 
 
 /***/ }),
@@ -1751,6 +1948,27 @@ class Shape {
     return 'SHAAAAPE';
   }
 
+  get canReadSubset() {
+    return this._cloneAndUpdate(typeVar => typeVar.canReadSubset);
+  }
+
+  get canWriteSuperset() {
+    return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
+  }
+
+  isMoreSpecificThan(other) {
+    if (this.handles.length !== other.handles.length || this.slots.length !== other.slots.length)
+      return false;
+    // TODO: should probably confirm that handles and slots actually match.
+    for (let i = 0; i < this._typeVars.length; i++) {
+      let thisTypeVar = this._typeVars[i];
+      let otherTypeVar = other._typeVars[i];
+      if (!thistypeVar.object[thistypeVar.field].isMoreSpecificThan(othertypeVar.object[othertypeVar.field]))
+        return false;
+    }
+    return true;
+  }
+
   _applyExistenceTypeTest(test) {
     for (let typeRef of this._typeVars) {
       if (test(typeRef.object[typeRef.field]))
@@ -1802,10 +2020,7 @@ ${this._slotsToManifestString()}
   }
 
   resolvedType() {
-    let result = this.clone();
-    for (let typeVar of result._typeVars)
-      typeVar.object[typeVar.field] = typeVar.object[typeVar.field].resolvedType();
-    return result;
+    return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
   }
 
   equals(other) {
@@ -1845,6 +2060,16 @@ ${this._slotsToManifestString()}
     }
 
     return true;
+  }
+
+  _cloneAndUpdate(update) {
+    let copy = this.clone();
+    copy._typeVars.forEach(typeVar => Shape._updateTypeVar(typeVar, update));
+    return copy;
+  }
+
+  static _updateTypeVar(typeVar, update) {
+    typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
   }
 
   static isTypeVar(reference) {
@@ -2030,6 +2255,7 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_type_checker_js__ = __webpack_require__(8);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -2043,49 +2269,76 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 
 
 
+
 class TypeVariable {
-  constructor(name, constraint) {
+  constructor(name, canWriteSuperset, canReadSubset) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(typeof name == 'string');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(constraint == null || constraint instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(canWriteSuperset == null || canWriteSuperset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(canReadSubset == null || canReadSubset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */]);
     this.name = name;
-    this._constraint = constraint;
+    this._canWriteSuperset = canWriteSuperset;
+    this._canReadSubset = canReadSubset;
     this._resolution = null;
   }
 
+  // Merge both the read subset (upper bound) and write superset (lower bound) constraints
+  // of two variables together. Use this when two separate type variables need to resolve
+  // to the same value.
+  maybeMergeConstraints(variable) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(variable instanceof TypeVariable);
 
-  static maybeMergeConstraints(variable1, variable2) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(variable1 instanceof TypeVariable);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(variable2 instanceof TypeVariable);
+    if (!this.maybeMergeCanReadSubset(variable.canReadSubset))
+      return false;
+    return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
+  }
 
-    let constraint1 = variable1.constraint;
-    let constraint2 = variable2.constraint;
-
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(constraint1 || constraint2);
-
-    if (constraint1 && constraint2) {
-      if (!constraint1.isEntity || !constraint2.isEntity) {
-        throw new Error('merging constraints not implemented for ${constraint1.type} and ${constraint2.type}');
-      }
-  
-      let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */].maybeMerge(constraint1.entitySchema, constraint2.entitySchema);
-      if (!mergedSchema) {
-        return null;
-      }
-      return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newEntity(mergedSchema);
-    } else {
-      return constraint1 || constraint2;
+  // merge a type variable's read subset (upper bound) constraints into this variable.
+  // This is used to accumulate read constraints when resolving a handle's type.
+  maybeMergeCanReadSubset(constraint) {
+    if (constraint == null)
+      return true;
+    
+    if (this.canReadSubset == null) {
+      this.canReadSubset = constraint;
+      return true;
     }
+
+    let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
+    if (!mergedSchema)
+      return false;
+    
+    this.canReadSubset = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newEntity(mergedSchema);
+    return true;
+  }
+
+  // merge a type variable's write superset (lower bound) constraints into this variable.
+  // This is used to accumulate write constraints when resolving a handle's type.
+  maybeMergeCanWriteSuperset(constraint) {
+    if (constraint == null)
+      return true;
+
+    if (this.canWriteSuperset == null) {
+      this.canWriteSuperset = constraint;
+      return true;
+    }
+
+    let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
+    if (!mergedSchema)
+      return false;
+
+    this.canWriteSuperset = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newEntity(mergedSchema);
+    return true;
   }
 
   isSatisfiedBy(type) {
-    let constraint = this.constraint;
+    let constraint = this._canWriteSuperset;
     if (!constraint) {
       return true;
     }
     if (!constraint.isEntity || !type.isEntity) {
-      throw new Error('constraint checking not implemented for ${constraint1.type} and ${constraint2.type}');
+      throw new Error(`constraint checking not implemented for ${this} and ${type}`);
     }
-    return type.entitySchema.contains(constraint.entitySchema);
+    return type.entitySchema.isMoreSpecificThan(constraint.entitySchema);
   }
 
   get resolution() {
@@ -2098,42 +2351,90 @@ class TypeVariable {
   set resolution(value) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(value instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */]);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
+    let probe = value;
+    while (probe) {
+      if (!probe.isVariable)
+        break;
+      if (probe.variable == this)
+        return;
+      probe = probe.resolution;
+    }
+
     this._resolution = value;
-    this._constraint = null;
+    this._canWriteSuperset = null;
+    this._canReadSubset = null;
   }
 
-  get constraint() {
+  get canWriteSuperset() {
     if (this._resolution) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._constraint);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._canWriteSuperset);
       if (this._resolution.isVariable) {
-        return this._resolution.variable.constraint;
+        return this._resolution.variable.canWriteSuperset;
       }
       return null;
     }
-    return this._constraint;
+    return this._canWriteSuperset;
   }
 
-  set constraint(value) {
+  set canWriteSuperset(value) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
-    this._constraint = value;
+    this._canWriteSuperset = value;
+  }
+
+  get canReadSubset() {
+    if (this._resolution) {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._canReadSubset);
+      if (this._resolution.isVariable) {
+        return this._resolution.variable.canReadSubset;
+      }
+      return null;
+    }
+    return this._canReadSubset;
+  }
+
+  set canReadSubset(value) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
+    this._canReadSubset = value;
+  }
+
+  canEnsureResolved() {
+    if (this._resolution)
+      return this._resolution.canEnsureResolved();
+    return (this._canWriteSuperset || this._canReadSubset);
+  }
+
+  maybeEnsureResolved() {
+    if (this._resolution)
+      return this._resolution.maybeEnsureResolved();
+    if (this._canWriteSuperset) {
+      this._resolution = this._canWriteSuperset;
+      return true;
+    }
+    if (this._canReadSubset) {
+      this._resolution = this._canReadSubset;
+      return true;
+    }
+    return false;
   }
 
   toLiteral() {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(this.resolution == null);
     return {
       name: this.name,
-      constraint: this._constraint && this._constraint.toLiteral(),
+      canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
+      canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
     };
   }
 
   static fromLiteral(data) {
     return new TypeVariable(
         data.name,
-        data.constraint ? __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(data.constraint) : null);
+        data.canWriteSuperset ? __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(data.canWriteSuperset) : null,
+        data.canReadSubset ? __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(data.canReadSubset) : null);
   }
 
   isResolved() {
-    return this._resolution && this._resolution.isResolved();
+    return (this._resolution && this._resolution.isResolved());
   }
 }
 
@@ -3827,7 +4128,7 @@ class Identifier {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
@@ -4222,7 +4523,7 @@ self.onmessage = function(e) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(8);
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(9);
 /*
   Copyright 2015 Google Inc. All Rights Reserved.
   Licensed under the Apache License, Version 2.0 (the "License");
