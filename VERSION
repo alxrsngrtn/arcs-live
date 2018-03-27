@@ -1,5 +1,5 @@
-commit c99b147f94fa0961678cc927e81dc6cffc0e1ab9
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Tue Mar 27 10:49:48 2018 +1100
+commit d3b68d864687ddd63101094e6b31b82733e53004
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Mar 27 16:10:17 2018 +1100
 
-    Use html``
+    Tests for strategies in separate files
