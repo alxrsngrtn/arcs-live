@@ -1,5 +1,5 @@
-commit 92dfef288f58cf5d66c17e10e099fcafe4c5eeaa
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Wed Mar 28 13:15:50 2018 +1100
+commit 1213b3b9d22511500ed8c5c5437160c172b661a4
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Mar 28 16:07:00 2018 +1100
 
-    I can typo and spell (#1067)
+    Put MapSlots tests in its own file (#1072)
