@@ -506,9 +506,10 @@ addType('Tuple', 'fields');
 
 class Schema {
   constructor(model) {
+    let legacy = [];
     // TODO: remove this (remnants of normative/optional)
     if (model.sections) {
-      console.warn(`Schema ${model.name} was serialized with legacy format`);
+      legacy.push('sections');
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!model.fields);
       model.fields = {};
       for (let section of model.sections) {
@@ -516,10 +517,25 @@ class Schema {
       }
       delete model.sections;
     }
+    if (model.name) {
+      legacy.push('name');
+      model.names = [model.name];
+      delete model.name;
+    }
+    if (model.parents) {
+      legacy.push('parents');
+      for (let parent of model.parents) {
+        let parentSchema = new Schema(parent);
+        model.names.push(...parent.names);
+        Object.assign(model.fields, parent.fields);
+      }
+      model.names = [...new Set(model.names)];
+    }
+    if (legacy.length > 0) {
+      console.warn(`Schema ${model.names[0] || '*'} was serialized with legacy format (${legacy.join(', ')})`, new Error());
+    }
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.fields);
     this._model = model;
-    this.name = model.name;
-    this.parents = (model.parents || []).map(parent => new Schema(parent));
     this.description = {};
     if (model.description) {
       model.description.description.forEach(desc => this.description[desc.name] = desc.pattern);
@@ -534,17 +550,17 @@ class Schema {
     return new Schema(data);
   }
 
-  _buildFields(result) {
-    Object.assign(result, this._model.fields);
-    for (let parent of this.parents) {
-      parent._buildFields(result);
-    }
+  get fields() {
+    return this._model.fields;
   }
 
-  get fields() {
-    let result = {};
-    this._buildFields(result);
-    return result;
+  get names() {
+    return this._model.names;
+  }
+
+  // TODO: This should only be an ident used in manifest parsing.
+  get name() {
+    return this.names[0];
   }
 
   static typesEqual(fieldType1, fieldType2) {
@@ -553,7 +569,7 @@ class Schema {
   }
 
   static union(schema1, schema2) {
-    let names = [...new Set([...schema1._names()].concat(...schema2._names()))];
+    let names = [...new Set([...schema1.names, ...schema2.names])];
     let fields = {};
 
     for (let [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
@@ -567,13 +583,8 @@ class Schema {
     }
 
     return new Schema({
-      name: names.length ? names[0] : null,
+      names,
       fields,
-      parents: names.slice(1).map(name => ({
-        name,
-        parents: [],
-        fields: [],
-      })),
     });
   }
 
@@ -596,8 +607,11 @@ class Schema {
   }
 
   isMoreSpecificThan(otherSchema) {
-    if (!this._containsNames(otherSchema)) {
-      return false;
+    let names = new Set(this.names);
+    for (let name of otherSchema.names) {
+      if (!names.has(name)) {
+        return false;
+      }
     }
     let fields = {};
     for (let [name, type] of Object.entries(this.fields)) {
@@ -609,37 +623,6 @@ class Schema {
       }
     }
     return true;
-  }
-
-  * _names() {
-    if (this.name)
-      yield this.name;
-    for (let parent of this.parents) {
-      yield* parent._names();
-    }
-  }
-
-  _containsNames(schema) {
-    // TODO: backwards?
-    let names = new Set(this._names());
-    for (let name of schema._names()) {
-      if (!names.has(name)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  hasCommonName(otherSchema) {
-    if (!this.name || !otherSchema.name)
-      return true;
-    let otherNames = new Set(otherSchema._names());
-    for (let name of this._names()) {
-      if (otherNames.has(name)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   get type() {
@@ -783,8 +766,7 @@ class Schema {
 
   toString() {
     let results = [];
-    this.parents.forEach(parent => results.push(parent.toString()));
-    results.push(`schema ${this.name}`.concat(this.parents.length > 0 ? ` extends ${this.parents.map(p => p.name).join(',')}` : ''));
+    results.push(`schema ${this.names.join(' ')}`);
 
     for (let [name, type] of Object.entries(this.fields)) {
       let typeString;
@@ -4265,12 +4247,11 @@ class Loader {
 
 function testEntityClass(type) {
   return new __WEBPACK_IMPORTED_MODULE_3__schema_js__["a" /* default */]({
-    name: type,
+    names: [type],
     fields: {
       id: 'Number',
       value: 'Text',
     },
-    parents: [],
   }).entityClass();
 }
 

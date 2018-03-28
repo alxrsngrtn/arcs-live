@@ -1,5 +1,9 @@
-commit 14c9def0d9988d656dfb1aa23f8253e4a290f507
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Tue Mar 27 18:18:24 2018 -0700
+commit d913e9876bdc371b4d355794e4d7b98b402749bd
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Wed Mar 28 13:15:28 2018 +1100
 
-    implement serial-roundtrip test, some tooling and css tuning
+    Normalize schemas to sets of names and fields (#1059)
+    
+    * Normalize schemas to sets of names and fields
+    
+    * Validate parent field types are compatible
