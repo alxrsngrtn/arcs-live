@@ -1,5 +1,5 @@
-commit 1213b3b9d22511500ed8c5c5437160c172b661a4
+commit bd2057ccb50b0db36c0e5fcb0d1baaff8bfd55d8
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Mar 28 16:07:00 2018 +1100
+Date:   Wed Mar 21 12:35:42 2018 +1100
 
-    Put MapSlots tests in its own file (#1072)
+    Adds a ruleset to the Strategizer
