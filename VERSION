@@ -1,5 +1,5 @@
-commit ef0c789c72d24a3f7a3548c402494dc8d951f197
+commit cf56ecb97472fa2e311863e98f356df8e2be400e
 Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Wed Mar 28 16:16:16 2018 +1100
+Date:   Wed Mar 28 17:12:55 2018 +1100
 
-    Add a markdown file that describes the schema landscape (#1065)
+    Add tests for resolve-recipe around type specifics
