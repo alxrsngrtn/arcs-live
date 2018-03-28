@@ -161,6 +161,15 @@ class Recipe {
     let idx = this._particles.indexOf(particle);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(idx > -1);
     this._particles.splice(idx, 1);
+    for (let slotConnection of Object.values(particle._consumedSlotConnections))
+      slotConnection.remove();
+  }
+
+  removeSlot(slot) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slot.consumeConnections.length == 0);
+    let idx = this._slots.indexOf(slot);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(idx > -1);
+    this._slots.splice(idx, 1);
   }
 
   newHandle() {
@@ -3985,6 +3994,7 @@ ${e.message}
           if (!providedSlot) {
             providedSlot = recipe.newSlot(ps.param);
             providedSlot.localName = ps.name;
+            providedSlot.sourceConnection = slotConn;
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!items.byName.has(ps.name));
             items.byName.set(ps.name, providedSlot);
             items.bySlot.set(providedSlot, ps);
@@ -4099,19 +4109,25 @@ ${e.message}
       }
 
       for (let slotConnectionItem of item.slotConnections) {
-        // Validate consumed and provided slots names are according to spec.
-        if (!particle.spec.slots.has(slotConnectionItem.param)) {
-          throw new ManifestError(
-              slotConnectionItem.location,
-              `Consumed slot '${slotConnectionItem.param}' is not defined by '${particle.name}'`);
-        }
-        slotConnectionItem.providedSlots.forEach(ps => {
-          if (!particle.spec.slots.get(slotConnectionItem.param).getProvidedSlotSpec(ps.param)) {
+        // particles that reference verbs should store slot connection information as constraints to be used 
+        // during verb matching. However, if there's a spec then the slots need to be validated against it
+        // instead.
+        if (particle.spec !== undefined) {
+          // Validate consumed and provided slots names are according to spec.
+          if (!particle.spec.slots.has(slotConnectionItem.param)) {
             throw new ManifestError(
-                ps.location,
-                `Provided slot '${ps.param}' is not defined by '${particle.name}'`);
+                slotConnectionItem.location,
+                `Consumed slot '${slotConnectionItem.param}' is not defined by '${particle.name}'`);
           }
-        });
+          slotConnectionItem.providedSlots.forEach(ps => {
+            if (!particle.spec.slots.get(slotConnectionItem.param).getProvidedSlotSpec(ps.param)) {
+              throw new ManifestError(
+                  ps.location,
+                  `Provided slot '${ps.param}' is not defined by '${particle.name}'`);
+            }
+          });
+        }
+
         let targetSlot = items.byName.get(slotConnectionItem.name);
         if (targetSlot) {
           __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(items.bySlot.has(targetSlot));
@@ -5347,6 +5363,12 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
 
     return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
       onSlotConnection(recipe, slotConnection) {
+        // don't try to connect verb constraints
+        // TODO: is this right? Should constraints be connectible, in order to precompute the
+        // recipe side once the verb is substituted?
+        if (slotConnection.slotSpec == undefined)
+          return;
+
         if (slotConnection.isConnected()) {
           return;
         }
@@ -5415,6 +5437,10 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
 
   // Returns true, if the given slot is a viable candidate for the slotConnection.
   static _filterSlot(slotConnection, slot) {
+    // if there's no slotSpec, this is just a slot constraint on a verb
+    if (!slotConnection.slotSpec)
+      return false;
+
     if (slotConnection.slotSpec.isSet != slot.getProvidedSlotSpec().isSet) {
       return false;
     }
@@ -8017,6 +8043,17 @@ class MatchParticleByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strat
 
 
 
+// This strategy substitutes 'particle can verb' declarations with recipes, 
+// according to the following conditions:
+// 1) the recipe is named by the verb described in the particle
+// 2) the recipe has the slot pattern (if any) owned by the particle
+//
+// The strategy also reconnects any slots that were connected to the 
+// particle, so that the substituted recipe fully takes the particle's place. 
+//
+// Note that the recipe may have the slot pattern multiple times over, but
+// this strategy currently only connects the first instance of the pattern up
+// if there are multiple instances.
 class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["c" /* Strategy */] {
   constructor(arc) {
     super();
@@ -8035,21 +8072,81 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
         if (particle.allConnections().length > 0)
           return;
 
-        if (Object.keys(particle.consumedSlotConnections).length > 0)
-          return;
-
         let recipes = arc.context.findRecipesByVerb(particle.primaryVerb);
+
+        let slotConstraints = {};
+        for (let consumeSlot of Object.values(particle.consumedSlotConnections)) {
+          let targetSlot = consumeSlot.targetSlot.sourceConnection ? consumeSlot.targetSlot : null;
+          slotConstraints[consumeSlot.name] = {targetSlot, providedSlots: {}};
+          for (let providedSlot of Object.keys(consumeSlot.providedSlots)) {
+            let sourceSlot = consumeSlot.providedSlots[providedSlot].consumeConnections.length > 0 ? consumeSlot.providedSlots[providedSlot] : null;
+            slotConstraints[consumeSlot.name].providedSlots[providedSlot] = sourceSlot;
+          }
+        }
+
+        recipes = recipes.filter(recipe => MatchRecipeByVerb.satisfiesSlotConstraints(recipe, slotConstraints));
 
         return recipes.map(recipe => {
           return (outputRecipe, particle) => {
-            recipe.mergeInto(outputRecipe);
+            let {handles, particles, slots} = recipe.mergeInto(outputRecipe);
+
             particle.remove();
+
+            for (let consumeSlot in slotConstraints) {
+              if (slotConstraints[consumeSlot].targetSlot) {
+                let {mappedSlot} = outputRecipe.updateToClone({mappedSlot: slotConstraints[consumeSlot].targetSlot});
+                for (let particle of particles) {
+                  if (particle.consumedSlotConnections[consumeSlot] && particle.consumedSlotConnections[consumeSlot].targetSlot == null) {
+                    particle.consumedSlotConnections[consumeSlot]._targetSlot = mappedSlot;
+                    mappedSlot._consumerConnections.push(particle.consumedSlotConnections[consumeSlot]); 
+                    break;
+                  }
+                }
+              }
+
+              for (let provideSlot in slotConstraints[consumeSlot].providedSlots) {
+                let slot = slotConstraints[consumeSlot].providedSlots[provideSlot];
+                let {mappedSlot} = outputRecipe.updateToClone({mappedSlot: slot});
+                for (let particle of particles) {
+                  if (particle.consumedSlotConnections[consumeSlot]) {
+                    if (particle.consumedSlotConnections[consumeSlot].providedSlots[provideSlot]) {
+                      let oldSlot = particle.consumedSlotConnections[consumeSlot].providedSlots[provideSlot];
+                      oldSlot.remove();
+                      particle.consumedSlotConnections[consumeSlot].providedSlots[provideSlot] = mappedSlot;
+                      mappedSlot._sourceConnection = particle.consumedSlotConnections[consumeSlot];
+                      break;
+                    }
+                  }                  
+                }
+              }
+            }
+
 
             return 1;
           };
         });
       }
     }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */].Permuted), this);
+  }
+
+  static satisfiesSlotConstraints(recipe, slotConstraints) {
+    for (let slotName in slotConstraints)
+      if (!MatchRecipeByVerb.satisfiesSlotConnection(recipe, slotName, slotConstraints[slotName].providedSlots))
+        return false;
+    return true;
+  }
+
+  static satisfiesSlotConnection(recipe, slotName, providesSlots) {
+    let satisfyingList = recipe.particles.filter(particle => Object.keys(particle.consumedSlotConnections).includes(slotName));
+    return satisfyingList.filter(particle => MatchRecipeByVerb.satisfiesSlotProvision(particle.consumedSlotConnections[slotName], providesSlots)).length > 0;
+  }
+
+  static satisfiesSlotProvision(slotConnection, providesSlots) {
+    let recipeProvidesSlots = Object.keys(slotConnection.providedSlots);
+    for (let providesSlot of Object.keys(providesSlots))
+      if (!recipeProvidesSlots.includes(providesSlot))
+        return false;
+    return true;
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = MatchRecipeByVerb;
@@ -19283,6 +19380,11 @@ class Particle {
     return slotConn;
   }
 
+  removeSlotConnection(slotConnection) {
+    this._consumedSlotConnections[slotConnection._name] = null;
+    slotConnection.disconnectFromSlot();
+  }
+
   remove() {
     this.recipe.removeParticle(this);
   }
@@ -19356,6 +19458,10 @@ class SlotConnection {
     this._providedSlots = {}; // Slot*
   }
 
+  remove() {
+    this._particle.removeSlotConnection(this);
+  }
+
   get recipe() { return this._recipe; }
   get particle() { return this._particle; }
   get name() { return this._name; }
@@ -19391,6 +19497,13 @@ class SlotConnection {
     targetSlot.consumeConnections.push(this);
   }
 
+  disconnectFromSlot() {
+    if (this._targetSlot) {
+      this._targetSlot.removeConsumeConnection(this);
+      this._targetSlot = undefined;
+    }
+  }
+  
   _clone(particle, cloneMap) {
     if (cloneMap.has(this)) {
       return cloneMap.get(this);
@@ -19489,8 +19602,13 @@ class SlotConnection {
       let providedSlot = this.providedSlots[psName];
       let provideRes = [];
       provideRes.push('  provide');
-      let providedSlotSpec = this.slotSpec.getProvidedSlotSpec(psName);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
+      
+      // Only assert that there's a spec for this provided slot if there's a spec for
+      // the consumed slot .. otherwise this is just a constraint.
+      if (this.slotSpec) {
+        let providedSlotSpec = this.slotSpec.getProvidedSlotSpec(psName);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
+      }
       provideRes.push(`${psName} as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);
       result.push(provideRes.join(' '));
     });
@@ -19550,7 +19668,9 @@ class Slot {
   set sourceConnection(sourceConnection) { this._sourceConnection = sourceConnection; }
   get consumeConnections() { return this._consumerConnections; }
   getProvidedSlotSpec() {
-    return this.sourceConnection ? this.sourceConnection.slotSpec.getProvidedSlotSpec(this.name) : {isSet: false, tags: []};
+    // TODO: should this return something that indicates this isn't available yet instead of 
+    // the constructed {isSet: false, tags: []}?
+    return (this.sourceConnection && this.sourceConnection.slotSpec) ? this.sourceConnection.slotSpec.getProvidedSlotSpec(this.name) : {isSet: false, tags: []};
   }
 
   _copyInto(recipe, cloneMap) {
@@ -19592,6 +19712,18 @@ class Slot {
     if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* default */].compareStrings(this.formFactor, other.formFactor)) != 0) return cmp;
     if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* default */].compareArrays(this._tags, other._tags, __WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* default */].compareStrings)) != 0) return cmp;
     return 0;
+  }
+
+  removeConsumeConnection(slotConnection) {
+    let idx = this._consumerConnections.indexOf(slotConnection);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(idx > -1);
+    this._consumerConnections.splice(idx, 1);
+    if (this._consumerConnections.length == 0)
+      this.remove();
+  }
+
+  remove() {
+    this._recipe.removeSlot(this);
   }
 
   isResolved(options) {

@@ -1,5 +1,36 @@
-commit 763084c11ba577133f010d48b7357c1561246d75
-Author: Yuin Chien <yuin@google.com>
-Date:   Wed Mar 28 15:01:30 2018 -0700
+commit 5da8b7ec956994d2cc6c33ec13bc862e3c35bb48
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu Mar 29 10:39:12 2018 +1100
 
-    updated launcher tile margin & padding
+    Verb substitution slot constraints (#1071)
+    
+    1) Allow particles specified by verbs to hold slot constraints. For example:
+    
+    ```recipe
+      particle can doTheThing
+        consume bar
+          provide foo
+    ```
+    
+    This means that a particle or recipe can only substitute into doTheThing if it consumes a bar slot and provides a foo slot.
+    
+    2) Make match-recipe-by-verb obey these constraints. Note that match-particle-by-verb doesn't, yet.
+    
+    3) Ensure that in at least some cases slot connections made with these constraints persist after recipe substitution. For example:
+    
+    ```recipe
+      particle can doTheThing
+        consume foo as s1
+          provide bar as s2
+      P
+        consume master
+          provide foo as s1
+      Q
+        consume bar as s2
+    ```
+    
+    Will result in the matched `foo` in the recipe selected to replace doTheThing consuming `P`'s `foo`, and the matched `bar` providing a slot for `Q`'s `bar`.
+    
+    This almost certainly doesn't yet work in all circumstances, for example I haven't tested what happens when the slot is shared across multiple consumers.
+    
+    At some point we're going to want to do the same thing as this for handles, too.
