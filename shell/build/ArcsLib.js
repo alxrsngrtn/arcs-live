@@ -7750,7 +7750,7 @@ ${this.activeRecipe.toString()}`;
         recipeHandle.storageKey = handle.storageKey;
         // TODO: move the call to OuterPEC's DefineView to here
       }
-      
+
       let storageKey = recipeHandle.storageKey;
       if (!storageKey)
         storageKey = this.keyForId(recipeHandle.id);

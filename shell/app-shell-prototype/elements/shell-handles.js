@@ -1,3 +1,13 @@
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
 // code
 import Xen from '../../components/xen/xen.js';
 import ArcsUtils from '../lib/arcs-utils.js';
@@ -6,11 +16,10 @@ import ArcsUtils from '../lib/arcs-utils.js';
 import './arc-handle.js';
 
 // globals
-/* global shellPath */
+/* global shellPath*/
 
 // templates
-const html = Xen.Template.html;
-const template = html`
+const template = Xen.html`
 
   <arc-handle arc="{{arc}}" data="{{themeData}}" options="{{themeHandleOptions}}" on-change="_onShellThemeChange"></arc-handle>
   <arc-handle arc="{{arc}}" data="{{usersHandleData}}" options="{{usersHandleOptions}}"></arc-handle>
@@ -21,9 +30,7 @@ const template = html`
 
 `;
 
-const log = Xen.Base.logFactory('ShellHandles', '#004f00');
-
-class ShellHandles extends Xen.Debug(Xen.Base, log) {
+class ShellHandles extends Xen.Base {
   static get observedAttributes() {
     return ['arc', 'users', 'user', 'visited'];
   }
@@ -68,8 +75,31 @@ class ShellHandles extends Xen.Debug(Xen.Base, log) {
         tags: ['#BOXED_avatar'],
         id: 'BOXED_avatar',
         asContext: true
+      },
+      userHandleData: {
+        id: 'f4',
+        name: 'Gomer',
+        location: {latitude: 0, longitude: 0}
       }
     };
+  }
+  _watchGeolocation() {
+    const fallback = () => this._maybeUpdateGeoCoords(
+        {latitude: 37.7610927, longitude: -122.4208173}); // San Francisco
+    if ('geolocation' in navigator) {
+      navigator.geolocation.watchPosition(
+        ({coords}) => this._maybeUpdateGeoCoords(coords),
+        fallback, {timeout: 3000, maximumAge: Infinity});
+    } else {
+      fallback();
+    }
+  }
+  _maybeUpdateGeoCoords({latitude, longitude}) {
+    const {geoCoords} = this._state;
+    // Skip setting the position if it's the same as what we've already got.
+    if (!geoCoords || geoCoords.latitude != latitude || geoCoords.longitude != longitude) {
+      this._setState({geoCoords: {latitude, longitude}});
+    }
   }
   _update(props, state, lastProps, lastState) {
     const {users, user, visited, arc} = props;
@@ -89,6 +119,7 @@ class ShellHandles extends Xen.Debug(Xen.Base, log) {
     }
   }
   _render(props, state) {
+    //log(props, state);
     return [state, props];
   }
   _renderUser(user, geoCoords) {
@@ -133,24 +164,6 @@ class ShellHandles extends Xen.Debug(Xen.Base, log) {
     });
     return data;
   }
-  _watchGeolocation() {
-    const fallback = () => this._maybeUpdateGeoCoords(
-        {latitude: 37.7610927, longitude: -122.4208173}); // San Francisco
-    if ('geolocation' in navigator) {
-      navigator.geolocation.watchPosition(
-        ({coords}) => this._maybeUpdateGeoCoords(coords),
-        fallback, {timeout: 3000, maximumAge: Infinity});
-    } else {
-      fallback();
-    }
-  }
-  _maybeUpdateGeoCoords({latitude, longitude}) {
-    const {geoCoords} = this._state;
-    // Skip setting the position if it's the same as what we've already got.
-    if (!geoCoords || geoCoords.latitude != latitude || geoCoords.longitude != longitude) {
-      this._setState({geoCoords: {latitude, longitude}});
-    }
-  }
   _onData(e, data) {
     if (this._setState({[e.type]: data})) {
       log(e.type, data);
@@ -167,4 +180,6 @@ class ShellHandles extends Xen.Debug(Xen.Base, log) {
     this._fire('launcherarcs', arcs);
   }
 }
+
+const log = Xen.Base.logFactory('ShellHandles', '#004f00');
 customElements.define('shell-handles', ShellHandles);
