@@ -1,5 +1,5 @@
-commit bd2057ccb50b0db36c0e5fcb0d1baaff8bfd55d8
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Mar 21 12:35:42 2018 +1100
+commit ef0c789c72d24a3f7a3548c402494dc8d951f197
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Wed Mar 28 16:16:16 2018 +1100
 
-    Adds a ruleset to the Strategizer
+    Add a markdown file that describes the schema landscape (#1065)
