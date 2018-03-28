@@ -1,5 +1,5 @@
-commit d3b68d864687ddd63101094e6b31b82733e53004
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Mar 27 16:10:17 2018 +1100
+commit 3e692ffa6315e0fd692fd87d10ed3f522567f607
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Wed Mar 28 11:22:12 2018 +1100
 
-    Tests for strategies in separate files
+    Require node 9
