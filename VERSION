@@ -1,5 +1,5 @@
-commit 816423b99f549bc6ec974cf95a33777a63c99828
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Wed Mar 28 14:56:58 2018 -0700
+commit 763084c11ba577133f010d48b7357c1561246d75
+Author: Yuin Chien <yuin@google.com>
+Date:   Wed Mar 28 15:01:30 2018 -0700
 
-    restore wdio.conf.js to default
+    updated launcher tile margin & padding
