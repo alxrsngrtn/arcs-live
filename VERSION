@@ -1,5 +1,5 @@
-commit 723fc323dcb6b01edc949fa3c3e19e92d63abb8d
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Thu Mar 29 08:50:26 2018 +1100
+commit 816423b99f549bc6ec974cf95a33777a63c99828
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Wed Mar 28 14:56:58 2018 -0700
 
-    Serialization uses inline schemas (#1073)
+    restore wdio.conf.js to default
