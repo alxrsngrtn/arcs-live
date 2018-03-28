@@ -1348,7 +1348,7 @@ class Type {
     if (this.isSetView)
       return `[${this.primitiveType().toString()}]`;
     if (this.isEntity)
-      return this.entitySchema.name;
+      return this.entitySchema.toInlineSchemaString();
     if (this.isInterface)
       return this.interfaceShape.name;
     if (this.isTuple)
@@ -2022,6 +2022,8 @@ init();
 
 
 
+
+
 class Schema {
   constructor(model) {
     let legacy = [];
@@ -2082,8 +2084,23 @@ class Schema {
   }
 
   static typesEqual(fieldType1, fieldType2) {
-    // TODO: structural check instead of JSON.
-    return JSON.stringify(fieldType1) == JSON.stringify(fieldType2);
+    // TODO: structural check instead of stringification.
+    return Schema._typeString(fieldType1) == Schema._typeString(fieldType2);
+  }
+
+  static _typeString(type) {
+    if (typeof(type) != 'object') {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(typeof type == 'string');
+      return type;
+    }
+    switch (type.kind) {
+      case 'schema-union':
+        return `(${type.types.join(' or ')})`;
+      case 'schema-tuple':
+        return `(${type.types.join(', ')})`;
+      default:
+        throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
+    }
   }
 
   static union(schema1, schema2) {
@@ -2282,51 +2299,28 @@ class Schema {
     return clazz;
   }
 
-  toString() {
+  toInlineSchemaString() {
+    let names = (this.names || ['*']).join(' ');
+    let fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
+    return `${names} {${fields}}`;
+  }
+  
+  toManifestString() {
     let results = [];
     results.push(`schema ${this.names.join(' ')}`);
-
-    for (let [name, type] of Object.entries(this.fields)) {
-      let typeString;
-      if (typeof(type) == 'object') {
-        switch (type.kind) {
-          case 'schema-union':
-            typeString = `(${type.types.join(' or ')})`;
-            break;
-          case 'schema-tuple':
-            typeString = `(${type.types.join(', ')})`;
-            break;
-          default:
-            throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
-        }
-      } else {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(typeof type == 'string');
-        typeString = type;
-      }
-      results.push(`  ${typeString} ${name}`);
-    }
-
+    results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
     if (Object.keys(this.description).length > 0) {
       results.push(`  description \`${this.description.pattern}\``);
-      Object.keys(this.description).forEach(name => {
+      for (let name of Object.keys(this.description)) {
         if (name != 'pattern') {
           results.push(`    ${name} \`${this.description[name]}\``);
         }
-      });
+      }
     }
-
     return results.join('\n');
   }
-
-  toManifestString() {
-    return this.toString();
-  }
 }
-
-/* harmony default export */ __webpack_exports__["a"] = (Schema);
-
-
-
+/* harmony export (immutable) */ __webpack_exports__["a"] = Schema;
 
 
 /***/ }),
@@ -3963,7 +3957,9 @@ ${e.message}
       particle.verbs = item.ref.verbs;
       if (item.ref.name) {
         let spec = manifest.findParticleByName(item.ref.name);
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(spec, `could not find particle ${item.ref.name}`);
+        if (!spec) {
+          throw new ManifestError(item.location, `could not find particle ${item.ref.name}`);
+        }
         particle.spec = spec.clone();
       }
       if (item.name) {
@@ -4238,7 +4234,7 @@ ${e.message}
     });
 
     Object.values(this._schemas).forEach(s => {
-      results.push(s.toString());
+      results.push(s.toManifestString());
     });
 
     Object.values(this._particles).forEach(p => {
@@ -4936,21 +4932,6 @@ class Particle {
       return true;
     }
     return false;
-  }
-  // TODO: Move to transformation-particle class.
-  // TODO: Don't serialize schemas, once partial schemas are in use.
-  serializeSchema(hostedParticle) {
-    let hostedConnSchemas = new Set();
-    hostedParticle.connections.forEach(conn => {
-      let type = conn.type.isSetView ? conn.type.primitiveType() : conn.type;
-      if (type.isEntity) {
-        hostedConnSchemas.add(type.entitySchema.toString());
-      }
-    });
-    let schemaString =
-`${[...hostedConnSchemas].map(schema => schema.toString()).join('\n\r')}
-${hostedParticle.toString()}`;
-    return schemaString;
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["b"] = Particle;
@@ -8730,13 +8711,11 @@ class Arc {
   }
 
   async _serializeHandles() {
-    let schemas = '';
     let handles = '';
     let resources = '';
     let interfaces = '';
 
     let id = 0;
-    let schemaSet = new Set();
     let importSet = new Set();
     for (let handle of this._activeRecipe.handles) {
       if (handle.fate == 'map')
@@ -8749,13 +8728,6 @@ class Arc {
       let type = handle.type;
       if (type.isSetView)
         type = type.primitiveType();
-      if (type.isEntity) {
-        let schema = type.entitySchema.toString();
-        if (!schemaSet.has(schema)) {
-          schemaSet.add(schema);
-          schemas += schema + '\n';
-        }
-      }
       if (type.isInterface) {
         interfaces += type.interfaceShape.toString() + '\n';
       }
@@ -8791,7 +8763,7 @@ class Arc {
       }
     }
 
-    return resources + interfaces + schemas + handles;
+    return resources + interfaces + handles;
   }
 
   _serializeParticles() {

@@ -1,5 +1,5 @@
-commit cf56ecb97472fa2e311863e98f356df8e2be400e
+commit 723fc323dcb6b01edc949fa3c3e19e92d63abb8d
 Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Wed Mar 28 17:12:55 2018 +1100
+Date:   Thu Mar 29 08:50:26 2018 +1100
 
-    Add tests for resolve-recipe around type specifics
+    Serialization uses inline schemas (#1073)
