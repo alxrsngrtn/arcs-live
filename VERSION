@@ -1,9 +1,5 @@
-commit d25587e6d81a6a9f1d59cc500ce59fddba6b51c3
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Mar 28 20:47:13 2018 -0700
+commit 837821a6d2d15ed4a25560a5df75b943f657f7c8
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu Mar 29 15:14:19 2018 +1100
 
-    don't touch arc record if there is no key (#1089)
-    
-    * don't touch arc record if there is no key
-    
-    * don't try to write a null user
+    Only serialize particles and handles that are in the active recipe. (#1090)

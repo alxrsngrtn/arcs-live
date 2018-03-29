@@ -9008,14 +9008,19 @@ class Arc {
 
     let id = 0;
     let importSet = new Set();
+    let handleSet = new Set();
     for (let handle of this._activeRecipe.handles) {
       if (handle.fate == 'map')
         importSet.add(this.context.findManifestUrlForHandleId(handle.id));
+      else 
+        handleSet.add(handle.id);
     }
     for (let url of importSet.values())
       resources += `import '${url}'\n`;
 
-    for (let handle of this._handlesById.values()) {
+    for (let handle of this._handles) {
+      if (!handleSet.has(handle.id))
+        continue;
       let type = handle.type;
       if (type.isSetView)
         type = type.primitiveType();
@@ -9058,7 +9063,7 @@ class Arc {
   }
 
   _serializeParticles() {
-    return [...this.particleHandleMaps.values()].map(entry => entry.spec.toString()).join('\n');
+    return this._activeRecipe.particles.map(entry => entry.spec.toString()).join('\n');
   }
 
   _serializeStorageKey() {
