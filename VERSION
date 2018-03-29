@@ -1,5 +1,15 @@
-commit 837821a6d2d15ed4a25560a5df75b943f657f7c8
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu Mar 29 15:14:19 2018 +1100
+commit ef5b43cf3c10d7267b96939f2f25cea01f4f7742
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Thu Mar 29 08:56:38 2018 -0700
 
-    Only serialize particles and handles that are in the active recipe. (#1090)
+    new giftlist demo flow (#1074)
+    
+    Major changes are that Claire edits her own wishlist, and shares that with the purchaser, and all data is derived from the browser (rather than having checked in assets).
+    
+    * Introduce a new annotation particle to provide alternate shipping information for products that won't arrive in time
+    * Show Claire's birthday, and an editable desired shipping date. By default dates are set so some products will make it in time, and some won't.
+    * Claire (a different user) can edit her wishlist, from choices populated from current browser context via the extension.
+    * Remove all local assets for the old flow.
+    * Skip failing tests that need major re-work (#1077, #1078).
+    
+    Note that nested annotations aren't yet supported, otherwise that would be an ideal solution. See #1009.
