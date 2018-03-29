@@ -1,5 +1,5 @@
-commit a8240bf999326124c4074939e516068d47eb7e84
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Thu Mar 29 11:02:30 2018 +1100
+commit ac6f7abf674b8f5ae928b69cf1896cc6da253ed9
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Wed Mar 28 15:22:49 2018 -0700
 
-    Add schema aliases
+    add `toLiteral` to `metaTypeFromType` as per instructions from down-under
