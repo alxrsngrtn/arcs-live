@@ -1,12 +1,12 @@
-commit 481c186e8c7275032ce14135fecb00f0c920a406
+commit edb209a5959ab3ea8d1efb9b02c3387b4e7f6d93
 Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Thu Mar 29 13:14:06 2018 -0700
+Date:   Thu Mar 29 13:16:35 2018 -0700
 
-    introduce command-line arguments to debug selenium tests (#1094)
+    small fixes for documentation (#1092)
     
-    This is a sane set - not everything - limited to non-headless and longer
-    timeouts.
-    
-    To activate, from npm: `npm run test-wdio --wdio-debug=true` (or `npm
-    test --wdio-debug=true`). From wdio directly: `node_modules/.bin/wdio
-    --wdio-debug=true`.
+    - the runtime path was incorrect (it was still referencing a separate
+      arcs repo)
+    - the toCamelCase method was transforming 'foo-bar' -> 'foo bar',
+      instead of 'foo-bar' -> 'FooBar'. The spaces weren't supported
+      elsewhere (sometimes we used an escaped `%20`, but not always), so the
+      getting started page wasn't loaded.
