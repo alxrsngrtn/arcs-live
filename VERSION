@@ -1,10 +1,5 @@
-commit 50f3cdc039ff247e128e2111120568bb62fce437
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Mar 29 12:15:07 2018 -0700
+commit c7e390b73cbaf5bb53c1b566f70e43aea8b5714f
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Mar 29 13:09:11 2018 -0700
 
-    Factor muxer for improved extensibility. (#1093)
-    
-    Updated version of https://github.com/PolymerLabs/arcs/pull/1018.
-    
-    Changes for social that make use of this new structure to follow
-    separately.
+    only clamp width if device > 600px (#1087)
