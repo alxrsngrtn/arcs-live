@@ -1,15 +1,10 @@
-commit ef5b43cf3c10d7267b96939f2f25cea01f4f7742
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Thu Mar 29 08:56:38 2018 -0700
+commit 50f3cdc039ff247e128e2111120568bb62fce437
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Thu Mar 29 12:15:07 2018 -0700
 
-    new giftlist demo flow (#1074)
+    Factor muxer for improved extensibility. (#1093)
     
-    Major changes are that Claire edits her own wishlist, and shares that with the purchaser, and all data is derived from the browser (rather than having checked in assets).
+    Updated version of https://github.com/PolymerLabs/arcs/pull/1018.
     
-    * Introduce a new annotation particle to provide alternate shipping information for products that won't arrive in time
-    * Show Claire's birthday, and an editable desired shipping date. By default dates are set so some products will make it in time, and some won't.
-    * Claire (a different user) can edit her wishlist, from choices populated from current browser context via the extension.
-    * Remove all local assets for the old flow.
-    * Skip failing tests that need major re-work (#1077, #1078).
-    
-    Note that nested annotations aren't yet supported, otherwise that would be an ideal solution. See #1009.
+    Changes for social that make use of this new structure to follow
+    separately.
