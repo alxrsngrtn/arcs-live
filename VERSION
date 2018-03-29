@@ -1,5 +1,12 @@
-commit c7e390b73cbaf5bb53c1b566f70e43aea8b5714f
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Mar 29 13:09:11 2018 -0700
+commit 481c186e8c7275032ce14135fecb00f0c920a406
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Thu Mar 29 13:14:06 2018 -0700
 
-    only clamp width if device > 600px (#1087)
+    introduce command-line arguments to debug selenium tests (#1094)
+    
+    This is a sane set - not everything - limited to non-headless and longer
+    timeouts.
+    
+    To activate, from npm: `npm run test-wdio --wdio-debug=true` (or `npm
+    test --wdio-debug=true`). From wdio directly: `node_modules/.bin/wdio
+    --wdio-debug=true`.
