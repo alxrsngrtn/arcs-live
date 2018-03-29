@@ -1,5 +1,5 @@
-commit 21420e758cac045cb340977cb971af7e74477837
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Mar 28 17:37:38 2018 -0700
+commit 55695440d29e43507d9557dac0a39907228c5951
+Author: Scott J Miles <sjmiles@google.com>
+Date:   Wed Mar 28 18:23:37 2018 -0700
 
-    fix selector sent to qSA (#1083)
+    track dom-slot created MutationObservers to afford teardown of an Arc
