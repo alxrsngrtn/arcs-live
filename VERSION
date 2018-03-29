@@ -1,5 +1,5 @@
-commit ac6f7abf674b8f5ae928b69cf1896cc6da253ed9
-Author: Scott J Miles <sjmiles@google.com>
-Date:   Wed Mar 28 15:22:49 2018 -0700
+commit 21420e758cac045cb340977cb971af7e74477837
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Mar 28 17:37:38 2018 -0700
 
-    add `toLiteral` to `metaTypeFromType` as per instructions from down-under
+    fix selector sent to qSA (#1083)
