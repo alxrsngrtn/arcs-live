@@ -5703,7 +5703,7 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 
 
 
-let templates = new Map();
+const templates = new Map();
 
 class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* default */] {
   constructor(consumeConn, arc, containerKind) {
@@ -5750,10 +5750,13 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* default */] 
     const observers = DomSlot._observers || (DomSlot._observers = []);
     observers.push(observer);
   }
-  static disconnectObservers() {
+  static dispose() {
+    // disconnect observers
     const observers = DomSlot._observers;
     observers && observers.forEach(o => o.disconnect());
     DomSlot._observers = [];
+    // empty template cache
+    templates.clear();
   }
   _initMutationObserver() {
     const observer = this.__initMutationObserver();

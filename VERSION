@@ -1,17 +1,5 @@
-commit ed927b6296527854301487a4b5326b91edf50a98
+commit 56463d9b606407fb29e5fabb2e98e96e854f1838
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Mar 29 19:18:16 2018 -0700
+Date:   Fri Mar 30 00:38:21 2018 -0700
 
-    Fix share state bug (#1095)
-    
-    * Expose Xen on Window for console access, expose Xen.nob(), use deep-cloning (when possible) for logged objects so we don't get trick info
-    
-    * state.share not share.state, do not modify user record unless there is a share-state mismatch
-    
-    * replace missing fields in user record after reading from FB
-    
-    * Prevent exceptions if metadata is null (aka an arc record is broken)
-    
-    * better if menu-panel doesn't just float out into space
-    
-    * create metadata Object when none exists
+    rename `disconnectObservers` to `dispose`, add clearing of the template cache to it's mandate (#1096)
