@@ -1,7 +1,5 @@
-commit 08901307d827cfc532a1697104df9a7968999bfd
+commit a857954fc1cd30fd349095f72454c9a3997a7ce1
 Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Fri Mar 30 15:37:34 2018 -0700
+Date:   Fri Mar 30 16:09:52 2018 -0700
 
-    prompt to create/select a user if none is available (#1098)
-    
-    Moves the new user flow inline with user selection.
+    check to make sure user exists before referencing it (#1099)
