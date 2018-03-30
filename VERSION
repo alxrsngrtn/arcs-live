@@ -1,5 +1,7 @@
-commit 56463d9b606407fb29e5fabb2e98e96e854f1838
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Mar 30 00:38:21 2018 -0700
+commit 08901307d827cfc532a1697104df9a7968999bfd
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Fri Mar 30 15:37:34 2018 -0700
 
-    rename `disconnectObservers` to `dispose`, add clearing of the template cache to it's mandate (#1096)
+    prompt to create/select a user if none is available (#1098)
+    
+    Moves the new user flow inline with user selection.
