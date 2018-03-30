@@ -1,12 +1,17 @@
-commit edb209a5959ab3ea8d1efb9b02c3387b4e7f6d93
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Thu Mar 29 13:16:35 2018 -0700
+commit ed927b6296527854301487a4b5326b91edf50a98
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Mar 29 19:18:16 2018 -0700
 
-    small fixes for documentation (#1092)
+    Fix share state bug (#1095)
     
-    - the runtime path was incorrect (it was still referencing a separate
-      arcs repo)
-    - the toCamelCase method was transforming 'foo-bar' -> 'foo bar',
-      instead of 'foo-bar' -> 'FooBar'. The spaces weren't supported
-      elsewhere (sometimes we used an escaped `%20`, but not always), so the
-      getting started page wasn't loaded.
+    * Expose Xen on Window for console access, expose Xen.nob(), use deep-cloning (when possible) for logged objects so we don't get trick info
+    
+    * state.share not share.state, do not modify user record unless there is a share-state mismatch
+    
+    * replace missing fields in user record after reading from FB
+    
+    * Prevent exceptions if metadata is null (aka an arc record is broken)
+    
+    * better if menu-panel doesn't just float out into space
+    
+    * create metadata Object when none exists
