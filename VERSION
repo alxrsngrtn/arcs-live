@@ -1,5 +1,5 @@
-commit a857954fc1cd30fd349095f72454c9a3997a7ce1
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Fri Mar 30 16:09:52 2018 -0700
+commit 277b4bc6c800ffd5a3b46efde752717c097193d6
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Mar 30 21:18:09 2018 -0700
 
-    check to make sure user exists before referencing it (#1099)
+    Remove FavoriteFood from standard profile recipe, use Noto Emoji for new FoodPicker (#1100)
