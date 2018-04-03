@@ -2422,7 +2422,6 @@ class ParticleSpec {
     this.connections.forEach(a => this.connectionMap.set(a.name, a));
     this.inputs = this.connections.filter(a => a.isInput);
     this.outputs = this.connections.filter(a => a.isOutput);
-    this.transient = model.transient;
 
     // initialize descriptions patterns.
     model.description = model.description || {};
@@ -2468,19 +2467,19 @@ class ParticleSpec {
   }
 
   toLiteral() {
-    let {args, name, verbs, transient, description, implFile, affordance, slots} = this._model;
+    let {args, name, verbs, description, implFile, affordance, slots} = this._model;
     args = args.map(a => {
       let {type, direction, name, isOptional} = a;
       type = type.toLiteral();
       return {type, direction, name, isOptional};
     });
-    return {args, name, verbs, transient, description, implFile, affordance, slots};
+    return {args, name, verbs, description, implFile, affordance, slots};
   }
 
   static fromLiteral(literal) {
-    let {args, name, verbs, transient, description, implFile, affordance, slots} = literal;
+    let {args, name, verbs, description, implFile, affordance, slots} = literal;
     args = args.map(({type, direction, name, isOptional}) => ({type: __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(type), direction, name, isOptional}));
-    return new ParticleSpec({args, name, verbs, transient, description, implFile, affordance, slots});
+    return new ParticleSpec({args, name, verbs, description, implFile, affordance, slots});
   }
 
   clone() {
@@ -3796,7 +3795,7 @@ ${e.message}
     visitor.traverse(items);
   }
   static _processSchema(manifest, schemaItem) {
-    let description;
+    let description = '';
     let fields = {};
     let names = [...schemaItem.names];
     for (let item of schemaItem.items) {
@@ -20680,7 +20679,9 @@ async function realTransaction(reference, transactionFunction) {
   return reference.transaction(data => {
     if (data == null)
       data = realData;
-    return transactionFunction(data);
+    let result = transactionFunction(data);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(result);
+    return result;
   }, undefined, false);
 }
 
@@ -20734,6 +20735,7 @@ class FirebaseStorage {
       if (!shouldExist) {
         return {version: 0};
       }
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(data);     
       return data;
     });
 

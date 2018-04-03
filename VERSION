@@ -1,5 +1,9 @@
-commit 8f7bb48d08fe659eec518ff09e117448758697d8
+commit a394b2139937365d68ab754ec0c7ad1004eed7f1
 Author: shans <shane.stephens@gmail.com>
-Date:   Wed Apr 4 09:12:44 2018 +1000
+Date:   Wed Apr 4 09:19:56 2018 +1000
 
-    Make sure slots deserialize cleanly (#1111)
+    prevent null data in firebase (#1110)
+    
+    * prevent null data in firebase
+    
+    * move assert
