@@ -1,5 +1,11 @@
-commit 049689f5c23d5b3d0867661c38866d991b58277b
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Apr 2 14:58:07 2018 -0700
+commit 2280c790873b0166626e3b15e1c32067c95fe156
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Apr 3 10:02:38 2018 +1000
 
-    Report missing map handle errors in Arc.loadRecipe. (#1101)
+    Demonstrate that slot constraints work better than I expected. (#1091)
+    
+    * Demonstrate that slot constraints work better than I expected.
+    
+    * lint fix.
+    
+    * remove 'only' designator on test.
