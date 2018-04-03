@@ -1,7 +1,12 @@
-commit 4a9ec2e31e6fb2b93ba061c41195a97c9625bd50
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed Apr 4 02:36:23 2018 +1000
+commit 935313499593a8798a9e6e23a582ca24604fe124
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Tue Apr 3 11:59:00 2018 -0700
 
-    Minor cleanup of match-recipe-by-verb. (#1106)
+    Muxer: map/build other views and connections per-item. (#1107)
     
-    This probably fixes a bug in slot matching too.
+    When muxing on a per-item basis the other-views/connections can vary
+    with each item. This patch is just an incremental step toward dealing
+    with this gracefully, and leaves a couple of TODOs.
+    
+    A social recipe that makes demonstrative use of these muxer changes to
+    follow shortly.
