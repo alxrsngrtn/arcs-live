@@ -1,5 +1,7 @@
-commit 4f230776ed6da5985bcac222e01b856f94fb6881
+commit 26b50aaf681329c33c1e2eb964deded2369efb4d
 Author: shans <shane.stephens@gmail.com>
-Date:   Tue Apr 3 10:26:23 2018 +1000
+Date:   Tue Apr 3 10:27:04 2018 +1000
 
-    Prevent type comparison from asserting (#1105)
+    Handle constraints (#1102)
+    
+    Implement handle constraints on recipe verb substitutions.
