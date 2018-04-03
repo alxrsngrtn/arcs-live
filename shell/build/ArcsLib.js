@@ -2162,6 +2162,8 @@ class Schema {
       fields[name] = type;
     }
     for (let [name, type] of Object.entries(otherSchema.fields)) {
+      if (fields[name] == undefined)
+        return false;
       if (!Schema.typesEqual(fields[name], type)) {
         return false;
       }

@@ -1,11 +1,5 @@
-commit 2280c790873b0166626e3b15e1c32067c95fe156
+commit 4f230776ed6da5985bcac222e01b856f94fb6881
 Author: shans <shane.stephens@gmail.com>
-Date:   Tue Apr 3 10:02:38 2018 +1000
+Date:   Tue Apr 3 10:26:23 2018 +1000
 
-    Demonstrate that slot constraints work better than I expected. (#1091)
-    
-    * Demonstrate that slot constraints work better than I expected.
-    
-    * lint fix.
-    
-    * remove 'only' designator on test.
+    Prevent type comparison from asserting (#1105)
