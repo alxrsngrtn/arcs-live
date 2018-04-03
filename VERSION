@@ -1,7 +1,7 @@
-commit 26b50aaf681329c33c1e2eb964deded2369efb4d
+commit 4a9ec2e31e6fb2b93ba061c41195a97c9625bd50
 Author: shans <shane.stephens@gmail.com>
-Date:   Tue Apr 3 10:27:04 2018 +1000
+Date:   Wed Apr 4 02:36:23 2018 +1000
 
-    Handle constraints (#1102)
+    Minor cleanup of match-recipe-by-verb. (#1106)
     
-    Implement handle constraints on recipe verb substitutions.
+    This probably fixes a bug in slot matching too.
