@@ -1,5 +1,5 @@
-commit 57e2fdae865cd55e4ee5d201766a194e3a2143b5
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Tue Apr 3 12:37:57 2018 -0700
+commit 8f7bb48d08fe659eec518ff09e117448758697d8
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Apr 4 09:12:44 2018 +1000
 
-    Initial social feed recipe using muxer and embedded item recipes. (#1108)
+    Make sure slots deserialize cleanly (#1111)
