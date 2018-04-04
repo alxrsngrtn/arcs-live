@@ -1,5 +1,5 @@
-commit 189b0a0066a35841e3fa5e5c99b9c68af846fa4d
+commit a8b959287b5821be595bf6fbbf1f3bb0cc4bd314
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Apr 4 14:36:27 2018 -0700
+Date:   Wed Apr 4 15:08:22 2018 -0700
 
-    propagate `step` event from below, don't cache and fire (#1120)
+    replace `<i class="material_icons">` with `<icon>` (#1119)
