@@ -1,5 +1,5 @@
-commit d2b4e6872ff68eba9f1caafc16fb49fa4c11b3c2
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Apr 4 12:01:01 2018 -0700
+commit 05923205cc070c99558a46a18a96970483982f39
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Apr 4 12:17:45 2018 -0700
 
-    Use polymorphic muxing for Words stats items. (#1112)
+    Cannot in general use cached state/props values across awaits (#1118)
