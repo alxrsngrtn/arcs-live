@@ -1,9 +1,7 @@
-commit a394b2139937365d68ab754ec0c7ad1004eed7f1
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed Apr 4 09:19:56 2018 +1000
+commit 725802b69dd67cc815f2f21eb91a74e4d699ae18
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Wed Apr 4 09:18:28 2018 -0700
 
-    prevent null data in firebase (#1110)
+    prompt to create/select a user when the current user doesn't exist in the database
     
-    * prevent null data in firebase
-    
-    * move assert
+    I left this as a todo last time, but having it will make the tests easier.
