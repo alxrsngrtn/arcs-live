@@ -1,18 +1,5 @@
-commit 02edcae2f761b64ba0dc70276deab6bbff882e4c
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Wed Apr 4 10:19:52 2018 -0700
+commit d2b4e6872ff68eba9f1caafc16fb49fa4c11b3c2
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Apr 4 12:01:01 2018 -0700
 
-    isolated database for tests (#1113)
-    
-    * add a test-only firebase with individually isolated instances
-    The URL parameter `testFirebaseKey` will attach to a test firebase, with
-    the value prepended to all accesses to that database (in lieu of a
-    version).
-    
-    * test flow includes new user creation
-    - current issue: only the first `describe` grouping of tests will work.
-      Every `describe` creates a new database, but the browser (and hence
-      the logged-in cookie) persists between `describe`s.
-    
-    * fix `waitUntilVisible` now actually checks for visibility (not just
-      selectability)
+    Use polymorphic muxing for Words stats items. (#1112)
