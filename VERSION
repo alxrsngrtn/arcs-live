@@ -1,7 +1,18 @@
-commit 725802b69dd67cc815f2f21eb91a74e4d699ae18
+commit 02edcae2f761b64ba0dc70276deab6bbff882e4c
 Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Wed Apr 4 09:18:28 2018 -0700
+Date:   Wed Apr 4 10:19:52 2018 -0700
 
-    prompt to create/select a user when the current user doesn't exist in the database
+    isolated database for tests (#1113)
     
-    I left this as a todo last time, but having it will make the tests easier.
+    * add a test-only firebase with individually isolated instances
+    The URL parameter `testFirebaseKey` will attach to a test firebase, with
+    the value prepended to all accesses to that database (in lieu of a
+    version).
+    
+    * test flow includes new user creation
+    - current issue: only the first `describe` grouping of tests will work.
+      Every `describe` creates a new database, but the browser (and hence
+      the logged-in cookie) persists between `describe`s.
+    
+    * fix `waitUntilVisible` now actually checks for visibility (not just
+      selectability)
