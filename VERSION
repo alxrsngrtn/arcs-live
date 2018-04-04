@@ -1,5 +1,5 @@
-commit 05923205cc070c99558a46a18a96970483982f39
+commit 189b0a0066a35841e3fa5e5c99b9c68af846fa4d
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Apr 4 12:17:45 2018 -0700
+Date:   Wed Apr 4 14:36:27 2018 -0700
 
-    Cannot in general use cached state/props values across awaits (#1118)
+    propagate `step` event from below, don't cache and fire (#1120)
