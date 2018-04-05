@@ -1,5 +1,7 @@
-commit 18876741f44a899c41cf95ae011c91fca328a596
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Apr 5 17:04:32 2018 +1000
+commit 2e389f6eef8a7fa38afa719437921848d80a94fb
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri Apr 6 02:17:44 2018 +1000
 
-    More stats in Strategy Explorer (#1124)
+    Ensure https://github.com/PolymerLabs/arcs/pull/1124 is reflected in (#1125)
+    
+    shell.
