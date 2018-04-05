@@ -1,5 +1,5 @@
-commit 1d682e41bcc7eb7a8f1682b74b967bb871509a95
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Thu Apr 5 14:27:27 2018 -0700
+commit 8c451d4a8542f3dd6e75b6e10575dd31fe6b947f
+Author: Bernhard Seefeld <seefeld@gmail.com>
+Date:   Thu Apr 5 14:53:29 2018 -0700
 
-    add hosting urls to readme (#1104)
+    fix mustaches and improve description (#1129)
