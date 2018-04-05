@@ -1,5 +1,5 @@
-commit 8c451d4a8542f3dd6e75b6e10575dd31fe6b947f
-Author: Bernhard Seefeld <seefeld@gmail.com>
-Date:   Thu Apr 5 14:53:29 2018 -0700
+commit dc1a7c2f4fa735b821193ce00d59fd0e64bbaf5c
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Apr 5 14:53:50 2018 -0700
 
-    fix mustaches and improve description (#1129)
+    default log level should be 2 (#1121)
