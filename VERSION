@@ -1,7 +1,5 @@
-commit 3a5e5bb30a54301ee3e7a3899379da8b79c92a9a
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Apr 4 17:01:31 2018 -0700
+commit 33ada46ad216a0654379b127ea9bcbf289c227ce
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Apr 4 19:57:44 2018 -0700
 
-    Move render particle logic to willReceiveProps. (#1115)
-    
-    Avoids need for async/await antics.
+    click a friend to open the current arc as their user (#1123)
