@@ -1,5 +1,7 @@
-commit a8b959287b5821be595bf6fbbf1f3bb0cc4bd314
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Apr 4 15:08:22 2018 -0700
+commit 3a5e5bb30a54301ee3e7a3899379da8b79c92a9a
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Apr 4 17:01:31 2018 -0700
 
-    replace `<i class="material_icons">` with `<icon>` (#1119)
+    Move render particle logic to willReceiveProps. (#1115)
+    
+    Avoids need for async/await antics.
