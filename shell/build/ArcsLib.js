@@ -651,9 +651,9 @@ class Strategizer {
     let record = {};
     record.generation = generation;
     record.sizeOfLastGeneration = this.generated.length;
-    record.outputSizesOfStrategies = {};
+    record.generatedDerivationsByStrategy = {};
     for (let i = 0; i < this._strategies.length; i++) {
-      record.outputSizesOfStrategies[this._strategies[i].constructor.name] = generated[i].length;
+      record.generatedDerivationsByStrategy[this._strategies[i].constructor.name] = generated[i].length;
     }
 
     generated = [].concat(...generated);
@@ -664,13 +664,15 @@ class Strategizer {
       return result;
     }));
 
-    record.rawGenerated = generated.length;
+    record.generatedDerivations = generated.length;
     record.nullDerivations = 0;
     record.invalidDerivations = 0;
     record.duplicateDerivations = 0;
+    record.duplicateSameParentDerivations = 0;
     record.nullDerivationsByStrategy = {};
-    record.duplicateDerivationsByStrategy = {};
     record.invalidDerivationsByStrategy = {};
+    record.duplicateDerivationsByStrategy = {};
+    record.duplicateSameParentDerivationsByStrategy = {};
 
     generated = generated.filter(result => {
       let strategy = result.derivation[0].strategy.constructor.name;
@@ -683,11 +685,15 @@ class Strategizer {
               record.nullDerivationsByStrategy[strategy] = 0;
             record.nullDerivationsByStrategy[strategy]++;
           } else if (existingResult.derivation.map(a => a.parent).indexOf(result.derivation[0].parent) != -1) {
+            record.duplicateSameParentDerivations += 1;
+            if (record.duplicateSameParentDerivationsByStrategy[strategy] == undefined)
+              record.duplicateSameParentDerivationsByStrategy[strategy] = 0;
+            record.duplicateSameParentDerivationsByStrategy[strategy]++;
+          } else {
             record.duplicateDerivations += 1;
             if (record.duplicateDerivationsByStrategy[strategy] == undefined)
               record.duplicateDerivationsByStrategy[strategy] = 0;
             record.duplicateDerivationsByStrategy[strategy]++;
-          } else {
             this.populationHash.get(result.hash).derivation.push(result.derivation[0]);
           }
           return false;
@@ -696,7 +702,7 @@ class Strategizer {
       }
       if (result.valid === false) {
         record.invalidDerivations++;
-        record.invalidDerivationsByStrategy[strategy] = (record.duplicateDerivationsByStrategy[strategy] || 0) + 1;
+        record.invalidDerivationsByStrategy[strategy] = (record.invalidDerivationsByStrategy[strategy] || 0) + 1;
         return false;
       }
       return true;
@@ -715,7 +721,7 @@ class Strategizer {
     }
     terminal = [...terminal.values()];
 
-    record.totalGenerated = generated.length;
+    record.survivingDerivations = generated.length;
 
     generated.sort((a, b) => {
       if (a.score > b.score)
@@ -10068,11 +10074,6 @@ class Planner {
     });
   }
 
-  async generate() {
-    let log = await this.strategizer.generate();
-    return this.strategizer.generated;
-  }
-
   // Specify a timeout value less than zero to disable timeouts.
   async plan(timeout, generations) {
     let trace = __WEBPACK_IMPORTED_MODULE_29__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::plan', args: {timeout}});
@@ -10081,12 +10082,13 @@ class Planner {
     let now = () => (typeof performance == 'object') ? performance.now() : process.hrtime();
     let start = now();
     do {
-      let generated = await trace.wait(() => this.generate());
+      let record = await trace.wait(() => this.strategizer.generate());
+      let generated = this.strategizer.generated;
       trace.resume({args: {
-        generated: this.strategizer.generated.length,
+        generated: generated.length,
       }});
       if (generations) {
-        generations.push(generated);
+        generations.push({generated, record});
       }
 
       let resolved = this.strategizer.generated
@@ -10225,7 +10227,7 @@ class Planner {
   _updateGeneration(generations, hash, handler) {
     if (generations) {
       generations.forEach(g => {
-        g.forEach(gg => {
+        g.generated.forEach(gg => {
           if (gg.hash.endsWith(hash)) {
             handler(gg);
           }
@@ -18286,7 +18288,7 @@ class StrategyExplorerAdapter {
     this.lastID = 0;
   }
   adapt(generations) {
-    return generations.map(pop => this._preparePopulation(pop));
+    return generations.map(pop => this._preparePopulation(pop.generated, pop.record));
   }
   _addExtraPredecessor(parent, hash) {
     let extras = [];
@@ -18305,7 +18307,11 @@ class StrategyExplorerAdapter {
     }
     return extras;
   }
-  _preparePopulation(population) {
+  _preparePopulation(population, record) {
+    // Adding those here to reuse recipe resolution computation.
+    record.resolvedDerivations = 0;
+    record.resolvedDerivationsByStrategy = {};
+
     let extras = [];
     population = population.map(recipe => {
       let {result, score, derivation, description, hash, valid, active} = recipe;
@@ -18325,6 +18331,13 @@ class StrategyExplorerAdapter {
         return {parent, strategy};
       });
       item.resolved = item.result.isResolved();
+      if (item.resolved) {
+        record.resolvedDerivations++;
+        let strategy = item.derivation[0].strategy;
+        if (record.resolvedDerivationsByStrategy[strategy] === undefined)
+          record.resolvedDerivationsByStrategy[strategy] = 0;
+        record.resolvedDerivationsByStrategy[strategy]++;
+      }
       let options = {showUnresolved: true, showInvalid: false, details: ''};
       item.result = item.result.toString(options);
     });
@@ -18334,7 +18347,7 @@ class StrategyExplorerAdapter {
         populationMap[item.derivation[0].strategy] = [];
       populationMap[item.derivation[0].strategy].push(item);
     });
-    let result = {population: []};
+    let result = {population: [], record};
     Object.keys(populationMap).forEach(strategy => {
       result.population.push({strategy: strategy, recipes: populationMap[strategy]});
     });

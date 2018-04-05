@@ -1,5 +1,5 @@
-commit 33ada46ad216a0654379b127ea9bcbf289c227ce
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Apr 4 19:57:44 2018 -0700
+commit 18876741f44a899c41cf95ae011c91fca328a596
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Apr 5 17:04:32 2018 +1000
 
-    click a friend to open the current arc as their user (#1123)
+    More stats in Strategy Explorer (#1124)
