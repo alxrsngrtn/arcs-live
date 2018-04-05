@@ -1,7 +1,5 @@
-commit 2e389f6eef8a7fa38afa719437921848d80a94fb
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Apr 6 02:17:44 2018 +1000
+commit 1d682e41bcc7eb7a8f1682b74b967bb871509a95
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Thu Apr 5 14:27:27 2018 -0700
 
-    Ensure https://github.com/PolymerLabs/arcs/pull/1124 is reflected in (#1125)
-    
-    shell.
+    add hosting urls to readme (#1104)
