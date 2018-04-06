@@ -1,5 +1,5 @@
-commit dc1a7c2f4fa735b821193ce00d59fd0e64bbaf5c
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Apr 5 14:53:50 2018 -0700
+commit 2c8827406ed2b7534b45953ffa040c9d411062cc
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Apr 6 10:46:24 2018 +1000
 
-    default log level should be 2 (#1121)
+    Keeps orphaned slots in recipe.normalize() (#1134)
