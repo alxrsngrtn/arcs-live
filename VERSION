@@ -1,5 +1,17 @@
-commit 3ab8332684c725ca31d6f99573aa6fd3e05da45d
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Apr 6 15:32:17 2018 +1000
+commit a0eac943a7386ec7c6dadbebf9ee7d4f146283aa
+Author: Bernhard Seefeld <seefeld@gmail.com>
+Date:   Thu Apr 5 22:41:55 2018 -0700
 
-    Restaurants with verbs! (#1139)
+    GitHub VR (#1140)
+    
+    * start counting at 1 instead of 0 to avoid subid=0
+    
+    * fix avatars when posting mustaches
+    
+    * changing the description broke vr
+    
+    * in progress, texts not reliably appearing yet
+    
+    * fps: 5 captures changes, but that's a hack. reverted chat to a-text for now.
+    
+    * fps=1 instead of fps=0.2 seems saner
