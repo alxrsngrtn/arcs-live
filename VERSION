@@ -1,5 +1,5 @@
-commit 2c8827406ed2b7534b45953ffa040c9d411062cc
+commit 33d0c932234d4b83221e157517a01ce4b883003e
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Apr 6 10:46:24 2018 +1000
+Date:   Fri Apr 6 13:01:01 2018 +1000
 
-    Keeps orphaned slots in recipe.normalize() (#1134)
+    Fix to how strategy stats are coalesced (#1137)
