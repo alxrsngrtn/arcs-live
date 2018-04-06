@@ -1,5 +1,5 @@
-commit d52a224c8f84ce5537f9aadae5473ad14cf6d17a
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Sat Apr 7 06:58:40 2018 +1000
+commit 1fea666620a0aa322e8fea12396389bfdb08e5ce
+Author: shans <shane.stephens@gmail.com>
+Date:   Sat Apr 7 09:06:17 2018 +1000
 
-    Fix GroupHandleConnections producing null derivations (#1136)
+    Remove unused identifier file (#1143)
