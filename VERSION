@@ -1,7 +1,13 @@
-commit e26eaff1eb2510a4fad1d168f02a15a19960e876
-Author: Bernhard Seefeld <seefeld@gmail.com>
-Date:   Thu Apr 5 20:16:06 2018 -0700
+commit 08ce47d6d1ab655d5393a3e56de3c9fa3df0d774
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Apr 5 20:39:19 2018 -0700
 
-    ignore third_party directoy (#1138)
+    Html in vr (#1135)
     
-    ignore third_party directory anywhere in the tree
+    * newer a-frame, add html-shader component
+    
+    * add VrHtml test Particle
+    
+    * web-component to encapsulate work needed to render HTML into a-frame scene
+    
+    * don't need that file and it made lint angry
