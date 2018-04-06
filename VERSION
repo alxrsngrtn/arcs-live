@@ -1,17 +1,5 @@
-commit a0eac943a7386ec7c6dadbebf9ee7d4f146283aa
-Author: Bernhard Seefeld <seefeld@gmail.com>
-Date:   Thu Apr 5 22:41:55 2018 -0700
+commit d52a224c8f84ce5537f9aadae5473ad14cf6d17a
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Sat Apr 7 06:58:40 2018 +1000
 
-    GitHub VR (#1140)
-    
-    * start counting at 1 instead of 0 to avoid subid=0
-    
-    * fix avatars when posting mustaches
-    
-    * changing the description broke vr
-    
-    * in progress, texts not reliably appearing yet
-    
-    * fps: 5 captures changes, but that's a hack. reverted chat to a-text for now.
-    
-    * fps=1 instead of fps=0.2 seems saner
+    Fix GroupHandleConnections producing null derivations (#1136)
