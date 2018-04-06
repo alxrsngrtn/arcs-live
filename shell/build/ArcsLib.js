@@ -2411,7 +2411,7 @@ class SlotSpec {
     if (!slotModel.providedSlots)
       return;
     slotModel.providedSlots.forEach(ps => {
-      this.providedSlots.push(new ProvidedSlotSpec(ps.name, ps.isSet, ps.tags, ps.formFactor, ps.views));
+      this.providedSlots.push(new ProvidedSlotSpec(ps.name, ps.isSet, ps.tags, ps.formFactor, ps.handles));
     });
   }
 
@@ -2421,12 +2421,12 @@ class SlotSpec {
 }
 
 class ProvidedSlotSpec {
-  constructor(name, isSet, tags, formFactor, views) {
+  constructor(name, isSet, tags, formFactor, handles) {
     this.name = name;
     this.isSet = isSet;
     this.tags = tags;
     this.formFactor = formFactor; // TODO: deprecate form factors?
-    this.views = views;
+    this.handles = handles;
   }
 }
 
@@ -2458,7 +2458,7 @@ class ParticleSpec {
     // Verify provided slots use valid view connection names.
     this.slots.forEach(slot => {
       slot.providedSlots.forEach(ps => {
-        ps.views.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
+        ps.handles.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
       });
     });
   }
@@ -2520,11 +2520,11 @@ class ParticleSpec {
   }
 
   _toShape() {
-    const views = this._model.args;
+    const handles = this._model.args;
     // TODO: wat do?
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(!this.slots.length, 'please implement slots toShape');
     const slots = [];
-    return new __WEBPACK_IMPORTED_MODULE_2__shape_js__["a" /* default */](views, slots);
+    return new __WEBPACK_IMPORTED_MODULE_2__shape_js__["a" /* default */](handles, slots);
   }
 
   toString() {
@@ -2566,7 +2566,7 @@ class ParticleSpec {
         if (ps.formFactor) {
           results.push(`      formFactor ${ps.formFactor}`);
         }
-        ps.views.forEach(psv => results.push(`      view ${psv}`));
+        ps.handles.forEach(psv => results.push(`      view ${psv}`));
       });
     });
     // Description
@@ -11263,7 +11263,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           },
         peg$c118 = function(isSet, name, tags, items) {
             let formFactor = null;
-            let views = [];
+            let handles = [];
             items = items ? extractIndented(items) : [];
             items.forEach(item => {
               if (item.kind == 'form-factor') {
@@ -11271,7 +11271,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                   error('duplicate form factor for a slot');
                 formFactor = item.formFactor;
               } else {
-                views.push(item.view);
+                handles.push(item.handle);
               }
             });
             return {
@@ -11281,19 +11281,19 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               tags: optional(tags, tags => tags[1], []),
               isSet: !!isSet,
               formFactor,
-              views
+              handles
             };
           },
         peg$c119 = "handle",
         peg$c120 = peg$literalExpectation("handle", false),
-        peg$c121 = function(view) {
+        peg$c121 = function(handle) {
             return {
-              kind: 'particle-provided-slot-view',
+              kind: 'particle-provided-slot-handle',
               location: location(),
-              view,
+              handle,
             };
           },
-        peg$c122 = function(pattern, viewDescriptions) {
+        peg$c122 = function(pattern, handleDescriptions) {
             return {
               kind: 'description',
               location: location(),
@@ -11305,13 +11305,13 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                   name: 'pattern',
                   pattern: pattern,
                 },
-                ...optional(viewDescriptions, extractIndented, []),
+                ...optional(handleDescriptions, extractIndented, []),
               ],
             };
           },
         peg$c123 = function(name, pattern) {
             return {
-              kind: 'view-description',
+              kind: 'handle-description',
               location: location(),
               name,
               pattern,
@@ -14498,13 +14498,13 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$parseSlotFormFactor();
       if (s0 === peg$FAILED) {
-        s0 = peg$parseParticleProvidedSlotView();
+        s0 = peg$parseParticleProvidedSlotHandle();
       }
 
       return s0;
     }
 
-    function peg$parseParticleProvidedSlotView() {
+    function peg$parseParticleProvidedSlotHandle() {
       var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
@@ -20083,7 +20083,7 @@ class SlotConnection {
         this.providedSlots[providedSlot.name] = slot;
       }
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slot.handleConnections.length == 0, 'Handle connections must be empty');
-      providedSlot.views.forEach(handle => slot.handleConnections.push(this.particle.connections[handle]));
+      providedSlot.handles.forEach(handle => slot.handleConnections.push(this.particle.connections[handle]));
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slot._name == providedSlot.name);
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!slot.formFactor);
       slot.formFactor = providedSlot.formFactor;
