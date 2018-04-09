@@ -1149,7 +1149,10 @@ class Type {
   static newCollection(type) {
     return Type.newSetView(type);
   }
-
+  collectionOf() {
+    return Type.newSetView(this);
+  }
+  
   mergeTypeVariablesByName(variableMap) {
     if (this.isVariable) {
       let name = this.variable.name;
@@ -3433,7 +3436,7 @@ class Manifest {
     // TODO: These should be lists, possibly with a separate flattened map.
     this._particles = {};
     this._schemas = {};
-    this._handles = [];
+    this._stores = [];
     this._shapes = [];
     this._handleTags = new Map();
     this._fileName = null;
@@ -3477,7 +3480,7 @@ class Manifest {
     return this._fileName;
   }
   get handles() {
-    return this._handles;
+    return this._stores;
   }
   get scheduler() {
     return this._scheduler;
@@ -3498,23 +3501,23 @@ class Manifest {
   }
   // TODO: newParticle, Schema, etc.
   // TODO: simplify() / isValid().
-  async newHandle(type, name, id, tags) {
+  async newStore(type, name, id, tags) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!type.hasVariableReference, `handles can't have variable references`);
     let handle = await this.storageProviderFactory.construct(id, type, `in-memory://${this.id}`);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handle._version !== null);
     handle.name = name;
     this._handleManifestUrls.set(handle.id, this.fileName);
-    return this._addHandle(handle, tags);
+    return this._addStore(handle, tags);
   }
 
-  _addHandle(handle, tags) {
-    this._handles.push(handle);
+  _addStore(handle, tags) {
+    this._stores.push(handle);
     this._handleTags.set(handle, tags ? tags : []);
     return handle;
   }
 
-  newHandleStub(type, name, id, storageKey, tags) {
-    return this._addHandle({type, id, name, storageKey}, tags);
+  newStorageStub(type, name, id, storageKey, tags) {
+    return this._addStore({type, id, name, storageKey}, tags);
   }
 
   _find(manifestFinder) {
@@ -3553,38 +3556,38 @@ class Manifest {
   findParticlesByVerb(verb) {
     return [...this._findAll(manifest => Object.values(manifest._particles).filter(particle => particle.primaryVerb == verb))];
   }
-  findHandleByName(name) {
-    return this._find(manifest => manifest._handles.find(handle => handle.name == name));
+  findStorageByName(name) {
+    return this._find(manifest => manifest._stores.find(store => store.name == name));
   }
-  findHandleById(id) {
-    return this._find(manifest => manifest._handles.find(handle => handle.id == id));
+  findStorageById(id) {
+    return this._find(manifest => manifest._stores.find(store => store.id == id));
   }
   findManifestUrlForHandleId(id) {
     return this._find(manifest => manifest._handleManifestUrls.get(id));
   }
-  findHandlesByType(type, options={}) {
+  findStorageByType(type, options={}) {
     let tags = options.tags || [];
     let subtype = options.subtype || false;
-    function typePredicate(view) {
+    function typePredicate(store) {
       let resolvedType = type.resolvedType();
       if (!resolvedType.isResolved()) {
-        return type.isSetView == view.type.isSetView;
+        return type.isCollection == store.type.isCollection;
       }
 
       if (subtype) {
-        let [left, right] = __WEBPACK_IMPORTED_MODULE_7__type_js__["a" /* default */].unwrapPair(view.type, resolvedType);
+        let [left, right] = __WEBPACK_IMPORTED_MODULE_7__type_js__["a" /* default */].unwrapPair(store.type, resolvedType);
         if (left.isEntity && right.isEntity) {
           return left.entitySchema.isMoreSpecificThan(right.entitySchema);
         }
         return false;
       }
 
-      return view.type.equals(type);
+      return store.type.equals(type);
     }
     function tagPredicate(manifest, handle) {
       return tags.filter(tag => !manifest._handleTags.get(handle).includes(tag)).length == 0;
     }
-    return [...this._findAll(manifest => manifest._handles.filter(handle => typePredicate(handle) && tagPredicate(manifest, handle)))];
+    return [...this._findAll(manifest => manifest._stores.filter(store => typePredicate(store) && tagPredicate(manifest, store)))];
   }
   findShapeByName(name) {
     return this._find(manifest => manifest._shapes.find(shape => shape.name == name));
@@ -3804,7 +3807,7 @@ ${e.message}
           return;
         }
         case 'list-type':
-          node.model = __WEBPACK_IMPORTED_MODULE_7__type_js__["a" /* default */].newSetView(node.type.model);
+          node.model = __WEBPACK_IMPORTED_MODULE_7__type_js__["a" /* default */].newCollection(node.type.model);
           return;
         default:
           return;
@@ -3970,14 +3973,14 @@ ${e.message}
       let ref = item.ref || {tags: []};
       if (ref.id) {
         handle.id = ref.id;
-        let targetHandle = manifest.findHandleById(handle.id);
-        if (targetHandle)
-          handle.mapToView(targetHandle);
+        let targetStore = manifest.findStorageById(handle.id);
+        if (targetStore)
+          handle.mapToStorage(targetStore);
       } else if (ref.name) {
-        let targetHandle = manifest.findHandleByName(ref.name);
+        let targetStore = manifest.findStorageByName(ref.name);
         // TODO: Error handling.
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(targetHandle, `Could not find handle ${ref.name}`);
-        handle.mapToView(targetHandle);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(targetStore, `Could not find handle ${ref.name}`);
+        handle.mapToStorage(targetStore);
       }
       handle.tags = ref.tags;
       if (item.name) {
@@ -4121,13 +4124,13 @@ ${e.message}
           // TODO: Mark as immediate.
           targetHandle = recipe.newHandle();
           targetHandle.fate = 'copy';
-          let handle = await manifest.newHandle(type, null, id, []);
+          let store = await manifest.newStore(type, null, id, []);
           // TODO: loader should not be optional.
           if (hostedParticle.implFile && loader) {
             hostedParticle.implFile = loader.join(manifest.fileName, hostedParticle.implFile);
           }
-          handle.set(hostedParticle.clone().toLiteral());
-          targetHandle.mapToView(handle);
+          store.set(hostedParticle.clone().toLiteral());
+          targetHandle.mapToStorage(store);
         }
 
         if (targetParticle) {
@@ -4217,20 +4220,20 @@ ${e.message}
     let id = item.id;
     let type = item.type.model;
     if (id == null) {
-      id = `${manifest._id}view${manifest._handles.length}`;
+      id = `${manifest._id}store${manifest._stores.length}`;
     }
     let tags = item.tags;
     if (tags == null)
       tags = [];
 
     if (item.origin == 'storage') {
-      manifest.newHandleStub(type, name, id, item.source, tags);
+      manifest.newStorageStub(type, name, id, item.source, tags);
       return;
     }
 
-    let view = await manifest.newHandle(type, name, id, tags);
-    view.source = item.source;
-    view.description = item.description;
+    let store = await manifest.newStore(type, name, id, tags);
+    store.source = item.source;
+    store.description = item.description;
     let json;
     let source;
     if (item.origin == 'file') {
@@ -4241,7 +4244,7 @@ ${e.message}
       source = item.source;
       json = manifest.resources[source];
       if (json == undefined)
-        throw new Error(`Resource '${source}' referenced by view '${id}' is not defined in this manifest`);
+        throw new Error(`Resource '${source}' referenced by store '${id}' is not defined in this manifest`);
     }
     let entities;
     try {
@@ -4251,7 +4254,7 @@ ${e.message}
     }
 
     let unitType;
-    if (!type.isSetView) {
+    if (!type.isCollection) {
       if (entities.length == 0)
         return;
       entities = entities.slice(entities.length - 1);
@@ -4272,10 +4275,10 @@ ${e.message}
 
     let version = item.version || 0;
 
-    if (type.isSetView) {
-      view._fromListWithVersion(entities, version);
+    if (type.isCollection) {
+      store._fromListWithVersion(entities, version);
     } else {
-      view._setWithVersion(entities[0], version);
+      store._setWithVersion(entities[0], version);
     }
   }
   _newRecipe(name) {
@@ -5617,7 +5620,7 @@ class ViewMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategize
             let tscore = 0;
 
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(newView.id);
-            clonedView.mapToView(newView);
+            clonedView.mapToStorage(newView);
             if (clonedView.fate != 'copy') {
               clonedView.fate = fate;
             }
@@ -7266,12 +7269,12 @@ class Handle {
     }
     this._id = id;
   }
-  mapToView(view) {
-    this._id = view.id;
+  mapToStorage(storage) {
+    this._id = storage.id;
     this._type = undefined;
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(view.type == undefined || !(view.type.hasVariableReference), `variable references shouldn't be part of handle types`);
-    this._mappedType = view.type;
-    this._storageKey = view.storageKey;
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(storage.type == undefined || !(storage.type.hasVariableReference), `variable references shouldn't be part of handle types`);
+    this._mappedType = storage.type;
+    this._storageKey = storage.storageKey;
   }
   get localName() { return this._localName; }
   set localName(name) { this._localName = name; }
@@ -7960,7 +7963,7 @@ class AssignRemoteViews extends __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js
   }
 
   getMappableViews(type, tags=[]) {
-    return this._arc.context.findHandlesByType(type, {tags, subtype: true});
+    return this._arc.context.findStorageByType(type, {tags, subtype: true});
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = AssignRemoteViews;
@@ -8172,7 +8175,7 @@ class CopyRemoteViews extends __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__
   }
 
   getMappableViews(type, tags=[]) {
-    return this._arc.context.findHandlesByType(type, {tags, subtype: true});
+    return this._arc.context.findStorageByType(type, {tags, subtype: true});
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = CopyRemoteViews;
@@ -8997,7 +9000,7 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
             break;
           case 'map':
           case 'copy':
-            mappable = arc.context.findHandlesByType(handle.type, {tags: handle.tags, subtype: true});
+            mappable = arc.context.findStorageByType(handle.type, {tags: handle.tags, subtype: true});
             break;
           case 'create':
           case '?':
@@ -9016,7 +9019,7 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
 
         if (mappable.length == 1) {
           return (recipe, handle) => {
-            handle.mapToView(mappable[0]);
+            handle.mapToStorage(mappable[0]);
           };
         }
       }
@@ -9858,7 +9861,7 @@ ${this.activeRecipe.toString()}`;
   findHandleById(id) {
     let handle = this._handlesById.get(id);
     if (handle == null) {
-      handle = this._context.findHandleById(id);
+      handle = this._context.findStorageById(id);
     }
     return handle;
   }
@@ -19251,7 +19254,7 @@ class OuterPEC extends __WEBPACK_IMPORTED_MODULE_0__particle_execution_context_j
             missingHandles.push(handle);
             continue;
           }
-          handle.mapToView(fromHandle);
+          handle.mapToStorage(fromHandle);
         }
         if (missingHandles.length > 0) {
           error = `Recipe couldn't load due to missing handles [recipe=${recipe0}, missingHandles=${missingHandles.join('\n')}].`;
