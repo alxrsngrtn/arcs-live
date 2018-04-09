@@ -1,9 +1,5 @@
-commit d0e8eacfe2500a577d1c4e22cc5a81a51244b3bb
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Apr 9 17:47:15 2018 +1000
+commit 8e00b9f22bfbca926ddda6c507ab980811b61c01
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon Apr 9 13:01:48 2018 -0700
 
-    Remove references to view from manifest. (#1147)
-    
-    * Remove references to view from manifest.
-    
-    * Fix references to changed functions in shell, too.
+    Fix setIfDirty deprecation warnings in EditPost. (#1151)
