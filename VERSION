@@ -1,39 +1,8 @@
-commit 23ea14f9fb50b44251d8d80fd3d30fa1facfa2e2
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Apr 9 13:46:41 2018 -0700
+commit 8a28c6f4bb289af6a667fd10308e979f1c298600
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon Apr 9 13:49:41 2018 -0700
 
-    Proto work: serialization (#1109)
+    Remove Words leaderboard placeholder bits. (#1152)
     
-    * use _onStateData for events that can directly populate state, plump arc info through
-    
-    * add getUrlParam to utils to complement setUrlParam
-    
-    * create cloud-arc
-    
-    * change cloud-users to use WatchGroup instead of doing it by hand
-    
-    * make it easier to force a debug level
-    
-    * give Gomer some default coords that actually exist
-    
-    * plumb title add watch-group.js
-    
-    * try to clone at least first level
-    
-    * plumb first try at persistent arcs and handles via runtime storage
-    
-    * start building unit test infrastructure for a-s-p
-    
-    * simple rearrangement
-    
-    * more tests
-    
-    * simplify cloud-users
-    
-    * better test description
-    
-    * make xen-explainer actually work
-    
-    * a `suggestion` turns into a `plan` after instantiation, plumb basic search support
-    
-    * runtime literal models may sometimes contain `undefined` because of Firebase, constructed objects never should
+    Thinking is to approach this instead as a sortable-by-score variant of
+    the social feed recipe.
