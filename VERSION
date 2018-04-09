@@ -1,8 +1,14 @@
-commit 8a28c6f4bb289af6a667fd10308e979f1c298600
+commit 2fa00a91d1ed436dff9c6b8029ec8d05a12d4352
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Apr 9 13:49:41 2018 -0700
+Date:   Mon Apr 9 14:30:25 2018 -0700
 
-    Remove Words leaderboard placeholder bits. (#1152)
+    Rework social muxing toward Post-focused embedded recipes. (#1153)
     
-    Thinking is to approach this instead as a sortable-by-score variant of
-    the social feed recipe.
+    * Rework social muxing toward Post-focused embedded recipes.
+    
+    - Moving away from Stats schema subclassing Post.
+    
+    - Introducing unique game id for Words to allow social feed
+      embedded recipe to stitch together shared game data.
+    
+    * Shorten manifest references.
