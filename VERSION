@@ -1,5 +1,5 @@
-commit aa5ad90ceaf929da893292f1dff263bc75335213
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Apr 10 12:49:16 2018 -0700
+commit 86ca3303e02f43de570577fac4fe5789b32a1e9b
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Tue Apr 10 13:13:55 2018 -0700
 
-    fix dom-context provided slot initialization (#1161)
+    Support posts with only image content. (#1162)
