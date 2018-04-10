@@ -1,7 +1,5 @@
-commit 7d7aa347b81f27396be25b7fdfc00cb743ec985a
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Mon Apr 9 15:54:08 2018 -0700
+commit aa5ad90ceaf929da893292f1dff263bc75335213
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Apr 10 12:49:16 2018 -0700
 
-    Increment mainline to 0.3.5-alpha (#1155)
-    
-    Roll mainline over to new "alpha" release (0.3.5-alpha)
+    fix dom-context provided slot initialization (#1161)
