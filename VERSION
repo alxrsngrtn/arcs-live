@@ -1,5 +1,5 @@
-commit 86ca3303e02f43de570577fac4fe5789b32a1e9b
+commit a856cf853608d2b172ab2cf333cf2ef5d46adc8d
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Tue Apr 10 13:13:55 2018 -0700
+Date:   Tue Apr 10 14:18:19 2018 -0700
 
-    Support posts with only image content. (#1162)
+    Report progress during image upload. (#1164)
