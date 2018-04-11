@@ -1,5 +1,5 @@
-commit a856cf853608d2b172ab2cf333cf2ef5d46adc8d
+commit 220784efa051f49909ebd8e53c1719fd221cb00d
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Tue Apr 10 14:18:19 2018 -0700
+Date:   Tue Apr 10 16:08:40 2018 -0700
 
-    Report progress during image upload. (#1164)
+    Update manifest.md (#1166)
