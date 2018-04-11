@@ -1,5 +1,10 @@
-commit 951ac62ad65c21b296271a922147d98b8e0a9efc
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Apr 11 10:18:53 2018 -0700
+commit dc120eb336f4f4ca5c1331e6daabed7bee590968
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Apr 11 10:43:34 2018 -0700
 
-    fix readme "test-with-start" command (#1157)
+    Apply 'Stockwellian Delay' to dictionary loading. (#1167)
+    
+    * Apply 'Stockwellian Delay' to dictionary loading.
+    
+    Don't begin loading the dictionary until the user clicks the 'Start
+    Game' button.
