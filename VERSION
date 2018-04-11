@@ -1,5 +1,5 @@
-commit 220784efa051f49909ebd8e53c1719fd221cb00d
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Tue Apr 10 16:08:40 2018 -0700
+commit 951ac62ad65c21b296271a922147d98b8e0a9efc
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Apr 11 10:18:53 2018 -0700
 
-    Update manifest.md (#1166)
+    fix readme "test-with-start" command (#1157)
