@@ -1,5 +1,11 @@
-commit 3e81070966944e8369a1bdb6efc2a637d90eeb53
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Apr 12 16:21:33 2018 +1000
+commit f6b5f5de781aeab3ff5bd1079d7dcde556ad57ca
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Thu Apr 12 09:15:02 2018 -0700
 
-    Fix argument ordering in Variable constructor (#1175)
+    add extra debugging, extend timeout to improve stability (#1178)
+    
+    I believe that 02edcae contained a regression. As part of that cl I added code to have the waitForVisibible() method check for both selectability & visibility (previously it had been detecting selectability).
+    
+    Waiting for the element to be visible seems to take a bit longer (so this increases the wait), and adds another source of errors (so this adds more logging for future diagnosing).
+    
+    The code I added in 02edcae also may have had a bug - instead of a boolean I was returning a Promise from the closure into browser.waitUntil(). It's not clear if browser.waitUntil() was resolving the Promise or using that as a truthy value. Now, however, this avoids async code entirely.
