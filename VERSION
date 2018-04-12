@@ -1,5 +1,5 @@
-commit a527a30123dafc28364e5fd1765c2b6cbe896a0b
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Apr 11 17:56:53 2018 -0700
+commit 733e80c44053cff328d29cd60e62a123952f80a4
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Apr 11 21:56:06 2018 -0700
 
-    Store image size post-upload and use to improve layout performance. (#1169)
+    re-enable demo-flow-test (#1172)
