@@ -1,9 +1,5 @@
-commit 9dea95b7643bbf3526a48be3939909bef9503469
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Apr 11 21:56:23 2018 -0700
+commit fe654ff17611eea138fc9007e3f1436b73a6c82b
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Apr 12 14:58:10 2018 +1000
 
-    Rely on Handle.toString to output identifying info in type errors. (#1171)
-    
-    We can see type errors where there are no ids, names or tags, but
-    there is still a fate and logging what little info we have can still
-    be helpful for identifying the failure.
+    Set of changes to the tracelib

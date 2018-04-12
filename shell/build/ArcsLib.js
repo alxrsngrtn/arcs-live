@@ -1816,8 +1816,7 @@ let now;
 if (typeof document == 'object') {
   pid = 42;
   now = function() {
-    let t = performance.now();
-    return t;
+    return performance.now() * 1000;
   };
 } else {
   pid = process.pid;
@@ -1853,14 +1852,8 @@ module.exports.enable = function() {
 
 function init() {
   let result = {
-    wait: function(f) {
-      if (f instanceof Function) {
-        return f();
-      }
-      return f;
-    },
-    resume: function() {
-      return this;
+    wait: async function(v) {
+      return v;
     },
     start: function() {
       return this;
@@ -1871,8 +1864,10 @@ function init() {
     step: function() {
       return this;
     },
-    endWrap: function(fn) {
-      return fn;
+    addArgs: function() {
+    },
+    endWith: async function(v) {
+      return v;
     },
   };
   module.exports.wrap = function(info, fn) {
@@ -1886,8 +1881,6 @@ function init() {
   };
   module.exports.flow = function(info, fn) {
     return result;
-  };
-  module.exports.dump = function() {
   };
 
   if (!module.exports.enabled) {
@@ -1909,6 +1902,9 @@ function init() {
     let args = info.args || {};
     let begin = now();
     return {
+      addArgs: function(extraInfo) {
+        Object.assign(args, extraInfo);
+      },
       end: function(endInfo) {
         if (endInfo && endInfo.args) {
           Object.assign(args, endInfo.args);
@@ -1926,30 +1922,27 @@ function init() {
     };
   };
   // TODO: perhaps this should just be the only API, it acts the same as
-  //       start() when there is no call to wait/resume().
+  //       start() when there is no call to wait().
   module.exports.async = function(info) {
     let trace = module.exports.start(info);
     let flow;
     let baseInfo = {cat: info.cat, name: info.name + ' (async)'};
-    let n = 0;
     return {
-      async wait(v) {
-        let result = await v;
+      async wait(v, info) {
         if (!flow) {
           flow = module.exports.flow(baseInfo).start();
         }
-        trace.end();
+        trace.end(info);
         trace = null;
-        return result;
-      },
-      resume(info) {
-        if (info) {
-          Object.assign(info, baseInfo);
-        } else {
-          info = baseInfo;
+        try {
+          return await v;
+        } finally {
+          trace = module.exports.start(baseInfo);
+          flow.step(baseInfo);
         }
-        trace = module.exports.start(info);
-        flow.step(baseInfo);
+      },
+      addArgs(info) {
+        trace.addArgs(info);
       },
       end(endInfo) {
         if (flow) {
@@ -1957,6 +1950,19 @@ function init() {
         }
         trace.end(endInfo);
       },
+      async endWith(v, endInfo) {
+        if (Promise.resolve(v) === v) { // If v is a promise.
+          v = this.wait(v);
+          try {
+            return await v;
+          } finally {
+            this.end(endInfo);
+          }
+        } else { // If v is not a promise.
+          this.end(endInfo);
+          return v;
+        }
+      }
     };
   };
   module.exports.flow = function(info) {
@@ -10048,11 +10054,11 @@ class Planner {
     let now = () => (typeof performance == 'object') ? performance.now() : process.hrtime();
     let start = now();
     do {
-      let record = await trace.wait(() => this.strategizer.generate());
+      let record = await trace.wait(this.strategizer.generate());
       let generated = this.strategizer.generated;
-      trace.resume({args: {
+      trace.addArgs({
         generated: generated.length,
-      }});
+      });
       if (generations) {
         generations.push({generated, record});
       }
@@ -10114,10 +10120,9 @@ class Planner {
     return groups;
   }
   async suggest(timeout, generations) {
-    if (!generations && this._arc._debugging) generations = [];
     let trace = __WEBPACK_IMPORTED_MODULE_28__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::suggest', args: {timeout}});
-    let plans = await trace.wait(() => this.plan(timeout, generations));
-    trace.resume();
+    if (!generations && this._arc._debugging) generations = [];
+    let plans = await trace.wait(this.plan(timeout, generations));
     let suggestions = [];
     let speculator = new __WEBPACK_IMPORTED_MODULE_26__speculator_js__["a" /* default */]();
     // We don't actually know how many threads the VM will decide to use to
@@ -10127,7 +10132,7 @@ class Planner {
     // efficient work distribution.
     const threadCount = this._speculativeThreadCount();
     const planGroups = this._splitToGroups(plans, threadCount);
-    let results = await trace.wait(() => Promise.all(planGroups.map(async (group, groupIndex) => {
+    let results = await trace.wait(Promise.all(planGroups.map(async (group, groupIndex) => {
       let results = [];
       for (let plan of group) {
         let hash = ((hash) => { return hash.substring(hash.length - 4);})(await plan.digest());
@@ -10180,15 +10185,13 @@ class Planner {
       }
       return results;
     })));
-    trace.resume();
     results = [].concat(...results);
-    trace.end();
 
     if (this._arc._debugging) {
       __WEBPACK_IMPORTED_MODULE_29__debug_strategy_explorer_adapter_js__["a" /* default */].processGenerations(generations);
     }
 
-    return results;
+    return trace.endWith(results);
   }
   _updateGeneration(generations, hash, handler) {
     if (generations) {
@@ -20579,7 +20582,7 @@ class Relevance {
 class Speculator {
 
   async speculate(arc, plan) {
-    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'speculator', name: 'Speculator::speculate'});
+    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].async({cat: 'speculator', name: 'Speculator::speculate'});
     let newArc = await arc.cloneForSpeculativeExecution();
     let relevance = new __WEBPACK_IMPORTED_MODULE_2__relevance_js__["a" /* default */]();
     async function awaitCompletion() {
@@ -20595,9 +20598,7 @@ class Speculator {
       }
     }
 
-    let result = newArc.instantiate(plan).then(a => awaitCompletion());
-    trace.end();
-    return result;
+    return trace.endWith(newArc.instantiate(plan).then(a => awaitCompletion()));
   }
 }
 
