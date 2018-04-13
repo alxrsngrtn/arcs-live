@@ -1,7 +1,9 @@
-commit d05b5d6947db893ed05149883a2d446df9864963
+commit 10f4b7e0c4e5d2ed5eb3b1024b8681283f03a681
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri Apr 13 14:32:45 2018 -0700
+Date:   Fri Apr 13 14:45:02 2018 -0700
 
-    Support special key events for post input control. (#1191)
+    Focus input when user clicks to create a new post. (#1188)
     
-    ESC to close, Ctrl-Enter to submit.
+    Add variable and set handle helpers to DomParticle.
+    
+    Import model-input component in app shell.

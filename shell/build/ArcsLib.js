@@ -4721,7 +4721,7 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     this.currentSlotName = slotName;
 
     contentTypes.forEach(ct => slot._requestedContentTypes.add(ct));
-    // TODO(sjmiles): redundant, same answer for every
+    // TODO(sjmiles): redundant, same answer for every slot
     if (this.shouldRender(...stateArgs)) {
       let content = {};
       if (slot._requestedContentTypes.has('template')) {
@@ -4751,6 +4751,22 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
     super.setDescriptionPattern('_template_', pattern.template);
     super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+  }
+  updateVariable(handleName, record) {
+    const handle = this.handles.get(handleName);
+    handle.set(new (handle.entityClass)(record));
+  }
+  updateSet(handleName, record) {
+    // Set the record into the right place in the set. If we find it
+    // already present replace it, otherwise, add it.
+    // TODO(dstockwell): Replace this with happy entity mutation approach.
+    const handle = this.handles.get(handleName);
+    const records = this._props[handleName];
+    const target = records.find(r => r.id === record.id);
+    if (target) {
+      handle.remove(target);
+    }
+    handle.store(record);
   }
 }
 
