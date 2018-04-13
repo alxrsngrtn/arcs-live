@@ -1,5 +1,7 @@
-commit 2d66839f7a52a49763bb17666ba5878b13044637
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Fri Apr 13 17:12:30 2018 +1000
+commit d05b5d6947db893ed05149883a2d446df9864963
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Fri Apr 13 14:32:45 2018 -0700
 
-    Color in hex border cells to indicate the player objective (#1186)
+    Support special key events for post input control. (#1191)
+    
+    ESC to close, Ctrl-Enter to submit.
