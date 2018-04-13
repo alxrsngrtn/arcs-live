@@ -1,5 +1,5 @@
-commit c02ba5f59bea2895f7d52a322c0d58fd3cfa0412
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Apr 12 18:07:59 2018 -0700
+commit 2d66839f7a52a49763bb17666ba5878b13044637
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Fri Apr 13 17:12:30 2018 +1000
 
-    Add a description to CopyCollection particle. (#1184)
+    Color in hex border cells to indicate the player objective (#1186)
