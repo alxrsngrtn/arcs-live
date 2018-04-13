@@ -1,9 +1,7 @@
-commit 10f4b7e0c4e5d2ed5eb3b1024b8681283f03a681
+commit 791f50993b1ffcda4102f7802c4ee7526e08a62a
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri Apr 13 14:45:02 2018 -0700
+Date:   Fri Apr 13 14:58:35 2018 -0700
 
-    Focus input when user clicks to create a new post. (#1188)
+    Minor cleanup of model-input. (#1190)
     
-    Add variable and set handle helpers to DomParticle.
-    
-    Import model-input component in app shell.
+    Try removing setTimeout. Destructure props for single parameter.
