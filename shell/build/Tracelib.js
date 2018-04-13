@@ -549,7 +549,7 @@ process.umask = function() { return 0; };
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__arcs_tracelib_trace_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__ = __webpack_require__(0);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -562,7 +562,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-window.Tracing = __WEBPACK_IMPORTED_MODULE_0__arcs_tracelib_trace_js__["a" /* default */];
+window.Tracing = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */];
 
 
 /***/ })

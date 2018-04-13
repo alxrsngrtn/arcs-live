@@ -1,7 +1,8 @@
-commit 791f50993b1ffcda4102f7802c4ee7526e08a62a
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri Apr 13 14:58:35 2018 -0700
+commit f027154a7993f4ebcdef84c370abb564a968987d
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Fri Apr 13 15:54:14 2018 -0700
 
-    Minor cleanup of model-input. (#1190)
+    small appveyor fixes (#1194)
     
-    Try removing setTimeout. Destructure props for single parameter.
+    * add appveyor icon
+    * don't assume that arcs is the name of the directory that the repo has been checked out into
