@@ -1839,13 +1839,24 @@ function parseInfo(info) {
 }
 
 let streamingCallbacks = [];
-function pushEvent(e) {
-  events.push(e);
-  for (let {callback, predicate} of streamingCallbacks) {
+function pushEvent(event) {
+    event.pid = pid;
+    event.tid = 0;
+    if (!event.args) {
+      delete event.args;
+    }
+    if (!event.ov) {
+      delete event.ov;
+    }
+    if (!event.cat) {
+      event.cat = '';
+    }
+    events.push(event);
     Promise.resolve().then(() => {
-      if (!predicate || predicate(e)) callback(e);
+      for (let {callback, predicate} of streamingCallbacks) {
+          if (!predicate || predicate(event)) callback(event);
+      }
     });
-  }
 }
 
 let module = {exports: {}};
@@ -1886,9 +1897,6 @@ function init() {
   module.exports.start = function(info, fn) {
     return result;
   };
-  module.exports.async = function(info, fn) {
-    return result;
-  };
   module.exports.flow = function(info, fn) {
     return result;
   };
@@ -1907,63 +1915,60 @@ function init() {
       }
     };
   };
-  module.exports.start = function(info) {
+
+  function startSyncTrace(info) {
     info = parseInfo(info);
-    let args = info.args || {};
+    let args = info.args;
     let begin = now();
     return {
-      addArgs: function(extraInfo) {
-        Object.assign(args, extraInfo);
+      addArgs: function(extraArgs) {
+        args = Object.assign(args || {}, extraArgs);
       },
       end: function(endInfo) {
         if (endInfo && endInfo.args) {
-          Object.assign(args, endInfo.args);
+          args = Object.assign(args || {}, endInfo.args);
         }
-        let end = now();
+        this.endTs = now();
         pushEvent({
           ph: 'X',
           ts: begin,
-          dur: end - begin,
+          dur: this.endTs - begin,
           cat: info.cat,
           name: info.name,
           ov: info.overview,
           args: args,
         });
       },
-      // TODO(piotrs): Clean up on when merging async() and start() APIs.
-      ts: begin
+      beginTs: begin
     };
-  };
-  // TODO: perhaps this should just be the only API, it acts the same as
-  //       start() when there is no call to wait().
-  module.exports.async = function(info) {
-    let trace = module.exports.start(info);
+  }
+  module.exports.start = function(info) {
+    let trace = startSyncTrace(info);
     let flow;
     let baseInfo = {cat: info.cat, name: info.name + ' (async)', overview: info.overview};
     return {
       async wait(v, info) {
-        if (!flow) {
-          // Use start time of the first trace as timestamp to for flow start,
-          // to display a range encompassing all duration events in devtools.
-          flow = module.exports.flow(Object.assign({ts: trace.ts}, baseInfo)).start();
-        }
         trace.end(info);
+        if (!flow) {
+          flow = module.exports.flow(Object.assign({ts: trace.endTs}, baseInfo)).start();
+        } else {
+          flow.step(Object.assign({ts: trace.beginTs}, baseInfo));
+        }
         trace = null;
         try {
           return await v;
         } finally {
-          trace = module.exports.start(baseInfo);
-          flow.step(baseInfo);
+          trace = startSyncTrace(baseInfo);
         }
       },
-      addArgs(info) {
-        trace.addArgs(info);
+      addArgs(extraArgs) {
+        trace.addArgs(extraArgs);
       },
       end(endInfo) {
-        if (flow) {
-          flow.end();
-        }
         trace.end(endInfo);
+        if (flow) {
+          flow.end({ts: trace.beginTs});
+        }
       },
       async endWith(v, endInfo) {
         if (Promise.resolve(v) === v) { // If v is a promise.
@@ -1986,7 +1991,7 @@ function init() {
     let started = false;
     return {
       start: function() {
-        let begin = info.ts || now();
+        let begin = (info && info.ts) || now();
         started = true;
         pushEvent({
           ph: 's',
@@ -2001,12 +2006,12 @@ function init() {
       },
       end: function(endInfo) {
         if (!started) return;
-        let end = now();
+        let ts = (endInfo && endInfo.ts) || now();
         endInfo = parseInfo(endInfo);
         pushEvent({
           ph: 'f',
           bp: 'e', // binding point is enclosing slice.
-          ts: end,
+          ts,
           cat: info.cat,
           name: info.name,
           ov: info.overview,
@@ -2017,11 +2022,11 @@ function init() {
       },
       step: function(stepInfo) {
         if (!started) return;
-        let step = now();
+        let ts = (stepInfo && stepInfo.ts) || now();
         stepInfo = parseInfo(stepInfo);
         pushEvent({
           ph: 't',
-          ts: step,
+          ts,
           cat: info.cat,
           name: info.name,
           ov: info.overview,
@@ -2033,16 +2038,6 @@ function init() {
     };
   };
   module.exports.save = function() {
-    events.forEach(function(event) {
-      event.pid = pid;
-      event.tid = 0;
-      if (!event.args) {
-        delete event.args;
-      }
-      if (!event.cat) {
-        event.cat = '';
-      }
-    });
     return {traceEvents: events};
   };
   module.exports.download = function() {
@@ -2054,6 +2049,10 @@ function init() {
   module.exports.now = now;
   module.exports.stream = function(callback, predicate) {
     streamingCallbacks.push({callback, predicate});
+  };
+  module.exports.__clearForTests = function() {
+    events.length = 0;
+    streamingCallbacks.length = 0;
   };
 }
 
@@ -10087,7 +10086,7 @@ class Planner {
 
   // Specify a timeout value less than zero to disable timeouts.
   async plan(timeout, generations) {
-    let trace = __WEBPACK_IMPORTED_MODULE_28__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::plan', overview: true, args: {timeout}});
+    let trace = __WEBPACK_IMPORTED_MODULE_28__tracelib_trace_js__["a" /* default */].start({cat: 'planning', name: 'Planner::plan', overview: true, args: {timeout}});
     timeout = timeout || -1;
     let allResolved = [];
     let now = () => (typeof performance == 'object') ? performance.now() : process.hrtime();
@@ -10159,7 +10158,7 @@ class Planner {
     return groups;
   }
   async suggest(timeout, generations) {
-    let trace = __WEBPACK_IMPORTED_MODULE_28__tracelib_trace_js__["a" /* default */].async({cat: 'planning', name: 'Planner::suggest', overview: true, args: {timeout}});
+    let trace = __WEBPACK_IMPORTED_MODULE_28__tracelib_trace_js__["a" /* default */].start({cat: 'planning', name: 'Planner::suggest', overview: true, args: {timeout}});
     if (!generations && this._arc._debugging) generations = [];
     let plans = await trace.wait(this.plan(timeout, generations));
     let suggestions = [];
@@ -20672,7 +20671,7 @@ class Relevance {
 class Speculator {
 
   async speculate(arc, plan) {
-    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].async({cat: 'speculator', name: 'Speculator::speculate'});
+    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'speculator', name: 'Speculator::speculate'});
     let newArc = await arc.cloneForSpeculativeExecution();
     let relevance = new __WEBPACK_IMPORTED_MODULE_2__relevance_js__["a" /* default */]();
     async function awaitCompletion() {
