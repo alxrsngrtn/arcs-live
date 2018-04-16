@@ -1,5 +1,5 @@
-commit 5e81d940c2ca26472be58e3d81bffe63b72ceadc
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Apr 16 16:17:02 2018 +1000
+commit 36508506ca8fe016733a349c3c9c3dd31b1d419b
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Mon Apr 16 15:05:43 2018 -0700
 
-    Allows binding a slot to any candidate (#1122)
+    document release process (#1179)
