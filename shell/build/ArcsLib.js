@@ -995,7 +995,7 @@ class Walker extends __WEBPACK_IMPORTED_MODULE_1__walker_base_js__["a" /* defaul
     let updateList = [];
 
     // update phase - walk through recipe and call onRecipe,
-    // onView, etc.
+    // onHandle, etc.
 
     if (this.onRecipe) {
       result = this.onRecipe(recipe, result);
@@ -1016,11 +1016,11 @@ class Walker extends __WEBPACK_IMPORTED_MODULE_1__walker_base_js__["a" /* defaul
           updateList.push({continuation: result, context: handleConnection});
       }
     }
-    for (let view of recipe.handles) {
-      if (this.onView) {
-        let result = this.onView(recipe, view);
+    for (let handle of recipe.handles) {
+      if (this.onHandle) {
+        let result = this.onHandle(recipe, handle);
         if (!this.isEmptyResult(result))
-          updateList.push({continuation: result, context: view});
+          updateList.push({continuation: result, context: handle});
       }
     }
     for (let slotConnection of recipe.slotConnections) {
@@ -5484,27 +5484,27 @@ class HandleMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategi
     let self = this;
 
     return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */] {
-      onView(recipe, view) {
-        if (view.fate !== self.fate)
+      onHandle(recipe, handle) {
+        if (handle.fate !== self.fate)
           return;
 
-        if (view.connections.length == 0)
+        if (handle.connections.length == 0)
           return;
 
-        if (view.id)
+        if (handle.id)
           return;
 
-        if (!view.type)
+        if (!handle.type)
           return;
 
         // TODO: using the connection to retrieve type information is wrong.
-        // Once validation of recipes generates type information on the view
+        // Once validation of recipes generates type information on the handle
         // we should switch to using that instead.
-        let counts = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* default */].directionCounts(view);
-        return this.mapView(view, view.tags, view.type, counts);
+        let counts = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* default */].directionCounts(handle);
+        return this.mapHandle(handle, handle.tags, handle.type, counts);
       }
 
-      mapView(view, tags, type, counts) {
+      mapHandle(handle, tags, type, counts) {
         let score = -1;
         if (counts.in == 0 || counts.out == 0) {
           if (counts.unknown > 0)
@@ -5522,27 +5522,27 @@ class HandleMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategi
         if (counts.out > 0 && fate == 'map') {
           return;
         }
-        let views = self.getMappableViews(type, tags, counts);
-        if (views.length < 2)
+        let handles = self.getMappableHandles(type, tags, counts);
+        if (handles.length < 2)
           return;
 
-        let responses = views.map(newView =>
-          ((recipe, clonedView) => {
-            for (let existingView of recipe.handles)
-              // TODO: Why don't we link the view connections to the existingView?
-              if (existingView.id == newView.id)
+        let responses = handles.map(newHandle =>
+          ((recipe, clonedHandle) => {
+            for (let existingHandle of recipe.handles)
+              // TODO: Why don't we link the handle connections to the existingHandle?
+              if (existingHandle.id == newHandle.id)
                 return 0;
             let tscore = 0;
 
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(newView.id);
-            clonedView.mapToStorage(newView);
-            if (clonedView.fate != 'copy') {
-              clonedView.fate = fate;
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(newHandle.id);
+            clonedHandle.mapToStorage(newHandle);
+            if (clonedHandle.fate != 'copy') {
+              clonedHandle.fate = fate;
             }
             return score + tscore;
           }));
 
-        responses.push(null); // "do nothing" for this view.
+        responses.push(null); // "do nothing" for this handle.
         return responses;
       }
     }(__WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */].Permuted), this);
@@ -7294,7 +7294,7 @@ class Handle {
 
   _finishNormalize() {
     for (let connection of this._connections) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Object.isFrozen(connection), `View connection '${connection.name}' is not frozen.`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Object.isFrozen(connection), `Handle connection '${connection.name}' is not frozen.`);
     }
     this._connections.sort(__WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* default */].compareComparables);
     Object.freeze(this);
@@ -7310,7 +7310,7 @@ class Handle {
     return 0;
   }
 
-  // a resolved View has either an id or create=true
+  // a resolved Handle has either an id or create=true
   get fate() { return this._fate || '?'; }
   set fate(fate) {
     if (this._originalFate == null) {
@@ -7321,7 +7321,7 @@ class Handle {
   get originalFate() { return this._originalFate || '?'; }
   get originalId() { return this._originalId; }
   get recipe() { return this._recipe; }
-  get tags() { return this._tags; } // only tags owned by the view
+  get tags() { return this._tags; } // only tags owned by the handle
   set tags(tags) { this._tags = tags; }
   get type() { return this._type; } // nullable
   get id() { return this._id; }
@@ -7354,7 +7354,7 @@ class Handle {
   _isValid(options) {
     let tags = new Set();
     for (let connection of this._connections) {
-      // A remote view cannot be connected to an output param.
+      // A remote handle cannot be connected to an output param.
       if (this.fate == 'map' && ['out', 'inout'].includes(connection.direction)) {
         if (options && options.errors) {
           options.errors.set(this, `Invalid fate '${this.fate}' for handle '${this}'; it is used for '${connection.direction}' ${connection.particle.name}::${connection.name} connection`);
@@ -7433,7 +7433,7 @@ class Handle {
     if (options && options.showUnresolved) {
       let options = {};
       if (!this.isResolved(options)) {
-        result.push(` // unresolved view: ${options.details}`);
+        result.push(` // unresolved handle: ${options.details}`);
       }
     }
 
@@ -7952,7 +7952,7 @@ class StorageProviderFactory {
 
 
 
-class AddUseViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["c" /* Strategy */] {
+class AddUseHandles extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["c" /* Strategy */] {
   // TODO: move generation to use an async generator.
   async generate(inputParams) {
     return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
@@ -7985,7 +7985,7 @@ class AddUseViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
     }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */].Permuted), this);
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = AddUseViews;
+/* harmony export (immutable) */ __webpack_exports__["a"] = AddUseHandles;
 
 
 
@@ -8022,7 +8022,7 @@ class AssignHandlesByTagAndType extends __WEBPACK_IMPORTED_MODULE_4__handle_mapp
     this.fate = 'use';
   }
 
-  getMappableViews(type, tags, counts) {
+  getMappableHandles(type, tags, counts) {
     // We can use a handle that has a subtype only when all of the connections
     // are inputs.
     let subtype = counts.out == 0;
@@ -8072,7 +8072,7 @@ class AssignRemoteHandles extends __WEBPACK_IMPORTED_MODULE_4__handle_mapper_bas
     this.fate = 'map';
   }
 
-  getMappableViews(type, tags=[]) {
+  getMappableHandles(type, tags=[]) {
     return this._arc.context.findStorageByType(type, {tags, subtype: true});
   }
 }
@@ -8111,10 +8111,10 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
     return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */] {
       onRecipe(recipe) {
         let particles = new Set();
-        let views = new Set();
+        let handles = new Set();
         let map = {};
         let particlesByName = {};
-        let viewCount = 0;
+        let handleCount = 0;
         if (recipe.connectionConstraints.length == 0) {
           return;
         }
@@ -8133,15 +8133,15 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
             map[constraint.toParticle.name] = {};
             particlesByName[constraint.toParticle.name] = constraint.toParticle;
           }
-          let view = map[constraint.fromParticle.name][constraint.fromConnection] || map[constraint.toParticle.name][constraint.toConnection];
-          if (view == undefined) {
-            view = 'v' + viewCount++;
-            views.add(view);
+          let handle = map[constraint.fromParticle.name][constraint.fromConnection] || map[constraint.toParticle.name][constraint.toConnection];
+          if (handle == undefined) {
+            handle = 'v' + handleCount++;
+            handles.add(handle);
           }
-          map[constraint.fromParticle.name][constraint.fromConnection] = view;
-          map[constraint.toParticle.name][constraint.toConnection] = view;
+          map[constraint.fromParticle.name][constraint.fromConnection] = handle;
+          map[constraint.toParticle.name][constraint.toConnection] = handle;
         }
-        let shape = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* default */].makeShape([...particles.values()], [...views.values()], map);
+        let shape = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* default */].makeShape([...particles.values()], [...handles.values()], map);
         let results = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* default */].find(recipe, shape);
 
         return results.filter(match => {
@@ -8169,7 +8169,7 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
             let recipeMap = recipe.updateToClone(match.match);
             for (let particle in map) {
               for (let connection in map[particle]) {
-                let view = map[particle][connection];
+                let handle = map[particle][connection];
                 let recipeParticle = recipeMap[particle];
                 if (recipeParticle == null) {
                   recipeParticle = recipe.newParticle(particle);
@@ -8179,14 +8179,14 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
                 let recipeHandleConnection = recipeParticle.connections[connection];
                 if (recipeHandleConnection == undefined)
                   recipeHandleConnection = recipeParticle.addConnectionName(connection);
-                let recipeView = recipeMap[view];
-                if (recipeView == null) {
-                  recipeView = recipe.newHandle();
-                  recipeView.fate = 'create';
-                  recipeMap[view] = recipeView;
+                let recipeHandle = recipeMap[handle];
+                if (recipeHandle == null) {
+                  recipeHandle = recipe.newHandle();
+                  recipeHandle.fate = 'create';
+                  recipeMap[handle] = recipeHandle;
                 }
                 if (recipeHandleConnection.handle == null)
-                  recipeHandleConnection.connectToHandle(recipeView);
+                  recipeHandleConnection.connectToHandle(recipeHandle);
               }
             }
             recipe.clearConnectionConstraints();
@@ -8236,7 +8236,7 @@ class CopyRemoteHandles extends __WEBPACK_IMPORTED_MODULE_4__handle_mapper_base_
     this.fate = 'copy';
   }
 
-  getMappableViews(type, tags=[]) {
+  getMappableHandles(type, tags=[]) {
     return this._arc.context.findStorageByType(type, {tags, subtype: true});
   }
 }
@@ -8313,19 +8313,19 @@ class CreateHandles extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
   // TODO: move generation to use an async generator.
   async generate(inputParams) {
     return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */] {
-      onView(recipe, view) {
-        let counts = __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_util_js__["a" /* default */].directionCounts(view);
+      onHandle(recipe, handle) {
+        let counts = __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_util_js__["a" /* default */].directionCounts(handle);
 
         // Don't make a 'create' handle, unless there is someone reading,
         // someone writing and at least 2 particles invloved.
         if (counts.in == 0 || counts.out == 0
             // TODO: Allow checking number of particles without touching privates.
-            || new Set(view.connections.map(hc => hc._particle)).size <= 1) {
+            || new Set(handle.connections.map(hc => hc._particle)).size <= 1) {
           return;
         }
 
-        if (!view.id && view.fate == '?') {
-          return (recipe, view) => {view.fate = 'create'; return 1;};
+        if (!handle.id && handle.fate == '?') {
+          return (recipe, handle) => {handle.fate = 'create'; return 1;};
         }
       }
     }(__WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */].Permuted), this);
@@ -8367,25 +8367,25 @@ class FallbackFate extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_
 
   async generate(inputParams) {
     return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */] {
-      onView(recipe, view) {
+      onHandle(recipe, handle) {
         // Only apply this strategy only to user query based recipes with resolved tokens.
         if (!recipe.search || (recipe.search.resolvedTokens.length == 0)) {
           return;
         }
 
-        // Only apply to views whose fate is set, but wasn't explicitly defined in the recipe.
-        if (view.isResolved() || view.fate == '?' || view.originalFate != '?') {
+        // Only apply to handles whose fate is set, but wasn't explicitly defined in the recipe.
+        if (handle.isResolved() || handle.fate == '?' || handle.originalFate != '?') {
           return;
         }
 
-        let hasOutConns = view.connections.some(hc => hc.isOutput);
+        let hasOutConns = handle.connections.some(hc => hc.isOutput);
         let newFate = hasOutConns ? 'copy' : 'map';
-        if (view.fate == newFate) {
+        if (handle.fate == newFate) {
           return;
         }
 
-        return (recipe, clonedView) => {
-          clonedView.fate = newFate;
+        return (recipe, clonedHandle) => {
+          clonedHandle.fate = newFate;
           return 0;
         };
       }
@@ -8655,7 +8655,7 @@ class MatchFreeHandlesToConnections extends __WEBPACK_IMPORTED_MODULE_0__strateg
     let self = this;
 
     return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */] {
-      onView(recipe, handle) {
+      onHandle(recipe, handle) {
         if (handle.connections.length > 0)
           return;
 
@@ -9048,7 +9048,7 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
   async generate(inputParams) {
     let arc = this._arc;
     return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */] {
-      onView(recipe, handle) {
+      onHandle(recipe, handle) {
         if (handle.connections.length == 0 || handle.id || (!handle.type) || (!handle.fate))
           return;
 
@@ -9134,7 +9134,7 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
 class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__["c" /* Strategy */] {
   constructor(arc) {
     super();
-    // TODO: Recipes. Views?
+    // TODO: Recipes. Handles?
     this._byToken = {};
     for (let particle of arc.context.particles) {
       let name = particle.name.toLowerCase();

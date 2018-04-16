@@ -1,5 +1,5 @@
-commit 40684d5155531a8f150af3ec21b95ab53533225c
+commit 952a12d7f3dd26a5d2ef2310abdf12b79284fca8
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Apr 16 09:58:58 2018 +1000
+Date:   Mon Apr 16 10:27:52 2018 +1000
 
-    s/view/handle/ in strategy names (#1195)
+    More view to handle renames (#1196)
