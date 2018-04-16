@@ -5596,16 +5596,16 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
         }
 
         let selectedSlots = MapSlots.findAllSlotCandidates(slotConnection, arc);
+
+        // ResolveRecipe handles one-slot case.
         if (selectedSlots.length < 2) {
           return;
         }
 
-        let selectedSlot = selectedSlots[0]; // TODO: return combinatorial results?
-
-        return (recipe, slotConnection) => {
-          MapSlots.connectSlotConnection(slotConnection, selectedSlot);
+        return selectedSlots.map(slot => ((recipe, slotConnection) => {
+          MapSlots.connectSlotConnection(slotConnection, slot);
           return 1;
-        };
+        }));
       }
     }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* default */].Permuted), this);
   }
@@ -9092,6 +9092,8 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
         }
 
         let selectedSlots = __WEBPACK_IMPORTED_MODULE_5__map_slots_js__["a" /* default */].findAllSlotCandidates(slotConnection, arc);
+
+        // MapSlots handles a multi-slot case.
         if (selectedSlots.length !== 1) {
           return;
         }
