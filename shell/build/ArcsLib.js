@@ -5462,6 +5462,102 @@ ${this._slotsToManifestString()}
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+
+
+class HandleMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["c" /* Strategy */] {
+  async generate(inputParams) {
+    let self = this;
+
+    return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */] {
+      onView(recipe, view) {
+        if (view.fate !== self.fate)
+          return;
+
+        if (view.connections.length == 0)
+          return;
+
+        if (view.id)
+          return;
+
+        if (!view.type)
+          return;
+
+        // TODO: using the connection to retrieve type information is wrong.
+        // Once validation of recipes generates type information on the view
+        // we should switch to using that instead.
+        let counts = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* default */].directionCounts(view);
+        return this.mapView(view, view.tags, view.type, counts);
+      }
+
+      mapView(view, tags, type, counts) {
+        let score = -1;
+        if (counts.in == 0 || counts.out == 0) {
+          if (counts.unknown > 0)
+            return;
+          if (counts.out == 0)
+            score = 1;
+          else
+            score = 0;
+        }
+
+        if (tags.length > 0)
+          score += 4;
+
+        let fate = self.fate;
+        if (counts.out > 0 && fate == 'map') {
+          return;
+        }
+        let views = self.getMappableViews(type, tags, counts);
+        if (views.length < 2)
+          return;
+
+        let responses = views.map(newView =>
+          ((recipe, clonedView) => {
+            for (let existingView of recipe.handles)
+              // TODO: Why don't we link the view connections to the existingView?
+              if (existingView.id == newView.id)
+                return 0;
+            let tscore = 0;
+
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(newView.id);
+            clonedView.mapToStorage(newView);
+            if (clonedView.fate != 'copy') {
+              clonedView.fate = fate;
+            }
+            return score + tscore;
+          }));
+
+        responses.push(null); // "do nothing" for this view.
+        return responses;
+      }
+    }(__WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */].Permuted), this);
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = HandleMapperBase;
+
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(6);
@@ -5609,102 +5705,6 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = MapSlots;
-
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-
-class ViewMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["c" /* Strategy */] {
-  async generate(inputParams) {
-    let self = this;
-
-    return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */] {
-      onView(recipe, view) {
-        if (view.fate !== self.fate)
-          return;
-
-        if (view.connections.length == 0)
-          return;
-
-        if (view.id)
-          return;
-
-        if (!view.type)
-          return;
-
-        // TODO: using the connection to retrieve type information is wrong.
-        // Once validation of recipes generates type information on the view
-        // we should switch to using that instead.
-        let counts = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* default */].directionCounts(view);
-        return this.mapView(view, view.tags, view.type, counts);
-      }
-
-      mapView(view, tags, type, counts) {
-        let score = -1;
-        if (counts.in == 0 || counts.out == 0) {
-          if (counts.unknown > 0)
-            return;
-          if (counts.out == 0)
-            score = 1;
-          else
-            score = 0;
-        }
-
-        if (tags.length > 0)
-          score += 4;
-
-        let fate = self.fate;
-        if (counts.out > 0 && fate == 'map') {
-          return;
-        }
-        let views = self.getMappableViews(type, tags, counts);
-        if (views.length < 2)
-          return;
-
-        let responses = views.map(newView =>
-          ((recipe, clonedView) => {
-            for (let existingView of recipe.handles)
-              // TODO: Why don't we link the view connections to the existingView?
-              if (existingView.id == newView.id)
-                return 0;
-            let tscore = 0;
-
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(newView.id);
-            clonedView.mapToStorage(newView);
-            if (clonedView.fate != 'copy') {
-              clonedView.fate = fate;
-            }
-            return score + tscore;
-          }));
-
-        responses.push(null); // "do nothing" for this view.
-        return responses;
-      }
-    }(__WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* default */].Permuted), this);
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = ViewMapperBase;
 
 
 
@@ -7998,7 +7998,55 @@ class AddUseViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__handle_mapper_base_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__platform_assert_web_js__ = __webpack_require__(0);
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+
+
+
+
+class AssignHandlesByTagAndType extends __WEBPACK_IMPORTED_MODULE_4__handle_mapper_base_js__["a" /* default */] {
+  constructor(arc) {
+    super();
+    this.arc = arc;
+    this.fate = 'use';
+  }
+
+  getMappableViews(type, tags, counts) {
+    // We can use a handle that has a subtype only when all of the connections
+    // are inputs.
+    let subtype = counts.out == 0;
+    if (tags.length > 0) {
+      return this.arc.findHandlesByType(type, {tags, subtype});
+    } else {
+      return this.arc.findHandlesByType(type);
+    }
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = AssignHandlesByTagAndType;
+
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__handle_mapper_base_js__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8017,7 +8065,7 @@ class AddUseViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
 
 
 
-class AssignRemoteViews extends __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__["a" /* default */] {
+class AssignRemoteHandles extends __WEBPACK_IMPORTED_MODULE_4__handle_mapper_base_js__["a" /* default */] {
   constructor(arc) {
     super();
     this._arc = arc;
@@ -8028,55 +8076,7 @@ class AssignRemoteViews extends __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js
     return this._arc.context.findStorageByType(type, {tags, subtype: true});
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = AssignRemoteViews;
-
-
-
-/***/ }),
-/* 42 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__platform_assert_web_js__ = __webpack_require__(0);
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-
-
-
-class AssignViewsByTagAndType extends __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__["a" /* default */] {
-  constructor(arc) {
-    super();
-    this.arc = arc;
-    this.fate = 'use';
-  }
-
-  getMappableViews(type, tags, counts) {
-    // We can use a handle that has a subtype only when all of the connections
-    // are inputs.
-    let subtype = counts.out == 0;
-    if (tags.length > 0) {
-      return this.arc.findHandlesByType(type, {tags, subtype});
-    } else {
-      return this.arc.findHandlesByType(type);
-    }
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = AssignViewsByTagAndType;
+/* harmony export (immutable) */ __webpack_exports__["a"] = AssignRemoteHandles;
 
 
 
@@ -8210,7 +8210,7 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__handle_mapper_base_js__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8229,7 +8229,7 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
 
 
 
-class CopyRemoteViews extends __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__["a" /* default */] {
+class CopyRemoteHandles extends __WEBPACK_IMPORTED_MODULE_4__handle_mapper_base_js__["a" /* default */] {
   constructor(arc) {
     super();
     this._arc = arc;
@@ -8240,7 +8240,7 @@ class CopyRemoteViews extends __WEBPACK_IMPORTED_MODULE_4__view_mapper_base_js__
     return this._arc.context.findStorageByType(type, {tags, subtype: true});
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = CopyRemoteViews;
+/* harmony export (immutable) */ __webpack_exports__["a"] = CopyRemoteHandles;
 
 
 
@@ -8309,7 +8309,7 @@ class CreateDescriptionHandle extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
 
 
 
-class CreateViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["c" /* Strategy */] {
+class CreateHandles extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["c" /* Strategy */] {
   // TODO: move generation to use an async generator.
   async generate(inputParams) {
     return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* default */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */] {
@@ -8331,7 +8331,7 @@ class CreateViews extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_j
     }(__WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* default */].Permuted), this);
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = CreateViews;
+/* harmony export (immutable) */ __webpack_exports__["a"] = CreateHandles;
 
 
 
@@ -9024,7 +9024,7 @@ class NameUnnamedConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_st
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__map_slots_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__map_slots_js__ = __webpack_require__(23);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -9990,15 +9990,15 @@ ${this.activeRecipe.toString()}`;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_recipe_util_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__strategies_convert_constraints_to_connections_js__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__strategies_assign_remote_views_js__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__strategies_copy_remote_views_js__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_assign_views_by_tag_and_type_js__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__strategies_assign_remote_handles_js__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__strategies_copy_remote_handles_js__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_assign_handles_by_tag_and_type_js__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_init_population_js__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_map_slots_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_map_slots_js__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_match_particle_by_verb_js__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__strategies_match_recipe_by_verb_js__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__strategies_name_unnamed_connections_js__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__strategies_add_use_views_js__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__strategies_add_use_handles_js__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__strategies_create_description_handle_js__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__manifest_js__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__strategies_init_search_js__ = __webpack_require__(50);
@@ -10006,7 +10006,7 @@ ${this.activeRecipe.toString()}`;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__strategies_fallback_fate_js__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__strategies_group_handle_connections_js__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__strategies_match_free_handles_to_connections_js__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__strategies_create_views_js__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__strategies_create_handles_js__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__strategies_resolve_recipe_js__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__speculator_js__ = __webpack_require__(92);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__description_js__ = __webpack_require__(11);
@@ -10062,16 +10062,16 @@ class Planner {
       new __WEBPACK_IMPORTED_MODULE_20__strategies_search_tokens_to_particles_js__["a" /* default */](arc),
       new __WEBPACK_IMPORTED_MODULE_22__strategies_group_handle_connections_js__["a" /* default */](),
       new __WEBPACK_IMPORTED_MODULE_21__strategies_fallback_fate_js__["a" /* default */](),
-      new __WEBPACK_IMPORTED_MODULE_24__strategies_create_views_js__["a" /* default */](),
-      new __WEBPACK_IMPORTED_MODULE_10__strategies_assign_views_by_tag_and_type_js__["a" /* default */](arc),
+      new __WEBPACK_IMPORTED_MODULE_24__strategies_create_handles_js__["a" /* default */](),
+      new __WEBPACK_IMPORTED_MODULE_10__strategies_assign_handles_by_tag_and_type_js__["a" /* default */](arc),
       new __WEBPACK_IMPORTED_MODULE_7__strategies_convert_constraints_to_connections_js__["a" /* default */](arc),
       new __WEBPACK_IMPORTED_MODULE_12__strategies_map_slots_js__["a" /* default */](arc),
-      new __WEBPACK_IMPORTED_MODULE_8__strategies_assign_remote_views_js__["a" /* default */](arc),
-      new __WEBPACK_IMPORTED_MODULE_9__strategies_copy_remote_views_js__["a" /* default */](arc),
+      new __WEBPACK_IMPORTED_MODULE_8__strategies_assign_remote_handles_js__["a" /* default */](arc),
+      new __WEBPACK_IMPORTED_MODULE_9__strategies_copy_remote_handles_js__["a" /* default */](arc),
       new __WEBPACK_IMPORTED_MODULE_13__strategies_match_particle_by_verb_js__["a" /* default */](arc),
       new __WEBPACK_IMPORTED_MODULE_14__strategies_match_recipe_by_verb_js__["a" /* default */](arc),
       new __WEBPACK_IMPORTED_MODULE_15__strategies_name_unnamed_connections_js__["a" /* default */](arc),
-      new __WEBPACK_IMPORTED_MODULE_16__strategies_add_use_views_js__["a" /* default */](),
+      new __WEBPACK_IMPORTED_MODULE_16__strategies_add_use_handles_js__["a" /* default */](),
       new __WEBPACK_IMPORTED_MODULE_17__strategies_create_description_handle_js__["a" /* default */](),
       new __WEBPACK_IMPORTED_MODULE_23__strategies_match_free_handles_to_connections_js__["a" /* default */](),
       new __WEBPACK_IMPORTED_MODULE_25__strategies_resolve_recipe_js__["a" /* default */](arc)
@@ -21303,15 +21303,15 @@ class CombinedStrategy extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategi
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__convert_constraints_to_connections_js__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__assign_remote_views_js__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__copy_remote_views_js__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__assign_views_by_tag_and_type_js__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__assign_remote_handles_js__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__copy_remote_handles_js__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__assign_handles_by_tag_and_type_js__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__init_population_js__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__map_slots_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__map_slots_js__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__match_particle_by_verb_js__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__match_recipe_by_verb_js__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__name_unnamed_connections_js__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__add_use_views_js__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__add_use_handles_js__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__create_description_handle_js__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__init_search_js__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__search_tokens_to_particles_js__ = __webpack_require__(56);
@@ -21319,7 +21319,7 @@ class CombinedStrategy extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategi
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__group_handle_connections_js__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__combined_strategy_js__ = __webpack_require__(95);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__match_free_handles_to_connections_js__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__create_views_js__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__create_handles_js__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__resolve_recipe_js__ = __webpack_require__(55);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -21366,11 +21366,11 @@ const ExperimentalPhased = new __WEBPACK_IMPORTED_MODULE_0__strategizer_strategi
   __WEBPACK_IMPORTED_MODULE_1__convert_constraints_to_connections_js__["a" /* default */],
   __WEBPACK_IMPORTED_MODULE_15__group_handle_connections_js__["a" /* default */],
   [
-    __WEBPACK_IMPORTED_MODULE_18__create_views_js__["a" /* default */],
-    __WEBPACK_IMPORTED_MODULE_10__add_use_views_js__["a" /* default */],
-    __WEBPACK_IMPORTED_MODULE_2__assign_remote_views_js__["a" /* default */],
-    __WEBPACK_IMPORTED_MODULE_3__copy_remote_views_js__["a" /* default */],
-    __WEBPACK_IMPORTED_MODULE_4__assign_views_by_tag_and_type_js__["a" /* default */],
+    __WEBPACK_IMPORTED_MODULE_18__create_handles_js__["a" /* default */],
+    __WEBPACK_IMPORTED_MODULE_10__add_use_handles_js__["a" /* default */],
+    __WEBPACK_IMPORTED_MODULE_2__assign_remote_handles_js__["a" /* default */],
+    __WEBPACK_IMPORTED_MODULE_3__copy_remote_handles_js__["a" /* default */],
+    __WEBPACK_IMPORTED_MODULE_4__assign_handles_by_tag_and_type_js__["a" /* default */],
     __WEBPACK_IMPORTED_MODULE_17__match_free_handles_to_connections_js__["a" /* default */],
     __WEBPACK_IMPORTED_MODULE_14__fallback_fate_js__["a" /* default */],
   ],
@@ -21390,12 +21390,12 @@ const ExperimentalLinear = new __WEBPACK_IMPORTED_MODULE_0__strategizer_strategi
   __WEBPACK_IMPORTED_MODULE_1__convert_constraints_to_connections_js__["a" /* default */],
   __WEBPACK_IMPORTED_MODULE_15__group_handle_connections_js__["a" /* default */],
   __WEBPACK_IMPORTED_MODULE_17__match_free_handles_to_connections_js__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_18__create_views_js__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_10__add_use_views_js__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_18__create_handles_js__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_10__add_use_handles_js__["a" /* default */],
   __WEBPACK_IMPORTED_MODULE_14__fallback_fate_js__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_2__assign_remote_views_js__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_3__copy_remote_views_js__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_4__assign_views_by_tag_and_type_js__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_2__assign_remote_handles_js__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_3__copy_remote_handles_js__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_4__assign_handles_by_tag_and_type_js__["a" /* default */],
   __WEBPACK_IMPORTED_MODULE_6__map_slots_js__["a" /* default */],
   __WEBPACK_IMPORTED_MODULE_11__create_description_handle_js__["a" /* default */],
   __WEBPACK_IMPORTED_MODULE_19__resolve_recipe_js__["a" /* default */]
