@@ -1,5 +1,5 @@
-commit 7dd733b7440c5f8d9a0cfd5a6aa55fb3c20cf0e0
+commit 377ada1a4e39dbd98a002054b37bdb67c412303c
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Apr 17 11:38:30 2018 +1000
+Date:   Tue Apr 17 12:24:50 2018 +1000
 
-    Another set of easy view/handle renames (#1197)
+    Clear URL params if empty in dataflow tool - personal annoyance (#1199)
