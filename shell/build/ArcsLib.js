@@ -4478,8 +4478,8 @@ class Scheduler {
 
   set idleCallback(idleCallback) { this._idleCallback = idleCallback; }
 
-  enqueue(view, eventRecords) {
-    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */].flow({cat: 'view', name: 'ViewBase::_fire flow'}).start();
+  enqueue(handle, eventRecords) {
+    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */].flow({cat: 'handle', name: 'ViewBase::_fire flow'}).start();
     if (this.frameQueue.length == 0 && eventRecords.length > 0)
       this._asyncProcess();
     if (!this._idleResolver) {
@@ -4488,20 +4488,20 @@ class Scheduler {
     for (let record of eventRecords) {
       let frame = this.targetMap.get(record.target);
       if (frame == undefined) {
-        frame = {target: record.target, views: new Map(), traces: []};
+        frame = {target: record.target, handles: new Map(), traces: []};
         this.frameQueue.push(frame);
         this.targetMap.set(record.target, frame);
       }
       frame.traces.push(trace);
-      let viewEvents = frame.views.get(view);
-      if (viewEvents == undefined) {
-        viewEvents = new Map();
-        frame.views.set(view, viewEvents);
+      let handleEvents = frame.handles.get(handle);
+      if (handleEvents == undefined) {
+        handleEvents = new Map();
+        frame.handles.set(handle, handleEvents);
       }
-      let kindEvents = viewEvents.get(record.kind);
+      let kindEvents = handleEvents.get(record.kind);
       if (kindEvents == undefined) {
         kindEvents = [];
-        viewEvents.set(record.kind, kindEvents);
+        handleEvents.set(record.kind, kindEvents);
       }
       kindEvents.push(record);
     }
@@ -4537,7 +4537,7 @@ class Scheduler {
     let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */].start({cat: 'scheduler', name: 'Scheduler::_applyFrame', args: {target: frame.target ? frame.target.constructor.name : 'NULL TARGET'}});
 
     let totalRecords = 0;
-    for (let [view, kinds] of frame.views.entries()) {
+    for (let [handle, kinds] of frame.handles.entries()) {
       for (let [kind, records] of kinds.entries()) {
         let record = records[records.length - 1];
         record.callback(record.details);
@@ -4675,7 +4675,7 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
   get config() {
     // TODO(sjmiles): getter that does work is a bad idea, this is temporary
     return {
-      views: this.spec.inputs.map(i => i.name),
+      handles: this.spec.inputs.map(i => i.name),
       // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
       // .manifest files, instead of .ptcl ones.
       slotNames: [...this.spec.slots.values()].map(s => s.name)
@@ -4684,26 +4684,26 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
   _info() {
     return `---------- DomParticle::[${this.spec.name}]`;
   }
-  async setViews(views) {
-    this.handles = views;
-    this._views = views;
+  async setViews(handles) {
+    this.handles = handles;
+    this._views = handles;
     let config = this.config;
-    this.when([new __WEBPACK_IMPORTED_MODULE_1__particle_js__["c" /* ViewChanges */](views, config.views, 'change')], async () => {
-      await this._handlesToProps(views, config);
+    this.when([new __WEBPACK_IMPORTED_MODULE_1__particle_js__["c" /* ViewChanges */](handles, config.handles, 'change')], async () => {
+      await this._handlesToProps(handles, config);
     });
-    // make sure we invalidate once, even if there are no incoming views
+    // make sure we invalidate once, even if there are no incoming handles
     this._invalidate();
   }
-  async _handlesToProps(views, config) {
-    // acquire (async) list data from views
+  async _handlesToProps(handles, config) {
+    // acquire (async) list data from handles
     let data = await Promise.all(
-      config.views
-      .map(name => views.get(name))
-      .map(view => view.toList ? view.toList() : view.get())
+      config.handles
+      .map(name => handles.get(name))
+      .map(handle => handle.toList ? handle.toList() : handle.get())
     );
-    // convert view data (array) into props (dictionary)
+    // convert handle data (array) into props (dictionary)
     let props = Object.create(null);
-    config.views.forEach((name, i) => {
+    config.handles.forEach((name, i) => {
       props[name] = data[i];
     });
     this._setProps(props);
@@ -7784,7 +7784,7 @@ class StorageProviderBase {
   constructor(type, arcId, name, id, key) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(id, 'id must be provided when constructing StorageProviders');
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!type.hasUnresolvedVariable, 'Storage types must be concrete');
-    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'view', name: 'StorageProviderBase::constructor', args: {type: type.key, name: name}});
+    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'handle', name: 'StorageProviderBase::constructor', args: {type: type.key, name: name}});
     this._type = type;
     this._arcId = arcId;
     this._listeners = new Map();
@@ -7827,7 +7827,7 @@ class StorageProviderBase {
     if (!listenerMap || listenerMap.size == 0)
       return;
 
-    let callTrace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'view', name: 'StorageProviderBase::_fire', args: {kind, type: this._type.key,
+    let callTrace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'handle', name: 'StorageProviderBase::_fire', args: {kind, type: this._type.key,
         name: this.name, listeners: listenerMap.size}});
 
     // TODO: wire up a target (particle)
@@ -7852,24 +7852,24 @@ class StorageProviderBase {
     return 0;
   }
 
-  toString(viewTags) {
+  toString(handleTags) {
     let results = [];
-    let viewStr = [];
-    viewStr.push(`view`);
+    let handleStr = [];
+    handleStr.push(`view`);
     if (this.name) {
-      viewStr.push(`${this.name}`);
+      handleStr.push(`${this.name}`);
     }
-    viewStr.push(`of ${this.type.toString()}`);
+    handleStr.push(`of ${this.type.toString()}`);
     if (this.id) {
-      viewStr.push(`'${this.id}'`);
+      handleStr.push(`'${this.id}'`);
     }
-    if (viewTags && viewTags.length) {
-      viewStr.push(`${[...viewTags].join(' ')}`);
+    if (handleTags && handleTags.length) {
+      handleStr.push(`${[...handleTags].join(' ')}`);
     }
     if (this.source) {
-      viewStr.push(`in '${this.source}'`);
+      handleStr.push(`in '${this.source}'`);
     }
-    results.push(viewStr.join(' '));
+    results.push(handleStr.join(' '));
     if (this.description)
       results.push(`  description \`${this.description}\``);
     return results.join('\n');
@@ -19468,15 +19468,15 @@ class ParticleExecutionContext {
   constructor() {
   }
 
-  // Instantiates `particle` in this context, connecting `views` to the particle's inputs and outputs.
-  // `mutateCallback` will be called each time the particle mutates a view or entity.
+  // Instantiates `particle` in this context, connecting `handles` to the particle's inputs and outputs.
+  // `mutateCallback` will be called each time the particle mutates a handle or entity.
   // Returns an identifier to refer to the particle (in `dispatch`).
-  instantiate(particle, views, mutateCallback) {
-    // views => {name => viewId}
+  instantiate(particle, handles, mutateCallback) {
+    // handles => {name => handleId}
     throw 'unimplemented';
   }
 
-  // Dispatches an event to the particle identified by `particleId` for the view or entity identified
+  // Dispatches an event to the particle identified by `particleId` for the handle or entity identified
   // by `entityId` concerning `eventDetails. The `morePending` flag indicates whether there are any
   // known further events to be dispatched to the same particle.
   dispatch(particleId, entityId, eventDetails, morePending) {
@@ -21113,9 +21113,9 @@ class InMemoryCollection extends InMemoryStorageProvider {
   }
 
   clone() {
-    let view = new InMemoryCollection(this._type, this._arcId, this.name, this.id);
-    view.cloneFrom(this);
-    return view;
+    let handle = new InMemoryCollection(this._type, this._arcId, this.name, this.id);
+    handle.cloneFrom(this);
+    return handle;
   }
 
   async cloneFrom(handle) {
@@ -21145,10 +21145,10 @@ class InMemoryCollection extends InMemoryStorageProvider {
   }
 
   async store(entity) {
-    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'view', name: 'InMemoryCollection::store', args: {name: this.name}});
+    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'handle', name: 'InMemoryCollection::store', args: {name: this.name}});
     let entityWasPresent = this._items.has(entity.id);
     if (entityWasPresent && (JSON.stringify(this._items.get(entity.id)) == JSON.stringify(entity))) {
-      trace.end({args: {entity}});    
+      trace.end({args: {entity}});
       return;
     }
     this._items.set(entity.id, entity);
@@ -21159,7 +21159,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
   }
 
   async remove(id) {
-    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'view', name: 'InMemoryCollection::remove', args: {name: this.name}});
+    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'handle', name: 'InMemoryCollection::remove', args: {name: this.name}});
     if (!this._items.has(id)) {
       return;
     }

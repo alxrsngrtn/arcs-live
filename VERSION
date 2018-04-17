@@ -1,5 +1,5 @@
-commit 36508506ca8fe016733a349c3c9c3dd31b1d419b
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Mon Apr 16 15:05:43 2018 -0700
+commit 7dd733b7440c5f8d9a0cfd5a6aa55fb3c20cf0e0
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Apr 17 11:38:30 2018 +1000
 
-    document release process (#1179)
+    Another set of easy view/handle renames (#1197)
