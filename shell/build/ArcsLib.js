@@ -19531,7 +19531,7 @@ class OuterPEC extends __WEBPACK_IMPORTED_MODULE_0__particle_execution_context_j
       if (recipe0) {
         const missingHandles = [];
         for (let handle of recipe0.handles) {
-          const fromHandle = this._arc.findHandleById(handle.id);
+          const fromHandle = this._arc.findHandleById(handle.id) || manifest.findStorageById(handle.id);
           if (!fromHandle) {
             missingHandles.push(handle);
             continue;
@@ -19544,6 +19544,9 @@ class OuterPEC extends __WEBPACK_IMPORTED_MODULE_0__particle_execution_context_j
           let options = {errors: new Map()};
           if (recipe0.normalize(options)) {
             if (recipe0.isResolved()) {
+              // TODO: pass tags through too, and reconcile with similar logic
+              // in Arc.deserialize.
+              manifest.handles.forEach(handle => this._arc._registerHandle(handle, []));
               this._arc.instantiate(recipe0, arc);
             } else {
               error = `Recipe is not resolvable ${recipe0.toString({showUnresolved: true})}`;

@@ -1,13 +1,5 @@
-commit 22ee4b36268f2c02895b56d03358d41f8a793ebb
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Wed Apr 18 10:00:15 2018 -0700
+commit b10fff2e1b7454bb5479ca1a930e49f7b63ee952
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Apr 18 10:05:45 2018 -0700
 
-    give appveyor builds a clean way to run all non-web tests (#1206)
-    
-    Given the flakiness we've seen (currently tracked in #1189), I'm not
-    sure that we're anywhere close to being ready to run the selenium tests
-    in more than a single autobuild, nor am I sure there's any benefit to
-    doing so. We can revisit later.
-    
-    Instead, this puts in place a cleaner system that appveyor can use to
-    run only the non-web tests. This will fix #985.
+    Allow referencing manifest handles when loading recipe into arc. (#1204)
