@@ -3906,6 +3906,7 @@ class Description {
     this._arc = arc;
     this._relevance = null;
   }
+
   get arc() { return this._arc; }
   get relevance() { return this._relevance; }
   set relevance(relevance) { this._relevance = relevance; }
@@ -3918,12 +3919,13 @@ class Description {
   }
 
   async getRecipeSuggestion(formatterClass) {
-    let desc = await new (formatterClass || DescriptionFormatter)(this).getDescription(this._arc.recipes[this._arc.recipes.length - 1]);
+    let formatter = await new (formatterClass || DescriptionFormatter)(this);
+    let desc = await formatter.getDescription(this._arc.recipes[this._arc.recipes.length - 1]);
     if (desc) {
       return desc;
     }
 
-    return this._arc.activeRecipe.name;
+    return formatter.descriptionFromString(this._arc.activeRecipe.name || Description.defaultDescription);
   }
 
   async getHandleDescription(recipeHandle) {
@@ -3936,6 +3938,8 @@ class Description {
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Description;
 
+
+Description.defaultDescription = 'i\'m feeling lucky';
 
 class DescriptionFormatter {
   constructor(description) {
@@ -3971,6 +3975,10 @@ class DescriptionFormatter {
     if (selectedDescriptions.length > 0) {
       return this._combineSelectedDescriptions(selectedDescriptions);
     }
+  }
+
+  descriptionFromString(str) {
+    return this._capitalizeAndPunctuate(str);
   }
 
   _isSelectedDescription(desc) {
@@ -4056,19 +4064,24 @@ class DescriptionFormatter {
         suggestions.push(await this.patternToSuggestion(particle.pattern, particle));
       }
     }));
-    return this._capitalizeAndPunctuate(this._joinDescriptions(suggestions));
+    let jointDescription = this._joinDescriptions(suggestions);
+    if (jointDescription) {
+      return this._capitalizeAndPunctuate(jointDescription);
+    }
   }
 
   _joinDescriptions(strings) {
     let nonEmptyStrings = strings.filter(str => str);
     let count = nonEmptyStrings.length;
-    // Combine descriptions into a sentence:
-    // "A."
-    // "A and b."
-    // "A, b, ..., and z." (Oxford comma ftw)
-    let delim = ['', '', ' and ', ', and '][Math.min(3, count)];
-    const lastString = nonEmptyStrings.pop();
-    return `${nonEmptyStrings.join(', ')}${delim}${lastString}`;
+    if (count > 0) {
+      // Combine descriptions into a sentence:
+      // "A."
+      // "A and b."
+      // "A, b, ..., and z." (Oxford comma ftw)
+      let delim = ['', '', ' and ', ', and '][Math.min(3, count)];
+      const lastString = nonEmptyStrings.pop();
+      return `${nonEmptyStrings.join(', ')}${delim}${lastString}`;
+    }
   }
 
   _joinTokens(tokens) {
@@ -4076,6 +4089,7 @@ class DescriptionFormatter {
   }
 
   _capitalizeAndPunctuate(sentence) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(sentence);
     // "Capitalize, punctuate." (if the sentence doesn't end with a punctuation character).
     let last = sentence.length - 1;
     return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9\(\)'>\]]/i) ? '.' : ''}`;
@@ -18639,6 +18653,10 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
     this._nextID = 0;
   }
 
+  descriptionFromString(str) {
+    return {template: super.descriptionFromString(str), model: {}};
+  }
+
   _isSelectedDescription(desc) {
     return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
   }
@@ -18830,6 +18848,7 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
       model: {[`${handleKey}Length`]: handleList.length}
     };
   }
+
   _formatSingleton(handleName, handleVar) {
     if (handleVar.rawData.name) {
       return {
