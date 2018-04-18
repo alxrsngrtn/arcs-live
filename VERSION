@@ -1,9 +1,8 @@
-commit 27a06cd1b57c4349289bdf4ff80ef157e86cac17
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Apr 18 00:33:39 2018 -0700
+commit f6caeb9d6b0ee8e351a652ee3fb586d4f435c0c8
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Apr 18 09:57:20 2018 -0700
 
-    set recipe description to "im feeling lucky", if nothing else (#1202)
+    Return new variable instance from SimpleParticle.updateVariable. (#1203)
     
-    * set recipe description to "im feeling lucky", if nothing else
-    
-    * address comment and lint warning
+    Callers might want to use it further subsequently, and it seems only
+    polite to allow for such antics.
