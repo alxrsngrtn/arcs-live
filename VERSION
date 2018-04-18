@@ -1,5 +1,5 @@
-commit 73cdada4face0994cccee957b7d02988bb8ff017
+commit 319d2ea7d764ba5f86ac438341bc5e820960edbd
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Apr 18 10:42:47 2018 -0700
+Date:   Wed Apr 18 11:35:45 2018 -0700
 
-    Write originating arc key to Posts. (#1208)
+    Clean up deprecated '_' prefixes and use new helper methods. (#1209)
