@@ -1,5 +1,9 @@
-commit db06bc186b0abcee648ed1b6d3649df4acbdc8e3
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Apr 17 15:11:54 2018 -0700
+commit 670524614da8eebd588d9ad432c39ee1f389f5e5
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Apr 18 12:09:35 2018 +1000
 
-    plumb arc key through to Particles via ShellTheme handle (for crafting URLs) (#1201)
+    Remove references to 'view' from manifest.md (#1176)
+    
+    * Remove references to 'view' from manifest.md
+    
+    * Update manifest.md
