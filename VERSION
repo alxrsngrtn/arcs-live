@@ -1,8 +1,13 @@
-commit f6caeb9d6b0ee8e351a652ee3fb586d4f435c0c8
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Apr 18 09:57:20 2018 -0700
+commit 22ee4b36268f2c02895b56d03358d41f8a793ebb
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Wed Apr 18 10:00:15 2018 -0700
 
-    Return new variable instance from SimpleParticle.updateVariable. (#1203)
+    give appveyor builds a clean way to run all non-web tests (#1206)
     
-    Callers might want to use it further subsequently, and it seems only
-    polite to allow for such antics.
+    Given the flakiness we've seen (currently tracked in #1189), I'm not
+    sure that we're anywhere close to being ready to run the selenium tests
+    in more than a single autobuild, nor am I sure there's any benefit to
+    doing so. We can revisit later.
+    
+    Instead, this puts in place a cleaner system that appveyor can use to
+    run only the non-web tests. This will fix #985.
