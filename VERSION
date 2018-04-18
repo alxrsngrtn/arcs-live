@@ -1,5 +1,5 @@
-commit b10fff2e1b7454bb5479ca1a930e49f7b63ee952
+commit 73cdada4face0994cccee957b7d02988bb8ff017
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Apr 18 10:05:45 2018 -0700
+Date:   Wed Apr 18 10:42:47 2018 -0700
 
-    Allow referencing manifest handles when loading recipe into arc. (#1204)
+    Write originating arc key to Posts. (#1208)
