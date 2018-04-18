@@ -1,9 +1,5 @@
-commit 670524614da8eebd588d9ad432c39ee1f389f5e5
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed Apr 18 12:09:35 2018 +1000
+commit 26bb8b623f01a80b7d802d324c4d5945f5f639e2
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Apr 18 15:39:21 2018 +1000
 
-    Remove references to 'view' from manifest.md (#1176)
-    
-    * Remove references to 'view' from manifest.md
-    
-    * Update manifest.md
+    Shane's strategy runner (#1205)

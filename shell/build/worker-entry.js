@@ -3303,11 +3303,12 @@ module.exports = g;
 class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__["a" /* default */] {
   constructor() {
     super();
+    document.addEventListener('arcs-debug-in', e => this._handleMessage(e.detail));
     this._makeReady(); // TODO: Consider readiness if connecting via extension.
   }
 
   _flush(messages) {
-    document.dispatchEvent(new CustomEvent('arcs-debug', {detail: messages}));
+    document.dispatchEvent(new CustomEvent('arcs-debug-out', {detail: messages}));
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ChromeExtensionChannel;
@@ -3803,6 +3804,7 @@ class JsonldToManifest {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -3814,10 +3816,13 @@ class JsonldToManifest {
  */
 
 
+
+
 class AbstractDevtoolsChannel {
   constructor() {
     this.debouncedMessages = [];
     this.debouncing = false;
+    this.messageListeners = new Map();
     this.ready = new Promise((resolve, reject) => {
       this._makeReady = resolve;
     });
@@ -3832,6 +3837,25 @@ class AbstractDevtoolsChannel {
         this.debouncedMessages = [];
         this.debouncing = false;
       }, 100);
+    }
+  }
+
+  listen(arcOrId, messageType, callback) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(messageType);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(arcOrId);
+    const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
+    const key = `${arcId}/${messageType}`;
+    let listeners = this.messageListeners.get(key);
+    if (!listeners) this.messageListeners.set(key, listeners = []);
+    listeners.push(callback);
+  }
+
+  _handleMessage(msg) {
+    let listeners = this.messageListeners.get(`${msg.targetArcId}/${msg.messageType}`);
+    if (!listeners) {
+      console.warn(`No one is listening to ${msg.messageType} message`);
+    } else {
+      for (let listener of listeners) listener(msg);
     }
   }
 
