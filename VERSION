@@ -1,11 +1,14 @@
-commit b3f00404012fea4d732b23b899f9501b2830c95c
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Wed Apr 18 11:39:07 2018 -0700
+commit e54256a94e773f5c89e2b2566dd8c8cb32f690e4
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Apr 19 16:27:17 2018 -0700
 
-    make testing for a consistent state through a reload more stable (#1207)
+    Initial Planificator (aka PlannerController) implementation (#1200)
     
-    Part of #1189
-    - Disable testing for a consistent list of suggestions until #697 is
-      done.
-    - Fix how we were retrieving the title for verification (we were
-      comparing the entire element, including the id, not just the title).
+    * Initial Planificator (aka PlannerController) implementation
+    and refactor existing code to use Planificator
+    
+    * Address comment and refactor planificator shell hooks.
+    
+    * add more planificator tests
+    
+    * pass struct containing latest instantiated plan and generations to arc-steps
