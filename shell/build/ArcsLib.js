@@ -6263,6 +6263,7 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* default */] 
     if (!content || Object.keys(content).length == 0) {
       if (this.getContext()) {
         this.getContext().clear();
+        this.innerSlotsUpdateCallback && this.innerSlotsUpdateCallback(this);
       }
       this._model = null;
       return;

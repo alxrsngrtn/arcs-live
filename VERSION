@@ -1,8 +1,5 @@
-commit ec0ed03d7f2ee472a424a9336b47bf10fdf162d9
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Apr 23 10:30:47 2018 -0700
+commit 816ab5eda133edc92ac9c4f262daba17087cb252
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Apr 23 11:23:38 2018 -0700
 
-    Support recipe resolution when loading recipes for inner arcs. (#1212)
-    
-    Allows such recipes to do things like referencing tagged handles
-    without an id.
+    call innerSlotsUpdateCallback after clearing context (fixes TVShow demo) (#1217)
