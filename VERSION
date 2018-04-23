@@ -1,5 +1,8 @@
-commit 794c2aacb807389274dfadbde4cc2e63d97bd200
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Mon Apr 23 10:00:23 2018 +1000
+commit ec0ed03d7f2ee472a424a9336b47bf10fdf162d9
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon Apr 23 10:30:47 2018 -0700
 
-    hex-board sizes to available width (#1215)
+    Support recipe resolution when loading recipes for inner arcs. (#1212)
+    
+    Allows such recipes to do things like referencing tagged handles
+    without an id.
