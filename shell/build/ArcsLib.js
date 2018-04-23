@@ -5869,14 +5869,16 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
           return;
         }
 
-        let selectedSlots = MapSlots.findAllSlotCandidates(slotConnection, arc);
+        let {local, remote} = MapSlots.findAllSlotCandidates(slotConnection, arc);
 
         // ResolveRecipe handles one-slot case.
-        if (selectedSlots.length < 2) {
+        if (local.length + remote.length < 2) {
           return;
         }
 
-        return selectedSlots.map(slot => ((recipe, slotConnection) => {
+        // If there are any local slots, prefer them over remote slots.
+        let slotList = local.length > 0 ? local : remote;
+        return slotList.map(slot => ((recipe, slotConnection) => {
           MapSlots.connectSlotConnection(slotConnection, slot);
           return 1;
         }));
@@ -5911,14 +5913,13 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
 
   // Returns all possible slot candidates, sorted by "quality"
   static findAllSlotCandidates(slotConnection, arc) {
-    let selectedSlots = [];
-    if (!slotConnection.targetSlot) {
+    return {
       // Note: during manfiest parsing, target slot is only set in slot connection, if the slot exists in the recipe.
       // If this slot is internal to the recipe, it has the sourceConnection set to the providing connection
       // (and hence the consuming connection is considered connected already). Otherwise, this may only be a remote slot.
-      selectedSlots = MapSlots._findSlotCandidates(slotConnection, slotConnection.recipe.slots);
-    }
-    return selectedSlots.concat(MapSlots._findSlotCandidates(slotConnection, arc.pec.slotComposer.getAvailableSlots()));
+      local: !slotConnection.targetSlot ? MapSlots._findSlotCandidates(slotConnection, slotConnection.recipe.slots) : [],
+      remote: MapSlots._findSlotCandidates(slotConnection, arc.pec.slotComposer.getAvailableSlots())
+    };
   }
 
   // Returns the given slot candidates, sorted by "quality".
@@ -9365,15 +9366,15 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
           return;
         }
 
-        let selectedSlots = __WEBPACK_IMPORTED_MODULE_5__map_slots_js__["a" /* default */].findAllSlotCandidates(slotConnection, arc);
+        let {local, remote} = __WEBPACK_IMPORTED_MODULE_5__map_slots_js__["a" /* default */].findAllSlotCandidates(slotConnection, arc);
+        let allSlots = [...local, ...remote];
 
         // MapSlots handles a multi-slot case.
-        if (selectedSlots.length !== 1) {
+        if (allSlots.length !== 1) {
           return;
         }
 
-        let selectedSlot = selectedSlots[0];
-
+        let selectedSlot = allSlots[0];
         return (recipe, slotConnection) => {
           __WEBPACK_IMPORTED_MODULE_5__map_slots_js__["a" /* default */].connectSlotConnection(slotConnection, selectedSlot);
           return 1;

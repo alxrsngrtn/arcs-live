@@ -1,14 +1,5 @@
-commit e54256a94e773f5c89e2b2566dd8c8cb32f690e4
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Apr 19 16:27:17 2018 -0700
+commit e9294467675cbb352caccfee0ea4b38a9627dcd2
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Apr 23 09:55:02 2018 +1000
 
-    Initial Planificator (aka PlannerController) implementation (#1200)
-    
-    * Initial Planificator (aka PlannerController) implementation
-    and refactor existing code to use Planificator
-    
-    * Address comment and refactor planificator shell hooks.
-    
-    * add more planificator tests
-    
-    * pass struct containing latest instantiated plan and generations to arc-steps
+    Adjusts MapSlots to prefer local slots if available (#1214)
