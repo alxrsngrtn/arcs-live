@@ -1,5 +1,5 @@
-commit e9294467675cbb352caccfee0ea4b38a9627dcd2
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Apr 23 09:55:02 2018 +1000
+commit 794c2aacb807389274dfadbde4cc2e63d97bd200
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Mon Apr 23 10:00:23 2018 +1000
 
-    Adjusts MapSlots to prefer local slots if available (#1214)
+    hex-board sizes to available width (#1215)
