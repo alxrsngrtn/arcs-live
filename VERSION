@@ -1,5 +1,5 @@
-commit 816ab5eda133edc92ac9c4f262daba17087cb252
+commit 979e51bcb448090931242b29b07f5bc9ed66589b
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Apr 23 11:23:38 2018 -0700
+Date:   Tue Apr 24 10:39:21 2018 -0700
 
-    call innerSlotsUpdateCallback after clearing context (fixes TVShow demo) (#1217)
+    Avoid redundant speculative execution runs. (#1220)
