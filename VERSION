@@ -1,5 +1,8 @@
-commit 979e51bcb448090931242b29b07f5bc9ed66589b
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Apr 24 10:39:21 2018 -0700
+commit d098b3f683052e3d9258e59ed32b20c5a1744022
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Tue Apr 24 14:31:35 2018 -0700
 
-    Avoid redundant speculative execution runs. (#1220)
+    remove the check for consistenty in the title through a reload (#1223)
+    
+    Unfortunately, it's not consistent, so it's causing the tests to flap.
+    Let's hold off until #697 is done.

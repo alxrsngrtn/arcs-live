@@ -2008,6 +2008,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
     }
 
     for (let [index, item] of list.entries()) {
+      let resolvedHostedParticle = hostedParticle;
       if (this.handleIds[item.id]) {
         let itemView = await this.handleIds[item.id];
         itemView.set(item);
@@ -2020,14 +2021,14 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
 
       let itemView = await itemViewPromise;
 
-      if (!hostedParticle) {
+      if (!resolvedHostedParticle) {
         // If we're muxing on behalf of an item with an embedded recipe, the
         // hosted particle should be retrievable from the item itself. Else we
         // just skip this item.
         if (!item.renderParticleSpec) {
           continue;
         }
-        hostedParticle =
+        resolvedHostedParticle =
             __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__["a" /* default */].fromLiteral(JSON.parse(item.renderParticleSpec));
         // Re-map compatible handles and compute the connections specific
         // to this item's render particle.
@@ -2037,14 +2038,14 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
             await this._mapParticleConnections(
                 listHandleName,
                 particleHandleName,
-                hostedParticle,
+                resolvedHostedParticle,
                 this._views,
                 arc);
       }
-      let hostedSlotName = [...hostedParticle.slots.keys()][0];
+      let hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
       let slotName = [...this.spec.slots.values()][0].name;
       let slotId = await arc.createSlot(
-          this, slotName, hostedParticle.name, hostedSlotName);
+          this, slotName, resolvedHostedParticle.name, hostedSlotName);
 
       if (!slotId) {
         continue;
@@ -2055,7 +2056,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
       try {
         await arc.loadRecipe(
             this.constructInnerRecipe(
-                hostedParticle,
+                resolvedHostedParticle,
                 item,
                 itemView,
                 {name: hostedSlotName, id: slotId},
