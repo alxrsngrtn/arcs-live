@@ -4776,6 +4776,17 @@ class Scheduler {
 
   registerIdleCallback(callback) { this._idleCallbacks.push(callback); }
 
+  unregisterIdleCallback(callback) {
+    let index = this._idleCallbacks.indexOf(callback);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(index >= 0, 'Cannot unregister nonexisted callback');
+    this._idleCallbacks.splice(index, 1);
+  }
+
+  unregisterArc(arc) {
+    this.targetMap.delete(arc);
+    this.frameQueue = this.frameQueue.filter(frame => frame.target !== arc);
+  }
+
   enqueue(handle, eventRecords) {
     let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */].flow({cat: 'handle', name: 'ViewBase::_fire flow'}).start();
     if (this.frameQueue.length == 0 && eventRecords.length > 0)
@@ -6213,29 +6224,14 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* default */] 
     return new __WEBPACK_IMPORTED_MODULE_2__dom_context_js__["b" /* DomContext */](null, this._containerKind);
   }
 
-  // TODO(sjmiles): next three functions are a quick-fix for cleaning up MOs when there is
-  // an Arcpocalypse (dropping one Arc, producing another).
-  // Where there are other situations where a DomSlot is dropped, we have to make sure
-  // we disconnect the observer.
-  // Perhaps we need `Arc.cleanup()` or `Arc.dispose()` as a clearing-house for these tasks.
-  static addObserver(observer) {
-    const observers = DomSlot._observers || (DomSlot._observers = []);
-    observers.push(observer);
+  dispose() {
+    this._observer.disconnect();
   }
   static dispose() {
-    // disconnect observers
-    const observers = DomSlot._observers;
-    observers && observers.forEach(o => o.disconnect());
-    DomSlot._observers = [];
     // empty template cache
     templates.clear();
   }
   _initMutationObserver() {
-    const observer = this.__initMutationObserver();
-    DomSlot.addObserver(observer);
-    return observer;
-  }
-  __initMutationObserver() {
     const observer = new MutationObserver(async (records) => {
       this._observer.disconnect();
       if (this.getContext() && records.some(r => this.getContext().isDirectInnerSlot(r.target))) {
@@ -8107,7 +8103,8 @@ class Slot {
   async setContent(content, handler) {}
   getInnerContext(slotName) {}
   constructRenderRequest() {}
-  static findRootSlots(context) { }
+  dispose() {}
+  static findRootSlots(context) {}
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Slot;
 
@@ -9869,6 +9866,18 @@ class Arc {
     this._instantiatePlanCallbacks.push(callback);
   }
 
+  unregisterInstantiatePlanCallback(callback) {
+    let index = this._instantiatePlanCallbacks.indexOf(callback);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(index >= 0, 'Cannot unregister nonexisted callback');
+    this._instantiatePlanCallbacks.splice(index, 1);
+  }
+
+  dispose() {
+    this._instantiatePlanCallbacks = [];
+    this._scheduler.unregisterArc(this);
+    this.pec.slotComposer.dispose();
+  }
+
   get idle() {
     let awaitCompletion = async () => {
       await this.scheduler.idle;
@@ -10395,10 +10404,23 @@ class Planificator {
     // TODO(mmandlis): Planificator subscribes to various change events.
     // Later, it will evaluate and batch events and trigger replanning intelligently.
     // Currently, just trigger replanning for each event.
-    this._arc.registerInstantiatePlanCallback(this.onPlanInstantiated.bind(this));
-    this._arc._scheduler.registerIdleCallback(this.requestPlanning.bind(this));
+    this._arcCallback = this.onPlanInstantiated.bind(this);
+    this._arc.registerInstantiatePlanCallback(this._arcCallback);
+
+    this._schedulerCallback = this.requestPlanning.bind(this);
+    this._arc._scheduler.registerIdleCallback(this._schedulerCallback);
 
     this.registerSuggestChangedCallback((suggestions) => this._arc.pec.slotComposer.setSuggestions(suggestions));
+  }
+
+  dispose() {
+    // clear all callbacks the planificator has registered.
+    this._arc.unregisterInstantiatePlanCallback(this._arcCallback);
+    this._arc._scheduler.unregisterIdleCallback(this._schedulerCallback);
+    // clear all planificator's callbacks.
+    this._plansChangedCallbacks = [];
+    this._suggestChangedCallbacks = [];
+    this._stateChangedCallbacks = [];
   }
 
   get isPlanning() { return this._isPlanning; }
@@ -10800,6 +10822,11 @@ class SlotComposer {
       }
     });
     return availableSlots;
+  }
+
+  dispose() {
+    this._slots.forEach(slot => slot.dispose());
+    this._slotClass.dispose();
   }
 }
 

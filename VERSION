@@ -1,8 +1,9 @@
-commit d098b3f683052e3d9258e59ed32b20c5a1744022
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Tue Apr 24 14:31:35 2018 -0700
+commit 6298b6e72996e85261c1747978307f04b4318795
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Apr 26 16:10:14 2018 -0700
 
-    remove the check for consistenty in the title through a reload (#1223)
+    Implement dispose() methods for arc and planificator (#1227)
     
-    Unfortunately, it's not consistent, so it's causing the tests to flap.
-    Let's hold off until #697 is done.
+    * Implement dispose() methods for arc and planificator
+    
+    * remove disposed arc from scheduler's update queue
