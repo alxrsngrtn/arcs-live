@@ -1,9 +1,9 @@
-commit 6298b6e72996e85261c1747978307f04b4318795
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Apr 26 16:10:14 2018 -0700
+commit 8ad06a8ac2805ace123f8f4091f8ab7087fc6ce3
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Thu Apr 26 16:15:29 2018 -0700
 
-    Implement dispose() methods for arc and planificator (#1227)
+    Make manifest ids unique via a session id. (#1231)
     
-    * Implement dispose() methods for arc and planificator
-    
-    * remove disposed arc from scheduler's update queue
+    Ensures that, for example, store ids for stores with the same name
+    loaded from a manifest file with the same name receive differing ids,
+    as they should, since their values could differ.
