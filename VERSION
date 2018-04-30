@@ -1,5 +1,8 @@
-commit 0e28a333cedb4edd83f6003e3f78dffadf30c84f
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Apr 30 15:26:35 2018 +1000
+commit 4f2b0105de3e40f94a4527e64b23219d0f79b831
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Mon Apr 30 15:48:35 2018 -0700
 
-    Implements Schema.intersect for non subtypes and adds tests for intersect and union (#1228)
+    fix npm version to 5.8.0 (#1243)
+    
+    This may help with some stream closed appveyor failures (see #1242).
+    For consistency I've made the same change to both travis & appveyor configuration.
