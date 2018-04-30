@@ -1,5 +1,7 @@
-commit f3d405890145c49790683ab378815105aa04453a
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Sun Apr 29 17:55:23 2018 -0700
+commit 727c53aa0f769d03c84588dc36425092a5ab9731
+Author: shans <shane.stephens@gmail.com>
+Date:   Mon Apr 30 11:33:59 2018 +1000
 
-    Add tests for recipe hash stability across manifest reparse. (#1239)
+    Allow handles to be listed the same as slots in particles. (#1240)
+    
+    Allow handles to be listed the same as slots in particles.

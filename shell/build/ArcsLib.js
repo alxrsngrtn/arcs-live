@@ -11450,6 +11450,13 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 }
                 verbs.push(item.verb);
                 args = item.args;
+              } else if (item.kind == 'particle-argument') {
+                // Do this here instead of setting the default value for args to be [], so
+                // that we can detect when no 'interface' or 'particle-argument's are 
+                // provided, as this is invalid.
+                if (args == null)
+                  args = [];
+                args.push(item);
               } else if (item.kind == 'particle-slot') {
                 slots.push(item);
               } else if (item.kind == 'description') {
@@ -11491,9 +11498,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               args: args || []
             };
           },
-        peg$c73 = "?",
-        peg$c74 = peg$literalExpectation("?", false),
-        peg$c75 = function(direction, type, isOptional, name) {
+        peg$c73 = function(arg) {
+            return arg;
+          },
+        peg$c74 = "?",
+        peg$c75 = peg$literalExpectation("?", false),
+        peg$c76 = function(direction, type, isOptional, name) {
             return {
               kind: 'particle-argument',
               location: location(),
@@ -11503,31 +11513,31 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               name,
             };
           },
-        peg$c76 = "inout",
-        peg$c77 = peg$literalExpectation("inout", false),
-        peg$c78 = "out",
-        peg$c79 = peg$literalExpectation("out", false),
-        peg$c80 = "host",
-        peg$c81 = peg$literalExpectation("host", false),
-        peg$c82 = function() {
+        peg$c77 = "inout",
+        peg$c78 = peg$literalExpectation("inout", false),
+        peg$c79 = "out",
+        peg$c80 = peg$literalExpectation("out", false),
+        peg$c81 = "host",
+        peg$c82 = peg$literalExpectation("host", false),
+        peg$c83 = function() {
             return text();
           },
-        peg$c83 = "[",
-        peg$c84 = peg$literalExpectation("[", false),
-        peg$c85 = "]",
-        peg$c86 = peg$literalExpectation("]", false),
-        peg$c87 = function(type) {
+        peg$c84 = "[",
+        peg$c85 = peg$literalExpectation("[", false),
+        peg$c86 = "]",
+        peg$c87 = peg$literalExpectation("]", false),
+        peg$c88 = function(type) {
             return {
               kind: 'list-type',
               location: location(),
               type,
             };
           },
-        peg$c88 = "~",
-        peg$c89 = peg$literalExpectation("~", false),
-        peg$c90 = "with",
-        peg$c91 = peg$literalExpectation("with", false),
-        peg$c92 = function(name, constraint) {
+        peg$c89 = "~",
+        peg$c90 = peg$literalExpectation("~", false),
+        peg$c91 = "with",
+        peg$c92 = peg$literalExpectation("with", false),
+        peg$c93 = function(name, constraint) {
             return {
               kind: 'variable-type',
               location: location(),
@@ -11535,34 +11545,34 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               constraint: optional(constraint, constraint => constraint[3], null),
             };
           },
-        peg$c93 = function(name) {
+        peg$c94 = function(name) {
             return {
               kind: 'reference-type',
               location: location(),
               name,
             };
           },
-        peg$c94 = function(head, tail) {
+        peg$c95 = function(head, tail) {
             return [head, ...tail.map(a => a[2])];
           },
-        peg$c95 = "affordance",
-        peg$c96 = peg$literalExpectation("affordance", false),
-        peg$c97 = "dom-touch",
-        peg$c98 = peg$literalExpectation("dom-touch", false),
-        peg$c99 = "dom",
-        peg$c100 = peg$literalExpectation("dom", false),
-        peg$c101 = "vr",
-        peg$c102 = peg$literalExpectation("vr", false),
-        peg$c103 = "voice",
-        peg$c104 = peg$literalExpectation("voice", false),
-        peg$c105 = function(affordance) {
+        peg$c96 = "affordance",
+        peg$c97 = peg$literalExpectation("affordance", false),
+        peg$c98 = "dom-touch",
+        peg$c99 = peg$literalExpectation("dom-touch", false),
+        peg$c100 = "dom",
+        peg$c101 = peg$literalExpectation("dom", false),
+        peg$c102 = "vr",
+        peg$c103 = peg$literalExpectation("vr", false),
+        peg$c104 = "voice",
+        peg$c105 = peg$literalExpectation("voice", false),
+        peg$c106 = function(affordance) {
             return {
               kind: 'particle-affordance',
               location: location(),
               affordance,
             };
           },
-        peg$c106 = function(isRequired, isSet, name, tags, items) {
+        peg$c107 = function(isRequired, isSet, name, tags, items) {
             let formFactor = null;
             let providedSlots = [];
             items = optional(items, extractIndented, []);
@@ -11588,24 +11598,24 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               providedSlots
             };
           },
-        peg$c107 = "formFactor",
-        peg$c108 = peg$literalExpectation("formFactor", false),
-        peg$c109 = "fullscreen",
-        peg$c110 = peg$literalExpectation("fullscreen", false),
-        peg$c111 = "big",
-        peg$c112 = peg$literalExpectation("big", false),
-        peg$c113 = "medium",
-        peg$c114 = peg$literalExpectation("medium", false),
-        peg$c115 = "small",
-        peg$c116 = peg$literalExpectation("small", false),
-        peg$c117 = function(formFactor) {
+        peg$c108 = "formFactor",
+        peg$c109 = peg$literalExpectation("formFactor", false),
+        peg$c110 = "fullscreen",
+        peg$c111 = peg$literalExpectation("fullscreen", false),
+        peg$c112 = "big",
+        peg$c113 = peg$literalExpectation("big", false),
+        peg$c114 = "medium",
+        peg$c115 = peg$literalExpectation("medium", false),
+        peg$c116 = "small",
+        peg$c117 = peg$literalExpectation("small", false),
+        peg$c118 = function(formFactor) {
             return {
               kind: 'form-factor',
               location: location(),
               formFactor
             };
           },
-        peg$c118 = function(isSet, name, tags, items) {
+        peg$c119 = function(isSet, name, tags, items) {
             let formFactor = null;
             let handles = [];
             items = items ? extractIndented(items) : [];
@@ -11628,16 +11638,16 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               handles
             };
           },
-        peg$c119 = "handle",
-        peg$c120 = peg$literalExpectation("handle", false),
-        peg$c121 = function(handle) {
+        peg$c120 = "handle",
+        peg$c121 = peg$literalExpectation("handle", false),
+        peg$c122 = function(handle) {
             return {
               kind: 'particle-provided-slot-handle',
               location: location(),
               handle,
             };
           },
-        peg$c122 = function(pattern, handleDescriptions) {
+        peg$c123 = function(pattern, handleDescriptions) {
             return {
               kind: 'description',
               location: location(),
@@ -11653,7 +11663,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               ],
             };
           },
-        peg$c123 = function(name, pattern) {
+        peg$c124 = function(name, pattern) {
             return {
               kind: 'handle-description',
               location: location(),
@@ -11661,9 +11671,9 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               pattern,
             };
           },
-        peg$c124 = "recipe",
-        peg$c125 = peg$literalExpectation("recipe", false),
-        peg$c126 = function(name, tags, items) {
+        peg$c125 = "recipe",
+        peg$c126 = peg$literalExpectation("recipe", false),
+        peg$c127 = function(name, tags, items) {
             return {
               kind: 'recipe',
               location: location(),
@@ -11672,12 +11682,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               items: optional(items, extractIndented, []),
             };
           },
-        peg$c127 = "as",
-        peg$c128 = peg$literalExpectation("as", false),
-        peg$c129 = function(name) {
+        peg$c128 = "as",
+        peg$c129 = peg$literalExpectation("as", false),
+        peg$c130 = function(name) {
             return name;
           },
-        peg$c130 = function(ref, name, connections) {
+        peg$c131 = function(ref, name, connections) {
             let handleConnections = [];
             let slotConnections = [];
             if (connections) {
@@ -11698,9 +11708,9 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               slotConnections: slotConnections,
             };
           },
-        peg$c131 = "*",
-        peg$c132 = peg$literalExpectation("*", false),
-        peg$c133 = function(param, dir, target) {
+        peg$c132 = "*",
+        peg$c133 = peg$literalExpectation("*", false),
+        peg$c134 = function(param, dir, target) {
             return {
               kind: 'handle-connection',
               location: location(),
@@ -11709,7 +11719,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               target: optional(target, target => target[1], null),
             };
           },
-        peg$c134 = function(ref, name, providedSlots) {
+        peg$c135 = function(ref, name, providedSlots) {
             return {
               kind: 'slot-connection',
               location: location(),
@@ -11719,7 +11729,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               providedSlots: optional(providedSlots, extractIndented, [])
             };
           },
-        peg$c135 = function(param, tags) {
+        peg$c136 = function(param, tags) {
             return {
               kind: 'slot-connection-ref',
               location: location(),
@@ -11727,7 +11737,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               tags,
             };
           },
-        peg$c136 = function(param, name) {
+        peg$c137 = function(param, name) {
             return {
               kind: 'provided-slot',
               location: location(),
@@ -11735,7 +11745,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               name: optional(name, name=>name[1], null)
             };
           },
-        peg$c137 = function(from, dir, to) {
+        peg$c138 = function(from, dir, to) {
             return {
               kind: 'connection',
               location: location(),
@@ -11744,11 +11754,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               to,
             };
           },
-        peg$c138 = "search",
-        peg$c139 = peg$literalExpectation("search", false),
-        peg$c140 = "tokens",
-        peg$c141 = peg$literalExpectation("tokens", false),
-        peg$c142 = function(phrase, tokens) {
+        peg$c139 = "search",
+        peg$c140 = peg$literalExpectation("search", false),
+        peg$c141 = "tokens",
+        peg$c142 = peg$literalExpectation("tokens", false),
+        peg$c143 = function(phrase, tokens) {
             return {
               kind: 'search',
               location: location(),
@@ -11756,15 +11766,15 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               tokens: optional(tokens, tokens => tokens[1][2].map(t => t[1]), null)
             };
           },
-        peg$c143 = "<-",
-        peg$c144 = peg$literalExpectation("<-", false),
-        peg$c145 = "->",
-        peg$c146 = peg$literalExpectation("->", false),
-        peg$c147 = "=",
-        peg$c148 = peg$literalExpectation("=", false),
-        peg$c149 = ".",
-        peg$c150 = peg$literalExpectation(".", false),
-        peg$c151 = function(ident, param, tags) {
+        peg$c144 = "<-",
+        peg$c145 = peg$literalExpectation("<-", false),
+        peg$c146 = "->",
+        peg$c147 = peg$literalExpectation("->", false),
+        peg$c148 = "=",
+        peg$c149 = peg$literalExpectation("=", false),
+        peg$c150 = ".",
+        peg$c151 = peg$literalExpectation(".", false),
+        peg$c152 = function(ident, param, tags) {
             let particle = null;
             let name = null;
             if (ident) {
@@ -11784,22 +11794,22 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               tags: optional(tags, tags => tags[1], []),
             }
           },
-        peg$c152 = function(tags) {
+        peg$c153 = function(tags) {
             return {
               kind: 'connection-target',
               location: location(),
               tags,
             };
           },
-        peg$c153 = "use",
-        peg$c154 = peg$literalExpectation("use", false),
-        peg$c155 = "map",
-        peg$c156 = peg$literalExpectation("map", false),
-        peg$c157 = "create",
-        peg$c158 = peg$literalExpectation("create", false),
-        peg$c159 = "copy",
-        peg$c160 = peg$literalExpectation("copy", false),
-        peg$c161 = function(type, ref, name) {
+        peg$c154 = "use",
+        peg$c155 = peg$literalExpectation("use", false),
+        peg$c156 = "map",
+        peg$c157 = peg$literalExpectation("map", false),
+        peg$c158 = "create",
+        peg$c159 = peg$literalExpectation("create", false),
+        peg$c160 = "copy",
+        peg$c161 = peg$literalExpectation("copy", false),
+        peg$c162 = function(type, ref, name) {
             return {
               kind: 'handle',
               location: location(),
@@ -11808,16 +11818,16 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               fate: type
             }
           },
-        peg$c162 = "#",
-        peg$c163 = peg$literalExpectation("#", false),
-        peg$c164 = /^[a-zA-Z]/,
-        peg$c165 = peg$classExpectation([["a", "z"], ["A", "Z"]], false, false),
-        peg$c166 = /^[a-zA-Z0-9_]/,
-        peg$c167 = peg$classExpectation([["a", "z"], ["A", "Z"], ["0", "9"], "_"], false, false),
-        peg$c168 = function() {return text()},
-        peg$c169 = function(head, tail) { return [head, ...(tail && tail[1] || [])]; },
-        peg$c170 = function(tags) { return tags; },
-        peg$c171 = function(name, tags) {
+        peg$c163 = "#",
+        peg$c164 = peg$literalExpectation("#", false),
+        peg$c165 = /^[a-zA-Z]/,
+        peg$c166 = peg$classExpectation([["a", "z"], ["A", "Z"]], false, false),
+        peg$c167 = /^[a-zA-Z0-9_]/,
+        peg$c168 = peg$classExpectation([["a", "z"], ["A", "Z"], ["0", "9"], "_"], false, false),
+        peg$c169 = function() {return text()},
+        peg$c170 = function(head, tail) { return [head, ...(tail && tail[1] || [])]; },
+        peg$c171 = function(tags) { return tags; },
+        peg$c172 = function(name, tags) {
             return {
               kind: 'particle-ref',
               location: location(),
@@ -11826,7 +11836,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               verbs: [],
             };
           },
-        peg$c172 = function(tags) {
+        peg$c173 = function(tags) {
             return {
               kind: 'particle-ref',
               location: location(),
@@ -11834,9 +11844,9 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               verbs: [],
             };
           },
-        peg$c173 = "particle can",
-        peg$c174 = peg$literalExpectation("particle can", false),
-        peg$c175 = function(verb, tags) {
+        peg$c174 = "particle can",
+        peg$c175 = peg$literalExpectation("particle can", false),
+        peg$c176 = function(verb, tags) {
             return {
               kind: 'particle-ref',
               location: location(),
@@ -11844,7 +11854,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               tags: tags || [],
             };
           },
-        peg$c176 = function(id, tags) {
+        peg$c177 = function(id, tags) {
             return {
               kind: 'handle-ref',
               location: location(),
@@ -11852,7 +11862,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               tags: tags || [],
             };
           },
-        peg$c177 = function(name, tags) {
+        peg$c178 = function(name, tags) {
             return {
               kind: 'handle-ref',
               location: location(),
@@ -11860,16 +11870,16 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               tags: tags || [],
             };
           },
-        peg$c178 = function(tags) {
+        peg$c179 = function(tags) {
             return {
               kind: 'handle-ref',
               location: location(),
               tags,
             };
           },
-        peg$c179 = "slot",
-        peg$c180 = peg$literalExpectation("slot", false),
-        peg$c181 = function(ref, name) {
+        peg$c180 = "slot",
+        peg$c181 = peg$literalExpectation("slot", false),
+        peg$c182 = function(ref, name) {
             return {
               kind: 'slot',
               location: location(),
@@ -11877,11 +11887,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               name: optional(name, name => name[1], '')
             }
           },
-        peg$c182 = "{",
-        peg$c183 = peg$literalExpectation("{", false),
-        peg$c184 = "}",
-        peg$c185 = peg$literalExpectation("}", false),
-        peg$c186 = function(names, fields) {
+        peg$c183 = "{",
+        peg$c184 = peg$literalExpectation("{", false),
+        peg$c185 = "}",
+        peg$c186 = peg$literalExpectation("}", false),
+        peg$c187 = function(names, fields) {
             return {
               kind: 'schema-inline',
               location: location(),
@@ -11889,7 +11899,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               fields: optional(fields, fields => [fields[0], ...fields[1].map(tail => tail[2])], []),
             }
           },
-        peg$c187 = function(type, name) {
+        peg$c188 = function(type, name) {
             return {
               kind: 'schema-inline-field',
               location: location(),
@@ -11897,17 +11907,17 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               type: optional(type, type => type[0], null),
             };
           },
-        peg$c188 = "schema",
-        peg$c189 = peg$literalExpectation("schema", false),
-        peg$c190 = function(names, parents) {
+        peg$c189 = "schema",
+        peg$c190 = peg$literalExpectation("schema", false),
+        peg$c191 = function(names, parents) {
             return {
               names: names.map(name => name[1]).filter(name => name != '*'),
               parents: optional(parents, parents => parents, []),
             };
           },
-        peg$c191 = "alias",
-        peg$c192 = peg$literalExpectation("alias", false),
-        peg$c193 = function(spec, alias, items) {
+        peg$c192 = "alias",
+        peg$c193 = peg$literalExpectation("alias", false),
+        peg$c194 = function(spec, alias, items) {
             return Object.assign(spec, {
               kind: 'schema',
               location: location(),
@@ -11915,27 +11925,27 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               alias,
             });
           },
-        peg$c194 = function(spec, items) {
+        peg$c195 = function(spec, items) {
             return Object.assign(spec, {
               kind: 'schema',
               location: location(),
               items: optional(items, extractIndented, []),
             });
           },
-        peg$c195 = "extends",
-        peg$c196 = peg$literalExpectation("extends", false),
-        peg$c197 = function(first, rest) {
+        peg$c196 = "extends",
+        peg$c197 = peg$literalExpectation("extends", false),
+        peg$c198 = function(first, rest) {
           var list = [first];
           for (let item of rest) {
             list.push(item[3]);
           }
           return list;
         },
-        peg$c198 = "normative",
-        peg$c199 = peg$literalExpectation("normative", false),
-        peg$c200 = "optional",
-        peg$c201 = peg$literalExpectation("optional", false),
-        peg$c202 = function(sectionType, fields) {
+        peg$c199 = "normative",
+        peg$c200 = peg$literalExpectation("normative", false),
+        peg$c201 = "optional",
+        peg$c202 = peg$literalExpectation("optional", false),
+        peg$c203 = function(sectionType, fields) {
             return {
               kind: 'schema-section',
               location: location(),
@@ -11943,7 +11953,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               fields: extractIndented(fields),
             };
           },
-        peg$c203 = function(type, name) {
+        peg$c204 = function(type, name) {
             return {
               kind: 'schema-field',
               location: location(),
@@ -11951,42 +11961,42 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               name,
             };
           },
-        peg$c204 = "Text",
-        peg$c205 = peg$literalExpectation("Text", false),
-        peg$c206 = "URL",
-        peg$c207 = peg$literalExpectation("URL", false),
-        peg$c208 = "Number",
-        peg$c209 = peg$literalExpectation("Number", false),
-        peg$c210 = "Boolean",
-        peg$c211 = peg$literalExpectation("Boolean", false),
-        peg$c212 = "Bytes",
-        peg$c213 = peg$literalExpectation("Bytes", false),
-        peg$c214 = "Object",
-        peg$c215 = peg$literalExpectation("Object", false),
-        peg$c216 = "or",
-        peg$c217 = peg$literalExpectation("or", false),
-        peg$c218 = function(first, rest) {
+        peg$c205 = "Text",
+        peg$c206 = peg$literalExpectation("Text", false),
+        peg$c207 = "URL",
+        peg$c208 = peg$literalExpectation("URL", false),
+        peg$c209 = "Number",
+        peg$c210 = peg$literalExpectation("Number", false),
+        peg$c211 = "Boolean",
+        peg$c212 = peg$literalExpectation("Boolean", false),
+        peg$c213 = "Bytes",
+        peg$c214 = peg$literalExpectation("Bytes", false),
+        peg$c215 = "Object",
+        peg$c216 = peg$literalExpectation("Object", false),
+        peg$c217 = "or",
+        peg$c218 = peg$literalExpectation("or", false),
+        peg$c219 = function(first, rest) {
             let types = [first];
             for (let type of rest) {
               types.push(type[3]);
             }
             return {kind: 'schema-union', location: location(), types};
           },
-        peg$c219 = function(first, rest) {
+        peg$c220 = function(first, rest) {
             let types = [first];
             for (let type of rest) {
               types.push(type[3]);
             }
             return {kind: 'schema-tuple', location: location(), types};
           },
-        peg$c220 = /^[0-9]/,
-        peg$c221 = peg$classExpectation([["0", "9"]], false, false),
-        peg$c222 = function(version) {
+        peg$c221 = /^[0-9]/,
+        peg$c222 = peg$classExpectation([["0", "9"]], false, false),
+        peg$c223 = function(version) {
             return Number(version.join(''));
           },
-        peg$c223 = " ",
-        peg$c224 = peg$literalExpectation(" ", false),
-        peg$c225 = function(i) {
+        peg$c224 = " ",
+        peg$c225 = peg$literalExpectation(" ", false),
+        peg$c226 = function(i) {
           i = i.join('');
           if (i.length > indent.length) {
             indents.push(indent);
@@ -11994,7 +12004,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             return true;
           }
         },
-        peg$c226 = function(i) {
+        peg$c227 = function(i) {
           i = i.join('');
           if (i.length == indent.length) {
             return true;
@@ -12003,7 +12013,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             return false;
           }
         },
-        peg$c227 = function(i) {
+        peg$c228 = function(i) {
           i = i.join('');
           if (i.length >= indent.length) {
             return true;
@@ -12012,33 +12022,33 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             return false;
           }
         },
-        peg$c228 = "`",
-        peg$c229 = peg$literalExpectation("`", false),
-        peg$c230 = /^[^`]/,
-        peg$c231 = peg$classExpectation(["`"], true, false),
-        peg$c232 = function(pattern) { return pattern.join(''); },
-        peg$c233 = "'",
-        peg$c234 = peg$literalExpectation("'", false),
-        peg$c235 = /^[^']/,
-        peg$c236 = peg$classExpectation(["'"], true, false),
-        peg$c237 = function(id) {return id.join('')},
-        peg$c238 = /^[A-Z]/,
-        peg$c239 = peg$classExpectation([["A", "Z"]], false, false),
-        peg$c240 = /^[a-z0-9_]/i,
-        peg$c241 = peg$classExpectation([["a", "z"], ["0", "9"], "_"], false, true),
-        peg$c242 = function(ident) {return text()},
-        peg$c243 = /^[a-z]/,
-        peg$c244 = peg$classExpectation([["a", "z"]], false, false),
-        peg$c245 = /^[ ]/,
-        peg$c246 = peg$classExpectation([" "], false, false),
-        peg$c247 = peg$anyExpectation(),
-        peg$c248 = "\r",
-        peg$c249 = peg$literalExpectation("\r", false),
-        peg$c250 = "\n",
-        peg$c251 = peg$literalExpectation("\n", false),
-        peg$c252 = "//",
-        peg$c253 = peg$literalExpectation("//", false),
-        peg$c254 = function(marker) {
+        peg$c229 = "`",
+        peg$c230 = peg$literalExpectation("`", false),
+        peg$c231 = /^[^`]/,
+        peg$c232 = peg$classExpectation(["`"], true, false),
+        peg$c233 = function(pattern) { return pattern.join(''); },
+        peg$c234 = "'",
+        peg$c235 = peg$literalExpectation("'", false),
+        peg$c236 = /^[^']/,
+        peg$c237 = peg$classExpectation(["'"], true, false),
+        peg$c238 = function(id) {return id.join('')},
+        peg$c239 = /^[A-Z]/,
+        peg$c240 = peg$classExpectation([["A", "Z"]], false, false),
+        peg$c241 = /^[a-z0-9_]/i,
+        peg$c242 = peg$classExpectation([["a", "z"], ["0", "9"], "_"], false, true),
+        peg$c243 = function(ident) {return text()},
+        peg$c244 = /^[a-z]/,
+        peg$c245 = peg$classExpectation([["a", "z"]], false, false),
+        peg$c246 = /^[ ]/,
+        peg$c247 = peg$classExpectation([" "], false, false),
+        peg$c248 = peg$anyExpectation(),
+        peg$c249 = "\r",
+        peg$c250 = peg$literalExpectation("\r", false),
+        peg$c251 = "\n",
+        peg$c252 = peg$literalExpectation("\n", false),
+        peg$c253 = "//",
+        peg$c254 = peg$literalExpectation("//", false),
+        peg$c255 = function(marker) {
             if (marker === '#' && !deprecatedCommentWarningShown) {
               console.warn("'#' for comments is deprecated. Please use '//' instead");
               deprecatedCommentWarningShown = true;
@@ -13875,11 +13885,14 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$parseParticleInterface();
       if (s0 === peg$FAILED) {
-        s0 = peg$parseParticleAffordance();
+        s0 = peg$parseParticleHandle();
         if (s0 === peg$FAILED) {
-          s0 = peg$parseParticleSlot();
+          s0 = peg$parseParticleAffordance();
           if (s0 === peg$FAILED) {
-            s0 = peg$parseDescription();
+            s0 = peg$parseParticleSlot();
+            if (s0 === peg$FAILED) {
+              s0 = peg$parseDescription();
+            }
           }
         }
       }
@@ -13934,6 +13947,29 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             peg$currPos = s0;
             s0 = peg$FAILED;
           }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+
+      return s0;
+    }
+
+    function peg$parseParticleHandle() {
+      var s0, s1, s2;
+
+      s0 = peg$currPos;
+      s1 = peg$parseParticleArgument();
+      if (s1 !== peg$FAILED) {
+        s2 = peg$parseeolWhiteSpace();
+        if (s2 !== peg$FAILED) {
+          peg$savedPos = s0;
+          s1 = peg$c73(s1);
+          s0 = s1;
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;
@@ -14037,11 +14073,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           s3 = peg$parseParticleArgumentType();
           if (s3 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 63) {
-              s4 = peg$c73;
+              s4 = peg$c74;
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c74); }
+              if (peg$silentFails === 0) { peg$fail(peg$c75); }
             }
             if (s4 === peg$FAILED) {
               s4 = null;
@@ -14052,7 +14088,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 s6 = peg$parselowerIdent();
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c75(s1, s3, s4, s6);
+                  s1 = peg$c76(s1, s3, s4, s6);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -14085,12 +14121,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
     function peg$parseParticleArgumentDirection() {
       var s0, s1;
 
-      if (input.substr(peg$currPos, 5) === peg$c76) {
-        s0 = peg$c76;
+      if (input.substr(peg$currPos, 5) === peg$c77) {
+        s0 = peg$c77;
         peg$currPos += 5;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c77); }
+        if (peg$silentFails === 0) { peg$fail(peg$c78); }
       }
       if (s0 === peg$FAILED) {
         if (input.substr(peg$currPos, 2) === peg$c21) {
@@ -14101,25 +14137,25 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           if (peg$silentFails === 0) { peg$fail(peg$c22); }
         }
         if (s0 === peg$FAILED) {
-          if (input.substr(peg$currPos, 3) === peg$c78) {
-            s0 = peg$c78;
+          if (input.substr(peg$currPos, 3) === peg$c79) {
+            s0 = peg$c79;
             peg$currPos += 3;
           } else {
             s0 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c79); }
+            if (peg$silentFails === 0) { peg$fail(peg$c80); }
           }
           if (s0 === peg$FAILED) {
             s0 = peg$currPos;
-            if (input.substr(peg$currPos, 4) === peg$c80) {
-              s1 = peg$c80;
+            if (input.substr(peg$currPos, 4) === peg$c81) {
+              s1 = peg$c81;
               peg$currPos += 4;
             } else {
               s1 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c81); }
+              if (peg$silentFails === 0) { peg$fail(peg$c82); }
             }
             if (s1 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c82();
+              s1 = peg$c83();
             }
             s0 = s1;
           }
@@ -14151,25 +14187,25 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 91) {
-        s1 = peg$c83;
+        s1 = peg$c84;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c84); }
+        if (peg$silentFails === 0) { peg$fail(peg$c85); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parseParticleArgumentType();
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 93) {
-            s3 = peg$c85;
+            s3 = peg$c86;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c86); }
+            if (peg$silentFails === 0) { peg$fail(peg$c87); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c87(s2);
+            s1 = peg$c88(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -14192,11 +14228,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 126) {
-        s1 = peg$c88;
+        s1 = peg$c89;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c89); }
+        if (peg$silentFails === 0) { peg$fail(peg$c90); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parselowerIdent();
@@ -14204,12 +14240,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           s3 = peg$currPos;
           s4 = peg$parsewhiteSpace();
           if (s4 !== peg$FAILED) {
-            if (input.substr(peg$currPos, 4) === peg$c90) {
-              s5 = peg$c90;
+            if (input.substr(peg$currPos, 4) === peg$c91) {
+              s5 = peg$c91;
               peg$currPos += 4;
             } else {
               s5 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c91); }
+              if (peg$silentFails === 0) { peg$fail(peg$c92); }
             }
             if (s5 !== peg$FAILED) {
               s6 = peg$parsewhiteSpace();
@@ -14239,7 +14275,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c92(s2, s3);
+            s1 = peg$c93(s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -14264,7 +14300,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s1 = peg$parseupperIdent();
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c93(s1);
+        s1 = peg$c94(s1);
       }
       s0 = s1;
 
@@ -14337,7 +14373,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c94(s1, s2);
+          s1 = peg$c95(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -14355,46 +14391,46 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 10) === peg$c95) {
-        s1 = peg$c95;
+      if (input.substr(peg$currPos, 10) === peg$c96) {
+        s1 = peg$c96;
         peg$currPos += 10;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c96); }
+        if (peg$silentFails === 0) { peg$fail(peg$c97); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 9) === peg$c97) {
-            s3 = peg$c97;
+          if (input.substr(peg$currPos, 9) === peg$c98) {
+            s3 = peg$c98;
             peg$currPos += 9;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c98); }
+            if (peg$silentFails === 0) { peg$fail(peg$c99); }
           }
           if (s3 === peg$FAILED) {
-            if (input.substr(peg$currPos, 3) === peg$c99) {
-              s3 = peg$c99;
+            if (input.substr(peg$currPos, 3) === peg$c100) {
+              s3 = peg$c100;
               peg$currPos += 3;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c100); }
+              if (peg$silentFails === 0) { peg$fail(peg$c101); }
             }
             if (s3 === peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c101) {
-                s3 = peg$c101;
+              if (input.substr(peg$currPos, 2) === peg$c102) {
+                s3 = peg$c102;
                 peg$currPos += 2;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c102); }
+                if (peg$silentFails === 0) { peg$fail(peg$c103); }
               }
               if (s3 === peg$FAILED) {
-                if (input.substr(peg$currPos, 5) === peg$c103) {
-                  s3 = peg$c103;
+                if (input.substr(peg$currPos, 5) === peg$c104) {
+                  s3 = peg$c104;
                   peg$currPos += 5;
                 } else {
                   s3 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c104); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c105); }
                 }
               }
             }
@@ -14403,7 +14439,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c105(s3);
+              s1 = peg$c106(s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -14565,7 +14601,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                     }
                     if (s8 !== peg$FAILED) {
                       peg$savedPos = s0;
-                      s1 = peg$c106(s1, s4, s5, s6, s8);
+                      s1 = peg$c107(s1, s4, s5, s6, s8);
                       s0 = s1;
                     } else {
                       peg$currPos = s0;
@@ -14618,46 +14654,46 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 10) === peg$c107) {
-        s1 = peg$c107;
+      if (input.substr(peg$currPos, 10) === peg$c108) {
+        s1 = peg$c108;
         peg$currPos += 10;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c108); }
+        if (peg$silentFails === 0) { peg$fail(peg$c109); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 10) === peg$c109) {
-            s3 = peg$c109;
+          if (input.substr(peg$currPos, 10) === peg$c110) {
+            s3 = peg$c110;
             peg$currPos += 10;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c110); }
+            if (peg$silentFails === 0) { peg$fail(peg$c111); }
           }
           if (s3 === peg$FAILED) {
-            if (input.substr(peg$currPos, 3) === peg$c111) {
-              s3 = peg$c111;
+            if (input.substr(peg$currPos, 3) === peg$c112) {
+              s3 = peg$c112;
               peg$currPos += 3;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c112); }
+              if (peg$silentFails === 0) { peg$fail(peg$c113); }
             }
             if (s3 === peg$FAILED) {
-              if (input.substr(peg$currPos, 6) === peg$c113) {
-                s3 = peg$c113;
+              if (input.substr(peg$currPos, 6) === peg$c114) {
+                s3 = peg$c114;
                 peg$currPos += 6;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c114); }
+                if (peg$silentFails === 0) { peg$fail(peg$c115); }
               }
               if (s3 === peg$FAILED) {
-                if (input.substr(peg$currPos, 5) === peg$c115) {
-                  s3 = peg$c115;
+                if (input.substr(peg$currPos, 5) === peg$c116) {
+                  s3 = peg$c116;
                   peg$currPos += 5;
                 } else {
                   s3 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c116); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c117); }
                 }
               }
             }
@@ -14666,7 +14702,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c117(s3);
+              s1 = peg$c118(s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -14803,7 +14839,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                   }
                   if (s7 !== peg$FAILED) {
                     peg$savedPos = s0;
-                    s1 = peg$c118(s3, s4, s5, s7);
+                    s1 = peg$c119(s3, s4, s5, s7);
                     s0 = s1;
                   } else {
                     peg$currPos = s0;
@@ -14860,12 +14896,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         if (peg$silentFails === 0) { peg$fail(peg$c15); }
       }
       if (s1 === peg$FAILED) {
-        if (input.substr(peg$currPos, 6) === peg$c119) {
-          s1 = peg$c119;
+        if (input.substr(peg$currPos, 6) === peg$c120) {
+          s1 = peg$c120;
           peg$currPos += 6;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c120); }
+          if (peg$silentFails === 0) { peg$fail(peg$c121); }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -14876,7 +14912,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c121(s3);
+              s1 = peg$c122(s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -14973,7 +15009,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c122(s3, s5);
+                s1 = peg$c123(s3, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -15012,7 +15048,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c123(s1, s3);
+              s1 = peg$c124(s1, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -15038,12 +15074,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c124) {
-        s1 = peg$c124;
+      if (input.substr(peg$currPos, 6) === peg$c125) {
+        s1 = peg$c125;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c125); }
+        if (peg$silentFails === 0) { peg$fail(peg$c126); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -15142,7 +15178,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c126(s2, s3, s5);
+                s1 = peg$c127(s2, s3, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -15195,12 +15231,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c127) {
-        s1 = peg$c127;
+      if (input.substr(peg$currPos, 2) === peg$c128) {
+        s1 = peg$c128;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c128); }
+        if (peg$silentFails === 0) { peg$fail(peg$c129); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
@@ -15208,7 +15244,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           s3 = peg$parselowerIdent();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c129(s3);
+            s1 = peg$c130(s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -15230,12 +15266,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c127) {
-        s1 = peg$c127;
+      if (input.substr(peg$currPos, 2) === peg$c128) {
+        s1 = peg$c128;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c128); }
+        if (peg$silentFails === 0) { peg$fail(peg$c129); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
@@ -15243,7 +15279,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           s3 = peg$parseupperIdent();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c129(s3);
+            s1 = peg$c130(s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -15341,7 +15377,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             }
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c130(s1, s2, s4);
+              s1 = peg$c131(s1, s2, s4);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -15381,11 +15417,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s1 = peg$parselowerIdent();
       if (s1 === peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 42) {
-          s1 = peg$c131;
+          s1 = peg$c132;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c132); }
+          if (peg$silentFails === 0) { peg$fail(peg$c133); }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -15415,7 +15451,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               s5 = peg$parseeolWhiteSpace();
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c133(s1, s3, s4);
+                s1 = peg$c134(s1, s3, s4);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -15531,7 +15567,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 }
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c134(s3, s4, s6);
+                  s1 = peg$c135(s3, s4, s6);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -15573,7 +15609,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c135(s1, s2);
+          s1 = peg$c136(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -15625,7 +15661,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               s5 = peg$parseeolWhiteSpace();
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c136(s3, s4);
+                s1 = peg$c137(s3, s4);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -15668,7 +15704,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 s6 = peg$parseeolWhiteSpace();
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c137(s1, s3, s5);
+                  s1 = peg$c138(s1, s3, s5);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -15702,12 +15738,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c138) {
-        s1 = peg$c138;
+      if (input.substr(peg$currPos, 6) === peg$c139) {
+        s1 = peg$c139;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c139); }
+        if (peg$silentFails === 0) { peg$fail(peg$c140); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
@@ -15722,12 +15758,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 s7 = peg$currPos;
                 s8 = peg$parseSameIndent();
                 if (s8 !== peg$FAILED) {
-                  if (input.substr(peg$currPos, 6) === peg$c140) {
-                    s9 = peg$c140;
+                  if (input.substr(peg$currPos, 6) === peg$c141) {
+                    s9 = peg$c141;
                     peg$currPos += 6;
                   } else {
                     s9 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c141); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c142); }
                   }
                   if (s9 !== peg$FAILED) {
                     s10 = [];
@@ -15805,7 +15841,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c142(s3, s5);
+                s1 = peg$c143(s3, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -15834,28 +15870,28 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
     function peg$parseDirection() {
       var s0;
 
-      if (input.substr(peg$currPos, 2) === peg$c143) {
-        s0 = peg$c143;
+      if (input.substr(peg$currPos, 2) === peg$c144) {
+        s0 = peg$c144;
         peg$currPos += 2;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c144); }
+        if (peg$silentFails === 0) { peg$fail(peg$c145); }
       }
       if (s0 === peg$FAILED) {
-        if (input.substr(peg$currPos, 2) === peg$c145) {
-          s0 = peg$c145;
+        if (input.substr(peg$currPos, 2) === peg$c146) {
+          s0 = peg$c146;
           peg$currPos += 2;
         } else {
           s0 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c146); }
+          if (peg$silentFails === 0) { peg$fail(peg$c147); }
         }
         if (s0 === peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 61) {
-            s0 = peg$c147;
+            s0 = peg$c148;
             peg$currPos++;
           } else {
             s0 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c148); }
+            if (peg$silentFails === 0) { peg$fail(peg$c149); }
           }
         }
       }
@@ -15874,11 +15910,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 46) {
-          s3 = peg$c149;
+          s3 = peg$c150;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c150); }
+          if (peg$silentFails === 0) { peg$fail(peg$c151); }
         }
         if (s3 !== peg$FAILED) {
           s4 = peg$parselowerIdent();
@@ -15917,7 +15953,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c151(s1, s2, s3);
+            s1 = peg$c152(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -15936,7 +15972,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         s1 = peg$parseTagList();
         if (s1 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c152(s1);
+          s1 = peg$c153(s1);
         }
         s0 = s1;
       }
@@ -15949,43 +15985,43 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 63) {
-        s1 = peg$c73;
+        s1 = peg$c74;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c74); }
+        if (peg$silentFails === 0) { peg$fail(peg$c75); }
       }
       if (s1 === peg$FAILED) {
-        if (input.substr(peg$currPos, 3) === peg$c153) {
-          s1 = peg$c153;
+        if (input.substr(peg$currPos, 3) === peg$c154) {
+          s1 = peg$c154;
           peg$currPos += 3;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c154); }
+          if (peg$silentFails === 0) { peg$fail(peg$c155); }
         }
         if (s1 === peg$FAILED) {
-          if (input.substr(peg$currPos, 3) === peg$c155) {
-            s1 = peg$c155;
+          if (input.substr(peg$currPos, 3) === peg$c156) {
+            s1 = peg$c156;
             peg$currPos += 3;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c156); }
+            if (peg$silentFails === 0) { peg$fail(peg$c157); }
           }
           if (s1 === peg$FAILED) {
-            if (input.substr(peg$currPos, 6) === peg$c157) {
-              s1 = peg$c157;
+            if (input.substr(peg$currPos, 6) === peg$c158) {
+              s1 = peg$c158;
               peg$currPos += 6;
             } else {
               s1 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c158); }
+              if (peg$silentFails === 0) { peg$fail(peg$c159); }
             }
             if (s1 === peg$FAILED) {
-              if (input.substr(peg$currPos, 4) === peg$c159) {
-                s1 = peg$c159;
+              if (input.substr(peg$currPos, 4) === peg$c160) {
+                s1 = peg$c160;
                 peg$currPos += 4;
               } else {
                 s1 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c160); }
+                if (peg$silentFails === 0) { peg$fail(peg$c161); }
               }
             }
           }
@@ -16033,7 +16069,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c161(s1, s2, s3);
+              s1 = peg$c162(s1, s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -16060,42 +16096,42 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 35) {
-        s1 = peg$c162;
+        s1 = peg$c163;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c163); }
+        if (peg$silentFails === 0) { peg$fail(peg$c164); }
       }
       if (s1 !== peg$FAILED) {
-        if (peg$c164.test(input.charAt(peg$currPos))) {
+        if (peg$c165.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c165); }
+          if (peg$silentFails === 0) { peg$fail(peg$c166); }
         }
         if (s2 !== peg$FAILED) {
           s3 = [];
-          if (peg$c166.test(input.charAt(peg$currPos))) {
+          if (peg$c167.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c167); }
+            if (peg$silentFails === 0) { peg$fail(peg$c168); }
           }
           while (s4 !== peg$FAILED) {
             s3.push(s4);
-            if (peg$c166.test(input.charAt(peg$currPos))) {
+            if (peg$c167.test(input.charAt(peg$currPos))) {
               s4 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c167); }
+              if (peg$silentFails === 0) { peg$fail(peg$c168); }
             }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c168();
+            s1 = peg$c169();
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -16139,7 +16175,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c169(s1, s2);
+          s1 = peg$c170(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -16162,7 +16198,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         s2 = peg$parseTagList();
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c170(s2);
+          s1 = peg$c171(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -16188,7 +16224,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c171(s1, s2);
+          s1 = peg$c172(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -16203,17 +16239,17 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         s1 = peg$parseTagList();
         if (s1 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c172(s1);
+          s1 = peg$c173(s1);
         }
         s0 = s1;
         if (s0 === peg$FAILED) {
           s0 = peg$currPos;
-          if (input.substr(peg$currPos, 12) === peg$c173) {
-            s1 = peg$c173;
+          if (input.substr(peg$currPos, 12) === peg$c174) {
+            s1 = peg$c174;
             peg$currPos += 12;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c174); }
+            if (peg$silentFails === 0) { peg$fail(peg$c175); }
           }
           if (s1 !== peg$FAILED) {
             s2 = peg$parsewhiteSpace();
@@ -16226,7 +16262,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 }
                 if (s4 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c175(s3, s4);
+                  s1 = peg$c176(s3, s4);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -16262,7 +16298,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c176(s1, s2);
+          s1 = peg$c177(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -16282,7 +16318,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           }
           if (s2 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c177(s1, s2);
+            s1 = peg$c178(s1, s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -16297,7 +16333,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           s1 = peg$parseTagList();
           if (s1 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c178(s1);
+            s1 = peg$c179(s1);
           }
           s0 = s1;
         }
@@ -16310,12 +16346,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4, s5;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c179) {
-        s1 = peg$c179;
+      if (input.substr(peg$currPos, 4) === peg$c180) {
+        s1 = peg$c180;
         peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c180); }
+        if (peg$silentFails === 0) { peg$fail(peg$c181); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -16359,7 +16395,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c181(s2, s3);
+              s1 = peg$c182(s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -16390,11 +16426,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s3 = peg$parseupperIdent();
       if (s3 === peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 42) {
-          s3 = peg$c131;
+          s3 = peg$c132;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c132); }
+          if (peg$silentFails === 0) { peg$fail(peg$c133); }
         }
       }
       if (s3 !== peg$FAILED) {
@@ -16417,11 +16453,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           s3 = peg$parseupperIdent();
           if (s3 === peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 42) {
-              s3 = peg$c131;
+              s3 = peg$c132;
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c132); }
+              if (peg$silentFails === 0) { peg$fail(peg$c133); }
             }
           }
           if (s3 !== peg$FAILED) {
@@ -16443,11 +16479,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       }
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 123) {
-          s2 = peg$c182;
+          s2 = peg$c183;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c183); }
+          if (peg$silentFails === 0) { peg$fail(peg$c184); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$currPos;
@@ -16527,15 +16563,15 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           }
           if (s3 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 125) {
-              s4 = peg$c184;
+              s4 = peg$c185;
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c185); }
+              if (peg$silentFails === 0) { peg$fail(peg$c186); }
             }
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c186(s1, s3);
+              s1 = peg$c187(s1, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -16583,7 +16619,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         s2 = peg$parselowerIdent();
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c187(s1, s2);
+          s1 = peg$c188(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -16601,12 +16637,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4, s5;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c188) {
-        s1 = peg$c188;
+      if (input.substr(peg$currPos, 6) === peg$c189) {
+        s1 = peg$c189;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c189); }
+        if (peg$silentFails === 0) { peg$fail(peg$c190); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
@@ -16614,11 +16650,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         s4 = peg$parsewhiteSpace();
         if (s4 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 42) {
-            s5 = peg$c131;
+            s5 = peg$c132;
             peg$currPos++;
           } else {
             s5 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c132); }
+            if (peg$silentFails === 0) { peg$fail(peg$c133); }
           }
           if (s5 === peg$FAILED) {
             s5 = peg$parseupperIdent();
@@ -16641,11 +16677,11 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parsewhiteSpace();
             if (s4 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 42) {
-                s5 = peg$c131;
+                s5 = peg$c132;
                 peg$currPos++;
               } else {
                 s5 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c132); }
+                if (peg$silentFails === 0) { peg$fail(peg$c133); }
               }
               if (s5 === peg$FAILED) {
                 s5 = peg$parseupperIdent();
@@ -16672,7 +16708,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c190(s2, s3);
+            s1 = peg$c191(s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -16694,12 +16730,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c191) {
-        s1 = peg$c191;
+      if (input.substr(peg$currPos, 5) === peg$c192) {
+        s1 = peg$c192;
         peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c192); }
+        if (peg$silentFails === 0) { peg$fail(peg$c193); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
@@ -16765,7 +16801,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                   }
                   if (s7 !== peg$FAILED) {
                     peg$savedPos = s0;
-                    s1 = peg$c193(s3, s5, s7);
+                    s1 = peg$c194(s3, s5, s7);
                     s0 = s1;
                   } else {
                     peg$currPos = s0;
@@ -16860,7 +16896,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c194(s1, s3);
+            s1 = peg$c195(s1, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -16884,12 +16920,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s0 = peg$currPos;
       s1 = peg$parsewhiteSpace();
       if (s1 !== peg$FAILED) {
-        if (input.substr(peg$currPos, 7) === peg$c195) {
-          s2 = peg$c195;
+        if (input.substr(peg$currPos, 7) === peg$c196) {
+          s2 = peg$c196;
           peg$currPos += 7;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c196); }
+          if (peg$silentFails === 0) { peg$fail(peg$c197); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parsewhiteSpace();
@@ -16974,7 +17010,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c197(s4, s5);
+                s1 = peg$c198(s4, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -17018,20 +17054,20 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 9) === peg$c198) {
-        s1 = peg$c198;
+      if (input.substr(peg$currPos, 9) === peg$c199) {
+        s1 = peg$c199;
         peg$currPos += 9;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c199); }
+        if (peg$silentFails === 0) { peg$fail(peg$c200); }
       }
       if (s1 === peg$FAILED) {
-        if (input.substr(peg$currPos, 8) === peg$c200) {
-          s1 = peg$c200;
+        if (input.substr(peg$currPos, 8) === peg$c201) {
+          s1 = peg$c201;
           peg$currPos += 8;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c201); }
+          if (peg$silentFails === 0) { peg$fail(peg$c202); }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -17091,7 +17127,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c202(s1, s3);
+            s1 = peg$c203(s1, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -17122,7 +17158,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c203(s1, s3);
+              s1 = peg$c204(s1, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -17161,52 +17197,52 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
     function peg$parseSchemaPrimitiveType() {
       var s0;
 
-      if (input.substr(peg$currPos, 4) === peg$c204) {
-        s0 = peg$c204;
+      if (input.substr(peg$currPos, 4) === peg$c205) {
+        s0 = peg$c205;
         peg$currPos += 4;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c205); }
+        if (peg$silentFails === 0) { peg$fail(peg$c206); }
       }
       if (s0 === peg$FAILED) {
-        if (input.substr(peg$currPos, 3) === peg$c206) {
-          s0 = peg$c206;
+        if (input.substr(peg$currPos, 3) === peg$c207) {
+          s0 = peg$c207;
           peg$currPos += 3;
         } else {
           s0 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c207); }
+          if (peg$silentFails === 0) { peg$fail(peg$c208); }
         }
         if (s0 === peg$FAILED) {
-          if (input.substr(peg$currPos, 6) === peg$c208) {
-            s0 = peg$c208;
+          if (input.substr(peg$currPos, 6) === peg$c209) {
+            s0 = peg$c209;
             peg$currPos += 6;
           } else {
             s0 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c209); }
+            if (peg$silentFails === 0) { peg$fail(peg$c210); }
           }
           if (s0 === peg$FAILED) {
-            if (input.substr(peg$currPos, 7) === peg$c210) {
-              s0 = peg$c210;
+            if (input.substr(peg$currPos, 7) === peg$c211) {
+              s0 = peg$c211;
               peg$currPos += 7;
             } else {
               s0 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c211); }
+              if (peg$silentFails === 0) { peg$fail(peg$c212); }
             }
             if (s0 === peg$FAILED) {
-              if (input.substr(peg$currPos, 5) === peg$c212) {
-                s0 = peg$c212;
+              if (input.substr(peg$currPos, 5) === peg$c213) {
+                s0 = peg$c213;
                 peg$currPos += 5;
               } else {
                 s0 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c213); }
+                if (peg$silentFails === 0) { peg$fail(peg$c214); }
               }
               if (s0 === peg$FAILED) {
-                if (input.substr(peg$currPos, 6) === peg$c214) {
-                  s0 = peg$c214;
+                if (input.substr(peg$currPos, 6) === peg$c215) {
+                  s0 = peg$c215;
                   peg$currPos += 6;
                 } else {
                   s0 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c215); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c216); }
                 }
               }
             }
@@ -17240,12 +17276,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s5 = peg$currPos;
             s6 = peg$parsewhiteSpace();
             if (s6 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c216) {
-                s7 = peg$c216;
+              if (input.substr(peg$currPos, 2) === peg$c217) {
+                s7 = peg$c217;
                 peg$currPos += 2;
               } else {
                 s7 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c217); }
+                if (peg$silentFails === 0) { peg$fail(peg$c218); }
               }
               if (s7 !== peg$FAILED) {
                 s8 = peg$parsewhiteSpace();
@@ -17276,12 +17312,12 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 s5 = peg$currPos;
                 s6 = peg$parsewhiteSpace();
                 if (s6 !== peg$FAILED) {
-                  if (input.substr(peg$currPos, 2) === peg$c216) {
-                    s7 = peg$c216;
+                  if (input.substr(peg$currPos, 2) === peg$c217) {
+                    s7 = peg$c217;
                     peg$currPos += 2;
                   } else {
                     s7 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c217); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c218); }
                   }
                   if (s7 !== peg$FAILED) {
                     s8 = peg$parsewhiteSpace();
@@ -17325,7 +17361,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 }
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c218(s3, s4);
+                  s1 = peg$c219(s3, s4);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -17471,7 +17507,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 }
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c219(s3, s4);
+                  s1 = peg$c220(s3, s4);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -17514,22 +17550,22 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c220.test(input.charAt(peg$currPos))) {
+        if (peg$c221.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c221); }
+          if (peg$silentFails === 0) { peg$fail(peg$c222); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c220.test(input.charAt(peg$currPos))) {
+            if (peg$c221.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c221); }
+              if (peg$silentFails === 0) { peg$fail(peg$c222); }
             }
           }
         } else {
@@ -17537,7 +17573,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c222(s2);
+          s1 = peg$c223(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -17559,21 +17595,21 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s1 = peg$currPos;
       s2 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s3 = peg$c223;
+        s3 = peg$c224;
         peg$currPos++;
       } else {
         s3 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c224); }
+        if (peg$silentFails === 0) { peg$fail(peg$c225); }
       }
       if (s3 !== peg$FAILED) {
         while (s3 !== peg$FAILED) {
           s2.push(s3);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s3 = peg$c223;
+            s3 = peg$c224;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c224); }
+            if (peg$silentFails === 0) { peg$fail(peg$c225); }
           }
         }
       } else {
@@ -17581,7 +17617,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       }
       if (s2 !== peg$FAILED) {
         peg$savedPos = peg$currPos;
-        s3 = peg$c225(s2);
+        s3 = peg$c226(s2);
         if (s3) {
           s3 = void 0;
         } else {
@@ -17618,105 +17654,20 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       s2 = peg$currPos;
       s3 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s4 = peg$c223;
+        s4 = peg$c224;
         peg$currPos++;
       } else {
         s4 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c224); }
+        if (peg$silentFails === 0) { peg$fail(peg$c225); }
       }
       while (s4 !== peg$FAILED) {
         s3.push(s4);
         if (input.charCodeAt(peg$currPos) === 32) {
-          s4 = peg$c223;
+          s4 = peg$c224;
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c224); }
-        }
-      }
-      if (s3 !== peg$FAILED) {
-        peg$savedPos = peg$currPos;
-        s4 = peg$c226(s3);
-        if (s4) {
-          s4 = void 0;
-        } else {
-          s4 = peg$FAILED;
-        }
-        if (s4 !== peg$FAILED) {
-          s3 = [s3, s4];
-          s2 = s3;
-        } else {
-          peg$currPos = s2;
-          s2 = peg$FAILED;
-        }
-      } else {
-        peg$currPos = s2;
-        s2 = peg$FAILED;
-      }
-      peg$silentFails--;
-      if (s2 !== peg$FAILED) {
-        peg$currPos = s1;
-        s1 = void 0;
-      } else {
-        s1 = peg$FAILED;
-      }
-      if (s1 !== peg$FAILED) {
-        s2 = [];
-        if (input.charCodeAt(peg$currPos) === 32) {
-          s3 = peg$c223;
-          peg$currPos++;
-        } else {
-          s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c224); }
-        }
-        while (s3 !== peg$FAILED) {
-          s2.push(s3);
-          if (input.charCodeAt(peg$currPos) === 32) {
-            s3 = peg$c223;
-            peg$currPos++;
-          } else {
-            s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c224); }
-          }
-        }
-        if (s2 !== peg$FAILED) {
-          s1 = [s1, s2];
-          s0 = s1;
-        } else {
-          peg$currPos = s0;
-          s0 = peg$FAILED;
-        }
-      } else {
-        peg$currPos = s0;
-        s0 = peg$FAILED;
-      }
-
-      return s0;
-    }
-
-    function peg$parseSameOrMoreIndent() {
-      var s0, s1, s2, s3, s4;
-
-      s0 = peg$currPos;
-      s1 = peg$currPos;
-      peg$silentFails++;
-      s2 = peg$currPos;
-      s3 = [];
-      if (input.charCodeAt(peg$currPos) === 32) {
-        s4 = peg$c223;
-        peg$currPos++;
-      } else {
-        s4 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c224); }
-      }
-      while (s4 !== peg$FAILED) {
-        s3.push(s4);
-        if (input.charCodeAt(peg$currPos) === 32) {
-          s4 = peg$c223;
-          peg$currPos++;
-        } else {
-          s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c224); }
+          if (peg$silentFails === 0) { peg$fail(peg$c225); }
         }
       }
       if (s3 !== peg$FAILED) {
@@ -17748,20 +17699,105 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       if (s1 !== peg$FAILED) {
         s2 = [];
         if (input.charCodeAt(peg$currPos) === 32) {
-          s3 = peg$c223;
+          s3 = peg$c224;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c224); }
+          if (peg$silentFails === 0) { peg$fail(peg$c225); }
         }
         while (s3 !== peg$FAILED) {
           s2.push(s3);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s3 = peg$c223;
+            s3 = peg$c224;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c224); }
+            if (peg$silentFails === 0) { peg$fail(peg$c225); }
+          }
+        }
+        if (s2 !== peg$FAILED) {
+          s1 = [s1, s2];
+          s0 = s1;
+        } else {
+          peg$currPos = s0;
+          s0 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+
+      return s0;
+    }
+
+    function peg$parseSameOrMoreIndent() {
+      var s0, s1, s2, s3, s4;
+
+      s0 = peg$currPos;
+      s1 = peg$currPos;
+      peg$silentFails++;
+      s2 = peg$currPos;
+      s3 = [];
+      if (input.charCodeAt(peg$currPos) === 32) {
+        s4 = peg$c224;
+        peg$currPos++;
+      } else {
+        s4 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c225); }
+      }
+      while (s4 !== peg$FAILED) {
+        s3.push(s4);
+        if (input.charCodeAt(peg$currPos) === 32) {
+          s4 = peg$c224;
+          peg$currPos++;
+        } else {
+          s4 = peg$FAILED;
+          if (peg$silentFails === 0) { peg$fail(peg$c225); }
+        }
+      }
+      if (s3 !== peg$FAILED) {
+        peg$savedPos = peg$currPos;
+        s4 = peg$c228(s3);
+        if (s4) {
+          s4 = void 0;
+        } else {
+          s4 = peg$FAILED;
+        }
+        if (s4 !== peg$FAILED) {
+          s3 = [s3, s4];
+          s2 = s3;
+        } else {
+          peg$currPos = s2;
+          s2 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s2;
+        s2 = peg$FAILED;
+      }
+      peg$silentFails--;
+      if (s2 !== peg$FAILED) {
+        peg$currPos = s1;
+        s1 = void 0;
+      } else {
+        s1 = peg$FAILED;
+      }
+      if (s1 !== peg$FAILED) {
+        s2 = [];
+        if (input.charCodeAt(peg$currPos) === 32) {
+          s3 = peg$c224;
+          peg$currPos++;
+        } else {
+          s3 = peg$FAILED;
+          if (peg$silentFails === 0) { peg$fail(peg$c225); }
+        }
+        while (s3 !== peg$FAILED) {
+          s2.push(s3);
+          if (input.charCodeAt(peg$currPos) === 32) {
+            s3 = peg$c224;
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c225); }
           }
         }
         if (s2 !== peg$FAILED) {
@@ -17785,30 +17821,30 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 96) {
-        s1 = peg$c228;
+        s1 = peg$c229;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c229); }
+        if (peg$silentFails === 0) { peg$fail(peg$c230); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c230.test(input.charAt(peg$currPos))) {
+        if (peg$c231.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c231); }
+          if (peg$silentFails === 0) { peg$fail(peg$c232); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c230.test(input.charAt(peg$currPos))) {
+            if (peg$c231.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c231); }
+              if (peg$silentFails === 0) { peg$fail(peg$c232); }
             }
           }
         } else {
@@ -17816,15 +17852,15 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 96) {
-            s3 = peg$c228;
+            s3 = peg$c229;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c229); }
+            if (peg$silentFails === 0) { peg$fail(peg$c230); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c232(s2);
+            s1 = peg$c233(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -17847,30 +17883,30 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 39) {
-        s1 = peg$c233;
+        s1 = peg$c234;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c234); }
+        if (peg$silentFails === 0) { peg$fail(peg$c235); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c235.test(input.charAt(peg$currPos))) {
+        if (peg$c236.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c236); }
+          if (peg$silentFails === 0) { peg$fail(peg$c237); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c235.test(input.charAt(peg$currPos))) {
+            if (peg$c236.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c236); }
+              if (peg$silentFails === 0) { peg$fail(peg$c237); }
             }
           }
         } else {
@@ -17878,15 +17914,15 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 39) {
-            s3 = peg$c233;
+            s3 = peg$c234;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c234); }
+            if (peg$silentFails === 0) { peg$fail(peg$c235); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c237(s2);
+            s1 = peg$c238(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -17909,30 +17945,30 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       s1 = peg$currPos;
-      if (peg$c238.test(input.charAt(peg$currPos))) {
+      if (peg$c239.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c239); }
+        if (peg$silentFails === 0) { peg$fail(peg$c240); }
       }
       if (s2 !== peg$FAILED) {
         s3 = [];
-        if (peg$c240.test(input.charAt(peg$currPos))) {
+        if (peg$c241.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c241); }
+          if (peg$silentFails === 0) { peg$fail(peg$c242); }
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c240.test(input.charAt(peg$currPos))) {
+          if (peg$c241.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c241); }
+            if (peg$silentFails === 0) { peg$fail(peg$c242); }
           }
         }
         if (s3 !== peg$FAILED) {
@@ -17948,7 +17984,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c242(s1);
+        s1 = peg$c243(s1);
       }
       s0 = s1;
 
@@ -17960,30 +17996,30 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       s1 = peg$currPos;
-      if (peg$c243.test(input.charAt(peg$currPos))) {
+      if (peg$c244.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c244); }
+        if (peg$silentFails === 0) { peg$fail(peg$c245); }
       }
       if (s2 !== peg$FAILED) {
         s3 = [];
-        if (peg$c240.test(input.charAt(peg$currPos))) {
+        if (peg$c241.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c241); }
+          if (peg$silentFails === 0) { peg$fail(peg$c242); }
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c240.test(input.charAt(peg$currPos))) {
+          if (peg$c241.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c241); }
+            if (peg$silentFails === 0) { peg$fail(peg$c242); }
           }
         }
         if (s3 !== peg$FAILED) {
@@ -17999,7 +18035,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c242(s1);
+        s1 = peg$c243(s1);
       }
       s0 = s1;
 
@@ -18011,21 +18047,21 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s1 = peg$c223;
+        s1 = peg$c224;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c224); }
+        if (peg$silentFails === 0) { peg$fail(peg$c225); }
       }
       if (s1 !== peg$FAILED) {
         while (s1 !== peg$FAILED) {
           s0.push(s1);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s1 = peg$c223;
+            s1 = peg$c224;
             peg$currPos++;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c224); }
+            if (peg$silentFails === 0) { peg$fail(peg$c225); }
           }
         }
       } else {
@@ -18040,21 +18076,21 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       s1 = [];
-      if (peg$c245.test(input.charAt(peg$currPos))) {
+      if (peg$c246.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c246); }
+        if (peg$silentFails === 0) { peg$fail(peg$c247); }
       }
       while (s2 !== peg$FAILED) {
         s1.push(s2);
-        if (peg$c245.test(input.charAt(peg$currPos))) {
+        if (peg$c246.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c246); }
+          if (peg$silentFails === 0) { peg$fail(peg$c247); }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -18065,7 +18101,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c247); }
+          if (peg$silentFails === 0) { peg$fail(peg$c248); }
         }
         peg$silentFails--;
         if (s3 === peg$FAILED) {
@@ -18088,21 +18124,21 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
         s1 = [];
-        if (peg$c245.test(input.charAt(peg$currPos))) {
+        if (peg$c246.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c246); }
+          if (peg$silentFails === 0) { peg$fail(peg$c247); }
         }
         while (s2 !== peg$FAILED) {
           s1.push(s2);
-          if (peg$c245.test(input.charAt(peg$currPos))) {
+          if (peg$c246.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c246); }
+            if (peg$silentFails === 0) { peg$fail(peg$c247); }
           }
         }
         if (s1 !== peg$FAILED) {
@@ -18140,30 +18176,30 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 13) {
-        s1 = peg$c248;
+        s1 = peg$c249;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c249); }
+        if (peg$silentFails === 0) { peg$fail(peg$c250); }
       }
       if (s1 === peg$FAILED) {
         s1 = null;
       }
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 10) {
-          s2 = peg$c250;
+          s2 = peg$c251;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c251); }
+          if (peg$silentFails === 0) { peg$fail(peg$c252); }
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 13) {
-            s3 = peg$c248;
+            s3 = peg$c249;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c249); }
+            if (peg$silentFails === 0) { peg$fail(peg$c250); }
           }
           if (s3 === peg$FAILED) {
             s3 = null;
@@ -18192,38 +18228,38 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
       s0 = peg$currPos;
       s1 = [];
-      if (peg$c245.test(input.charAt(peg$currPos))) {
+      if (peg$c246.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c246); }
+        if (peg$silentFails === 0) { peg$fail(peg$c247); }
       }
       while (s2 !== peg$FAILED) {
         s1.push(s2);
-        if (peg$c245.test(input.charAt(peg$currPos))) {
+        if (peg$c246.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c246); }
+          if (peg$silentFails === 0) { peg$fail(peg$c247); }
         }
       }
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 35) {
-          s2 = peg$c162;
+          s2 = peg$c163;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c163); }
+          if (peg$silentFails === 0) { peg$fail(peg$c164); }
         }
         if (s2 === peg$FAILED) {
-          if (input.substr(peg$currPos, 2) === peg$c252) {
-            s2 = peg$c252;
+          if (input.substr(peg$currPos, 2) === peg$c253) {
+            s2 = peg$c253;
             peg$currPos += 2;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c253); }
+            if (peg$silentFails === 0) { peg$fail(peg$c254); }
           }
         }
         if (s2 !== peg$FAILED) {
@@ -18249,7 +18285,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c254(s2);
+              s1 = peg$c255(s2);
               s0 = s1;
             } else {
               peg$currPos = s0;
