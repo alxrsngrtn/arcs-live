@@ -1,9 +1,5 @@
-commit da2bf5bf0e6e437a25612e4ae43055b1ee7b002d
+commit f3d405890145c49790683ab378815105aa04453a
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri Apr 27 15:26:24 2018 -0700
+Date:   Sun Apr 29 17:55:23 2018 -0700
 
-    Revert "Make manifest ids unique via a session id." (#1236)
-    
-    * Revert "Make manifest ids unique via a session id. (#1231)"
-    
-    This reverts commit 8ad06a8ac2805ace123f8f4091f8ab7087fc6ce3.
+    Add tests for recipe hash stability across manifest reparse. (#1239)
