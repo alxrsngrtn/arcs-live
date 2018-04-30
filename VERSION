@@ -1,7 +1,5 @@
-commit 727c53aa0f769d03c84588dc36425092a5ab9731
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Apr 30 11:33:59 2018 +1000
+commit 0e28a333cedb4edd83f6003e3f78dffadf30c84f
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Apr 30 15:26:35 2018 +1000
 
-    Allow handles to be listed the same as slots in particles. (#1240)
-    
-    Allow handles to be listed the same as slots in particles.
+    Implements Schema.intersect for non subtypes and adds tests for intersect and union (#1228)

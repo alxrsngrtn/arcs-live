@@ -2182,14 +2182,20 @@ class Schema {
   }
 
   static intersect(schema1, schema2) {
-    if (schema1.isMoreSpecificThan(schema2))
-      return schema2;
-    else if (schema2.isMoreSpecificThan(schema1))
-      return schema1;
-    
-    // TODO: Don't be lazy
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, 'non-trivial intersection of schemas not implemented.');
-    return null;
+    let names = [...schema1.names].filter(name => schema2.names.includes(name));
+    let fields = {};
+
+    for (let [field, type] of Object.entries(schema1.fields)) {
+      let otherType = schema2.fields[field];
+      if (otherType && Schema.typesEqual(type, otherType)) {
+        fields[field] = type;
+      }
+    }
+
+    return new Schema({
+      names,
+      fields,
+    });
   }
 
   equals(otherSchema) {
@@ -2364,7 +2370,7 @@ class Schema {
     let fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
     return `${names} {${fields}}`;
   }
-  
+
   toManifestString() {
     let results = [];
     results.push(`schema ${this.names.join(' ')}`);
@@ -2381,6 +2387,7 @@ class Schema {
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Schema;
+
 
 
 /***/ }),
@@ -3341,7 +3348,7 @@ ${e.message}
     visitor.traverse(items);
   }
   static _processSchema(manifest, schemaItem) {
-    let description = '';
+    let description;
     let fields = {};
     let names = [...schemaItem.names];
     for (let item of schemaItem.items) {
@@ -3397,11 +3404,9 @@ ${e.message}
           schemaItem.location,
           `Schema defined without name or alias`);
     }
-    let schema = new __WEBPACK_IMPORTED_MODULE_4__schema_js__["a" /* default */]({
-      names,
-      description: description,
-      fields,
-    });
+    let model = {names, fields};
+    if (description) model.description = description;
+    let schema = new __WEBPACK_IMPORTED_MODULE_4__schema_js__["a" /* default */](model);
     if (schemaItem.alias) {
       schema.isAlias = true;
     }
