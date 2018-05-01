@@ -1,9 +1,5 @@
-commit ac4060ff4b2e8365e559918d2025965da68f467e
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue May 1 12:03:56 2018 +1000
+commit 63e38d058a1e7eced59fa0d3b029de6182784437
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Tue May 1 09:35:35 2018 -0700
 
-    Fix tests for new Particle bodies (#1241)
-    
-    (1) Mark old body style (Foo(in Foo in)) as deprecated
-    (2) ensure only 1 of each deprecation message is printed
-    (3) move all the tests over to the new style
+    arc._context._handles is sometimes (perhaps always?) undefined (#1246)
