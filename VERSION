@@ -1,8 +1,9 @@
-commit 4f2b0105de3e40f94a4527e64b23219d0f79b831
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Mon Apr 30 15:48:35 2018 -0700
+commit ac4060ff4b2e8365e559918d2025965da68f467e
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue May 1 12:03:56 2018 +1000
 
-    fix npm version to 5.8.0 (#1243)
+    Fix tests for new Particle bodies (#1241)
     
-    This may help with some stream closed appveyor failures (see #1242).
-    For consistency I've made the same change to both travis & appveyor configuration.
+    (1) Mark old body style (Foo(in Foo in)) as deprecated
+    (2) ensure only 1 of each deprecation message is printed
+    (3) move all the tests over to the new style

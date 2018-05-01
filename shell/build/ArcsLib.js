@@ -2566,9 +2566,10 @@ class ParticleSpec {
 
   toString() {
     let results = [];
-    results.push(`particle ${this.name} in '${this.implFile}'`);
-    let connRes = this.connections.map(cs => `${cs.direction} ${cs.type.toString()}${cs.isOptional ? '?' : ''} ${cs.name}`);
-    results.push(`  ${this.primaryVerb}(${connRes.join(', ')})`);
+    let verbs = this.verbs.map(verb => `#${verb}`).join(' ');
+    results.push(`particle ${this.name} in '${this.implFile}' ${verbs}`.trim());
+    for (let connection of this.connections)
+      results.push(`  ${connection.direction} ${connection.type.toString()}${connection.isOptional ? '?' : ''} ${connection.name}`);
     this.affordance.filter(a => a != 'mock').forEach(a => results.push(`  affordance ${a}`));
     // TODO: support form factors
     this.slots.forEach(s => {
@@ -2960,6 +2961,8 @@ class ManifestVisitor {
   }
 }
 
+let globalWarningKeys = new Set();
+
 class Manifest {
   constructor({id}) {
     this._recipes = [];
@@ -3163,6 +3166,11 @@ class Manifest {
         // TODO: make a decision as to whether we should be logging these here, or if it should
         //       be a responsibility of the caller.
         // TODO: figure out how to have node print the correct message and stack trace
+        if (warning.key) {
+          if (globalWarningKeys.has(warning.key))
+            continue;     
+          globalWarningKeys.add(warning.key);
+        }  
         console.warn(processError(warning).message);
       }
     }
@@ -3423,6 +3431,14 @@ ${e.message}
     if (!particleItem.args) {
       particleItem.args = [];
     }
+
+    if (particleItem.hasParticleArgument) {
+      let warning = new ManifestError(particleItem.location, `Particle uses deprecated argument body`);
+      warning.key = 'hasParticleArgument';
+      manifest._warnings.push(warning);
+      
+    }
+
     // TODO: loader should not be optional.
     if (particleItem.implFile && loader) {
       particleItem.implFile = loader.join(manifest.fileName, particleItem.implFile);
@@ -11441,12 +11457,13 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
         },
         peg$c69 = "particle",
         peg$c70 = peg$literalExpectation("particle", false),
-        peg$c71 = function(name, implFile, items) {
-            let args = null;
-            let verbs = [];
+        peg$c71 = function(name, verbs, implFile, items) {
+            let args = [];
             let affordance = [];
             let slots = [];
             let description = null;
+            let hasParticleArgument = false;
+            verbs = optional(verbs, parsedOutput => parsedOutput[1].map(verb => verb.slice(1)), []);
             items = items ? extractIndented(items) : [];
             items.forEach(item => {
               if (item.kind == 'interface') {
@@ -11455,12 +11472,8 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
                 }
                 verbs.push(item.verb);
                 args = item.args;
+                hasParticleArgument = true;
               } else if (item.kind == 'particle-argument') {
-                // Do this here instead of setting the default value for args to be [], so
-                // that we can detect when no 'interface' or 'particle-argument's are 
-                // provided, as this is invalid.
-                if (args == null)
-                  args = [];
                 args.push(item);
               } else if (item.kind == 'particle-slot') {
                 slots.push(item);
@@ -11493,6 +11506,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               affordance,
               slots,
               description,
+              hasParticleArgument
             };
           },
         peg$c72 = function(verb, args) {
@@ -13739,7 +13753,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
     }
 
     function peg$parseParticleDefinition() {
-      var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
+      var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12;
 
       s0 = peg$currPos;
       if (input.substr(peg$currPos, 8) === peg$c69) {
@@ -13757,28 +13771,10 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
             s4 = peg$currPos;
             s5 = peg$parsewhiteSpace();
             if (s5 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c21) {
-                s6 = peg$c21;
-                peg$currPos += 2;
-              } else {
-                s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c22); }
-              }
+              s6 = peg$parseTagList();
               if (s6 !== peg$FAILED) {
-                s7 = peg$parsewhiteSpace();
-                if (s7 !== peg$FAILED) {
-                  s8 = peg$parseid();
-                  if (s8 !== peg$FAILED) {
-                    s5 = [s5, s6, s7, s8];
-                    s4 = s5;
-                  } else {
-                    peg$currPos = s4;
-                    s4 = peg$FAILED;
-                  }
-                } else {
-                  peg$currPos = s4;
-                  s4 = peg$FAILED;
-                }
+                s5 = [s5, s6];
+                s4 = s5;
               } else {
                 peg$currPos = s4;
                 s4 = peg$FAILED;
@@ -13791,68 +13787,109 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               s4 = null;
             }
             if (s4 !== peg$FAILED) {
-              s5 = peg$parseeolWhiteSpace();
-              if (s5 !== peg$FAILED) {
-                s6 = peg$currPos;
-                s7 = peg$parseIndent();
+              s5 = peg$currPos;
+              s6 = peg$parsewhiteSpace();
+              if (s6 !== peg$FAILED) {
+                if (input.substr(peg$currPos, 2) === peg$c21) {
+                  s7 = peg$c21;
+                  peg$currPos += 2;
+                } else {
+                  s7 = peg$FAILED;
+                  if (peg$silentFails === 0) { peg$fail(peg$c22); }
+                }
                 if (s7 !== peg$FAILED) {
-                  s8 = [];
-                  s9 = peg$currPos;
-                  s10 = peg$parseSameIndent();
-                  if (s10 !== peg$FAILED) {
-                    s11 = peg$parseParticleItem();
-                    if (s11 !== peg$FAILED) {
-                      s10 = [s10, s11];
-                      s9 = s10;
-                    } else {
-                      peg$currPos = s9;
-                      s9 = peg$FAILED;
-                    }
-                  } else {
-                    peg$currPos = s9;
-                    s9 = peg$FAILED;
-                  }
-                  while (s9 !== peg$FAILED) {
-                    s8.push(s9);
-                    s9 = peg$currPos;
-                    s10 = peg$parseSameIndent();
-                    if (s10 !== peg$FAILED) {
-                      s11 = peg$parseParticleItem();
-                      if (s11 !== peg$FAILED) {
-                        s10 = [s10, s11];
-                        s9 = s10;
-                      } else {
-                        peg$currPos = s9;
-                        s9 = peg$FAILED;
-                      }
-                    } else {
-                      peg$currPos = s9;
-                      s9 = peg$FAILED;
-                    }
-                  }
+                  s8 = peg$parsewhiteSpace();
                   if (s8 !== peg$FAILED) {
-                    s7 = [s7, s8];
-                    s6 = s7;
+                    s9 = peg$parseid();
+                    if (s9 !== peg$FAILED) {
+                      s6 = [s6, s7, s8, s9];
+                      s5 = s6;
+                    } else {
+                      peg$currPos = s5;
+                      s5 = peg$FAILED;
+                    }
                   } else {
-                    peg$currPos = s6;
-                    s6 = peg$FAILED;
+                    peg$currPos = s5;
+                    s5 = peg$FAILED;
                   }
                 } else {
-                  peg$currPos = s6;
-                  s6 = peg$FAILED;
+                  peg$currPos = s5;
+                  s5 = peg$FAILED;
                 }
-                if (s6 === peg$FAILED) {
-                  s6 = null;
-                }
+              } else {
+                peg$currPos = s5;
+                s5 = peg$FAILED;
+              }
+              if (s5 === peg$FAILED) {
+                s5 = null;
+              }
+              if (s5 !== peg$FAILED) {
+                s6 = peg$parseeolWhiteSpace();
                 if (s6 !== peg$FAILED) {
-                  s7 = peg$parseeolWhiteSpace();
+                  s7 = peg$currPos;
+                  s8 = peg$parseIndent();
+                  if (s8 !== peg$FAILED) {
+                    s9 = [];
+                    s10 = peg$currPos;
+                    s11 = peg$parseSameIndent();
+                    if (s11 !== peg$FAILED) {
+                      s12 = peg$parseParticleItem();
+                      if (s12 !== peg$FAILED) {
+                        s11 = [s11, s12];
+                        s10 = s11;
+                      } else {
+                        peg$currPos = s10;
+                        s10 = peg$FAILED;
+                      }
+                    } else {
+                      peg$currPos = s10;
+                      s10 = peg$FAILED;
+                    }
+                    while (s10 !== peg$FAILED) {
+                      s9.push(s10);
+                      s10 = peg$currPos;
+                      s11 = peg$parseSameIndent();
+                      if (s11 !== peg$FAILED) {
+                        s12 = peg$parseParticleItem();
+                        if (s12 !== peg$FAILED) {
+                          s11 = [s11, s12];
+                          s10 = s11;
+                        } else {
+                          peg$currPos = s10;
+                          s10 = peg$FAILED;
+                        }
+                      } else {
+                        peg$currPos = s10;
+                        s10 = peg$FAILED;
+                      }
+                    }
+                    if (s9 !== peg$FAILED) {
+                      s8 = [s8, s9];
+                      s7 = s8;
+                    } else {
+                      peg$currPos = s7;
+                      s7 = peg$FAILED;
+                    }
+                  } else {
+                    peg$currPos = s7;
+                    s7 = peg$FAILED;
+                  }
                   if (s7 === peg$FAILED) {
                     s7 = null;
                   }
                   if (s7 !== peg$FAILED) {
-                    peg$savedPos = s0;
-                    s1 = peg$c71(s3, s4, s6);
-                    s0 = s1;
+                    s8 = peg$parseeolWhiteSpace();
+                    if (s8 === peg$FAILED) {
+                      s8 = null;
+                    }
+                    if (s8 !== peg$FAILED) {
+                      peg$savedPos = s0;
+                      s1 = peg$c71(s3, s4, s5, s7);
+                      s0 = s1;
+                    } else {
+                      peg$currPos = s0;
+                      s0 = peg$FAILED;
+                    }
                   } else {
                     peg$currPos = s0;
                     s0 = peg$FAILED;
