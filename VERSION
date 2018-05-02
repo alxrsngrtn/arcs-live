@@ -1,9 +1,5 @@
-commit 21b3d653525dbfd013b537b4fd22a5758eb17c60
+commit 6977f7080309611428861534e906fd8ac4717aaf
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed May 2 15:07:02 2018 -0700
+Date:   Wed May 2 15:58:48 2018 -0700
 
-    Refactor suggestions rendering out of slot-composer (#1232)
-    
-    * Refactor suggestions rendering out of slot-composer
-    
-    * add test and address comment - move SuggestionComposer initialization to planificator
+    SearchTokensToParticles strategy to also find recipe by name (#1244)
