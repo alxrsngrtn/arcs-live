@@ -1,11 +1,5 @@
-commit 1f77b5fb3920803af1ef29db5a181dbce545a3fc
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed May 2 15:30:47 2018 +1000
+commit 0d6e69a8155d6e1c6319145500285fafb03ffea7
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue May 1 23:08:46 2018 -0700
 
-    Dependent connections (#1247)
-    
-    - allow dependent connections to be parsed
-    - inflate dependent connections & track parents
-    - ensure dependent connections can be literalized correctly
-    - make recipes with satisfied connections that have unsatisfied parents unresolved.
-    - fix some new recipes to match new recipe syntax
+    remove unused manifest scheduler (#1250)
