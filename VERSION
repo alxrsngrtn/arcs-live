@@ -1,5 +1,11 @@
-commit 8b0711c21afab7b05cff99c3183559efc61da070
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Tue May 1 14:03:45 2018 -0700
+commit 1f77b5fb3920803af1ef29db5a181dbce545a3fc
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed May 2 15:30:47 2018 +1000
 
-    change appveyor from smalls to arcs (#1251)
+    Dependent connections (#1247)
+    
+    - allow dependent connections to be parsed
+    - inflate dependent connections & track parents
+    - ensure dependent connections can be literalized correctly
+    - make recipes with satisfied connections that have unsatisfied parents unresolved.
+    - fix some new recipes to match new recipe syntax

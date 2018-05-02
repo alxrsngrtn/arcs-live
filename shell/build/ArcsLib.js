@@ -2421,6 +2421,16 @@ class ConnectionSpec {
     this.name = rawData.name;
     this.type = rawData.type.mergeTypeVariablesByName(typeVarMap);
     this.isOptional = rawData.isOptional;
+    this.dependentConnections = [];
+  }
+
+  instantiateDependentConnections(particle, typeVarMap) {
+    for (let dependentArg of this.rawData.dependentConnections) {
+      let dependentConnection = particle.createConnection(dependentArg, typeVarMap);
+      dependentConnection.parentConnection = this;
+      this.dependentConnections.push(dependentConnection);
+    }
+
   }
 
   get isInput() {
@@ -2473,7 +2483,8 @@ class ParticleSpec {
     this.name = model.name;
     this.verbs = model.verbs;
     let typeVarMap = new Map();
-    this.connections = model.args.map(a => new ConnectionSpec(a, typeVarMap));
+    this.connections = [];
+    model.args.forEach(arg => this.createConnection(arg, typeVarMap));
     this.connectionMap = new Map();
     this.connections.forEach(a => this.connectionMap.set(a.name, a));
     this.inputs = this.connections.filter(a => a.isInput);
@@ -2500,6 +2511,13 @@ class ParticleSpec {
     });
   }
 
+  createConnection(arg, typeVarMap) {
+    let connection = new ConnectionSpec(arg, typeVarMap);
+    this.connections.push(connection);
+    connection.instantiateDependentConnections(this, typeVarMap);
+    return connection;
+  }
+
   isInput(param) {
     for (let input of this.inputs) if (input.name == param) return true;
   }
@@ -2524,17 +2542,15 @@ class ParticleSpec {
 
   toLiteral() {
     let {args, name, verbs, description, implFile, affordance, slots} = this._model;
-    args = args.map(a => {
-      let {type, direction, name, isOptional} = a;
-      type = type.toLiteral();
-      return {type, direction, name, isOptional};
-    });
+    let connectionToLiteral = ({type, direction, name, isOptional, dependentConnections}) => ({type: type.toLiteral(), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral)});
+    args = args.map(a => connectionToLiteral(a));
     return {args, name, verbs, description, implFile, affordance, slots};
   }
 
   static fromLiteral(literal) {
     let {args, name, verbs, description, implFile, affordance, slots} = literal;
-    args = args.map(({type, direction, name, isOptional}) => ({type: __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(type), direction, name, isOptional}));
+    let connectionFromLiteral = ({type, direction, name, isOptional, dependentConnections}) => ({type: __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionFromLiteral)}); 
+    args = args.map(connectionFromLiteral);
     return new ParticleSpec({args, name, verbs, description, implFile, affordance, slots});
   }
 
@@ -2568,8 +2584,20 @@ class ParticleSpec {
     let results = [];
     let verbs = this.verbs.map(verb => `#${verb}`).join(' ');
     results.push(`particle ${this.name} in '${this.implFile}' ${verbs}`.trim());
-    for (let connection of this.connections)
-      results.push(`  ${connection.direction} ${connection.type.toString()}${connection.isOptional ? '?' : ''} ${connection.name}`);
+    let indent = '  ';
+    let writeConnection = (connection, indent) => {
+      results.push(`${indent}${connection.direction} ${connection.type.toString()}${connection.isOptional ? '?' : ''} ${connection.name}`);
+      for (let dependent of connection.dependentConnections) {
+        writeConnection(dependent, indent + '  ');
+      }
+    };
+
+    for (let connection of this.connections) {
+      if (connection.parentConnection)
+        continue;
+      writeConnection(connection, indent);
+    }
+
     this.affordance.filter(a => a != 'mock').forEach(a => results.push(`  affordance ${a}`));
     // TODO: support form factors
     this.slots.forEach(s => {
@@ -3444,9 +3472,13 @@ ${e.message}
       particleItem.implFile = loader.join(manifest.fileName, particleItem.implFile);
     }
 
-    for (let arg of particleItem.args) {
-      arg.type = arg.type.model;
-    }
+    let processArgTypes = args => {
+      for (let arg of args) {      
+        arg.type = arg.type.model;
+        processArgTypes(arg.dependentConnections);
+      }
+    };
+    processArgTypes(particleItem.args);
 
     let particleSpec = new __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__["a" /* default */](particleItem);
     manifest._particles[particleItem.name] = particleSpec;
@@ -11517,7 +11549,9 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               args: args || []
             };
           },
-        peg$c73 = function(arg) {
+        peg$c73 = function(arg, dependentConnections) {
+            dependentConnections = optional(dependentConnections, extractIndented, []);
+            arg.dependentConnections = dependentConnections;
             return arg;
           },
         peg$c74 = "?",
@@ -11529,6 +11563,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
               direction,
               type: type,
               isOptional: !!isOptional,
+              dependentConnections: [],
               name,
             };
           },
@@ -14002,16 +14037,72 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
     }
 
     function peg$parseParticleHandle() {
-      var s0, s1, s2;
+      var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
       s0 = peg$currPos;
       s1 = peg$parseParticleArgument();
       if (s1 !== peg$FAILED) {
         s2 = peg$parseeolWhiteSpace();
         if (s2 !== peg$FAILED) {
-          peg$savedPos = s0;
-          s1 = peg$c73(s1);
-          s0 = s1;
+          s3 = peg$currPos;
+          s4 = peg$parseIndent();
+          if (s4 !== peg$FAILED) {
+            s5 = [];
+            s6 = peg$currPos;
+            s7 = peg$parseSameIndent();
+            if (s7 !== peg$FAILED) {
+              s8 = peg$parseParticleHandle();
+              if (s8 !== peg$FAILED) {
+                s7 = [s7, s8];
+                s6 = s7;
+              } else {
+                peg$currPos = s6;
+                s6 = peg$FAILED;
+              }
+            } else {
+              peg$currPos = s6;
+              s6 = peg$FAILED;
+            }
+            while (s6 !== peg$FAILED) {
+              s5.push(s6);
+              s6 = peg$currPos;
+              s7 = peg$parseSameIndent();
+              if (s7 !== peg$FAILED) {
+                s8 = peg$parseParticleHandle();
+                if (s8 !== peg$FAILED) {
+                  s7 = [s7, s8];
+                  s6 = s7;
+                } else {
+                  peg$currPos = s6;
+                  s6 = peg$FAILED;
+                }
+              } else {
+                peg$currPos = s6;
+                s6 = peg$FAILED;
+              }
+            }
+            if (s5 !== peg$FAILED) {
+              s4 = [s4, s5];
+              s3 = s4;
+            } else {
+              peg$currPos = s3;
+              s3 = peg$FAILED;
+            }
+          } else {
+            peg$currPos = s3;
+            s3 = peg$FAILED;
+          }
+          if (s3 === peg$FAILED) {
+            s3 = null;
+          }
+          if (s3 !== peg$FAILED) {
+            peg$savedPos = s0;
+            s1 = peg$c73(s1, s3);
+            s0 = s1;
+          } else {
+            peg$currPos = s0;
+            s0 = peg$FAILED;
+          }
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;
@@ -20314,21 +20405,19 @@ class HandleConnection {
       }
       return false;
     }
-    if (this.type && this.particle && this.particle.spec) {
-      let connectionSpec = this.particle.spec.connectionMap.get(this.name);
-      if (connectionSpec) {
-        if (!connectionSpec.isCompatibleType(this.rawType)) {
-          if (options && options.errors) {
-            options.errors.set(this, `Type '${this.rawType} for handle connection '${this.particle.name}::${this.name}' doesn't match particle spec's type '${connectionSpec.type}'`);
-          }
-          return false;
+    if (this.type && this.spec) {
+      let connectionSpec = this.spec;
+      if (!connectionSpec.isCompatibleType(this.rawType)) {
+        if (options && options.errors) {
+          options.errors.set(this, `Type '${this.rawType} for handle connection '${this.particle.name}::${this.name}' doesn't match particle spec's type '${connectionSpec.type}'`);
         }
-        if (this.direction != connectionSpec.direction) {
-          if (options && options.errors) {
-            options.errors.set(this, `Direction '${this.direction}' for handle connection '${this.particle.name}::${this.name}' doesn't match particle spec's direction '${connectionSpec.direction}'`);
-          }
-          return false;
+        return false;
+      }
+      if (this.direction != connectionSpec.direction) {
+        if (options && options.errors) {
+          options.errors.set(this, `Direction '${this.direction}' for handle connection '${this.particle.name}::${this.name}' doesn't match particle spec's direction '${connectionSpec.direction}'`);
         }
+        return false;
       }
     }
     return true;
@@ -20340,6 +20429,10 @@ class HandleConnection {
     if (this.isOptional) {
       return true;
     }
+
+    let parent;
+    if (this.spec && this.spec.parentConnection)
+      parent = this.particle.connections[this.spec.parentConnection.name];
 
     // TODO: This should use this._type, or possibly not consider type at all.
     if (!this.type) {
@@ -20355,10 +20448,19 @@ class HandleConnection {
       return false;
     }
     if (!this.handle) {
+      if (parent && parent.isOptional && !parent.handle)
+        return true;
       if (options) {
         options.details = 'missing handle';
       }
       return false;
+    } else if (parent) {
+      if (!parent.handle) {
+        if (options) {
+          options.details = 'parent connection missing handle';
+        }
+        return false;
+      }
     }
     return true;
   }
