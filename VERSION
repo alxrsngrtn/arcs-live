@@ -1,5 +1,9 @@
-commit 0d6e69a8155d6e1c6319145500285fafb03ffea7
+commit 21b3d653525dbfd013b537b4fd22a5758eb17c60
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue May 1 23:08:46 2018 -0700
+Date:   Wed May 2 15:07:02 2018 -0700
 
-    remove unused manifest scheduler (#1250)
+    Refactor suggestions rendering out of slot-composer (#1232)
+    
+    * Refactor suggestions rendering out of slot-composer
+    
+    * add test and address comment - move SuggestionComposer initialization to planificator
