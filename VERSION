@@ -1,5 +1,5 @@
-commit 9720b0a9bae97ef925323a37953d086601807c1f
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu May 3 11:46:23 2018 +1000
+commit e4710736fe2f40f6a80a1d212d3f9379c0df5d6c
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu May 3 13:33:25 2018 +1000
 
-    Implements recipe text-search in the Strategy Explorer (#1252)
+    Test that types can resolve around an interface. (#1254)
