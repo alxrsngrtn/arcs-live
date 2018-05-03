@@ -6727,10 +6727,6 @@ class Scheduler {
     this._idleCallbacks = [];
   }
 
-  clone() {
-    return new Scheduler();
-  }
-
   registerIdleCallback(callback) { this._idleCallbacks.push(callback); }
 
   unregisterIdleCallback(callback) {
@@ -6818,8 +6814,7 @@ class Scheduler {
   }
 }
 
-// TODO: Scheduler needs to be per arc, once multi-arc support is implemented.
-/* harmony default export */ __webpack_exports__["a"] = (new Scheduler());
+/* harmony default export */ __webpack_exports__["a"] = (Scheduler);
 
 
 /***/ }),
@@ -10106,7 +10101,7 @@ class TypeVariable {
 
 
 class Arc {
-  constructor({id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative}) {
+  constructor({id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, scheduler}) {
     // TODO: context should not be optional.
     this._context = context || new __WEBPACK_IMPORTED_MODULE_7__manifest_js__["a" /* default */]({id});
     // TODO: pecFactory should not be optional. update all callers and fix here.
@@ -10121,7 +10116,7 @@ class Arc {
     // TODO: rename: this are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
     this._recipes = [];
     this._loader = loader;
-    this._scheduler = __WEBPACK_IMPORTED_MODULE_12__scheduler_js__["a" /* default */];
+    this._scheduler = scheduler || new __WEBPACK_IMPORTED_MODULE_12__scheduler_js__["a" /* default */]();
 
     // All the handles, mapped by handle ID
     this._handlesById = new Map();
@@ -10363,7 +10358,6 @@ ${this.activeRecipe.toString()}`;
   // Makes a copy of the arc used for speculative execution.
   async cloneForSpeculativeExecution() {
     let arc = new Arc({id: this.generateID().toString(), pecFactory: this._pecFactory, context: this.context, loader: this._loader, speculative: true});
-    arc._scheduler = this._scheduler.clone();
     let handleMap = new Map();
     for (let handle of this._handles) {
       let clone = await arc._storageProviderFactory.construct(handle.id, handle.type, 'in-memory');
