@@ -1,5 +1,9 @@
-commit e4710736fe2f40f6a80a1d212d3f9379c0df5d6c
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu May 3 13:33:25 2018 +1000
+commit 5d0373d5f034e3c500f155a255e9a6f1511567cc
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu May 3 16:59:35 2018 +1000
 
-    Test that types can resolve around an interface. (#1254)
+    First cut at particle API rewrite. (#1253)
+    
+    * First cut at particle API rewrite.
+    
+    * s/setup/loadFilesIntoNewArc/ in particle-api-test.js

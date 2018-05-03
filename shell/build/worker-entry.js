@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 32);
+/******/ 	return __webpack_require__(__webpack_require__.s = 33);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -96,7 +96,7 @@ function assert(test, message) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(8);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1189,7 +1189,7 @@ class Entity {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(32);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1381,7 +1381,7 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_js__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tracelib_trace_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tracelib_trace_js__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__schema_js__ = __webpack_require__(3);
 /**
@@ -1431,6 +1431,37 @@ class Particle {
    */
   setViews(views) {
 
+  }
+
+  /** @method onHandleUpdate(handle, data, add, remove)
+   * Called once after setViews() for each readable handle to establish the current handle values.
+   * Thereafter called whenever the data for a given handle has been updated to the next version.
+   *
+   * handle is the Handle instance that was updated.
+   * version is the received version number.
+   * update is an object with the following fields:
+   *   variable:   The Entity data, or null if the handle was not set prior to setViews or has been
+   *               explicitly cleared. Only defined for Variable-backed handles.
+   *   collection: An Array of Entities; empty if the handle does not contain any entities. Only
+   *               defined for Collection-backed handles.
+   *   added:      An Array of ids indicating which entities were added. Only defined for updates
+   *               to Collection-backed handles.
+   *   removed:    An Array of ids indicating which entities were removed. Only defined for updates
+   *               to Collection-backed handles.
+   */
+  onHandleUpdate(handle, version, update) {
+
+  }
+
+  /** @method onHandleDesync(handle)
+   * Called when an update event for a Collection-backed handle has been missed.
+   * The default implementation automatically resyncronizes the handle.
+   *
+   * handle is the Handle instance that has desynchronized.
+   * version is the received version number.
+   */
+  onHandleDesync(handle, version) {
+    handle.resync();
   }
 
   constructInnerArc() {
@@ -2680,6 +2711,7 @@ class TypeVariable {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_channel_js__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__storage_proxy_js__ = __webpack_require__(30);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2698,64 +2730,6 @@ class TypeVariable {
 
 
 
-class StorageProxy {
-  constructor(id, type, port, pec, name, version) {
-    this._id = id;
-    this._type = type;
-    this._port = port;
-    this._pec = pec;
-    this.name = name;
-    this._version = version;
-    this.state = 'outOfDate';
-  }
-
-  get id() {
-    return this._id;
-  }
-
-  get type() {
-    return this._type;
-  }
-
-  generateIDComponents() {
-    return this._pec.generateIDComponents();
-  }
-
-  on(type, callback, target, particleId) {
-    let dataFreeCallback = (d) => callback();
-    this.synchronize(type, dataFreeCallback, dataFreeCallback, target, particleId);
-  }
-
-  synchronize(type, modelCallback, callback, target, particleId) {
-    this._port.Synchronize({handle: this, modelCallback, callback, target, type, particleId});
-  }
-
-  get(particleId) {
-    return new Promise((resolve, reject) =>
-      this._port.HandleGet({callback: r => resolve(r), handle: this, particleId}));
-  }
-
-  toList(particleId) {
-    return new Promise((resolve, reject) =>
-      this._port.HandleToList({callback: r => resolve(r), handle: this, particleId}));
-  }
-
-  set(entity, particleId) {
-    this._port.HandleSet({data: entity, handle: this, particleId});
-  }
-
-  store(entity, particleId) {
-    this._port.HandleStore({data: entity, handle: this, particleId});
-  }
-
-  remove(entityId, particleId) {
-    this._port.HandleRemove({data: entityId, handle: this, particleId});
-  }
-
-  clear(particleId) {
-    this._port.HandleClear({handle: this, particleId});
-  }
-}
 
 class InnerPEC {
   constructor(port, idBase, loader) {
@@ -2776,24 +2750,22 @@ class InnerPEC {
      * specifications separated from particle classes - and
      * only keeping type information on the arc side.
      */
-    this._apiPort.onDefineHandle = ({type, identifier, name, version}) => {
-      return new StorageProxy(identifier, type, this._apiPort, this, name, version);
+    this._apiPort.onDefineHandle = ({type, identifier, name}) => {
+      let proxy = new __WEBPACK_IMPORTED_MODULE_6__storage_proxy_js__["a" /* StorageProxy */](identifier, type, this._apiPort, this, name, null);
+      return [proxy, () => proxy._initialize()];
     };
 
     this._apiPort.onCreateHandleCallback = ({type, id, name, callback}) => {
-      let proxy = new StorageProxy(id, type, this._apiPort, this, name, 0);
-      Promise.resolve().then(() => callback(proxy));
-      return proxy;
+      let proxy = new __WEBPACK_IMPORTED_MODULE_6__storage_proxy_js__["a" /* StorageProxy */](id, type, this._apiPort, this, name, 0);
+      return [proxy, () => callback(proxy)];
     };
 
     this._apiPort.onMapHandleCallback = ({id, callback}) => {
-      Promise.resolve().then(() => callback(id));
-      return id;
+      return [id, () => callback(id)];
     };
 
     this._apiPort.onCreateSlotCallback = ({hostedSlotId, callback}) => {
-      Promise.resolve().then(() => callback(hostedSlotId));
-      return hostedSlotId;
+      return [hostedSlotId, () => callback(hostedSlotId)];
     };
 
     this._apiPort.onInnerArcRender = ({transformationParticle, transformationSlotName, hostedSlotId, content}) => {
@@ -2892,8 +2864,8 @@ class InnerPEC {
       createHandle: function(type, name) {
         return new Promise((resolve, reject) =>
           pec._apiPort.ArcCreateHandle({arc: arcId, type, name, callback: proxy => {
-            let v = __WEBPACK_IMPORTED_MODULE_1__handle_js__["a" /* default */].handleFor(proxy, proxy.type.isSetView, particleId);
-            v.entityClass = (proxy.type.isSetView ? proxy.type.primitiveType().entitySchema : proxy.type.entitySchema).entityClass();
+            let v = __WEBPACK_IMPORTED_MODULE_1__handle_js__["a" /* default */].handleFor(proxy, proxy.type.isSetView, name, particleId);
+            v.entityClass = (proxy.type.isSetView ? proxy.type.primitiveType() : proxy.type).entitySchema.entityClass();
             resolve(v);
           }}));
       },
@@ -2944,28 +2916,28 @@ class InnerPEC {
     this._particles.push(particle);
 
     let handleMap = new Map();
-    proxies.forEach((value, key) => {
-      handleMap.set(key, __WEBPACK_IMPORTED_MODULE_1__handle_js__["a" /* default */].handleFor(value, value.type.isSetView, id, spec.connectionMap.get(key).isInput, spec.connectionMap.get(key).isOutput));
-    });
-
-    for (let localHandle of handleMap.values()) {
-      let type = localHandle.underlyingProxy().type;
-      let schemaModel;
-      if (type.isSetView && type.primitiveType().isEntity) {
-        schemaModel = type.primitiveType().entitySchema;
-      } else if (type.isEntity) {
-        schemaModel = type.entitySchema;
+    let registerList = [];
+    proxies.forEach((proxy, name) => {
+      let connSpec = spec.connectionMap.get(name);
+      let hnd = __WEBPACK_IMPORTED_MODULE_1__handle_js__["a" /* default */].handleFor(proxy, proxy.type.isSetView, name, id, connSpec.isInput, connSpec.isOutput);
+      let type = proxy.type.isSetView ? proxy.type.primitiveType() : proxy.type;
+      if (type.isEntity) {
+        hnd.entityClass = type.entitySchema.entityClass();
       }
+      handleMap.set(name, hnd);
 
-      if (schemaModel)
-        localHandle.entityClass = schemaModel.entityClass();
-    }
+      // Defer notifications for initial handle data until after setViews is called.
+      if (hnd.canRead) {
+        registerList.push({proxy, particle, handle: hnd});
+      }
+    });
 
     return [particle, async () => {
       resolve();
       let idx = this._pendingLoads.indexOf(p);
       this._pendingLoads.splice(idx, 1);
       await particle.setViews(handleMap);
+      registerList.forEach(({proxy, particle, handle}) => proxy.register(particle, handle));
     }];
   }
 
@@ -3647,6 +3619,8 @@ class PECOuterPort extends APIPort {
     this.registerCall('StopRender', {particle: this.Mapped, slotName: this.Direct});
 
     this.registerHandler('Render', {particle: this.Mapped, slotName: this.Direct, content: this.Direct});
+    this.registerHandler('InitializeProxy', {handle: this.Mapped, callback: this.Direct});
+    this.registerHandler('ResyncHandle', {handle: this.Mapped, callback: this.Direct});
     this.registerHandler('Synchronize', {handle: this.Mapped, target: this.Mapped,
                                     type: this.Direct, callback: this.Direct,
                                     modelCallback: this.Direct, particleId: this.Direct});
@@ -3695,6 +3669,8 @@ class PECInnerPort extends APIPort {
     this.registerHandler('StopRender', {particle: this.Mapped, slotName: this.Direct});
 
     this.registerCall('Render', {particle: this.Mapped, slotName: this.Direct, content: this.Direct});
+    this.registerCall('InitializeProxy', {handle: this.Mapped, callback: this.LocalMapped});
+    this.registerCall('ResyncHandle', {handle: this.Mapped, callback: this.LocalMapped});
     this.registerCall('Synchronize', {handle: this.Mapped, target: this.Mapped,
                                  type: this.Direct, callback: this.LocalMapped,
                                  modelCallback: this.LocalMapped, particleId: this.Direct});
@@ -4145,6 +4121,7 @@ function cloneData(data) {
 }
 
 function restore(entry, entityClass) {
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(entityClass, 'Handles need entity classes for deserialization');
   let {id, rawData} = entry;
   let entity = new entityClass(cloneData(rawData));
   if (entry.id) {
@@ -4160,16 +4137,23 @@ function restore(entry, entityClass) {
  * Base class for Collections and Variables.
  */
 class Handle {
-  constructor(proxy, particleId, canRead, canWrite) {
+  constructor(proxy, name, particleId, canRead, canWrite) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(!(proxy instanceof Handle));
     this._proxy = proxy;
+    this.name = name || this._proxy.name;
     this.canRead = canRead;
     this.canWrite = canWrite;
     this._particleId = particleId;
   }
+
   underlyingProxy() {
     return this._proxy;
   }
+
+  resync() {
+    return this._proxy.resync();
+  }
+
   /** @method on(kind, callback, target)
    * Register for callbacks every time the requested kind of event occurs.
    * Events are grouped into delivery sets by target, which should therefore
@@ -4204,16 +4188,8 @@ class Handle {
     };
   }
 
-  _restore(entry) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this.entityClass, 'Handles need entity classes for deserialization');
-    return restore(entry, this.entityClass);
-  }
-
   get type() {
     return this._proxy._type;
-  }
-  get name() {
-    return this._proxy.name;
   }
 
   get _id() {
@@ -4233,13 +4209,20 @@ class Handle {
  * which handles are connected.
  */
 class Collection extends Handle {
-  constructor(proxy, particleId, canRead, canWrite) {
+  constructor(proxy, name, particleId, canRead, canWrite) {
     // TODO: this should talk to an API inside the PEC.
-    super(proxy, particleId, canRead, canWrite);
+    super(proxy, name, particleId, canRead, canWrite);
   }
   query() {
     // TODO: things
   }
+
+  notify(particle, version, update) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this.canRead, 'notify should not be called for non-readable handles');
+    update.collection = this._restore(update.collection);
+    particle.onHandleUpdate(this, version, update);
+  }
+
   /** @method async toList()
    * Returns a list of the Entities contained by the handle.
    * throws: Error if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
@@ -4249,7 +4232,11 @@ class Collection extends Handle {
     // TODO: remove this and use query instead
     if (!this.canRead)
       throw new Error('Handle not readable');
-    return (await this._proxy.toList(this._particleId)).map(a => this._restore(a));
+    return this._restore(await this._proxy.toList(this._particleId));
+  }
+
+  _restore(list) {
+    return (list != null) ? list.map(a => restore(a, this.entityClass)) : null;
   }
 
   /** @method store(entity)
@@ -4271,7 +4258,7 @@ class Collection extends Handle {
    */
   async remove(entity) {
     if (!this.canWrite)
-      throw new Error('View not writeable');
+      throw new Error('Handle not writeable');
     let serialization = this._serialize(entity);
     return this._proxy.remove(serialization.id, this._particleId);
   }
@@ -4283,8 +4270,14 @@ class Collection extends Handle {
  * the current recipe identifies which handles are connected.
  */
 class Variable extends Handle {
-  constructor(proxy, particleId, canRead, canWrite) {
-    super(proxy, particleId, canRead, canWrite);
+  constructor(proxy, name, particleId, canRead, canWrite) {
+    super(proxy, name, particleId, canRead, canWrite);
+  }
+
+  notify(particle, version, update) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this.canRead, 'notify should not be called for non-readable handles');
+    update.variable = this._restore(update.variable);
+    particle.onHandleUpdate(this, version, update);
   }
 
   /** @method async get()
@@ -4295,15 +4288,18 @@ class Variable extends Handle {
    */
   async get() {
     if (!this.canRead)
-      throw new Error('View not readable');
-    let result = await this._proxy.get(this._particleId);
-    if (result == null)
-      return undefined;
-    if (this.type.isEntity)
-      return this._restore(result);
-    if (this.type.isInterface)
-      return __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__["a" /* default */].fromLiteral(result);
-    return result;
+      throw new Error('Handle not readable');
+    let model = await this._proxy.get(this._particleId);
+    return this._restore(model);
+  }
+
+  _restore(model) {
+    if (model == null)
+      return null;
+    if (this.type.isEntity) {
+      return restore(model, this.entityClass);
+    }
+    return this.type.isInterface ? __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__["a" /* default */].fromLiteral(model) : model;
   }
 
   /** @method set(entity)
@@ -4313,7 +4309,7 @@ class Variable extends Handle {
    */
   async set(entity) {
     if (!this.canWrite)
-      throw new Error('View not writeable');
+      throw new Error('Handle not writeable');
     return this._proxy.set(this._serialize(entity), this._particleId);
   }
 
@@ -4324,15 +4320,15 @@ class Variable extends Handle {
    */
   async clear() {
     if (!this.canWrite)
-      throw new Error('View not writeable');
+      throw new Error('Handle not writeable');
     await this._proxy.clear(this._particleId);
   }
 }
 
-function handleFor(proxy, isSet, particleId, canRead = true, canWrite = true) {
+function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = true) {
   return (isSet || (isSet == undefined && proxy.type.isSetView))
-      ? new Collection(proxy, particleId, canRead, canWrite)
-      : new Variable(proxy, particleId, canRead, canWrite);
+      ? new Collection(proxy, name, particleId, canRead, canWrite)
+      : new Variable(proxy, name, particleId, canRead, canWrite);
 }
 
 /* harmony default export */ __webpack_exports__["a"] = ({handleFor});
@@ -4510,6 +4506,200 @@ let BasicEntity = testEntityClass('BasicEntity');
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StorageProxy; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+class StorageProxy {
+  constructor(id, type, port, pec, name, version) {
+    this._id = id;
+    this._type = type;
+    this._port = port;
+    this._pec = pec;
+    this.name = name;
+    this._version = version;
+    this._variable = undefined;
+    this._collection = undefined;
+    this._observers = [];
+  }
+
+  get id() {
+    return this._id;
+  }
+
+  get type() {
+    return this._type;
+  }
+
+  // Sets up a change listener on the outer storage provider.
+  // Must be invoked after the newly constructed proxy has been mapped into the API channel.
+  _initialize() {
+    let callback = received => {
+      if (received.version < this._version) {
+        console.warn(`StorageProxy '${this._id}' received old version ${received.version}; current is ${this._version}`);
+        return;
+      }
+      if (received.version == this._version) {
+        return;
+      }
+
+      let added, removed;
+      if ('data' in received) {
+        // Backing storage is a Variable containing a single Entity.
+        this._variable = received.data;
+      } else if ('list' in received) {
+        // Backing storage is a Collection and we've been given the full set.
+        this._collection = received.list;
+      } else if (this._version !== null && received.version === this._version + 1) {
+        // We've been given the next version of a Collection and have previously received the initial set.
+        [added, removed] = this._processCollectionUpdate(received);
+      } else {
+        // We've missed an update or didn't receive the initial set.
+        // TODO: move to a "desync" state that discards new updates until resynced?
+        this._observers.forEach(({particle, handle}) => particle.onHandleDesync(handle, received.version));
+        return;
+      }
+      this._version = received.version;
+      this._observers.forEach(({particle, handle}) => {
+        handle.notify(particle, this._version, this._buildUpdate(added, removed));
+      });
+    };
+    // TODO: consider deferring this until we have a registered observer; if all particles in the
+    // current arc only ever write to this proxy, there's no need to catch update events.
+    this._port.InitializeProxy({handle: this, callback});
+  }
+
+  // Folds the add/remove change into the stored _collection model, and returns the ids of the
+  // entities added or removed.
+  _processCollectionUpdate(received) {
+    if ('add' in received) {
+      this._collection.push(...received.add);
+      return [received.add.map(e => e.id), undefined];
+    }
+    if ('remove' in received) {
+      let keep = [];
+      let removed = [];
+      for (let held of this._collection) {
+        keep.push(held);
+        // TODO: avoid revisiting removed items? (e.g. use a set of ids, prune as they are matched)
+        for (let item of received.remove) {
+          if (held.id === item.id) {
+            keep.pop();
+            removed.push(item.id);
+            break;
+          }
+        }
+      }
+      this._collection = keep;
+      return [undefined, removed];
+    }
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `StorageProxy received invalid change event: ${JSON.stringify(received)}`);
+  }
+
+  // Called by InnerPEC to associate (potentially multiple) particle/handle pairs with this proxy.
+  register(particle, handle) {
+    this._observers.push({particle, handle});
+    if (this._version != null) {
+      handle.notify(particle, this._version, this._buildUpdate());
+    }
+  }
+
+  // Builds the update object passed to particles. Only relevant fields are defined. Note that we
+  // don't want to say 'update.x = undefined', because then ('x' in update) still returns true.
+  _buildUpdate(added, removed) {
+    let update = {};
+    if (this._variable !== undefined) {
+      update.variable = this._variable;
+    }
+    if (this._collection !== undefined) {
+      update.collection = this._collection;
+    }
+    if (added !== undefined) {
+      update.added = added;
+    }
+    if (removed !== undefined) {
+      update.removed = removed;
+    }
+    return update;
+  }
+
+  // Retrieve the full data from the backing storage.
+  resync() {
+    let callback = received => {
+      if ('data' in received) {
+        this._variable = received.data;
+      } else if ('list' in received) {
+        this._collection = received.list;
+      } else {
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `StorageProxy received invalid resync event: ${JSON.stringify(received)}`);
+      }
+      this._version = received.version;
+      this._observers.forEach(({particle, handle}) => {
+        handle.notify(particle, this._version, this._buildUpdate());
+      });
+    };
+    this._port.ResyncHandle({handle: this, callback});
+  }
+
+  generateIDComponents() {
+    return this._pec.generateIDComponents();
+  }
+
+  on(type, callback, target, particleId) {
+    let dataFreeCallback = (d) => callback();
+    this.synchronize(type, dataFreeCallback, dataFreeCallback, target, particleId);
+  }
+
+  synchronize(type, modelCallback, callback, target, particleId) {
+    this._port.Synchronize({handle: this, modelCallback, callback, target, type, particleId});
+  }
+
+  get(particleId) {
+    return new Promise((resolve, reject) =>
+      this._port.HandleGet({callback: r => resolve(r), handle: this, particleId}));
+  }
+
+  toList(particleId) {
+    return new Promise((resolve, reject) =>
+      this._port.HandleToList({callback: r => resolve(r), handle: this, particleId}));
+  }
+
+  set(entity, particleId) {
+    this._port.HandleSet({data: entity, handle: this, particleId});
+  }
+
+  store(entity, particleId) {
+    this._port.HandleStore({data: entity, handle: this, particleId});
+  }
+
+  remove(entityId, particleId) {
+    this._port.HandleRemove({data: entityId, handle: this, particleId});
+  }
+
+  clear(particleId) {
+    this._port.HandleClear({handle: this, particleId});
+  }
+}
+
+
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(1);
 /**
@@ -4556,7 +4746,7 @@ class TupleFields {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4706,7 +4896,7 @@ const nob = () => Object.create(null);
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4735,7 +4925,7 @@ self.onmessage = function(e) {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
