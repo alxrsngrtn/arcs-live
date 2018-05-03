@@ -1,5 +1,5 @@
-commit 1de3b92f6d3545bba9a901815002aecde9d2da34
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed May 2 18:04:23 2018 -0700
+commit 9720b0a9bae97ef925323a37953d086601807c1f
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu May 3 11:46:23 2018 +1000
 
-    create a Scheduler per arc (#1256)
+    Implements recipe text-search in the Strategy Explorer (#1252)
