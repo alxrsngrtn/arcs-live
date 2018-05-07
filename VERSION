@@ -1,5 +1,5 @@
-commit 7470858fed383e1ab65620b54c0c96f5c9970d3d
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon May 7 11:01:00 2018 -0700
+commit 315ddf990fa5fadb2618d1df38b21ac55171880a
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon May 7 11:15:38 2018 -0700
 
-    Include hash of read-only manifest handle values in handle id. (#1266)
+    Avoid extra whitespace in type descriptions (#1264)
