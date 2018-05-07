@@ -1,5 +1,5 @@
-commit e36057b4afa75f07183317a38ec93f89f9b2fbb9
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon May 7 16:27:53 2018 +1000
+commit 7470858fed383e1ab65620b54c0c96f5c9970d3d
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon May 7 11:01:00 2018 -0700
 
-    Remove default exports for all trivial cases in runtime. (#1272)
+    Include hash of read-only manifest handle values in handle id. (#1266)
