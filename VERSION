@@ -1,5 +1,5 @@
-commit 315ddf990fa5fadb2618d1df38b21ac55171880a
+commit 4c1aff9a6b93326c8b8f7ba7b6d719b8afbc418d
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon May 7 11:15:38 2018 -0700
+Date:   Mon May 7 11:39:40 2018 -0700
 
-    Avoid extra whitespace in type descriptions (#1264)
+    Fix arc dispose method (#1262)
