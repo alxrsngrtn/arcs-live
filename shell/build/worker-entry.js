@@ -2864,9 +2864,9 @@ class InnerPEC {
       createHandle: function(type, name) {
         return new Promise((resolve, reject) =>
           pec._apiPort.ArcCreateHandle({arc: arcId, type, name, callback: proxy => {
-            let v = __WEBPACK_IMPORTED_MODULE_1__handle_js__["a" /* default */].handleFor(proxy, proxy.type.isSetView, name, particleId);
-            v.entityClass = (proxy.type.isSetView ? proxy.type.primitiveType() : proxy.type).entitySchema.entityClass();
-            resolve(v);
+            let h = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__handle_js__["a" /* handleFor */])(proxy, proxy.type.isSetView, name, particleId);
+            h.entityClass = (proxy.type.isSetView ? proxy.type.primitiveType() : proxy.type).entitySchema.entityClass();
+            resolve(h);
           }}));
       },
       mapHandle: function(handle) {
@@ -2919,16 +2919,16 @@ class InnerPEC {
     let registerList = [];
     proxies.forEach((proxy, name) => {
       let connSpec = spec.connectionMap.get(name);
-      let hnd = __WEBPACK_IMPORTED_MODULE_1__handle_js__["a" /* default */].handleFor(proxy, proxy.type.isSetView, name, id, connSpec.isInput, connSpec.isOutput);
+      let handle = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__handle_js__["a" /* handleFor */])(proxy, proxy.type.isSetView, name, id, connSpec.isInput, connSpec.isOutput);
       let type = proxy.type.isSetView ? proxy.type.primitiveType() : proxy.type;
       if (type.isEntity) {
-        hnd.entityClass = type.entitySchema.entityClass();
+        handle.entityClass = type.entitySchema.entityClass();
       }
-      handleMap.set(name, hnd);
+      handleMap.set(name, handle);
 
       // Defer notifications for initial handle data until after setViews is called.
-      if (hnd.canRead) {
-        registerList.push({proxy, particle, handle: hnd});
+      if (handle.canRead) {
+        registerList.push({proxy, particle, handle});
       }
     });
 
@@ -4092,6 +4092,7 @@ class OuterPortAttachment {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return handleFor; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__relation_js__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__symbols_js__ = __webpack_require__(5);
@@ -4331,7 +4332,7 @@ function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = tr
       : new Variable(proxy, name, particleId, canRead, canWrite);
 }
 
-/* harmony default export */ __webpack_exports__["a"] = ({handleFor});
+
 
 
 /***/ }),

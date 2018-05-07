@@ -1,5 +1,5 @@
-commit 55332b0fc37287c678ef9d0ed5e497d5570f8168
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri May 4 17:27:04 2018 +1000
+commit 8af8e6b5a9a2e27b7bf704d4b12fe1c5a5b049c1
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon May 7 13:24:47 2018 +1000
 
-    Fixes addition of hidden predecessors caused by the combined strategy (#1257)
+    Remove default export from handle.js (#1271)
