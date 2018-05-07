@@ -93,11 +93,11 @@ function assert(test, message) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(7);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -133,7 +133,7 @@ class Type {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(typeof tag == 'string');
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data);
     if (tag == 'Entity') {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data instanceof __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */]);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data instanceof __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */]);
     }
     if (tag == 'SetView') {
       if (!(data instanceof Type) && data.tag && data.data) {
@@ -141,8 +141,8 @@ class Type {
       }
     }
     if (tag == 'Variable') {
-      if (!(data instanceof __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* default */])) {
-        data = new __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* default */](data.name, data.constraint);
+      if (!(data instanceof __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */])) {
+        data = new __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */](data.name, data.constraint);
       }
     }
     this.tag = tag;
@@ -201,7 +201,7 @@ class Type {
         variableMap.set(name, this);
       } else {
         if (variable.variable.constraint || this.variable.constraint) {
-          let mergedConstraint = __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* default */].maybeMergeConstraints(variable.variable, this.variable);
+          let mergedConstraint = __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */].maybeMergeConstraints(variable.variable, this.variable);
           if (!mergedConstraint) {
             throw new Error('could not merge type variables');
           }
@@ -349,7 +349,7 @@ class Type {
       if (type1.canReadSubset.tag !== type2.canReadSubset.tag)
         return false;
       if (type1.canReadSubset.isEntity)
-        return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */].intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
+        return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
     }
     return true;
@@ -360,7 +360,7 @@ class Type {
       if (type1.canWriteSuperset.tag !== type2.canWriteSuperset.tag)
         return false;
       if (type1.canWriteSuperset.isEntity)
-        return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */].union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
+        return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
       
     }
     return true;
@@ -383,15 +383,15 @@ class Type {
   static _deliteralizer(tag) {
     switch (tag) {
       case 'Interface':
-        return __WEBPACK_IMPORTED_MODULE_1__shape_js__["a" /* default */].fromLiteral;
+        return __WEBPACK_IMPORTED_MODULE_1__shape_js__["a" /* Shape */].fromLiteral;
       case 'Entity':
-        return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */].fromLiteral;
+        return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].fromLiteral;
       case 'SetView':
         return Type.fromLiteral;
       case 'Tuple':
-        return __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__["a" /* default */].fromLiteral;
+        return __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__["a" /* TupleFields */].fromLiteral;
       case 'Variable':
-        return __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* default */].fromLiteral;
+        return __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */].fromLiteral;
       default:
         return a => a;
     }
@@ -496,15 +496,299 @@ addType('Tuple', 'fields');
 
 
 
-
 /***/ }),
 /* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Entity; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+
+class Entity {
+  constructor(userIDComponent) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = undefined;
+    this._userIDComponent = userIDComponent;
+  }
+  get data() {
+    return undefined;
+  }
+
+  getUserID() {
+    return this._userIDComponent;
+  }
+
+  isIdentified() {
+    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] !== undefined;
+  }
+  // TODO: entity should not be exposing its IDs.
+  get id() {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!this.isIdentified());
+    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier];
+  }
+  identify(identifier) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = identifier;
+    let components = identifier.split(':');
+    if (components[components.length - 2] == 'uid')
+      this._userIDComponent = components[components.length - 1];
+  }
+  createIdentity(components) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
+    let id;
+    if (this._userIDComponent)
+      id = `${components.base}:uid:${this._userIDComponent}`;
+    else
+      id = `${components.base}:${components.component()}`;
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = id;
+  }
+  toLiteral() {
+    return this.rawData;
+  }
+
+  static get type() {
+    // TODO: should the entity's key just be its type?
+    // Should it just be called type in that case?
+    return __WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */].newEntity(this.key.schema);
+  }
+}
+
+
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({identifier: Symbol('id')});
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DomParticle; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(32);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+
+/** @class DomParticle
+ * Particle that does stuff with DOM.
+ */
+class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_1__particle_js__["b" /* Particle */]) {
+  constructor() {
+    super();
+    this.state = this._state;
+    this.props = this._props;
+  }
+  /** @method get template()
+   * Override to return a String defining primary markup.
+   */
+  get template() {
+    return '';
+  }
+  /** @method getTemplate(slotName)
+   * Override to return a String defining primary markup for the given slot name.
+   */
+  getTemplate(slotName) {
+    // TODO: only supports a single template for now. add multiple templates support.
+    return this.template;
+  }
+  /** @method willReceiveProps(props, state, oldProps, oldState)
+   * Override if necessary, to do things when props change.
+   */
+  willReceiveProps() {
+  }
+  /** @method update(props, state, oldProps, oldState)
+   * Override if necessary, to modify superclass config.
+   */
+  update() {
+  }
+  /** @method shouldRender(props, state, oldProps, oldState)
+   * Override to return false if the Particle won't use
+   * it's slot.
+   */
+  shouldRender() {
+    return true;
+  }
+  /** @method render(props, state, oldProps, oldState)
+   * Override to return a dictionary to map into the template.
+   */
+  render() {
+    return {};
+  }
+  setState(state) {
+    return this._setState(state);
+  }
+  // TODO(sjmiles): deprecated, just use setState
+  setIfDirty(state) {
+    console.warn('DomParticle: `setIfDirty` is deprecated, please use `setState` instead');
+    return this._setState(state);
+  }
+  _willReceiveProps(...args) {
+    this.willReceiveProps(...args);
+  }
+  _update(...args) {
+    this.update(...args);
+    if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
+      this.relevance = 1; // TODO: improve relevance signal.
+    }
+    this.config.slotNames.forEach(s => this.renderSlot(s, ['model']));
+  }
+  /** @method get config()
+   * Override if necessary, to modify superclass config.
+   */
+  get config() {
+    // TODO(sjmiles): getter that does work is a bad idea, this is temporary
+    return {
+      handles: this.spec.inputs.map(i => i.name),
+      // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
+      // .manifest files, instead of .ptcl ones.
+      slotNames: [...this.spec.slots.values()].map(s => s.name)
+    };
+  }
+  _info() {
+    return `---------- DomParticle::[${this.spec.name}]`;
+  }
+  async setViews(handles) {
+    this.handles = handles;
+    this._views = handles;
+    let config = this.config;
+    this.when([new __WEBPACK_IMPORTED_MODULE_1__particle_js__["c" /* ViewChanges */](handles, config.handles, 'change')], async () => {
+      await this._handlesToProps(handles, config);
+    });
+    // make sure we invalidate once, even if there are no incoming handles
+    this._invalidate();
+  }
+  async _handlesToProps(handles, config) {
+    // acquire (async) list data from handles
+    let data = await Promise.all(
+      config.handles
+      .map(name => handles.get(name))
+      .map(handle => handle.toList ? handle.toList() : handle.get())
+    );
+    // convert handle data (array) into props (dictionary)
+    let props = Object.create(null);
+    config.handles.forEach((name, i) => {
+      props[name] = data[i];
+    });
+    this._setProps(props);
+  }
+  renderSlot(slotName, contentTypes) {
+    const stateArgs = this._getStateArgs();
+    let slot = this.getSlot(slotName);
+    if (!slot) {
+      return; // didn't receive StartRender.
+    }
+
+    // Set this to support multiple slots consumed by a particle, without needing
+    // to pass slotName to particle's render method, where it useless in most cases.
+    this.currentSlotName = slotName;
+
+    contentTypes.forEach(ct => slot._requestedContentTypes.add(ct));
+    // TODO(sjmiles): redundant, same answer for every slot
+    if (this.shouldRender(...stateArgs)) {
+      let content = {};
+      if (slot._requestedContentTypes.has('template')) {
+        content.template = this.getTemplate(slot.slotName);
+      }
+      if (slot._requestedContentTypes.has('model')) {
+        content.model = this.render(...stateArgs);
+      }
+      slot.render(content);
+    } else if (slot.isRendered) {
+      // Send empty object, to clear rendered slot contents.
+      slot.render({});
+    }
+
+    this.currentSlotName = undefined;
+  }
+  fireEvent(slotName, {handler, data}) {
+    if (this[handler]) {
+      // TODO(sjmiles): remove `this._state` parameter
+      this[handler]({data}, this._state);
+    }
+  }
+  setParticleDescription(pattern) {
+    if (typeof pattern === 'string') {
+      return super.setParticleDescription(pattern);
+    }
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
+    super.setDescriptionPattern('_template_', pattern.template);
+    super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+  }
+  updateVariable(handleName, record) {
+    const handle = this.handles.get(handleName);
+    const newRecord = new (handle.entityClass)(record);
+    handle.set(newRecord);
+    return newRecord;
+  }
+  updateSet(handleName, record) {
+    // Set the record into the right place in the set. If we find it
+    // already present replace it, otherwise, add it.
+    // TODO(dstockwell): Replace this with happy entity mutation approach.
+    const handle = this.handles.get(handleName);
+    const records = this._props[handleName];
+    const target = records.find(r => r.id === record.id);
+    if (target) {
+      handle.remove(target);
+    }
+    handle.store(record);
+  }
+}
+
+
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ParticleSpec; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /**
  * @license
@@ -684,7 +968,7 @@ class ParticleSpec {
     // TODO: wat do?
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(!this.slots.length, 'please implement slots toShape');
     const slots = [];
-    return new __WEBPACK_IMPORTED_MODULE_2__shape_js__["a" /* default */](handles, slots);
+    return new __WEBPACK_IMPORTED_MODULE_2__shape_js__["a" /* Shape */](handles, slots);
   }
 
   toString() {
@@ -759,17 +1043,540 @@ class ParticleSpec {
   }
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (ParticleSpec);
+
 
 
 /***/ }),
-/* 3 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_js__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+/** @class Particle
+ * A basic particle. For particles that provide UI, you may like to
+ * instead use DOMParticle.
+ */
+class Particle {
+  constructor(capabilities) {
+    this.spec = this.constructor.spec;
+    if (this.spec.inputs.length == 0)
+      this.extraData = true;
+    this.relevances = [];
+    this._idle = Promise.resolve();
+    this._idleResolver = null;
+    this._busy = 0;
+    this.slotHandlers = [];
+    this.stateHandlers = new Map();
+    this.states = new Map();
+    this._slotByName = new Map();
+    this.capabilities = capabilities || {};
+  }
+
+  /** @method setViews(views)
+   * This method is invoked with a handle for each view this particle
+   * is registered to interact with, once those views are ready for
+   * interaction. Override the method to register for events from
+   * the views.
+   *
+   * Views is a map from view names to view handles.
+   */
+  setViews(views) {
+
+  }
+
+  /** @method onHandleUpdate(handle, data, add, remove)
+   * Called once after setViews() for each readable handle to establish the current handle values.
+   * Thereafter called whenever the data for a given handle has been updated to the next version.
+   *
+   * handle is the Handle instance that was updated.
+   * version is the received version number.
+   * update is an object with the following fields:
+   *   variable:   The Entity data, or null if the handle was not set prior to setViews or has been
+   *               explicitly cleared. Only defined for Variable-backed handles.
+   *   collection: An Array of Entities; empty if the handle does not contain any entities. Only
+   *               defined for Collection-backed handles.
+   *   added:      An Array of ids indicating which entities were added. Only defined for updates
+   *               to Collection-backed handles.
+   *   removed:    An Array of ids indicating which entities were removed. Only defined for updates
+   *               to Collection-backed handles.
+   */
+  onHandleUpdate(handle, version, update) {
+
+  }
+
+  /** @method onHandleDesync(handle)
+   * Called when an update event for a Collection-backed handle has been missed.
+   * The default implementation automatically resyncronizes the handle.
+   *
+   * handle is the Handle instance that has desynchronized.
+   * version is the received version number.
+   */
+  onHandleDesync(handle, version) {
+    handle.resync();
+  }
+
+  constructInnerArc() {
+    if (!this.capabilities.constructInnerArc)
+      throw new Error('This particle is not allowed to construct inner arcs');
+    return this.capabilities.constructInnerArc(this);
+  }
+
+  get busy() {
+    return this._busy > 0;
+  }
+
+  get idle() {
+    return this._idle;
+  }
+
+  /** @method setBusy()
+   * Prevents this particle from indicating that it's idle until a matching
+   * call to setIdle is made.
+   */
+  setBusy() {
+    if (this._busy == 0)
+    this._idle = new Promise((resolve, reject) => {
+      this._idleResolver = resolve;
+    });
+    this._busy++;
+  }
+
+  /** @method setIdle()
+   * Indicates that a busy period (initiated by a call to setBusy) has completed.
+   */
+  setIdle() {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this._busy > 0);
+    this._busy--;
+    if (this._busy == 0)
+      this._idleResolver();
+  }
+
+  set relevance(r) {
+    this.relevances.push(r);
+  }
+
+  inputs() {
+    return this.spec.inputs;
+  }
+
+  outputs() {
+    return this.spec.outputs;
+  }
+
+  /** @method getSlot(name)
+   * Returns the slot with provided name.
+   */
+  getSlot(name) {
+    return this._slotByName.get(name);
+  }
+
+  addSlotHandler(f) {
+    this.slotHandlers.push(f);
+  }
+
+  addStateHandler(states, f) {
+    states.forEach(state => {
+      if (!this.stateHandlers.has(state)) {
+        this.stateHandlers.set(state, []);
+      }
+      this.stateHandlers.get(state).push(f);
+    });
+  }
+
+  emit(state, value) {
+    this.states.set(state, value);
+    this.stateHandlers.get(state).forEach(f => f(value));
+  }
+
+  /** @method on(views, names, kind, f)
+   * Convenience method for registering a callback on multiple views at once.
+   *
+   * views is a map from names to view handles
+   * names indicates the views which should have a callback installed on them
+   * kind is the kind of event that should be registered for
+   * f is the callback function
+   */
+  on(views, names, kind, f) {
+    if (typeof names == 'string')
+      names = [names];
+    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'particle', names: this.constructor.name + '::on', args: {view: names, event: kind}});
+    names.forEach(name => views.get(name).on(kind, __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].wrap({cat: 'particle', name: this.constructor.name, args: {view: name, event: kind}}, f), this));
+    trace.end();
+  }
+
+  when(changes, f) {
+    changes.forEach(change => change.register(this, f));
+  }
+
+  fireEvent(slotName, event) {
+    // TODO(sjmiles): tests can get here without a `this.slot`, maybe this needs to be fixed in MockSlotManager?
+    let slot = this.getSlot(slotName);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(slot, `Particle::fireEvent: slot ${slotName} is falsey`);
+    slot.fireEvent(event);
+  }
+
+  static buildManifest(strings, ...bits) {
+    let output = [];
+    for (let i = 0; i < bits.length; i++) {
+        let str = strings[i];
+        let indent = / *$/.exec(str)[0];
+        let bitStr;
+        if (typeof bits[i] == 'string')
+          bitStr = bits[i];
+        else
+          bitStr = bits[i].toManifestString();
+        bitStr = bitStr.replace(/(\n)/g, '$1' + indent);
+        output.push(str);
+        output.push(bitStr);
+    }
+    if (strings.length > bits.length)
+      output.push(strings[strings.length - 1]);
+    return output.join('');
+  }
+
+  setParticleDescription(pattern) {
+    return this.setDescriptionPattern('_pattern_', pattern);
+  }
+  setDescriptionPattern(connectionName, pattern) {
+    let descriptions = this._views.get('descriptions');
+    if (descriptions) {
+      descriptions.store(new descriptions.entityClass({key: connectionName, value: pattern}, connectionName));
+      return true;
+    }
+    return false;
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["b"] = Particle;
+
+
+class ViewChanges {
+  constructor(views, names, type) {
+    if (typeof names == 'string')
+      names = [names];
+    this.names = names;
+    this.views = views;
+    this.type = type;
+  }
+  register(particle, f) {
+    let modelCount = 0;
+    let afterAllModels = () => { if (++modelCount == this.names.length) { f(); } };
+
+    for (let name of this.names) {
+      let view = this.views.get(name);
+      view.synchronize(this.type, afterAllModels, f, particle);
+    }
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["c"] = ViewChanges;
+
+
+class SlotChanges {
+  constructor() {
+  }
+  register(particle, f) {
+    particle.addSlotHandler(f);
+  }
+}
+/* unused harmony export SlotChanges */
+
+
+class StateChanges {
+  constructor(states) {
+    if (typeof states == 'string')
+      states = [states];
+    this.states = states;
+  }
+  register(particle, f) {
+    particle.addStateHandler(this.states, f);
+  }
+}
+/* unused harmony export StateChanges */
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({Particle, ViewChanges, SlotChanges, StateChanges});
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+class TypeChecker {
+
+  // resolve a list of handleConnection types against a handle
+  // base type. This is the core type resolution mechanism, but should only
+  // be used when types can actually be associated with each other / constrained.
+  //
+  // By design this function is called exactly once per handle in a recipe during
+  // normalization, and should provide the same final answers regardless of the
+  // ordering of handles within that recipe
+  //
+  // NOTE: you probably don't want to call this function, if you think you
+  // do, talk to shans@.
+  static processTypeList(baseType, list) {
+    if (baseType == undefined)
+      baseType = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */]('a'));
+
+    let concreteTypes = [];
+
+    // baseType might be a variable (and is definitely a variable if no baseType was available).
+    // Some of the list might contain variables too.
+
+    // First attempt to merge all the variables into the baseType
+    //
+    // If the baseType is a variable then this results in a single place to manipulate the constraints
+    // of all the other connected variables at the same time.
+    for (let item of list) {
+      if (item.type.resolvedType().hasVariable) {
+        baseType = TypeChecker._tryMergeTypeVariable(baseType, item.type);
+        if (baseType == null)
+          return null;
+      } else {
+        concreteTypes.push(item);
+      }
+    }
+
+    for (let item of concreteTypes) {
+      let success = TypeChecker._tryMergeConstraints(baseType, item);
+      if (!success)
+        return null;
+    }
+
+    let getResolution = candidate => {
+      if (candidate.isVariable == false)
+        return candidate;
+      if (candidate.canReadSubset == null || candidate.canWriteSuperset == null)
+        return candidate;
+      if (candidate.canReadSubset.isMoreSpecificThan(candidate.canWriteSuperset)) {
+        if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset))
+          candidate.variable.resolution = candidate.canReadSubset;
+        return candidate;
+      }
+      return null;
+    };
+
+    let candidate = baseType.resolvedType();
+
+    if (candidate.isSetView) {
+      candidate = candidate.primitiveType();
+      let resolution = getResolution(candidate);
+      if (resolution == null)
+        return null;
+      return resolution.setViewOf();
+    }
+
+    return getResolution(candidate);
+  }
+
+  static _tryMergeTypeVariable(base, onto) {
+    let [primitiveBase, primitiveOnto] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(base.resolvedType(), onto.resolvedType());
+
+    if (primitiveBase.isVariable) {
+      if (primitiveOnto.isVariable) {
+        // base, onto both variables.
+        let result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
+        if (result == false)
+          return null;
+        primitiveOnto.variable.resolution = primitiveBase;
+      } else {
+        // base variable, onto not.
+        primitiveBase.variable.resolution = primitiveOnto;
+      }
+    } else if (primitiveOnto.isVariable) {
+      // onto variable, base not.
+      primitiveOnto.variable.resolution = primitiveBase;
+      return onto;
+    } else {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(false, 'tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
+    }
+
+    return base;
+  }
+
+  static _tryMergeConstraints(handleType, {type, direction}) {
+    let [primitiveHandleType, primitiveConnectionType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(handleType.resolvedType(), type.resolvedType());
+    if (primitiveHandleType.isVariable) {
+      if (primitiveConnectionType.isSetView) {
+        if (primitiveHandleType.variable.resolution != null
+            || primitiveHandleType.variable.canReadSubset != null
+            || primitiveHandleType.variable.canWriteSuperset != null) {
+          // Resolved and/or constrained variables can only represent Entities, not sets.
+          return false;
+        }
+        // If this is an undifferentiated variable then we need to create structure to match against. That's
+        // allowed because this variable could represent anything, and it needs to represent this structure
+        // in order for type resolution to succeed.
+        primitiveHandleType.variable.resolution = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newSetView(__WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */]('a')));
+        let unwrap = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
+        primitiveHandleType = unwrap[0];
+        primitiveConnectionType = unwrap[1];
+      }
+
+      if (direction == 'out' || direction == 'inout') {
+        // the canReadSubset of the handle represents the maximal type that can be read from the
+        // handle, so we need to intersect out any type that is more specific than the maximal type
+        // that could be written.
+        if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset))
+          return false;
+      }
+      if (direction == 'in' || direction == 'inout') {
+        // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
+        // so we need to union it with the type that wants to be read here.
+        if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset))
+          return false;
+      }
+    } else {
+      if (primitiveConnectionType.tag !== primitiveHandleType.tag) return false;
+
+      if (direction == 'out' || direction == 'inout')
+        if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType))
+          return false;
+      if (direction == 'in' || direction == 'inout')
+        if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType))
+          return false;
+    }
+
+    return true;
+  }
+
+  static _writeConstraintsApply(handleType, connectionType) {
+    // this connection wants to write to this handle. If the written type is
+    // more specific than the canReadSubset then it isn't violating the maximal type
+    // that can be read.
+    let writtenType = connectionType.canWriteSuperset;
+    if (writtenType == null || handleType.canReadSubset == null)
+      return true;
+    if (writtenType.isMoreSpecificThan(handleType.canReadSubset))
+      return true;
+    return false;
+  }
+
+  static _readConstraintsApply(handleType, connectionType) {
+    // this connection wants to read from this handle. If the read type
+    // is less specific than the canWriteSuperset, then it isn't violating
+    // the maximum lower-bound read type.
+    let readType = connectionType.canReadSubset;
+    if (readType == null|| handleType.canWriteSuperset == null)
+      return true;
+    if (handleType.canWriteSuperset.isMoreSpecificThan(readType))
+      return true;
+    return false;
+  }
+
+  // TODO: what is this? Does it still belong here?
+  static restrictType(type, instance) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(type.isInterface, `restrictType not implemented for ${type}`);
+
+    let shape = type.interfaceShape.restrictType(instance);
+    if (shape == false)
+      return false;
+    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newInterface(shape);
+  }
+
+  // Compare two types to see if they could be potentially resolved (in the absence of other
+  // information). This is used as a filter when selecting compatible handles or checking
+  // validity of recipes. This function returning true never implies that full type resolution
+  // will succeed, but if the function returns false for a pair of types that are associated
+  // then type resolution is guaranteed to fail.
+  //
+  // left, right: {type, direction, connection}
+  static compareTypes(left, right) {
+    let resolvedLeft = left.type.resolvedType();
+    let resolvedRight = right.type.resolvedType();
+    let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(resolvedLeft, resolvedRight);
+
+    if (leftType.isVariable || rightType.isVariable) {
+      // TODO: everything should use this, eventually. Need to implement the
+      // right functionality in Shapes first, though.
+      return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].canMergeConstraints(leftType, rightType);
+    }
+
+    if (leftType.type != rightType.type) {
+      return false;
+    }
+
+    // TODO: we need a generic way to evaluate type compatibility
+    //       shapes + entities + etc
+    if (leftType.isInterface && rightType.isInterface) {
+      if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
+        return true;
+      }
+    }
+
+    if (!leftType.isEntity || !rightType.isEntity) {
+      return false;
+    }
+
+    let leftIsSub = leftType.entitySchema.isMoreSpecificThan(rightType.entitySchema);
+    let leftIsSuper = rightType.entitySchema.isMoreSpecificThan(leftType.entitySchema);
+
+    if (leftIsSuper && leftIsSub) {
+       return true;
+    }
+    if (!leftIsSuper && !leftIsSub) {
+      return false;
+    }
+    let [superclass, subclass] = leftIsSuper ? [left, right] : [right, left];
+
+    // treat view types as if they were 'inout' connections. Note that this
+    // guarantees that the view's type will be preserved, and that the fact
+    // that the type comes from a view rather than a connection will also
+    // be preserved.
+    let superDirection = superclass.direction || (superclass.connection ? superclass.connection.direction : 'inout');
+    let subDirection = subclass.direction || (subclass.connection ? subclass.connection.direction : 'inout');
+    if (superDirection == 'in') {
+      return true;
+    }
+    if (subDirection == 'out') {
+      return true;
+    }
+    return false;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (TypeChecker);
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Schema; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(2);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1010,7 +1817,7 @@ class Schema {
       }
     };
 
-    let clazz = class extends __WEBPACK_IMPORTED_MODULE_2__entity_js__["a" /* default */] {
+    let clazz = class extends __WEBPACK_IMPORTED_MODULE_2__entity_js__["a" /* Entity */] {
       constructor(data, userIDComponent) {
         super(userIDComponent);
         this.rawData = new Proxy({}, {
@@ -1088,816 +1895,8 @@ class Schema {
     return results.join('\n');
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = Schema;
 
 
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-class Entity {
-  constructor(userIDComponent) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = undefined;
-    this._userIDComponent = userIDComponent;
-  }
-  get data() {
-    return undefined;
-  }
-
-  getUserID() {
-    return this._userIDComponent;
-  }
-
-  isIdentified() {
-    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] !== undefined;
-  }
-  // TODO: entity should not be exposing its IDs.
-  get id() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!this.isIdentified());
-    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier];
-  }
-  identify(identifier) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = identifier;
-    let components = identifier.split(':');
-    if (components[components.length - 2] == 'uid')
-      this._userIDComponent = components[components.length - 1];
-  }
-  createIdentity(components) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
-    let id;
-    if (this._userIDComponent)
-      id = `${components.base}:uid:${this._userIDComponent}`;
-    else
-      id = `${components.base}:${components.component()}`;
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = id;
-  }
-  toLiteral() {
-    return this.rawData;
-  }
-
-  static get type() {
-    // TODO: should the entity's key just be its type?
-    // Should it just be called type in that case?
-    return __WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */].newEntity(this.key.schema);
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Entity);
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-/* harmony default export */ __webpack_exports__["a"] = ({identifier: Symbol('id')});
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(32);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-/** @class DomParticle
- * Particle that does stuff with DOM.
- */
-class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_1__particle_js__["b" /* Particle */]) {
-  constructor() {
-    super();
-    this.state = this._state;
-    this.props = this._props;
-  }
-  /** @method get template()
-   * Override to return a String defining primary markup.
-   */
-  get template() {
-    return '';
-  }
-  /** @method getTemplate(slotName)
-   * Override to return a String defining primary markup for the given slot name.
-   */
-  getTemplate(slotName) {
-    // TODO: only supports a single template for now. add multiple templates support.
-    return this.template;
-  }
-  /** @method willReceiveProps(props, state, oldProps, oldState)
-   * Override if necessary, to do things when props change.
-   */
-  willReceiveProps() {
-  }
-  /** @method update(props, state, oldProps, oldState)
-   * Override if necessary, to modify superclass config.
-   */
-  update() {
-  }
-  /** @method shouldRender(props, state, oldProps, oldState)
-   * Override to return false if the Particle won't use
-   * it's slot.
-   */
-  shouldRender() {
-    return true;
-  }
-  /** @method render(props, state, oldProps, oldState)
-   * Override to return a dictionary to map into the template.
-   */
-  render() {
-    return {};
-  }
-  setState(state) {
-    return this._setState(state);
-  }
-  // TODO(sjmiles): deprecated, just use setState
-  setIfDirty(state) {
-    console.warn('DomParticle: `setIfDirty` is deprecated, please use `setState` instead');
-    return this._setState(state);
-  }
-  _willReceiveProps(...args) {
-    this.willReceiveProps(...args);
-  }
-  _update(...args) {
-    this.update(...args);
-    if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
-      this.relevance = 1; // TODO: improve relevance signal.
-    }
-    this.config.slotNames.forEach(s => this.renderSlot(s, ['model']));
-  }
-  /** @method get config()
-   * Override if necessary, to modify superclass config.
-   */
-  get config() {
-    // TODO(sjmiles): getter that does work is a bad idea, this is temporary
-    return {
-      handles: this.spec.inputs.map(i => i.name),
-      // TODO(mmandlis): this.spec needs to be replaced with a particle-spec loaded from
-      // .manifest files, instead of .ptcl ones.
-      slotNames: [...this.spec.slots.values()].map(s => s.name)
-    };
-  }
-  _info() {
-    return `---------- DomParticle::[${this.spec.name}]`;
-  }
-  async setViews(handles) {
-    this.handles = handles;
-    this._views = handles;
-    let config = this.config;
-    this.when([new __WEBPACK_IMPORTED_MODULE_1__particle_js__["c" /* ViewChanges */](handles, config.handles, 'change')], async () => {
-      await this._handlesToProps(handles, config);
-    });
-    // make sure we invalidate once, even if there are no incoming handles
-    this._invalidate();
-  }
-  async _handlesToProps(handles, config) {
-    // acquire (async) list data from handles
-    let data = await Promise.all(
-      config.handles
-      .map(name => handles.get(name))
-      .map(handle => handle.toList ? handle.toList() : handle.get())
-    );
-    // convert handle data (array) into props (dictionary)
-    let props = Object.create(null);
-    config.handles.forEach((name, i) => {
-      props[name] = data[i];
-    });
-    this._setProps(props);
-  }
-  renderSlot(slotName, contentTypes) {
-    const stateArgs = this._getStateArgs();
-    let slot = this.getSlot(slotName);
-    if (!slot) {
-      return; // didn't receive StartRender.
-    }
-
-    // Set this to support multiple slots consumed by a particle, without needing
-    // to pass slotName to particle's render method, where it useless in most cases.
-    this.currentSlotName = slotName;
-
-    contentTypes.forEach(ct => slot._requestedContentTypes.add(ct));
-    // TODO(sjmiles): redundant, same answer for every slot
-    if (this.shouldRender(...stateArgs)) {
-      let content = {};
-      if (slot._requestedContentTypes.has('template')) {
-        content.template = this.getTemplate(slot.slotName);
-      }
-      if (slot._requestedContentTypes.has('model')) {
-        content.model = this.render(...stateArgs);
-      }
-      slot.render(content);
-    } else if (slot.isRendered) {
-      // Send empty object, to clear rendered slot contents.
-      slot.render({});
-    }
-
-    this.currentSlotName = undefined;
-  }
-  fireEvent(slotName, {handler, data}) {
-    if (this[handler]) {
-      // TODO(sjmiles): remove `this._state` parameter
-      this[handler]({data}, this._state);
-    }
-  }
-  setParticleDescription(pattern) {
-    if (typeof pattern === 'string') {
-      return super.setParticleDescription(pattern);
-    }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
-    super.setDescriptionPattern('_template_', pattern.template);
-    super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
-  }
-  updateVariable(handleName, record) {
-    const handle = this.handles.get(handleName);
-    const newRecord = new (handle.entityClass)(record);
-    handle.set(newRecord);
-    return newRecord;
-  }
-  updateSet(handleName, record) {
-    // Set the record into the right place in the set. If we find it
-    // already present replace it, otherwise, add it.
-    // TODO(dstockwell): Replace this with happy entity mutation approach.
-    const handle = this.handles.get(handleName);
-    const records = this._props[handleName];
-    const target = records.find(r => r.id === record.id);
-    if (target) {
-      handle.remove(target);
-    }
-    handle.store(record);
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (DomParticle);
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_js__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tracelib_trace_js__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__schema_js__ = __webpack_require__(3);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-
-/** @class Particle
- * A basic particle. For particles that provide UI, you may like to
- * instead use DOMParticle.
- */
-class Particle {
-  constructor(capabilities) {
-    this.spec = this.constructor.spec;
-    if (this.spec.inputs.length == 0)
-      this.extraData = true;
-    this.relevances = [];
-    this._idle = Promise.resolve();
-    this._idleResolver = null;
-    this._busy = 0;
-    this.slotHandlers = [];
-    this.stateHandlers = new Map();
-    this.states = new Map();
-    this._slotByName = new Map();
-    this.capabilities = capabilities || {};
-  }
-
-  /** @method setViews(views)
-   * This method is invoked with a handle for each view this particle
-   * is registered to interact with, once those views are ready for
-   * interaction. Override the method to register for events from
-   * the views.
-   *
-   * Views is a map from view names to view handles.
-   */
-  setViews(views) {
-
-  }
-
-  /** @method onHandleUpdate(handle, data, add, remove)
-   * Called once after setViews() for each readable handle to establish the current handle values.
-   * Thereafter called whenever the data for a given handle has been updated to the next version.
-   *
-   * handle is the Handle instance that was updated.
-   * version is the received version number.
-   * update is an object with the following fields:
-   *   variable:   The Entity data, or null if the handle was not set prior to setViews or has been
-   *               explicitly cleared. Only defined for Variable-backed handles.
-   *   collection: An Array of Entities; empty if the handle does not contain any entities. Only
-   *               defined for Collection-backed handles.
-   *   added:      An Array of ids indicating which entities were added. Only defined for updates
-   *               to Collection-backed handles.
-   *   removed:    An Array of ids indicating which entities were removed. Only defined for updates
-   *               to Collection-backed handles.
-   */
-  onHandleUpdate(handle, version, update) {
-
-  }
-
-  /** @method onHandleDesync(handle)
-   * Called when an update event for a Collection-backed handle has been missed.
-   * The default implementation automatically resyncronizes the handle.
-   *
-   * handle is the Handle instance that has desynchronized.
-   * version is the received version number.
-   */
-  onHandleDesync(handle, version) {
-    handle.resync();
-  }
-
-  constructInnerArc() {
-    if (!this.capabilities.constructInnerArc)
-      throw new Error('This particle is not allowed to construct inner arcs');
-    return this.capabilities.constructInnerArc(this);
-  }
-
-  get busy() {
-    return this._busy > 0;
-  }
-
-  get idle() {
-    return this._idle;
-  }
-
-  /** @method setBusy()
-   * Prevents this particle from indicating that it's idle until a matching
-   * call to setIdle is made.
-   */
-  setBusy() {
-    if (this._busy == 0)
-    this._idle = new Promise((resolve, reject) => {
-      this._idleResolver = resolve;
-    });
-    this._busy++;
-  }
-
-  /** @method setIdle()
-   * Indicates that a busy period (initiated by a call to setBusy) has completed.
-   */
-  setIdle() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this._busy > 0);
-    this._busy--;
-    if (this._busy == 0)
-      this._idleResolver();
-  }
-
-  set relevance(r) {
-    this.relevances.push(r);
-  }
-
-  inputs() {
-    return this.spec.inputs;
-  }
-
-  outputs() {
-    return this.spec.outputs;
-  }
-
-  /** @method getSlot(name)
-   * Returns the slot with provided name.
-   */
-  getSlot(name) {
-    return this._slotByName.get(name);
-  }
-
-  addSlotHandler(f) {
-    this.slotHandlers.push(f);
-  }
-
-  addStateHandler(states, f) {
-    states.forEach(state => {
-      if (!this.stateHandlers.has(state)) {
-        this.stateHandlers.set(state, []);
-      }
-      this.stateHandlers.get(state).push(f);
-    });
-  }
-
-  emit(state, value) {
-    this.states.set(state, value);
-    this.stateHandlers.get(state).forEach(f => f(value));
-  }
-
-  /** @method on(views, names, kind, f)
-   * Convenience method for registering a callback on multiple views at once.
-   *
-   * views is a map from names to view handles
-   * names indicates the views which should have a callback installed on them
-   * kind is the kind of event that should be registered for
-   * f is the callback function
-   */
-  on(views, names, kind, f) {
-    if (typeof names == 'string')
-      names = [names];
-    let trace = __WEBPACK_IMPORTED_MODULE_2__tracelib_trace_js__["a" /* default */].start({cat: 'particle', names: this.constructor.name + '::on', args: {view: names, event: kind}});
-    names.forEach(name => views.get(name).on(kind, __WEBPACK_IMPORTED_MODULE_2__tracelib_trace_js__["a" /* default */].wrap({cat: 'particle', name: this.constructor.name, args: {view: name, event: kind}}, f), this));
-    trace.end();
-  }
-
-  when(changes, f) {
-    changes.forEach(change => change.register(this, f));
-  }
-
-  fireEvent(slotName, event) {
-    // TODO(sjmiles): tests can get here without a `this.slot`, maybe this needs to be fixed in MockSlotManager?
-    let slot = this.getSlot(slotName);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(slot, `Particle::fireEvent: slot ${slotName} is falsey`);
-    slot.fireEvent(event);
-  }
-
-  static buildManifest(strings, ...bits) {
-    let output = [];
-    for (let i = 0; i < bits.length; i++) {
-        let str = strings[i];
-        let indent = / *$/.exec(str)[0];
-        let bitStr;
-        if (typeof bits[i] == 'string')
-          bitStr = bits[i];
-        else
-          bitStr = bits[i].toManifestString();
-        bitStr = bitStr.replace(/(\n)/g, '$1' + indent);
-        output.push(str);
-        output.push(bitStr);
-    }
-    if (strings.length > bits.length)
-      output.push(strings[strings.length - 1]);
-    return output.join('');
-  }
-
-  setParticleDescription(pattern) {
-    return this.setDescriptionPattern('_pattern_', pattern);
-  }
-  setDescriptionPattern(connectionName, pattern) {
-    let descriptions = this._views.get('descriptions');
-    if (descriptions) {
-      descriptions.store(new descriptions.entityClass({key: connectionName, value: pattern}, connectionName));
-      return true;
-    }
-    return false;
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["b"] = Particle;
-
-
-class ViewChanges {
-  constructor(views, names, type) {
-    if (typeof names == 'string')
-      names = [names];
-    this.names = names;
-    this.views = views;
-    this.type = type;
-  }
-  register(particle, f) {
-    let modelCount = 0;
-    let afterAllModels = () => { if (++modelCount == this.names.length) { f(); } };
-
-    for (let name of this.names) {
-      let view = this.views.get(name);
-      view.synchronize(this.type, afterAllModels, f, particle);
-    }
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["c"] = ViewChanges;
-
-
-class SlotChanges {
-  constructor() {
-  }
-  register(particle, f) {
-    particle.addSlotHandler(f);
-  }
-}
-/* unused harmony export SlotChanges */
-
-
-class StateChanges {
-  constructor(states) {
-    if (typeof states == 'string')
-      states = [states];
-    this.states = states;
-  }
-  register(particle, f) {
-    particle.addStateHandler(this.states, f);
-  }
-}
-/* unused harmony export StateChanges */
-
-
-/* harmony default export */ __webpack_exports__["a"] = ({Particle, ViewChanges, SlotChanges, StateChanges});
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-class TypeChecker {
-
-  // resolve a list of handleConnection types against a handle
-  // base type. This is the core type resolution mechanism, but should only
-  // be used when types can actually be associated with each other / constrained.
-  //
-  // By design this function is called exactly once per handle in a recipe during
-  // normalization, and should provide the same final answers regardless of the
-  // ordering of handles within that recipe
-  //
-  // NOTE: you probably don't want to call this function, if you think you
-  // do, talk to shans@.
-  static processTypeList(baseType, list) {
-    if (baseType == undefined)
-      baseType = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* default */]('a'));
-
-    let concreteTypes = [];
-
-    // baseType might be a variable (and is definitely a variable if no baseType was available).
-    // Some of the list might contain variables too.
-
-    // First attempt to merge all the variables into the baseType
-    //
-    // If the baseType is a variable then this results in a single place to manipulate the constraints
-    // of all the other connected variables at the same time.
-    for (let item of list) {
-      if (item.type.resolvedType().hasVariable) {
-        baseType = TypeChecker._tryMergeTypeVariable(baseType, item.type);
-        if (baseType == null)
-          return null;
-      } else {
-        concreteTypes.push(item);
-      }
-    }
-
-    for (let item of concreteTypes) {
-      let success = TypeChecker._tryMergeConstraints(baseType, item);
-      if (!success)
-        return null;
-    }
-
-    let getResolution = candidate => {
-      if (candidate.isVariable == false)
-        return candidate;
-      if (candidate.canReadSubset == null || candidate.canWriteSuperset == null)
-        return candidate;
-      if (candidate.canReadSubset.isMoreSpecificThan(candidate.canWriteSuperset)) {
-        if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset))
-          candidate.variable.resolution = candidate.canReadSubset;
-        return candidate;
-      }
-      return null;
-    };
-
-    let candidate = baseType.resolvedType();
-
-    if (candidate.isSetView) {
-      candidate = candidate.primitiveType();
-      let resolution = getResolution(candidate);
-      if (resolution == null)
-        return null;
-      return resolution.setViewOf();
-    }
-
-    return getResolution(candidate);
-  }
-
-  static _tryMergeTypeVariable(base, onto) {
-    let [primitiveBase, primitiveOnto] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(base.resolvedType(), onto.resolvedType());
-
-    if (primitiveBase.isVariable) {
-      if (primitiveOnto.isVariable) {
-        // base, onto both variables.
-        let result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
-        if (result == false)
-          return null;
-        primitiveOnto.variable.resolution = primitiveBase;
-      } else {
-        // base variable, onto not.
-        primitiveBase.variable.resolution = primitiveOnto;
-      }
-    } else if (primitiveOnto.isVariable) {
-      // onto variable, base not.
-      primitiveOnto.variable.resolution = primitiveBase;
-      return onto;
-    } else {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(false, 'tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
-    }
-
-    return base;
-  }
-
-  static _tryMergeConstraints(handleType, {type, direction}) {
-    let [primitiveHandleType, primitiveConnectionType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(handleType.resolvedType(), type.resolvedType());
-    if (primitiveHandleType.isVariable) {
-      if (primitiveConnectionType.isSetView) {
-        if (primitiveHandleType.variable.resolution != null
-            || primitiveHandleType.variable.canReadSubset != null
-            || primitiveHandleType.variable.canWriteSuperset != null) {
-          // Resolved and/or constrained variables can only represent Entities, not sets.
-          return false;
-        }
-        // If this is an undifferentiated variable then we need to create structure to match against. That's
-        // allowed because this variable could represent anything, and it needs to represent this structure
-        // in order for type resolution to succeed.
-        primitiveHandleType.variable.resolution = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newSetView(__WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* default */]('a')));
-        let unwrap = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
-        primitiveHandleType = unwrap[0];
-        primitiveConnectionType = unwrap[1];
-      }
-
-      if (direction == 'out' || direction == 'inout') {
-        // the canReadSubset of the handle represents the maximal type that can be read from the
-        // handle, so we need to intersect out any type that is more specific than the maximal type
-        // that could be written.
-        if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset))
-          return false;
-      }
-      if (direction == 'in' || direction == 'inout') {
-        // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
-        // so we need to union it with the type that wants to be read here.
-        if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset))
-          return false;
-      }
-    } else {
-      if (primitiveConnectionType.tag !== primitiveHandleType.tag) return false;
-
-      if (direction == 'out' || direction == 'inout')
-        if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType))
-          return false;
-      if (direction == 'in' || direction == 'inout')
-        if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType))
-          return false;
-    }
-
-    return true;
-  }
-
-  static _writeConstraintsApply(handleType, connectionType) {
-    // this connection wants to write to this handle. If the written type is
-    // more specific than the canReadSubset then it isn't violating the maximal type
-    // that can be read.
-    let writtenType = connectionType.canWriteSuperset;
-    if (writtenType == null || handleType.canReadSubset == null)
-      return true;
-    if (writtenType.isMoreSpecificThan(handleType.canReadSubset))
-      return true;
-    return false;
-  }
-
-  static _readConstraintsApply(handleType, connectionType) {
-    // this connection wants to read from this handle. If the read type
-    // is less specific than the canWriteSuperset, then it isn't violating
-    // the maximum lower-bound read type.
-    let readType = connectionType.canReadSubset;
-    if (readType == null|| handleType.canWriteSuperset == null)
-      return true;
-    if (handleType.canWriteSuperset.isMoreSpecificThan(readType))
-      return true;
-    return false;
-  }
-
-  // TODO: what is this? Does it still belong here?
-  static restrictType(type, instance) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(type.isInterface, `restrictType not implemented for ${type}`);
-
-    let shape = type.interfaceShape.restrictType(instance);
-    if (shape == false)
-      return false;
-    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newInterface(shape);
-  }
-
-  // Compare two types to see if they could be potentially resolved (in the absence of other
-  // information). This is used as a filter when selecting compatible handles or checking
-  // validity of recipes. This function returning true never implies that full type resolution
-  // will succeed, but if the function returns false for a pair of types that are associated
-  // then type resolution is guaranteed to fail.
-  //
-  // left, right: {type, direction, connection}
-  static compareTypes(left, right) {
-    let resolvedLeft = left.type.resolvedType();
-    let resolvedRight = right.type.resolvedType();
-    let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(resolvedLeft, resolvedRight);
-
-    if (leftType.isVariable || rightType.isVariable) {
-      // TODO: everything should use this, eventually. Need to implement the
-      // right functionality in Shapes first, though.
-      return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].canMergeConstraints(leftType, rightType);
-    }
-
-    if (leftType.type != rightType.type) {
-      return false;
-    }
-
-    // TODO: we need a generic way to evaluate type compatibility
-    //       shapes + entities + etc
-    if (leftType.isInterface && rightType.isInterface) {
-      if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
-        return true;
-      }
-    }
-
-    if (!leftType.isEntity || !rightType.isEntity) {
-      return false;
-    }
-
-    let leftIsSub = leftType.entitySchema.isMoreSpecificThan(rightType.entitySchema);
-    let leftIsSuper = rightType.entitySchema.isMoreSpecificThan(leftType.entitySchema);
-
-    if (leftIsSuper && leftIsSub) {
-       return true;
-    }
-    if (!leftIsSuper && !leftIsSub) {
-      return false;
-    }
-    let [superclass, subclass] = leftIsSuper ? [left, right] : [right, left];
-
-    // treat view types as if they were 'inout' connections. Note that this
-    // guarantees that the view's type will be preserved, and that the fact
-    // that the type comes from a view rather than a connection will also
-    // be preserved.
-    let superDirection = superclass.direction || (superclass.connection ? superclass.connection.direction : 'inout');
-    let subDirection = subclass.direction || (subclass.connection ? subclass.connection.direction : 'inout');
-    if (superDirection == 'in') {
-      return true;
-    }
-    if (subDirection == 'out') {
-      return true;
-    }
-    return false;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (TypeChecker);
 
 
 /***/ }),
@@ -1905,8 +1904,9 @@ class TypeChecker {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TransformationDomParticle; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dom_particle_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dom_particle_js__ = __webpack_require__(4);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1927,7 +1927,7 @@ let re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
 /** @class TransformationDomParticle
  * Particle that does transformation stuff with DOM.
  */
-class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particle_js__["a" /* default */] {
+class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particle_js__["a" /* DomParticle */] {
   getTemplate(slotName) {
     return this._state.template;
   }
@@ -1968,7 +1968,7 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
   }
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (TransformationDomParticle);
+
 
 
 /***/ }),
@@ -1991,7 +1991,8 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__ = __webpack_require__(2);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MultiplexerDomParticle; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__ = __webpack_require__(9);
 /**
  * @license
@@ -2007,7 +2008,7 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 
 
 
-class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__["a" /* default */] {
+class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__["a" /* TransformationDomParticle */] {
   constructor() {
     super();
     this._itemSubIdByHostedSlotId = new Map();
@@ -2103,7 +2104,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
           continue;
         }
         resolvedHostedParticle =
-            __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__["a" /* default */].fromLiteral(JSON.parse(item.renderParticleSpec));
+            __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__["a" /* ParticleSpec */].fromLiteral(JSON.parse(item.renderParticleSpec));
         // Re-map compatible handles and compute the connections specific
         // to this item's render particle.
         const listHandleName = 'list';
@@ -2177,7 +2178,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
   constructInnerRecipe(hostedParticle, item, itemView, slot, other) {
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = MultiplexerDomParticle;
+
 
 
 
@@ -2186,47 +2187,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__entity_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__symbols_js__ = __webpack_require__(5);
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-
-// TODO: Should relations normalized by another layer, or here?
-class Relation extends __WEBPACK_IMPORTED_MODULE_1__entity_js__["a" /* default */] {
-  constructor(...entities) {
-    super();
-    this.entities = entities;
-  }
-  get data() {
-    return this.entities.map(entity => entity[__WEBPACK_IMPORTED_MODULE_3__symbols_js__["a" /* default */].identifier].toLiteral());
-  }
-  static typeFor(relation) {
-    let result = new __WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */](relation.entities.map(entity => entity.constructor.type), relation.constructor);
-    return result;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Relation);
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Shape; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(1);
 /**
@@ -2506,20 +2467,21 @@ ${this._slotsToManifestString()}
   }
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (Shape);
+
 
 
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TypeVariable; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_type_checker_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_type_checker_js__ = __webpack_require__(7);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -2567,7 +2529,7 @@ class TypeVariable {
       return true;
     }
 
-    let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
+    let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
     if (!mergedSchema)
       return false;
     
@@ -2586,7 +2548,7 @@ class TypeVariable {
       return true;
     }
 
-    let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* default */].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
+    let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
     if (!mergedSchema)
       return false;
 
@@ -2704,21 +2666,19 @@ class TypeVariable {
   }
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (TypeVariable);
+
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__handle_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__handle_js__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_channel_js__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__storage_proxy_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_channel_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__storage_proxy_js__ = __webpack_require__(30);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2728,8 +2688,6 @@ class TypeVariable {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-
 
 
 
@@ -2758,12 +2716,12 @@ class InnerPEC {
      * only keeping type information on the arc side.
      */
     this._apiPort.onDefineHandle = ({type, identifier, name}) => {
-      let proxy = new __WEBPACK_IMPORTED_MODULE_6__storage_proxy_js__["a" /* StorageProxy */](identifier, type, this._apiPort, this, name, null);
+      let proxy = new __WEBPACK_IMPORTED_MODULE_4__storage_proxy_js__["a" /* StorageProxy */](identifier, type, this._apiPort, this, name, null);
       return [proxy, () => proxy._initialize()];
     };
 
     this._apiPort.onCreateHandleCallback = ({type, id, name, callback}) => {
-      let proxy = new __WEBPACK_IMPORTED_MODULE_6__storage_proxy_js__["a" /* StorageProxy */](id, type, this._apiPort, this, name, 0);
+      let proxy = new __WEBPACK_IMPORTED_MODULE_4__storage_proxy_js__["a" /* StorageProxy */](id, type, this._apiPort, this, name, 0);
       return [proxy, () => callback(proxy)];
     };
 
@@ -2980,16 +2938,16 @@ class InnerPEC {
 
 /* harmony default export */ __webpack_exports__["a"] = (InnerPEC);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(18)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(17)))
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__ = __webpack_require__(9);
 /**
@@ -3013,7 +2971,7 @@ const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + stri
 
 const dumbCache = {};
 
-class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a" /* default */] {
+class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a" /* Loader */] {
   constructor(urlMap) {
     super();
     this._urlMap = urlMap;
@@ -3070,10 +3028,10 @@ class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a"
     return particleWrapper({
       particle: __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__["a" /* default */],
       Particle: __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__["a" /* default */].Particle,
-      DomParticle: __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__["a" /* default */],
-      MultiplexerDomParticle: __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__["a" /* default */],
-      SimpleParticle: __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__["a" /* default */],
-      TransformationDomParticle: __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__["a" /* default */],
+      DomParticle: __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__["a" /* DomParticle */],
+      MultiplexerDomParticle: __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__["a" /* MultiplexerDomParticle */],
+      SimpleParticle: __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__["a" /* DomParticle */],
+      TransformationDomParticle: __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__["a" /* TransformationDomParticle */],
       resolver,
       log,
       html
@@ -3085,7 +3043,7 @@ class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a"
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -3275,7 +3233,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports) {
 
 var g;
@@ -3302,11 +3260,11 @@ module.exports = g;
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__ = __webpack_require__(22);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -3336,7 +3294,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3351,16 +3309,16 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* unused harmony export PECOuterPort */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PECInnerPort; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__debug_outer_port_attachment_js__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__debug_outer_port_attachment_js__ = __webpack_require__(24);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3617,7 +3575,7 @@ class PECOuterPort extends APIPort {
     this.registerCall('Stop', {});
     this.registerRedundantInitializer('DefineHandle', {type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */]), name: this.Direct});
     this.registerInitializer('InstantiateParticle',
-      {id: this.Direct, spec: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* default */]), handles: this.Map(this.Direct, this.Mapped)}, 'id');
+      {id: this.Direct, spec: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* ParticleSpec */]), handles: this.Map(this.Direct, this.Mapped)}, 'id');
 
     this.registerCall('UIEvent', {particle: this.Mapped, slotName: this.Direct, event: this.Direct});
     this.registerCall('SimpleCallback', {callback: this.Direct, data: this.Direct});
@@ -3669,7 +3627,7 @@ class PECInnerPort extends APIPort {
       {particleDefinition: this.Direct, particleFunction: this.Direct});
     this.registerInitializerHandler('DefineHandle', {type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */]), name: this.Direct});
     this.registerInitializerHandler('InstantiateParticle',
-      {id: this.Direct, spec: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* default */]), handles: this.Map(this.Direct, this.Mapped)});
+      {id: this.Direct, spec: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* ParticleSpec */]), handles: this.Map(this.Direct, this.Mapped)});
 
     this.registerHandler('UIEvent', {particle: this.Mapped, slotName: this.Direct, event: this.Direct});
     this.registerHandler('SimpleCallback', {callback: this.LocalMapped, data: this.Direct});
@@ -3711,11 +3669,10 @@ class PECInnerPort extends APIPort {
 }
 
 
-/* unused harmony default export */ var _unused_webpack_default_export = ({PECOuterPort, PECInnerPort});
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3829,7 +3786,7 @@ class JsonldToManifest {
 
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3897,11 +3854,11 @@ class AbstractDevtoolsChannel {
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__ = __webpack_require__(18);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -3925,11 +3882,11 @@ let instance = null;
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__devtools_channel_provider_js__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__devtools_channel_provider_js__ = __webpack_require__(23);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -4085,7 +4042,7 @@ class OuterPortAttachment {
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4100,16 +4057,15 @@ class OuterPortAttachment {
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return handleFor; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__relation_js__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__symbols_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__ = __webpack_require__(5);
 /** @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -4123,8 +4079,6 @@ class OuterPortAttachment {
 
 
 
-let identifier = __WEBPACK_IMPORTED_MODULE_2__symbols_js__["a" /* default */].identifier;
-
 
 
 // TODO: This won't be needed once runtime is transferred between contexts.
@@ -4134,7 +4088,7 @@ function cloneData(data) {
 }
 
 function restore(entry, entityClass) {
-  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(entityClass, 'Handles need entity classes for deserialization');
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(entityClass, 'Handles need entity classes for deserialization');
   let {id, rawData} = entry;
   let entity = new entityClass(cloneData(rawData));
   if (entry.id) {
@@ -4151,7 +4105,7 @@ function restore(entry, entityClass) {
  */
 class Handle {
   constructor(proxy, name, particleId, canRead, canWrite) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(!(proxy instanceof Handle));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(!(proxy instanceof Handle));
     this._proxy = proxy;
     this.name = name || this._proxy.name;
     this.canRead = canRead;
@@ -4185,20 +4139,20 @@ class Handle {
   }
 
   generateID() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this._proxy.generateID);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this._proxy.generateID);
     return this._proxy.generateID();
   }
 
   generateIDComponents() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this._proxy.generateIDComponents);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this._proxy.generateIDComponents);
     return this._proxy.generateIDComponents();
   }
 
   _serialize(entity) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(entity, 'can\'t serialize a null entity');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(entity, 'can\'t serialize a null entity');
     if (!entity.isIdentified())
       entity.createIdentity(this.generateIDComponents());
-    let id = entity[identifier];
+    let id = entity[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier];
     let rawData = entity.dataClone();
     return {
       id,
@@ -4236,7 +4190,7 @@ class Collection extends Handle {
   }
 
   notify(particle, version, update) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this.canRead, 'notify should not be called for non-readable handles');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this.canRead, 'notify should not be called for non-readable handles');
     update.collection = this._restore(update.collection);
     particle.onHandleUpdate(this, version, update);
   }
@@ -4293,7 +4247,7 @@ class Variable extends Handle {
   }
 
   notify(particle, version, update) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this.canRead, 'notify should not be called for non-readable handles');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this.canRead, 'notify should not be called for non-readable handles');
     update.variable = this._restore(update.variable);
     particle.onHandleUpdate(this, version, update);
   }
@@ -4317,7 +4271,7 @@ class Variable extends Handle {
     if (this.type.isEntity) {
       return restore(model, this.entityClass);
     }
-    return this.type.isInterface ? __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__["a" /* default */].fromLiteral(model) : model;
+    return this.type.isInterface ? __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__["a" /* ParticleSpec */].fromLiteral(model) : model;
   }
 
   /** @method set(entity)
@@ -4358,19 +4312,20 @@ function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = tr
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Loader; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__ = __webpack_require__(21);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4463,12 +4418,54 @@ class Loader {
   }
 
   unwrapParticle(particleWrapper) {
-    return particleWrapper({particle: __WEBPACK_IMPORTED_MODULE_4__particle_js__["a" /* default */], Particle: __WEBPACK_IMPORTED_MODULE_4__particle_js__["a" /* default */].Particle, DomParticle: __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__["a" /* default */], TransformationDomParticle: __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__["a" /* default */], MultiplexerDomParticle: __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__["a" /* default */], html});
+    return particleWrapper({particle: __WEBPACK_IMPORTED_MODULE_4__particle_js__["a" /* default */], Particle: __WEBPACK_IMPORTED_MODULE_4__particle_js__["a" /* default */].Particle, DomParticle: __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__["a" /* DomParticle */], TransformationDomParticle: __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__["a" /* TransformationDomParticle */], MultiplexerDomParticle: __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__["a" /* MultiplexerDomParticle */], html});
   }
 
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (Loader);
+
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Relation; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__entity_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__symbols_js__ = __webpack_require__(3);
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+
+
+// TODO: Should relations normalized by another layer, or here?
+class Relation extends __WEBPACK_IMPORTED_MODULE_1__entity_js__["a" /* Entity */] {
+  constructor(...entities) {
+    super();
+    this.entities = entities;
+  }
+  get data() {
+    return this.entities.map(entity => entity[__WEBPACK_IMPORTED_MODULE_3__symbols_js__["a" /* default */].identifier].toLiteral());
+  }
+  static typeFor(relation) {
+    let result = new __WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */](relation.entities.map(entity => entity.constructor.type), relation.constructor);
+    return result;
+  }
+}
+
+
 
 
 /***/ }),
@@ -4477,11 +4474,11 @@ class Loader {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__schema_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__schema_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__relation_js__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__relation_js__ = __webpack_require__(28);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4500,7 +4497,7 @@ class Loader {
 
 
 function testEntityClass(type) {
-  return new __WEBPACK_IMPORTED_MODULE_3__schema_js__["a" /* default */]({
+  return new __WEBPACK_IMPORTED_MODULE_3__schema_js__["a" /* Schema */]({
     names: [type],
     fields: {
       id: 'Number',
@@ -4512,8 +4509,8 @@ function testEntityClass(type) {
 let BasicEntity = testEntityClass('BasicEntity');
 
 /* unused harmony default export */ var _unused_webpack_default_export = ({
-  Entity: __WEBPACK_IMPORTED_MODULE_2__entity_js__["a" /* default */],
-  Relation: __WEBPACK_IMPORTED_MODULE_5__relation_js__["a" /* default */],
+  Entity: __WEBPACK_IMPORTED_MODULE_2__entity_js__["a" /* Entity */],
+  Relation: __WEBPACK_IMPORTED_MODULE_5__relation_js__["a" /* Relation */],
   testing: {
     testEntityClass,
   },
@@ -4728,6 +4725,7 @@ class StorageProxy {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TupleFields; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(1);
 /**
@@ -4770,7 +4768,8 @@ class TupleFields {
     return true;
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = TupleFields;
+
+
 
 
 /***/ }),
@@ -4929,8 +4928,8 @@ const nob = () => Object.create(null);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_inner_PEC_js__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__browser_loader_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_inner_PEC_js__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__browser_loader_js__ = __webpack_require__(15);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -5221,7 +5220,7 @@ function init() {
 
 init();
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(17)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(16)))
 
 /***/ })
 /******/ ]);
