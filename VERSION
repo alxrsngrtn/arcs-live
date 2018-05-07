@@ -1,5 +1,9 @@
-commit 8af8e6b5a9a2e27b7bf704d4b12fe1c5a5b049c1
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon May 7 13:24:47 2018 +1000
+commit f9e773c90aff5c608aaec6075dfe1e512b3993e3
+Author: shans <shane.stephens@gmail.com>
+Date:   Mon May 7 13:26:45 2018 +1000
 
-    Remove default export from handle.js (#1271)
+    Allow shape bodies to use new syntax (#1269)
+    
+    * Allow shape bodies to use new syntax
+    
+    * lint
