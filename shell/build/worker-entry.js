@@ -3647,6 +3647,8 @@ class PECOuterPort extends APIPort {
     this.registerCall('InnerArcRender', {transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedSlotId: this.Direct, content: this.Direct});
 
     this.registerHandler('ArcLoadRecipe', {arc: this.LocalMapped, recipe: this.Direct, callback: this.Direct});
+
+    this.registerHandler('RaiseSystemException', {exception: this.Direct, methodName: this.Direct, particleId: this.Direct});
   }
 }
 
@@ -3695,6 +3697,9 @@ class PECInnerPort extends APIPort {
     this.registerHandler('InnerArcRender', {transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedSlotId: this.Direct, content: this.Direct});
 
     this.registerCall('ArcLoadRecipe', {arc: this.Direct, recipe: this.Direct, callback: this.LocalMapped});
+
+    this.registerCall('RaiseSystemException', {exception: this.Direct, methodName: this.Direct, particleId: this.Direct});
+    
   }
 }
 
@@ -4147,6 +4152,10 @@ class Handle {
     this._particleId = particleId;
   }
 
+  raiseSystemException(exception, method, particleId) {
+    this._proxy.raiseSystemException(exception, method, particleId);
+  }
+
   underlyingProxy() {
     return this._proxy;
   }
@@ -4179,6 +4188,7 @@ class Handle {
   }
 
   _serialize(entity) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(entity, 'can\'t serialize a null entity');
     if (!entity.isIdentified())
       entity.createIdentity(this.generateIDComponents());
     let id = entity[identifier];
@@ -4309,9 +4319,14 @@ class Variable extends Handle {
      in the particle's manifest.
    */
   async set(entity) {
-    if (!this.canWrite)
-      throw new Error('Handle not writeable');
-    return this._proxy.set(this._serialize(entity), this._particleId);
+    try {
+      if (!this.canWrite)
+        throw new Error('Handle not writeable');
+      return this._proxy.set(this._serialize(entity), this._particleId);
+    } catch (e) {
+      this.raiseSystemException(e, 'Handle::set', this._particleId);
+      throw e;
+    }
   }
 
   /** @method clear()
@@ -4533,6 +4548,11 @@ class StorageProxy {
     this._variable = undefined;
     this._collection = undefined;
     this._observers = [];
+  }
+
+  raiseSystemException(exception, methodName, particleId) {
+
+    this._port.RaiseSystemException({exception: {message: exception.message, stack: exception.stack, name: exception.name}, methodName, particleId});
   }
 
   get id() {
