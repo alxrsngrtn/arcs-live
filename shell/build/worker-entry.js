@@ -1671,7 +1671,7 @@ class TypeChecker {
   // be used when types can actually be associated with each other / constrained.
   //
   // By design this function is called exactly once per handle in a recipe during
-  // normalization, and should provide the same final answers regardless of the 
+  // normalization, and should provide the same final answers regardless of the
   // ordering of handles within that recipe
   //
   // NOTE: you probably don't want to call this function, if you think you
@@ -1684,7 +1684,7 @@ class TypeChecker {
 
     // baseType might be a variable (and is definitely a variable if no baseType was available).
     // Some of the list might contain variables too.
-    
+
     // First attempt to merge all the variables into the baseType
     //
     // If the baseType is a variable then this results in a single place to manipulate the constraints
@@ -1714,7 +1714,7 @@ class TypeChecker {
         if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset))
           candidate.variable.resolution = candidate.canReadSubset;
         return candidate;
-      }  
+      }
       return null;
     };
 
@@ -1752,18 +1752,23 @@ class TypeChecker {
     } else {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(false, 'tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
     }
-    
+
     return base;
   }
 
   static _tryMergeConstraints(handleType, {type, direction}) {
     let [primitiveHandleType, primitiveConnectionType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(handleType.resolvedType(), type.resolvedType());
     if (primitiveHandleType.isVariable) {
-      // if this is an undifferentiated variable then we need to create structure to match against. That's
-      // allowed because this variable could represent anything, and it needs to represent this structure
-      // in order for type resolution to succeed.
       if (primitiveConnectionType.isSetView) {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(primitiveHandleType.variable.resolution == null && primitiveHandleType.variable.canReadSubset == null && primitiveHandleType.variable.canWriteSuperset == null);
+        if (primitiveHandleType.variable.resolution != null
+            || primitiveHandleType.variable.canReadSubset != null
+            || primitiveHandleType.variable.canWriteSuperset != null) {
+          // Resolved and/or constrained variables can only represent Entities, not sets.
+          return false;
+        }
+        // If this is an undifferentiated variable then we need to create structure to match against. That's
+        // allowed because this variable could represent anything, and it needs to represent this structure
+        // in order for type resolution to succeed.
         primitiveHandleType.variable.resolution = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newSetView(__WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* default */]('a')));
         let unwrap = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
         primitiveHandleType = unwrap[0];
@@ -1784,6 +1789,8 @@ class TypeChecker {
           return false;
       }
     } else {
+      if (primitiveConnectionType.tag !== primitiveHandleType.tag) return false;
+
       if (direction == 'out' || direction == 'inout')
         if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType))
           return false;
@@ -1830,7 +1837,7 @@ class TypeChecker {
   }
 
   // Compare two types to see if they could be potentially resolved (in the absence of other
-  // information). This is used as a filter when selecting compatible handles or checking 
+  // information). This is used as a filter when selecting compatible handles or checking
   // validity of recipes. This function returning true never implies that full type resolution
   // will succeed, but if the function returns false for a pair of types that are associated
   // then type resolution is guaranteed to fail.

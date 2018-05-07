@@ -1,9 +1,5 @@
-commit baf829f2e34bc904d21290fc2c11e4d5fed88e21
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon May 7 13:43:05 2018 +1000
+commit 8e6aa6ed266f304b21f7509f590bebaad51964ee
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon May 7 15:59:24 2018 +1000
 
-    Fix a couple of tests that were expecting undefined. (#1270)
-    
-    * Fix a couple of tests that were expecting undefined.
-    * Plumb exceptions for Handle::set through to outer PEC and intercept
-    during testing.
+    Expands _tryMergeConstraints for merging setviews with entities (#1260)
