@@ -1,5 +1,5 @@
-commit 576f25994ab64e4207d68056533aa43406b9a93e
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Tue May 8 12:39:55 2018 -0700
+commit 16fc3feb155e46e6f9441af5f48ec7bb861305b3
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed May 9 08:49:48 2018 +1000
 
-    Update Social and Words particle definitions for new parameter syntax. (#1280)
+    Declare exports inline (top-level runtime) (#1285)
