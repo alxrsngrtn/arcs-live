@@ -1,9 +1,5 @@
-commit ff27c1ecb5290e888c458ac16f868c95632a92b3
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue May 8 10:15:50 2018 -0700
+commit 576f25994ab64e4207d68056533aa43406b9a93e
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Tue May 8 12:39:55 2018 -0700
 
-    remove unused DefineParticle api (#1282)
-    
-    * remove unused DefineParticle api
-    
-    * remove this.Stringify
+    Update Social and Words particle definitions for new parameter syntax. (#1280)
