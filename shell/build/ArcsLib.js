@@ -3411,7 +3411,7 @@ ${e.message}
             hostedParticle.implFile = loader.join(manifest.fileName, hostedParticle.implFile);
           }
           const hostedParticleLiteral = hostedParticle.clone().toLiteral();
-          let particleSpecHash = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__recipe_digest_web_js__["a" /* default */])(JSON.stringify(hostedParticleLiteral));
+          let particleSpecHash = await __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__recipe_digest_web_js__["a" /* default */])(JSON.stringify(hostedParticleLiteral));
           let id = `${manifest.generateID()}:${particleSpecHash}:${hostedParticle.name}`;
           targetHandle = recipe.newHandle();
           targetHandle.fate = 'copy';
@@ -3563,7 +3563,7 @@ ${e.message}
       // array of entities in above map rather than mapping again below, (2) we
       // could hash the object tree data directly rather than stringifying.
       if (!item.id && !hasSerializedId) {
-        let entityHash = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__recipe_digest_web_js__["a" /* default */])(JSON.stringify(entities.map(entity => entity.rawData)));
+        let entityHash = await __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__recipe_digest_web_js__["a" /* default */])(JSON.stringify(entities.map(entity => entity.rawData)));
         id = `${id}:${entityHash}`;
       }
     }

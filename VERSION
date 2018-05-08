@@ -1,5 +1,9 @@
-commit 16fc3feb155e46e6f9441af5f48ec7bb861305b3
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed May 9 08:49:48 2018 +1000
+commit 3ace003753620e1e73f1b586d3ccda2d31f28b0a
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue May 8 16:20:19 2018 -0700
 
-    Declare exports inline (top-level runtime) (#1285)
+    add missing await to interface handle ID generation (#1286)
+    
+    * add missing await to interface handle ID generation
+    
+    * update digest-node to async and test hosted particle handle IDs
