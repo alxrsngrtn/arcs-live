@@ -6624,11 +6624,6 @@ class APIPort {
       unconvert: a => a
     };
 
-    this.Stringify = {
-      convert: a => a.toString(),
-      unconvert: a => eval(a)
-    };
-
     this.LocalMapped = {
       convert: a => this._mapper.maybeCreateMappingForThing(a),
       unconvert: a => this._mapper.thingForIdentifier(a)
@@ -6830,9 +6825,6 @@ class PECInnerPort extends APIPort {
     super(messagePort, 'i');
 
     this.registerHandler('Stop', {});
-    // particleFunction needs to be eval'd in context or it won't work.
-    this.registerHandler('DefineParticle',
-      {particleDefinition: this.Direct, particleFunction: this.Direct});
     this.registerInitializerHandler('DefineHandle', {type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* Type */]), name: this.Direct});
     this.registerInitializerHandler('InstantiateParticle',
       {id: this.Direct, spec: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* ParticleSpec */]), handles: this.Map(this.Direct, this.Mapped)});
@@ -20258,15 +20250,6 @@ class OuterPEC extends __WEBPACK_IMPORTED_MODULE_0__particle_execution_context_j
     handles.forEach(handle => {
       this._apiPort.DefineHandle(handle, {type: handle.type.resolvedType(), name: handle.name});
     });
-
-    // TODO: Can we just always define the particle and map a handle for use in later
-    //       calls to InstantiateParticle?
-    if (spec._model._isInline) {
-      this._apiPort.DefineParticle({
-        particleDefinition: spec._model._inlineDefinition,
-        particleFunction: spec._model._inlineUpdateFunction
-      });
-    }
 
     // TODO: rename this concept to something like instantiatedParticle, handle or registration.
     this._apiPort.InstantiateParticle(particleSpec, {id, spec, handles});

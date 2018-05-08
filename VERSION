@@ -1,5 +1,9 @@
-commit f313f70495ddeb753c0b7cb166ce1c40bc710fad
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue May 8 17:08:55 2018 +1000
+commit ff27c1ecb5290e888c458ac16f868c95632a92b3
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue May 8 10:15:50 2018 -0700
 
-    Remove default exports; less trivial cases in top-level runtime dir. (#1284)
+    remove unused DefineParticle api (#1282)
+    
+    * remove unused DefineParticle api
+    
+    * remove this.Stringify
