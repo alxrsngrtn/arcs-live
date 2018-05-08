@@ -2278,8 +2278,8 @@ class Shape {
     return this.handles
       .map(handle => {
         let type = handle.type.resolvedType();
-        return `${handle.direction ? handle.direction + ' ': ''}${type.toString()}${handle.name ? ' ' + handle.name : ''}`;
-      }).join(', ');
+        return `  ${handle.direction ? handle.direction + ' ': ''}${type.toString()} ${handle.name ? handle.name : '*'}`;
+      }).join('\n');
   }
 
   _slotsToManifestString() {
@@ -2292,7 +2292,7 @@ class Shape {
   // toString().
   toString() {
     return `shape ${this.name}
-  ${this.name}(${this._handlesToManifestString()})
+${this._handlesToManifestString()}
 ${this._slotsToManifestString()}
 `;
   }

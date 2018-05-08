@@ -1,5 +1,7 @@
-commit 7088197175190657173c8331cd200f2f7fcf9083
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon May 7 17:24:59 2018 -0700
+commit f35e824a55ce077306bcd6e6654fe9536462ffd5
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue May 8 13:21:04 2018 +1000
 
-    strategy explorer to indicate when recipe was found "irrelevant" by speculative execution (#1281)
+    Mark old-style shape body as deprecated and fix in tests. (#1273)
+    
+    Doing this exercise uncovered an issue with the way I'd set up parsing (specifically, slots were parsed as handles) and also required implementing the use of '*' to mean no name.
