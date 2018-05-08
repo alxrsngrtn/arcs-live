@@ -1,7 +1,5 @@
-commit f35e824a55ce077306bcd6e6654fe9536462ffd5
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue May 8 13:21:04 2018 +1000
+commit f313f70495ddeb753c0b7cb166ce1c40bc710fad
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue May 8 17:08:55 2018 +1000
 
-    Mark old-style shape body as deprecated and fix in tests. (#1273)
-    
-    Doing this exercise uncovered an issue with the way I'd set up parsing (specifically, slots were parsed as handles) and also required implementing the use of '*' to mean no name.
+    Remove default exports; less trivial cases in top-level runtime dir. (#1284)

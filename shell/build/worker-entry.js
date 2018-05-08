@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 33);
+/******/ 	return __webpack_require__(__webpack_require__.s = 31);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -92,12 +92,13 @@ function assert(test, message) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Type; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(5);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -487,7 +488,7 @@ addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Tuple', 'fields');
 
-/* harmony default export */ __webpack_exports__["a"] = (Type);
+
 
 
 
@@ -501,101 +502,10 @@ addType('Tuple', 'fields');
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Entity; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-class Entity {
-  constructor(userIDComponent) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = undefined;
-    this._userIDComponent = userIDComponent;
-  }
-  get data() {
-    return undefined;
-  }
-
-  getUserID() {
-    return this._userIDComponent;
-  }
-
-  isIdentified() {
-    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] !== undefined;
-  }
-  // TODO: entity should not be exposing its IDs.
-  get id() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!this.isIdentified());
-    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier];
-  }
-  identify(identifier) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = identifier;
-    let components = identifier.split(':');
-    if (components[components.length - 2] == 'uid')
-      this._userIDComponent = components[components.length - 1];
-  }
-  createIdentity(components) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
-    let id;
-    if (this._userIDComponent)
-      id = `${components.base}:uid:${this._userIDComponent}`;
-    else
-      id = `${components.base}:${components.component()}`;
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = id;
-  }
-  toLiteral() {
-    return this.rawData;
-  }
-
-  static get type() {
-    // TODO: should the entity's key just be its type?
-    // Should it just be called type in that case?
-    return __WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */].newEntity(this.key.schema);
-  }
-}
-
-
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-/* harmony default export */ __webpack_exports__["a"] = ({identifier: Symbol('id')});
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DomParticle; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(30);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -611,11 +521,10 @@ class Entity {
 
 
 
-
 /** @class DomParticle
  * Particle that does stuff with DOM.
  */
-class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_1__particle_js__["b" /* Particle */]) {
+class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_1__particle_js__["a" /* Particle */]) {
   constructor() {
     super();
     this.state = this._state;
@@ -694,7 +603,7 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     this.handles = handles;
     this._views = handles;
     let config = this.config;
-    this.when([new __WEBPACK_IMPORTED_MODULE_1__particle_js__["c" /* ViewChanges */](handles, config.handles, 'change')], async () => {
+    this.when([new __WEBPACK_IMPORTED_MODULE_1__particle_js__["b" /* ViewChanges */](handles, config.handles, 'change')], async () => {
       await this._handlesToProps(handles, config);
     });
     // make sure we invalidate once, even if there are no incoming handles
@@ -781,14 +690,14 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
 
 
 /***/ }),
-/* 5 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ParticleSpec; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /**
  * @license
@@ -940,7 +849,7 @@ class ParticleSpec {
 
   static fromLiteral(literal) {
     let {args, name, verbs, description, implFile, affordance, slots} = literal;
-    let connectionFromLiteral = ({type, direction, name, isOptional, dependentConnections}) => ({type: __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionFromLiteral)}); 
+    let connectionFromLiteral = ({type, direction, name, isOptional, dependentConnections}) => ({type: __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].fromLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionFromLiteral)}); 
     args = args.map(connectionFromLiteral);
     return new ParticleSpec({args, name, verbs, description, implFile, affordance, slots});
   }
@@ -960,7 +869,7 @@ class ParticleSpec {
   }
 
   toInterface() {
-    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newInterface(this._toShape());
+    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newInterface(this._toShape());
   }
 
   _toShape() {
@@ -1047,13 +956,12 @@ class ParticleSpec {
 
 
 /***/ }),
-/* 6 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_js__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1063,7 +971,6 @@ class ParticleSpec {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -1162,7 +1069,7 @@ class Particle {
    * Indicates that a busy period (initiated by a call to setBusy) has completed.
    */
   setIdle() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this._busy > 0);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(this._busy > 0);
     this._busy--;
     if (this._busy == 0)
       this._idleResolver();
@@ -1216,8 +1123,8 @@ class Particle {
   on(views, names, kind, f) {
     if (typeof names == 'string')
       names = [names];
-    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'particle', names: this.constructor.name + '::on', args: {view: names, event: kind}});
-    names.forEach(name => views.get(name).on(kind, __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].wrap({cat: 'particle', name: this.constructor.name, args: {view: name, event: kind}}, f), this));
+    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */].start({cat: 'particle', names: this.constructor.name + '::on', args: {view: names, event: kind}});
+    names.forEach(name => views.get(name).on(kind, __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */].wrap({cat: 'particle', name: this.constructor.name, args: {view: name, event: kind}}, f), this));
     trace.end();
   }
 
@@ -1228,7 +1135,7 @@ class Particle {
   fireEvent(slotName, event) {
     // TODO(sjmiles): tests can get here without a `this.slot`, maybe this needs to be fixed in MockSlotManager?
     let slot = this.getSlot(slotName);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(slot, `Particle::fireEvent: slot ${slotName} is falsey`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(slot, `Particle::fireEvent: slot ${slotName} is falsey`);
     slot.fireEvent(event);
   }
 
@@ -1263,7 +1170,7 @@ class Particle {
     return false;
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["b"] = Particle;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Particle;
 
 
 class ViewChanges {
@@ -1284,7 +1191,7 @@ class ViewChanges {
     }
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["c"] = ViewChanges;
+/* harmony export (immutable) */ __webpack_exports__["b"] = ViewChanges;
 
 
 class SlotChanges {
@@ -1310,11 +1217,10 @@ class StateChanges {
 /* unused harmony export StateChanges */
 
 
-/* harmony default export */ __webpack_exports__["a"] = ({Particle, ViewChanges, SlotChanges, StateChanges});
 
 
 /***/ }),
-/* 7 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1346,7 +1252,7 @@ class TypeChecker {
   // do, talk to shans@.
   static processTypeList(baseType, list) {
     if (baseType == undefined)
-      baseType = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */]('a'));
+      baseType = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */]('a'));
 
     let concreteTypes = [];
 
@@ -1400,7 +1306,7 @@ class TypeChecker {
   }
 
   static _tryMergeTypeVariable(base, onto) {
-    let [primitiveBase, primitiveOnto] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(base.resolvedType(), onto.resolvedType());
+    let [primitiveBase, primitiveOnto] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].unwrapPair(base.resolvedType(), onto.resolvedType());
 
     if (primitiveBase.isVariable) {
       if (primitiveOnto.isVariable) {
@@ -1425,7 +1331,7 @@ class TypeChecker {
   }
 
   static _tryMergeConstraints(handleType, {type, direction}) {
-    let [primitiveHandleType, primitiveConnectionType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(handleType.resolvedType(), type.resolvedType());
+    let [primitiveHandleType, primitiveConnectionType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].unwrapPair(handleType.resolvedType(), type.resolvedType());
     if (primitiveHandleType.isVariable) {
       if (primitiveConnectionType.isSetView) {
         if (primitiveHandleType.variable.resolution != null
@@ -1437,8 +1343,8 @@ class TypeChecker {
         // If this is an undifferentiated variable then we need to create structure to match against. That's
         // allowed because this variable could represent anything, and it needs to represent this structure
         // in order for type resolution to succeed.
-        primitiveHandleType.variable.resolution = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newSetView(__WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */]('a')));
-        let unwrap = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
+        primitiveHandleType.variable.resolution = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newSetView(__WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */]('a')));
+        let unwrap = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
         primitiveHandleType = unwrap[0];
         primitiveConnectionType = unwrap[1];
       }
@@ -1501,7 +1407,7 @@ class TypeChecker {
     let shape = type.interfaceShape.restrictType(instance);
     if (shape == false)
       return false;
-    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newInterface(shape);
+    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newInterface(shape);
   }
 
   // Compare two types to see if they could be potentially resolved (in the absence of other
@@ -1514,12 +1420,12 @@ class TypeChecker {
   static compareTypes(left, right) {
     let resolvedLeft = left.type.resolvedType();
     let resolvedRight = right.type.resolvedType();
-    let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].unwrapPair(resolvedLeft, resolvedRight);
+    let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].unwrapPair(resolvedLeft, resolvedRight);
 
     if (leftType.isVariable || rightType.isVariable) {
       // TODO: everything should use this, eventually. Need to implement the
       // right functionality in Shapes first, though.
-      return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].canMergeConstraints(leftType, rightType);
+      return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].canMergeConstraints(leftType, rightType);
     }
 
     if (leftType.type != rightType.type) {
@@ -1569,344 +1475,13 @@ class TypeChecker {
 
 
 /***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Schema; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(2);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class Schema {
-  constructor(model) {
-    let legacy = [];
-    // TODO: remove this (remnants of normative/optional)
-    if (model.sections) {
-      legacy.push('sections');
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!model.fields);
-      model.fields = {};
-      for (let section of model.sections) {
-        Object.assign(model.fields, section.fields);
-      }
-      delete model.sections;
-    }
-    if (model.name) {
-      legacy.push('name');
-      model.names = [model.name];
-      delete model.name;
-    }
-    if (model.parents) {
-      legacy.push('parents');
-      for (let parent of model.parents) {
-        let parentSchema = new Schema(parent);
-        model.names.push(...parent.names);
-        Object.assign(model.fields, parent.fields);
-      }
-      model.names = [...new Set(model.names)];
-    }
-    if (legacy.length > 0) {
-      console.warn(`Schema ${model.names[0] || '*'} was serialized with legacy format (${legacy.join(', ')})`, new Error());
-    }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.fields);
-    this._model = model;
-    this.description = {};
-    if (model.description) {
-      model.description.description.forEach(desc => this.description[desc.name] = desc.pattern);
-    }
-  }
-
-  toLiteral() {
-    return this._model;
-  }
-
-  static fromLiteral(data) {
-    return new Schema(data);
-  }
-
-  get fields() {
-    return this._model.fields;
-  }
-
-  get names() {
-    return this._model.names;
-  }
-
-  // TODO: This should only be an ident used in manifest parsing.
-  get name() {
-    return this.names[0];
-  }
-
-  static typesEqual(fieldType1, fieldType2) {
-    // TODO: structural check instead of stringification.
-    return Schema._typeString(fieldType1) == Schema._typeString(fieldType2);
-  }
-
-  static _typeString(type) {
-    if (typeof(type) != 'object') {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(typeof type == 'string');
-      return type;
-    }
-    switch (type.kind) {
-      case 'schema-union':
-        return `(${type.types.join(' or ')})`;
-      case 'schema-tuple':
-        return `(${type.types.join(', ')})`;
-      default:
-        throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
-    }
-  }
-
-  static union(schema1, schema2) {
-    let names = [...new Set([...schema1.names, ...schema2.names])];
-    let fields = {};
-
-    for (let [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
-      if (fields[field]) {
-        if (!Schema.typesEqual(fields[field], type)) {
-          return null;
-        }
-      } else {
-        fields[field] = type;
-      }
-    }
-
-    return new Schema({
-      names,
-      fields,
-    });
-  }
-
-  static intersect(schema1, schema2) {
-    let names = [...schema1.names].filter(name => schema2.names.includes(name));
-    let fields = {};
-
-    for (let [field, type] of Object.entries(schema1.fields)) {
-      let otherType = schema2.fields[field];
-      if (otherType && Schema.typesEqual(type, otherType)) {
-        fields[field] = type;
-      }
-    }
-
-    return new Schema({
-      names,
-      fields,
-    });
-  }
-
-  equals(otherSchema) {
-    return this === otherSchema || (this.name == otherSchema.name
-       // TODO: Check equality without calling contains.
-       && this.isMoreSpecificThan(otherSchema)
-       && otherSchema.isMoreSpecificThan(this));
-  }
-
-  isMoreSpecificThan(otherSchema) {
-    let names = new Set(this.names);
-    for (let name of otherSchema.names) {
-      if (!names.has(name)) {
-        return false;
-      }
-    }
-    let fields = {};
-    for (let [name, type] of Object.entries(this.fields)) {
-      fields[name] = type;
-    }
-    for (let [name, type] of Object.entries(otherSchema.fields)) {
-      if (fields[name] == undefined)
-        return false;
-      if (!Schema.typesEqual(fields[name], type)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  get type() {
-    return __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */].newEntity(this);
-  }
-
-  entityClass() {
-    let schema = this;
-    let className = this.name;
-    let classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
-
-    let convertToJsType = fieldType => {
-      switch (fieldType) {
-        case 'Text':
-          return 'string';
-        case 'URL':
-          return 'string';
-        case 'Number':
-          return 'number';
-        case 'Boolean':
-          return 'boolean';
-        case 'Object':
-          return 'object';
-        default:
-          throw new Error(`Unknown field type ${fieldType} in schema ${className}`);
-      }
-    };
-
-    const fieldTypes = this.fields;
-    let validateFieldAndTypes = (op, name, value) => {
-      let fieldType = fieldTypes[name];
-      if (fieldType === undefined) {
-        throw new Error(`Can't ${op} field ${name}; not in schema ${className}`);
-      }
-      if (value === undefined || value === null) {
-        return;
-      }
-
-      if (typeof(fieldType) !== 'object') {
-        // Primitive fields.
-        if (typeof(value) !== convertToJsType(fieldType)) {
-          throw new TypeError(
-              `Type mismatch ${op}ting field ${name} (type ${fieldType}); ` +
-              `value '${value}' is type ${typeof(value)}`);
-        }
-        return;
-      }
-
-      switch (fieldType.kind) {
-        case 'schema-union':
-          // Value must be a primitive that matches one of the union types.
-          for (let innerType of fieldType.types) {
-            if (typeof(value) === convertToJsType(innerType)) {
-              return;
-            }
-          }
-          throw new TypeError(
-              `Type mismatch ${op}ting field ${name} (union [${fieldType.types}]); ` +
-              `value '${value}' is type ${typeof(value)}`);
-
-        case 'schema-tuple':
-          // Value must be an array whose contents match each of the tuple types.
-          if (!Array.isArray(value)) {
-            throw new TypeError(`Cannot ${op} tuple ${name} with non-array value '${value}'`);
-          }
-          if (value.length != fieldType.types.length) {
-            throw new TypeError(`Length mismatch ${op}ting tuple ${name} ` +
-                                `[${fieldType.types}] with value '${value}'`);
-          }
-          fieldType.types.map((innerType, i) => {
-            if (value[i] !== undefined && value[i] !== null &&
-                typeof(value[i]) !== convertToJsType(innerType)) {
-              throw new TypeError(
-                  `Type mismatch ${op}ting field ${name} (tuple [${fieldType.types}]); ` +
-                  `value '${value}' has type ${typeof(value[i])} at index ${i}`);
-            }
-          });
-          break;
-
-        default:
-          throw new Error(`Unknown kind ${fieldType.kind} in schema ${className}`);
-      }
-    };
-
-    let clazz = class extends __WEBPACK_IMPORTED_MODULE_2__entity_js__["a" /* Entity */] {
-      constructor(data, userIDComponent) {
-        super(userIDComponent);
-        this.rawData = new Proxy({}, {
-          get: (target, name) => {
-            if (classJunk.includes(name) || name.constructor == Symbol) {
-              return undefined;
-            }
-            let value = target[name];
-            validateFieldAndTypes('get', name, value);
-            return value;
-          },
-          set: (target, name, value) => {
-            validateFieldAndTypes('set', name, value);
-            target[name] = value;
-            return true;
-          }
-        });
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data, `can't construct entity with null data`);
-        for (let [name, value] of Object.entries(data)) {
-          this.rawData[name] = value;
-        }
-      }
-
-      dataClone() {
-        let clone = {};
-        for (let name of Object.keys(schema.fields)) {
-          if (this.rawData[name] !== undefined)
-            clone[name] = this.rawData[name];
-        }
-        return clone;
-      }
-
-      static get key() {
-        return {
-          tag: 'entity',
-          schema: schema.toLiteral(),
-        };
-      }
-    };
-
-    Object.defineProperty(clazz, 'type', {value: this.type});
-    Object.defineProperty(clazz, 'name', {value: this.name});
-    // TODO: add query / getter functions for user properties
-    for (let name of Object.keys(this.fields)) {
-      Object.defineProperty(clazz.prototype, name, {
-        get: function() {
-          return this.rawData[name];
-        },
-        set: function(v) {
-          this.rawData[name] = v;
-        }
-      });
-    }
-    return clazz;
-  }
-
-  toInlineSchemaString() {
-    let names = (this.names || ['*']).join(' ');
-    let fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
-    return `${names} {${fields}}`;
-  }
-
-  toManifestString() {
-    let results = [];
-    results.push(`schema ${this.names.join(' ')}`);
-    results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
-    if (Object.keys(this.description).length > 0) {
-      results.push(`  description \`${this.description.pattern}\``);
-      for (let name of Object.keys(this.description)) {
-        if (name != 'pattern') {
-          results.push(`    ${name} \`${this.description[name]}\``);
-        }
-      }
-    }
-    return results.join('\n');
-  }
-}
-
-
-
-
-/***/ }),
-/* 9 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TransformationDomParticle; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dom_particle_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dom_particle_js__ = __webpack_require__(2);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1972,7 +1547,7 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 
 
 /***/ }),
-/* 10 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1987,13 +1562,87 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 
 
 /***/ }),
-/* 11 */
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Entity; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+
+class Entity {
+  constructor(userIDComponent) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = undefined;
+    this._userIDComponent = userIDComponent;
+  }
+  get data() {
+    return undefined;
+  }
+
+  getUserID() {
+    return this._userIDComponent;
+  }
+
+  isIdentified() {
+    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] !== undefined;
+  }
+  // TODO: entity should not be exposing its IDs.
+  get id() {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!this.isIdentified());
+    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier];
+  }
+  identify(identifier) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = identifier;
+    let components = identifier.split(':');
+    if (components[components.length - 2] == 'uid')
+      this._userIDComponent = components[components.length - 1];
+  }
+  createIdentity(components) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
+    let id;
+    if (this._userIDComponent)
+      id = `${components.base}:uid:${this._userIDComponent}`;
+    else
+      id = `${components.base}:${components.component()}`;
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = id;
+  }
+  toLiteral() {
+    return this.rawData;
+  }
+
+  static get type() {
+    // TODO: should the entity's key just be its type?
+    // Should it just be called type in that case?
+    return __WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* Type */].newEntity(this.key.schema);
+  }
+}
+
+
+
+
+/***/ }),
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MultiplexerDomParticle; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__ = __webpack_require__(6);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2183,7 +1832,338 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
 
 
 /***/ }),
-/* 12 */
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Schema; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(8);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+class Schema {
+  constructor(model) {
+    let legacy = [];
+    // TODO: remove this (remnants of normative/optional)
+    if (model.sections) {
+      legacy.push('sections');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!model.fields);
+      model.fields = {};
+      for (let section of model.sections) {
+        Object.assign(model.fields, section.fields);
+      }
+      delete model.sections;
+    }
+    if (model.name) {
+      legacy.push('name');
+      model.names = [model.name];
+      delete model.name;
+    }
+    if (model.parents) {
+      legacy.push('parents');
+      for (let parent of model.parents) {
+        let parentSchema = new Schema(parent);
+        model.names.push(...parent.names);
+        Object.assign(model.fields, parent.fields);
+      }
+      model.names = [...new Set(model.names)];
+    }
+    if (legacy.length > 0) {
+      console.warn(`Schema ${model.names[0] || '*'} was serialized with legacy format (${legacy.join(', ')})`, new Error());
+    }
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.fields);
+    this._model = model;
+    this.description = {};
+    if (model.description) {
+      model.description.description.forEach(desc => this.description[desc.name] = desc.pattern);
+    }
+  }
+
+  toLiteral() {
+    return this._model;
+  }
+
+  static fromLiteral(data) {
+    return new Schema(data);
+  }
+
+  get fields() {
+    return this._model.fields;
+  }
+
+  get names() {
+    return this._model.names;
+  }
+
+  // TODO: This should only be an ident used in manifest parsing.
+  get name() {
+    return this.names[0];
+  }
+
+  static typesEqual(fieldType1, fieldType2) {
+    // TODO: structural check instead of stringification.
+    return Schema._typeString(fieldType1) == Schema._typeString(fieldType2);
+  }
+
+  static _typeString(type) {
+    if (typeof(type) != 'object') {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(typeof type == 'string');
+      return type;
+    }
+    switch (type.kind) {
+      case 'schema-union':
+        return `(${type.types.join(' or ')})`;
+      case 'schema-tuple':
+        return `(${type.types.join(', ')})`;
+      default:
+        throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
+    }
+  }
+
+  static union(schema1, schema2) {
+    let names = [...new Set([...schema1.names, ...schema2.names])];
+    let fields = {};
+
+    for (let [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
+      if (fields[field]) {
+        if (!Schema.typesEqual(fields[field], type)) {
+          return null;
+        }
+      } else {
+        fields[field] = type;
+      }
+    }
+
+    return new Schema({
+      names,
+      fields,
+    });
+  }
+
+  static intersect(schema1, schema2) {
+    let names = [...schema1.names].filter(name => schema2.names.includes(name));
+    let fields = {};
+
+    for (let [field, type] of Object.entries(schema1.fields)) {
+      let otherType = schema2.fields[field];
+      if (otherType && Schema.typesEqual(type, otherType)) {
+        fields[field] = type;
+      }
+    }
+
+    return new Schema({
+      names,
+      fields,
+    });
+  }
+
+  equals(otherSchema) {
+    return this === otherSchema || (this.name == otherSchema.name
+       // TODO: Check equality without calling contains.
+       && this.isMoreSpecificThan(otherSchema)
+       && otherSchema.isMoreSpecificThan(this));
+  }
+
+  isMoreSpecificThan(otherSchema) {
+    let names = new Set(this.names);
+    for (let name of otherSchema.names) {
+      if (!names.has(name)) {
+        return false;
+      }
+    }
+    let fields = {};
+    for (let [name, type] of Object.entries(this.fields)) {
+      fields[name] = type;
+    }
+    for (let [name, type] of Object.entries(otherSchema.fields)) {
+      if (fields[name] == undefined)
+        return false;
+      if (!Schema.typesEqual(fields[name], type)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  get type() {
+    return __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */].newEntity(this);
+  }
+
+  entityClass() {
+    let schema = this;
+    let className = this.name;
+    let classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
+
+    let convertToJsType = fieldType => {
+      switch (fieldType) {
+        case 'Text':
+          return 'string';
+        case 'URL':
+          return 'string';
+        case 'Number':
+          return 'number';
+        case 'Boolean':
+          return 'boolean';
+        case 'Object':
+          return 'object';
+        default:
+          throw new Error(`Unknown field type ${fieldType} in schema ${className}`);
+      }
+    };
+
+    const fieldTypes = this.fields;
+    let validateFieldAndTypes = (op, name, value) => {
+      let fieldType = fieldTypes[name];
+      if (fieldType === undefined) {
+        throw new Error(`Can't ${op} field ${name}; not in schema ${className}`);
+      }
+      if (value === undefined || value === null) {
+        return;
+      }
+
+      if (typeof(fieldType) !== 'object') {
+        // Primitive fields.
+        if (typeof(value) !== convertToJsType(fieldType)) {
+          throw new TypeError(
+              `Type mismatch ${op}ting field ${name} (type ${fieldType}); ` +
+              `value '${value}' is type ${typeof(value)}`);
+        }
+        return;
+      }
+
+      switch (fieldType.kind) {
+        case 'schema-union':
+          // Value must be a primitive that matches one of the union types.
+          for (let innerType of fieldType.types) {
+            if (typeof(value) === convertToJsType(innerType)) {
+              return;
+            }
+          }
+          throw new TypeError(
+              `Type mismatch ${op}ting field ${name} (union [${fieldType.types}]); ` +
+              `value '${value}' is type ${typeof(value)}`);
+
+        case 'schema-tuple':
+          // Value must be an array whose contents match each of the tuple types.
+          if (!Array.isArray(value)) {
+            throw new TypeError(`Cannot ${op} tuple ${name} with non-array value '${value}'`);
+          }
+          if (value.length != fieldType.types.length) {
+            throw new TypeError(`Length mismatch ${op}ting tuple ${name} ` +
+                                `[${fieldType.types}] with value '${value}'`);
+          }
+          fieldType.types.map((innerType, i) => {
+            if (value[i] !== undefined && value[i] !== null &&
+                typeof(value[i]) !== convertToJsType(innerType)) {
+              throw new TypeError(
+                  `Type mismatch ${op}ting field ${name} (tuple [${fieldType.types}]); ` +
+                  `value '${value}' has type ${typeof(value[i])} at index ${i}`);
+            }
+          });
+          break;
+
+        default:
+          throw new Error(`Unknown kind ${fieldType.kind} in schema ${className}`);
+      }
+    };
+
+    let clazz = class extends __WEBPACK_IMPORTED_MODULE_2__entity_js__["a" /* Entity */] {
+      constructor(data, userIDComponent) {
+        super(userIDComponent);
+        this.rawData = new Proxy({}, {
+          get: (target, name) => {
+            if (classJunk.includes(name) || name.constructor == Symbol) {
+              return undefined;
+            }
+            let value = target[name];
+            validateFieldAndTypes('get', name, value);
+            return value;
+          },
+          set: (target, name, value) => {
+            validateFieldAndTypes('set', name, value);
+            target[name] = value;
+            return true;
+          }
+        });
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data, `can't construct entity with null data`);
+        for (let [name, value] of Object.entries(data)) {
+          this.rawData[name] = value;
+        }
+      }
+
+      dataClone() {
+        let clone = {};
+        for (let name of Object.keys(schema.fields)) {
+          if (this.rawData[name] !== undefined)
+            clone[name] = this.rawData[name];
+        }
+        return clone;
+      }
+
+      static get key() {
+        return {
+          tag: 'entity',
+          schema: schema.toLiteral(),
+        };
+      }
+    };
+
+    Object.defineProperty(clazz, 'type', {value: this.type});
+    Object.defineProperty(clazz, 'name', {value: this.name});
+    // TODO: add query / getter functions for user properties
+    for (let name of Object.keys(this.fields)) {
+      Object.defineProperty(clazz.prototype, name, {
+        get: function() {
+          return this.rawData[name];
+        },
+        set: function(v) {
+          this.rawData[name] = v;
+        }
+      });
+    }
+    return clazz;
+  }
+
+  toInlineSchemaString() {
+    let names = (this.names || ['*']).join(' ');
+    let fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
+    return `${names} {${fields}}`;
+  }
+
+  toManifestString() {
+    let results = [];
+    results.push(`schema ${this.names.join(' ')}`);
+    results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
+    if (Object.keys(this.description).length > 0) {
+      results.push(`  description \`${this.description.pattern}\``);
+      for (let name of Object.keys(this.description)) {
+        if (name != 'pattern') {
+          results.push(`    ${name} \`${this.description[name]}\``);
+        }
+      }
+    }
+    return results.join('\n');
+  }
+}
+
+
+
+
+/***/ }),
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2207,7 +2187,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
 
 function _fromLiteral(member) {
   if (!!member && typeof member == 'object')
-    return __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */].fromLiteral(member);
+    return __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */].fromLiteral(member);
   return member;
 }
 
@@ -2369,7 +2349,7 @@ ${this._slotsToManifestString()}
   }
 
   static isTypeVar(reference) {
-    return (reference instanceof __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */]) && reference.hasProperty(r => r.isVariable);
+    return (reference instanceof __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */]) && reference.hasProperty(r => r.isVariable);
   }
 
   static mustMatch(reference) {
@@ -2386,7 +2366,7 @@ ${this._slotsToManifestString()}
       return true;
     if (shapeHandle.type.isVariableReference)
       return false;
-    let [left, right] = __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */].unwrapPair(shapeHandle.type, particleHandle.type);
+    let [left, right] = __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */].unwrapPair(shapeHandle.type, particleHandle.type);
     if (left.isVariable) {
       return [{var: left, value: right}];
     } else {
@@ -2473,6 +2453,23 @@ ${this._slotsToManifestString()}
 
 
 /***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({identifier: Symbol('id')});
+
+
+/***/ }),
 /* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2480,8 +2477,8 @@ ${this._slotsToManifestString()}
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TypeVariable; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_type_checker_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_type_checker_js__ = __webpack_require__(5);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -2499,8 +2496,8 @@ ${this._slotsToManifestString()}
 class TypeVariable {
   constructor(name, canWriteSuperset, canReadSubset) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(typeof name == 'string');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(canWriteSuperset == null || canWriteSuperset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */]);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(canReadSubset == null || canReadSubset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(canWriteSuperset == null || canWriteSuperset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(canReadSubset == null || canReadSubset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
     this.name = name;
     this._canWriteSuperset = canWriteSuperset;
     this._canReadSubset = canReadSubset;
@@ -2533,7 +2530,7 @@ class TypeVariable {
     if (!mergedSchema)
       return false;
     
-    this.canReadSubset = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newEntity(mergedSchema);
+    this.canReadSubset = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newEntity(mergedSchema);
     return true;
   }
 
@@ -2552,7 +2549,7 @@ class TypeVariable {
     if (!mergedSchema)
       return false;
 
-    this.canWriteSuperset = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].newEntity(mergedSchema);
+    this.canWriteSuperset = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newEntity(mergedSchema);
     return true;
   }
 
@@ -2575,7 +2572,7 @@ class TypeVariable {
   }
 
   set resolution(value) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(value instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(value instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
     let probe = value;
     while (probe) {
@@ -2657,8 +2654,8 @@ class TypeVariable {
   static fromLiteral(data) {
     return new TypeVariable(
         data.name,
-        data.canWriteSuperset ? __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(data.canWriteSuperset) : null,
-        data.canReadSubset ? __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* default */].fromLiteral(data.canReadSubset) : null);
+        data.canWriteSuperset ? __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].fromLiteral(data.canWriteSuperset) : null,
+        data.canReadSubset ? __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].fromLiteral(data.canReadSubset) : null);
   }
 
   isResolved() {
@@ -2674,11 +2671,12 @@ class TypeVariable {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return InnerPEC; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__handle_js__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_channel_js__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__storage_proxy_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__storage_proxy_js__ = __webpack_require__(28);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2936,7 +2934,7 @@ class InnerPEC {
   }
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (InnerPEC);
+
 
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(17)))
 
@@ -2946,10 +2944,10 @@ class InnerPEC {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__ = __webpack_require__(6);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3026,8 +3024,7 @@ class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a"
     //  for use in DOM
     let resolver = this._resolve.bind(this);
     return particleWrapper({
-      particle: __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__["a" /* default */],
-      Particle: __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__["a" /* default */].Particle,
+      Particle: __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__["a" /* Particle */],
       DomParticle: __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__["a" /* DomParticle */],
       MultiplexerDomParticle: __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__["a" /* MultiplexerDomParticle */],
       SimpleParticle: __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__["a" /* DomParticle */],
@@ -3316,7 +3313,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 /* unused harmony export PECOuterPort */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PECInnerPort; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__debug_outer_port_attachment_js__ = __webpack_require__(24);
 /**
@@ -3573,7 +3570,7 @@ class PECOuterPort extends APIPort {
     super(messagePort, 'o');
 
     this.registerCall('Stop', {});
-    this.registerRedundantInitializer('DefineHandle', {type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */]), name: this.Direct});
+    this.registerRedundantInitializer('DefineHandle', {type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* Type */]), name: this.Direct});
     this.registerInitializer('InstantiateParticle',
       {id: this.Direct, spec: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* ParticleSpec */]), handles: this.Map(this.Direct, this.Mapped)}, 'id');
 
@@ -3600,8 +3597,8 @@ class PECOuterPort extends APIPort {
     this.registerHandler('ConstructInnerArc', {callback: this.Direct, particle: this.Mapped});
     this.registerCall('ConstructArcCallback', {callback: this.Direct, arc: this.LocalMapped});
 
-    this.registerHandler('ArcCreateHandle', {callback: this.Direct, arc: this.LocalMapped, type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */]), name: this.Direct});
-    this.registerInitializer('CreateHandleCallback', {callback: this.Direct, type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */]), name: this.Direct, id: this.Direct});
+    this.registerHandler('ArcCreateHandle', {callback: this.Direct, arc: this.LocalMapped, type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* Type */]), name: this.Direct});
+    this.registerInitializer('CreateHandleCallback', {callback: this.Direct, type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* Type */]), name: this.Direct, id: this.Direct});
 
     this.registerHandler('ArcMapHandle', {callback: this.Direct, arc: this.LocalMapped, handle: this.Mapped});
     this.registerInitializer('MapHandleCallback', {callback: this.Direct, id: this.Direct});
@@ -3625,7 +3622,7 @@ class PECInnerPort extends APIPort {
     // particleFunction needs to be eval'd in context or it won't work.
     this.registerHandler('DefineParticle',
       {particleDefinition: this.Direct, particleFunction: this.Direct});
-    this.registerInitializerHandler('DefineHandle', {type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */]), name: this.Direct});
+    this.registerInitializerHandler('DefineHandle', {type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* Type */]), name: this.Direct});
     this.registerInitializerHandler('InstantiateParticle',
       {id: this.Direct, spec: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* ParticleSpec */]), handles: this.Map(this.Direct, this.Mapped)});
 
@@ -3652,8 +3649,8 @@ class PECInnerPort extends APIPort {
     this.registerCall('ConstructInnerArc', {callback: this.LocalMapped, particle: this.Mapped});
     this.registerHandler('ConstructArcCallback', {callback: this.LocalMapped, arc: this.Direct});
 
-    this.registerCall('ArcCreateHandle', {callback: this.LocalMapped, arc: this.Direct, type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */]), name: this.Direct});
-    this.registerInitializerHandler('CreateHandleCallback', {callback: this.LocalMapped, type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */]), name: this.Direct, id: this.Direct});
+    this.registerCall('ArcCreateHandle', {callback: this.LocalMapped, arc: this.Direct, type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* Type */]), name: this.Direct});
+    this.registerInitializerHandler('CreateHandleCallback', {callback: this.LocalMapped, type: this.ByLiteral(__WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* Type */]), name: this.Direct, id: this.Direct});
     this.registerCall('ArcMapHandle', {callback: this.LocalMapped, arc: this.Direct, handle: this.Mapped});
     this.registerInitializerHandler('MapHandleCallback', {callback: this.LocalMapped, id: this.Direct});
     this.registerCall('ArcCreateSlot',
@@ -4062,10 +4059,10 @@ class OuterPortAttachment {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return handleFor; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__ = __webpack_require__(3);
 /** @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -4317,14 +4314,14 @@ function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = tr
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Loader; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__ = __webpack_require__(21);
 /**
  * @license
@@ -4418,7 +4415,7 @@ class Loader {
   }
 
   unwrapParticle(particleWrapper) {
-    return particleWrapper({particle: __WEBPACK_IMPORTED_MODULE_4__particle_js__["a" /* default */], Particle: __WEBPACK_IMPORTED_MODULE_4__particle_js__["a" /* default */].Particle, DomParticle: __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__["a" /* DomParticle */], TransformationDomParticle: __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__["a" /* TransformationDomParticle */], MultiplexerDomParticle: __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__["a" /* MultiplexerDomParticle */], html});
+    return particleWrapper({Particle: __WEBPACK_IMPORTED_MODULE_4__particle_js__["a" /* Particle */], DomParticle: __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__["a" /* DomParticle */], TransformationDomParticle: __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__["a" /* TransformationDomParticle */], MultiplexerDomParticle: __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__["a" /* MultiplexerDomParticle */], html});
   }
 
 }
@@ -4428,101 +4425,6 @@ class Loader {
 
 /***/ }),
 /* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Relation; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__entity_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__symbols_js__ = __webpack_require__(3);
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-
-// TODO: Should relations normalized by another layer, or here?
-class Relation extends __WEBPACK_IMPORTED_MODULE_1__entity_js__["a" /* Entity */] {
-  constructor(...entities) {
-    super();
-    this.entities = entities;
-  }
-  get data() {
-    return this.entities.map(entity => entity[__WEBPACK_IMPORTED_MODULE_3__symbols_js__["a" /* default */].identifier].toLiteral());
-  }
-  static typeFor(relation) {
-    let result = new __WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* default */](relation.entities.map(entity => entity.constructor.type), relation.constructor);
-    return result;
-  }
-}
-
-
-
-
-/***/ }),
-/* 29 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__schema_js__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__relation_js__ = __webpack_require__(28);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-
-function testEntityClass(type) {
-  return new __WEBPACK_IMPORTED_MODULE_3__schema_js__["a" /* Schema */]({
-    names: [type],
-    fields: {
-      id: 'Number',
-      value: 'Text',
-    },
-  }).entityClass();
-}
-
-let BasicEntity = testEntityClass('BasicEntity');
-
-/* unused harmony default export */ var _unused_webpack_default_export = ({
-  Entity: __WEBPACK_IMPORTED_MODULE_2__entity_js__["a" /* Entity */],
-  Relation: __WEBPACK_IMPORTED_MODULE_5__relation_js__["a" /* Relation */],
-  testing: {
-    testEntityClass,
-  },
-  internals: {
-    identifier: __WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier,
-    Type: __WEBPACK_IMPORTED_MODULE_4__type_js__["a" /* default */],
-  }
-});
-
-
-/***/ }),
-/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4721,7 +4623,7 @@ class StorageProxy {
 
 
 /***/ }),
-/* 31 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4747,7 +4649,7 @@ class TupleFields {
   }
 
   static fromLiteral(literal) {
-    return new TupleFields(literal.map(a => __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* default */].fromLiteral(a)));
+    return new TupleFields(literal.map(a => __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */].fromLiteral(a)));
   }
 
   toLiteral() {
@@ -4773,7 +4675,7 @@ class TupleFields {
 
 
 /***/ }),
-/* 32 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4923,7 +4825,7 @@ const nob = () => Object.create(null);
 
 
 /***/ }),
-/* 33 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4947,16 +4849,16 @@ self.onmessage = function(e) {
   self.onmessage = null;
   let {id, base} = e.data;
   //log('starting worker', id);
-  new __WEBPACK_IMPORTED_MODULE_0__runtime_inner_PEC_js__["a" /* default */](e.ports[0], id, new __WEBPACK_IMPORTED_MODULE_1__browser_loader_js__["a" /* default */](base));
+  new __WEBPACK_IMPORTED_MODULE_0__runtime_inner_PEC_js__["a" /* InnerPEC */](e.ports[0], id, new __WEBPACK_IMPORTED_MODULE_1__browser_loader_js__["a" /* BrowserLoader */](base));
 };
 
 
 /***/ }),
-/* 34 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(10);
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(7);
 /*
   Copyright 2015 Google Inc. All Rights Reserved.
   Licensed under the Apache License, Version 2.0 (the "License");
