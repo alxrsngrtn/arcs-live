@@ -1,10 +1,5 @@
-commit 4cdc11eaf89e770d28a4dbbcb0b9ad22b61146de
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon May 7 13:44:59 2018 -0700
+commit 7088197175190657173c8331cd200f2f7fcf9083
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon May 7 17:24:59 2018 -0700
 
-    Update Words to write post with embedded recipe. (#1279)
-    
-    Muxed social feed incorporating posts and game entries rendering
-    polymorphically is operational with this patch and a fix to template
-    caching optimization. See also
-    https://github.com/PolymerLabs/arcs/issues/1233.
+    strategy explorer to indicate when recipe was found "irrelevant" by speculative execution (#1281)
