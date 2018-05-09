@@ -93,11 +93,11 @@ function assert(test, message) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(8);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -693,8 +693,8 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /**
  * @license
@@ -1223,8 +1223,345 @@ class StateChanges {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dom_particle_js__ = __webpack_require__(2);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+// Regex to separate style and template.
+let re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
+
+/** @class TransformationDomParticle
+ * Particle that does transformation stuff with DOM.
+ */
+class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_0__dom_particle_js__["a" /* DomParticle */] {
+  getTemplate(slotName) {
+    return this._state.template;
+  }
+  render(props, state) {
+    return state.renderModel;
+  }
+  shouldRender(props, state) {
+    return Boolean(state.template && state.renderModel);
+  }
+
+  renderHostedSlot(slotName, hostedSlotId, content) {
+    this.combineHostedTemplate(slotName, hostedSlotId, content);
+    this.combineHostedModel(slotName, hostedSlotId, content);
+  }
+
+  // abstract
+  combineHostedTemplate(slotName, hostedSlotId, content) {}
+  combineHostedModel(slotName, hostedSlotId, content) {}
+
+  // Helper methods that may be reused in transformation particles to combine hosted content.
+  static combineTemplates(transformationTemplate, hostedTemplate) {
+    let transformationMatch = transformationTemplate.match(re);
+    if (!transformationMatch || transformationMatch.length != 3) {
+      return;
+    }
+    let hostedMatch = hostedTemplate.match(re);
+    if (!hostedMatch || hostedMatch.length != 3) {
+      return;
+    }
+
+    return `
+      <style>${transformationMatch[1].trim()}${hostedMatch[1].trim()}</style>
+      ${transformationMatch[2].trim().replace('{{hostedParticle}}', hostedMatch[2].trim())}
+    `;
+  }
+  static propsToItems(propsValues) {
+    return propsValues ? propsValues.map(({rawData, id}) => Object.assign({}, rawData, {subId: id})) : [];
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = TransformationDomParticle;
+
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+
+class Entity {
+  constructor(userIDComponent) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = undefined;
+    this._userIDComponent = userIDComponent;
+  }
+  get data() {
+    return undefined;
+  }
+
+  getUserID() {
+    return this._userIDComponent;
+  }
+
+  isIdentified() {
+    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] !== undefined;
+  }
+  // TODO: entity should not be exposing its IDs.
+  get id() {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!!this.isIdentified());
+    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier];
+  }
+  identify(identifier) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = identifier;
+    let components = identifier.split(':');
+    if (components[components.length - 2] == 'uid')
+      this._userIDComponent = components[components.length - 1];
+  }
+  createIdentity(components) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
+    let id;
+    if (this._userIDComponent)
+      id = `${components.base}:uid:${this._userIDComponent}`;
+    else
+      id = `${components.base}:${components.component()}`;
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = id;
+  }
+  toLiteral() {
+    return this.rawData;
+  }
+
+  static get type() {
+    // TODO: should the entity's key just be its type?
+    // Should it just be called type in that case?
+    return __WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* Type */].newEntity(this.key.schema);
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Entity;
+
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__ = __webpack_require__(5);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__["a" /* TransformationDomParticle */] {
+  constructor() {
+    super();
+    this._itemSubIdByHostedSlotId = new Map();
+    this._connByHostedConn = new Map();
+  }
+
+  async _mapParticleConnections(
+      listHandleName,
+      particleHandleName,
+      hostedParticle,
+      views,
+      arc) {
+    let otherMappedViews = [];
+    let otherConnections = [];
+    let index = 2;
+    const skipConnectionNames = [listHandleName, particleHandleName];
+    for (let [connectionName, otherView] of views) {
+      if (skipConnectionNames.includes(connectionName)) {
+        continue;
+      }
+      // TODO(wkorman): For items with embedded recipes we may need a map
+      // (perhaps id to index) to make sure we don't map a handle into the inner
+      // arc multiple times unnecessarily.
+      otherMappedViews.push(
+          `map '${await arc.mapHandle(otherView._proxy)}' as v${index}`);
+      let hostedOtherConnection = hostedParticle.connections.find(
+          conn => conn.isCompatibleType(otherView.type));
+      if (hostedOtherConnection) {
+        otherConnections.push(`${hostedOtherConnection.name} <- v${index++}`);
+        // TODO(wkorman): For items with embedded recipes where we may have a
+        // different particle rendering each item, we need to track
+        // |connByHostedConn| keyed on the particle type.
+        this._connByHostedConn.set(hostedOtherConnection.name, connectionName);
+      }
+    }
+    return [otherMappedViews, otherConnections];
+  }
+
+  async setViews(views) {
+    this.handleIds = {};
+    let arc = await this.constructInnerArc();
+    const listHandleName = 'list';
+    const particleHandleName = 'hostedParticle';
+    let particleView = views.get(particleHandleName);
+    let hostedParticle = null;
+    let otherMappedViews = [];
+    let otherConnections = [];
+    if (particleView) {
+      hostedParticle = await particleView.get();
+      if (hostedParticle) {
+        [otherMappedViews, otherConnections] =
+            await this._mapParticleConnections(
+                listHandleName, particleHandleName, hostedParticle, views, arc);
+      }
+    }
+    this.setState({
+      arc,
+      type: views.get(listHandleName).type,
+      hostedParticle,
+      otherMappedViews,
+      otherConnections
+    });
+
+    super.setViews(views);
+  }
+
+  async willReceiveProps(
+      {list},
+      {arc, type, hostedParticle, otherMappedViews, otherConnections}) {
+    if (list.length > 0) {
+      this.relevance = 0.1;
+    }
+
+    for (let [index, item] of list.entries()) {
+      let resolvedHostedParticle = hostedParticle;
+      if (this.handleIds[item.id]) {
+        let itemView = await this.handleIds[item.id];
+        itemView.set(item);
+        continue;
+      }
+
+      let itemViewPromise =
+          arc.createHandle(type.primitiveType(), 'item' + index);
+      this.handleIds[item.id] = itemViewPromise;
+
+      let itemView = await itemViewPromise;
+
+      if (!resolvedHostedParticle) {
+        // If we're muxing on behalf of an item with an embedded recipe, the
+        // hosted particle should be retrievable from the item itself. Else we
+        // just skip this item.
+        if (!item.renderParticleSpec) {
+          continue;
+        }
+        resolvedHostedParticle =
+            __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__["a" /* ParticleSpec */].fromLiteral(JSON.parse(item.renderParticleSpec));
+        // Re-map compatible handles and compute the connections specific
+        // to this item's render particle.
+        const listHandleName = 'list';
+        const particleHandleName = 'renderParticle';
+        [otherMappedViews, otherConnections] =
+            await this._mapParticleConnections(
+                listHandleName,
+                particleHandleName,
+                resolvedHostedParticle,
+                this._views,
+                arc);
+      }
+      let hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
+      let slotName = [...this.spec.slots.values()][0].name;
+      let slotId = await arc.createSlot(
+          this, slotName, resolvedHostedParticle.name, hostedSlotName);
+
+      if (!slotId) {
+        continue;
+      }
+
+      this._itemSubIdByHostedSlotId.set(slotId, item.id);
+
+      try {
+        await arc.loadRecipe(
+            this.constructInnerRecipe(
+                resolvedHostedParticle,
+                item,
+                itemView,
+                {name: hostedSlotName, id: slotId},
+                {connections: otherConnections, views: otherMappedViews}),
+            this);
+        itemView.set(item);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
+  combineHostedModel(slotName, hostedSlotId, content) {
+    let subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
+    if (!subId) {
+      return;
+    }
+    let items = this._state.renderModel ? this._state.renderModel.items : [];
+    let listIndex = items.findIndex(item => item.subId == subId);
+    let item = Object.assign({}, content.model, {subId});
+    if (listIndex >= 0 && listIndex < items.length) {
+      items[listIndex] = item;
+    } else {
+      items.push(item);
+    }
+    this._setState({renderModel: {items}});
+  }
+
+  combineHostedTemplate(slotName, hostedSlotId, content) {
+    if (!this._state.template && !!content.template) {
+      let template = content.template;
+      // Replace hosted particle connection in template with the corresponding particle connection names.
+      // TODO: make this generic!
+      this._connByHostedConn.forEach((conn, hostedConn) => {
+        template = template.replace(
+            new RegExp(`{{${hostedConn}.description}}`, 'g'),
+            `{{${conn}.description}}`);
+      });
+      this._setState({template});
+    }
+  }
+
+  // Abstract
+  constructInnerRecipe(hostedParticle, item, itemView, slot, other) {
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = MultiplexerDomParticle;
+
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -1474,369 +1811,13 @@ class TypeChecker {
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dom_particle_js__ = __webpack_require__(2);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-// Regex to separate style and template.
-let re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
-
-/** @class TransformationDomParticle
- * Particle that does transformation stuff with DOM.
- */
-class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particle_js__["a" /* DomParticle */] {
-  getTemplate(slotName) {
-    return this._state.template;
-  }
-  render(props, state) {
-    return state.renderModel;
-  }
-  shouldRender(props, state) {
-    return Boolean(state.template && state.renderModel);
-  }
-
-  renderHostedSlot(slotName, hostedSlotId, content) {
-    this.combineHostedTemplate(slotName, hostedSlotId, content);
-    this.combineHostedModel(slotName, hostedSlotId, content);
-  }
-
-  // abstract
-  combineHostedTemplate(slotName, hostedSlotId, content) {}
-  combineHostedModel(slotName, hostedSlotId, content) {}
-
-  // Helper methods that may be reused in transformation particles to combine hosted content.
-  static combineTemplates(transformationTemplate, hostedTemplate) {
-    let transformationMatch = transformationTemplate.match(re);
-    if (!transformationMatch || transformationMatch.length != 3) {
-      return;
-    }
-    let hostedMatch = hostedTemplate.match(re);
-    if (!hostedMatch || hostedMatch.length != 3) {
-      return;
-    }
-
-    return `
-      <style>${transformationMatch[1].trim()}${hostedMatch[1].trim()}</style>
-      ${transformationMatch[2].trim().replace('{{hostedParticle}}', hostedMatch[2].trim())}
-    `;
-  }
-  static propsToItems(propsValues) {
-    return propsValues ? propsValues.map(({rawData, id}) => Object.assign({}, rawData, {subId: id})) : [];
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = TransformationDomParticle;
-
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-const fs = {};
-/* harmony export (immutable) */ __webpack_exports__["a"] = fs;
-
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(1);
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-class Entity {
-  constructor(userIDComponent) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = undefined;
-    this._userIDComponent = userIDComponent;
-  }
-  get data() {
-    return undefined;
-  }
-
-  getUserID() {
-    return this._userIDComponent;
-  }
-
-  isIdentified() {
-    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] !== undefined;
-  }
-  // TODO: entity should not be exposing its IDs.
-  get id() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!!this.isIdentified());
-    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier];
-  }
-  identify(identifier) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = identifier;
-    let components = identifier.split(':');
-    if (components[components.length - 2] == 'uid')
-      this._userIDComponent = components[components.length - 1];
-  }
-  createIdentity(components) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
-    let id;
-    if (this._userIDComponent)
-      id = `${components.base}:uid:${this._userIDComponent}`;
-    else
-      id = `${components.base}:${components.component()}`;
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = id;
-  }
-  toLiteral() {
-    return this.rawData;
-  }
-
-  static get type() {
-    // TODO: should the entity's key just be its type?
-    // Should it just be called type in that case?
-    return __WEBPACK_IMPORTED_MODULE_2__type_js__["a" /* Type */].newEntity(this.key.schema);
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Entity;
-
-
-
-/***/ }),
 /* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__ = __webpack_require__(6);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__["a" /* TransformationDomParticle */] {
-  constructor() {
-    super();
-    this._itemSubIdByHostedSlotId = new Map();
-    this._connByHostedConn = new Map();
-  }
-
-  async _mapParticleConnections(
-      listHandleName,
-      particleHandleName,
-      hostedParticle,
-      views,
-      arc) {
-    let otherMappedViews = [];
-    let otherConnections = [];
-    let index = 2;
-    const skipConnectionNames = [listHandleName, particleHandleName];
-    for (let [connectionName, otherView] of views) {
-      if (skipConnectionNames.includes(connectionName)) {
-        continue;
-      }
-      // TODO(wkorman): For items with embedded recipes we may need a map
-      // (perhaps id to index) to make sure we don't map a handle into the inner
-      // arc multiple times unnecessarily.
-      otherMappedViews.push(
-          `map '${await arc.mapHandle(otherView._proxy)}' as v${index}`);
-      let hostedOtherConnection = hostedParticle.connections.find(
-          conn => conn.isCompatibleType(otherView.type));
-      if (hostedOtherConnection) {
-        otherConnections.push(`${hostedOtherConnection.name} <- v${index++}`);
-        // TODO(wkorman): For items with embedded recipes where we may have a
-        // different particle rendering each item, we need to track
-        // |connByHostedConn| keyed on the particle type.
-        this._connByHostedConn.set(hostedOtherConnection.name, connectionName);
-      }
-    }
-    return [otherMappedViews, otherConnections];
-  }
-
-  async setViews(views) {
-    this.handleIds = {};
-    let arc = await this.constructInnerArc();
-    const listHandleName = 'list';
-    const particleHandleName = 'hostedParticle';
-    let particleView = views.get(particleHandleName);
-    let hostedParticle = null;
-    let otherMappedViews = [];
-    let otherConnections = [];
-    if (particleView) {
-      hostedParticle = await particleView.get();
-      if (hostedParticle) {
-        [otherMappedViews, otherConnections] =
-            await this._mapParticleConnections(
-                listHandleName, particleHandleName, hostedParticle, views, arc);
-      }
-    }
-    this.setState({
-      arc,
-      type: views.get(listHandleName).type,
-      hostedParticle,
-      otherMappedViews,
-      otherConnections
-    });
-
-    super.setViews(views);
-  }
-
-  async willReceiveProps(
-      {list},
-      {arc, type, hostedParticle, otherMappedViews, otherConnections}) {
-    if (list.length > 0) {
-      this.relevance = 0.1;
-    }
-
-    for (let [index, item] of list.entries()) {
-      let resolvedHostedParticle = hostedParticle;
-      if (this.handleIds[item.id]) {
-        let itemView = await this.handleIds[item.id];
-        itemView.set(item);
-        continue;
-      }
-
-      let itemViewPromise =
-          arc.createHandle(type.primitiveType(), 'item' + index);
-      this.handleIds[item.id] = itemViewPromise;
-
-      let itemView = await itemViewPromise;
-
-      if (!resolvedHostedParticle) {
-        // If we're muxing on behalf of an item with an embedded recipe, the
-        // hosted particle should be retrievable from the item itself. Else we
-        // just skip this item.
-        if (!item.renderParticleSpec) {
-          continue;
-        }
-        resolvedHostedParticle =
-            __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__["a" /* ParticleSpec */].fromLiteral(JSON.parse(item.renderParticleSpec));
-        // Re-map compatible handles and compute the connections specific
-        // to this item's render particle.
-        const listHandleName = 'list';
-        const particleHandleName = 'renderParticle';
-        [otherMappedViews, otherConnections] =
-            await this._mapParticleConnections(
-                listHandleName,
-                particleHandleName,
-                resolvedHostedParticle,
-                this._views,
-                arc);
-      }
-      let hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
-      let slotName = [...this.spec.slots.values()][0].name;
-      let slotId = await arc.createSlot(
-          this, slotName, resolvedHostedParticle.name, hostedSlotName);
-
-      if (!slotId) {
-        continue;
-      }
-
-      this._itemSubIdByHostedSlotId.set(slotId, item.id);
-
-      try {
-        await arc.loadRecipe(
-            this.constructInnerRecipe(
-                resolvedHostedParticle,
-                item,
-                itemView,
-                {name: hostedSlotName, id: slotId},
-                {connections: otherConnections, views: otherMappedViews}),
-            this);
-        itemView.set(item);
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }
-
-  combineHostedModel(slotName, hostedSlotId, content) {
-    let subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
-    if (!subId) {
-      return;
-    }
-    let items = this._state.renderModel ? this._state.renderModel.items : [];
-    let listIndex = items.findIndex(item => item.subId == subId);
-    let item = Object.assign({}, content.model, {subId});
-    if (listIndex >= 0 && listIndex < items.length) {
-      items[listIndex] = item;
-    } else {
-      items.push(item);
-    }
-    this._setState({renderModel: {items}});
-  }
-
-  combineHostedTemplate(slotName, hostedSlotId, content) {
-    if (!this._state.template && !!content.template) {
-      let template = content.template;
-      // Replace hosted particle connection in template with the corresponding particle connection names.
-      // TODO: make this generic!
-      this._connByHostedConn.forEach((conn, hostedConn) => {
-        template = template.replace(
-            new RegExp(`{{${hostedConn}.description}}`, 'g'),
-            `{{${conn}.description}}`);
-      });
-      this._setState({template});
-    }
-  }
-
-  // Abstract
-  constructInnerRecipe(hostedParticle, item, itemView, slot, other) {
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = MultiplexerDomParticle;
-
-
-
-/***/ }),
-/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(6);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2160,7 +2141,7 @@ class Schema {
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2449,7 +2430,7 @@ ${this._slotsToManifestString()}
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2468,14 +2449,13 @@ const Symbols = {identifier: Symbol('id')};
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_type_checker_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(9);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -2483,7 +2463,6 @@ const Symbols = {identifier: Symbol('id')};
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 
 
@@ -2664,15 +2643,14 @@ class TypeVariable {
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__handle_js__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__api_channel_js__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__storage_proxy_js__ = __webpack_require__(28);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_js__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_channel_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__ = __webpack_require__(28);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2689,10 +2667,9 @@ class TypeVariable {
 
 
 
-
 class InnerPEC {
   constructor(port, idBase, loader) {
-    this._apiPort = new __WEBPACK_IMPORTED_MODULE_3__api_channel_js__["a" /* PECInnerPort */](port);
+    this._apiPort = new __WEBPACK_IMPORTED_MODULE_2__api_channel_js__["a" /* PECInnerPort */](port);
     this._particles = [];
     this._idBase = idBase;
     this._nextLocalID = 0;
@@ -2710,12 +2687,12 @@ class InnerPEC {
      * only keeping type information on the arc side.
      */
     this._apiPort.onDefineHandle = ({type, identifier, name}) => {
-      let proxy = new __WEBPACK_IMPORTED_MODULE_4__storage_proxy_js__["a" /* StorageProxy */](identifier, type, this._apiPort, this, name, null);
+      let proxy = new __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__["a" /* StorageProxy */](identifier, type, this._apiPort, this, name, null);
       return [proxy, () => proxy._initialize()];
     };
 
     this._apiPort.onCreateHandleCallback = ({type, id, name, callback}) => {
-      let proxy = new __WEBPACK_IMPORTED_MODULE_4__storage_proxy_js__["a" /* StorageProxy */](id, type, this._apiPort, this, name, 0);
+      let proxy = new __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__["a" /* StorageProxy */](id, type, this._apiPort, this, name, 0);
       return [proxy, () => callback(proxy)];
     };
 
@@ -2803,7 +2780,7 @@ class InnerPEC {
     };
 
     this._apiPort.onStopRender = ({particle, slotName}) => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(particle._slotByName.has(slotName),
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(particle._slotByName.has(slotName),
         `Stop render called for particle ${particle.name} slot ${slotName} without start render being called.`);
       particle._slotByName.delete(slotName);
     };
@@ -2823,7 +2800,7 @@ class InnerPEC {
       createHandle: function(type, name) {
         return new Promise((resolve, reject) =>
           pec._apiPort.ArcCreateHandle({arc: arcId, type, name, callback: proxy => {
-            let h = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__handle_js__["a" /* handleFor */])(proxy, proxy.type.isSetView, name, particleId);
+            let h = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__handle_js__["a" /* handleFor */])(proxy, proxy.type.isSetView, name, particleId);
             h.entityClass = (proxy.type.isSetView ? proxy.type.primitiveType() : proxy.type).entitySchema.entityClass();
             resolve(h);
           }}));
@@ -2878,7 +2855,7 @@ class InnerPEC {
     let registerList = [];
     proxies.forEach((proxy, name) => {
       let connSpec = spec.connectionMap.get(name);
-      let handle = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__handle_js__["a" /* handleFor */])(proxy, proxy.type.isSetView, name, id, connSpec.isInput, connSpec.isOutput);
+      let handle = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__handle_js__["a" /* handleFor */])(proxy, proxy.type.isSetView, name, id, connSpec.isInput, connSpec.isOutput);
       let type = proxy.type.isSetView ? proxy.type.primitiveType() : proxy.type;
       if (type.isEntity) {
         handle.entityClass = type.entitySchema.entityClass();
@@ -2932,18 +2909,18 @@ class InnerPEC {
 /* harmony export (immutable) */ __webpack_exports__["a"] = InnerPEC;
 
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(17)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(16)))
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__ = __webpack_require__(5);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3036,7 +3013,7 @@ class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a"
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -3226,7 +3203,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports) {
 
 var g;
@@ -3253,7 +3230,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3283,6 +3260,23 @@ class DevtoolsChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstrac
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = DevtoolsChannel;
+
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+const fs = {};
+/* harmony export (immutable) */ __webpack_exports__["a"] = fs;
 
 
 
@@ -3846,7 +3840,7 @@ class AbstractDevtoolsChannel {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = getDevtoolsChannel;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__ = __webpack_require__(17);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -4056,8 +4050,8 @@ const local_fetch = fetch;
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = handleFor;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__ = __webpack_require__(3);
 /** @license
@@ -4308,14 +4302,14 @@ function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = tr
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__ = __webpack_require__(21);
 /**
  * @license
@@ -4620,8 +4614,7 @@ class StorageProxy {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(1);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4634,14 +4627,13 @@ class StorageProxy {
 
 
 
-
 class TupleFields {
   constructor(fieldList) {
     this.fieldList = fieldList;
   }
 
   static fromLiteral(literal) {
-    return new TupleFields(literal.map(a => __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */].fromLiteral(a)));
+    return new TupleFields(literal.map(a => __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].fromLiteral(a)));
   }
 
   toLiteral() {
@@ -4822,8 +4814,8 @@ const nob = () => Object.create(null);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_inner_PEC_js__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__browser_loader_js__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_inner_PEC_js__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__browser_loader_js__ = __webpack_require__(14);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -4850,8 +4842,7 @@ self.onmessage = function(e) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(7);
-/*
+/* WEBPACK VAR INJECTION */(function(process) {/*
   Copyright 2015 Google Inc. All Rights Reserved.
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -4863,8 +4854,6 @@ self.onmessage = function(e) {
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-
-
 
 let events = [];
 let pid;
@@ -5116,7 +5105,7 @@ function init() {
 
 init();
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(16)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(15)))
 
 /***/ })
 /******/ ]);
