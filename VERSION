@@ -1,9 +1,5 @@
-commit 3ace003753620e1e73f1b586d3ccda2d31f28b0a
+commit 627542786bd605453a2bb7739c98e5e6a9abd6a6
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue May 8 16:20:19 2018 -0700
+Date:   Tue May 8 17:00:41 2018 -0700
 
-    add missing await to interface handle ID generation (#1286)
-    
-    * add missing await to interface handle ID generation
-    
-    * update digest-node to async and test hosted particle handle IDs
+    update List and Hex manifests to new syntax (#1287)
