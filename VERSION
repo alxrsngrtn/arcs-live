@@ -1,5 +1,5 @@
-commit 11979b2fbf21a0fa294af0232be572f2cefffb4e
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed May 9 16:28:06 2018 +1000
+commit 7c73e2f57eb6c535110f2a49e6eb57333042b901
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed May 9 16:42:16 2018 -0700
 
-    Add 'clean' command to sigh.js for deleting build artifacts (#1294)
+    Add initial pass at Words leaderboard social feed. (#1297)
