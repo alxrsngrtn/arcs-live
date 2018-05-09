@@ -92,7 +92,6 @@ function assert(test, message) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Type; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(10);
@@ -243,7 +242,7 @@ class Type {
   // TODO: update call sites to use the type checker instead (since they will
   // have additional information about direction etc.)
   equals(type) {
-    return __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__["a" /* default */].compareTypes({type: this}, {type});
+    return __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__["a" /* TypeChecker */].compareTypes({type: this}, {type});
   }
 
   _applyExistenceTypeTest(test) {
@@ -480,6 +479,8 @@ class Type {
       return this.interfaceShape.toPrettyString();
   }
 }
+/* harmony export (immutable) */ __webpack_exports__["a"] = Type;
+
 
 addType('Entity', 'schema');
 addType('Variable');
@@ -487,8 +488,6 @@ addType('SetView', 'type');
 addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Tuple', 'fields');
-
-
 
 
 
@@ -741,7 +740,7 @@ class ConnectionSpec {
   }
 
   isCompatibleType(type) {
-    return __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__["a" /* default */].compareTypes({type}, {type: this.type, direction: this.direction});
+    return __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__["a" /* TypeChecker */].compareTypes({type}, {type: this.type, direction: this.direction});
   }
 }
 
@@ -1470,8 +1469,8 @@ class TypeChecker {
     return false;
   }
 }
+/* harmony export (immutable) */ __webpack_exports__["a"] = TypeChecker;
 
-/* harmony default export */ __webpack_exports__["a"] = (TypeChecker);
 
 
 /***/ }),
@@ -1584,7 +1583,7 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 class Entity {
   constructor(userIDComponent) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = undefined;
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = undefined;
     this._userIDComponent = userIDComponent;
   }
   get data() {
@@ -1596,16 +1595,16 @@ class Entity {
   }
 
   isIdentified() {
-    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] !== undefined;
+    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] !== undefined;
   }
   // TODO: entity should not be exposing its IDs.
   get id() {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!this.isIdentified());
-    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier];
+    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier];
   }
   identify(identifier) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = identifier;
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = identifier;
     let components = identifier.split(':');
     if (components[components.length - 2] == 'uid')
       this._userIDComponent = components[components.length - 1];
@@ -1617,7 +1616,7 @@ class Entity {
       id = `${components.base}:uid:${this._userIDComponent}`;
     else
       id = `${components.base}:${components.component()}`;
-    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier] = id;
+    this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = id;
   }
   toLiteral() {
     return this.rawData;
@@ -2163,7 +2162,6 @@ class Schema {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Shape; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(1);
 /**
@@ -2442,7 +2440,7 @@ ${this._slotsToManifestString()}
     return this;
   }
 }
-
+/* harmony export (immutable) */ __webpack_exports__["a"] = Shape;
 
 
 
@@ -2462,7 +2460,9 @@ ${this._slotsToManifestString()}
 // http://polymer.github.io/PATENTS.txt
 
 
-/* harmony default export */ __webpack_exports__["a"] = ({identifier: Symbol('id')});
+const Symbols = {identifier: Symbol('id')};
+/* harmony export (immutable) */ __webpack_exports__["a"] = Symbols;
+
 
 
 /***/ }),
@@ -3269,7 +3269,7 @@ module.exports = g;
 
 
 
-class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__["a" /* default */] {
+class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__["a" /* AbstractDevtoolsChannel */] {
   constructor() {
     super();
     document.addEventListener('arcs-debug-in', e => this._handleMessage(e.detail));
@@ -3548,7 +3548,7 @@ class APIPort {
   }
 
   initDebug(arc) {
-    if (!this._debugAttachment) this._debugAttachment = new __WEBPACK_IMPORTED_MODULE_3__debug_outer_port_attachment_js__["a" /* default */](arc);
+    if (!this._debugAttachment) this._debugAttachment = new __WEBPACK_IMPORTED_MODULE_3__debug_outer_port_attachment_js__["a" /* OuterPortAttachment */](arc);
   }
 }
 
@@ -3764,8 +3764,8 @@ class JsonldToManifest {
     return s;
   }
 }
+/* harmony export (immutable) */ __webpack_exports__["a"] = JsonldToManifest;
 
-/* harmony default export */ __webpack_exports__["a"] = (JsonldToManifest);
 
 
 /***/ }),
@@ -3841,6 +3841,7 @@ class AbstractDevtoolsChannel {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = getDevtoolsChannel;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__ = __webpack_require__(18);
 /**
  * @license
@@ -3856,12 +3857,11 @@ class AbstractDevtoolsChannel {
 
 
 let instance = null;
-/* harmony default export */ __webpack_exports__["a"] = ({
-  get: () => {
-    if (!instance) instance = new __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__["a" /* default */]();
-    return instance;
-  }
-});
+
+function getDevtoolsChannel() {
+  if (!instance) instance = new __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__["a" /* default */]();
+  return instance;
+}
 
 
 /***/ }),
@@ -3893,7 +3893,7 @@ class OuterPortAttachment {
 
   InstantiateParticle(particle, {id, spec, handles}) {
     this._particleRegistry[id] = spec;
-    __WEBPACK_IMPORTED_MODULE_0__devtools_channel_provider_js__["a" /* default */].get().send({
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__devtools_channel_provider_js__["a" /* getDevtoolsChannel */])().send({
       messageType: 'InstantiateParticle',
       messageBody: Object.assign(
         this._arcMetadata(),
@@ -3950,7 +3950,7 @@ class OuterPortAttachment {
   _sendDataflowMessage(messageBody, data) {
     messageBody.data = JSON.stringify(data);
     messageBody.timestamp = Date.now();
-    __WEBPACK_IMPORTED_MODULE_0__devtools_channel_provider_js__["a" /* default */].get().send({messageType: 'dataflow', messageBody});
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__devtools_channel_provider_js__["a" /* getDevtoolsChannel */])().send({messageType: 'dataflow', messageBody});
   }
 
   _describeHandleCall({operation, handle, particleId}) {
@@ -4135,7 +4135,7 @@ class Handle {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(entity, 'can\'t serialize a null entity');
     if (!entity.isIdentified())
       entity.createIdentity(this.generateIDComponents());
-    let id = entity[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* default */].identifier];
+    let id = entity[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier];
     let rawData = entity.dataClone();
     return {
       id,
@@ -4367,9 +4367,9 @@ class Loader {
   _loadURL(url) {
     if (/\/\/schema.org\//.test(url)) {
       if (url.endsWith('/Thing')) {
-        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* default */])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__["a" /* default */].convert(data, {'@id': 'schema:Thing'}));
+        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* default */])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__["a" /* JsonldToManifest */].convert(data, {'@id': 'schema:Thing'}));
       }
-      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* default */])(url + '.jsonld').then(res => res.text()).then(data => __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__["a" /* default */].convert(data));
+      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* default */])(url + '.jsonld').then(res => res.text()).then(data => __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__["a" /* JsonldToManifest */].convert(data));
     }
     return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* default */])(url).then(res => res.text());
   }

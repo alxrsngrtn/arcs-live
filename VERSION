@@ -1,5 +1,5 @@
-commit d3cfae3fb29c6b2c18939e51f1f5eb8bb6d545f3
+commit c2e19f429168d54aec1d3ef3182f85f91eab8766
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed May 9 11:00:24 2018 +1000
+Date:   Wed May 9 13:31:25 2018 +1000
 
-    Remove deprecated '#' comment format in manifests (#1289)
+    Remove default exports; runtime subdirs (#1290)
