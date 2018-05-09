@@ -1,5 +1,5 @@
-commit 627542786bd605453a2bb7739c98e5e6a9abd6a6
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue May 8 17:00:41 2018 -0700
+commit d3cfae3fb29c6b2c18939e51f1f5eb8bb6d545f3
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed May 9 11:00:24 2018 +1000
 
-    update List and Hex manifests to new syntax (#1287)
+    Remove deprecated '#' comment format in manifests (#1289)
