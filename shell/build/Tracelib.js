@@ -137,7 +137,9 @@ function pushEvent(event) {
 }
 
 let module = {exports: {}};
-/* harmony default export */ __webpack_exports__["a"] = (module.exports);
+const Tracing = module.exports;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Tracing;
+
 module.exports.enabled = false;
 module.exports.enable = function() {
   module.exports.enabled = true;
@@ -539,7 +541,9 @@ process.umask = function() { return 0; };
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-/* unused harmony default export */ var _unused_webpack_default_export = ({});
+const fs = {};
+/* unused harmony export fs */
+
 
 
 /***/ }),
@@ -561,7 +565,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-window.Tracing = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */];
+window.Tracing = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */];
 
 
 /***/ })

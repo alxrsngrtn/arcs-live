@@ -143,7 +143,7 @@ class Recipe {
 
   removeConstraint(constraint) {
     let idx = this._connectionConstraints.indexOf(constraint);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(idx >= 0);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(idx >= 0);
     this._connectionConstraints.splice(idx, 1);
   }
 
@@ -159,16 +159,16 @@ class Recipe {
 
   removeParticle(particle) {
     let idx = this._particles.indexOf(particle);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(idx > -1);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(idx > -1);
     this._particles.splice(idx, 1);
     for (let slotConnection of Object.values(particle._consumedSlotConnections))
       slotConnection.remove();
   }
 
   removeSlot(slot) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slot.consumeConnections.length == 0);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(slot.consumeConnections.length == 0);
     let idx = this._slots.indexOf(slot);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(idx > -1);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(idx > -1);
     this._slots.splice(idx, 1);
   }
 
@@ -185,7 +185,7 @@ class Recipe {
   }
 
   isResolved() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Object.isFrozen(this), 'Recipe must be normalized to be resolved.');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this), 'Recipe must be normalized to be resolved.');
     return this._connectionConstraints.length == 0
         && (this._search === null || this._search.isResolved())
         && this._handles.every(handle => handle.isResolved())
@@ -245,7 +245,7 @@ class Recipe {
     this._search = search;
   }
   setSearchPhrase(phrase) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this._search, 'Cannot override search phrase');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this._search, 'Cannot override search phrase');
     if (phrase) {
       this._search = new __WEBPACK_IMPORTED_MODULE_4__search_js__["a" /* Search */](phrase);
     }
@@ -298,7 +298,7 @@ class Recipe {
     description.forEach(desc => {
       if (desc.name != 'pattern') {
         let handle = this.handles.find(handle => handle.localName == desc.name);
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handle, `Cannot set description pattern for nonexistent handle ${desc.name}.`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handle, `Cannot set description pattern for nonexistent handle ${desc.name}.`);
         handle.pattern = desc.pattern;
       }
     });
@@ -633,7 +633,7 @@ class Strategizer {
   // Individuals from the previous generation that were not decended from in the
   // current generation.
   get terminal() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._terminal);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._terminal);
     return this._terminal;
   }
   async generate() {
@@ -739,7 +739,7 @@ class Strategizer {
       return strategy.evaluate(this, generated);
     }));
     let fitness = Strategizer._mergeEvaluations(evaluations, generated);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(fitness.length == generated.length);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(fitness.length == generated.length);
 
 
     // Merge + Discard
@@ -836,8 +836,8 @@ class Walker {
   }
 
   createDescendant(result, score, hash, valid) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this.currentResult, 'no current result');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this.currentStrategy, 'no current strategy');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.currentResult, 'no current result');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.currentStrategy, 'no current strategy');
     if (this.currentResult.score)
       score += this.currentResult.score;
     this.descendants.push({
@@ -949,7 +949,7 @@ Ruleset.Builder = class {
   }
 
   _transitiveClosureFor(strategy, beingExpanded, alreadyExpanded) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!beingExpanded.has(strategy), 'Detected a loop in the ordering rules');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!beingExpanded.has(strategy), 'Detected a loop in the ordering rules');
 
     let followingStrategies = this._orderingRules.get(strategy);
     if (alreadyExpanded.has(strategy)) return followingStrategies || [];
@@ -1003,7 +1003,7 @@ function addType(name, arg) {
   Object.defineProperty(Type.prototype, `${lowerName}${upperArg}`, {
     get: function() {
       if (!this[`is${name}`])
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this[`is${name}`], `{${this.tag}, ${this.data}} is not of type ${name}`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this[`is${name}`], `{${this.tag}, ${this.data}} is not of type ${name}`);
       return this.data;
     }});
   Object.defineProperty(Type.prototype, `is${name}`, {
@@ -1014,10 +1014,10 @@ function addType(name, arg) {
 
 class Type {
   constructor(tag, data) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(typeof tag == 'string');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(typeof tag == 'string');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(data);
     if (tag == 'Entity') {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data instanceof __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */]);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(data instanceof __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */]);
     }
     if (tag == 'SetView') {
       if (!(data instanceof Type) && data.tag && data.data) {
@@ -1115,8 +1115,8 @@ class Type {
   }
 
   static unwrapPair(type1, type2) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(type1 instanceof Type);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(type2 instanceof Type);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type1 instanceof Type);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type2 instanceof Type);
     if (type1.isSetView && type2.isSetView)
       return Type.unwrapPair(type1.primitiveType(), type2.primitiveType());
     return [type1, type2];
@@ -1180,7 +1180,7 @@ class Type {
     if (this.isResolved())
       return true;
     if (this.isInterface)
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `canEnsureResolved not implemented for ${this}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canEnsureResolved not implemented for ${this}`);
     if (this.isVariable)
       return this.variable.canEnsureResolved();
     if (this.isSetView)
@@ -1190,7 +1190,7 @@ class Type {
 
   maybeEnsureResolved() {
     if (this.isInterface)
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `maybeEnsureResolved not implemented for ${this}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `maybeEnsureResolved not implemented for ${this}`);
     if (this.isVariable)
       return this.variable.maybeEnsureResolved();
     if (this.isSetView)
@@ -1205,7 +1205,7 @@ class Type {
       return this;
     if (this.isInterface)
       return Type.newInterface(this.interfaceShape.canWriteSuperset);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `canWriteSuperset not implemented for ${this}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canWriteSuperset not implemented for ${this}`);
   }
 
   get canReadSubset() {
@@ -1215,7 +1215,7 @@ class Type {
       return this;
     if (this.isInterface)
       return Type.newInterface(this.interfaceShape.canReadSubset);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `canReadSubset not implemented for ${this}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canReadSubset not implemented for ${this}`);
   }
 
   isMoreSpecificThan(type) {
@@ -1225,7 +1225,7 @@ class Type {
       return this.entitySchema.isMoreSpecificThan(type.entitySchema);
     if (this.isInterface)
       return this.interfaceShape.isMoreSpecificThan(type.interfaceShape);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, 'contains not implemented for ${this}');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, 'contains not implemented for ${this}');
   }
 
   static _canMergeCanReadSubset(type1, type2) {
@@ -1234,7 +1234,7 @@ class Type {
         return false;
       if (type1.canReadSubset.isEntity)
         return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
     }
     return true;
   }
@@ -1313,7 +1313,7 @@ class Type {
       return this.data;
     if (this.isVariable)
       return `~${this.data.name}`;
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `Add support to serializing type: ${JSON.stringify(this)}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `Add support to serializing type: ${JSON.stringify(this)}`);
   }
 
   getEntitySchema() {
@@ -1500,8 +1500,8 @@ function compareBools(b1, b2) {
 }
 
 function compareArrays(a1, a2, compare) {
-  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(a1 != null);
-  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(a2 != null);
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(a1 != null);
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(a2 != null);
   if (a1.length != a2.length) return compareNumbers(a1.length, a2.length);
   for (let i = 0; i < a1.length; i++) {
     let result;
@@ -1597,7 +1597,9 @@ function pushEvent(event) {
 }
 
 let module = {exports: {}};
-/* harmony default export */ __webpack_exports__["a"] = (module.exports);
+const Tracing = module.exports;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Tracing;
+
 module.exports.enabled = false;
 module.exports.enable = function() {
   module.exports.enabled = true;
@@ -1911,7 +1913,7 @@ class RecipeUtil {
 
         // clone forward and reverse mappings and establish new components.
         let newMatch = {forward: new Map(forward), reverse: new Map(reverse), score};
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) == recipeHC.particle);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) == recipeHC.particle);
         newMatch.forward.set(shapeHC.particle, recipeHC.particle);
         newMatch.reverse.set(recipeHC.particle, shapeHC.particle);
         if (shapeHC.handle) {
@@ -2167,7 +2169,7 @@ class TypeChecker {
       primitiveOnto.variable.resolution = primitiveBase;
       return onto;
     } else {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(false, 'tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(false, 'tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
     }
 
     return base;
@@ -2245,7 +2247,7 @@ class TypeChecker {
 
   // TODO: what is this? Does it still belong here?
   static restrictType(type, instance) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(type.isInterface, `restrictType not implemented for ${type}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(type.isInterface, `restrictType not implemented for ${type}`);
 
     let shape = type.interfaceShape.restrictType(instance);
     if (shape == false)
@@ -2340,7 +2342,7 @@ class TypeChecker {
 let instance = null;
 
 function getDevtoolsChannel() {
-  if (!instance) instance = new __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__["a" /* default */]();
+  if (!instance) instance = new __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__["a" /* DevtoolsChannel */]();
   return instance;
 }
 
@@ -2461,7 +2463,7 @@ class ParticleSpec {
     // Verify provided slots use valid view connection names.
     this.slots.forEach(slot => {
       slot.providedSlots.forEach(ps => {
-        ps.handles.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
+        ps.handles.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* assert */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
       });
     });
   }
@@ -2519,7 +2521,7 @@ class ParticleSpec {
 
   validateDescription(description) {
     Object.keys(description || []).forEach(d => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* assert */])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
     });
   }
 
@@ -2530,7 +2532,7 @@ class ParticleSpec {
   _toShape() {
     const handles = this._model.args;
     // TODO: wat do?
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(!this.slots.length, 'please implement slots toShape');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* assert */])(!this.slots.length, 'please implement slots toShape');
     const slots = [];
     return new __WEBPACK_IMPORTED_MODULE_2__shape_js__["a" /* Shape */](handles, slots);
   }
@@ -2673,8 +2675,8 @@ class ManifestVisitor {
       }
       return;
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(ast.location, 'expected manifest node to have `location`');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(ast.kind, 'expected manifest node to have `kind`');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(ast.location, 'expected manifest node to have `location`');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(ast.kind, 'expected manifest node to have `kind`');
     let childrenVisited = false;
     let visitChildren = () => {
       if (childrenVisited) {
@@ -2763,15 +2765,15 @@ class Manifest {
   }
   applyMeta(section) {
     if (this._storageProviderFactory !== undefined)
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(section.name == this._meta.name || section.name == undefined, `can't change manifest ID after storage is constructed`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(section.name == this._meta.name || section.name == undefined, `can't change manifest ID after storage is constructed`);
     this._meta.apply(section);
   }
   // TODO: newParticle, Schema, etc.
   // TODO: simplify() / isValid().
   async newStore(type, name, id, tags) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!type.hasVariableReference, `handles can't have variable references`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!type.hasVariableReference, `handles can't have variable references`);
     let handle = await this.storageProviderFactory.construct(id, type, `in-memory://${this.id}`);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handle._version !== null);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handle._version !== null);
     handle.name = name;
     this._handleManifestUrls.set(handle.id, this.fileName);
     return this._addStore(handle, tags);
@@ -2875,7 +2877,7 @@ class Manifest {
     registry[fileName] = (async () => {
       let content = await loader.loadResource(fileName);
       // TODO: When does this happen? The loader should probably throw an exception here.
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(content !== undefined, `${fileName} unable to be loaded by Manifest parser`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(content !== undefined, `${fileName} unable to be loaded by Manifest parser`);
       return await Manifest.parse(content, {
         id,
         fileName,
@@ -2945,7 +2947,7 @@ ${e.message}
 
     let items = [];
     try {
-      items = __WEBPACK_IMPORTED_MODULE_1__build_manifest_parser_js__["a" /* default */].parse(content);
+      items = __WEBPACK_IMPORTED_MODULE_1__build_manifest_parser_js__["a" /* parser */].parse(content);
     } catch (e) {
       throw processError(e, true);
     }
@@ -3160,7 +3162,7 @@ ${e.message}
     // TODO: we should be producing a new particleSpec, not mutating
     //       particleItem directly.
     // TODO: we should require both of these and update failing tests...
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particleItem.implFile == null || particleItem.args !== null, 'no valid body defined for this particle');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particleItem.implFile == null || particleItem.args !== null, 'no valid body defined for this particle');
     if (!particleItem.args) {
       particleItem.args = [];
     }
@@ -3269,12 +3271,12 @@ ${e.message}
       } else if (ref.name) {
         let targetStore = manifest.findStorageByName(ref.name);
         // TODO: Error handling.
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(targetStore, `Could not find handle ${ref.name}`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(targetStore, `Could not find handle ${ref.name}`);
         handle.mapToStorage(targetStore);
       }
       handle.tags = ref.tags;
       if (item.name) {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!items.byName.has(item.name));
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!items.byName.has(item.name));
         handle.localName = item.name;
         items.byName.set(item.name, {item, handle});
       }
@@ -3292,7 +3294,7 @@ ${e.message}
         slot.tags = item.ref.tags;
       }
       if (item.name) {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!items.byName.has(item.name), `Duplicate slot local name ${item.name}`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!items.byName.has(item.name), `Duplicate slot local name ${item.name}`);
         slot.localName = item.name;
         items.byName.set(item.name, slot);
       }
@@ -3313,7 +3315,7 @@ ${e.message}
       }
       if (item.name) {
         // TODO: errors.
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!items.byName.has(item.name));
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!items.byName.has(item.name));
         particle.localName = item.name;
         items.byName.set(item.name, {item, particle});
       }
@@ -3336,7 +3338,7 @@ ${e.message}
             providedSlot = recipe.newSlot(ps.param);
             providedSlot.localName = ps.name;
             providedSlot.sourceConnection = slotConn;
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!items.byName.has(ps.name));
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!items.byName.has(ps.name));
             items.byName.set(ps.name, providedSlot);
             items.bySlot.set(providedSlot, ps);
           }
@@ -3391,7 +3393,7 @@ ${e.message}
           } else if (entry.item.kind == 'particle') {
             targetParticle = entry.particle;
           } else {
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `did not expect ${entry.item.kind}`);
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `did not expect ${entry.item.kind}`);
           }
         }
 
@@ -3403,7 +3405,7 @@ ${e.message}
                 connectionItem.target.location,
                 `Could not find hosted particle '${connectionItem.target.particle}'`);
           }
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!connection.type.hasVariableReference);
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!connection.type.hasVariableReference);
           let type = __WEBPACK_IMPORTED_MODULE_11__recipe_type_checker_js__["a" /* TypeChecker */].restrictType(connection.type, hostedParticle);
           if (!type) {
             throw new ManifestError(
@@ -3472,11 +3474,11 @@ ${e.message}
 
         let targetSlot = items.byName.get(slotConnectionItem.name);
         if (targetSlot) {
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(items.bySlot.has(targetSlot));
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(items.bySlot.has(targetSlot));
           if (!targetSlot.name) {
             targetSlot.name = slotConnectionItem.param;
           }
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(targetSlot == items.byName.get(slotConnectionItem.name),
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(targetSlot == items.byName.get(slotConnectionItem.name),
                  `Target slot ${targetSlot.name} doesn't match slot connection ${slotConnectionItem.param}`);
         } else if (slotConnectionItem.name) {
           targetSlot = recipe.newSlot(slotConnectionItem.param);
@@ -3683,7 +3685,7 @@ class Description {
   }
 
   async getHandleDescription(recipeHandle) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(recipeHandle.connections.length > 0, 'handle has no connections?');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipeHandle.connections.length > 0, 'handle has no connections?');
 
     let formatter = new DescriptionFormatter(this);
     formatter.excludeValues = true;
@@ -3843,7 +3845,7 @@ class DescriptionFormatter {
   }
 
   _capitalizeAndPunctuate(sentence) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(sentence);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(sentence);
     // "Capitalize, punctuate." (if the sentence doesn't end with a punctuation character).
     let last = sentence.length - 1;
     return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9\(\)'>\]]/i) ? '.' : ''}`;
@@ -3872,7 +3874,7 @@ class DescriptionFormatter {
         firstToken = '';
         tokenIndex = pattern.length;
       }
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(tokenIndex >= 0);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(tokenIndex >= 0);
       let nextToken = pattern.substring(0, tokenIndex);
       if (nextToken.length > 0)
         results.push({text: nextToken});
@@ -3892,11 +3894,11 @@ class DescriptionFormatter {
 
     // Fetch the particle description by name from the value token - if it wasn't passed, this is a recipe description.
     if (!particleDescription) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handleNames.length > 1, `'${valueTokens[1]}' must contain dot-separated particle and handle connection name.`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handleNames.length > 1, `'${valueTokens[1]}' must contain dot-separated particle and handle connection name.`);
       let particleName = handleNames.shift();
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particleName[0] === particleName[0].toUpperCase(), `Expected particle name, got '${particleName}' instead.`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particleName[0] === particleName[0].toUpperCase(), `Expected particle name, got '${particleName}' instead.`);
       let particleDescriptions = this._particleDescriptions.filter(desc => desc._particle.name == particleName);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particleDescriptions.length > 0, `Cannot find particles with name ${particleName}.`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particleDescriptions.length > 0, `Cannot find particles with name ${particleName}.`);
       if (particleDescriptions.length > 1) {
         console.warn(`Multiple particles with name ${particleName}.`);
       }
@@ -3906,7 +3908,7 @@ class DescriptionFormatter {
 
     let handleConn = particle.connections[handleNames[0]];
     if (handleConn) { // handle connection
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handleConn.handle && handleConn.handle.id, 'Missing id???');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handleConn.handle && handleConn.handle.id, 'Missing id???');
       return {
         fullName: valueTokens[0],
         handleName: handleConn.name,
@@ -3917,9 +3919,9 @@ class DescriptionFormatter {
     }
 
     // slot connection
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handleNames.length == 2, 'slot connections tokens must have 2 names');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handleNames.length == 2, 'slot connections tokens must have 2 names');
     let providedSlotConn = particle.consumedSlotConnections[handleNames[0]].providedSlots[handleNames[1]];
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(providedSlotConn, `Could not find handle ${handleNames.join('.')}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(providedSlotConn, `Could not find handle ${handleNames.join('.')}`);
     return {fullName: valueTokens[0], consumeSlotName: handleNames[0], provideSlotName: handleNames[1], extra, _providedSlotConn: providedSlotConn};
   }
 
@@ -3932,7 +3934,7 @@ class DescriptionFormatter {
     } else if (token.consumeSlotName && token.provideSlotName) {
       return this._slotTokenToString(token);
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, 'no handle or slot name');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, 'no handle or slot name');
   }
 
   async _handleTokenToString(token) {
@@ -3944,7 +3946,7 @@ class DescriptionFormatter {
       case '_name_':
         return this._formatDescription(token._handleConn, token._handle);
       default: {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!token.extra, `Unrecognized extra ${token.extra}`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!token.extra, `Unrecognized extra ${token.extra}`);
 
         // Transformation's hosted particle.
         if (token._handleConn.type.isInterface) {
@@ -3989,7 +3991,7 @@ class DescriptionFormatter {
         // TODO: also return false, if the consuming particles generate an empty description.
         return token._providedSlotConn.consumeConnections.length == 0;
       default:
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!token.extra, `Unrecognized slot extra ${token.extra}`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!token.extra, `Unrecognized slot extra ${token.extra}`);
     }
 
     let results = (await Promise.all(token._providedSlotConn.consumeConnections.map(async consumeConn => {
@@ -4003,7 +4005,7 @@ class DescriptionFormatter {
   }
 
   async _propertyTokenToString(handleName, handle, properties) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!handle.type.isSetView, `Cannot return property ${properties.join(',')} for set-view`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!handle.type.isSetView, `Cannot return property ${properties.join(',')} for set-view`);
     // Use singleton value's property (eg. "09/15" for person's birthday)
     let handleVar = await handle.get();
     if (handleVar) {
@@ -4229,7 +4231,7 @@ class Planner {
 
   // Specify a timeout value less than zero to disable timeouts.
   async plan(timeout, generations) {
-    let trace = __WEBPACK_IMPORTED_MODULE_24__tracelib_trace_js__["a" /* default */].start({cat: 'planning', name: 'Planner::plan', overview: true, args: {timeout}});
+    let trace = __WEBPACK_IMPORTED_MODULE_24__tracelib_trace_js__["a" /* Tracing */].start({cat: 'planning', name: 'Planner::plan', overview: true, args: {timeout}});
     timeout = timeout || -1;
     let allResolved = [];
     let now = () => (typeof performance == 'object') ? performance.now() : process.hrtime();
@@ -4267,8 +4269,8 @@ class Planner {
   _speculativeThreadCount() {
     // TODO(wkorman): We'll obviously have to rework the below when we do
     // speculation in the cloud.
-    const cores = __WEBPACK_IMPORTED_MODULE_3__platform_deviceinfo_web_js__["a" /* default */].hardwareConcurrency();
-    const memory = __WEBPACK_IMPORTED_MODULE_3__platform_deviceinfo_web_js__["a" /* default */].deviceMemory();
+    const cores = __WEBPACK_IMPORTED_MODULE_3__platform_deviceinfo_web_js__["a" /* DeviceInfo */].hardwareConcurrency();
+    const memory = __WEBPACK_IMPORTED_MODULE_3__platform_deviceinfo_web_js__["a" /* DeviceInfo */].deviceMemory();
     // For now, allow occupying half of the available cores while constraining
     // total memory used to at most a quarter of what's available. In the
     // absence of resource information we just run two in parallel as a
@@ -4301,7 +4303,7 @@ class Planner {
     return groups;
   }
   async suggest(timeout, generations, speculator) {
-    let trace = __WEBPACK_IMPORTED_MODULE_24__tracelib_trace_js__["a" /* default */].start({cat: 'planning', name: 'Planner::suggest', overview: true, args: {timeout}});
+    let trace = __WEBPACK_IMPORTED_MODULE_24__tracelib_trace_js__["a" /* Tracing */].start({cat: 'planning', name: 'Planner::suggest', overview: true, args: {timeout}});
     if (!generations && this._arc._debugging) generations = [];
     let plans = await trace.wait(this.plan(timeout, generations));
     let suggestions = [];
@@ -4567,7 +4569,7 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     if (typeof pattern === 'string') {
       return super.setParticleDescription(pattern);
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
     super.setDescriptionPattern('_template_', pattern.template);
     super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
   }
@@ -4708,7 +4710,7 @@ class Particle {
    * Indicates that a busy period (initiated by a call to setBusy) has completed.
    */
   setIdle() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(this._busy > 0);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(this._busy > 0);
     this._busy--;
     if (this._busy == 0)
       this._idleResolver();
@@ -4762,8 +4764,8 @@ class Particle {
   on(views, names, kind, f) {
     if (typeof names == 'string')
       names = [names];
-    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */].start({cat: 'particle', names: this.constructor.name + '::on', args: {view: names, event: kind}});
-    names.forEach(name => views.get(name).on(kind, __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */].wrap({cat: 'particle', name: this.constructor.name, args: {view: name, event: kind}}, f), this));
+    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].start({cat: 'particle', names: this.constructor.name + '::on', args: {view: names, event: kind}});
+    names.forEach(name => views.get(name).on(kind, __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].wrap({cat: 'particle', name: this.constructor.name, args: {view: name, event: kind}}, f), this));
     trace.end();
   }
 
@@ -4774,7 +4776,7 @@ class Particle {
   fireEvent(slotName, event) {
     // TODO(sjmiles): tests can get here without a `this.slot`, maybe this needs to be fixed in MockSlotManager?
     let slot = this.getSlot(slotName);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(slot, `Particle::fireEvent: slot ${slotName} is falsey`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(slot, `Particle::fireEvent: slot ${slotName} is falsey`);
     slot.fireEvent(event);
   }
 
@@ -4886,7 +4888,7 @@ class Schema {
     // TODO: remove this (remnants of normative/optional)
     if (model.sections) {
       legacy.push('sections');
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!model.fields);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!model.fields);
       model.fields = {};
       for (let section of model.sections) {
         Object.assign(model.fields, section.fields);
@@ -4910,7 +4912,7 @@ class Schema {
     if (legacy.length > 0) {
       console.warn(`Schema ${model.names[0] || '*'} was serialized with legacy format (${legacy.join(', ')})`, new Error());
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.fields);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(model.fields);
     this._model = model;
     this.description = {};
     if (model.description) {
@@ -4946,7 +4948,7 @@ class Schema {
 
   static _typeString(type) {
     if (typeof(type) != 'object') {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(typeof type == 'string');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(typeof type == 'string');
       return type;
     }
     switch (type.kind) {
@@ -5124,7 +5126,7 @@ class Schema {
             return true;
           }
         });
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data, `can't construct entity with null data`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(data, `can't construct entity with null data`);
         for (let [name, value] of Object.entries(data)) {
           this.rawData[name] = value;
         }
@@ -5227,9 +5229,9 @@ const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
 
 class Shape {
   constructor(name, handles, slots) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(name);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handles !== undefined);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slots !== undefined);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(name);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handles !== undefined);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(slots !== undefined);
     this.name = name;
     this.handles = handles;
     this.slots = slots;
@@ -5555,7 +5557,7 @@ class HandleMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategi
                 return 0;
             let tscore = 0;
 
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(newHandle.id);
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* assert */])(newHandle.id);
             clonedHandle.mapToStorage(newHandle);
             if (clonedHandle.fate != 'copy') {
               clonedHandle.fate = fate;
@@ -5605,8 +5607,8 @@ class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
 
     let recipe = new __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* Recipe */]();
     recipe.setSearchPhrase(this._search);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(recipe.normalize());
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(!recipe.isResolved());
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(recipe.normalize());
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(!recipe.isResolved());
 
     return [{
       result: recipe,
@@ -5697,7 +5699,7 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
       slotConnection.connectToSlot(clonedSlot);
     }
 
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id == slotConnection.targetSlot.id),
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* assert */])(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id == slotConnection.targetSlot.id),
            `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
     slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
 
@@ -5832,7 +5834,7 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
             mappable = [];
             break;
           default:
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(false, `unexpected fate ${handle.fate}`);
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* assert */])(false, `unexpected fate ${handle.fate}`);
         }
 
         mappable = mappable.filter(incomingHandle => {
@@ -6069,7 +6071,7 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* Slot */] {
   }
 
   _doRender() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this.getContext());
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.getContext());
 
     this.getContext().observe(this._observer);
 
@@ -6136,7 +6138,7 @@ class Scheduler {
 
   unregisterIdleCallback(callback) {
     let index = this._idleCallbacks.indexOf(callback);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(index >= 0, 'Cannot unregister nonexisted callback');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(index >= 0, 'Cannot unregister nonexisted callback');
     this._idleCallbacks.splice(index, 1);
   }
 
@@ -6146,7 +6148,7 @@ class Scheduler {
   }
 
   enqueue(handle, eventRecords) {
-    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */].flow({cat: 'handle', name: 'ViewBase::_fire flow'}).start();
+    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].flow({cat: 'handle', name: 'ViewBase::_fire flow'}).start();
     if (this.frameQueue.length == 0 && eventRecords.length > 0)
       this._asyncProcess();
     if (!this._idleResolver) {
@@ -6184,7 +6186,7 @@ class Scheduler {
 
   _asyncProcess() {
     Promise.resolve().then(() => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(this.frameQueue.length > 0, '_asyncProcess should not be invoked with 0 length queue');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(this.frameQueue.length > 0, '_asyncProcess should not be invoked with 0 length queue');
       let frame = this.frameQueue.shift();
       this.targetMap.delete(frame.target);
       if (this.frameQueue.length > 0)
@@ -6199,7 +6201,7 @@ class Scheduler {
   }
 
   _applyFrame(frame) {
-    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */].start({cat: 'scheduler', name: 'Scheduler::_applyFrame', args: {target: frame.target ? frame.target.constructor.name : 'NULL TARGET'}});
+    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].start({cat: 'scheduler', name: 'Scheduler::_applyFrame', args: {target: frame.target ? frame.target.constructor.name : 'NULL TARGET'}});
 
     let totalRecords = 0;
     for (let [handle, kinds] of frame.handles.entries()) {
@@ -6451,7 +6453,9 @@ module.exports = g;
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-/* harmony default export */ __webpack_exports__["a"] = ({});
+const fs = {};
+/* harmony export (immutable) */ __webpack_exports__["a"] = fs;
+
 
 
 /***/ }),
@@ -6490,7 +6494,7 @@ class Affordance {
     });
   }
   static forName(name) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(_affordances[name], `Unsupported affordance ${name}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(_affordances[name], `Unsupported affordance ${name}`);
     return _affordances[name];
   }
 }
@@ -6544,7 +6548,7 @@ class ThingMapper {
   }
 
   createMappingForThing(thing, requestedId) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this._reverseIdMap.has(thing));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this._reverseIdMap.has(thing));
     let id;
     if (requestedId) {
       id = requestedId;
@@ -6553,7 +6557,7 @@ class ThingMapper {
     } else {
       id = this._newIdentifier();
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this._idMap.has(id), `${requestedId ? 'requestedId' : (thing.apiChannelMappingId ? 'apiChannelMappingId' : 'newIdentifier()')} ${id} already in use`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this._idMap.has(id), `${requestedId ? 'requestedId' : (thing.apiChannelMappingId ? 'apiChannelMappingId' : 'newIdentifier()')} ${id} already in use`);
     this.establishThingMapping(id, thing);
     return id;
   }
@@ -6572,7 +6576,7 @@ class ThingMapper {
     }
     this._idMap.set(id, thing);
     if (thing instanceof Promise) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(continuation == null);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(continuation == null);
       await this.establishThingMapping(id, await thing);
     } else {
       this._reverseIdMap.set(thing, id);
@@ -6587,12 +6591,12 @@ class ThingMapper {
   }
 
   identifierForThing(thing) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._reverseIdMap.has(thing), `Missing thing ${thing}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._reverseIdMap.has(thing), `Missing thing ${thing}`);
     return this._reverseIdMap.get(thing);
   }
 
   thingForIdentifier(id) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._idMap.has(id), `Missing id: ${id}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._idMap.has(id), `Missing id: ${id}`);
     return this._idMap.get(id);
   }
 }
@@ -6670,7 +6674,7 @@ class APIPort {
   }
 
   async _handle(e) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._messageMap.has(e.data.messageType));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._messageMap.has(e.data.messageType));
 
     this.messageCount++;
 
@@ -6696,7 +6700,7 @@ class APIPort {
       this._debugAttachment[handlerName](args);
     }
     if (handler.isInitializer) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(args.identifier);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(args.identifier);
       await this._mapper.establishThingMapping(args.identifier, result);
     }
   }
@@ -6903,13 +6907,13 @@ class DomContext {
     return domContext;
   }
   initContext(context) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(context);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(context);
     if (!this._context) {
       this._context = document.createElement(this._containerKind || 'div');
       this._setParticleName('');
       context.appendChild(this._context);
     } else {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._context.parentNode == context,
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._context.parentNode == context,
              'TODO: add support for moving slot to different context');
     }
   }
@@ -6974,7 +6978,7 @@ class DomContext {
       }
       parentNode = parentNode.parentNode;
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false);
   }
   // get a value from node that could be an attribute, if not a property
   getNodeValue(node, name) {
@@ -7004,23 +7008,23 @@ class DomContext {
       if (!this._innerContextBySlotName[slotId]) {
         this._innerContextBySlotName[slotId] = {};
       }
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this._innerContextBySlotName[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this._innerContextBySlotName[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
       this._innerContextBySlotName[slotId][subId] = elem;
     } else {
       this._innerContextBySlotName[slotId] = elem;
     }
   }
   _validateSubId(providedSlotSpec, subId) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.subId || !subId || this.subId == subId, `Unexpected sub-id ${subId}, expecting ${this.subId}`);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Boolean(this.subId || subId) === providedSlotSpec.isSet,
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.subId || !subId || this.subId == subId, `Unexpected sub-id ${subId}, expecting ${this.subId}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Boolean(this.subId || subId) === providedSlotSpec.isSet,
         `Sub-id ${subId} for provided slot ${providedSlotSpec.name} doesn't match set spec: ${providedSlotSpec.isSet}`);
   }
   findRootSlots() {
     let innerSlotById = {};
     Array.from(this._context.querySelectorAll('[slotid]')).forEach(s => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this.isDirectInnerSlot(s), 'Unexpected inner slot');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.isDirectInnerSlot(s), 'Unexpected inner slot');
       let slotId = s.getAttribute('slotid');
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!innerSlotById[slotId], `Duplicate root slot ${slotId}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!innerSlotById[slotId], `Duplicate root slot ${slotId}`);
       innerSlotById[slotId] = s;
     });
     return innerSlotById;
@@ -7077,7 +7081,7 @@ class SetDomContext {
            !Object.keys(this._contextBySubId).find(c => this._contextBySubId[c] != context[c]);
   }
   updateModel(model) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.items, `Model must contain items`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(model.items, `Model must contain items`);
     model.items.forEach(item => {
       // Properties from item override properties from model.
       item = Object.assign(Object.assign({}, model), item);
@@ -7153,7 +7157,7 @@ class SetDomContext {
 
 class Entity {
   constructor(userIDComponent) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
     this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = undefined;
     this._userIDComponent = userIDComponent;
   }
@@ -7170,18 +7174,18 @@ class Entity {
   }
   // TODO: entity should not be exposing its IDs.
   get id() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!this.isIdentified());
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!!this.isIdentified());
     return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier];
   }
   identify(identifier) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
     this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = identifier;
     let components = identifier.split(':');
     if (components[components.length - 2] == 'uid')
       this._userIDComponent = components[components.length - 1];
   }
   createIdentity(components) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
     let id;
     if (this._userIDComponent)
       id = `${components.base}:uid:${this._userIDComponent}`;
@@ -7235,7 +7239,7 @@ function cloneData(data) {
 }
 
 function restore(entry, entityClass) {
-  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(entityClass, 'Handles need entity classes for deserialization');
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(entityClass, 'Handles need entity classes for deserialization');
   let {id, rawData} = entry;
   let entity = new entityClass(cloneData(rawData));
   if (entry.id) {
@@ -7252,7 +7256,7 @@ function restore(entry, entityClass) {
  */
 class Handle {
   constructor(proxy, name, particleId, canRead, canWrite) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(!(proxy instanceof Handle));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(!(proxy instanceof Handle));
     this._proxy = proxy;
     this.name = name || this._proxy.name;
     this.canRead = canRead;
@@ -7286,17 +7290,17 @@ class Handle {
   }
 
   generateID() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this._proxy.generateID);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this._proxy.generateID);
     return this._proxy.generateID();
   }
 
   generateIDComponents() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this._proxy.generateIDComponents);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this._proxy.generateIDComponents);
     return this._proxy.generateIDComponents();
   }
 
   _serialize(entity) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(entity, 'can\'t serialize a null entity');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(entity, 'can\'t serialize a null entity');
     if (!entity.isIdentified())
       entity.createIdentity(this.generateIDComponents());
     let id = entity[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier];
@@ -7337,7 +7341,7 @@ class Collection extends Handle {
   }
 
   notify(particle, version, update) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this.canRead, 'notify should not be called for non-readable handles');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, 'notify should not be called for non-readable handles');
     update.collection = this._restore(update.collection);
     particle.onHandleUpdate(this, version, update);
   }
@@ -7394,7 +7398,7 @@ class Variable extends Handle {
   }
 
   notify(particle, version, update) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this.canRead, 'notify should not be called for non-readable handles');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, 'notify should not be called for non-readable handles');
     update.variable = this._restore(update.variable);
     particle.onHandleUpdate(this, version, update);
   }
@@ -7519,7 +7523,7 @@ class Loader {
 
   _loadFile(file) {
     return new Promise((resolve, reject) => {
-      __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__["a" /* default */].readFile(file, (err, data) => {
+      __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__["a" /* fs */].readFile(file, (err, data) => {
         if (err)
           reject(err);
         else
@@ -7531,11 +7535,11 @@ class Loader {
   _loadURL(url) {
     if (/\/\/schema.org\//.test(url)) {
       if (url.endsWith('/Thing')) {
-        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* default */])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__["a" /* JsonldToManifest */].convert(data, {'@id': 'schema:Thing'}));
+        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* fetch */])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__["a" /* JsonldToManifest */].convert(data, {'@id': 'schema:Thing'}));
       }
-      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* default */])(url + '.jsonld').then(res => res.text()).then(data => __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__["a" /* JsonldToManifest */].convert(data));
+      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* fetch */])(url + '.jsonld').then(res => res.text()).then(data => __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__["a" /* JsonldToManifest */].convert(data));
     }
-    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* default */])(url).then(res => res.text());
+    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* fetch */])(url).then(res => res.text());
   }
 
   async loadParticleClass(spec) {
@@ -7547,7 +7551,7 @@ class Loader {
   async requireParticle(fileName) {
     let src = await this.loadResource(fileName);
     // Note. This is not real isolation.
-    let script = new __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__["a" /* default */].Script(src, {filename: fileName, displayErrors: true});
+    let script = new __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__["a" /* vm */].Script(src, {filename: fileName, displayErrors: true});
     let result = [];
     let self = {
       defineParticle(particleWrapper) {
@@ -7557,7 +7561,7 @@ class Loader {
       importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
     };
     script.runInNewContext(self, {filename: fileName, displayErrors: true});
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(result.length > 0 && typeof result[0] == 'function', `Error while instantiating particle implementation from ${fileName}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* assert */])(result.length > 0 && typeof result[0] == 'function', `Error while instantiating particle implementation from ${fileName}`);
     return this.unwrapParticle(result[0]);
   }
 
@@ -7806,7 +7810,7 @@ async function digest(str) {
 
 class Handle {
   constructor(recipe) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(recipe);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipe);
     this._recipe = recipe;
     this._id = null;
     this._localName = undefined;
@@ -7855,7 +7859,7 @@ class Handle {
 
   _finishNormalize() {
     for (let connection of this._connections) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Object.isFrozen(connection), `Handle connection '${connection.name}' is not frozen.`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(connection), `Handle connection '${connection.name}' is not frozen.`);
     }
     this._connections.sort(__WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* compareComparables */]);
     Object.freeze(this);
@@ -7895,7 +7899,7 @@ class Handle {
   mapToStorage(storage) {
     this._id = storage.id;
     this._type = undefined;
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(storage.type == undefined || !(storage.type.hasVariableReference), `variable references shouldn't be part of handle types`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(storage.type == undefined || !(storage.type.hasVariableReference), `variable references shouldn't be part of handle types`);
     this._mappedType = storage.type;
     this._storageKey = storage.storageKey;
   }
@@ -7939,7 +7943,7 @@ class Handle {
   }
 
   isResolved(options) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Object.isFrozen(this));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this));
     if (!this._type) {
       if (options) {
         options.details = 'missing type';
@@ -7973,7 +7977,7 @@ class Handle {
         if (options) {
           options.details = `invalid fate ${this.fate}`;
         }
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `Unexpected fate: ${this.fate}`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `Unexpected fate: ${this.fate}`);
       }
     }
   }
@@ -8022,7 +8026,7 @@ class Handle {
 
 class Search {
   constructor(phrase, unresolvedTokens) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(phrase);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(phrase);
 
     this._phrase = '';
     this._unresolvedTokens = [];
@@ -8052,7 +8056,7 @@ class Search {
   get resolvedTokens() { return this._resolvedTokens; }
   resolveToken(token) {
     let index = this.unresolvedTokens.indexOf(token.toLowerCase());
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(index >= 0, `Cannot resolved nonexistent token ${token}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(index >= 0, `Cannot resolved nonexistent token ${token}`);
     this._unresolvedTokens.splice(index, 1);
     this._resolvedTokens.push(token.toLowerCase());
   }
@@ -8062,7 +8066,7 @@ class Search {
   }
 
   isResolved() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Object.isFrozen(this));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this));
     // Recipe is considered resolved, if at least one of the search tokens was resolved.
     // TODO: Unresolved tokens don't prevent the recipe from being resolved. For now...
     return this._resolvedTokens.length > 0;
@@ -8080,9 +8084,9 @@ class Search {
       recipe.search.appendPhrase(this.phrase, this.unresolvedTokens);
     } else {
       recipe.search = new Search(this.phrase, this.unresolvedTokens);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(recipe.search.resolvedTokens.length == this.resolvedTokens.length);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipe.search.resolvedTokens.length == this.resolvedTokens.length);
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this.resolvedTokens.every(rt => recipe.search.resolvedTokens.indexOf(rt) >= 0) &&
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.resolvedTokens.every(rt => recipe.search.resolvedTokens.indexOf(rt) >= 0) &&
            this.unresolvedTokens.every(rt => recipe.search.unresolvedTokens.indexOf(rt) >= 0));
     return recipe.search;
   }
@@ -8134,8 +8138,8 @@ class Search {
 
 class Slot {
   constructor(consumeConn, arc) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(consumeConn);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(arc);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(consumeConn);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(arc);
     this._consumeConn = consumeConn;
     this._arc = arc;
     this._context = null;
@@ -8208,8 +8212,8 @@ class Slot {
   }
 
   addHostedSlot(hostedSlotId, hostedParticleName, hostedSlotName) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(hostedSlotId, `Hosted slot ID must be provided`);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this._hostedSlotById.has(hostedSlotId), `Hosted slot ${hostedSlotId} already exists`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(hostedSlotId, `Hosted slot ID must be provided`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this._hostedSlotById.has(hostedSlotId), `Hosted slot ${hostedSlotId} already exists`);
     this._hostedSlotById.set(hostedSlotId, {slotId: hostedSlotId, particleName: hostedParticleName, slotName: hostedSlotName});
     return hostedSlotId;
   }
@@ -8225,8 +8229,8 @@ class Slot {
   }
   initHostedSlot(hostedSlotId, hostedParticle) {
     let hostedSlot = this.getHostedSlot(hostedSlotId);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(hostedSlot, `Hosted slot ${hostedSlotId} doesn't exist`);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(hostedSlot.particleName == hostedParticle.name,
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(hostedSlot, `Hosted slot ${hostedSlotId} doesn't exist`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(hostedSlot.particleName == hostedParticle.name,
            `Unexpected particle name ${hostedParticle.name} for slot ${hostedSlotId}; expected: ${hostedSlot.particleName}`);
     hostedSlot.particle = hostedParticle;
     if (this.getContext() && this.startRenderCallback) {
@@ -8281,7 +8285,7 @@ class Speculator {
       }
     }
 
-    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'speculator', name: 'Speculator::speculate'});
+    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'speculator', name: 'Speculator::speculate'});
     let newArc = await arc.cloneForSpeculativeExecution();
     let relevance = new __WEBPACK_IMPORTED_MODULE_2__relevance_js__["a" /* Relevance */](arc.getHandlesState());
     let relevanceByHash = this._relevanceByHash;
@@ -8351,9 +8355,9 @@ class KeyBase {
 
 class StorageProviderBase {
   constructor(type, arcId, name, id, key) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(id, 'id must be provided when constructing StorageProviders');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!type.hasUnresolvedVariable, 'Storage types must be concrete');
-    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'handle', name: 'StorageProviderBase::constructor', args: {type: type.key, name: name}});
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(id, 'id must be provided when constructing StorageProviders');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!type.hasUnresolvedVariable, 'Storage types must be concrete');
+    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'handle', name: 'StorageProviderBase::constructor', args: {type: type.key, name: name}});
     this._type = type;
     this._arcId = arcId;
     this._listeners = new Map();
@@ -8383,9 +8387,9 @@ class StorageProviderBase {
   }
   // TODO: add 'once' which returns a promise.
   on(kind, callback, target) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(target !== undefined, 'must provide a target to register a storage event handler');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(target !== undefined, 'must provide a target to register a storage event handler');
     let scheduler = target._scheduler;
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(scheduler !== undefined, 'must provider a scheduler to register a storage event handler');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(scheduler !== undefined, 'must provider a scheduler to register a storage event handler');
     let listeners = this._listeners.get(kind) || new Map();
     listeners.set(callback, {version: -Infinity, target, scheduler});
     this._listeners.set(kind, listeners);
@@ -8396,7 +8400,7 @@ class StorageProviderBase {
     if (!listenerMap || listenerMap.size == 0)
       return;
 
-    let callTrace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'handle', name: 'StorageProviderBase::_fire', args: {kind, type: this._type.key,
+    let callTrace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'handle', name: 'StorageProviderBase::_fire', args: {kind, type: this._type.key,
         name: this.name, listeners: listenerMap.size}});
 
     // TODO: wire up a target (particle)
@@ -8900,7 +8904,7 @@ class CreateHandles extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
 
 class FallbackFate extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__["b" /* Strategy */] {
   getResults(inputParams) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(inputParams);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(inputParams);
     let generated = inputParams.generated.filter(result => !result.result.isResolved());
     let terminal = inputParams.terminal;
     return [...generated, ...terminal];
@@ -8985,7 +8989,7 @@ class GroupHandleConnections extends __WEBPACK_IMPORTED_MODULE_1__strategizer_st
           let sortedParticles = [...recipe.particles].sort((p1, p2) => {
             return countConnectionsByType(p2.connections) - countConnectionsByType(p1.connections);
           }).filter(p => countConnectionsByType(p.connections) > 0);
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(sortedParticles.length > 0);
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(sortedParticles.length > 0);
 
           // Handle connections of the same particle cannot be bound to the same handle. Iterate on handle connections of the particle
           // with the most connections of the given type, and group each of them with same typed handle connections of other particles.
@@ -9331,7 +9335,7 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
                     break;
                   }
                 }
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(slotMapped);
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* assert */])(slotMapped);
               }
             }
 
@@ -9369,12 +9373,12 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
 
             for (let name in handleConstraints.named) {
               if (handleConstraints.named[name].handle)
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(applyHandleConstraint(name, handleConstraints.named[name], handleConstraints.named[name].handle));
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* assert */])(applyHandleConstraint(name, handleConstraints.named[name], handleConstraints.named[name].handle));
             }
 
             for (let connection of handleConstraints.unnamed) {
               if (connection.handle)
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* default */])(applyHandleConstraint(null, connection, connection.handle));
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* assert */])(applyHandleConstraint(null, connection, connection.handle));
             }
 
             return 1;
@@ -9539,7 +9543,7 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
                 let particle = recipe.newParticle(spec.name);
                 particle.spec = spec;
               } else {
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(innerRecipe);
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(innerRecipe);
                 innerRecipe.mergeInto(recipe);
               }
             });
@@ -9556,7 +9560,7 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
   }
 
   getResults(inputParams) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(inputParams);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(inputParams);
     let generated = super.getResults(inputParams).filter(result => !result.result.isResolved());
     let terminal = inputParams.terminal;
     return [...generated, ...terminal];
@@ -9622,9 +9626,9 @@ const Symbols = {identifier: Symbol('id')};
 
 class TypeVariable {
   constructor(name, canWriteSuperset, canReadSubset) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(typeof name == 'string');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(canWriteSuperset == null || canWriteSuperset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(canReadSubset == null || canReadSubset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(typeof name == 'string');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(canWriteSuperset == null || canWriteSuperset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(canReadSubset == null || canReadSubset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
     this.name = name;
     this._canWriteSuperset = canWriteSuperset;
     this._canReadSubset = canReadSubset;
@@ -9635,7 +9639,7 @@ class TypeVariable {
   // of two variables together. Use this when two separate type variables need to resolve
   // to the same value.
   maybeMergeConstraints(variable) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(variable instanceof TypeVariable);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(variable instanceof TypeVariable);
 
     if (!this.maybeMergeCanReadSubset(variable.canReadSubset))
       return false;
@@ -9699,8 +9703,8 @@ class TypeVariable {
   }
 
   set resolution(value) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(value instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(value instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!this._resolution);
     let probe = value;
     while (probe) {
       if (!probe.isVariable)
@@ -9717,7 +9721,7 @@ class TypeVariable {
 
   get canWriteSuperset() {
     if (this._resolution) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._canWriteSuperset);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!this._canWriteSuperset);
       if (this._resolution.isVariable) {
         return this._resolution.variable.canWriteSuperset;
       }
@@ -9727,13 +9731,13 @@ class TypeVariable {
   }
 
   set canWriteSuperset(value) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!this._resolution);
     this._canWriteSuperset = value;
   }
 
   get canReadSubset() {
     if (this._resolution) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._canReadSubset);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!this._canReadSubset);
       if (this._resolution.isVariable) {
         return this._resolution.variable.canReadSubset;
       }
@@ -9743,7 +9747,7 @@ class TypeVariable {
   }
 
   set canReadSubset(value) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!this._resolution);
     this._canReadSubset = value;
   }
 
@@ -9770,7 +9774,7 @@ class TypeVariable {
   }
 
   toLiteral() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(this.resolution == null);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(this.resolution == null);
     return {
       name: this.name,
       canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
@@ -10042,7 +10046,7 @@ ${this.activeRecipe.toString()}`;
     manifest.handles.forEach(handle => arc._registerHandle(handle, []));
     let recipe = manifest.activeRecipe.clone();
     let options = {errors: new Map()};
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(recipe.normalize(options), `Couldn't normalize recipe ${recipe.toString()}:\n${[...options.errors.values()].join('\n')}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipe.normalize(options), `Couldn't normalize recipe ${recipe.toString()}:\n${[...options.errors.values()].join('\n')}`);
     await arc.instantiate(recipe);
     return arc;
   }
@@ -10065,16 +10069,16 @@ ${this.activeRecipe.toString()}`;
 
     for (let [name, connection] of Object.entries(recipeParticle.connections)) {
       if (!connection.handle) {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(connection.isOptional);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(connection.isOptional);
         continue;
       }
       let handle = this.findHandleById(connection.handle.id);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handle, `can't find handle of id ${connection.handle.id}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handle, `can't find handle of id ${connection.handle.id}`);
       this._connectParticleToHandle(id, recipeParticle, name, handle);
     }
 
     // At least all non-optional connections must be resolved
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handleMap.handles.size >= handleMap.spec.connections.filter(c => !c.isOptional).length,
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handleMap.handles.size >= handleMap.spec.connections.filter(c => !c.isOptional).length,
            `Not all mandatory connections are resolved for {$particle}`);
     this.pec.instantiate(recipeParticle, id, handleMap.spec, handleMap.handles);
     recipeParticle._scheduler = this.scheduler;
@@ -10161,7 +10165,7 @@ ${this.activeRecipe.toString()}`;
   }
 
   async instantiate(recipe, innerArc) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(recipe.isResolved(), 'Cannot instantiate an unresolved recipe');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipe.isResolved(), 'Cannot instantiate an unresolved recipe');
 
     let currentArc = {activeRecipe: this._activeRecipe, recipes: this._recipes};
     if (innerArc) {
@@ -10179,15 +10183,15 @@ ${this.activeRecipe.toString()}`;
       if (['copy', 'create'].includes(recipeHandle.fate)) {
         let type = recipeHandle.type;
         if (recipeHandle.fate == 'create')
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);
 
         type = type.resolvedType();
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(type.isResolved(), `Can't create handle for unresolved type ${type}`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type.isResolved(), `Can't create handle for unresolved type ${type}`);
 
         let handle = await this.createHandle(type, /* name= */ null, this.generateID(), recipeHandle.tags);
         if (recipeHandle.fate === 'copy') {
           let copiedHandle = this.findHandleById(recipeHandle.id);
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(copiedHandle._version !== null);
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(copiedHandle._version !== null);
           await handle.cloneFrom(copiedHandle);
           let copiedHandleDesc = this.getHandleDescription(copiedHandle);
           if (copiedHandleDesc) {
@@ -10203,9 +10207,9 @@ ${this.activeRecipe.toString()}`;
       let storageKey = recipeHandle.storageKey;
       if (!storageKey)
         storageKey = this.keyForId(recipeHandle.id);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
       let handle = await this._storageProviderFactory.connect(recipeHandle.id, recipeHandle.type, storageKey);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handle, `handle '${recipeHandle.id}' was not found`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handle, `handle '${recipeHandle.id}' was not found`);
     }
 
     particles.forEach(recipeParticle => this._instantiateParticle(recipeParticle));
@@ -10222,14 +10226,14 @@ ${this.activeRecipe.toString()}`;
   }
 
   _connectParticleToHandle(particleId, particle, name, targetHandle) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(targetHandle, 'no target handle provided');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(targetHandle, 'no target handle provided');
     let handleMap = this.particleHandleMaps.get(particleId);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handleMap.spec.connectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handleMap.spec.connectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
     handleMap.handles.set(name, targetHandle);
   }
 
   async createHandle(type, name, id, tags, storageKey) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(type instanceof __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */], `can't createHandle with type ${type} that isn't a Type`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type instanceof __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */], `can't createHandle with type ${type} that isn't a Type`);
 
     if (type.isRelation) {
       type = __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */].newCollection(type);
@@ -10245,7 +10249,7 @@ ${this.activeRecipe.toString()}`;
       storageKey = 'in-memory';
 
     let handle = await this._storageProviderFactory.construct(id, type, storageKey);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handle, 'handle with id ${id} already exists');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handle, 'handle with id ${id} already exists');
     handle.name = name;
 
     this._registerHandle(handle, tags);
@@ -10255,7 +10259,7 @@ ${this.activeRecipe.toString()}`;
   _registerHandle(handle, tags) {
     tags = tags || [];
     tags = Array.isArray(tags) ? tags : [tags];
-    tags.forEach(tag => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(tag.startsWith('#'),
+    tags.forEach(tag => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(tag.startsWith('#'),
       `tag ${tag} must start with '#'`));
 
     this._handlesById.set(handle.id, handle);
@@ -10329,7 +10333,7 @@ ${this.activeRecipe.toString()}`;
   }
 
   getHandleDescription(handle) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handle, 'Cannot fetch description for nonexistent handle');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handle, 'Cannot fetch description for nonexistent handle');
     return this._handleDescriptions.get(handle) || handle.description;
   }
 
@@ -10484,7 +10488,7 @@ class Planificator {
   }
   get suggestFilter() { return this._suggestFilter; }
   set suggestFilter(suggestFilter) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!suggestFilter.showAll || !suggestFilter.search);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!suggestFilter.showAll || !suggestFilter.search);
     this._suggestFilter = suggestFilter;
   }
 
@@ -10557,7 +10561,7 @@ class Planificator {
   onPlanInstantiated(plan) {
     // Check that plan is in this._current.plans;
     if (!this._current.plans.find(currentPlan => currentPlan.plan == plan)) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `The plan being instantiated (${plan.description}) doesn't appear in the current list of plans`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `The plan being instantiated (${plan.description}) doesn't appear in the current list of plans`);
     }
     // Move current to past, and clear current;
     this._past = {plan, plans: this._current.plans, generations: this._current.generations};
@@ -10668,12 +10672,12 @@ class SlotComposer {
    * - containerKind: the type of container wrapping each slot's context (for example, div).
    */
   constructor(options) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(options.affordance, 'Affordance is mandatory');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(options.rootContext, 'Root context is mandatory');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(options.affordance, 'Affordance is mandatory');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(options.rootContext, 'Root context is mandatory');
 
     this._containerKind = options.containerKind;
     this._affordance = __WEBPACK_IMPORTED_MODULE_1__affordance_js__["a" /* Affordance */].forName(options.affordance);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._affordance.slotClass);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._affordance.slotClass);
 
     let slotContextByName = this._affordance.slotClass.findRootSlots(options.rootContext) || {};
     if (Object.keys(slotContextByName).length == 0) {
@@ -10706,7 +10710,7 @@ class SlotComposer {
     let hostedSlotId = this.arc.generateID();
 
     let transformationSlot = this.getSlot(transformationParticle, transformationSlotName);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(transformationSlot,
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(transformationSlot,
            `Unexpected transformation slot particle ${transformationParticle.name}:${transformationSlotName}, hosted particle ${hostedParticleName}, slot name ${hostedSlotName}`);
     transformationSlot.addHostedSlot(hostedSlotId, hostedParticleName, hostedSlotName);
     return hostedSlotId;
@@ -10734,7 +10738,7 @@ class SlotComposer {
     recipeParticles.forEach(p => {
       Object.values(p.consumedSlotConnections).forEach(cs => {
         if (!cs.targetSlot) {
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!cs.slotSpec.isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!cs.slotSpec.isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
           return;
         }
 
@@ -10753,7 +10757,7 @@ class SlotComposer {
 
     // Attempt to set context for each of the slots.
     newSlots.forEach(s => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!s.getContext(), `Unexpected context in new slot`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!s.getContext(), `Unexpected context in new slot`);
 
       let context = null;
       let sourceConnection = s.consumeConn.targetSlot && s.consumeConn.targetSlot.sourceConnection;
@@ -10797,7 +10801,7 @@ class SlotComposer {
       return;
     }
 
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slot, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(slot, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
   }
 
   _renderHostedSlot(particle, slotName, content) {
@@ -10806,7 +10810,7 @@ class SlotComposer {
       return false;
     }
     let transformationSlot = this._findSlotByHostedSlotId(hostedSlot.slotId);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(transformationSlot, `No transformation slot found for ${hostedSlot.slotId}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(transformationSlot, `No transformation slot found for ${hostedSlot.slotId}`);
 
     this.arc.pec.innerArcRender(transformationSlot.consumeConn.particle, transformationSlot.consumeConn.name, hostedSlot.slotId, content);
 
@@ -10814,7 +10818,7 @@ class SlotComposer {
   }
 
   updateInnerSlots(slot) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slot, 'Cannot update inner slots of null');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(slot, 'Cannot update inner slots of null');
     // Update provided slot contexts.
     Object.keys(slot.consumeConn.providedSlots).forEach(providedSlotName => {
       let providedContext = slot.getInnerContext(providedSlotName);
@@ -11017,7 +11021,9 @@ function registerArc(arc) {
 
 // Assume firebase has been loaded. We can't `import` it here as it does not
 // support strict mode.
-/* harmony default export */ __webpack_exports__["a"] = (window.btoa);
+const btoa = window.btoa;
+/* harmony export (immutable) */ __webpack_exports__["a"] = btoa;
+
 
 
 /***/ }),
@@ -11066,7 +11072,7 @@ class DeviceInfo {
 
 
 
-class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__["a" /* AbstractDevtoolsChannel */] {
+class DevtoolsChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__["a" /* AbstractDevtoolsChannel */] {
   constructor() {
     super();
     document.addEventListener('arcs-debug-in', e => this._handleMessage(e.detail));
@@ -11077,7 +11083,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
     document.dispatchEvent(new CustomEvent('arcs-debug-out', {detail: messages}));
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = ChromeExtensionChannel;
+/* harmony export (immutable) */ __webpack_exports__["a"] = DevtoolsChannel;
 
 
 
@@ -11095,7 +11101,9 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 
 // Assume firebase has been loaded. We can't `import` it here as it does not
 // support strict mode.
-/* harmony default export */ __webpack_exports__["a"] = (window.firebase);
+const firebase = window.firebase;
+/* harmony export (immutable) */ __webpack_exports__["a"] = firebase;
+
 
 
 /***/ }),
@@ -11110,7 +11118,9 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-/* harmony default export */ __webpack_exports__["a"] = ({});
+const vm = {};
+/* harmony export (immutable) */ __webpack_exports__["a"] = vm;
+
 
 
 /***/ }),
@@ -11155,7 +11165,12 @@ function removeSystemExceptionHandler(handler) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony default export */ __webpack_exports__["a"] = ((function() {
+const parser = /*
+ * Generated by PEG.js 0.10.0.
+ *
+ * http://pegjs.org/
+ */
+(function() {
   "use strict";
 
   function peg$subclass(child, parent) {
@@ -18559,7 +18574,9 @@ function removeSystemExceptionHandler(handler) {
     SyntaxError: peg$SyntaxError,
     parse:       peg$parse
   };
-})());
+})()
+/* harmony export (immutable) */ __webpack_exports__["a"] = parser;
+
 
 /***/ }),
 /* 71 */
@@ -18717,8 +18734,8 @@ class AbstractDevtoolsChannel {
   }
 
   listen(arcOrId, messageType, callback) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(messageType);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(arcOrId);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(messageType);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(arcOrId);
     const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
     const key = `${arcId}/${messageType}`;
     let listeners = this.messageListeners.get(key);
@@ -19153,19 +19170,19 @@ let streamingToDevtools = false;
 
 function enableTracingAdapter() {
   if (!streamingToDevtools) {
-    if (!__WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].enabled) __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].enable();
+    if (!__WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].enabled) __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].enable();
 
     const channel = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__devtools_channel_provider_js__["a" /* getDevtoolsChannel */])();
 
     channel.send({
       messageType: 'trace-time-sync',
       messageBody: {
-        traceTime: __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].now(),
+        traceTime: __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].now(),
         localTime: Date.now()
       }
     });
 
-    __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].stream(
+    __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].stream(
       trace => channel.send({
         messageType: 'trace',
         messageBody: trace
@@ -19280,7 +19297,7 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
     if (particleDesc.template && particleDesc.model) {
       return {template: particleDesc.template, model: particleDesc.model};
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particleDesc.pattern, 'Description must contain template and model, or pattern');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particleDesc.pattern, 'Description must contain template and model, or pattern');
     let template = '';
     let model = {};
     let tokens = this._initTokens(particleDesc.pattern, particleDesc);
@@ -19451,6 +19468,7 @@ function FakePecFactory(id) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return local_fetch; });
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -19458,7 +19476,13 @@ function FakePecFactory(id) {
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-/* harmony default export */ __webpack_exports__["a"] = (fetch);
+// 'export default fetch' works because 'fetch' is evaluated as an expression, which finds the
+// appropriate global definition - but we don't want to use default exports.
+// 'export {fetch}' doesn't work because 'fetch' is just a name in that context and is not defined.
+// So we need to use an expression to find the global fetch function then map that for export.
+
+const local_fetch = fetch;
+
 
 
 /***/ }),
@@ -19687,7 +19711,7 @@ class InnerPEC {
     };
 
     this._apiPort.onStopRender = ({particle, slotName}) => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(particle._slotByName.has(slotName),
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(particle._slotByName.has(slotName),
         `Stop render called for particle ${particle.name} slot ${slotName} without start render being called.`);
       particle._slotByName.delete(slotName);
     };
@@ -20027,7 +20051,7 @@ class OuterPEC extends __WEBPACK_IMPORTED_MODULE_0__particle_execution_context_j
     };
 
     this._apiPort.onArcMapHandle = async ({callback, arc, handle}) => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(this._arc.findHandleById(handle.id), `Cannot map nonexistent handle ${handle.id}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(this._arc.findHandleById(handle.id), `Cannot map nonexistent handle ${handle.id}`);
       // TODO: create hosted handles map with specially generated ids instead of returning the real ones?
       this._apiPort.MapHandleCallback({}, {callback, id: handle.id});
     };
@@ -20245,7 +20269,7 @@ class Random {
 
 class ConnectionConstraint {
   constructor(from, fromConnection, to, toConnection, direction) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(direction);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(direction);
     this.fromParticle = from;
     this.fromConnection = fromConnection;
     this.toParticle = to;
@@ -20297,8 +20321,8 @@ class ConnectionConstraint {
 
 class HandleConnection {
   constructor(name, particle) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particle);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particle.recipe);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particle);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particle.recipe);
     this._recipe = particle.recipe;
     this._name = name;
     this._tags = [];
@@ -20320,7 +20344,7 @@ class HandleConnection {
     handleConnection._direction = this._direction;
     if (this._handle != undefined) {
       handleConnection._handle = cloneMap.get(this._handle);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handleConnection._handle !== undefined);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handleConnection._handle !== undefined);
       handleConnection._handle.connections.push(handleConnection);
     }
     cloneMap.set(this, handleConnection);
@@ -20416,7 +20440,7 @@ class HandleConnection {
   }
 
   isResolved(options) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Object.isFrozen(this));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this));
 
     if (this.isOptional) {
       return true;
@@ -20463,7 +20487,7 @@ class HandleConnection {
   }
 
   connectToHandle(handle) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handle.recipe == this.recipe);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handle.recipe == this.recipe);
     this._handle = handle;
     this._resetHandleType();
     this._handle.connections.push(this);
@@ -20515,7 +20539,7 @@ class HandleConnection {
 
 class Particle {
   constructor(recipe, name) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(recipe);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipe);
     this._recipe = recipe;
     this._id = undefined;
     this._name = name;
@@ -20598,7 +20622,7 @@ class Particle {
   }
 
   isResolved(options) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Object.isFrozen(this));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this));
     // TODO: slots
     if (this.consumedSlotConnections.length > 0) {
       let fulfilledSlotConnections = this.consumedSlotConnections.filter(connection => connection.targetSlot !== undefined);
@@ -20672,7 +20696,7 @@ class Particle {
   }
 
   addConnectionName(name) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._connections[name] == undefined);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._connections[name] == undefined);
     this._connections[name] = new __WEBPACK_IMPORTED_MODULE_2__handle_connection_js__["a" /* HandleConnection */](name, this);
     return this._connections[name];
   }
@@ -20690,15 +20714,15 @@ class Particle {
   }
 
   nameConnection(connection, name) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this._connections[name].handle, `Connection "${name}" already has a handle`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this._connections[name].handle, `Connection "${name}" already has a handle`);
 
     let idx = this._unnamedConnections.indexOf(connection);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(idx >= 0, `Cannot name '${name}' nonexistent unnamed connection.`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(idx >= 0, `Cannot name '${name}' nonexistent unnamed connection.`);
     connection._name = name;
 
     connection.type = this._connections[name].type;
     if (connection.direction != this._connections[name].direction) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(connection.direction == 'inout',
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(connection.direction == 'inout',
              `Unnamed connection cannot adjust direction ${connection.direction} to ${name}'s direction ${this._connections[name].direction}`);
       connection.direction = this._connections[name].direction;
     }
@@ -20824,9 +20848,9 @@ class RecipeResolver {
 
 class SlotConnection {
   constructor(name, particle) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particle);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(particle.recipe);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(name);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particle);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particle.recipe);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(name);
 
     this._recipe = particle.recipe;
     this._particle = particle;
@@ -20851,7 +20875,7 @@ class SlotConnection {
   set tags(tags) { this._tags = tags; }
 
   set slotSpec(slotSpec) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this.name == slotSpec.name);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.name == slotSpec.name);
     this._slotSpec = slotSpec;
     slotSpec.providedSlots.forEach(providedSlot => {
       let slot = this.providedSlots[providedSlot.name];
@@ -20861,18 +20885,18 @@ class SlotConnection {
         slot._name = providedSlot.name;
         this.providedSlots[providedSlot.name] = slot;
       }
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slot.handleConnections.length == 0, 'Handle connections must be empty');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(slot.handleConnections.length == 0, 'Handle connections must be empty');
       providedSlot.handles.forEach(handle => slot.handleConnections.push(this.particle.connections[handle]));
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slot._name == providedSlot.name);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!slot.formFactor);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(slot._name == providedSlot.name);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!slot.formFactor);
       slot.formFactor = providedSlot.formFactor;
     });
   }
 
   connectToSlot(targetSlot) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(targetSlot);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.targetSlot);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this.recipe == targetSlot.recipe, 'Cannot connect to slot from different recipe');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(targetSlot);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.targetSlot);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.recipe == targetSlot.recipe, 'Cannot connect to slot from different recipe');
 
     this._targetSlot = targetSlot;
     targetSlot.consumeConnections.push(this);
@@ -20931,7 +20955,7 @@ class SlotConnection {
   }
 
   isResolved(options) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Object.isFrozen(this));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this));
 
     if (!this.name) {
       if (options) {
@@ -20989,7 +21013,7 @@ class SlotConnection {
       // the consumed slot .. otherwise this is just a constraint.
       if (this.slotSpec) {
         let providedSlotSpec = this.slotSpec.getProvidedSlotSpec(psName);
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
       }
       provideRes.push(`${psName} as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);
       result.push(provideRes.join(' '));
@@ -21020,7 +21044,7 @@ class SlotConnection {
 
 class Slot {
   constructor(recipe, name) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(recipe);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipe);
 
     this._recipe = recipe;
     this._id = undefined; // The ID of the slot in the context
@@ -21081,8 +21105,8 @@ class Slot {
   }
 
   _finishNormalize() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Object.isFrozen(this._source));
-    this._consumerConnections.forEach(cc => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Object.isFrozen(cc)));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this._source));
+    this._consumerConnections.forEach(cc => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(cc)));
     this._consumerConnections.sort(__WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* compareComparables */]);
     Object.freeze(this);
   }
@@ -21098,7 +21122,7 @@ class Slot {
 
   removeConsumeConnection(slotConnection) {
     let idx = this._consumerConnections.indexOf(slotConnection);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(idx > -1);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(idx > -1);
     this._consumerConnections.splice(idx, 1);
     if (this._consumerConnections.length == 0)
       this.remove();
@@ -21109,7 +21133,7 @@ class Slot {
   }
 
   isResolved(options) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(Object.isFrozen(this));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this));
 
     if (options && options.showUnresolved) {
       options.details = [];
@@ -21201,7 +21225,7 @@ class Slot {
 class WalkerBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["a" /* Strategizer */].Walker {
   constructor(tactic) {
     super();
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(tactic);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(tactic);
     this.tactic = tactic;
   }
 
@@ -21280,7 +21304,7 @@ class WalkerBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
     if (result.constructor == Array && result.length <= 0)
       return true;
 
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(typeof result == 'function' || result.length);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(typeof result == 'function' || result.length);
 
     return false;
   }
@@ -21491,7 +21515,7 @@ class StorageProxy {
       this._collection = keep;
       return [undefined, removed];
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `StorageProxy received invalid change event: ${JSON.stringify(received)}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `StorageProxy received invalid change event: ${JSON.stringify(received)}`);
   }
 
   // Called by InnerPEC to associate (potentially multiple) particle/handle pairs with this proxy.
@@ -21529,7 +21553,7 @@ class StorageProxy {
       } else if ('list' in received) {
         this._collection = received.list;
       } else {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `StorageProxy received invalid resync event: ${JSON.stringify(received)}`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `StorageProxy received invalid resync event: ${JSON.stringify(received)}`);
       }
       this._version = received.version;
       this._observers.forEach(({particle, handle}) => {
@@ -21611,10 +21635,10 @@ class FirebaseKey extends __WEBPACK_IMPORTED_MODULE_3__key_base_js__["a" /* KeyB
     super();
     let parts = key.split('://');
     this.protocol = parts[0];
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this.protocol == 'firebase');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.protocol == 'firebase');
     if (parts[1]) {
       parts = parts[1].split('/');
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(parts[0].endsWith('.firebaseio.com'));
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(parts[0].endsWith('.firebaseio.com'));
       this.databaseUrl = parts[0];
       this.projectId = this.databaseUrl.split('.')[0];
       this.apiKey = parts[1];
@@ -21649,7 +21673,7 @@ async function realTransaction(reference, transactionFunction) {
     if (data == null)
       data = realData;
     let result = transactionFunction(data);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(result);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(result);
     return result;
   }, undefined, false);
 }
@@ -21681,7 +21705,7 @@ class FirebaseStorage {
       throw new Error('Can\'t complete partial firebase keys');
 
     if (this._apps[key.projectId] == undefined) {
-      for (let app of __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__["a" /* default */].apps) {
+      for (let app of __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__["a" /* firebase */].apps) {
         if (app.options.databaseURL == key.databaseURL) {
           this._apps[key.projectId] = app;
           break;
@@ -21690,13 +21714,13 @@ class FirebaseStorage {
     }
 
     if (this._apps[key.projectId] == undefined) {
-      this._apps[key.projectId] = __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__["a" /* default */].initializeApp({
+      this._apps[key.projectId] = __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__["a" /* firebase */].initializeApp({
         apiKey: key.apiKey,
         databaseURL: key.databaseUrl
       }, `app${_nextAppNameSuffix++}`);
     }
 
-    let reference = __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__["a" /* default */].database(this._apps[key.projectId]).ref(key.location);
+    let reference = __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__["a" /* firebase */].database(this._apps[key.projectId]).ref(key.location);
 
     let result = await realTransaction(reference, data => {
       if ((data == null) == shouldExist)
@@ -21704,7 +21728,7 @@ class FirebaseStorage {
       if (!shouldExist) {
         return {version: 0};
       }
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(data);     
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(data);     
       return data;
     });
 
@@ -21732,7 +21756,7 @@ class FirebaseStorageProvider extends __WEBPACK_IMPORTED_MODULE_0__storage_provi
   }
 
   static encodeKey(key) {
-    key = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_btoa_web_js__["a" /* default */])(key);
+    key = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_btoa_web_js__["a" /* btoa */])(key);
     return key.replace(/\//g, '*');
   }
   static decodeKey(key) {
@@ -21915,11 +21939,11 @@ class InMemoryKey extends __WEBPACK_IMPORTED_MODULE_3__key_base_js__["a" /* KeyB
     super();
     let parts = key.split('://');
     this.protocol = parts[0];
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this.protocol == 'in-memory');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.protocol == 'in-memory');
     parts = parts[1] ? parts.slice(1).join('://').split('^^') : [];
     this.arcId = parts[0];
     this.location = parts[1];
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this.toString() == key);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.toString() == key);
   }
 
   childKeyForHandle(id) {
@@ -21939,7 +21963,7 @@ let __storageCache = {};
 
 class InMemoryStorage {
   constructor(arcId) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(arcId !== undefined, 'Arcs with storage must have ids');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(arcId !== undefined, 'Arcs with storage must have ids');
       this._arcId = arcId;
       this._memoryMap = {};
       this.localIDBase = 0;
@@ -21997,7 +22021,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
   constructor(type, arcId, name, id, key) {
     super(type, arcId, name, id, key);
     this._items = new Map();
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._version !== null);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._version !== null);
   }
 
   clone() {
@@ -22008,7 +22032,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
 
   async cloneFrom(handle) {
     let {list, version} = await handle.toListWithVersion();
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(version !== null);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(version !== null);
     await this._fromListWithVersion(list, version);
   }
 
@@ -22033,7 +22057,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
   }
 
   async store(entity) {
-    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'handle', name: 'InMemoryCollection::store', args: {name: this.name}});
+    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'handle', name: 'InMemoryCollection::store', args: {name: this.name}});
     let entityWasPresent = this._items.has(entity.id);
     if (entityWasPresent && (JSON.stringify(this._items.get(entity.id)) == JSON.stringify(entity))) {
       trace.end({args: {entity}});
@@ -22047,12 +22071,12 @@ class InMemoryCollection extends InMemoryStorageProvider {
   }
 
   async remove(id) {
-    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* default */].start({cat: 'handle', name: 'InMemoryCollection::remove', args: {name: this.name}});
+    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'handle', name: 'InMemoryCollection::remove', args: {name: this.name}});
     if (!this._items.has(id)) {
       return;
     }
     let entity = this._items.get(id);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._items.delete(id));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._items.delete(id));
     this._version++;
     this._fire('change', {remove: [entity], version: this._version});
     trace.end({args: {entity}});
@@ -22297,11 +22321,11 @@ const ExperimentalLinear = new __WEBPACK_IMPORTED_MODULE_0__strategizer_strategi
 
 class SuggestionComposer {
   constructor(slotComposer) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slotComposer);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(slotComposer);
     this._affordance = __WEBPACK_IMPORTED_MODULE_1__affordance_js__["a" /* Affordance */].forName(slotComposer.affordance);
     // TODO(mmandlis): find a cleaner way to fetch suggestions context.
     this._context = slotComposer._contextSlots.find(slot => slot.name == 'suggestions').context;
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._context);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._context);
 
     this._suggestions = [];
     this._suggestionsQueue = [];
@@ -22327,7 +22351,7 @@ class SuggestionComposer {
     return Promise.all(suggestions.map(async suggestion => {
       let suggestionContent =
         await suggestion.description.getRecipeSuggestion(this._affordance.descriptionFormatter);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(suggestionContent, 'No suggestion content available');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(suggestionContent, 'No suggestion content available');
       this._affordance.contextClass.createContext(
           this.createSuggestionElement(this._context, suggestion), suggestionContent);
     }));
@@ -22965,7 +22989,7 @@ const Arcs = {
   DomSlot: __WEBPACK_IMPORTED_MODULE_6__runtime_dom_slot_js__["a" /* DomSlot */],
   Type: __WEBPACK_IMPORTED_MODULE_7__runtime_type_js__["a" /* Type */],
   BrowserLoader: __WEBPACK_IMPORTED_MODULE_8__browser_loader_js__["a" /* BrowserLoader */],
-  Tracing: __WEBPACK_IMPORTED_MODULE_9__tracelib_trace_js__["a" /* default */],
+  Tracing: __WEBPACK_IMPORTED_MODULE_9__tracelib_trace_js__["a" /* Tracing */],
   Scheduler: __WEBPACK_IMPORTED_MODULE_10__runtime_scheduler_js__["a" /* Scheduler */]
 };
 

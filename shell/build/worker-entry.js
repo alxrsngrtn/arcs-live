@@ -119,7 +119,7 @@ function addType(name, arg) {
   Object.defineProperty(Type.prototype, `${lowerName}${upperArg}`, {
     get: function() {
       if (!this[`is${name}`])
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this[`is${name}`], `{${this.tag}, ${this.data}} is not of type ${name}`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this[`is${name}`], `{${this.tag}, ${this.data}} is not of type ${name}`);
       return this.data;
     }});
   Object.defineProperty(Type.prototype, `is${name}`, {
@@ -130,10 +130,10 @@ function addType(name, arg) {
 
 class Type {
   constructor(tag, data) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(typeof tag == 'string');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(typeof tag == 'string');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(data);
     if (tag == 'Entity') {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data instanceof __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */]);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(data instanceof __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */]);
     }
     if (tag == 'SetView') {
       if (!(data instanceof Type) && data.tag && data.data) {
@@ -231,8 +231,8 @@ class Type {
   }
 
   static unwrapPair(type1, type2) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(type1 instanceof Type);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(type2 instanceof Type);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type1 instanceof Type);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type2 instanceof Type);
     if (type1.isSetView && type2.isSetView)
       return Type.unwrapPair(type1.primitiveType(), type2.primitiveType());
     return [type1, type2];
@@ -296,7 +296,7 @@ class Type {
     if (this.isResolved())
       return true;
     if (this.isInterface)
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `canEnsureResolved not implemented for ${this}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canEnsureResolved not implemented for ${this}`);
     if (this.isVariable)
       return this.variable.canEnsureResolved();
     if (this.isSetView)
@@ -306,7 +306,7 @@ class Type {
 
   maybeEnsureResolved() {
     if (this.isInterface)
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `maybeEnsureResolved not implemented for ${this}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `maybeEnsureResolved not implemented for ${this}`);
     if (this.isVariable)
       return this.variable.maybeEnsureResolved();
     if (this.isSetView)
@@ -321,7 +321,7 @@ class Type {
       return this;
     if (this.isInterface)
       return Type.newInterface(this.interfaceShape.canWriteSuperset);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `canWriteSuperset not implemented for ${this}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canWriteSuperset not implemented for ${this}`);
   }
 
   get canReadSubset() {
@@ -331,7 +331,7 @@ class Type {
       return this;
     if (this.isInterface)
       return Type.newInterface(this.interfaceShape.canReadSubset);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `canReadSubset not implemented for ${this}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canReadSubset not implemented for ${this}`);
   }
 
   isMoreSpecificThan(type) {
@@ -341,7 +341,7 @@ class Type {
       return this.entitySchema.isMoreSpecificThan(type.entitySchema);
     if (this.isInterface)
       return this.interfaceShape.isMoreSpecificThan(type.interfaceShape);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, 'contains not implemented for ${this}');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, 'contains not implemented for ${this}');
   }
 
   static _canMergeCanReadSubset(type1, type2) {
@@ -350,7 +350,7 @@ class Type {
         return false;
       if (type1.canReadSubset.isEntity)
         return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
     }
     return true;
   }
@@ -429,7 +429,7 @@ class Type {
       return this.data;
     if (this.isVariable)
       return `~${this.data.name}`;
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `Add support to serializing type: ${JSON.stringify(this)}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `Add support to serializing type: ${JSON.stringify(this)}`);
   }
 
   getEntitySchema() {
@@ -660,7 +660,7 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     if (typeof pattern === 'string') {
       return super.setParticleDescription(pattern);
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
     super.setDescriptionPattern('_template_', pattern.template);
     super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
   }
@@ -803,7 +803,7 @@ class ParticleSpec {
     // Verify provided slots use valid view connection names.
     this.slots.forEach(slot => {
       slot.providedSlots.forEach(ps => {
-        ps.handles.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
+        ps.handles.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* assert */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
       });
     });
   }
@@ -861,7 +861,7 @@ class ParticleSpec {
 
   validateDescription(description) {
     Object.keys(description || []).forEach(d => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* assert */])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
     });
   }
 
@@ -872,7 +872,7 @@ class ParticleSpec {
   _toShape() {
     const handles = this._model.args;
     // TODO: wat do?
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(!this.slots.length, 'please implement slots toShape');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* assert */])(!this.slots.length, 'please implement slots toShape');
     const slots = [];
     return new __WEBPACK_IMPORTED_MODULE_2__shape_js__["a" /* Shape */](handles, slots);
   }
@@ -1068,7 +1068,7 @@ class Particle {
    * Indicates that a busy period (initiated by a call to setBusy) has completed.
    */
   setIdle() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(this._busy > 0);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(this._busy > 0);
     this._busy--;
     if (this._busy == 0)
       this._idleResolver();
@@ -1122,8 +1122,8 @@ class Particle {
   on(views, names, kind, f) {
     if (typeof names == 'string')
       names = [names];
-    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */].start({cat: 'particle', names: this.constructor.name + '::on', args: {view: names, event: kind}});
-    names.forEach(name => views.get(name).on(kind, __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* default */].wrap({cat: 'particle', name: this.constructor.name, args: {view: name, event: kind}}, f), this));
+    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].start({cat: 'particle', names: this.constructor.name + '::on', args: {view: names, event: kind}});
+    names.forEach(name => views.get(name).on(kind, __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].wrap({cat: 'particle', name: this.constructor.name, args: {view: name, event: kind}}, f), this));
     trace.end();
   }
 
@@ -1134,7 +1134,7 @@ class Particle {
   fireEvent(slotName, event) {
     // TODO(sjmiles): tests can get here without a `this.slot`, maybe this needs to be fixed in MockSlotManager?
     let slot = this.getSlot(slotName);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(slot, `Particle::fireEvent: slot ${slotName} is falsey`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(slot, `Particle::fireEvent: slot ${slotName} is falsey`);
     slot.fireEvent(event);
   }
 
@@ -1323,7 +1323,7 @@ class TypeChecker {
       primitiveOnto.variable.resolution = primitiveBase;
       return onto;
     } else {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(false, 'tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(false, 'tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
     }
 
     return base;
@@ -1401,7 +1401,7 @@ class TypeChecker {
 
   // TODO: what is this? Does it still belong here?
   static restrictType(type, instance) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(type.isInterface, `restrictType not implemented for ${type}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(type.isInterface, `restrictType not implemented for ${type}`);
 
     let shape = type.interfaceShape.restrictType(instance);
     if (shape == false)
@@ -1556,7 +1556,9 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-/* harmony default export */ __webpack_exports__["a"] = ({});
+const fs = {};
+/* harmony export (immutable) */ __webpack_exports__["a"] = fs;
+
 
 
 /***/ }),
@@ -1582,7 +1584,7 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_1__dom_particl
 
 class Entity {
   constructor(userIDComponent) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
     this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = undefined;
     this._userIDComponent = userIDComponent;
   }
@@ -1599,18 +1601,18 @@ class Entity {
   }
   // TODO: entity should not be exposing its IDs.
   get id() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!!this.isIdentified());
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!!this.isIdentified());
     return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier];
   }
   identify(identifier) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
     this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = identifier;
     let components = identifier.split(':');
     if (components[components.length - 2] == 'uid')
       this._userIDComponent = components[components.length - 1];
   }
   createIdentity(components) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this.isIdentified());
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
     let id;
     if (this._userIDComponent)
       id = `${components.base}:uid:${this._userIDComponent}`;
@@ -1855,7 +1857,7 @@ class Schema {
     // TODO: remove this (remnants of normative/optional)
     if (model.sections) {
       legacy.push('sections');
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!model.fields);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!model.fields);
       model.fields = {};
       for (let section of model.sections) {
         Object.assign(model.fields, section.fields);
@@ -1879,7 +1881,7 @@ class Schema {
     if (legacy.length > 0) {
       console.warn(`Schema ${model.names[0] || '*'} was serialized with legacy format (${legacy.join(', ')})`, new Error());
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(model.fields);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(model.fields);
     this._model = model;
     this.description = {};
     if (model.description) {
@@ -1915,7 +1917,7 @@ class Schema {
 
   static _typeString(type) {
     if (typeof(type) != 'object') {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(typeof type == 'string');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(typeof type == 'string');
       return type;
     }
     switch (type.kind) {
@@ -2093,7 +2095,7 @@ class Schema {
             return true;
           }
         });
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(data, `can't construct entity with null data`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(data, `can't construct entity with null data`);
         for (let [name, value] of Object.entries(data)) {
           this.rawData[name] = value;
         }
@@ -2196,9 +2198,9 @@ const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
 
 class Shape {
   constructor(name, handles, slots) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(name);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(handles !== undefined);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(slots !== undefined);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(name);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handles !== undefined);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(slots !== undefined);
     this.name = name;
     this.handles = handles;
     this.slots = slots;
@@ -2490,9 +2492,9 @@ const Symbols = {identifier: Symbol('id')};
 
 class TypeVariable {
   constructor(name, canWriteSuperset, canReadSubset) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(typeof name == 'string');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(canWriteSuperset == null || canWriteSuperset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(canReadSubset == null || canReadSubset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(typeof name == 'string');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(canWriteSuperset == null || canWriteSuperset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(canReadSubset == null || canReadSubset instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
     this.name = name;
     this._canWriteSuperset = canWriteSuperset;
     this._canReadSubset = canReadSubset;
@@ -2503,7 +2505,7 @@ class TypeVariable {
   // of two variables together. Use this when two separate type variables need to resolve
   // to the same value.
   maybeMergeConstraints(variable) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(variable instanceof TypeVariable);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(variable instanceof TypeVariable);
 
     if (!this.maybeMergeCanReadSubset(variable.canReadSubset))
       return false;
@@ -2567,8 +2569,8 @@ class TypeVariable {
   }
 
   set resolution(value) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(value instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(value instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!this._resolution);
     let probe = value;
     while (probe) {
       if (!probe.isVariable)
@@ -2585,7 +2587,7 @@ class TypeVariable {
 
   get canWriteSuperset() {
     if (this._resolution) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._canWriteSuperset);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!this._canWriteSuperset);
       if (this._resolution.isVariable) {
         return this._resolution.variable.canWriteSuperset;
       }
@@ -2595,13 +2597,13 @@ class TypeVariable {
   }
 
   set canWriteSuperset(value) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!this._resolution);
     this._canWriteSuperset = value;
   }
 
   get canReadSubset() {
     if (this._resolution) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._canReadSubset);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!this._canReadSubset);
       if (this._resolution.isVariable) {
         return this._resolution.variable.canReadSubset;
       }
@@ -2611,7 +2613,7 @@ class TypeVariable {
   }
 
   set canReadSubset(value) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(!this._resolution);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!this._resolution);
     this._canReadSubset = value;
   }
 
@@ -2638,7 +2640,7 @@ class TypeVariable {
   }
 
   toLiteral() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* default */])(this.resolution == null);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(this.resolution == null);
     return {
       name: this.name,
       canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
@@ -2801,7 +2803,7 @@ class InnerPEC {
     };
 
     this._apiPort.onStopRender = ({particle, slotName}) => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(particle._slotByName.has(slotName),
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(particle._slotByName.has(slotName),
         `Stop render called for particle ${particle.name} slot ${slotName} without start render being called.`);
       particle._slotByName.delete(slotName);
     };
@@ -3269,7 +3271,7 @@ module.exports = g;
 
 
 
-class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__["a" /* AbstractDevtoolsChannel */] {
+class DevtoolsChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__["a" /* AbstractDevtoolsChannel */] {
   constructor() {
     super();
     document.addEventListener('arcs-debug-in', e => this._handleMessage(e.detail));
@@ -3280,7 +3282,7 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
     document.dispatchEvent(new CustomEvent('arcs-debug-out', {detail: messages}));
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = ChromeExtensionChannel;
+/* harmony export (immutable) */ __webpack_exports__["a"] = DevtoolsChannel;
 
 
 
@@ -3296,7 +3298,9 @@ class ChromeExtensionChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-/* harmony default export */ __webpack_exports__["a"] = ({});
+const vm = {};
+/* harmony export (immutable) */ __webpack_exports__["a"] = vm;
+
 
 
 /***/ }),
@@ -3337,7 +3341,7 @@ class ThingMapper {
   }
 
   createMappingForThing(thing, requestedId) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this._reverseIdMap.has(thing));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this._reverseIdMap.has(thing));
     let id;
     if (requestedId) {
       id = requestedId;
@@ -3346,7 +3350,7 @@ class ThingMapper {
     } else {
       id = this._newIdentifier();
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(!this._idMap.has(id), `${requestedId ? 'requestedId' : (thing.apiChannelMappingId ? 'apiChannelMappingId' : 'newIdentifier()')} ${id} already in use`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this._idMap.has(id), `${requestedId ? 'requestedId' : (thing.apiChannelMappingId ? 'apiChannelMappingId' : 'newIdentifier()')} ${id} already in use`);
     this.establishThingMapping(id, thing);
     return id;
   }
@@ -3365,7 +3369,7 @@ class ThingMapper {
     }
     this._idMap.set(id, thing);
     if (thing instanceof Promise) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(continuation == null);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(continuation == null);
       await this.establishThingMapping(id, await thing);
     } else {
       this._reverseIdMap.set(thing, id);
@@ -3380,12 +3384,12 @@ class ThingMapper {
   }
 
   identifierForThing(thing) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._reverseIdMap.has(thing), `Missing thing ${thing}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._reverseIdMap.has(thing), `Missing thing ${thing}`);
     return this._reverseIdMap.get(thing);
   }
 
   thingForIdentifier(id) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._idMap.has(id), `Missing id: ${id}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._idMap.has(id), `Missing id: ${id}`);
     return this._idMap.get(id);
   }
 }
@@ -3463,7 +3467,7 @@ class APIPort {
   }
 
   async _handle(e) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(this._messageMap.has(e.data.messageType));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._messageMap.has(e.data.messageType));
 
     this.messageCount++;
 
@@ -3489,7 +3493,7 @@ class APIPort {
       this._debugAttachment[handlerName](args);
     }
     if (handler.isInitializer) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(args.identifier);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(args.identifier);
       await this._mapper.establishThingMapping(args.identifier, result);
     }
   }
@@ -3810,8 +3814,8 @@ class AbstractDevtoolsChannel {
   }
 
   listen(arcOrId, messageType, callback) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(messageType);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(arcOrId);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(messageType);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(arcOrId);
     const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
     const key = `${arcId}/${messageType}`;
     let listeners = this.messageListeners.get(key);
@@ -3859,7 +3863,7 @@ class AbstractDevtoolsChannel {
 let instance = null;
 
 function getDevtoolsChannel() {
-  if (!instance) instance = new __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__["a" /* default */]();
+  if (!instance) instance = new __WEBPACK_IMPORTED_MODULE_0__platform_devtools_channel_web_js__["a" /* DevtoolsChannel */]();
   return instance;
 }
 
@@ -4029,6 +4033,7 @@ class OuterPortAttachment {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return local_fetch; });
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -4036,7 +4041,13 @@ class OuterPortAttachment {
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-/* harmony default export */ __webpack_exports__["a"] = (fetch);
+// 'export default fetch' works because 'fetch' is evaluated as an expression, which finds the
+// appropriate global definition - but we don't want to use default exports.
+// 'export {fetch}' doesn't work because 'fetch' is just a name in that context and is not defined.
+// So we need to use an expression to find the global fetch function then map that for export.
+
+const local_fetch = fetch;
+
 
 
 /***/ }),
@@ -4071,7 +4082,7 @@ function cloneData(data) {
 }
 
 function restore(entry, entityClass) {
-  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(entityClass, 'Handles need entity classes for deserialization');
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(entityClass, 'Handles need entity classes for deserialization');
   let {id, rawData} = entry;
   let entity = new entityClass(cloneData(rawData));
   if (entry.id) {
@@ -4088,7 +4099,7 @@ function restore(entry, entityClass) {
  */
 class Handle {
   constructor(proxy, name, particleId, canRead, canWrite) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(!(proxy instanceof Handle));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(!(proxy instanceof Handle));
     this._proxy = proxy;
     this.name = name || this._proxy.name;
     this.canRead = canRead;
@@ -4122,17 +4133,17 @@ class Handle {
   }
 
   generateID() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this._proxy.generateID);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this._proxy.generateID);
     return this._proxy.generateID();
   }
 
   generateIDComponents() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this._proxy.generateIDComponents);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this._proxy.generateIDComponents);
     return this._proxy.generateIDComponents();
   }
 
   _serialize(entity) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(entity, 'can\'t serialize a null entity');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(entity, 'can\'t serialize a null entity');
     if (!entity.isIdentified())
       entity.createIdentity(this.generateIDComponents());
     let id = entity[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier];
@@ -4173,7 +4184,7 @@ class Collection extends Handle {
   }
 
   notify(particle, version, update) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this.canRead, 'notify should not be called for non-readable handles');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, 'notify should not be called for non-readable handles');
     update.collection = this._restore(update.collection);
     particle.onHandleUpdate(this, version, update);
   }
@@ -4230,7 +4241,7 @@ class Variable extends Handle {
   }
 
   notify(particle, version, update) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* default */])(this.canRead, 'notify should not be called for non-readable handles');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, 'notify should not be called for non-readable handles');
     update.variable = this._restore(update.variable);
     particle.onHandleUpdate(this, version, update);
   }
@@ -4355,7 +4366,7 @@ class Loader {
 
   _loadFile(file) {
     return new Promise((resolve, reject) => {
-      __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__["a" /* default */].readFile(file, (err, data) => {
+      __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__["a" /* fs */].readFile(file, (err, data) => {
         if (err)
           reject(err);
         else
@@ -4367,11 +4378,11 @@ class Loader {
   _loadURL(url) {
     if (/\/\/schema.org\//.test(url)) {
       if (url.endsWith('/Thing')) {
-        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* default */])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__["a" /* JsonldToManifest */].convert(data, {'@id': 'schema:Thing'}));
+        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* fetch */])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__["a" /* JsonldToManifest */].convert(data, {'@id': 'schema:Thing'}));
       }
-      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* default */])(url + '.jsonld').then(res => res.text()).then(data => __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__["a" /* JsonldToManifest */].convert(data));
+      return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* fetch */])(url + '.jsonld').then(res => res.text()).then(data => __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__["a" /* JsonldToManifest */].convert(data));
     }
-    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* default */])(url).then(res => res.text());
+    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetch_web_js__["a" /* fetch */])(url).then(res => res.text());
   }
 
   async loadParticleClass(spec) {
@@ -4383,7 +4394,7 @@ class Loader {
   async requireParticle(fileName) {
     let src = await this.loadResource(fileName);
     // Note. This is not real isolation.
-    let script = new __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__["a" /* default */].Script(src, {filename: fileName, displayErrors: true});
+    let script = new __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__["a" /* vm */].Script(src, {filename: fileName, displayErrors: true});
     let result = [];
     let self = {
       defineParticle(particleWrapper) {
@@ -4393,7 +4404,7 @@ class Loader {
       importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
     };
     script.runInNewContext(self, {filename: fileName, displayErrors: true});
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* default */])(result.length > 0 && typeof result[0] == 'function', `Error while instantiating particle implementation from ${fileName}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* assert */])(result.length > 0 && typeof result[0] == 'function', `Error while instantiating particle implementation from ${fileName}`);
     return this.unwrapParticle(result[0]);
   }
 
@@ -4513,7 +4524,7 @@ class StorageProxy {
       this._collection = keep;
       return [undefined, removed];
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `StorageProxy received invalid change event: ${JSON.stringify(received)}`);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `StorageProxy received invalid change event: ${JSON.stringify(received)}`);
   }
 
   // Called by InnerPEC to associate (potentially multiple) particle/handle pairs with this proxy.
@@ -4551,7 +4562,7 @@ class StorageProxy {
       } else if ('list' in received) {
         this._collection = received.list;
       } else {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* default */])(false, `StorageProxy received invalid resync event: ${JSON.stringify(received)}`);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `StorageProxy received invalid resync event: ${JSON.stringify(received)}`);
       }
       this._version = received.version;
       this._observers.forEach(({particle, handle}) => {
@@ -4905,7 +4916,9 @@ function pushEvent(event) {
 }
 
 let module = {exports: {}};
-/* harmony default export */ __webpack_exports__["a"] = (module.exports);
+const Tracing = module.exports;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Tracing;
+
 module.exports.enabled = false;
 module.exports.enable = function() {
   module.exports.enabled = true;

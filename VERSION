@@ -1,5 +1,5 @@
-commit c2e19f429168d54aec1d3ef3182f85f91eab8766
+commit dc4fdbb2b0311b90334192cad10c363f64eb058e
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed May 9 13:31:25 2018 +1000
+Date:   Wed May 9 15:16:37 2018 +1000
 
-    Remove default exports; runtime subdirs (#1290)
+    Remove default exports from platforms dir (#1291)
