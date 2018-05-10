@@ -521,6 +521,8 @@ class Recipe {
     // type to particles/handles.
     this._connectionConstraints = [];
 
+    this._verbs = [];
+
     // TODO: Change to array, if needed for search strings of merged recipes.
     this._search = null;
 
@@ -630,6 +632,8 @@ class Recipe {
   get slots() { return this._slots; } // Slot*
   set slots(slots) { this._slots = slots; }
   get connectionConstraints() { return this._connectionConstraints; }
+  get verbs() { return this._verbs; }
+  set verbs(verbs) { this._verbs = verbs; }
   get search() { return this._search; }
   set search(search) {
     this._search = search;
@@ -855,6 +859,7 @@ class Recipe {
     this._particles.forEach(cloneTheThing);
     this._slots.forEach(cloneTheThing);
     this._connectionConstraints.forEach(cloneTheThing);
+    recipe.verbs = recipe.verbs.slice();
     if (this.search) {
       this.search._copyInto(recipe);
     }
@@ -933,7 +938,8 @@ class Recipe {
   toString(options) {
     let nameMap = this._makeLocalNameMap();
     let result = [];
-    result.push(`recipe${this.name ? ' ' + this.name : ''}`);
+    let verbs = this.verbs.length > 0 ? ` ${this.verbs.map(verb => `#${verb}`).join(' ')}` : '';
+    result.push(`recipe${this.name ? ` ${this.name}` : ''}${verbs}`);
     if (this.search) {
       result.push(this.search.toString(options).replace(/^|(\n)/g, '$1  '));
     }
@@ -2981,6 +2987,7 @@ ${e.message}
     // TODO: annotate other things too
     let recipe = manifest._newRecipe(recipeItem.name);
     recipe.annotation = recipeItem.annotation;
+    recipe.verbs = recipeItem.verbs;
     let items = {
       handles: recipeItem.items.filter(item => item.kind == 'handle'),
       byHandle: new Map(),
@@ -9507,6 +9514,9 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
       if (recipe.name) {
         this._addRecipe(recipe.name.toLowerCase(), recipe);
       }
+      recipe.verbs.forEach(verb => {
+        this._addRecipe(verb, recipe);
+      });
     }
 
     let findParticles = token => this._particleByToken[token] || [];
@@ -11737,12 +11747,13 @@ const parser = /*
           },
         peg$c129 = "recipe",
         peg$c130 = peg$literalExpectation("recipe", false),
-        peg$c131 = function(name, tags, items) {
+        peg$c131 = function(name, verbs, items) {
+            verbs = optional(verbs, parsedOutput => parsedOutput[1].map(verb => verb.slice(1)), []);
             return {
               kind: 'recipe',
               location: location(),
               name: optional(name, name => name[1], null),
-              tags: optional(tags, tags => tags[1], []),
+              verbs,
               items: optional(items, extractIndented, []),
             };
           },
