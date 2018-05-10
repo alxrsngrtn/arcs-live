@@ -1,5 +1,5 @@
-commit 8ac7e4a070b7000602f8854b7743f4375de839d6
+commit 911a48c28ca5b7fe30bc554e3bdacfb385cd6383
 Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Thu May 10 11:19:24 2018 -0700
+Date:   Thu May 10 11:43:41 2018 -0700
 
-    new stable version 0.3.5 (#1302)
+    New mainline (0.3.6), updates to README (#1304)
