@@ -1264,21 +1264,6 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_0__dom_particl
   combineHostedModel(slotName, hostedSlotId, content) {}
 
   // Helper methods that may be reused in transformation particles to combine hosted content.
-  static combineTemplates(transformationTemplate, hostedTemplate) {
-    let transformationMatch = transformationTemplate.match(re);
-    if (!transformationMatch || transformationMatch.length != 3) {
-      return;
-    }
-    let hostedMatch = hostedTemplate.match(re);
-    if (!hostedMatch || hostedMatch.length != 3) {
-      return;
-    }
-
-    return `
-      <style>${transformationMatch[1].trim()}${hostedMatch[1].trim()}</style>
-      ${transformationMatch[2].trim().replace('{{hostedParticle}}', hostedMatch[2].trim())}
-    `;
-  }
   static propsToItems(propsValues) {
     return propsValues ? propsValues.map(({rawData, id}) => Object.assign({}, rawData, {subId: id})) : [];
   }
