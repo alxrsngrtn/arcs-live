@@ -1,5 +1,9 @@
-commit 911a48c28ca5b7fe30bc554e3bdacfb385cd6383
+commit c766ed280a4d5515f8109c281f2792d371cc2723
 Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Thu May 10 11:43:41 2018 -0700
+Date:   Thu May 10 11:44:16 2018 -0700
 
-    New mainline (0.3.6), updates to README (#1304)
+    try rolling back to npm 5.7.1 to address #1242 (#1261)
+    
+    This was our previous known-good version (any further back than this had other issues that were fixed in #986).
+    
+    Unfortunately, it's not clear that this will make the build more stable, so I'm not sure this is worthwhile. It's something, though. Also as part of this I've run `npm update` to bring everything to latest (there were some other new dependent versions that were automatically brought in, so I figured it was better to just pick up the rest as well).
