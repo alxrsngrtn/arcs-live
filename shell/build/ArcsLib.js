@@ -6888,8 +6888,7 @@ class DomContext {
       this._setParticleName('');
       context.appendChild(this._context);
     } else {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._context.parentNode == context,
-             'TODO: add support for moving slot to different context');
+      //assert(this._context.parentNode == context, 'TODO: add support for moving slot to different context');
     }
   }
   updateParticleName(slotName, particleName) {
