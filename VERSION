@@ -1,5 +1,5 @@
-commit 7c73e2f57eb6c535110f2a49e6eb57333042b901
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed May 9 16:42:16 2018 -0700
+commit ff103947502556de3a3e1cc899a0466a2bc2456f
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu May 10 10:01:57 2018 +1000
 
-    Add initial pass at Words leaderboard social feed. (#1297)
+    Make restaurant selenium test pass for me in Syd (#1292)
