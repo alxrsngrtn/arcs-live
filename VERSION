@@ -1,5 +1,5 @@
-commit 020354fb01611ef3455eae39e74a5ff1c6a81f72
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu May 10 14:12:17 2018 +1000
+commit 1d3726a82d25b668e46b2ba11c70597798e570be
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu May 10 14:39:06 2018 +1000
 
-    Make sure directions in constraints are enforced. (#1295)
+    Move ResultInspector into test-util.js to allow use in other tests (#1299)
