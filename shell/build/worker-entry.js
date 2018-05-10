@@ -341,7 +341,7 @@ class Type {
       return this.entitySchema.isMoreSpecificThan(type.entitySchema);
     if (this.isInterface)
       return this.interfaceShape.isMoreSpecificThan(type.interfaceShape);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, 'contains not implemented for ${this}');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `contains not implemented for ${this}`);
   }
 
   static _canMergeCanReadSubset(type1, type2) {

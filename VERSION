@@ -1,5 +1,9 @@
-commit d9baed78846ce2a582b361ecfefb232f930ef3eb
+commit a3a86c11e51471f9b876c1250edda762f1003d25
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu May 10 09:33:36 2018 -0700
+Date:   Thu May 10 10:09:16 2018 -0700
 
-    Remove unused transformation dom particle method (#1265)
+    Strategy to convert search tokens to handles by tags (#1298)
+    
+    * Strategy to convert search tokens to handles by tags
+    
+    * Address comments: add comment and remove implicit in-strategy sequencing
