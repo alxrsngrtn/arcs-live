@@ -1,9 +1,5 @@
-commit b2a2060e3845e5718d0ea8f8d56b221d8b4dd35c
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu May 10 11:18:20 2018 +1000
+commit 020354fb01611ef3455eae39e74a5ff1c6a81f72
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu May 10 14:12:17 2018 +1000
 
-    Replace view with store in arcs repo (#1296)
-    
-    * Replace view with store in arcs repo
-    
-    * Handle to Store
+    Make sure directions in constraints are enforced. (#1295)

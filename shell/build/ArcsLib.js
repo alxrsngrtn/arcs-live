@@ -2132,7 +2132,18 @@ class RecipeUtil {
     Object.keys(map).forEach(key => {
       Object.keys(map[key]).forEach(name => {
         let handle = map[key][name];
-        pMap[key].addConnectionName(name).connectToHandle(hMap[handle]);
+        let direction = '=';
+        if (handle.handle) {
+        // NOTE: for now, '=' on the shape means "accept anything". This is going
+        // to change when we redo capabilities; for now it's modeled by mapping '=' to
+        // '=' rather than to 'inout'.
+
+          direction = {'->': 'out', '<-': 'in', '=': '='}[handle.direction];
+          handle = handle.handle;
+        }
+        let connection = pMap[key].addConnectionName(name);
+        connection.direction = direction;
+        connection.connectToHandle(hMap[handle]);
         hcMap[key + ':' + name] = pMap[key].connections[name];
       });
     });
@@ -2167,6 +2178,12 @@ class RecipeUtil {
 
         if (shapeHC.name && shapeHC.name != recipeHC.name)
           continue;
+
+        let acceptedDirections = {'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host']};
+        if (recipeHC.direction) {
+          if (!acceptedDirections[shapeHC.direction].includes(recipeHC.direction))
+            continue;
+        }
 
         // recipeHC is a candidate for shapeHC. shapeHC references a
         // particle, so recipeHC must reference the matching particle,
@@ -8627,8 +8644,13 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
     let affordance = this.affordance;
     return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* Walker */] {
       onRecipe(recipe) {
+        // The particles & handles Sets are used as input to RecipeUtil's shape functionality
+        // (this is the algorithm that "finds" the constraint set in the recipe).
+        // They track which particles/handles need to be found/created.
         let particles = new Set();
         let handles = new Set();
+        // The map object tracks the connections between particles that need to be found/created.
+        // It's another input to RecipeUtil.makeShape.
         let map = {};
         let particlesByName = {};
         let handleCount = 0;
@@ -8637,9 +8659,12 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
         }
 
         for (let constraint of recipe.connectionConstraints) {
+          // Don't process constraints if their listed particles don't match the current affordance.
           if (affordance && (!constraint.fromParticle.matchAffordance(affordance) || !constraint.toParticle.matchAffordance(affordance))) {
             return;
           }
+
+          // Set up initial mappings & input to RecipeUtil.
           particles.add(constraint.fromParticle.name);
           if (map[constraint.fromParticle.name] == undefined) {
             map[constraint.fromParticle.name] = {};
@@ -8652,11 +8677,38 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
           }
           let handle = map[constraint.fromParticle.name][constraint.fromConnection] || map[constraint.toParticle.name][constraint.toConnection];
           if (handle == undefined) {
-            handle = 'v' + handleCount++;
-            handles.add(handle);
+            handle = {handle: 'v' + handleCount++, direction: constraint.direction};
+            handles.add(handle.handle);
           }
-          map[constraint.fromParticle.name][constraint.fromConnection] = handle;
-          map[constraint.toParticle.name][constraint.toConnection] = handle;
+          let reverse = {'->': '<-', '=': '=', '<-': '->'};
+
+          let unionDirections = (a, b) => {
+            if (a == '=')
+              return '=';
+            if (b == '=')
+              return '=';
+            if (a !== b)
+              return '=';
+            return a;
+          };
+
+          let existingHandle = map[constraint.fromParticle.name][constraint.fromConnection];
+          let direction = constraint.direction;
+          if (existingHandle) {
+            direction = unionDirections(direction, existingHandle.direction);
+            if (direction == null)
+              return;
+          }
+          map[constraint.fromParticle.name][constraint.fromConnection] = {handle: handle.handle, direction};
+  
+          existingHandle = map[constraint.toParticle.name][constraint.toConnection];
+          direction = reverse[constraint.direction];
+          if (existingHandle) {
+            direction = unionDirections(direction, existingHandle.direction);
+            if (direction == null)
+              return;
+          }
+          map[constraint.toParticle.name][constraint.toConnection] = {handle: handle.handle, direction};
         }
         let shape = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* RecipeUtil */].makeShape([...particles.values()], [...handles.values()], map);
         let results = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* RecipeUtil */].find(recipe, shape);
@@ -8667,7 +8719,7 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
           let resolvedHandles = {};
           for (let particle in map) {
             for (let connection in map[particle]) {
-              let handle = map[particle][connection];
+              let handle = map[particle][connection].handle;
               if (resolvedHandles[handle]) {
                 continue;
               }
@@ -8684,6 +8736,7 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
           return (recipe) => {
             let score = recipe.connectionConstraints.length + match.score;
             let recipeMap = recipe.updateToClone(match.match);
+            
             for (let particle in map) {
               for (let connection in map[particle]) {
                 let handle = map[particle][connection];
@@ -8696,11 +8749,11 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
                 let recipeHandleConnection = recipeParticle.connections[connection];
                 if (recipeHandleConnection == undefined)
                   recipeHandleConnection = recipeParticle.addConnectionName(connection);
-                let recipeHandle = recipeMap[handle];
+                let recipeHandle = recipeMap[handle.handle];
                 if (recipeHandle == null) {
                   recipeHandle = recipe.newHandle();
                   recipeHandle.fate = 'create';
-                  recipeMap[handle] = recipeHandle;
+                  recipeMap[handle.handle] = recipeHandle;
                 }
                 if (recipeHandleConnection.handle == null)
                   recipeHandleConnection.connectToHandle(recipeHandle);
