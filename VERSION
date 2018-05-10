@@ -1,5 +1,9 @@
-commit 718a822304ca13e5863cfaa99a61ec0ae60722d1
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu May 10 15:30:32 2018 -0700
+commit 5a67a4928468d81f964e2ae31f80eeab129ff0ca
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri May 11 08:54:02 2018 +1000
 
-    Apply Post.rank to sort posts in Post{List,Muxer}. (#1305)
+    Replace any user error with system exceptions rather than raising the (#1308)
+    
+    system exception as an error on the afterEach hook. This means that
+    tests don't double-print the system exception (and not the user error)
+    when there's a user error.
