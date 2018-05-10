@@ -1,5 +1,5 @@
-commit 1d3726a82d25b668e46b2ba11c70597798e570be
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu May 10 14:39:06 2018 +1000
+commit 5d93b0adcdedc8358aad295aaef17217991d63c7
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu May 10 15:10:51 2018 +1000
 
-    Move ResultInspector into test-util.js to allow use in other tests (#1299)
+    Allows searching in SE by recipe description (#1301)
