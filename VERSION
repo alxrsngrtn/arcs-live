@@ -1,9 +1,15 @@
-commit 8522ff8c3ae72d57dd930bcfbf05beb6ce1ead13
+commit 50bedce39e11659d507a53f85662d32513979225
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri May 11 03:01:23 2018 -0700
+Date:   Fri May 11 03:28:08 2018 -0700
 
-    Update shell-ui for new search design and minimized suggestions (#1310)
+    Fix clipped user list in user-picker (#1311)
     
-    * update system-ui for search and minimized suggestions
+    * make user panel as high as it needs to be to show all the users
     
-    * align tests with new ui
+    * repair toolbar positioning
+    
+    * use Google Sans for the search box
+    
+    * be "Gomer' by default
+    
+    * disambiguate search input selector
