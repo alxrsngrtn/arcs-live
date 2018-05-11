@@ -1,11 +1,5 @@
-commit bb5b679c6c0308b3563c6353a5e61c1eab6e369b
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu May 10 16:57:41 2018 -0700
+commit 2dae06a1c8ed960f3683e5353718cf4af44c8b2a
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Thu May 10 20:17:37 2018 -0700
 
-    Planificator to group and throttle data changes triggered replaning. (#1258)
-    
-    * Planificator to group and throttle data changes triggered replaning.
-    
-    * address comments
-    
-    * Address comments
+    Move digest from recipe to platform as it's now also used in manifest. (#1312)
