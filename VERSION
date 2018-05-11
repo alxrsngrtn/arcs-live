@@ -1,5 +1,7 @@
-commit 9fd2fe5c2562e3ff3b456a232f765b458253a4d2
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri May 11 10:27:43 2018 -0700
+commit 484b387ee887ceb78669fcdd0b479c1bc680ce7e
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Fri May 11 11:45:01 2018 -0700
 
-    Convert some particles to the new syntax. (#1309)
+    appveyor `npm install` retry (#1316)
+    
+    We've seen continued flakiness in the appveyor Windows builds, particularly around `npm install`. With this change, `appveyor-retry` will retry `npm install` up to 3 times.
