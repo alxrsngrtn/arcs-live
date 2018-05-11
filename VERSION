@@ -1,5 +1,9 @@
-commit 2dae06a1c8ed960f3683e5353718cf4af44c8b2a
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu May 10 20:17:37 2018 -0700
+commit 8522ff8c3ae72d57dd930bcfbf05beb6ce1ead13
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri May 11 03:01:23 2018 -0700
 
-    Move digest from recipe to platform as it's now also used in manifest. (#1312)
+    Update shell-ui for new search design and minimized suggestions (#1310)
+    
+    * update system-ui for search and minimized suggestions
+    
+    * align tests with new ui

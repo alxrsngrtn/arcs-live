@@ -103,7 +103,7 @@ function assert(test, message) {
 
 
 class Strategizer {
-  constructor(strategies, evaluators, {maxPopulation, generationSize, discardSize, ruleset}) {
+  constructor(strategies, evaluators, ruleset) {
     this._strategies = strategies;
     this._evaluators = evaluators;
     this._generation = 0;
@@ -112,11 +112,6 @@ class Strategizer {
     this._generated = [];
     this._terminal = [];
     this._ruleset = ruleset;
-    this._options = {
-      maxPopulation,
-      generationSize,
-      discardSize,
-    };
     this.populationHash = new Map();
   }
   // Latest generation number.
@@ -131,11 +126,6 @@ class Strategizer {
   get generated() {
     return this._generated;
   }
-  // Individuals that were discarded in the latest generation.
-  get discarded() {
-    return this._discarded;
-    // TODO: Do we need this?
-  }
   // Individuals from the previous generation that were not decended from in the
   // current generation.
   get terminal() {
@@ -145,15 +135,13 @@ class Strategizer {
   async generate() {
     // Generate
     let generation = this.generation + 1;
-    let individualsPerStrategy = Math.floor(this._options.generationSize / this._strategies.length);
     let generated = await Promise.all(this._strategies.map(strategy => {
       let recipeFilter = recipe => this._ruleset.isAllowed(strategy, recipe);
       return strategy.generate({
         generation: this.generation,
         generated: this.generated.filter(recipeFilter),
         terminal: this.terminal.filter(recipeFilter),
-        population: this.population.filter(recipeFilter),
-        outputLimit: individualsPerStrategy
+        population: this.population.filter(recipeFilter)
       });
     }));
 
@@ -245,40 +233,17 @@ class Strategizer {
       return strategy.evaluate(this, generated);
     }));
     let fitness = Strategizer._mergeEvaluations(evaluations, generated);
+
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(fitness.length == generated.length);
-
-
-    // Merge + Discard
-    let discarded = [];
-    let newGeneration = [];
-
     for (let i = 0; i < fitness.length; i++) {
-      newGeneration.push({
+      this._internalPopulation.push({
         fitness: fitness[i],
         individual: generated[i],
       });
     }
 
-    while (this._internalPopulation.length > (this._options.maxPopulation - this._options.discardSize)) {
-      discarded.push(this._internalPopulation.pop().individual);
-    }
-
-    newGeneration.sort((x, y) => y.fitness - x.fitness);
-
-    for (let i = 0; i < newGeneration.length && i < this._options.discardSize; i++) {
-      if (i < this._options.discardSize) {
-        this._internalPopulation.push(newGeneration[i]);
-      } else {
-        discarded.push(newGeneration[i].individual);
-      }
-    }
-
     // TODO: Instead of push+sort, merge `internalPopulation` with `generated`.
     this._internalPopulation.sort((x, y) => y.fitness - x.fitness);
-
-    for (let strategy of this._strategies) {
-      strategy.discard(discarded);
-    }
 
     // Publish
     this._terminal = terminal;
@@ -379,8 +344,6 @@ class Strategy {
   }
   async generate(inputParams) {
     return [];
-  }
-  discard(individuals) {
   }
   async evaluate(strategizer, individuals) {
     return individuals.map(() => NaN);
@@ -4240,12 +4203,7 @@ class Planner {
   init(arc, {strategies, ruleset} = {}) {
     this._arc = arc;
     strategies = strategies || Planner.AllStrategies.map(strategy => new strategy(arc));
-    this.strategizer = new __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__["a" /* Strategizer */](strategies, [], {
-      maxPopulation: 100,
-      generationSize: 100,
-      discardSize: 20,
-      ruleset: ruleset || __WEBPACK_IMPORTED_MODULE_2__strategies_rulesets_js__["a" /* Empty */]
-    });
+    this.strategizer = new __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__["a" /* Strategizer */](strategies, [], ruleset || __WEBPACK_IMPORTED_MODULE_2__strategies_rulesets_js__["a" /* Empty */]);
   }
 
   // Specify a timeout value less than zero to disable timeouts.
