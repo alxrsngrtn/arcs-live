@@ -1,9 +1,11 @@
-commit 0f118137ef850d75f4f6ff49aedf369ef53e752f
+commit bb5b679c6c0308b3563c6353a5e61c1eab6e369b
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu May 10 16:22:11 2018 -0700
+Date:   Thu May 10 16:57:41 2018 -0700
 
-    support recipe tags in manifest parsing and search strategy (#1300)
+    Planificator to group and throttle data changes triggered replaning. (#1258)
     
-    * support recipe tags in manifest parsing and search strategy
+    * Planificator to group and throttle data changes triggered replaning.
     
-    * Address comments, rename recipe tags to verbs to be consistent with particle spec
+    * address comments
+    
+    * Address comments
