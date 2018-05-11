@@ -1,7 +1,5 @@
-commit 484b387ee887ceb78669fcdd0b479c1bc680ce7e
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Fri May 11 11:45:01 2018 -0700
+commit b775ed586fc6b1889bde82439e4365713e4587eb
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Fri May 11 14:39:58 2018 -0700
 
-    appveyor `npm install` retry (#1316)
-    
-    We've seen continued flakiness in the appveyor Windows builds, particularly around `npm install`. With this change, `appveyor-retry` will retry `npm install` up to 3 times.
+    Update miniblog left view to show only date rather than avatar. (#1318)
