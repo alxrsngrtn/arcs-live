@@ -1,5 +1,5 @@
-commit 4d3d9bec5f77fa6c267b5720854925261d7593be
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri May 11 18:12:02 2018 -0700
+commit d316f2fe90f8c5b3f0e2a54f2a9f5440e1e253de
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Sat May 12 11:45:45 2018 +1000
 
-    clear `boxed` cache when rebuilding shared handles (#1324)
+    Make SE comfortable with parents in later generations (#1314)
