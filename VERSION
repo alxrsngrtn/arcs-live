@@ -1,5 +1,5 @@
-commit 5aa62aed2f2cda5cb5c91baf92ee9fe0db223ce5
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri May 11 19:17:39 2018 -0700
+commit f5555177bbb9825d65330ea8af4a712e907d98af
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Fri May 11 20:50:47 2018 -0700
 
-    Fix planificator test (#1317)
+    Only show delete button on hover of associated message. (#1322)
