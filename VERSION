@@ -1,5 +1,5 @@
-commit b775ed586fc6b1889bde82439e4365713e4587eb
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri May 11 14:39:58 2018 -0700
+commit 4d3d9bec5f77fa6c267b5720854925261d7593be
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri May 11 18:12:02 2018 -0700
 
-    Update miniblog left view to show only date rather than avatar. (#1318)
+    clear `boxed` cache when rebuilding shared handles (#1324)
