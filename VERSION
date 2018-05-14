@@ -1,9 +1,10 @@
-commit 6525698fcc0a0afe98d8b7fa3bd46bb105e2cf2f
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon May 14 13:35:57 2018 +1000
+commit f28ec07eb0bbed5984ebd3830916d026adfae86b
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon May 14 11:48:38 2018 -0700
 
-    Adjust connection constraints to expect objects for 'to' and 'from' (#1328)
+    Restore setting arc key in shell theme. (#1331)
     
-    * Adjust connection constraints to expect objects for 'to' and 'from'
+    Port of the original work in
+    https://github.com/PolymerLabs/arcs/pull/1201/files
     
-    * lint
+    Lost in the shift to the new app shell.
