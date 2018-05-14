@@ -1,9 +1,5 @@
-commit fe2536b229b4750962ae8d9f355d691c4be8fe9c
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon May 14 12:03:06 2018 +1000
+commit aab311ce61605c55e7cdeda016b58cd3e21ad0bd
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon May 14 12:25:49 2018 +1000
 
-    Adjust constraint parsing to deal with new features (#1326)
-    
-    * Adjust constraint parsing to deal with new features
-    
-    * Review comments
+    Do not modify the input baseType in processTypeList (#1327)
