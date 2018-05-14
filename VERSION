@@ -1,5 +1,5 @@
-commit aab311ce61605c55e7cdeda016b58cd3e21ad0bd
+commit e6926a3cd5108b5f6277f8f9ad3c36e11b4264bc
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon May 14 12:25:49 2018 +1000
+Date:   Mon May 14 13:09:18 2018 +1000
 
-    Do not modify the input baseType in processTypeList (#1327)
+    Strategy to make a create handle greedily grouping free connections (#1229)

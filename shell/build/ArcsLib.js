@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 107);
+/******/ 	return __webpack_require__(__webpack_require__.s = 109);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -446,13 +446,13 @@ Ruleset.Builder = class {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategizer_strategizer_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__connection_constraint_js__ = __webpack_require__(89);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(91);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__search_js__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__slot_js__ = __webpack_require__(94);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__handle_js__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__handle_js__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__util_js__ = __webpack_require__(5);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -1021,10 +1021,10 @@ Walker.Independent = __WEBPACK_IMPORTED_MODULE_0__walker_base_js__["a" /* Walker
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(57);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(104);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(106);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(11);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2080,7 +2080,7 @@ function getDevtoolsChannel() {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /**
  * @license
@@ -2346,13 +2346,13 @@ class ParticleSpec {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__build_manifest_parser_js__ = __webpack_require__(71);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__recipe_search_js__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__shape_js__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__shape_js__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__recipe_util_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__storage_storage_provider_factory_js__ = __webpack_require__(41);
@@ -4137,9 +4137,9 @@ class DescriptionFormatter {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_date_web_js__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_date_web_js__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_rulesets_js__ = __webpack_require__(101);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_rulesets_js__ = __webpack_require__(103);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_deviceinfo_web_js__ = __webpack_require__(65);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_recipe_util_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__strategies_convert_constraints_to_connections_js__ = __webpack_require__(45);
@@ -4147,29 +4147,33 @@ class DescriptionFormatter {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__strategies_copy_remote_handles_js__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__strategies_assign_handles_by_tag_and_type_js__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__strategies_init_population_js__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_map_slots_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_map_slots_js__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_match_particle_by_verb_js__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_match_recipe_by_verb_js__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_name_unnamed_connections_js__ = __webpack_require__(100);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_name_unnamed_connections_js__ = __webpack_require__(102);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__strategies_add_use_handles_js__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__strategies_create_description_handle_js__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__strategies_init_search_js__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__strategies_search_tokens_to_handles_js__ = __webpack_require__(102);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__strategies_init_search_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__strategies_search_tokens_to_handles_js__ = __webpack_require__(104);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__strategies_search_tokens_to_particles_js__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__strategies_fallback_fate_js__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__strategies_group_handle_connections_js__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__strategies_match_free_handles_to_connections_js__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__strategies_create_handles_js__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__strategies_resolve_recipe_js__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__speculator_js__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__tracelib_trace_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__debug_strategy_explorer_adapter_js__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__strategies_create_handle_group_js__ = __webpack_require__(101);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__strategies_combined_strategy_js__ = __webpack_require__(100);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__strategies_resolve_recipe_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__speculator_js__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__tracelib_trace_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__debug_strategy_explorer_adapter_js__ = __webpack_require__(77);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
+
 
 
 
@@ -4209,7 +4213,7 @@ class Planner {
 
   // Specify a timeout value less than zero to disable timeouts.
   async plan(timeout, generations) {
-    let trace = __WEBPACK_IMPORTED_MODULE_25__tracelib_trace_js__["a" /* Tracing */].start({cat: 'planning', name: 'Planner::plan', overview: true, args: {timeout}});
+    let trace = __WEBPACK_IMPORTED_MODULE_27__tracelib_trace_js__["a" /* Tracing */].start({cat: 'planning', name: 'Planner::plan', overview: true, args: {timeout}});
     timeout = timeout || -1;
     let allResolved = [];
     let start = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_date_web_js__["a" /* now */])();
@@ -4280,11 +4284,11 @@ class Planner {
     return groups;
   }
   async suggest(timeout, generations, speculator) {
-    let trace = __WEBPACK_IMPORTED_MODULE_25__tracelib_trace_js__["a" /* Tracing */].start({cat: 'planning', name: 'Planner::suggest', overview: true, args: {timeout}});
+    let trace = __WEBPACK_IMPORTED_MODULE_27__tracelib_trace_js__["a" /* Tracing */].start({cat: 'planning', name: 'Planner::suggest', overview: true, args: {timeout}});
     if (!generations && this._arc._debugging) generations = [];
     let plans = await trace.wait(this.plan(timeout, generations));
     let suggestions = [];
-    speculator = speculator || new __WEBPACK_IMPORTED_MODULE_24__speculator_js__["a" /* Speculator */]();
+    speculator = speculator || new __WEBPACK_IMPORTED_MODULE_26__speculator_js__["a" /* Speculator */]();
     // We don't actually know how many threads the VM will decide to use to
     // handle the parallel speculation, but at least we know we won't kick off
     // more than this number and so can somewhat limit resource utilization.
@@ -4334,7 +4338,7 @@ class Planner {
     results = [].concat(...results);
 
     if (this._arc._debugging) {
-      __WEBPACK_IMPORTED_MODULE_26__debug_strategy_explorer_adapter_js__["a" /* StrategyExplorerAdapter */].processGenerations(generations);
+      __WEBPACK_IMPORTED_MODULE_28__debug_strategy_explorer_adapter_js__["a" /* StrategyExplorerAdapter */].processGenerations(generations);
     }
 
     return trace.endWith(results);
@@ -4365,6 +4369,7 @@ Planner.ResolutionStrategies = [
   __WEBPACK_IMPORTED_MODULE_20__strategies_group_handle_connections_js__["a" /* GroupHandleConnections */],
   __WEBPACK_IMPORTED_MODULE_19__strategies_fallback_fate_js__["a" /* FallbackFate */],
   __WEBPACK_IMPORTED_MODULE_22__strategies_create_handles_js__["a" /* CreateHandles */],
+  __WEBPACK_IMPORTED_MODULE_23__strategies_create_handle_group_js__["a" /* CreateHandleGroup */],
   __WEBPACK_IMPORTED_MODULE_8__strategies_assign_handles_by_tag_and_type_js__["a" /* AssignHandlesByTagAndType */],
   __WEBPACK_IMPORTED_MODULE_5__strategies_convert_constraints_to_connections_js__["a" /* ConvertConstraintsToConnections */],
   __WEBPACK_IMPORTED_MODULE_10__strategies_map_slots_js__["a" /* MapSlots */],
@@ -4376,7 +4381,7 @@ Planner.ResolutionStrategies = [
   __WEBPACK_IMPORTED_MODULE_14__strategies_add_use_handles_js__["a" /* AddUseHandles */],
   __WEBPACK_IMPORTED_MODULE_15__strategies_create_description_handle_js__["a" /* CreateDescriptionHandle */],
   __WEBPACK_IMPORTED_MODULE_21__strategies_match_free_handles_to_connections_js__["a" /* MatchFreeHandlesToConnections */],
-  __WEBPACK_IMPORTED_MODULE_23__strategies_resolve_recipe_js__["a" /* ResolveRecipe */]
+  __WEBPACK_IMPORTED_MODULE_25__strategies_resolve_recipe_js__["a" /* ResolveRecipe */]
 ];
 
 Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.ResolutionStrategies);
@@ -4389,7 +4394,7 @@ Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.Resoluti
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(105);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(107);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4843,8 +4848,228 @@ class StateChanges {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_checker_js__ = __webpack_require__(11);
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+class Handle {
+  constructor(recipe) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipe);
+    this._recipe = recipe;
+    this._id = null;
+    this._localName = undefined;
+    this._tags = [];
+    this._type = undefined;
+    this._fate = null;
+    // TODO: replace originalFate and originalId with more generic mechanism for tracking
+    // how and from what the recipe was generated.
+    this._originalFate = null;
+    this._originalId = null;
+    this._connections = [];
+    this._mappedType = undefined;
+    this._storageKey = undefined;
+    this._pattern = undefined;
+  }
+
+  _copyInto(recipe) {
+    let handle = undefined;
+    if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate))
+      handle = recipe.findHandle(this._id);
+
+    if (handle == undefined) {
+      handle = recipe.newHandle();
+      handle._id = this._id;
+      handle._tags = [...this._tags];
+      handle._type = this._type;
+      handle._fate = this._fate;
+      handle._originalFate = this._originalFate;
+      handle._originalId = this._originalId;
+      handle._mappedType = this._mappedType;
+      handle._storageKey = this._storageKey;
+
+      // the connections are re-established when Particles clone their
+      // attached HandleConnection objects.
+      handle._connections = [];
+      handle._pattern = this._pattern;
+    }
+    return handle;
+  }
+
+  _startNormalize() {
+    this._localName = null;
+    this._tags.sort();
+    // TODO: type?
+  }
+
+  _finishNormalize() {
+    for (let connection of this._connections) {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(connection), `Handle connection '${connection.name}' is not frozen.`);
+    }
+    this._connections.sort(__WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* compareComparables */]);
+    Object.freeze(this);
+  }
+
+  _compareTo(other) {
+    let cmp;
+    if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["b" /* compareStrings */](this._id, other._id)) != 0) return cmp;
+    if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["b" /* compareStrings */](this._localName, other._localName)) != 0) return cmp;
+    if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["c" /* compareArrays */](this._tags, other._tags, __WEBPACK_IMPORTED_MODULE_1__util_js__["b" /* compareStrings */])) != 0) return cmp;
+    // TODO: type?
+    if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["b" /* compareStrings */](this.fate, other.fate)) != 0) return cmp;
+    return 0;
+  }
+
+  // a resolved Handle has either an id or create=true
+  get fate() { return this._fate || '?'; }
+  set fate(fate) {
+    if (this._originalFate == null) {
+      this._originalFate = this._fate;
+    }
+    this._fate = fate;
+  }
+  get originalFate() { return this._originalFate || '?'; }
+  get originalId() { return this._originalId; }
+  get recipe() { return this._recipe; }
+  get tags() { return this._tags; } // only tags owned by the handle
+  set tags(tags) { this._tags = tags; }
+  get type() { return this._type; } // nullable
+  get id() { return this._id; }
+  set id(id) {
+    if (!this._originalId) {
+      this._originalId = this._id;
+    }
+    this._id = id;
+  }
+  mapToStorage(storage) {
+    this._id = storage.id;
+    this._type = undefined;
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(storage.type == undefined || !(storage.type.hasVariableReference), `variable references shouldn't be part of handle types`);
+    this._mappedType = storage.type;
+    this._storageKey = storage.storageKey;
+  }
+  get localName() { return this._localName; }
+  set localName(name) { this._localName = name; }
+  get connections() { return this._connections; } // HandleConnection*
+  get storageKey() { return this._storageKey; }
+  set storageKey(key) { this._storageKey = key; }
+  get pattern() { return this._pattern; }
+  set pattern(pattern) { this._pattern = pattern; }
+
+  static effectiveType(handleType, connections) {
+    let typeSet = connections.filter(connection => connection.type != null).map(connection => ({type: connection.type, direction: connection.direction, connection}));
+    return __WEBPACK_IMPORTED_MODULE_2__type_checker_js__["a" /* TypeChecker */].processTypeList(handleType, typeSet);
+  }
+
+  _isValid(options) {
+    let tags = new Set();
+    for (let connection of this._connections) {
+      // A remote handle cannot be connected to an output param.
+      if (this.fate == 'map' && ['out', 'inout'].includes(connection.direction)) {
+        if (options && options.errors) {
+          options.errors.set(this, `Invalid fate '${this.fate}' for handle '${this}'; it is used for '${connection.direction}' ${connection.particle.name}::${connection.name} connection`);
+        }
+        return false;
+      }
+      connection.tags.forEach(tag => tags.add(tag));
+    }
+    let type = Handle.effectiveType(this._mappedType, this._connections);
+    if (type) {
+      this._type = type;
+      this._tags.forEach(tag => tags.add(tag));
+      this._tags = [...tags];
+      return true;
+    }
+    if (options && options.errors) {
+      // TODO: pass options to TypeChecker.processTypeList for better error.
+      options.errors.set(this, `Type validations failed for handle '${this}'`);
+    }
+    return false;
+  }
+
+  isResolved(options) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this));
+    if (!this._type) {
+      if (options) {
+        options.details = 'missing type';
+      }
+      return false;
+    }
+    if ((!this.type.isResolved() && this.fate !== 'create') || (!this.type.canEnsureResolved() && this.fate == 'create')) {
+      if (options) {
+        options.details = 'unresolved type';
+      }
+      return false;
+    }
+    switch (this.fate) {
+      case '?': {
+        if (options) {
+          options.details = 'missing fate';
+        }
+        return false;
+      }
+      case 'copy':
+      case 'map':
+      case 'use': {
+        if (options && this.id === null) {
+          options.details = 'missing id';
+        }
+        return this.id !== null;
+      }
+      case 'create':
+        return true;
+      default: {
+        if (options) {
+          options.details = `invalid fate ${this.fate}`;
+        }
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `Unexpected fate: ${this.fate}`);
+      }
+    }
+  }
+
+  toString(nameMap, options) {
+    // TODO: type? maybe output in a comment
+    let result = [];
+    result.push(this.fate);
+    if (this.id) {
+      result.push(`'${this.id}'`);
+    }
+    result.push(...this.tags);
+    result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
+    if (this.type) {
+      result.push('//');
+      result.push(this.type.resolvedType().toString());
+    }
+    if (options && options.showUnresolved) {
+      let options = {};
+      if (!this.isResolved(options)) {
+        result.push(` // unresolved handle: ${options.details}`);
+      }
+    }
+
+    return result.join(' ');
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Handle;
+
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(32);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5168,7 +5393,7 @@ class Schema {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5457,7 +5682,7 @@ ${this._slotsToManifestString()}
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5553,7 +5778,7 @@ class HandleMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategi
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5600,7 +5825,7 @@ class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5755,7 +5980,7 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5764,7 +5989,7 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__map_slots_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__map_slots_js__ = __webpack_require__(21);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -5853,7 +6078,7 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5907,13 +6132,13 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_0__dom_particl
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_js__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom_context_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom_context_js__ = __webpack_require__(31);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6064,7 +6289,7 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* Slot */] {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6183,7 +6408,7 @@ class Scheduler {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 var g;
@@ -6210,7 +6435,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6228,7 +6453,7 @@ function now() {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6248,14 +6473,14 @@ async function digest(str) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_js__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom_slot_js__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dom_context_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom_slot_js__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dom_context_js__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__description_dom_formatter_js__ = __webpack_require__(79);
 /**
  * @license
@@ -6300,7 +6525,7 @@ let _affordances = {};
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6655,12 +6880,12 @@ class PECInnerPort extends APIPort {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shell_components_xen_xen_template_js__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shell_components_xen_xen_template_js__ = __webpack_require__(108);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6923,7 +7148,7 @@ class SetDomContext {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6996,12 +7221,12 @@ class Entity {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = handleFor;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(56);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__ = __webpack_require__(9);
@@ -7249,7 +7474,7 @@ function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = tr
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7259,8 +7484,8 @@ function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = tr
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__ = __webpack_require__(72);
 /**
  * @license
@@ -7363,12 +7588,12 @@ class Loader {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__ = __webpack_require__(23);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7566,226 +7791,6 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = MultiplexerDomParticle;
-
-
-
-/***/ }),
-/* 35 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_checker_js__ = __webpack_require__(11);
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-class Handle {
-  constructor(recipe) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipe);
-    this._recipe = recipe;
-    this._id = null;
-    this._localName = undefined;
-    this._tags = [];
-    this._type = undefined;
-    this._fate = null;
-    // TODO: replace originalFate and originalId with more generic mechanism for tracking
-    // how and from what the recipe was generated.
-    this._originalFate = null;
-    this._originalId = null;
-    this._connections = [];
-    this._mappedType = undefined;
-    this._storageKey = undefined;
-    this._pattern = undefined;
-  }
-
-  _copyInto(recipe) {
-    let handle = undefined;
-    if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate))
-      handle = recipe.findHandle(this._id);
-
-    if (handle == undefined) {
-      handle = recipe.newHandle();
-      handle._id = this._id;
-      handle._tags = [...this._tags];
-      handle._type = this._type;
-      handle._fate = this._fate;
-      handle._originalFate = this._originalFate;
-      handle._originalId = this._originalId;
-      handle._mappedType = this._mappedType;
-      handle._storageKey = this._storageKey;
-
-      // the connections are re-established when Particles clone their
-      // attached HandleConnection objects.
-      handle._connections = [];
-      handle._pattern = this._pattern;
-    }
-    return handle;
-  }
-
-  _startNormalize() {
-    this._localName = null;
-    this._tags.sort();
-    // TODO: type?
-  }
-
-  _finishNormalize() {
-    for (let connection of this._connections) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(connection), `Handle connection '${connection.name}' is not frozen.`);
-    }
-    this._connections.sort(__WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* compareComparables */]);
-    Object.freeze(this);
-  }
-
-  _compareTo(other) {
-    let cmp;
-    if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["b" /* compareStrings */](this._id, other._id)) != 0) return cmp;
-    if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["b" /* compareStrings */](this._localName, other._localName)) != 0) return cmp;
-    if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["c" /* compareArrays */](this._tags, other._tags, __WEBPACK_IMPORTED_MODULE_1__util_js__["b" /* compareStrings */])) != 0) return cmp;
-    // TODO: type?
-    if ((cmp = __WEBPACK_IMPORTED_MODULE_1__util_js__["b" /* compareStrings */](this.fate, other.fate)) != 0) return cmp;
-    return 0;
-  }
-
-  // a resolved Handle has either an id or create=true
-  get fate() { return this._fate || '?'; }
-  set fate(fate) {
-    if (this._originalFate == null) {
-      this._originalFate = this._fate;
-    }
-    this._fate = fate;
-  }
-  get originalFate() { return this._originalFate || '?'; }
-  get originalId() { return this._originalId; }
-  get recipe() { return this._recipe; }
-  get tags() { return this._tags; } // only tags owned by the handle
-  set tags(tags) { this._tags = tags; }
-  get type() { return this._type; } // nullable
-  get id() { return this._id; }
-  set id(id) {
-    if (!this._originalId) {
-      this._originalId = this._id;
-    }
-    this._id = id;
-  }
-  mapToStorage(storage) {
-    this._id = storage.id;
-    this._type = undefined;
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(storage.type == undefined || !(storage.type.hasVariableReference), `variable references shouldn't be part of handle types`);
-    this._mappedType = storage.type;
-    this._storageKey = storage.storageKey;
-  }
-  get localName() { return this._localName; }
-  set localName(name) { this._localName = name; }
-  get connections() { return this._connections; } // HandleConnection*
-  get storageKey() { return this._storageKey; }
-  set storageKey(key) { this._storageKey = key; }
-  get pattern() { return this._pattern; }
-  set pattern(pattern) { this._pattern = pattern; }
-
-  static effectiveType(handleType, connections) {
-    let typeSet = connections.filter(connection => connection.type != null).map(connection => ({type: connection.type, direction: connection.direction, connection}));
-    return __WEBPACK_IMPORTED_MODULE_2__type_checker_js__["a" /* TypeChecker */].processTypeList(handleType, typeSet);
-  }
-
-  _isValid(options) {
-    let tags = new Set();
-    for (let connection of this._connections) {
-      // A remote handle cannot be connected to an output param.
-      if (this.fate == 'map' && ['out', 'inout'].includes(connection.direction)) {
-        if (options && options.errors) {
-          options.errors.set(this, `Invalid fate '${this.fate}' for handle '${this}'; it is used for '${connection.direction}' ${connection.particle.name}::${connection.name} connection`);
-        }
-        return false;
-      }
-      connection.tags.forEach(tag => tags.add(tag));
-    }
-    let type = Handle.effectiveType(this._mappedType, this._connections);
-    if (type) {
-      this._type = type;
-      this._tags.forEach(tag => tags.add(tag));
-      this._tags = [...tags];
-      return true;
-    }
-    if (options && options.errors) {
-      // TODO: pass options to TypeChecker.processTypeList for better error.
-      options.errors.set(this, `Type validations failed for handle '${this}'`);
-    }
-    return false;
-  }
-
-  isResolved(options) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this));
-    if (!this._type) {
-      if (options) {
-        options.details = 'missing type';
-      }
-      return false;
-    }
-    if ((!this.type.isResolved() && this.fate !== 'create') || (!this.type.canEnsureResolved() && this.fate == 'create')) {
-      if (options) {
-        options.details = 'unresolved type';
-      }
-      return false;
-    }
-    switch (this.fate) {
-      case '?': {
-        if (options) {
-          options.details = 'missing fate';
-        }
-        return false;
-      }
-      case 'copy':
-      case 'map':
-      case 'use': {
-        if (options && this.id === null) {
-          options.details = 'missing id';
-        }
-        return this.id !== null;
-      }
-      case 'create':
-        return true;
-      default: {
-        if (options) {
-          options.details = `invalid fate ${this.fate}`;
-        }
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `Unexpected fate: ${this.fate}`);
-      }
-    }
-  }
-
-  toString(nameMap, options) {
-    // TODO: type? maybe output in a comment
-    let result = [];
-    result.push(this.fate);
-    if (this.id) {
-      result.push(`'${this.id}'`);
-    }
-    result.push(...this.tags);
-    result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
-    if (this.type) {
-      result.push('//');
-      result.push(this.type.resolvedType().toString());
-    }
-    if (options && options.showUnresolved) {
-      let options = {};
-      if (!this.isResolved(options)) {
-        result.push(` // unresolved handle: ${options.details}`);
-      }
-    }
-
-    return result.join(' ');
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Handle;
 
 
 
@@ -8345,7 +8350,7 @@ class AddUseHandles extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(19);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -8382,7 +8387,7 @@ class AssignHandlesByTagAndType extends __WEBPACK_IMPORTED_MODULE_0__handle_mapp
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(19);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -8569,7 +8574,7 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(19);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -9036,7 +9041,7 @@ class MatchParticleByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strat
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_handle_js__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_handle_js__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -9412,7 +9417,7 @@ const Symbols = {identifier: Symbol('id')};
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(17);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -9606,7 +9611,7 @@ class TypeVariable {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__handle_js__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__handle_js__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__outer_PEC_js__ = __webpack_require__(86);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_recipe_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__manifest_js__ = __webpack_require__(10);
@@ -9614,7 +9619,7 @@ class TypeVariable {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__recipe_util_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__fake_pec_factory_js__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__storage_storage_provider_factory_js__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__scheduler_js__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__scheduler_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__devtools_shared_arc_registry_js__ = __webpack_require__(62);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__id_js__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__debug_arc_debug_handler_js__ = __webpack_require__(74);
@@ -10204,11 +10209,11 @@ ${this.activeRecipe.toString()}`;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_date_web_js__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_init_search_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_date_web_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_init_search_js__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__planner_js__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__speculator_js__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__suggestion_composer_js__ = __webpack_require__(103);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__suggestion_composer_js__ = __webpack_require__(105);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -10528,7 +10533,7 @@ class Planificator {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__affordance_js__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__affordance_js__ = __webpack_require__(29);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -10736,11 +10741,11 @@ class SlotComposer {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__ = __webpack_require__(23);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -10884,7 +10889,7 @@ function registerArc(arc) {
 
 
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(25)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(26)))
 
 /***/ }),
 /* 63 */
@@ -19732,7 +19737,7 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
 /* harmony export (immutable) */ __webpack_exports__["a"] = FakePecFactory;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__inner_PEC_js__ = __webpack_require__(83);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__message_channel_js__ = __webpack_require__(85);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__loader_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__loader_js__ = __webpack_require__(34);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -19867,9 +19872,9 @@ class Id {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_js__ = __webpack_require__(32);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_js__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_channel_js__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_channel_js__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__ = __webpack_require__(97);
 /**
  * @license
@@ -20129,7 +20134,7 @@ class InnerPEC {
 /* harmony export (immutable) */ __webpack_exports__["a"] = InnerPEC;
 
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(25)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(26)))
 
 /***/ }),
 /* 84 */
@@ -20234,7 +20239,7 @@ class MessageChannel {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__particle_execution_context_js__ = __webpack_require__(87);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_channel_js__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_channel_js__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__manifest_js__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_recipe_resolver_js__ = __webpack_require__(92);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__arc_exceptions_js__ = __webpack_require__(70);
@@ -21076,7 +21081,7 @@ class Particle {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategies_resolve_recipe_js__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategies_resolve_recipe_js__ = __webpack_require__(22);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -22433,6 +22438,153 @@ class InMemoryVariable extends InMemoryStorageProvider {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(2);
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+class CombinedStrategy extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__["b" /* Strategy */] {
+  constructor(strategies) {
+    super();
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(strategies.length > 1, 'Strategies must contain at least 2 elements.');
+    this._strategies = strategies;
+    this._strategies.forEach(strategy => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(strategy.walker));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._strategies[0].getResults);
+  }
+  _getLeaves(results) {
+    // Only use leaf recipes.
+    let recipeByParent = new Map();
+    let resultsList = [...results.values()];
+    resultsList.forEach(r => {
+      r.derivation.forEach(d => {
+        if (d.parent) {
+          recipeByParent.set(d.parent, r);
+        }
+      });
+    });
+    return resultsList.filter(r => !recipeByParent.has(r));
+  }
+  async generate(inputParams) {
+    let results = this._strategies[0].getResults(inputParams);
+    let totalResults = new Map();
+    for (let strategy of this._strategies) {
+      results = __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* Recipe */].over(results, strategy.walker, strategy);
+      results = await Promise.all(results.map(async result => {
+        if (result.hash) {
+          result.hash = await result.hash;
+        }
+        if (!totalResults.has(result.hash)) {
+          // TODO: deduping of results is already done in strategizer.
+          // It should dedup the intermeditate derivations as well.
+          totalResults.set(result.hash, result);
+        }
+        return result;
+      }));
+      results = this._getLeaves(totalResults);
+    }
+
+    return results;
+  }
+}
+/* unused harmony export CombinedStrategy */
+
+
+
+/***/ }),
+/* 101 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_handle_js__ = __webpack_require__(16);
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+
+class CreateHandleGroup extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["b" /* Strategy */] {
+
+  async generate(inputParams) {
+    return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* Walker */] {
+      onRecipe(recipe) {
+        // Resolve constraints before assuming connections are free.
+        if (recipe.connectionConstraints.length > 0) return;
+
+        const freeConnections = recipe.handleConnections.filter(hc => !hc.handle && !hc.isOptional);
+        let maximalGroup = null;
+        for (let writer of freeConnections.filter(hc => hc.isOutput)) {
+          let compatibleConnections = [writer];
+          let effectiveType = __WEBPACK_IMPORTED_MODULE_3__recipe_handle_js__["a" /* Handle */].effectiveType(null, compatibleConnections);
+          let typeCandidate = null;
+          let involvedParticles = new Set([writer.particle]);
+
+          let foundSomeReader = false;
+          for (let reader of freeConnections.filter(hc => hc.isInput)) {
+            if (!involvedParticles.has(reader.particle) &&
+                (typeCandidate = __WEBPACK_IMPORTED_MODULE_3__recipe_handle_js__["a" /* Handle */].effectiveType(effectiveType, [reader])) !== null) {
+              compatibleConnections.push(reader);
+              involvedParticles.add(reader.particle);
+              effectiveType = typeCandidate;
+              foundSomeReader = true;
+            }
+          }
+
+          // Only make a 'create' group for a writer->reader case.
+          if (!foundSomeReader) continue;
+
+          for (let otherWriter of freeConnections.filter(hc => hc.isOutput)) {
+            if (!involvedParticles.has(otherWriter.particle) &&
+                (typeCandidate = __WEBPACK_IMPORTED_MODULE_3__recipe_handle_js__["a" /* Handle */].effectiveType(effectiveType, [otherWriter])) !== null) {
+              compatibleConnections.push(otherWriter);
+              involvedParticles.add(otherWriter.particle);
+              effectiveType = typeCandidate;
+            }
+          }
+
+          if (!maximalGroup || compatibleConnections.length > maximalGroup.length) {
+            maximalGroup = compatibleConnections;
+          }
+        }
+
+        if (maximalGroup) return recipe => {
+          let newHandle = recipe.newHandle();
+          newHandle.fate = 'create';
+          for (let conn of maximalGroup) {
+            let cloneConn = recipe.updateToClone({conn}).conn;
+            cloneConn.connectToHandle(newHandle);
+          }
+        };
+      }
+    }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* Walker */].Independent), this);
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CreateHandleGroup;
+
+
+
+/***/ }),
+/* 102 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
@@ -22479,7 +22631,7 @@ class NameUnnamedConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_st
 
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22489,18 +22641,18 @@ class NameUnnamedConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_st
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__copy_remote_handles_js__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__assign_handles_by_tag_and_type_js__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__init_population_js__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__map_slots_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__map_slots_js__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__match_particle_by_verb_js__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__match_recipe_by_verb_js__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__add_use_handles_js__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__create_description_handle_js__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__init_search_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__init_search_js__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__search_tokens_to_particles_js__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__fallback_fate_js__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__group_handle_connections_js__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__match_free_handles_to_connections_js__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__create_handles_js__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__resolve_recipe_js__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__resolve_recipe_js__ = __webpack_require__(22);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -22583,7 +22735,7 @@ const ExperimentalLinear = new __WEBPACK_IMPORTED_MODULE_0__strategizer_strategi
 
 
 /***/ }),
-/* 102 */
+/* 104 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22659,12 +22811,12 @@ class SearchTokensToHandles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_str
 
 
 /***/ }),
-/* 103 */
+/* 105 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__affordance_js__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__affordance_js__ = __webpack_require__(29);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -22727,7 +22879,7 @@ class SuggestionComposer {
 
 
 /***/ }),
-/* 104 */
+/* 106 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22776,7 +22928,7 @@ class TupleFields {
 
 
 /***/ }),
-/* 105 */
+/* 107 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22926,7 +23078,7 @@ const nob = () => Object.create(null);
 
 
 /***/ }),
-/* 106 */
+/* 108 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23294,7 +23446,7 @@ const createTemplate = innerHTML => {
 
 
 /***/ }),
-/* 107 */
+/* 109 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23305,11 +23457,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_planificator_js__ = __webpack_require__(59);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_planner_js__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__runtime_slot_composer_js__ = __webpack_require__(60);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__runtime_dom_slot_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__runtime_dom_slot_js__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__runtime_type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__browser_loader_js__ = __webpack_require__(61);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__tracelib_trace_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__runtime_scheduler_js__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__runtime_scheduler_js__ = __webpack_require__(25);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
