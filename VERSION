@@ -1,10 +1,5 @@
-commit f28ec07eb0bbed5984ebd3830916d026adfae86b
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon May 14 11:48:38 2018 -0700
+commit 646c15a69370fe6c0acdad1146e88f6c8c758487
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue May 15 08:58:37 2018 +1000
 
-    Restore setting arc key in shell theme. (#1331)
-    
-    Port of the original work in
-    https://github.com/PolymerLabs/arcs/pull/1201/files
-    
-    Lost in the shift to the new app shell.
+    Fix for modifying generations in SE-adapter (#1334)
