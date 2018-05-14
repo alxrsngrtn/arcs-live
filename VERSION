@@ -1,5 +1,5 @@
-commit f5555177bbb9825d65330ea8af4a712e907d98af
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri May 11 20:50:47 2018 -0700
+commit 231d7f6c964b6dd1b8dae06189ff0e0d6aedf320
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon May 14 10:19:21 2018 +1000
 
-    Only show delete button on hover of associated message. (#1322)
+    Adds a hash of a recipe to the recipe view (#1325)
