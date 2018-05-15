@@ -1,5 +1,13 @@
-commit 646c15a69370fe6c0acdad1146e88f6c8c758487
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue May 15 08:58:37 2018 +1000
+commit ffe4e6dc079f399095c815daef763d77fa422f2a
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue May 15 13:41:35 2018 +1000
 
-    Fix for modifying generations in SE-adapter (#1334)
+    Handles as endpoints for constraints (#1329)
+    
+    * Parse handle references into constraints.
+    
+    * Apply handle endpoints in convert-constraints-to-connections.
+    
+    * Regularize names
+    
+    * Review comments.
