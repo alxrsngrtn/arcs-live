@@ -1,5 +1,11 @@
-commit d7053f055770050df5c11d8025f0fb518172ddcf
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed May 16 15:35:47 2018 -0700
+commit 5ac11f33f18024443c4712e9849a09ea30205325
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed May 16 15:37:21 2018 -0700
 
-    Dont exclude InitPopulation from replanning, if triggered by search string change (#1349)
+    Update polymer-cli and packages to reflect npm 6.0.1 and audit. (#1348)
+    
+    * Update polymer-cli and packages to reflect npm 6.0.1 and audit.
+    
+    * Explore moving appveyor and travis to npm 6.0.1 again.
+    
+    * Explore increasing node max-old-space-size for appveyor build.
