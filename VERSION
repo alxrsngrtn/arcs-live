@@ -1,5 +1,5 @@
-commit 1c91d00d88c84516918861436d284d2b2f49f72d
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed May 16 13:41:26 2018 -0700
+commit d7053f055770050df5c11d8025f0fb518172ddcf
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed May 16 15:35:47 2018 -0700
 
-    Updated node package-lock.json. (#1346)
+    Dont exclude InitPopulation from replanning, if triggered by search string change (#1349)
