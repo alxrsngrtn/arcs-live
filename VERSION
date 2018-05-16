@@ -1,27 +1,5 @@
-commit 2d0d539e50240f4870c6c1dfb34e655f651aea6b
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed May 16 15:39:12 2018 -0700
+commit 30613453b01f016444af083ac3f600e4b9cb9f19
+Author: Bernhard Seefeld <seefeld@gmail.com>
+Date:   Wed May 16 15:51:49 2018 -0700
 
-    Mostly minor shell tweaks (#1347)
-    
-    * move default manifest to config.js
-    
-    * experimental utilities
-    
-    * experimental utilities
-    
-    * minor tweaks
-    
-    * update particle formats, remove $cdn redirects
-    
-    * set color on tool panel, inherited color can modulate
-    
-    * null-check Theme entity
-    
-    * use only 0.4 arcs-stories manifests
-    
-    * make particle log entries stand out better
-    
-    * highlight selected tile
-    
-    * restore index.debug.html
+    add verb for reservations recipe (#1350)
