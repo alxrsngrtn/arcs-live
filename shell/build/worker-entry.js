@@ -371,9 +371,26 @@ class Type {
     return Type._canMergeCanReadSubset(type1, type2) && Type._canMergeCanWriteSuperset(type1, type2);
   }
 
+  clone(variableMap) {
+    let type = this.resolvedType();
+    if (type.isVariable) {
+      if (variableMap.has(type.variable)) {
+        return new Type('Variable', variableMap.get(type.variable));
+      } else {
+        let newTypeVariable = __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */].fromLiteral(type.variable.toLiteral());
+        variableMap.set(type.variable, newTypeVariable);
+        return new Type('Variable', newTypeVariable);
+      }
+    }
+    if (type.data.clone) {
+      return new Type(type.tag, type.data.clone(variableMap));
+    }
+    return Type.fromLiteral(type.toLiteral());
+  }
+
   toLiteral() {
-    if (this.isVariable && this.isResolved()) {
-      return this.resolvedType().toLiteral();
+    if (this.isVariable && this.variable.resolution) {
+      return this.variable.resolution.toLiteral();
     }
     if (this.data.toLiteral)
       return {tag: this.tag, data: this.data.toLiteral()};
@@ -1587,7 +1604,7 @@ class TypeChecker {
     baseType = baseType == undefined
         ? __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */]('a'))
         : __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].fromLiteral(baseType.toLiteral()); // Copy for mutating.
-
+    
     let concreteTypes = [];
 
     // baseType might be a variable (and is definitely a variable if no baseType was available).

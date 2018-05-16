@@ -1308,9 +1308,26 @@ class Type {
     return Type._canMergeCanReadSubset(type1, type2) && Type._canMergeCanWriteSuperset(type1, type2);
   }
 
+  clone(variableMap) {
+    let type = this.resolvedType();
+    if (type.isVariable) {
+      if (variableMap.has(type.variable)) {
+        return new Type('Variable', variableMap.get(type.variable));
+      } else {
+        let newTypeVariable = __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */].fromLiteral(type.variable.toLiteral());
+        variableMap.set(type.variable, newTypeVariable);
+        return new Type('Variable', newTypeVariable);
+      }
+    }
+    if (type.data.clone) {
+      return new Type(type.tag, type.data.clone(variableMap));
+    }
+    return Type.fromLiteral(type.toLiteral());
+  }
+
   toLiteral() {
-    if (this.isVariable && this.isResolved()) {
-      return this.resolvedType().toLiteral();
+    if (this.isVariable && this.variable.resolution) {
+      return this.variable.resolution.toLiteral();
     }
     if (this.data.toLiteral)
       return {tag: this.tag, data: this.data.toLiteral()};
@@ -3393,12 +3410,14 @@ ${e.message}
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_checker_js__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_js__ = __webpack_require__(4);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -3432,7 +3451,7 @@ class Handle {
       handle = recipe.newHandle();
       handle._id = this._id;
       handle._tags = [...this._tags];
-      handle._type = this._type;
+      handle._type = this._type ? __WEBPACK_IMPORTED_MODULE_3__type_js__["a" /* Type */].fromLiteral(this._type.toLiteral()) : undefined;
       handle._fate = this._fate;
       handle._originalFate = this._originalFate;
       handle._originalId = this._originalId;
@@ -3508,7 +3527,7 @@ class Handle {
   set pattern(pattern) { this._pattern = pattern; }
 
   static effectiveType(handleType, connections) {
-    let typeSet = connections.filter(connection => connection.type != null).map(connection => ({type: connection.type, direction: connection.direction, connection}));
+    let typeSet = connections.filter(connection => connection.type != null).map(connection => ({type: connection.type, direction: connection.direction}));
     return __WEBPACK_IMPORTED_MODULE_2__type_checker_js__["a" /* TypeChecker */].processTypeList(handleType, typeSet);
   }
 
@@ -3589,7 +3608,15 @@ class Handle {
     result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
     if (this.type) {
       result.push('//');
-      result.push(this.type.resolvedType().toString());
+      if (this.type.isResolved()) {
+        result.push(this.type.resolvedType().toString());
+      } else if (this.type.canEnsureResolved()) {
+        let type = __WEBPACK_IMPORTED_MODULE_3__type_js__["a" /* Type */].fromLiteral(this.type.toLiteral());
+        type.maybeEnsureResolved();
+        result.push(type.resolvedType().toString());
+      } else {
+        result.push(this.type.toString());
+      }
     }
     if (options && options.showUnresolved) {
       let options = {};
@@ -3640,7 +3667,7 @@ class TypeChecker {
     baseType = baseType == undefined
         ? __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */]('a'))
         : __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].fromLiteral(baseType.toLiteral()); // Copy for mutating.
-
+    
     let concreteTypes = [];
 
     // baseType might be a variable (and is definitely a variable if no baseType was available).
@@ -4476,6 +4503,7 @@ class Planner {
       let resolved = this.strategizer.generated
           .map(individual => individual.result)
           .filter(recipe => recipe.isResolved());
+
       allResolved.push(...resolved);
       const elapsed = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_date_web_js__["a" /* now */])() - start;
       if (timeout >= 0 && elapsed > timeout) {
@@ -20692,12 +20720,14 @@ class Random {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(4);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -20722,7 +20752,9 @@ class HandleConnection {
     }
     let handleConnection = new HandleConnection(this._name, particle);
     handleConnection._tags = [...this._tags];
-    handleConnection._type = this._type;
+    // Note that _rawType will be cloned later by the particle that references this connection.
+    // Doing it there allows the particle to maintain variable associations across the particle
+    // scope.    
     handleConnection._rawType = this._rawType;
     handleConnection._direction = this._direction;
     if (this._handle != undefined) {
@@ -20955,11 +20987,22 @@ class Particle {
       particle._connections[key] = this._connections[key]._clone(particle, cloneMap);
     });
     particle._unnamedConnections = this._unnamedConnections.map(connection => connection._clone(particle, cloneMap));
+    particle._cloneConnectionRawTypes();
     Object.keys(this._consumedSlotConnections).forEach(key => {
       particle._consumedSlotConnections[key] = this._consumedSlotConnections[key]._clone(particle, cloneMap);
     });
 
     return particle;
+  }
+
+  _cloneConnectionRawTypes() {
+    let map = new Map();
+    for (let connection of Object.values(this._connections))
+      if (connection._rawType)
+        connection._rawType = connection._rawType.clone(map);
+    for (let connection of this._unnamedConnections)
+      if (connection._rawType)
+        connection._rawType = connection._rawType.clone(map);
   }
 
   _startNormalize() {

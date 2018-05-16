@@ -1,7 +1,7 @@
-commit e5e8bbb6e1073e5e4080913fa74566a1acbc49f7
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed May 16 12:56:23 2018 +1000
+commit 0d7fbff70117322a4ff37ce14c5c1376e173e81f
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed May 16 16:36:35 2018 +1000
 
-    Revert "Attempts to fix restaurant demo with a longer timeout (#1342)" (#1343)
+    Clone types correctly when cloning recipes.
     
-    This reverts commit c4e2ef1e7326295904a4d68a7b86f23929572b05.
+    This fixes #1340
