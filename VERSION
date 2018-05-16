@@ -1,5 +1,7 @@
-commit 12e5ef4b5c715a228a403855ec44207cd07d55aa
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Tue May 15 16:51:24 2018 -0700
+commit e5e8bbb6e1073e5e4080913fa74566a1acbc49f7
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed May 16 12:56:23 2018 +1000
 
-    skip the restaurant test (#1338)
+    Revert "Attempts to fix restaurant demo with a longer timeout (#1342)" (#1343)
+    
+    This reverts commit c4e2ef1e7326295904a4d68a7b86f23929572b05.
