@@ -1,9 +1,5 @@
-commit 89fde162a3e712cc5e934fee8a762c5d209c8504
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed May 16 11:17:02 2018 -0700
+commit 1c91d00d88c84516918861436d284d2b2f49f72d
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed May 16 13:41:26 2018 -0700
 
-    Nullify stale arc (#1345)
-    
-    * when app-shell requests a new arc (key = '*') now it also sets arc=null (old arc is stale)
-    
-    * update comments
+    Updated node package-lock.json. (#1346)
