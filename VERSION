@@ -1,7 +1,9 @@
-commit 0d7fbff70117322a4ff37ce14c5c1376e173e81f
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed May 16 16:36:35 2018 +1000
+commit 89fde162a3e712cc5e934fee8a762c5d209c8504
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed May 16 11:17:02 2018 -0700
 
-    Clone types correctly when cloning recipes.
+    Nullify stale arc (#1345)
     
-    This fixes #1340
+    * when app-shell requests a new arc (key = '*') now it also sets arc=null (old arc is stale)
+    
+    * update comments
