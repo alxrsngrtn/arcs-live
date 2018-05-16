@@ -10932,7 +10932,7 @@ class SlotComposer {
 
 
 
-const logFactory = (preamble, color, log='log') => console[log].bind(console, `Ptcl:%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 4px;`);
+const logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble} [Particle]`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 4px;`);
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 
 const dumbCache = {};
@@ -10976,7 +10976,7 @@ class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a"
     };
     importScripts(path);
     delete self.defineParticle;
-    const logger = logFactory(fileName.split('/').pop(), 'blue');
+    const logger = logFactory(fileName.split('/').pop(), '#1faa00');
     return this.unwrapParticle(result[0], logger);
   }
   mapParticleUrl(path) {

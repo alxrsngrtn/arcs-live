@@ -1,11 +1,27 @@
-commit 5ac11f33f18024443c4712e9849a09ea30205325
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed May 16 15:37:21 2018 -0700
+commit 2d0d539e50240f4870c6c1dfb34e655f651aea6b
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed May 16 15:39:12 2018 -0700
 
-    Update polymer-cli and packages to reflect npm 6.0.1 and audit. (#1348)
+    Mostly minor shell tweaks (#1347)
     
-    * Update polymer-cli and packages to reflect npm 6.0.1 and audit.
+    * move default manifest to config.js
     
-    * Explore moving appveyor and travis to npm 6.0.1 again.
+    * experimental utilities
     
-    * Explore increasing node max-old-space-size for appveyor build.
+    * experimental utilities
+    
+    * minor tweaks
+    
+    * update particle formats, remove $cdn redirects
+    
+    * set color on tool panel, inherited color can modulate
+    
+    * null-check Theme entity
+    
+    * use only 0.4 arcs-stories manifests
+    
+    * make particle log entries stand out better
+    
+    * highlight selected tile
+    
+    * restore index.debug.html
