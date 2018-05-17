@@ -1,12 +1,5 @@
-commit aa0a6f5ab1ad4a42fa5d8843382049160816a210
+commit f791aa51e0488fc595f4bdee5d72c207717dc01f
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu May 17 11:57:49 2018 -0700
+Date:   Thu May 17 12:40:04 2018 -0700
 
-    polymorphic muxing (for social demo) (#1357)
-    
-    * polymorphic muxing (for social demo)
-    support different templates be used for hosted slots.
-    
-    * address comments
-    
-    * fix gift shopping selenium test
+    remove unused arcs-utils methods (#1362)
