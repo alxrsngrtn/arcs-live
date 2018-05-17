@@ -1,5 +1,9 @@
-commit cd1dd8ff3ac64c8d8a50d830553a2f83615f7334
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed May 16 19:00:51 2018 -0700
+commit 19e704cc4659cae7f187b6d388282035287a9191
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu May 17 15:12:17 2018 +1000
 
-    Implement using schema type description to represent handle value in a description. (#1352)
+    Don't store '#' signifier internally for tags. (#1336)
+    
+    * Don't store '#' signifier internally for tags.
+    
+    * Change occurences of #root to root
