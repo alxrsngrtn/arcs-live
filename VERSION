@@ -1,5 +1,5 @@
-commit 30613453b01f016444af083ac3f600e4b9cb9f19
-Author: Bernhard Seefeld <seefeld@gmail.com>
-Date:   Wed May 16 15:51:49 2018 -0700
+commit 14f3135a7f5db8fef075d314ad1bb94261ec2392
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu May 17 10:51:06 2018 +1000
 
-    add verb for reservations recipe (#1350)
+    Allow ~a to be compatible with [~b], if ~a is unconstrained.
