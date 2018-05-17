@@ -3836,11 +3836,11 @@ class TypeChecker {
     let resolvedRight = right.type.resolvedType();
     let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].unwrapPair(resolvedLeft, resolvedRight);
 
-    // an unconstrained variable is compatible with a set.
-    if (leftType.isVariable && !(leftType.variable.canReadSubset) && !(leftType.variable.canWriteSuperset) && rightType.isSetView)
-      return true;
-    if (rightType.isVariable && !(rightType.variable.canReadSubset) && !(rightType.variable.canWriteSuperset) && leftType.isSetView)
-      return true;
+    // a variable is compatible with a set only if it is unconstrained.
+    if (leftType.isVariable && rightType.isSetView)
+      return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
+    if (rightType.isVariable && leftType.isSetView)
+      return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
 
     if (leftType.isVariable || rightType.isVariable) {
       // TODO: everything should use this, eventually. Need to implement the
