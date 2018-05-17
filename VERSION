@@ -1,9 +1,5 @@
-commit 19e704cc4659cae7f187b6d388282035287a9191
+commit b03e529f0d2f2e74c75de1cce3d74f178d2b67c3
 Author: shans <shane.stephens@gmail.com>
-Date:   Thu May 17 15:12:17 2018 +1000
+Date:   Thu May 17 16:09:52 2018 +1000
 
-    Don't store '#' signifier internally for tags. (#1336)
-    
-    * Don't store '#' signifier internally for tags.
-    
-    * Change occurences of #root to root
+    Remove some hashtags from the shell to get things working again
