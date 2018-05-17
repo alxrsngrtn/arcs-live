@@ -1,5 +1,5 @@
-commit 6f5f85425b18961f67a8837d6c18d009b7029841
-Author: Bernhard Seefeld <seefeld@gmail.com>
-Date:   Wed May 16 18:54:47 2018 -0700
+commit cd1dd8ff3ac64c8d8a50d830553a2f83615f7334
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed May 16 19:00:51 2018 -0700
 
-    Avoid '*' when doubleclicking to select a word (#1353)
+    Implement using schema type description to represent handle value in a description. (#1352)
