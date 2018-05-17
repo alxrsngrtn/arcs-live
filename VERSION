@@ -1,5 +1,9 @@
-commit 39ee7d0d5a1b026887e0992a7e990e1848144a75
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri May 18 09:06:53 2018 +1000
+commit 9b9dd554c5f2d544a7b2c133810ca26d6608bf83
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri May 18 09:50:20 2018 +1000
 
-    Uploads screenshots from failed runs to Google Drive (#1358)
+    Verbs are ampersands (#1366)
+    
+    * Switch verb signifier to '&'
+    
+    * Test for parsing of shorthand

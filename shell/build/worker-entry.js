@@ -915,7 +915,7 @@ class ParticleSpec {
     let results = [];
     let verbs = '';
     if (this.verbs.length > 0)
-      verbs = ' ' + this.verbs.map(verb => `#${verb}`).join(' ');
+      verbs = ' ' + this.verbs.map(verb => `&${verb}`).join(' ');
     results.push(`particle ${this.name}${verbs} in '${this.implFile}'`.trim());
     let indent = '  ';
     let writeConnection = (connection, indent) => {
