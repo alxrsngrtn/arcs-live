@@ -558,6 +558,13 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     // TODO: only supports a single template for now. add multiple templates support.
     return this.template;
   }
+  /** @method getTemplateName(slotName)
+   * Override to return a String defining the name of the template for the given slot name.
+   */
+  getTemplateName(slotName) {
+    // TODO: only supports a single template for now. add multiple templates support.
+    return `default`;
+  }
   /** @method willReceiveProps(props, state, oldProps, oldState)
    * Override if necessary, to do things when props change.
    */
@@ -659,6 +666,8 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
       if (slot._requestedContentTypes.has('model')) {
         content.model = this.render(...stateArgs);
       }
+      content.templateName = this.getTemplateName(slot.slotName);
+
       slot.render(content);
     } else if (slot.isRendered) {
       // Send empty object, to clear rendered slot contents.
@@ -667,6 +676,14 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
 
     this.currentSlotName = undefined;
   }
+  forceRenderTemplate(slotName) {
+    this._slotByName.forEach((slot, name) => {
+      if (!slotName || (name == slotName)) {
+        slot._requestedContentTypes.add('template');
+      }
+    });
+  }
+
   fireEvent(slotName, {handler, data}) {
     if (this[handler]) {
       // TODO(sjmiles): remove `this._state` parameter
@@ -1262,7 +1279,12 @@ let re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
  */
 class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_0__dom_particle_js__["a" /* DomParticle */] {
   getTemplate(slotName) {
+    // TODO: add support for multiple slots.
     return this._state.template;
+  }
+  getTemplateName(slotName) {
+    // TODO: add support for multiple slots.
+    return this._state.templateName;
   }
   render(props, state) {
     return state.renderModel;
@@ -1367,8 +1389,9 @@ class Entity {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__transformation_dom_particle_js__ = __webpack_require__(5);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1383,7 +1406,8 @@ class Entity {
 
 
 
-class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__["a" /* TransformationDomParticle */] {
+
+class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation_dom_particle_js__["a" /* TransformationDomParticle */] {
   constructor() {
     super();
     this._itemSubIdByHostedSlotId = new Map();
@@ -1479,7 +1503,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
           continue;
         }
         resolvedHostedParticle =
-            __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__["a" /* ParticleSpec */].fromLiteral(JSON.parse(item.renderParticleSpec));
+            __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* ParticleSpec */].fromLiteral(JSON.parse(item.renderParticleSpec));
         // Re-map compatible handles and compute the connections specific
         // to this item's render particle.
         const listHandleName = 'list';
@@ -1536,7 +1560,14 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
   }
 
   combineHostedTemplate(slotName, hostedSlotId, content) {
-    if (!this._state.template && !!content.template) {
+    let subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
+    if (!subId) {
+      return;
+    }
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(content.templateName, `Template name is missing for slot '${slotName}' (hosted slot ID: '${hostedSlotId}')`);
+    this._setState({templateName: Object.assign(this._state.templateName || {}, {[subId]: `${content.templateName}`})});
+
+    if (content.template) {
       let template = content.template;
       // Replace hosted particle connection in template with the corresponding particle connection names.
       // TODO: make this generic!
@@ -1545,7 +1576,9 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
             new RegExp(`{{${hostedConn}.description}}`, 'g'),
             `{{${conn}.description}}`);
       });
-      this._setState({template});
+      this._setState({template: Object.assign(this._state.template || {}, {[content.templateName]: template})});
+
+      this.forceRenderTemplate();
     }
   }
 

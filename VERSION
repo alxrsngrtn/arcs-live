@@ -1,5 +1,12 @@
-commit b03e529f0d2f2e74c75de1cce3d74f178d2b67c3
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu May 17 16:09:52 2018 +1000
+commit aa0a6f5ab1ad4a42fa5d8843382049160816a210
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu May 17 11:57:49 2018 -0700
 
-    Remove some hashtags from the shell to get things working again
+    polymorphic muxing (for social demo) (#1357)
+    
+    * polymorphic muxing (for social demo)
+    support different templates be used for hosted slots.
+    
+    * address comments
+    
+    * fix gift shopping selenium test

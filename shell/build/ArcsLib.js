@@ -447,9 +447,9 @@ Ruleset.Builder = class {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategizer_strategizer_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__connection_constraint_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__connection_constraint_js__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(93);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__search_js__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__slot_js__ = __webpack_require__(96);
@@ -1030,8 +1030,8 @@ Walker.Independent = __WEBPACK_IMPORTED_MODULE_0__walker_base_js__["a" /* Walker
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(109);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(12);
@@ -2106,7 +2106,7 @@ function getDevtoolsChannel() {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /**
  * @license
@@ -2372,19 +2372,19 @@ class ParticleSpec {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__build_manifest_parser_js__ = __webpack_require__(73);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__recipe_search_js__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__shape_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__shape_js__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__recipe_util_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__storage_storage_provider_factory_js__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__manifest_meta_js__ = __webpack_require__(87);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__recipe_type_checker_js__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__recipe_connection_constraint_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__recipe_connection_constraint_js__ = __webpack_require__(19);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4422,7 +4422,7 @@ class DescriptionFormatter {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_date_web_js__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_date_web_js__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_rulesets_js__ = __webpack_require__(106);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_deviceinfo_web_js__ = __webpack_require__(67);
@@ -4432,13 +4432,13 @@ class DescriptionFormatter {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__strategies_copy_remote_handles_js__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__strategies_assign_handles_by_tag_and_type_js__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__strategies_init_population_js__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_map_slots_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_map_slots_js__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_match_particle_by_verb_js__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_match_recipe_by_verb_js__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_name_unnamed_connections_js__ = __webpack_require__(105);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__strategies_add_use_handles_js__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__strategies_create_description_handle_js__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__strategies_init_search_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__strategies_init_search_js__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__strategies_search_tokens_to_handles_js__ = __webpack_require__(107);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__strategies_search_tokens_to_particles_js__ = __webpack_require__(56);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__strategies_fallback_fate_js__ = __webpack_require__(50);
@@ -4448,7 +4448,7 @@ class DescriptionFormatter {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__strategies_create_handle_group_js__ = __webpack_require__(104);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__strategies_combined_strategy_js__ = __webpack_require__(103);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__strategies_coalesce_recipes_js__ = __webpack_require__(102);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__strategies_resolve_recipe_js__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__strategies_resolve_recipe_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__speculator_js__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__tracelib_trace_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__debug_strategy_explorer_adapter_js__ = __webpack_require__(79);
@@ -4681,6 +4681,26 @@ Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.Resoluti
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = digest;
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+async function digest(str) {
+  let buffer = new TextEncoder('utf-8').encode(str);
+  let digest = await crypto.subtle.digest('SHA-1', buffer);
+  return Array.from(new Uint8Array(digest)).map(x => ('00' + x.toString(16)).slice(-2)).join('');
+}
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shell_components_xen_xen_template_js__ = __webpack_require__(59);
 /**
@@ -4697,6 +4717,8 @@ Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.Resoluti
 
 
 
+const templateByName = new Map();
+
 class DomContext {
   constructor(context, containerKind) {
     this._context = context;
@@ -4704,6 +4726,7 @@ class DomContext {
     // TODO(sjmiles): _liveDom needs new name
     this._liveDom = null;
     this._innerContextBySlotName = {};
+    this._templateName = null;
     this._subId = null;
   }
   get subId() {return this._subId; }
@@ -4713,7 +4736,7 @@ class DomContext {
   }
   static createContext(context, content) {
     let domContext = new DomContext(context);
-    domContext.stampTemplate(domContext.createTemplateElement(content.template), () => {});
+    domContext._stampTemplate(domContext.createTemplateElement(content.template), () => {});
     domContext.updateModel(content.model);
     return domContext;
   }
@@ -4737,6 +4760,27 @@ class DomContext {
   isEqual(context) {
     return this._context.parentNode == context;
   }
+  setTemplate(templatePrefix, templateName, template) {
+    this._templateName = [templatePrefix, templateName].filter(s => s).join('::');
+    if (template) {
+      if (templateByName.has(this._templateName)) {
+        // TODO: check whether the new template is different from the one that was previously used.
+        // Template is being replaced.
+        this.clear();
+      }
+      templateByName.set(this._templateName, this.createTemplateElement(template));
+    }
+  }
+  hasTemplate(templatePrefix) {
+    return DomContext.hasTemplate(templatePrefix);
+  }
+  static hasTemplate(templatePrefix) {
+    return [...templateByName.keys()].find(key => key.startsWith(templatePrefix));
+  }
+  static dispose() {
+    // empty template cache
+    templateByName.clear();
+  }
   updateModel(model) {
     if (this._liveDom) {
       this._liveDom.set(model);
@@ -4756,7 +4800,15 @@ class DomContext {
   createTemplateElement(template) {
     return DomContext.createTemplateElement(template);
   }
-  stampTemplate(template, eventHandler) {
+  stampTemplate(eventHandler) {
+    if (this._templateName) {
+      let template = templateByName.get(this._templateName);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(template, `No template for ${this._templateName}`);
+      this._stampTemplate(template, eventHandler);
+    }
+  }
+
+  _stampTemplate(template, eventHandler) {
     if (!this._liveDom) {
       // TODO(sjmiles): hack to allow subtree elements (e.g. x-list) to marshal events
       this._context._eventMapper = this._eventMapper.bind(this, eventHandler);
@@ -4865,12 +4917,12 @@ class DomContext {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(110);
 /**
  * @license
@@ -4908,6 +4960,13 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
   getTemplate(slotName) {
     // TODO: only supports a single template for now. add multiple templates support.
     return this.template;
+  }
+  /** @method getTemplateName(slotName)
+   * Override to return a String defining the name of the template for the given slot name.
+   */
+  getTemplateName(slotName) {
+    // TODO: only supports a single template for now. add multiple templates support.
+    return `default`;
   }
   /** @method willReceiveProps(props, state, oldProps, oldState)
    * Override if necessary, to do things when props change.
@@ -5010,6 +5069,8 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
       if (slot._requestedContentTypes.has('model')) {
         content.model = this.render(...stateArgs);
       }
+      content.templateName = this.getTemplateName(slot.slotName);
+
       slot.render(content);
     } else if (slot.isRendered) {
       // Send empty object, to clear rendered slot contents.
@@ -5018,6 +5079,14 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
 
     this.currentSlotName = undefined;
   }
+  forceRenderTemplate(slotName) {
+    this._slotByName.forEach((slot, name) => {
+      if (!slotName || (name == slotName)) {
+        slot._requestedContentTypes.add('template');
+      }
+    });
+  }
+
   fireEvent(slotName, {handler, data}) {
     if (this[handler]) {
       // TODO(sjmiles): remove `this._state` parameter
@@ -5056,7 +5125,7 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5320,7 +5389,7 @@ class StateChanges {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5412,7 +5481,7 @@ class ConnectionConstraint {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5742,7 +5811,7 @@ class Schema {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6031,7 +6100,7 @@ ${this._slotsToManifestString()}
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6127,7 +6196,7 @@ class HandleMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategi
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6174,7 +6243,7 @@ class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6329,7 +6398,7 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6338,7 +6407,7 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__map_slots_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__map_slots_js__ = __webpack_require__(24);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -6427,11 +6496,11 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dom_particle_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dom_particle_js__ = __webpack_require__(17);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6453,7 +6522,12 @@ let re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
  */
 class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_0__dom_particle_js__["a" /* DomParticle */] {
   getTemplate(slotName) {
+    // TODO: add support for multiple slots.
     return this._state.template;
+  }
+  getTemplateName(slotName) {
+    // TODO: add support for multiple slots.
+    return this._state.templateName;
   }
   render(props, state) {
     return state.renderModel;
@@ -6481,14 +6555,15 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_0__dom_particl
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_js__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom_context_js__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dom_set_context_js__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__slot_js__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dom_context_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__dom_set_context_js__ = __webpack_require__(82);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6505,16 +6580,16 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_0__dom_particl
 
 
 
-const templates = new Map();
 
-class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* Slot */] {
+class DomSlot extends __WEBPACK_IMPORTED_MODULE_2__slot_js__["a" /* Slot */] {
   constructor(consumeConn, arc, containerKind) {
     super(consumeConn, arc);
-    this._templateName = [this.consumeConn.particle.name, this.consumeConn.name].concat(
-        Object.values(this.consumeConn.particle.connections).filter(conn => conn.type.isInterface).map(conn => conn.handle.id)).join('::');
     this._model = null;
     this._observer = this._initMutationObserver();
     this._containerKind = containerKind;
+  }
+  get templatePrefix() {
+    return `${this.consumeConn.particle.name}::${this.consumeConn.name}`;
   }
 
   setContext(context) {
@@ -6538,17 +6613,12 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* Slot */] {
   }
   _createDomContext() {
     if (this.consumeConn.slotSpec.isSet) {
-      return new __WEBPACK_IMPORTED_MODULE_3__dom_set_context_js__["a" /* DomSetContext */](this._containerKind);
+      return new __WEBPACK_IMPORTED_MODULE_4__dom_set_context_js__["a" /* DomSetContext */](this._containerKind);
     }
-    return new __WEBPACK_IMPORTED_MODULE_2__dom_context_js__["a" /* DomContext */](null, this._containerKind);
+    return new __WEBPACK_IMPORTED_MODULE_3__dom_context_js__["a" /* DomContext */](null, this._containerKind);
   }
-
   dispose() {
     this._observer.disconnect();
-  }
-  static dispose() {
-    // empty template cache
-    templates.clear();
   }
   _initMutationObserver() {
     const observer = new MutationObserver(async (records) => {
@@ -6566,11 +6636,6 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* Slot */] {
   isSameContext(context) {
     return this.getContext().isEqual(context);
   }
-
-  getTemplate() {
-    return templates.get(this._templateName);
-  }
-
   // TODO(sjmiles): triggered when innerPEC sends Render message to outerPEC,
   // (usually by request of DomParticle::render())
   // `handler` is generated by caller (slot-composer::renderSlot())
@@ -6586,12 +6651,8 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* Slot */] {
     if (!this.getContext()) {
       return;
     }
-    if (content.template) {
-      if (this.getTemplate()) {
-        // Template is being replaced.
-        this.getContext().clear();
-      }
-      templates.set(this._templateName, this.getContext().createTemplateElement(content.template));
+    if (content.templateName) {
+      this.getContext().setTemplate(this.templatePrefix, content.templateName, content.template);
     }
     this.eventHandler = handler;
     if (Object.keys(content).indexOf('model') >= 0) {
@@ -6609,13 +6670,7 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* Slot */] {
 
     this.getContext().observe(this._observer);
 
-    // Initialize template, if possible.
-    if (this.getTemplate()) {
-      this.getContext().stampTemplate(this.getTemplate(), this.eventHandler);
-    }
-    // else {
-    // TODO: should trigger request to particle, if template missing?
-    //}
+    this.getContext().stampTemplate(this.eventHandler);
 
     if (this._model) {
       this.getContext().updateModel(this._model);
@@ -6624,15 +6679,34 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* Slot */] {
   getInnerContext(slotName) {
     return this.getContext() && this.getContext().getInnerContext(slotName);
   }
-  constructRenderRequest() {
+  hasTemplate() {
+    return this.getContext().hasTemplate(this._templatePrefix);
+  }
+  constructRenderRequest(hostedSlot) {
     let request = ['model'];
-    if (!this.getTemplate()) {
+    let prefixes = [this.templatePrefix];
+    if (hostedSlot) {
+      prefixes.push(hostedSlot.particle.name);
+      prefixes.push(hostedSlot.slotName);
+    }
+    if (!this.getContext().hasTemplate(prefixes.join('::'))) {
       request.push('template');
     }
     return request;
   }
+  formatHostedContent(hostedSlot, content) {
+    if (content.templateName) {
+      if (typeof content.templateName == 'string') {
+        content.templateName = `${hostedSlot.particleName}::${hostedSlot.slotName}::${content.templateName}`;
+      } else {
+        // TODO(mmandlis): add support for hosted particle rendering set slot.
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, 'TODO: Implement this!');
+      }
+    }
+    return content;
+  }
   static findRootSlots(context) {
-    return new __WEBPACK_IMPORTED_MODULE_2__dom_context_js__["a" /* DomContext */](context, this._containerKind).findRootSlots(context);
+    return new __WEBPACK_IMPORTED_MODULE_3__dom_context_js__["a" /* DomContext */](context, this._containerKind).findRootSlots(context);
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = DomSlot;
@@ -6640,7 +6714,7 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_1__slot_js__["a" /* Slot */] {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6759,7 +6833,7 @@ class Scheduler {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports) {
 
 var g;
@@ -6786,7 +6860,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6804,34 +6878,14 @@ function now() {
 
 
 /***/ }),
-/* 30 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = digest;
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-async function digest(str) {
-  let buffer = new TextEncoder('utf-8').encode(str);
-  let digest = await crypto.subtle.digest('SHA-1', buffer);
-  return Array.from(new Uint8Array(digest)).map(x => ('00' + x.toString(16)).slice(-2)).join('');
-}
-
-
-/***/ }),
 /* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_js__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom_slot_js__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dom_context_js__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom_slot_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dom_context_js__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__description_dom_formatter_js__ = __webpack_require__(81);
 /**
  * @license
@@ -7565,10 +7619,10 @@ function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = tr
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__ = __webpack_require__(71);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(84);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__ = __webpack_require__(74);
 /**
  * @license
@@ -7675,8 +7729,9 @@ class Loader {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__transformation_dom_particle_js__ = __webpack_require__(26);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7691,7 +7746,8 @@ class Loader {
 
 
 
-class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation_dom_particle_js__["a" /* TransformationDomParticle */] {
+
+class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation_dom_particle_js__["a" /* TransformationDomParticle */] {
   constructor() {
     super();
     this._itemSubIdByHostedSlotId = new Map();
@@ -7787,7 +7843,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
           continue;
         }
         resolvedHostedParticle =
-            __WEBPACK_IMPORTED_MODULE_0__particle_spec_js__["a" /* ParticleSpec */].fromLiteral(JSON.parse(item.renderParticleSpec));
+            __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* ParticleSpec */].fromLiteral(JSON.parse(item.renderParticleSpec));
         // Re-map compatible handles and compute the connections specific
         // to this item's render particle.
         const listHandleName = 'list';
@@ -7844,7 +7900,14 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
   }
 
   combineHostedTemplate(slotName, hostedSlotId, content) {
-    if (!this._state.template && !!content.template) {
+    let subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
+    if (!subId) {
+      return;
+    }
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(content.templateName, `Template name is missing for slot '${slotName}' (hosted slot ID: '${hostedSlotId}')`);
+    this._setState({templateName: Object.assign(this._state.templateName || {}, {[subId]: `${content.templateName}`})});
+
+    if (content.template) {
       let template = content.template;
       // Replace hosted particle connection in template with the corresponding particle connection names.
       // TODO: make this generic!
@@ -7853,7 +7916,9 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_1__transformation
             new RegExp(`{{${hostedConn}.description}}`, 'g'),
             `{{${conn}.description}}`);
       });
-      this._setState({template});
+      this._setState({template: Object.assign(this._state.template || {}, {[content.templateName]: template})});
+
+      this.forceRenderTemplate();
     }
   }
 
@@ -8047,13 +8112,19 @@ class Slot {
       if (context.updateParticleName) {
         context.updateParticleName(slotName, particle.name);
       }
-      const contentTypes = this.constructRenderRequest();
-      this.startRenderCallback({particle, slotName, contentTypes});
+      this.startRenderCallback({particle, slotName, contentTypes: this.constructRenderRequest()});
 
       for (let hostedSlot of this._hostedSlotById.values()) {
         if (hostedSlot.particle) {
           // Note: hosted particle may still not be set, if the hosted slot was already created, but the inner recipe wasn't instantiate yet.
-          this.startRenderCallback({particle: hostedSlot.particle, slotName: hostedSlot.slotName, contentTypes});
+          this.startRenderCallback({
+              particle: hostedSlot.particle,
+              slotName: hostedSlot.slotName,
+              // TODO(mmandlis): Only one of each type of hosted particles need to send the particle template.
+              // The problem is with rendering content arriving out of order - currently can't track all slots using the same
+              // template and render them after the template is uploaded.
+              contentTypes: this.constructRenderRequest(hostedSlot)
+          });
         }
       }
     }
@@ -8102,14 +8173,22 @@ class Slot {
            `Unexpected particle name ${hostedParticle.name} for slot ${hostedSlotId}; expected: ${hostedSlot.particleName}`);
     hostedSlot.particle = hostedParticle;
     if (this.getContext() && this.startRenderCallback) {
-      this.startRenderCallback({particle: hostedSlot.particle, slotName: hostedSlot.slotName, contentTypes: this.constructRenderRequest()});
+      this.startRenderCallback({
+          particle: hostedSlot.particle,
+          slotName: hostedSlot.slotName,
+          // TODO(mmandlis): Only one of each type of hosted particles need to send the particle template.
+          // The problem is with rendering content arriving out of order - currently can't track all slots using the same
+          // template and render them after the template is uploaded.
+          contentTypes: this.constructRenderRequest(hostedSlot)
+      });
     }
   }
+  formatHostedContent(hostedSlot, content) { return content; }
 
   // Abstract methods.
   async setContent(content, handler) {}
   getInnerContext(slotName) {}
-  constructRenderRequest() {}
+  constructRenderRequest(hostedSlot) {}
   dispose() {}
   static findRootSlots(context) {}
 }
@@ -8433,7 +8512,7 @@ class AddUseHandles extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(22);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -8470,7 +8549,7 @@ class AssignHandlesByTagAndType extends __WEBPACK_IMPORTED_MODULE_0__handle_mapp
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(22);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -8504,7 +8583,7 @@ class AssignRemoteHandles extends __WEBPACK_IMPORTED_MODULE_0__handle_mapper_bas
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_connection_constraint_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_connection_constraint_js__ = __webpack_require__(19);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -8679,7 +8758,7 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(22);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -9521,7 +9600,7 @@ const Symbols = {identifier: Symbol('id')};
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(20);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -10091,7 +10170,7 @@ const createTemplate = innerHTML => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__recipe_util_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__fake_pec_factory_js__ = __webpack_require__(83);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__storage_storage_provider_factory_js__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__scheduler_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__scheduler_js__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__devtools_shared_arc_registry_js__ = __webpack_require__(64);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__id_js__ = __webpack_require__(85);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__debug_arc_debug_handler_js__ = __webpack_require__(76);
@@ -10679,8 +10758,8 @@ ${this.activeRecipe.toString()}`;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_date_web_js__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_init_search_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_date_web_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_init_search_js__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__planner_js__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__speculator_js__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__suggestion_composer_js__ = __webpack_require__(108);
@@ -11168,7 +11247,8 @@ class SlotComposer {
     let transformationSlot = this._findSlotByHostedSlotId(hostedSlot.slotId);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(transformationSlot, `No transformation slot found for ${hostedSlot.slotId}`);
 
-    this.arc.pec.innerArcRender(transformationSlot.consumeConn.particle, transformationSlot.consumeConn.name, hostedSlot.slotId, content);
+    this.arc.pec.innerArcRender(transformationSlot.consumeConn.particle, transformationSlot.consumeConn.name, hostedSlot.slotId,
+      transformationSlot.formatHostedContent(hostedSlot, content));
 
     return true;
   }
@@ -11200,7 +11280,7 @@ class SlotComposer {
   dispose() {
     this._slots.forEach(slot => slot.dispose());
     this._slots.forEach(slot => slot.setContext(null));
-    this._affordance.slotClass.dispose();
+    this._affordance.contextClass.dispose();
     this._contextSlots.forEach(contextSlot => this._affordance.contextClass.clear(contextSlot));
   }
 }
@@ -11214,10 +11294,10 @@ class SlotComposer {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__ = __webpack_require__(26);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11361,7 +11441,7 @@ function registerArc(arc) {
 
 
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(28)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(29)))
 
 /***/ }),
 /* 65 */
@@ -20169,7 +20249,7 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shell_components_xen_xen_template_js__ = __webpack_require__(59);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom_context_js__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom_context_js__ = __webpack_require__(16);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -20213,6 +20293,20 @@ class DomSetContext {
     return Object.keys(this._contextBySubId).length == Object.keys(context).length &&
            !Object.keys(this._contextBySubId).find(c => this._contextBySubId[c] != context[c]);
   }
+  setTemplate(templatePrefix, templateName, template) {
+    let isStringTemplateName = typeof templateName == 'string';
+    let isStringTemplate = typeof template == 'string';
+    Object.keys(this._contextBySubId).forEach(subId => {
+      let templateNameForSubId = isStringTemplateName ? templateName : templateName[subId];
+      if (templateNameForSubId) {
+        let templateForSubId = (!template || isStringTemplate) ? template : template[templateNameForSubId];
+        this._contextBySubId[subId].setTemplate(templatePrefix, templateNameForSubId, templateForSubId);
+      }
+    });
+  }
+  hasTemplate(templatePrefix) {
+    return __WEBPACK_IMPORTED_MODULE_2__dom_context_js__["a" /* DomContext */].hasTemplate(templatePrefix);
+  }
   updateModel(model) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(model.items, `Model must contain items`);
     model.items.forEach(item => {
@@ -20230,7 +20324,7 @@ class DomSetContext {
   createTemplateElement(template) {
     let templates = {};
     if (typeof template === 'string') {
-      templates[''] = __WEBPACK_IMPORTED_MODULE_2__dom_context_js__["a" /* DomContext */].createTemplateElement(template);
+      return __WEBPACK_IMPORTED_MODULE_2__dom_context_js__["a" /* DomContext */].createTemplateElement(template);
     } else {
       Object.keys(template).forEach(subId => {
         templates[subId] = this._contextBySubId[subId].createTemplateElement(template[subId]);
@@ -20238,12 +20332,9 @@ class DomSetContext {
     }
     return templates;
   }
-  stampTemplate(template, eventHandler, eventMapper) {
+  stampTemplate(eventHandler, eventMapper) {
     Object.keys(this._contextBySubId).forEach(subId => {
-      let templateForSubId = template[subId] || template[''];
-      if (templateForSubId) {
-        this._contextBySubId[subId].stampTemplate(templateForSubId, eventHandler, eventMapper);
-      }
+      this._contextBySubId[subId].stampTemplate(eventHandler, eventMapper);
     });
   }
   observe(observer) {
@@ -20672,7 +20763,7 @@ class InnerPEC {
 /* harmony export (immutable) */ __webpack_exports__["a"] = InnerPEC;
 
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(28)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(29)))
 
 /***/ }),
 /* 87 */
@@ -21584,7 +21675,7 @@ class Particle {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategies_resolve_recipe_js__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategies_resolve_recipe_js__ = __webpack_require__(25);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -23253,18 +23344,18 @@ class NameUnnamedConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_st
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__copy_remote_handles_js__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__assign_handles_by_tag_and_type_js__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__init_population_js__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__map_slots_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__map_slots_js__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__match_particle_by_verb_js__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__match_recipe_by_verb_js__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__add_use_handles_js__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__create_description_handle_js__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__init_search_js__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__init_search_js__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__search_tokens_to_particles_js__ = __webpack_require__(56);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__fallback_fate_js__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__group_handle_connections_js__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__match_free_handles_to_connections_js__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__create_handles_js__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__resolve_recipe_js__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__resolve_recipe_js__ = __webpack_require__(25);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -23701,11 +23792,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_planificator_js__ = __webpack_require__(61);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_planner_js__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__runtime_slot_composer_js__ = __webpack_require__(62);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__runtime_dom_slot_js__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__runtime_dom_slot_js__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__runtime_type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__browser_loader_js__ = __webpack_require__(63);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__tracelib_trace_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__runtime_scheduler_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__runtime_scheduler_js__ = __webpack_require__(28);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
