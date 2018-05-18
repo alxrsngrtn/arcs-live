@@ -1,5 +1,5 @@
-commit 3eed8d66ab6243c3b82acfeec28f3b1ffe949d03
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu May 17 17:35:29 2018 -0700
+commit de5aad56fbaca266c574f67bbb6ddb370a3abab1
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri May 18 10:45:57 2018 +1000
 
-    Show selected tiles and scale down board view in Words feed posts. (#1364)
+    Enabled restaurant demo test (#1367)
