@@ -4720,14 +4720,14 @@ async function digest(str) {
 const templateByName = new Map();
 
 class DomContext {
-  constructor(context, containerKind) {
+  constructor(context, containerKind, subId, templateName) {
     this._context = context;
     this._containerKind = containerKind;
     // TODO(sjmiles): _liveDom needs new name
     this._liveDom = null;
     this._innerContextBySlotName = {};
-    this._templateName = null;
-    this._subId = null;
+    this._templateName = templateName || null;
+    this._subId = subId || null;
   }
   get subId() {return this._subId; }
   set subId(subId) { this._subId = subId; }
@@ -4792,7 +4792,6 @@ class DomContext {
     }
     this._liveDom = null;
     this._innerContextBySlotName = {};
-
   }
   static createTemplateElement(template) {
     return Object.assign(document.createElement('template'), {innerHTML: template});
@@ -4807,7 +4806,6 @@ class DomContext {
       this._stampTemplate(template, eventHandler);
     }
   }
-
   _stampTemplate(template, eventHandler) {
     if (!this._liveDom) {
       // TODO(sjmiles): hack to allow subtree elements (e.g. x-list) to marshal events
@@ -4828,7 +4826,6 @@ class DomContext {
     if (slot === this._context) {
       return true;
     }
-
     let parentNode = slot.parentNode;
     while (parentNode) {
       if (parentNode == this._context) {
@@ -10972,7 +10969,19 @@ class Planificator {
           return suggestion.descriptionText.toLowerCase().includes(this.suggestFilter.search);
         });
       } else {
-        suggestions = suggestions.filter(suggestion => !suggestion.plan.search && !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root')));
+        suggestions = suggestions.filter(suggestion => {
+          let plan = suggestion.plan;
+          let usesHandlesFromActiveRecipe = plan.handles.find(handle => {
+            // TODO(mmandlis): find a generic way to exlude system handles (eg Theme), either by tagging or
+            // by exploring connection directions etc.
+            return !!handle.id && this._arc._activeRecipe.handles.find(activeHandle => activeHandle.id == handle.id);
+          });
+          let usesRemoteNonRootSlots = plan.slots.find(slot => {
+            return !slot.name.includes('root') && !slot.tags.includes('root') && slot.id && !slot.id.includes('root');
+          });
+          let onlyUsesNonRootSlots = !plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
+          return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
+        });
       }
     }
     return suggestions || [];
@@ -20382,11 +20391,14 @@ class DomSetContext {
   }
   initContext(context) {
     Object.keys(context).forEach(subId => {
-      if (!this._contextBySubId[subId] || !this._contextBySubId[subId].isEqual(context[subId])) {
-        this._contextBySubId[subId] = new __WEBPACK_IMPORTED_MODULE_2__dom_context_js__["a" /* DomContext */](null, this._containerKind);
-        this._contextBySubId[subId].subId = subId;
+      let subContext = this._contextBySubId[subId];
+      if (!subContext || !subContext.isEqual(context[subId])) {
+        // Replace the context corresponding to subId with a newly created context,
+        // while maintaining the template name.
+        subContext = new __WEBPACK_IMPORTED_MODULE_2__dom_context_js__["a" /* DomContext */](null, this._containerKind, subId, subContext ? subContext._templateName : null);
+        this._contextBySubId[subId] = subContext;
       }
-      this._contextBySubId[subId].initContext(context[subId]);
+      subContext.initContext(context[subId]);
     });
     // Delete sub-contexts that are not found in the new context.
     Object.keys(this._contextBySubId).forEach(subId => {

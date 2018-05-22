@@ -1,5 +1,5 @@
-commit de5aad56fbaca266c574f67bbb6ddb370a3abab1
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri May 18 10:45:57 2018 +1000
+commit 098d1e23a53a51b48447a782ed756f133161b45f
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon May 21 18:10:34 2018 -0700
 
-    Enabled restaurant demo test (#1367)
+    Fix default planificator suggestions filtering (#1371)
