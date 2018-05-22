@@ -1128,7 +1128,7 @@ class Type {
   collectionOf() {
     return Type.newSetView(this);
   }
-  
+
   mergeTypeVariablesByName(variableMap) {
     if (this.isVariable) {
       let name = this.variable.name;
@@ -1233,17 +1233,17 @@ class Type {
     if (this.isResolved())
       return true;
     if (this.isInterface)
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canEnsureResolved not implemented for ${this}`);
+      return this.interfaceShape.canEnsureResolved();
     if (this.isVariable)
       return this.variable.canEnsureResolved();
     if (this.isSetView)
       return this.primitiveType().canEnsureResolved();
-    return true; 
+    return true;
   }
 
   maybeEnsureResolved() {
     if (this.isInterface)
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `maybeEnsureResolved not implemented for ${this}`);
+      return this.interfaceShape.maybeEnsureResolved();
     if (this.isVariable)
       return this.variable.maybeEnsureResolved();
     if (this.isSetView)
@@ -1298,7 +1298,7 @@ class Type {
         return false;
       if (type1.canWriteSuperset.isEntity)
         return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
-      
+
     }
     return true;
   }
@@ -1424,7 +1424,7 @@ class Type {
       // Spit MyTypeFOO to My Type FOO
       if (this.entitySchema.name) {
         return this.entitySchema.name.replace(/([^A-Z])([A-Z])/g, '$1 $2').replace(/([A-Z][^A-Z])/g, ' $1').replace(/[\s]+/g, ' ').trim();
-      } 
+      }
       return JSON.stringify(this.entitySchema._model);
     }
     if (this.isTuple)
@@ -5939,6 +5939,23 @@ ${this._slotsToManifestString()}
     return new Shape(this.name, handles, slots);
   }
 
+  canEnsureResolved() {
+    for (let typeVar of this._typeVars)
+      if (!typeVar.object[typeVar.field].canEnsureResolved()) return false;
+    return true;
+  }
+
+  maybeEnsureResolved() {
+    for (let typeVar of this._typeVars) {
+      let variable = typeVar.object[typeVar.field];
+      variable = variable.clone(new Map());
+      if (!variable.maybeEnsureResolved()) return false;
+    }
+    for (let typeVar of this._typeVars)
+      typeVar.object[typeVar.field].maybeEnsureResolved();
+    return true;
+  }
+
   resolvedType() {
     return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
   }
@@ -6037,7 +6054,7 @@ ${this._slotsToManifestString()}
 
   restrictType(particleSpec) {
     let newShape = this.clone();
-    return newShape._restrictThis(particleSpec); 
+    return newShape._restrictThis(particleSpec);
   }
 
   _restrictThis(particleSpec) {
@@ -6076,7 +6093,7 @@ ${this._slotsToManifestString()}
 
       return false;
     }
-    
+
     let handleOptions = choose(handleMatches, []);
     let slotOptions = choose(slotMatches, []);
 

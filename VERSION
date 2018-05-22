@@ -1,5 +1,9 @@
-commit 098d1e23a53a51b48447a782ed756f133161b45f
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon May 21 18:10:34 2018 -0700
+commit 6d0c727807f0a951734b50ae6ae006e2628a563a
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue May 22 16:02:25 2018 +1000
 
-    Fix default planificator suggestions filtering (#1371)
+    Adds canEnsureResolved() and maybeEnsureResolved() to Shapes (#1372)
+    
+    * Adds canEnsureResolved() and maybeEnsureResolved() to Shapes
+    
+    * Update to clone types before maybeEnsureResolved()
