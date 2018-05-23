@@ -1038,38 +1038,49 @@ class Particle {
    * Views is a map from view names to view handles.
    */
   setViews(views) {
-
   }
 
-  /** @method onHandleUpdate(handle, data, add, remove)
-   * Called once after setViews() for each readable handle to establish the current handle values.
-   * Thereafter called whenever the data for a given handle has been updated to the next version.
+  /** @method onHandleSync(handle, model, version)
+   * Called for handles that are configured with both keepSynced and notifySync, when they are
+   * updated with the full model of their data. This will occur once after setViews() and any time
+   * thereafter if the handle is resynchronized.
    *
-   * handle is the Handle instance that was updated.
-   * version is the received version number.
-   * update is an object with the following fields:
-   *   variable:   The Entity data, or null if the handle was not set prior to setViews or has been
-   *               explicitly cleared. Only defined for Variable-backed handles.
-   *   collection: An Array of Entities; empty if the handle does not contain any entities. Only
-   *               defined for Collection-backed handles.
-   *   added:      An Array of ids indicating which entities were added. Only defined for updates
-   *               to Collection-backed handles.
-   *   removed:    An Array of ids indicating which entities were removed. Only defined for updates
-   *               to Collection-backed handles.
+   * handle: The Handle instance that was updated.
+   * model: For Variable-backed Handles, the Entity data or null if the Variable is not set.
+   *        For Collection-backed Handles, the Array of Entities, which may be empty.
+   * version: The received version number.
    */
-  onHandleUpdate(handle, version, update) {
-
+  onHandleSync(handle, model, version) {
   }
 
-  /** @method onHandleDesync(handle)
-   * Called when an update event for a Collection-backed handle has been missed.
-   * The default implementation automatically resyncronizes the handle.
+  /** @method onHandleUpdate(handle, update, version)
+   * Called for handles that are configued with notifyUpdate, when change events are received from
+   * the backing store. For handles also configured with keepSynced these events will be correctly
+   * ordered, with some potential skips if a desync occurs. For handles not configured with
+   * keepSynced, all change events will be passed through as they are received.
    *
-   * handle is the Handle instance that has desynchronized.
-   * version is the received version number.
+   * handle: The Handle instance that was updated.
+   * update: An object containing one of the following fields:
+   *    data: The full Entity for a Variable-backed Handle.
+   *    added: An Array of Entities added to a Collection-backed Handle.
+   *    removed: An Array of Entities removed from a Collection-backed Handle.
+   * version: The received version number.
+   */
+  onHandleUpdate(handle, update, version) {
+  }
+
+  /** @method onHandleDesync(handle, version)
+   * Called for handles that are configured with both keepSynced and notifyDesync, when they are
+   * detected as being out-of-date against the backing store. For Variables, the event that triggers
+   * this will also resync the data and thus this call may usually be ignored. For Collections, the
+   * underlying proxy will automatically request a full copy of the stored data to resynchronize.
+   * onHandleSync will be invoked when that is received.
+   *
+   * handle: The Handle instance that was desynchronized.
+   * version: The received version number, which will be more than one ahead of the previously
+   *          stored data.
    */
   onHandleDesync(handle, version) {
-    handle.resync();
   }
 
   constructInnerArc() {
@@ -2758,12 +2769,11 @@ class InnerPEC {
      * only keeping type information on the arc side.
      */
     this._apiPort.onDefineHandle = ({type, identifier, name}) => {
-      let proxy = new __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__["a" /* StorageProxy */](identifier, type, this._apiPort, this, name, null);
-      return [proxy, () => proxy._initialize()];
+      return new __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__["a" /* StorageProxy */](identifier, type, this._apiPort, this, name);
     };
 
     this._apiPort.onCreateHandleCallback = ({type, id, name, callback}) => {
-      let proxy = new __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__["a" /* StorageProxy */](id, type, this._apiPort, this, name, 0);
+      let proxy = new __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__["a" /* StorageProxy */](id, type, this._apiPort, this, name);
       return [proxy, () => callback(proxy)];
     };
 
@@ -2933,10 +2943,9 @@ class InnerPEC {
       }
       handleMap.set(name, handle);
 
-      // Defer notifications for initial handle data until after setViews is called.
-      if (handle.canRead) {
-        registerList.push({proxy, particle, handle});
-      }
+      // Defer registration of handles with proxies until after particles have a chance to
+      // configure them in setViews.
+      registerList.push({proxy, particle, handle});
     });
 
     return [particle, async () => {
@@ -3638,7 +3647,7 @@ class PECOuterPort extends APIPort {
 
     this.registerHandler('Render', {particle: this.Mapped, slotName: this.Direct, content: this.Direct});
     this.registerHandler('InitializeProxy', {handle: this.Mapped, callback: this.Direct});
-    this.registerHandler('ResyncHandle', {handle: this.Mapped, callback: this.Direct});
+    this.registerHandler('SynchronizeProxy', {handle: this.Mapped, callback: this.Direct});
     this.registerHandler('Synchronize', {handle: this.Mapped, target: this.Mapped,
                                     type: this.Direct, callback: this.Direct,
                                     modelCallback: this.Direct, particleId: this.Direct});
@@ -3689,7 +3698,7 @@ class PECInnerPort extends APIPort {
 
     this.registerCall('Render', {particle: this.Mapped, slotName: this.Direct, content: this.Direct});
     this.registerCall('InitializeProxy', {handle: this.Mapped, callback: this.LocalMapped});
-    this.registerCall('ResyncHandle', {handle: this.Mapped, callback: this.LocalMapped});
+    this.registerCall('SynchronizeProxy', {handle: this.Mapped, callback: this.LocalMapped});
     this.registerCall('Synchronize', {handle: this.Mapped, target: this.Mapped,
                                  type: this.Direct, callback: this.LocalMapped,
                                  modelCallback: this.LocalMapped, particleId: this.Direct});
@@ -3716,7 +3725,7 @@ class PECInnerPort extends APIPort {
     this.registerCall('ArcLoadRecipe', {arc: this.Direct, recipe: this.Direct, callback: this.LocalMapped});
 
     this.registerCall('RaiseSystemException', {exception: this.Direct, methodName: this.Direct, particleId: this.Direct});
-    
+
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = PECInnerPort;
@@ -4170,18 +4179,40 @@ class Handle {
     this.canRead = canRead;
     this.canWrite = canWrite;
     this._particleId = particleId;
+    this.options = {
+      keepSynced: true,
+      notifySync: true,
+      notifyUpdate: true,
+      notifyDesync: false,
+    };
   }
 
-  raiseSystemException(exception, method, particleId) {
-    this._proxy.raiseSystemException(exception, method, particleId);
+  raiseSystemException(exception, method) {
+    this._proxy.raiseSystemException(exception, method, this._particleId);
   }
 
   underlyingProxy() {
     return this._proxy;
   }
 
-  resync() {
-    return this._proxy.resync();
+  // `options` may contain any of:
+  // - keepSynced (bool): load full data on startup, maintain data in proxy and resync as required
+  // - notifySync (bool): if keepSynced is true, call onHandleSync when the full data is received
+  // - notifyUpdate (bool): call onHandleUpdate for every change event received
+  // - notifyDesync (bool): if keepSynced is true, call onHandleDesync when desync is detected
+  configure(options) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, 'configure can only be called on readable Handles');
+    try {
+      let keys = Object.keys(this.options);
+      let badKeys = Object.keys(options).filter(o => !keys.includes(o));
+      if (badKeys.length > 0) {
+        throw new Error(`Invalid option in Handle.configure(): ${badKeys}`);
+      }
+      Object.assign(this.options, options);
+    } catch (e) {
+      this.raiseSystemException(e, 'Handle::configure');
+      throw e;
+    }
   }
 
   /** @method on(kind, callback, target)
@@ -4248,10 +4279,19 @@ class Collection extends Handle {
     // TODO: things
   }
 
-  notify(particle, version, update) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, 'notify should not be called for non-readable handles');
-    update.collection = this._restore(update.collection);
-    particle.onHandleUpdate(this, version, update);
+  // Called by StorageProxy.
+  _notify(forSync, particle, version, details) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, '_notify should not be called for non-readable handles');
+    if (forSync) {
+      particle.onHandleSync(this, this._restore(details), version);
+    } else {
+      let update = {};
+      if ('add' in details)
+        update.added = this._restore(details.add);
+      if ('remove' in details)
+        update.removed = this._restore(details.remove);
+      particle.onHandleUpdate(this, update, version);
+    }
   }
 
   /** @method async toList()
@@ -4267,7 +4307,7 @@ class Collection extends Handle {
   }
 
   _restore(list) {
-    return (list != null) ? list.map(a => restore(a, this.entityClass)) : null;
+    return (list !== null) ? list.map(a => restore(a, this.entityClass)) : null;
   }
 
   /** @method store(entity)
@@ -4305,10 +4345,14 @@ class Variable extends Handle {
     super(proxy, name, particleId, canRead, canWrite);
   }
 
-  notify(particle, version, update) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, 'notify should not be called for non-readable handles');
-    update.variable = this._restore(update.variable);
-    particle.onHandleUpdate(this, version, update);
+  // Called by StorageProxy.
+  _notify(forSync, particle, version, details) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, '_notify should not be called for non-readable handles');
+    if (forSync) {
+      particle.onHandleSync(this, this._restore(details), version);
+    } else {
+      particle.onHandleUpdate(this, {data: this._restore(details.data)}, version);
+    }
   }
 
   /** @method async get()
@@ -4325,7 +4369,7 @@ class Variable extends Handle {
   }
 
   _restore(model) {
-    if (model == null)
+    if (model === null)
       return null;
     if (this.type.isEntity) {
       return restore(model, this.entityClass);
@@ -4344,7 +4388,7 @@ class Variable extends Handle {
         throw new Error('Handle not writeable');
       return this._proxy.set(this._serialize(entity), this._particleId);
     } catch (e) {
-      this.raiseSystemException(e, 'Handle::set', this._particleId);
+      this.raiseSystemException(e, 'Handle::set');
       throw e;
     }
   }
@@ -4501,21 +4545,44 @@ class Loader {
 
 
 
+/** @class StorageProxy
+ * Mediates between one or more Handles and the backing store outside the PEC.
+ *
+ * This can operate in two modes, based on how observing handles are configured:
+ * - synchronized: the proxy maintains a copy of the full data held by the backing store, keeping
+ *                 it in sync by listening to change events from the store.
+ * - unsynchronized: the proxy simply passes through calls from Handles to the backing store.
+ *
+ * In synchronized mode we maintain a queue of sorted update events received from the backing store.
+ * While events are received correctly - each update is one version ahead of our stored model - they
+ * are processed immediately and observing handles are notified accordingly. If we receive an update
+ * with a "future" version, the proxy is desynchronized:
+ * - a request for the full data is sent to the backing store;
+ * - any update events received after that (and before the response) are added to the queue;
+ * - any new updates that can be applied will be (which may cause the proxy to "catch up" and resync
+ *   before the full data response arrives);
+ * - once the resync response is received, stale queued updates are discarded and any remaining ones
+ *   are applied.
+ */
 class StorageProxy {
-  constructor(id, type, port, pec, name, version) {
+  constructor(id, type, port, pec, name) {
     this._id = id;
     this._type = type;
     this._port = port;
     this._pec = pec;
     this.name = name;
-    this._version = version;
-    this._variable = undefined;
-    this._collection = undefined;
+
+    // _model is an Entity for Variables or [Entity] for Collections.
+    this._model = undefined;
+    this._version = undefined;
+    this._listenerAttached = false;
+    this._keepSynced = false;
+    this._synchronized = false;
     this._observers = [];
+    this._updates = [];
   }
 
   raiseSystemException(exception, methodName, particleId) {
-
     this._port.RaiseSystemException({exception: {message: exception.message, stack: exception.stack, name: exception.name}, methodName, particleId});
   }
 
@@ -4527,114 +4594,146 @@ class StorageProxy {
     return this._type;
   }
 
-  // Sets up a change listener on the outer storage provider.
-  // Must be invoked after the newly constructed proxy has been mapped into the API channel.
-  _initialize() {
-    let callback = received => {
-      if (received.version < this._version) {
-        console.warn(`StorageProxy '${this._id}' received old version ${received.version}; current is ${this._version}`);
-        return;
-      }
-      if (received.version == this._version) {
-        return;
+  // Called by InnerPEC to associate (potentially multiple) particle/handle pairs with this proxy.
+  register(particle, handle) {
+    if (!handle.canRead)
+      return;
+    this._observers.push({particle, handle});
+
+    // Attach an event listener to the backing store when the first readable handle is registered.
+    if (!this._listenerAttached) {
+      this._port.InitializeProxy({handle: this, callback: x => this._onUpdate(x)});
+      this._listenerAttached = true;
+    }
+
+    // Change to synchronized mode as soon as we get any handle configured with keepSynced and send
+    // a request to get the full model (once).
+    // TODO: drop back to non-sync mode if all handles re-configure to !keepSynced
+    if (handle.options.keepSynced) {
+      if (!this._keepSynced) {
+        this._port.SynchronizeProxy({handle: this, callback: x => this._onSynchronize(x)});
+        this._keepSynced = true;
       }
 
-      let added, removed;
-      if ('data' in received) {
-        // Backing storage is a Variable containing a single Entity.
-        this._variable = received.data;
-      } else if ('list' in received) {
-        // Backing storage is a Collection and we've been given the full set.
-        this._collection = received.list;
-      } else if (this._version !== null && received.version === this._version + 1) {
-        // We've been given the next version of a Collection and have previously received the initial set.
-        [added, removed] = this._processCollectionUpdate(received);
-      } else {
-        // We've missed an update or didn't receive the initial set.
-        // TODO: move to a "desync" state that discards new updates until resynced?
-        this._observers.forEach(({particle, handle}) => particle.onHandleDesync(handle, received.version));
-        return;
+      // If a handle configured for sync notifications registers after we've received the full
+      // model, notify it immediately.
+      // TODO: add a unit test to cover this case
+      if (handle.options.notifySync && this._synchronized) {
+        handle._notify(true, particle, this._version, this._model);
       }
-      this._version = received.version;
-      this._observers.forEach(({particle, handle}) => {
-        handle.notify(particle, this._version, this._buildUpdate(added, removed));
-      });
-    };
-    // TODO: consider deferring this until we have a registered observer; if all particles in the
-    // current arc only ever write to this proxy, there's no need to catch update events.
-    this._port.InitializeProxy({handle: this, callback});
+    }
   }
 
-  // Folds the add/remove change into the stored _collection model, and returns the ids of the
-  // entities added or removed.
-  _processCollectionUpdate(received) {
-    if ('add' in received) {
-      this._collection.push(...received.add);
-      return [received.add.map(e => e.id), undefined];
+  // `model` contains 'version' and one of 'data' or 'list'.
+  _onSynchronize(model) {
+    if (this._version !== undefined && model.version <= this._version) {
+      console.warn(`StorageProxy '${this._id}' received stale model version ${model.version}; ` +
+                   `current is ${this._version}`);
+      return;
     }
-    if ('remove' in received) {
-      let keep = [];
-      let removed = [];
-      for (let held of this._collection) {
-        keep.push(held);
-        // TODO: avoid revisiting removed items? (e.g. use a set of ids, prune as they are matched)
-        for (let item of received.remove) {
-          if (held.id === item.id) {
-            keep.pop();
-            removed.push(item.id);
-            break;
+
+    // We may have queued updates that were received after a desync; discard any that are stale
+    // with respect to the received model.
+    this._synchronized = true;
+    while (this._updates.length > 0 && this._updates[0].version <= model.version) {
+      this._updates.shift();
+    }
+
+    // Replace the stored data with the new one and notify handles that are configured for it.
+    this._version = model.version;
+    if ('data' in model) {
+      this._model = model.data;
+    } else if ('list' in model) {
+      this._model = model.list;
+    } else {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `StorageProxy received invalid synchronize event: ${JSON.stringify(received)}`);
+    }
+    for (let {handle, particle} of this._observers) {
+      if (handle.options.keepSynced && handle.options.notifySync) {
+        handle._notify(true, particle, this._version, this._model, null);
+      }
+    }
+    this._processUpdates();
+  }
+
+  // `update` contains 'version' and one of 'data', 'add' or 'remove'.
+  _onUpdate(update) {
+    // Immediately notify any handles that are not configured with keepSynced but do want updates.
+    for (let {handle, particle} of this._observers) {
+      if (!handle.options.keepSynced && handle.options.notifyUpdate) {
+        handle._notify(false, particle, update.version, update);
+      }
+    }
+
+    // Bail if we're not in synchronized mode or this is a stale event.
+    if (!this._keepSynced)
+      return;
+    if (update.version <= this._version) {
+      console.warn(`StorageProxy '${this._id}' received stale update version ${update.version}; ` +
+                   `current is ${this._version}`);
+      return;
+    }
+
+    // Add the update to the queue and process. Most of the time the queue should be empty and
+    // _processUpdates will consume this event immediately.
+    this._updates.push(update);
+    this._updates.sort((a, b) => a.version - b.version);
+    this._processUpdates();
+  }
+
+  _processUpdates() {
+    // Consume all queued updates whose versions are monotonically increasing from our stored one.
+    while (this._updates.length > 0 && this._updates[0].version === this._version + 1) {
+      let update = this._updates.shift();
+
+      // Fold the update into our stored model.
+      this._version = update.version;
+      if ('data' in update) {
+        this._model = update.data;
+      } else if ('add' in update) {
+        this._model.push(...update.add);
+      } else if ('remove' in update) {
+        let keep = [];
+        for (let held of this._model) {
+          keep.push(held);
+          // TODO: avoid revisiting removed items? (eg. use a set of ids, prune as they are matched)
+          for (let item of update.remove) {
+            if (held.id === item.id) {
+              keep.pop();
+              break;
+            }
+          }
+        }
+        this._model = keep;
+      } else {
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `StorageProxy received invalid update event: ${JSON.stringify(update)}`);
+      }
+
+      // Notify handles configured with keepSynced and notifyUpdates (non-keepSynced handles are
+      // notified as updates are received).
+      for (let {handle, particle} of this._observers) {
+        if (handle.options.keepSynced && handle.options.notifyUpdate) {
+          handle._notify(false, particle, this._version, update);
+        }
+      }
+    }
+
+    // If we still have update events queued, we must have received a future version are are now
+    // desynchronized. Send a request for the full model and notify handles configured for it.
+    if (this._updates.length > 0) {
+      if (this._synchronized) {
+        this._synchronized = false;
+        this._port.SynchronizeProxy({handle: this, callback: x => this._onSynchronize(x)});
+        for (let {handle, particle} of this._observers) {
+          if (handle.options.notifyDesync) {
+            particle.onHandleDesync(handle, this._updates[0].version);
           }
         }
       }
-      this._collection = keep;
-      return [undefined, removed];
+    } else if (!this._synchronized) {
+      // If we were desynced but have now consumed all update events, we've caught up.
+      this._synchronized = true;
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `StorageProxy received invalid change event: ${JSON.stringify(received)}`);
-  }
-
-  // Called by InnerPEC to associate (potentially multiple) particle/handle pairs with this proxy.
-  register(particle, handle) {
-    this._observers.push({particle, handle});
-    if (this._version != null) {
-      handle.notify(particle, this._version, this._buildUpdate());
-    }
-  }
-
-  // Builds the update object passed to particles. Only relevant fields are defined. Note that we
-  // don't want to say 'update.x = undefined', because then ('x' in update) still returns true.
-  _buildUpdate(added, removed) {
-    let update = {};
-    if (this._variable !== undefined) {
-      update.variable = this._variable;
-    }
-    if (this._collection !== undefined) {
-      update.collection = this._collection;
-    }
-    if (added !== undefined) {
-      update.added = added;
-    }
-    if (removed !== undefined) {
-      update.removed = removed;
-    }
-    return update;
-  }
-
-  // Retrieve the full data from the backing storage.
-  resync() {
-    let callback = received => {
-      if ('data' in received) {
-        this._variable = received.data;
-      } else if ('list' in received) {
-        this._collection = received.list;
-      } else {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `StorageProxy received invalid resync event: ${JSON.stringify(received)}`);
-      }
-      this._version = received.version;
-      this._observers.forEach(({particle, handle}) => {
-        handle.notify(particle, this._version, this._buildUpdate());
-      });
-    };
-    this._port.ResyncHandle({handle: this, callback});
   }
 
   generateIDComponents() {
