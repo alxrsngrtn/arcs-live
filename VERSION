@@ -1,5 +1,15 @@
-commit bc3b63aff6dc3ffe746c63486666ad08d0730597
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed May 23 11:05:59 2018 +1000
+commit 3d0a45efd319122b023ad90554f5fb6cd4fc475f
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed May 23 15:53:19 2018 -0700
 
-    Rework StorageProxy to allow per-Handle configuration of syncing and notifications (#1373)
+    Fix apps/vr, update vr manifest syntax, install voice command subsystem (#1378)
+    
+    * update manifest syntax
+    
+    * empty-string templates cause an exception, as a stopgap, add a space
+    
+    * differentiate shapes by consumed slot
+    
+    * fix vr app
+    
+    * voice-driven UI support (via shift-key-listen)
