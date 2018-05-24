@@ -1,23 +1,5 @@
-commit 0ce48a012a042615a04d68816f0742808112a6c7
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu May 24 11:42:21 2018 -0700
+commit 72f54f5d8c0ab907f3776ec4ae7fcdf5aa98ae4d
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri May 25 09:17:51 2018 +1000
 
-    Multi-shell App Mods ala Berni (#1379)
-    
-    * use full signature in fire override
-    
-    * intercept profile to send to meta-shell
-    
-    * don't jack anchor tags used as buttons (no href)
-    
-    * Berni-design for multishell
-    
-    * standardize generic-ish recipes
-    
-    * generalizer experiment
-    
-    * more generalizer plumbing
-    
-    * make frame URL available by right-clicking the magic-avatar-button
-    
-    * fix lint problem
+    Integrate the local model in StorageProxy with get/set/etc (#1377)
