@@ -1,15 +1,5 @@
-commit 3d0a45efd319122b023ad90554f5fb6cd4fc475f
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed May 23 15:53:19 2018 -0700
+commit 86c214c2b7d570c8cf545c8ce575a99101792c40
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu May 24 14:56:46 2018 +1000
 
-    Fix apps/vr, update vr manifest syntax, install voice command subsystem (#1378)
-    
-    * update manifest syntax
-    
-    * empty-string templates cause an exception, as a stopgap, add a space
-    
-    * differentiate shapes by consumed slot
-    
-    * fix vr app
-    
-    * voice-driven UI support (via shift-key-listen)
+    Update deprecated particle syntax in manifest-parser-test. (#1380)
