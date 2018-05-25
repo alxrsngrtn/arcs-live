@@ -555,16 +555,9 @@ class Recipe {
         && this._particles.every(particle => particle.isResolved())
         && this._slots.every(slot => slot.isResolved())
         && this.handleConnections.every(connection => connection.isResolved())
-        // Verify slot connections: all required slot connections must be resolved,
-        // and for each particle their must be an at least one resolved slot connection.
-        && this._particles.every(particle => {
-          let connections = Object.values(particle.consumedSlotConnections);
-          if (connections.length == 0) {
-            return true;
-          }
-          return !!connections.find(connection => connection.isResolved())
-              && connections.every(connection => !connection.slotSpec.isRequired || connection.isResolved());
-        });
+        && this.slotConnections.every(slotConnection => slotConnection.isResolved());
+
+    // TODO: check recipe level resolution requirements, eg there is no slot loops.
   }
 
   _findDuplicate(items, options) {
@@ -2167,7 +2160,7 @@ class SlotSpec {
     if (!slotModel.providedSlots)
       return;
     slotModel.providedSlots.forEach(ps => {
-      this.providedSlots.push(new ProvidedSlotSpec(ps.name, ps.isSet, ps.tags, ps.formFactor, ps.handles));
+      this.providedSlots.push(new ProvidedSlotSpec(ps));
     });
   }
 
@@ -2177,12 +2170,13 @@ class SlotSpec {
 }
 
 class ProvidedSlotSpec {
-  constructor(name, isSet, tags, formFactor, handles) {
-    this.name = name;
-    this.isSet = isSet;
-    this.tags = tags || [];
-    this.formFactor = formFactor; // TODO: deprecate form factors?
-    this.handles = handles || [];
+  constructor(slotModel) {
+    this.name = slotModel.name;
+    this.isRequired = slotModel.isRequired;
+    this.isSet = slotModel.isSet;
+    this.tags = slotModel.tags || [];
+    this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
+    this.handles = slotModel.handles || [];
   }
 }
 
@@ -2310,7 +2304,6 @@ class ParticleSpec {
     }
 
     this.affordance.filter(a => a != 'mock').forEach(a => results.push(`  affordance ${a}`));
-    // TODO: support form factors
     this.slots.forEach(s => {
       // Consume slot.
       let consume = [];
@@ -2331,7 +2324,11 @@ class ParticleSpec {
       }
       // Provided slots.
       s.providedSlots.forEach(ps => {
-        let provide = ['provide'];
+        let provide = [];
+        if (ps.isRequired) {
+          provide.push('must');
+        }
+        provide.push('provide');
         if (ps.isSet) {
           provide.push('set of');
         }
@@ -9368,7 +9365,7 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
                     if (slotConstraints[consumeSlot].targetSlot) {
                       let {mappedSlot} = outputRecipe.updateToClone({mappedSlot: slotConstraints[consumeSlot].targetSlot});
                       particle.consumedSlotConnections[consumeSlot]._targetSlot = mappedSlot;
-                      mappedSlot._consumerConnections.push(particle.consumedSlotConnections[consumeSlot]); 
+                      mappedSlot.consumeConnections.push(particle.consumedSlotConnections[consumeSlot]); 
                     }
                     for (let slotName in slotConstraints[consumeSlot].providedSlots) {
                       let slot = slotConstraints[consumeSlot].providedSlots[slotName];
@@ -12374,7 +12371,7 @@ const parser = /*
               formFactor
             };
           },
-        peg$c123 = function(isSet, name, tags, items) {
+        peg$c123 = function(isRequired, isSet, name, tags, items) {
             let formFactor = null;
             let handles = [];
             items = items ? extractIndented(items) : [];
@@ -12392,6 +12389,7 @@ const parser = /*
               location: location(),
               name,
               tags: optional(tags, tags => tags[1], []),
+              isRequired: optional(isRequired, isRequired => isRequired[0] == 'must', false),
               isSet: !!isSet,
               formFactor,
               handles
@@ -15691,122 +15689,151 @@ const parser = /*
     }
 
     function peg$parseParticleProvidedSlot() {
-      var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12;
+      var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 7) === peg$c57) {
-        s1 = peg$c57;
-        peg$currPos += 7;
+      s1 = peg$currPos;
+      if (input.substr(peg$currPos, 4) === peg$c53) {
+        s2 = peg$c53;
+        peg$currPos += 4;
       } else {
+        s2 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c54); }
+      }
+      if (s2 !== peg$FAILED) {
+        s3 = peg$parsewhiteSpace();
+        if (s3 !== peg$FAILED) {
+          s2 = [s2, s3];
+          s1 = s2;
+        } else {
+          peg$currPos = s1;
+          s1 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s1;
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c58); }
+      }
+      if (s1 === peg$FAILED) {
+        s1 = null;
       }
       if (s1 !== peg$FAILED) {
-        s2 = peg$parsewhiteSpace();
+        if (input.substr(peg$currPos, 7) === peg$c57) {
+          s2 = peg$c57;
+          peg$currPos += 7;
+        } else {
+          s2 = peg$FAILED;
+          if (peg$silentFails === 0) { peg$fail(peg$c58); }
+        }
         if (s2 !== peg$FAILED) {
-          s3 = peg$currPos;
-          if (input.substr(peg$currPos, 6) === peg$c59) {
-            s4 = peg$c59;
-            peg$currPos += 6;
-          } else {
-            s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c60); }
-          }
-          if (s4 !== peg$FAILED) {
-            s5 = peg$parsewhiteSpace();
-            if (s5 !== peg$FAILED) {
-              s4 = [s4, s5];
-              s3 = s4;
-            } else {
-              peg$currPos = s3;
-              s3 = peg$FAILED;
-            }
-          } else {
-            peg$currPos = s3;
-            s3 = peg$FAILED;
-          }
-          if (s3 === peg$FAILED) {
-            s3 = null;
-          }
+          s3 = peg$parsewhiteSpace();
           if (s3 !== peg$FAILED) {
-            s4 = peg$parselowerIdent();
-            if (s4 !== peg$FAILED) {
-              s5 = peg$currPos;
+            s4 = peg$currPos;
+            if (input.substr(peg$currPos, 6) === peg$c59) {
+              s5 = peg$c59;
+              peg$currPos += 6;
+            } else {
+              s5 = peg$FAILED;
+              if (peg$silentFails === 0) { peg$fail(peg$c60); }
+            }
+            if (s5 !== peg$FAILED) {
               s6 = peg$parsewhiteSpace();
               if (s6 !== peg$FAILED) {
-                s7 = peg$parseTagList();
-                if (s7 !== peg$FAILED) {
-                  s6 = [s6, s7];
-                  s5 = s6;
-                } else {
-                  peg$currPos = s5;
-                  s5 = peg$FAILED;
-                }
+                s5 = [s5, s6];
+                s4 = s5;
               } else {
-                peg$currPos = s5;
-                s5 = peg$FAILED;
+                peg$currPos = s4;
+                s4 = peg$FAILED;
               }
-              if (s5 === peg$FAILED) {
-                s5 = null;
-              }
+            } else {
+              peg$currPos = s4;
+              s4 = peg$FAILED;
+            }
+            if (s4 === peg$FAILED) {
+              s4 = null;
+            }
+            if (s4 !== peg$FAILED) {
+              s5 = peg$parselowerIdent();
               if (s5 !== peg$FAILED) {
-                s6 = peg$parseeolWhiteSpace();
-                if (s6 !== peg$FAILED) {
-                  s7 = peg$currPos;
-                  s8 = peg$parseIndent();
+                s6 = peg$currPos;
+                s7 = peg$parsewhiteSpace();
+                if (s7 !== peg$FAILED) {
+                  s8 = peg$parseTagList();
                   if (s8 !== peg$FAILED) {
-                    s9 = [];
-                    s10 = peg$currPos;
-                    s11 = peg$parseSameIndent();
-                    if (s11 !== peg$FAILED) {
-                      s12 = peg$parseParticleProvidedSlotItem();
+                    s7 = [s7, s8];
+                    s6 = s7;
+                  } else {
+                    peg$currPos = s6;
+                    s6 = peg$FAILED;
+                  }
+                } else {
+                  peg$currPos = s6;
+                  s6 = peg$FAILED;
+                }
+                if (s6 === peg$FAILED) {
+                  s6 = null;
+                }
+                if (s6 !== peg$FAILED) {
+                  s7 = peg$parseeolWhiteSpace();
+                  if (s7 !== peg$FAILED) {
+                    s8 = peg$currPos;
+                    s9 = peg$parseIndent();
+                    if (s9 !== peg$FAILED) {
+                      s10 = [];
+                      s11 = peg$currPos;
+                      s12 = peg$parseSameIndent();
                       if (s12 !== peg$FAILED) {
-                        s11 = [s11, s12];
-                        s10 = s11;
-                      } else {
-                        peg$currPos = s10;
-                        s10 = peg$FAILED;
-                      }
-                    } else {
-                      peg$currPos = s10;
-                      s10 = peg$FAILED;
-                    }
-                    while (s10 !== peg$FAILED) {
-                      s9.push(s10);
-                      s10 = peg$currPos;
-                      s11 = peg$parseSameIndent();
-                      if (s11 !== peg$FAILED) {
-                        s12 = peg$parseParticleProvidedSlotItem();
-                        if (s12 !== peg$FAILED) {
-                          s11 = [s11, s12];
-                          s10 = s11;
+                        s13 = peg$parseParticleProvidedSlotItem();
+                        if (s13 !== peg$FAILED) {
+                          s12 = [s12, s13];
+                          s11 = s12;
                         } else {
-                          peg$currPos = s10;
-                          s10 = peg$FAILED;
+                          peg$currPos = s11;
+                          s11 = peg$FAILED;
                         }
                       } else {
-                        peg$currPos = s10;
-                        s10 = peg$FAILED;
+                        peg$currPos = s11;
+                        s11 = peg$FAILED;
                       }
-                    }
-                    if (s9 !== peg$FAILED) {
-                      s8 = [s8, s9];
-                      s7 = s8;
+                      while (s11 !== peg$FAILED) {
+                        s10.push(s11);
+                        s11 = peg$currPos;
+                        s12 = peg$parseSameIndent();
+                        if (s12 !== peg$FAILED) {
+                          s13 = peg$parseParticleProvidedSlotItem();
+                          if (s13 !== peg$FAILED) {
+                            s12 = [s12, s13];
+                            s11 = s12;
+                          } else {
+                            peg$currPos = s11;
+                            s11 = peg$FAILED;
+                          }
+                        } else {
+                          peg$currPos = s11;
+                          s11 = peg$FAILED;
+                        }
+                      }
+                      if (s10 !== peg$FAILED) {
+                        s9 = [s9, s10];
+                        s8 = s9;
+                      } else {
+                        peg$currPos = s8;
+                        s8 = peg$FAILED;
+                      }
                     } else {
-                      peg$currPos = s7;
-                      s7 = peg$FAILED;
+                      peg$currPos = s8;
+                      s8 = peg$FAILED;
                     }
-                  } else {
-                    peg$currPos = s7;
-                    s7 = peg$FAILED;
-                  }
-                  if (s7 === peg$FAILED) {
-                    s7 = null;
-                  }
-                  if (s7 !== peg$FAILED) {
-                    peg$savedPos = s0;
-                    s1 = peg$c123(s3, s4, s5, s7);
-                    s0 = s1;
+                    if (s8 === peg$FAILED) {
+                      s8 = null;
+                    }
+                    if (s8 !== peg$FAILED) {
+                      peg$savedPos = s0;
+                      s1 = peg$c123(s1, s4, s5, s6, s8);
+                      s0 = s1;
+                    } else {
+                      peg$currPos = s0;
+                      s0 = peg$FAILED;
+                    }
                   } else {
                     peg$currPos = s0;
                     s0 = peg$FAILED;
@@ -21687,9 +21714,9 @@ class Particle {
 
   isResolved(options) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this));
-    // TODO: slots
-    if (this.consumedSlotConnections.length > 0) {
-      let fulfilledSlotConnections = this.consumedSlotConnections.filter(connection => connection.targetSlot !== undefined);
+    let consumedSlotConnections = Object.values(this.consumedSlotConnections);
+    if (consumedSlotConnections.length > 0) {
+      let fulfilledSlotConnections = consumedSlotConnections.filter(connection => connection.targetSlot !== undefined);
       if (fulfilledSlotConnections.length == 0) {
         if (options && options.showUnresolved) {
           options.details = 'unfullfilled slot connections';
@@ -22028,12 +22055,24 @@ class SlotConnection {
       return false;
     }
     if (!this.targetSlot) {
-      if (options) {
-        options.details = 'missing target-slot';
+      if (this.slotSpec.isRequired) {
+        if (options) {
+          options.details = 'missing target-slot';
+        }
+        return false;
       }
-      return false;
+      return true;
     }
-    return true;
+
+    return this.slotSpec.providedSlots.every(providedSlot => {
+      if (providedSlot.isRequired && this.providedSlots[providedSlot.name].consumeConnections.length == 0) {
+        if (options) {
+          options.details = 'missing consuming slot';
+        }
+        return false;
+      }
+      return true;
+    });
   }
 
   isConnectedToInternalSlot() {
@@ -22113,7 +22152,7 @@ class Slot {
     this._formFactor = undefined;
     this._handleConnections = []; // HandleConnection* (can only be set if source connection is set and particle in slot connections is set)
     this._sourceConnection = undefined; // SlotConnection
-    this._consumerConnections = []; // SlotConnection*
+    this._consumeConnections = []; // SlotConnection*
   }
 
   get recipe() { return this._recipe; }
@@ -22130,7 +22169,7 @@ class Slot {
   get handleConnections() { return this._handleConnections; }
   get sourceConnection() { return this._sourceConnection; }
   set sourceConnection(sourceConnection) { this._sourceConnection = sourceConnection; }
-  get consumeConnections() { return this._consumerConnections; }
+  get consumeConnections() { return this._consumeConnections; }
   getProvidedSlotSpec() {
     // TODO: should this return something that indicates this isn't available yet instead of 
     // the constructed {isSet: false, tags: []}?
@@ -22153,7 +22192,7 @@ class Slot {
         slot.sourceConnection._providedSlots[slot.name] = slot;
       this._handleConnections.forEach(connection => slot._handleConnections.push(cloneMap.get(connection)));
     }
-    this._consumerConnections.forEach(connection => cloneMap.get(connection).connectToSlot(slot));
+    this._consumeConnections.forEach(connection => cloneMap.get(connection).connectToSlot(slot));
     return slot;
   }
 
@@ -22164,8 +22203,8 @@ class Slot {
 
   _finishNormalize() {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this._source));
-    this._consumerConnections.forEach(cc => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(cc)));
-    this._consumerConnections.sort(__WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* compareComparables */]);
+    this._consumeConnections.forEach(cc => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(cc)));
+    this._consumeConnections.sort(__WEBPACK_IMPORTED_MODULE_1__util_js__["a" /* compareComparables */]);
     Object.freeze(this);
   }
 
@@ -22179,10 +22218,10 @@ class Slot {
   }
 
   removeConsumeConnection(slotConnection) {
-    let idx = this._consumerConnections.indexOf(slotConnection);
+    let idx = this._consumeConnections.indexOf(slotConnection);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(idx > -1);
-    this._consumerConnections.splice(idx, 1);
-    if (this._consumerConnections.length == 0)
+    this._consumeConnections.splice(idx, 1);
+    if (this._consumeConnections.length == 0)
       this.remove();
   }
 

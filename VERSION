@@ -1,5 +1,5 @@
-commit 72f54f5d8c0ab907f3776ec4ae7fcdf5aa98ae4d
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri May 25 09:17:51 2018 +1000
+commit c888c417e4a31188b22dfcd15f917b50db1fa8c0
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri May 25 10:28:18 2018 +1000
 
-    Integrate the local model in StorageProxy with get/set/etc (#1377)
+    Support required provide slots in manifest and recipe resolution. (#1381)
