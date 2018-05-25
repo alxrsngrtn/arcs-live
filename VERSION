@@ -1,5 +1,5 @@
-commit c888c417e4a31188b22dfcd15f917b50db1fa8c0
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri May 25 10:28:18 2018 +1000
+commit f2caf3c220d5bb628b816e89ab0f515a7240b84e
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri May 25 14:15:47 2018 +1000
 
-    Support required provide slots in manifest and recipe resolution. (#1381)
+    Allow constraints to use tags to target handles. (#1376)
