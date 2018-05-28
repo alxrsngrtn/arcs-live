@@ -1,7 +1,5 @@
-commit bec3d58e3e9155bec4aa758cedd2947ad928d352
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Sun May 27 19:29:28 2018 -0700
+commit f288ce5a1be44571a74c9a3b5773fcd4be0c0201
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon May 28 15:13:40 2018 +1000
 
-    Replace broken link to runtime/browser/lib with shell/components (#1385)
-    
-    These files moved in 1fd72f8
+    Introduces a StubLoader for tests (#1387)
