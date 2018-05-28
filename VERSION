@@ -1,5 +1,9 @@
-commit f2caf3c220d5bb628b816e89ab0f515a7240b84e
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri May 25 14:15:47 2018 +1000
+commit c4a871abc686f79a1f4f3c7a3fdba9875300cf3d
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon May 28 10:09:07 2018 +1000
 
-    Allow constraints to use tags to target handles. (#1376)
+    Rework StorageProxy tests to use faked interfaces instead of a running arc (#1382)
+    
+    * Rework StorageProxy unit tests to use faked interfaces instead of a running arc.
+    
+    * Forgot a couple of comments
