@@ -835,10 +835,10 @@ class ParticleSpec {
     this.slots = new Map();
     if (model.slots)
       model.slots.forEach(s => this.slots.set(s.name, new SlotSpec(s)));
-    // Verify provided slots use valid view connection names.
+    // Verify provided slots use valid handle connection names.
     this.slots.forEach(slot => {
       slot.providedSlots.forEach(ps => {
-        ps.handles.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* assert */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent view constraint ', v));
+        ps.handles.forEach(v => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__["a" /* assert */])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ', v));
       });
     });
   }
@@ -969,7 +969,7 @@ class ParticleSpec {
         if (ps.formFactor) {
           results.push(`      formFactor ${ps.formFactor}`);
         }
-        ps.handles.forEach(psv => results.push(`      view ${psv}`));
+        ps.handles.forEach(handle => results.push(`      handle ${handle}`));
       });
     });
     // Description
@@ -1435,7 +1435,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
       hostedParticle,
       views,
       arc) {
-    let otherMappedViews = [];
+    let otherMappedHandles = [];
     let otherConnections = [];
     let index = 2;
     const skipConnectionNames = [listHandleName, particleHandleName];
@@ -1446,7 +1446,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
       // TODO(wkorman): For items with embedded recipes we may need a map
       // (perhaps id to index) to make sure we don't map a handle into the inner
       // arc multiple times unnecessarily.
-      otherMappedViews.push(
+      otherMappedHandles.push(
           `map '${await arc.mapHandle(otherView._proxy)}' as v${index}`);
       let hostedOtherConnection = hostedParticle.connections.find(
           conn => conn.isCompatibleType(otherView.type));
@@ -1458,7 +1458,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
         this._connByHostedConn.set(hostedOtherConnection.name, connectionName);
       }
     }
-    return [otherMappedViews, otherConnections];
+    return [otherMappedHandles, otherConnections];
   }
 
   async setViews(views) {
@@ -1468,12 +1468,12 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
     const particleHandleName = 'hostedParticle';
     let particleView = views.get(particleHandleName);
     let hostedParticle = null;
-    let otherMappedViews = [];
+    let otherMappedHandles = [];
     let otherConnections = [];
     if (particleView) {
       hostedParticle = await particleView.get();
       if (hostedParticle) {
-        [otherMappedViews, otherConnections] =
+        [otherMappedHandles, otherConnections] =
             await this._mapParticleConnections(
                 listHandleName, particleHandleName, hostedParticle, views, arc);
       }
@@ -1482,7 +1482,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
       arc,
       type: views.get(listHandleName).type,
       hostedParticle,
-      otherMappedViews,
+      otherMappedHandles,
       otherConnections
     });
 
@@ -1491,7 +1491,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
 
   async willReceiveProps(
       {list},
-      {arc, type, hostedParticle, otherMappedViews, otherConnections}) {
+      {arc, type, hostedParticle, otherMappedHandles, otherConnections}) {
     if (list.length > 0) {
       this.relevance = 0.1;
     }
@@ -1499,16 +1499,16 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
     for (let [index, item] of this.getListEntries(list)) {
       let resolvedHostedParticle = hostedParticle;
       if (this.handleIds[item.id]) {
-        let itemView = await this.handleIds[item.id];
-        itemView.set(item);
+        let itemHandle = await this.handleIds[item.id];
+        itemHandle.set(item);
         continue;
       }
 
-      let itemViewPromise =
+      let itemHandlePromise =
           arc.createHandle(type.primitiveType(), 'item' + index);
-      this.handleIds[item.id] = itemViewPromise;
+      this.handleIds[item.id] = itemHandlePromise;
 
-      let itemView = await itemViewPromise;
+      let itemHandle = await itemHandlePromise;
 
       if (!resolvedHostedParticle) {
         // If we're muxing on behalf of an item with an embedded recipe, the
@@ -1523,7 +1523,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
         // to this item's render particle.
         const listHandleName = 'list';
         const particleHandleName = 'renderParticle';
-        [otherMappedViews, otherConnections] =
+        [otherMappedHandles, otherConnections] =
             await this._mapParticleConnections(
                 listHandleName,
                 particleHandleName,
@@ -1547,11 +1547,11 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
             this.constructInnerRecipe(
                 resolvedHostedParticle,
                 item,
-                itemView,
+                itemHandle,
                 {name: hostedSlotName, id: slotId},
-                {connections: otherConnections, views: otherMappedViews}),
+                {connections: otherConnections, views: otherMappedHandles}),
             this);
-        itemView.set(item);
+        itemHandle.set(item);
       } catch (e) {
         console.log(e);
       }
@@ -1603,7 +1603,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
   // arc for each item. Subclasses should override this method as by default
   // it does nothing and so no recipe will be returned and content will not
   // be loaded successfully into the inner arc.
-  constructInnerRecipe(hostedParticle, item, itemView, slot, other) {}
+  constructInnerRecipe(hostedParticle, item, itemHandle, slot, other) {}
 
   // Called with the list of items and by default returns the direct result of
   // `Array.entries()`. Subclasses can override this method to alter the item
@@ -1860,9 +1860,9 @@ class TypeChecker {
     }
     let [superclass, subclass] = leftIsSuper ? [left, right] : [right, left];
 
-    // treat view types as if they were 'inout' connections. Note that this
-    // guarantees that the view's type will be preserved, and that the fact
-    // that the type comes from a view rather than a connection will also
+    // treat handle types as if they were 'inout' connections. Note that this
+    // guarantees that the handle's type will be preserved, and that the fact
+    // that the type comes from a handle rather than a connection will also
     // be preserved.
     let superDirection = superclass.direction || (superclass.connection ? superclass.connection.direction : 'inout');
     let subDirection = subclass.direction || (subclass.connection ? subclass.connection.direction : 'inout');

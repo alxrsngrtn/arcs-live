@@ -1,9 +1,5 @@
-commit c4a871abc686f79a1f4f3c7a3fdba9875300cf3d
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon May 28 10:09:07 2018 +1000
+commit 1a24f7be80a3e4648ee18b7d49bba021c98167a8
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon May 28 10:20:43 2018 +1000
 
-    Rework StorageProxy tests to use faked interfaces instead of a running arc (#1382)
-    
-    * Rework StorageProxy unit tests to use faked interfaces instead of a running arc.
-    
-    * Forgot a couple of comments
+    Rename views to handles or stores (#1384)
