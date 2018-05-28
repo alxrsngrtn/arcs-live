@@ -1,5 +1,7 @@
-commit e83fbb48111fa5b4c9fd8cd020bc202556aa90a8
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon May 28 12:05:29 2018 +1000
+commit bec3d58e3e9155bec4aa758cedd2947ad928d352
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Sun May 27 19:29:28 2018 -0700
 
-    Creates runtime/testing directory for test utils (#1386)
+    Replace broken link to runtime/browser/lib with shell/components (#1385)
+    
+    These files moved in 1fd72f8
