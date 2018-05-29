@@ -135,7 +135,7 @@ class Type {
     if (tag == 'Entity') {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(data instanceof __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */]);
     }
-    if (tag == 'SetView') {
+    if (tag == 'Collection') {
       if (!(data instanceof Type) && data.tag && data.data) {
         data = new Type(data.tag, data.data);
       }
@@ -147,49 +147,6 @@ class Type {
     }
     this.tag = tag;
     this.data = data;
-  }
-
-  static newHandle(type) {
-    console.warn('Type.newView is deprecated. Please use Type.newSetView instead');
-    return Type.newSetView(type);
-  }
-
-  get isView() {
-    console.warn('Type.isView is deprecated. Please use Type.isSetView instead');
-    return this.isSetView;
-  }
-
-  get viewType() {
-    console.warn('Type.viewType is deprecated. Please use Type.setViewType isntead');
-    return this.setViewType;
-  }
-
-  viewOf() {
-    console.warn('Type.viewOf is deprecated. Please use Type.setViewOf instead');
-    return this.setViewOf();
-  }
-
-  get manifestReferenceName() {
-    console.warn('Type.manifestReferenceName is deprecated. Please use Type.manifestReference instead');
-    return this.manifestReference;
-  }
-
-  get variableVariable() {
-    console.warn('Type.variableVariable is deprecated. Please use Type.variable instead');
-    return this.variable;
-  }
-
-  // TODO: rename SetView to Collection
-  // Once everything's moved over to this, we can change the
-  // underlying representation
-  get isCollection() {
-    return this.isSetView;
-  }
-  static newCollection(type) {
-    return Type.newSetView(type);
-  }
-  collectionOf() {
-    return Type.newSetView(this);
   }
 
   mergeTypeVariablesByName(variableMap) {
@@ -211,13 +168,13 @@ class Type {
       return variable;
     }
 
-    if (this.isSetView) {
+    if (this.isCollection) {
       let primitiveType = this.primitiveType();
       let result = primitiveType.mergeTypeVariablesByName(variableMap);
       if (result === primitiveType) {
         return this;
       }
-      return result.setViewOf();
+      return result.collectionOf();
     }
 
     if (this.isInterface) {
@@ -233,7 +190,7 @@ class Type {
   static unwrapPair(type1, type2) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type1 instanceof Type);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type2 instanceof Type);
-    if (type1.isSetView && type2.isSetView)
+    if (type1.isCollection && type2.isCollection)
       return Type.unwrapPair(type1.primitiveType(), type2.primitiveType());
     return [type1, type2];
   }
@@ -246,7 +203,7 @@ class Type {
   }
 
   _applyExistenceTypeTest(test) {
-    if (this.isSetView)
+    if (this.isCollection)
       return this.primitiveType()._applyExistenceTypeTest(test);
     if (this.isInterface)
       return this.data._applyExistenceTypeTest(test);
@@ -265,16 +222,20 @@ class Type {
     return this._applyExistenceTypeTest(type => type.isVariableReference);
   }
 
-  // TODO: remove this in favor of a renamed setViewType
+  // TODO: remove this in favor of a renamed collectionType
   primitiveType() {
-    return this.setViewType;
+    return this.collectionType;
+  }
+
+  collectionOf() {
+    return Type.newCollection(this);
   }
 
   resolvedType() {
-    if (this.isSetView) {
+    if (this.isCollection) {
       let primitiveType = this.primitiveType();
       let resolvedPrimitiveType = primitiveType.resolvedType();
-      return primitiveType !== resolvedPrimitiveType ? resolvedPrimitiveType.setViewOf() : this;
+      return primitiveType !== resolvedPrimitiveType ? resolvedPrimitiveType.collectionOf() : this;
     }
     if (this.isVariable) {
       let resolution = this.variable.resolution;
@@ -299,7 +260,7 @@ class Type {
       return this.interfaceShape.canEnsureResolved();
     if (this.isVariable)
       return this.variable.canEnsureResolved();
-    if (this.isSetView)
+    if (this.isCollection)
       return this.primitiveType().canEnsureResolved();
     return true;
   }
@@ -309,7 +270,7 @@ class Type {
       return this.interfaceShape.maybeEnsureResolved();
     if (this.isVariable)
       return this.variable.maybeEnsureResolved();
-    if (this.isSetView)
+    if (this.isCollection)
       return this.primitiveType().maybeEnsureResolved();
     return true;
   }
@@ -403,7 +364,7 @@ class Type {
         return __WEBPACK_IMPORTED_MODULE_1__shape_js__["a" /* Shape */].fromLiteral;
       case 'Entity':
         return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].fromLiteral;
-      case 'SetView':
+      case 'Collection':
         return Type.fromLiteral;
       case 'Tuple':
         return __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__["a" /* TupleFields */].fromLiteral;
@@ -415,24 +376,24 @@ class Type {
   }
 
   static fromLiteral(literal) {
+    if (literal.tag == 'SetView') {
+      // TODO: SetView is deprecated, remove when possible.
+      literal.tag = 'Collection';
+    }
     return new Type(literal.tag, Type._deliteralizer(literal.tag)(literal.data));
-  }
-
-  setViewOf() {
-    return Type.newSetView(this);
   }
 
   // TODO: is this the same as _applyExistenceTypeTest
   hasProperty(property) {
     if (property(this))
       return true;
-    if (this.isSetView)
-      return this.setViewType.hasProperty(property);
+    if (this.isCollection)
+      return this.collectionType.hasProperty(property);
     return false;
   }
 
   toString() {
-    if (this.isSetView)
+    if (this.isCollection)
       return `[${this.primitiveType().toString()}]`;
     if (this.isEntity)
       return this.entitySchema.toInlineSchemaString();
@@ -450,7 +411,7 @@ class Type {
   }
 
   getEntitySchema() {
-    if (this.isSetView) {
+    if (this.isCollection) {
       return this.primitiveType().getEntitySchema();
     }
     if (this.isEntity) {
@@ -467,7 +428,7 @@ class Type {
     // Try extract the description from schema spec.
     let entitySchema = this.getEntitySchema();
     if (entitySchema) {
-      if (this.isSetView && entitySchema.description.plural) {
+      if (this.isCollection && entitySchema.description.plural) {
         return entitySchema.description.plural;
       }
       if (this.isEntity && entitySchema.description.pattern) {
@@ -478,7 +439,7 @@ class Type {
     if (this.isRelation) {
       return JSON.stringify(this.data);
     }
-    if (this.isSetView) {
+    if (this.isCollection) {
       return `${this.primitiveType().toPrettyString()} List`;
     }
     if (this.isVariable)
@@ -501,7 +462,7 @@ class Type {
 
 addType('Entity', 'schema');
 addType('Variable');
-addType('SetView', 'type');
+addType('Collection', 'type');
 addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Tuple', 'fields');
@@ -1439,7 +1400,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
     let otherConnections = [];
     let index = 2;
     const skipConnectionNames = [listHandleName, particleHandleName];
-    for (let [connectionName, otherView] of views) {
+    for (let [connectionName, otherHandle] of views) {
       if (skipConnectionNames.includes(connectionName)) {
         continue;
       }
@@ -1447,9 +1408,9 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
       // (perhaps id to index) to make sure we don't map a handle into the inner
       // arc multiple times unnecessarily.
       otherMappedHandles.push(
-          `map '${await arc.mapHandle(otherView._proxy)}' as v${index}`);
+          `map '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
       let hostedOtherConnection = hostedParticle.connections.find(
-          conn => conn.isCompatibleType(otherView.type));
+          conn => conn.isCompatibleType(otherHandle.type));
       if (hostedOtherConnection) {
         otherConnections.push(`${hostedOtherConnection.name} <- v${index++}`);
         // TODO(wkorman): For items with embedded recipes where we may have a
@@ -1466,12 +1427,12 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
     let arc = await this.constructInnerArc();
     const listHandleName = 'list';
     const particleHandleName = 'hostedParticle';
-    let particleView = views.get(particleHandleName);
+    let particleHandle = views.get(particleHandleName);
     let hostedParticle = null;
     let otherMappedHandles = [];
     let otherConnections = [];
-    if (particleView) {
-      hostedParticle = await particleView.get();
+    if (particleHandle) {
+      hostedParticle = await particleHandle.get();
       if (hostedParticle) {
         [otherMappedHandles, otherConnections] =
             await this._mapParticleConnections(
@@ -1693,12 +1654,12 @@ class TypeChecker {
 
     let candidate = baseType.resolvedType();
 
-    if (candidate.isSetView) {
+    if (candidate.isCollection) {
       candidate = candidate.primitiveType();
       let resolution = getResolution(candidate);
       if (resolution == null)
         return null;
-      return resolution.setViewOf();
+      return resolution.collectionOf();
     }
 
     return getResolution(candidate);
@@ -1732,7 +1693,7 @@ class TypeChecker {
   static _tryMergeConstraints(handleType, {type, direction}) {
     let [primitiveHandleType, primitiveConnectionType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].unwrapPair(handleType.resolvedType(), type.resolvedType());
     if (primitiveHandleType.isVariable) {
-      if (primitiveConnectionType.isSetView) {
+      if (primitiveConnectionType.isCollection) {
         if (primitiveHandleType.variable.resolution != null
             || primitiveHandleType.variable.canReadSubset != null
             || primitiveHandleType.variable.canWriteSuperset != null) {
@@ -1742,7 +1703,7 @@ class TypeChecker {
         // If this is an undifferentiated variable then we need to create structure to match against. That's
         // allowed because this variable could represent anything, and it needs to represent this structure
         // in order for type resolution to succeed.
-        primitiveHandleType.variable.resolution = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newSetView(__WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */]('a')));
+        primitiveHandleType.variable.resolution = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newCollection(__WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */]('a')));
         let unwrap = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
         primitiveHandleType = unwrap[0];
         primitiveConnectionType = unwrap[1];
@@ -1822,9 +1783,9 @@ class TypeChecker {
     let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].unwrapPair(resolvedLeft, resolvedRight);
 
     // a variable is compatible with a set only if it is unconstrained.
-    if (leftType.isVariable && rightType.isSetView)
+    if (leftType.isVariable && rightType.isCollection)
       return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
-    if (rightType.isVariable && leftType.isSetView)
+    if (rightType.isVariable && leftType.isCollection)
       return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
 
     if (leftType.isVariable || rightType.isVariable) {
@@ -2885,8 +2846,8 @@ class InnerPEC {
       createHandle: function(type, name) {
         return new Promise((resolve, reject) =>
           pec._apiPort.ArcCreateHandle({arc: arcId, type, name, callback: proxy => {
-            let h = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__handle_js__["a" /* handleFor */])(proxy, proxy.type.isSetView, name, particleId);
-            h.entityClass = (proxy.type.isSetView ? proxy.type.primitiveType() : proxy.type).entitySchema.entityClass();
+            let h = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__handle_js__["a" /* handleFor */])(proxy, proxy.type.isCollection, name, particleId);
+            h.entityClass = (proxy.type.isCollection ? proxy.type.primitiveType() : proxy.type).entitySchema.entityClass();
             resolve(h);
           }}));
       },
@@ -2940,8 +2901,8 @@ class InnerPEC {
     let registerList = [];
     proxies.forEach((proxy, name) => {
       let connSpec = spec.connectionMap.get(name);
-      let handle = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__handle_js__["a" /* handleFor */])(proxy, proxy.type.isSetView, name, id, connSpec.isInput, connSpec.isOutput);
-      let type = proxy.type.isSetView ? proxy.type.primitiveType() : proxy.type;
+      let handle = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__handle_js__["a" /* handleFor */])(proxy, proxy.type.isCollection, name, id, connSpec.isInput, connSpec.isOutput);
+      let type = proxy.type.isCollection ? proxy.type.primitiveType() : proxy.type;
       if (type.isEntity) {
         handle.entityClass = type.entitySchema.entityClass();
       }
@@ -4090,7 +4051,7 @@ class OuterPortAttachment {
     switch (handleType.constructor.name) {
       case 'Type':
         switch (handleType.tag) {
-          case 'SetView': return `[${this._describeHandleType(handleType.data)}]`;
+          case 'Collection': return `[${this._describeHandleType(handleType.data)}]`;
           case 'Entity': return this._describeHandleType(handleType.data);
           default: return `${handleType.tag} ${this._describeHandleType(handleType.data)}`;
         }
@@ -4410,7 +4371,7 @@ class Variable extends Handle {
 }
 
 function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = true) {
-  return (isSet || (isSet == undefined && proxy.type.isSetView))
+  return (isSet || (isSet == undefined && proxy.type.isCollection))
       ? new Collection(proxy, name, particleId, canRead, canWrite)
       : new Variable(proxy, name, particleId, canRead, canWrite);
 }

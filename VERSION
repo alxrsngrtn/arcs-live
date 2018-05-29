@@ -1,5 +1,10 @@
-commit f288ce5a1be44571a74c9a3b5773fcd4be0c0201
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon May 28 15:13:40 2018 +1000
+commit eb884821facecdd325c1aae5b414fda587ce5469
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue May 29 10:15:36 2018 +1000
 
-    Introduces a StubLoader for tests (#1387)
+    naming fixes: use collection, store, handle appropriate (and get rid of views) (#1389)
+    
+    * rename SetView to Collection (and some more view->handle renames)
+    * delete unused manifest-view
+    * remove deprecated "view" from manifest-parser.peg
+    * Consistently use "store" and "handle" in arc and manifest classes and their apis.
