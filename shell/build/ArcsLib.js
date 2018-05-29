@@ -4994,11 +4994,18 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
   _info() {
     return `---------- DomParticle::[${this.spec.name}]`;
   }
-  async setViews(handles) {
+  get _views() {
+    console.warn(`Particle ${this.spec.name} uses deprecated _views getter.`);
+    return this.handles;
+  }
+  async setViews(views) {
+    console.warn(`Particle ${this.spec.name} uses deprecated setViews method.`);
+    return this.setHandles(views);
+  }
+  async setHandles(handles) {
     this.handles = handles;
-    this._views = handles;
     let config = this.config;
-    this.when([new __WEBPACK_IMPORTED_MODULE_1__particle_js__["b" /* ViewChanges */](handles, config.handles, 'change')], async () => {
+    this.when([new __WEBPACK_IMPORTED_MODULE_1__particle_js__["b" /* HandleChanges */](handles, config.handles, 'change')], async () => {
       await this._handlesToProps(handles, config);
     });
     // make sure we invalidate once, even if there are no incoming handles
@@ -5135,20 +5142,26 @@ class Particle {
     this.capabilities = capabilities || {};
   }
 
-  /** @method setViews(views)
-   * This method is invoked with a handle for each view this particle
-   * is registered to interact with, once those views are ready for
+  /** @method setHandles(handles)
+   * This method is invoked with a handle for each store this particle
+   * is registered to interact with, once those handles are ready for
    * interaction. Override the method to register for events from
-   * the views.
+   * the handles.
    *
-   * Views is a map from view names to view handles.
+   * Handles is a map from handle names to store handles.
+   */
+  setHandles(handles) {
+  }
+  
+  /** @method setViews(views)
+   * This method is deprecated. Use setHandles instead.
    */
   setViews(views) {
   }
 
   /** @method onHandleSync(handle, model, version)
    * Called for handles that are configured with both keepSynced and notifySync, when they are
-   * updated with the full model of their data. This will occur once after setViews() and any time
+   * updated with the full model of their data. This will occur once after setHandles() and any time
    * thereafter if the handle is resynchronized.
    *
    * handle: The Handle instance that was updated.
@@ -5262,19 +5275,19 @@ class Particle {
     this.stateHandlers.get(state).forEach(f => f(value));
   }
 
-  /** @method on(views, names, kind, f)
-   * Convenience method for registering a callback on multiple views at once.
+  /** @method on(handles, names, kind, f)
+   * Convenience method for registering a callback on multiple handles at once.
    *
-   * views is a map from names to view handles
-   * names indicates the views which should have a callback installed on them
+   * handles is a map from names to store handles
+   * names indicates the handles which should have a callback installed on them
    * kind is the kind of event that should be registered for
    * f is the callback function
    */
-  on(views, names, kind, f) {
+  on(handles, names, kind, f) {
     if (typeof names == 'string')
       names = [names];
-    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].start({cat: 'particle', names: this.constructor.name + '::on', args: {view: names, event: kind}});
-    names.forEach(name => views.get(name).on(kind, __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].wrap({cat: 'particle', name: this.constructor.name, args: {view: name, event: kind}}, f), this));
+    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].start({cat: 'particle', names: this.constructor.name + '::on', args: {handle: names, event: kind}});
+    names.forEach(name => handles.get(name).on(kind, __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].wrap({cat: 'particle', name: this.constructor.name, args: {handle: name, event: kind}}, f), this));
     trace.end();
   }
 
@@ -5312,7 +5325,7 @@ class Particle {
     return this.setDescriptionPattern('_pattern_', pattern);
   }
   setDescriptionPattern(connectionName, pattern) {
-    let descriptions = this._views.get('descriptions');
+    let descriptions = this.handles.get('descriptions');
     if (descriptions) {
       descriptions.store(new descriptions.entityClass({key: connectionName, value: pattern}, connectionName));
       return true;
@@ -5323,12 +5336,12 @@ class Particle {
 /* harmony export (immutable) */ __webpack_exports__["a"] = Particle;
 
 
-class ViewChanges {
-  constructor(views, names, type) {
+class HandleChanges {
+  constructor(handles, names, type) {
     if (typeof names == 'string')
       names = [names];
     this.names = names;
-    this.views = views;
+    this.handles = handles;
     this.type = type;
   }
   register(particle, f) {
@@ -5336,12 +5349,12 @@ class ViewChanges {
     let afterAllModels = () => { if (++modelCount == this.names.length) { f(); } };
 
     for (let name of this.names) {
-      let view = this.views.get(name);
-      view.synchronize(this.type, afterAllModels, f, particle);
+      let handle = this.handles.get(name);
+      handle.synchronize(this.type, afterAllModels, f, particle);
     }
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["b"] = ViewChanges;
+/* harmony export (immutable) */ __webpack_exports__["b"] = HandleChanges;
 
 
 class SlotChanges {
@@ -6776,7 +6789,7 @@ class Scheduler {
   }
 
   enqueue(handle, eventRecords) {
-    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].flow({cat: 'handle', name: 'ViewBase::_fire flow'}).start();
+    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].flow({cat: 'handle', name: 'StorageBase::_fire flow'}).start();
     if (this.frameQueue.length == 0 && eventRecords.length > 0)
       this._asyncProcess();
     if (!this._idleResolver) {
@@ -7813,13 +7826,13 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
       listHandleName,
       particleHandleName,
       hostedParticle,
-      views,
+      handles,
       arc) {
     let otherMappedHandles = [];
     let otherConnections = [];
     let index = 2;
     const skipConnectionNames = [listHandleName, particleHandleName];
-    for (let [connectionName, otherHandle] of views) {
+    for (let [connectionName, otherHandle] of handles) {
       if (skipConnectionNames.includes(connectionName)) {
         continue;
       }
@@ -7841,12 +7854,12 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
     return [otherMappedHandles, otherConnections];
   }
 
-  async setViews(views) {
+  async setHandles(handles) {
     this.handleIds = {};
     let arc = await this.constructInnerArc();
     const listHandleName = 'list';
     const particleHandleName = 'hostedParticle';
-    let particleHandle = views.get(particleHandleName);
+    let particleHandle = handles.get(particleHandleName);
     let hostedParticle = null;
     let otherMappedHandles = [];
     let otherConnections = [];
@@ -7855,18 +7868,18 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
       if (hostedParticle) {
         [otherMappedHandles, otherConnections] =
             await this._mapParticleConnections(
-                listHandleName, particleHandleName, hostedParticle, views, arc);
+                listHandleName, particleHandleName, hostedParticle, handles, arc);
       }
     }
     this.setState({
       arc,
-      type: views.get(listHandleName).type,
+      type: handles.get(listHandleName).type,
       hostedParticle,
       otherMappedHandles,
       otherConnections
     });
 
-    super.setViews(views);
+    super.setHandles(handles);
   }
 
   async willReceiveProps(
@@ -7908,7 +7921,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
                 listHandleName,
                 particleHandleName,
                 resolvedHostedParticle,
-                this._views,
+                this.handles,
                 arc);
       }
       let hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
@@ -7929,7 +7942,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
                 item,
                 itemHandle,
                 {name: hostedSlotName, id: slotId},
-                {connections: otherConnections, views: otherMappedHandles}),
+                {connections: otherConnections, handles: otherMappedHandles}),
             this);
         itemHandle.set(item);
       } catch (e) {
@@ -20849,7 +20862,7 @@ class InnerPEC {
       handleMap.set(name, handle);
 
       // Defer registration of handles with proxies until after particles have a chance to
-      // configure them in setViews.
+      // configure them in setHandles.
       registerList.push({proxy, particle, handle});
     });
 
@@ -20857,7 +20870,7 @@ class InnerPEC {
       resolve();
       let idx = this._pendingLoads.indexOf(p);
       this._pendingLoads.splice(idx, 1);
-      await particle.setViews(handleMap);
+      await particle.setHandles(handleMap);
       registerList.forEach(({proxy, particle, handle}) => proxy.register(particle, handle));
     }];
   }

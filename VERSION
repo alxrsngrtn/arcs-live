@@ -1,10 +1,7 @@
-commit eb884821facecdd325c1aae5b414fda587ce5469
+commit 9e0a019a1341581d1238884b31d5a74ed30a1dd6
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue May 29 10:15:36 2018 +1000
+Date:   Tue May 29 13:55:48 2018 +1000
 
-    naming fixes: use collection, store, handle appropriate (and get rid of views) (#1389)
+    rename setViews to setHandles and update particles (#1390)
     
-    * rename SetView to Collection (and some more view->handle renames)
-    * delete unused manifest-view
-    * remove deprecated "view" from manifest-parser.peg
-    * Consistently use "store" and "handle" in arc and manifest classes and their apis.
+    and replace all remaining 'views' with 'stores' and 'handles' appropriately, including documentation
