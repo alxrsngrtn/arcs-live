@@ -1,5 +1,5 @@
-commit 8130bad85e20efab6cfa5395ed3e70c85d34f7b9
-Author: Bernhard Seefeld <seefeld@gmail.com>
-Date:   Wed May 30 12:56:27 2018 +1000
+commit d517896e638dbfeae5138cc20fb5cac89e6cce4c
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed May 30 15:38:30 2018 -0700
 
-    add fan out menu w/ close, duplicate, link and vr toggle (#1392)
+    Fix link urls, plus minor tweaks (#1395)
