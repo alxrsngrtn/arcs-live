@@ -1,5 +1,7 @@
-commit 757b18435bdaf08d0ea059f78fddbdb32a0da49c
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed May 30 19:20:57 2018 -0700
+commit b8f9b5e3ef5aab30133366a7ee4c065200e69d34
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu May 31 13:13:29 2018 +1000
 
-    other_views backward compatibility (#1398)
+    Implement recipe obligations and use them to track connection (#1393)
+    
+    requests between particles.
