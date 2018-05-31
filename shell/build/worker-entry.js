@@ -1279,7 +1279,7 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_0__dom_particl
     return state.renderModel;
   }
   shouldRender(props, state) {
-    return Boolean(state.template && state.renderModel);
+    return Boolean((state.template || state.templateName) && state.renderModel);
   }
 
   renderHostedSlot(slotName, hostedSlotId, content) {
