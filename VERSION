@@ -1,5 +1,5 @@
-commit 4e72ee44adfddae800fd764e30cbbcffd60006e5
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed May 30 22:50:28 2018 -0700
+commit 6a275da81f678165a143e0e6dee4ad36bd055d67
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu May 31 12:31:11 2018 -0700
 
-    don't import modules directly from runtime, that's what `arcs.js` is for (#1401)
+    add recipe description to manifest.md (#1403)
