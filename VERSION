@@ -1,5 +1,5 @@
-commit 448a390e97ba6f823a77d7653252073c4181d5c7
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu May 31 14:44:16 2018 +1000
+commit 4e72ee44adfddae800fd764e30cbbcffd60006e5
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed May 30 22:50:28 2018 -0700
 
-    Extra tests (& fixes) for connecting to tags. (#1400)
+    don't import modules directly from runtime, that's what `arcs.js` is for (#1401)
