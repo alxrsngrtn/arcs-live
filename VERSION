@@ -1,5 +1,5 @@
-commit 024e0af83884458b2cc6fccca2780104241c3729
+commit 24da06fa9f1d88ec800afbed0379383188c8c0db
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu May 31 16:30:04 2018 -0700
+Date:   Thu May 31 16:52:52 2018 -0700
 
-    ShowSingle[Post|Stats] particles handle nonexistent avatar gracefully (#1405)
+    fix show stats avatar (#1408)
