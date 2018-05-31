@@ -1,5 +1,5 @@
-commit 6a275da81f678165a143e0e6dee4ad36bd055d67
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu May 31 12:31:11 2018 -0700
+commit 8bbbf28b5a09942041bd6267a9620adc56b63fe0
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Jun 1 09:24:58 2018 +1000
 
-    add recipe description to manifest.md (#1403)
+    Adds a design doc for Recipe Interface (#1394)
