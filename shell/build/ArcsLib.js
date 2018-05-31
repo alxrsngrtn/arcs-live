@@ -8928,9 +8928,10 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
                 if (recipeHandleConnection == undefined)
                   recipeHandleConnection = recipeParticle.addConnectionName(connection);
                 let recipeHandle = recipeMap[handle.handle];
-                if (recipeHandle == null) {
+                if (recipeHandle == null && recipeHandleConnection.handle == null) {
                   recipeHandle = recipe.newHandle();
                   recipeHandle.fate = 'create';
+                  recipeHandle.tags = handle.tags || [];
                   recipeMap[handle.handle] = recipeHandle;
                 }
                 if (recipeHandleConnection.handle == null)

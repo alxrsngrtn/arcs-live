@@ -1,7 +1,5 @@
-commit b8f9b5e3ef5aab30133366a7ee4c065200e69d34
+commit 448a390e97ba6f823a77d7653252073c4181d5c7
 Author: shans <shane.stephens@gmail.com>
-Date:   Thu May 31 13:13:29 2018 +1000
+Date:   Thu May 31 14:44:16 2018 +1000
 
-    Implement recipe obligations and use them to track connection (#1393)
-    
-    requests between particles.
+    Extra tests (& fixes) for connecting to tags. (#1400)
