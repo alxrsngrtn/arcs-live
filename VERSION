@@ -1,5 +1,7 @@
-commit 8867aa6576a75051b2d321bbfba8080f2770295c
-Author: shans <shane.stephens@gmail.com>
-Date:   Sat Jun 2 03:30:27 2018 +1000
+commit 4454e10986c274cc92c4896d5377ca8adf10f6a6
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Sun Jun 3 16:04:13 2018 -0700
 
-    Ensure new social posts show up in realtime again (#1410)
+    Ensure new Words games show up in leaderboard in real time again. (#1416)
+    
+    Use new particle API following #1410.
