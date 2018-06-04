@@ -1,9 +1,5 @@
-commit e000d20b9f6de271ebabf42454f1af2aa6d3ad9e
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Jun 4 17:03:50 2018 +1000
+commit 4edf89c1835fb2f4484d594907e5a5d524d61530
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jun 4 12:53:49 2018 -0700
 
-    More tests for connecting to localNames in constraints (#1411)
-    
-    I also needed to convert the handles component of Shape to a map, because we're storing actual handles as the key sometimes, rather than strings.
-    
-    The main thing that this does is ensure that connection matches and particle matches fail if there's a specified localName for the handle in the shape and it doesn't match what the recipe version's connected to.
+    dedup manifest.md (#1418)
