@@ -1,11 +1,5 @@
-commit 89c9a7f0d820432ed983a40af0d76c9975018a29
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Mon Jun 4 11:32:07 2018 +1000
+commit 55b5427369c20df83d34f5534474e2d60b46f78a
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Jun 4 16:39:59 2018 +1000
 
-    Add design doc for storage consistency (#1407)
-    
-    * Add design doc for storage consistency
-    
-    * Rename index.md to README.md
-    
-    * Update objective
+    Narrow version of the devtools toolbar (#1417)
