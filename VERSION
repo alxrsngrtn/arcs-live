@@ -1,5 +1,9 @@
-commit 4edf89c1835fb2f4484d594907e5a5d524d61530
+commit e4d768feed702c28523021a816aae67fcf14b7f0
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jun 4 12:53:49 2018 -0700
+Date:   Mon Jun 4 18:04:09 2018 -0700
 
-    dedup manifest.md (#1418)
+    tweak checks order in handle.isResolved (#1419)
+    
+    * tweak checks order in handle.isResolved
+    
+    * accumulate error messages in handle.isResolved
