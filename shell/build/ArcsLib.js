@@ -3992,7 +3992,7 @@ class Description {
       return desc;
     }
 
-    return formatter.descriptionFromString(this._arc.activeRecipe.name || Description.defaultDescription);
+    return formatter._capitalizeAndPunctuate(this._arc.activeRecipe.name || Description.defaultDescription);
   }
 
   async getHandleDescription(recipeHandle) {
@@ -4025,7 +4025,7 @@ class DescriptionFormatter {
     if (recipe.pattern) {
       let recipeDesc = await this.patternToSuggestion(recipe.pattern);
       if (recipeDesc) {
-        return this._combineSelectedDescriptions([{pattern: recipeDesc}]);
+        return this._capitalizeAndPunctuate(recipeDesc);
       }
     }
 
@@ -4042,10 +4042,6 @@ class DescriptionFormatter {
     if (selectedDescriptions.length > 0) {
       return this._combineSelectedDescriptions(selectedDescriptions);
     }
-  }
-
-  descriptionFromString(str) {
-    return this._capitalizeAndPunctuate(str);
   }
 
   _isSelectedDescription(desc) {
@@ -20013,10 +20009,6 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
     this._nextID = 0;
   }
 
-  descriptionFromString(str) {
-    return {template: super.descriptionFromString(str), model: {}};
-  }
-
   _isSelectedDescription(desc) {
     return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
   }
@@ -20116,6 +20108,23 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
     return {template, model};
   }
 
+  _capitalizeAndPunctuate(sentence) {
+    if (typeof sentence === 'string') {
+      return {template: super._capitalizeAndPunctuate(sentence), model: {}};
+    }
+
+    // Capitalize the first element in the DOM template.
+    let tokens = sentence.template.match(/<[a-zA-Z0-9]+>{{([a-zA-Z0-9]*)}}<\/[a-zA-Z0-9]+>/);
+    if (tokens && tokens.length > 1 && sentence.model[tokens[1]]) {
+      let modelToken = sentence.model[tokens[1]];
+      if (modelToken.length > 0) {
+        sentence.model[tokens[1]] = `${modelToken[0].toUpperCase()}${modelToken.substr(1)}`;
+      }
+    }
+    sentence.template += '.';
+    return sentence;
+  }
+
   _joinDescriptions(descs) {
     // // If all tokens are strings, just join them.
     if (descs.every(desc => typeof desc === 'string')) {
@@ -20209,11 +20218,12 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
     };
   }
 
-  _formatSingleton(handleName, handleVar) {
-    if (handleVar.rawData.name) {
+  _formatSingleton(handleName, handleVar, handleDescription) {
+    let value = super._formatSingleton(handleName, handleVar, handleDescription);
+    if (value) {
       return {
         template: `<b>{{${handleName}Var}}</b>`,
-        model: {[`${handleName}Var`]: handleVar.rawData.name}
+        model: {[`${handleName}Var`]: value}
       };
     }
   }

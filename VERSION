@@ -1,23 +1,5 @@
-commit ee3db5c7a02f021606ac5da825be716f92f1ae1c
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Jun 5 18:03:22 2018 -0700
+commit d47e1534e08e5aea976808cb244edb8251667999
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jun 6 09:17:45 2018 -0700
 
-    More shell tweaks (#1423)
-    
-    * try alternate rule for focusing search input
-    
-    * don't fail if user has no friends
-    
-    * styling fix for suggestions
-    
-    * deprecate makePlans (delete subsequently)
-    
-    * describe Detail recipe to avoid anonymous message
-    
-    * remove dead code
-    
-    * ws changes
-    
-    * required specialized font style
-    
-    * logging tweaks
+    Fix recipe description (#1428)
