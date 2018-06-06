@@ -1,5 +1,23 @@
-commit aa17bdba738eb2b39e606ae28c0213601d254211
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jun 5 16:05:43 2018 -0700
+commit ee3db5c7a02f021606ac5da825be716f92f1ae1c
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Jun 5 18:03:22 2018 -0700
 
-    fix recipe slot tags serialization (#1426)
+    More shell tweaks (#1423)
+    
+    * try alternate rule for focusing search input
+    
+    * don't fail if user has no friends
+    
+    * styling fix for suggestions
+    
+    * deprecate makePlans (delete subsequently)
+    
+    * describe Detail recipe to avoid anonymous message
+    
+    * remove dead code
+    
+    * ws changes
+    
+    * required specialized font style
+    
+    * logging tweaks
