@@ -2458,6 +2458,20 @@ class ManifestError extends Error {
   }
 }
 
+class StorageStub {
+  constructor(type, id, name, storageKey, storageProviderFactory) {
+    this.type = type;
+    this.id = id;
+    this.name = name;
+    this.storageKey = storageKey;
+    this.storageProviderFactory;
+  }
+
+  inflate() {
+    return this.storageProviderFactory.connect(this.id, this.type, this.storageKey);
+  }
+}
+
 // Calls `this.visit()` for each node in a manfest AST, parents before children.
 class ManifestVisitor {
   traverse(ast) {
@@ -2581,7 +2595,7 @@ class Manifest {
   }
 
   newStorageStub(type, name, id, storageKey, tags) {
-    return this._addStore({type, id, name, storageKey}, tags);
+    return this._addStore(new StorageStub(type, id, name, storageKey, this.storageProviderFactory), tags);
   }
 
   _find(manifestFinder) {
@@ -3331,6 +3345,9 @@ ${e.message}
     if (tags == null)
       tags = [];
 
+
+    // Instead of creating links to remote firebase during manifest parsing,
+    // we generate storage stubs that contain the relevant information.
     if (item.origin == 'storage') {
       manifest.newStorageStub(type, name, id, item.source, tags);
       return;
@@ -10247,7 +10264,11 @@ ${this.activeRecipe.toString()}`;
       context
     });
     // TODO: pass tags through too
-    manifest.stores.forEach(store => arc._registerStore(store, []));
+    manifest.stores.forEach(store => {
+      if (store.constructor.name == 'StorageStub')
+        store = store.inflate();
+      arc._registerStore(store, []);
+    });
     let recipe = manifest.activeRecipe.clone();
     let options = {errors: new Map()};
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipe.normalize(options), `Couldn't normalize recipe ${recipe.toString()}:\n${[...options.errors.values()].join('\n')}`);
