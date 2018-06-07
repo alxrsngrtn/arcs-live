@@ -1,9 +1,5 @@
-commit eeeb26b3d571d2b73723143a0c1627908d5d7832
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jun 6 21:13:37 2018 -0700
+commit 7af7db85b2ec69ceb443c88d619e72dba6488fcc
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Jun 7 14:21:33 2018 +1000
 
-    fix handle's isResolved method and type var description (#1430)
-    
-    * fix handle.isResolved method and add test
-    
-    * Use handle resolved type variable in description (instead of current [~undefined])
+    particle can verb -> &verb (#1433)
