@@ -3603,7 +3603,7 @@ class Handle {
 
   isResolved(options) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this));
-    let resolved;
+    let resolved = true;
     if (this.type) {
       if ((!this.type.isResolved() && this.fate !== 'create') || 
           (!this.type.canEnsureResolved() && this.fate == 'create')) {
@@ -3633,11 +3633,10 @@ class Handle {
         if (options && this.id === null) {
           options.details += 'missing id';
         }
-        resolved = this.id !== null;
+        resolved = resolved && (this.id !== null);
         break;
       }
       case 'create':
-        resolved = true;
         break;
       default: {
         if (options) {
@@ -4411,7 +4410,8 @@ class DescriptionFormatter {
     }
   }
   _formatHandleType(handleConnection) {
-    return handleConnection.type.toPrettyString().toLowerCase();
+    let type = handleConnection.handle && handleConnection.handle.type.isResolved() ? handleConnection.handle.type : handleConnection.type;
+    return type.toPrettyString().toLowerCase();
   }
 
   _selectHandleConnection(recipeHandle) {

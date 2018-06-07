@@ -1,5 +1,9 @@
-commit a91fbd81950be5fcf1045620a185438a1b0a5bd1
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jun 7 13:40:56 2018 +1000
+commit eeeb26b3d571d2b73723143a0c1627908d5d7832
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jun 6 21:13:37 2018 -0700
 
-    Disallow lowerCase names on recipes (#1432)
+    fix handle's isResolved method and type var description (#1430)
+    
+    * fix handle.isResolved method and add test
+    
+    * Use handle resolved type variable in description (instead of current [~undefined])
