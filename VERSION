@@ -1,7 +1,5 @@
-commit 4bccbf9c6f16eb434b5f49baffc0624dcd7c0a7f
+commit 15ecbe1d3529bb8782034774aa930c7eb68774db
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Jun 7 11:58:15 2018 -0700
+Date:   Thu Jun 7 13:22:58 2018 -0700
 
-    Set stats background to green in Words leaderboard. (#1438)
-    
-    To differentiate from the regular social feed.
+    Fix reentry of Arc.idle by caching an existing await-completion promise. (#1424)
