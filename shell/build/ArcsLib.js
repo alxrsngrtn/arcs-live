@@ -2657,7 +2657,7 @@ class Manifest {
     return this._find(manifest => manifest._shapes.find(shape => shape.name == name));
   }
   findRecipesByVerb(verb) {
-    return [...this._findAll(manifest => manifest._recipes.filter(recipe => recipe.name == verb))];
+    return [...this._findAll(manifest => manifest._recipes.filter(recipe => recipe.verbs.includes(verb)))];
   }
   generateID() {
     return `${this.id}:${this._nextLocalID++}`;
@@ -12334,10 +12334,10 @@ const parser = /*
         peg$c149 = "=",
         peg$c150 = peg$literalExpectation("=", false),
         peg$c151 = function(verbs, components) {
-            let {param, tags} = optional(components, components => components, {param: null, tags: []});    
+            let {param, tags} = optional(components, components => components, {param: null, tags: []});
             return {
               kind: 'connection-target',
-              location: location(),      
+              location: location(),
               targetType: 'verb',
               verbs,
               param,
@@ -12347,13 +12347,13 @@ const parser = /*
         peg$c152 = function(tags) {
             return {
               kind: 'connection-target',
-              location: location(),      
+              location: location(),
               targetType: 'tag',
               tags
             }
           },
         peg$c153 = function(name, components) {
-            let {param, tags} = optional(components, components => components, {param: null, tags: []});    
+            let {param, tags} = optional(components, components => components, {param: null, tags: []});
             return {
               kind: 'connection-target',
               targetType: 'localName',
@@ -12364,7 +12364,7 @@ const parser = /*
             }
           },
         peg$c154 = function(particle, components) {
-            let {param, tags} = optional(components, components => components, {param: null, tags: []});    
+            let {param, tags} = optional(components, components => components, {param: null, tags: []});
             return {
               kind: 'connection-target',
               targetType: 'particle',
@@ -15843,9 +15843,6 @@ const parser = /*
         s3 = peg$parsewhiteSpace();
         if (s3 !== peg$FAILED) {
           s4 = peg$parseupperIdent();
-          if (s4 === peg$FAILED) {
-            s4 = peg$parselowerIdent();
-          }
           if (s4 !== peg$FAILED) {
             s3 = [s3, s4];
             s2 = s3;

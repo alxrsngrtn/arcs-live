@@ -1,5 +1,5 @@
-commit d47e1534e08e5aea976808cb244edb8251667999
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jun 6 09:17:45 2018 -0700
+commit a91fbd81950be5fcf1045620a185438a1b0a5bd1
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Jun 7 13:40:56 2018 +1000
 
-    Fix recipe description (#1428)
+    Disallow lowerCase names on recipes (#1432)
