@@ -1,9 +1,5 @@
-commit ab5354540bffff5e53fd022cb2a74c7d937d2b4b
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Thu Jun 7 16:09:13 2018 +1000
+commit 76b7ec7924c17b14a4364dc1e3448f2d3878539c
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Jun 7 17:08:04 2018 +1000
 
-    Remove some dead/unused code (#1434)
-    
-    None of our current particles use `setBusy` and it's probably better for
-    this tracking to be the responsibility of the inner-pec. If a particle
-    is able to defer execution the PEC should be aware that it is happening.
+    A tiny recipe name fix (#1437)
