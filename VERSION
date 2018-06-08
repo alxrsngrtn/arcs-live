@@ -1,67 +1,7 @@
-commit f5062a5c6af9e6eefd0492fb5e3ad71a793efd2f
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Jun 7 15:41:36 2018 -0700
+commit 10e7b84888a31cea262735d3e1a010e1a9e4da0d
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Jun 7 22:21:42 2018 -0700
 
-    Promote arc-serialization-persistence logic to master behind `serial` url param (#1441)
+    Handle accumulated duplicate particles in recipe description. (#1439)
     
-    * make serialization vs steps configurable via url param (`noserial` enables old step storage/replay) (#1420)
-    
-    * experimental fix for arc.idle re-entrancy
-    
-    * logging tweaks
-    
-    * tweak checks order in handle.isResolved (#1419)
-    
-    * tweak checks order in handle.isResolved
-    
-    * accumulate error messages in handle.isResolved
-    
-    * fix recipe slot tags serialization (#1426)
-    
-    * More shell tweaks (#1423)
-    
-    * try alternate rule for focusing search input
-    
-    * don't fail if user has no friends
-    
-    * styling fix for suggestions
-    
-    * deprecate makePlans (delete subsequently)
-    
-    * describe Detail recipe to avoid anonymous message
-    
-    * remove dead code
-    
-    * ws changes
-    
-    * required specialized font style
-    
-    * logging tweaks
-    
-    * Fix recipe description (#1428)
-    
-    * Disallow lowerCase names on recipes (#1432)
-    
-    * fix handle's isResolved method and type var description (#1430)
-    
-    * fix handle.isResolved method and add test
-    
-    * Use handle resolved type variable in description (instead of current [~undefined])
-    
-    * particle can verb -> &verb (#1433)
-    
-    * Remove some dead/unused code (#1434)
-    
-    None of our current particles use `setBusy` and it's probably better for
-    this tracking to be the responsibility of the inner-pec. If a particle
-    is able to defer execution the PEC should be aware that it is happening.
-    
-    * A tiny recipe name fix (#1437)
-    
-    * Set stats background to green in Words leaderboard. (#1438)
-    
-    To differentiate from the regular social feed.
-    
-    * Fix reentry of Arc.idle by caching an existing await-completion promise. (#1424)
-    
-    * invert flag: use `serial` url param to enable runtime arc serialization
+    (Get rid of warning message).
