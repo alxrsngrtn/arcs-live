@@ -1,7 +1,5 @@
-commit f2f573b5e99c0744531794c9b30158f1bfb5c33e
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Jun 8 11:22:46 2018 -0700
+commit da1d6dae556299b8b9dcb8909ef20ad7bd493a35
+Author: Bernhard Seefeld <seefeld@gmail.com>
+Date:   Fri Jun 8 14:13:03 2018 -0700
 
-    document schema descriptions in manifest.md (#1447)
-    
-    (and update recipe description section)
+    don't set URL twice (routeIframe does it again) (#1448)
