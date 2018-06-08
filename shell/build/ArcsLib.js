@@ -4039,7 +4039,7 @@ class DescriptionFormatter {
     await this._updateDescriptionHandles(this._description);
 
     if (recipe.pattern) {
-      let recipeDesc = await this.patternToSuggestion(recipe.pattern);
+      let recipeDesc = await this.patternToSuggestion(recipe.pattern, {_recipe: recipe});
       if (recipeDesc) {
         return this._capitalizeAndPunctuate(recipeDesc);
       }
@@ -4216,15 +4216,18 @@ class DescriptionFormatter {
     let valueToken;
 
     // Fetch the particle description by name from the value token - if it wasn't passed, this is a recipe description.
-    if (!particleDescription) {
+    if (!particleDescription._particle) {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handleNames.length > 1, `'${valueTokens[1]}' must contain dot-separated particle and handle connection name.`);
       let particleName = handleNames.shift();
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particleName[0] === particleName[0].toUpperCase(), `Expected particle name, got '${particleName}' instead.`);
-      let particleDescriptions = this._particleDescriptions.filter(desc => desc._particle.name == particleName);
+      let particleDescriptions = this._particleDescriptions.filter(desc => {
+        return desc._particle.name == particleName
+            // The particle description is from the current recipe.
+            && particleDescription._recipe.particles.find(p => p == desc._particle);
+      });
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particleDescriptions.length > 0, `Cannot find particles with name ${particleName}.`);
-      if (particleDescriptions.length > 1) {
-        console.warn(`Multiple particles with name ${particleName}.`);
-      }
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particleDescriptions.length == 1,
+             `Cannot reference duplicate particle '${particleName}' in recipe description.`);
       particleDescription = particleDescriptions[0];
     }
     let particle = particleDescription._particle;

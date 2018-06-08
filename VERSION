@@ -1,5 +1,7 @@
-commit 7a92a0343eedbeaa48b0b3c0a846b303a103c11a
+commit f2f573b5e99c0744531794c9b30158f1bfb5c33e
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jun 7 22:21:21 2018 -0700
+Date:   Fri Jun 8 11:22:46 2018 -0700
 
-    serialize and deserialize arc store tags (#1445)
+    document schema descriptions in manifest.md (#1447)
+    
+    (and update recipe description section)
