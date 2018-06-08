@@ -1,7 +1,5 @@
-commit 10e7b84888a31cea262735d3e1a010e1a9e4da0d
+commit 7a92a0343eedbeaa48b0b3c0a846b303a103c11a
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jun 7 22:21:42 2018 -0700
+Date:   Thu Jun 7 22:21:21 2018 -0700
 
-    Handle accumulated duplicate particles in recipe description. (#1439)
-    
-    (Get rid of warning message).
+    serialize and deserialize arc store tags (#1445)

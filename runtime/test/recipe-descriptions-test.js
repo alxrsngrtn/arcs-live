@@ -79,64 +79,54 @@ store BoxesStore of [Box] 'allboxes' in AllBoxes` : ''}
     assert.equal(expectedDescription, description);
   }
 
-  it('generates recipe description', async () => {
+  it('generates recipe description', async function() {
     await testRecipeDescription({includeSchemaDescription: false, includeStore: false, includeEntityName: false},
                                 'The winner is: \'box\' of all \'box list\'.');
   });
-
-  it('generates recipe description (with handle value)', async () => {
+  it('generates recipe description (with handle value)', async function() {
     await testRecipeDescription({includeSchemaDescription: false, includeStore: true, includeEntityName: false},
                                 'The winner is: \'box\' of all \'box list\'.');
   });
-
-  it('generates recipe description (with handle value and name)', async () => {
+  it('generates recipe description (with handle value and name)', async function() {
     await testRecipeDescription({includeSchemaDescription: false, includeStore: true, includeEntityName: true},
                                 'The winner is: \'favorite-box\' of all \'box list\'.');
   });
-
-  it('generates recipe description (with schema description)', async () => {
+  it('generates recipe description (with schema description)', async function() {
     await testRecipeDescription({includeSchemaDescription: true, includeStore: false, includeEntityName: false},
                                 'The winner is: \'booooox\' of all \'boxes\'.');
   });
-
-  it('generates recipe description (with schema description and handle value)', async () => {
+  it('generates recipe description (with schema description and handle value)', async function() {
     await testRecipeDescription({includeSchemaDescription: true, includeStore: true, includeEntityName: false},
                                 'The winner is: \'3*5\' of all \'boxes\'.');
   });
-
-  it('generates recipe description (with schema description and handle value and name)', async () => {
+  it('generates recipe description (with schema description and handle value and name)', async function() {
     await testRecipeDescription({includeSchemaDescription: true, includeStore: true, includeEntityName: true},
                                 'The winner is: \'3*5\' of all \'boxes\'.');
   });
-
-  it('generates recipe description (with schema description and stores descriptions)', async () => {
+  it('generates recipe description (with schema description and stores descriptions)', async function() {
     await testRecipeDescription(
         {includeSchemaDescription: true, includeStore: true, includeEntityName: true, includeAllDescription: true},
         'The winner is: \'3*5\' of all \'ALL\'.');
   });
-
-  it('generates recipe description (everything)', async () => {
+  it('generates recipe description (everything)', async function() {
     await testRecipeDescription(
         {includeSchemaDescription: true, includeStore: true, includeEntityName: true, includeAllDescription: true, includeAllStore: true},
         'The winner is: \'3*5\' of all \'ALL (2 items)\'.');
   });
-
-  it('generates DOM recipe description', async () => {
+  it('generates DOM recipe description', async function() {
     let description = await generateRecipeDescription(
         {includeSchemaDescription: false, includeStore: false, includeEntityName: false, formatter: DescriptionDomFormatter});
 
     assert.equal('The winner is: \'box\' of all \'box list\'.', description.template);
     assert.isEmpty(description.model);
   });
-
-  it('generates DOM recipe description (with handle value)', async () => {
+  it('generates DOM recipe description (with handle value)', async function() {
     let description = await generateRecipeDescription(
         {includeSchemaDescription: false, includeStore: true, includeEntityName: false, formatter: DescriptionDomFormatter});
     assert.equal('The winner is: \'box\' of all \'box list\'.', description.template);
     assert.isEmpty(description.model);
   });
-
-  it('generates DOM recipe description (with handle value and name)', async () => {
+  it('generates DOM recipe description (with handle value and name)', async function() {
     let description = await generateRecipeDescription(
         {includeSchemaDescription: false, includeStore: true, includeEntityName: true, formatter: DescriptionDomFormatter});
     assert.equal('<span>{{text1}}</span><b>{{biggestVar}}</b><span>{{text2}}</span><span>{{text3}}</span><span>{{text4}}</span>.',
@@ -148,16 +138,14 @@ store BoxesStore of [Box] 'allboxes' in AllBoxes` : ''}
       'text3': 'box list',
       'text4': '\''}, description.model);
   });
-
-  it('generates DOM recipe description (with schema description)', async () => {
+  it('generates DOM recipe description (with schema description)', async function() {
     let description = await generateRecipeDescription(
         {includeSchemaDescription: true, includeStore: false, includeEntityName: false, formatter: DescriptionDomFormatter});
 
     assert.equal('The winner is: \'booooox\' of all \'boxes\'.', description.template);
     assert.isEmpty(description.model);
   });
-
-  it('generates DOM recipe description (with schema description and handle value)', async () => {
+  it('generates DOM recipe description (with schema description and handle value)', async function() {
     let description = await generateRecipeDescription(
         {includeSchemaDescription: true, includeStore: true, includeEntityName: false, formatter: DescriptionDomFormatter});
     assert.equal('<span>{{text1}}</span><b>{{biggestVar}}</b><span>{{text2}}</span><span>{{text3}}</span><span>{{text4}}</span>.',
@@ -169,8 +157,9 @@ store BoxesStore of [Box] 'allboxes' in AllBoxes` : ''}
       'text3': 'boxes',
       'text4': '\''}, description.model);
   });
-
-  it('generates DOM recipe description with schema description and entity name', async () => {
+  it('generates recipe description (with handle value)', async function() {
+  });
+  it('generates DOM recipe description with schema description and entity name', async function() {
     let description = await generateRecipeDescription(
         {includeSchemaDescription: true, includeStore: true, includeEntityName: true, formatter: DescriptionDomFormatter});
 
@@ -183,8 +172,7 @@ store BoxesStore of [Box] 'allboxes' in AllBoxes` : ''}
       'text3': 'boxes',
       'text4': '\''}, description.model);
   });
-
-  it('generates DOM recipe description (with schema description and stores descriptions)', async () => {
+  it('generates DOM recipe description (with schema description and stores descriptions)', async function() {
     let description = await generateRecipeDescription(
         {includeSchemaDescription: true, includeStore: true, includeEntityName: true,
          includeAllDescription: true, formatter: DescriptionDomFormatter});
@@ -197,8 +185,7 @@ store BoxesStore of [Box] 'allboxes' in AllBoxes` : ''}
       'text3': 'ALL',
       'text4': '\''}, description.model);
   });
-
-  it('generates DOM recipe description (everything)', async () => {
+  it('generates DOM recipe description (everything)', async function() {
     let description = await generateRecipeDescription(
         {includeSchemaDescription: true, includeStore: true, includeEntityName: true,
          includeAllDescription: true, includeAllStore: true, formatter: DescriptionDomFormatter});
@@ -212,52 +199,5 @@ store BoxesStore of [Box] 'allboxes' in AllBoxes` : ''}
       'all1Length': 2,
       'text5': '\''
     }, description.model);
-  });
-
-  it('fails generating recipe description with duplicate particles', async () => {
-    await TestHelper.parseManifestAndPlan(`
-      schema Foo
-      particle ShowFoo
-        out Foo foo
-      recipe
-        create as fooHandle
-        ShowFoo
-          foo -> fooHandle
-        ShowFoo
-          foo -> fooHandle
-        description \`cannot show duplicate \${ShowFoo.foo}\`
-    `).then(() => assert('expected exception for duplicate particles'))
-      .catch((err) => assert.equal(
-          err.message, 'Cannot reference duplicate particle \'ShowFoo\' in recipe description.'));
-  });
-
-  it('generates recipe description with duplicate particles', async () => {
-    let helper = await TestHelper.parseManifestAndPlan(`
-      schema Foo
-      particle ShowFoo
-        out Foo foo
-      particle Dummy
-
-      recipe
-        create as fooHandle
-        ShowFoo
-          foo -> fooHandle
-        description \`show \${ShowFoo.foo}\`
-
-      recipe
-        create as fooHandle
-        ShowFoo
-          foo -> fooHandle
-        Dummy
-        description \`show \${ShowFoo.foo} with dummy\`
-  `);
-    assert.equal(helper.plans.length, 2);
-    assert.equal('Show foo.', await helper.plans[0].description.getRecipeSuggestion());
-
-    await helper.acceptSuggestion({particles: ['ShowFoo']});
-    await helper.makePlans();
-    assert.equal(helper.plans.length, 1);
-
-    assert.equal('Show foo with dummy.', await helper.plans[0].description.getRecipeSuggestion());
   });
 });
