@@ -10633,6 +10633,13 @@ ${this.activeRecipe.toString()}`;
 
 let defaultTimeoutMs = 5000;
 
+const bindLog = (log) => {
+  return console[log].bind(console, `%cPlanificator`,
+      `background: #ff0090; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
+};
+const log = bindLog('log');
+const error = bindLog('error');
+
 class ReplanQueue {
   constructor(planificator, options) {
     this._planificator = planificator;
@@ -10883,7 +10890,7 @@ class Planificator {
       try {
         await this._runPlanning(options);
       } catch (x) {
-        console.error(x);
+        error(`Planning failed [error=${x}].`);
       }
       this.isPlanning = false;
       this._setCurrent({plans: this._next.plans, generations: this._next.generations},
@@ -10898,7 +10905,7 @@ class Planificator {
       await this._doNextPlans(options);
     }
     time = ((__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_date_web_js__["a" /* now */])() - time) / 1000).toFixed(2);
-    console.log(`Produced ${this._next.plans.length} in ${time}s.`);
+    log(`Produced plans [count=${this._next.plans.length}, elapsed=${time}s].`);
   }
 
   _plansDiffer(newPlans, oldPlans) {

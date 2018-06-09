@@ -1,5 +1,5 @@
-commit da1d6dae556299b8b9dcb8909ef20ad7bd493a35
-Author: Bernhard Seefeld <seefeld@gmail.com>
-Date:   Fri Jun 8 14:13:03 2018 -0700
+commit 101ce27392c1f0410ad374607321795ba1b643d1
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Fri Jun 8 17:14:31 2018 -0700
 
-    don't set URL twice (routeIframe does it again) (#1448)
+    Enhance Planificator log formatting. (#1451)
