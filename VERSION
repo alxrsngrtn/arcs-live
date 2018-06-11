@@ -1,9 +1,5 @@
-commit 277ca7e688be5c8d930d888c8e98f24762f5f0d8
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Jun 11 15:29:43 2018 -0700
+commit fec975f732bfe171f8ed264d3a360d79e062cae0
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Jun 11 16:17:36 2018 -0700
 
-    Remove improper '#', implement node reuse for subtemplate stamping (#1460)
-    
-    * implement node-reuse when subtemplate stamping
-    
-    * no longer include `#` when dealing with tags
+    Add more emacs patterns to .gitignore (#1456)
