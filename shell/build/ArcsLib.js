@@ -4068,8 +4068,8 @@ class DescriptionFormatter {
     await this._updateDescriptionHandles(this._description);
 
     let handleConnection = this._selectHandleConnection(recipeHandle) || recipeHandle.connections[0];
-    let handle = this._arc.findStoreById(recipeHandle.id);
-    return this._formatDescription(handleConnection, handle);
+    let store = this._arc.findStoreById(recipeHandle.id);
+    return this._formatDescription(handleConnection, store);
   }
 
   async _updateDescriptionHandles(description) {
@@ -4111,7 +4111,7 @@ class DescriptionFormatter {
       let specConn = particle.spec.connectionMap.get(handleConn.name);
       let pattern = descByName[handleConn.name] || specConn.pattern;
       if (pattern) {
-        let handleDescription = {pattern: pattern, _handleConn: handleConn, _handle: this._arc.findStoreById(handleConn.handle.id)};
+        let handleDescription = {pattern: pattern, _handleConn: handleConn, _store: this._arc.findStoreById(handleConn.handle.id)};
         pDesc._connections[handleConn.name] = handleDescription;
       }
     });
@@ -4241,7 +4241,7 @@ class DescriptionFormatter {
         properties: handleNames.splice(1),
         extra,
         _handleConn: handleConn,
-        _handle: this._arc.findStoreById(handleConn.handle.id)};
+        _store: this._arc.findStoreById(handleConn.handle.id)};
     }
 
     // slot connection
@@ -4268,47 +4268,47 @@ class DescriptionFormatter {
       case '_type_':
         return token._handleConn.type.toPrettyString().toLowerCase();
       case '_values_':
-        return this._formatHandleValue(token.handleName, token._handle);
+        return this._formatStoreValue(token.handleName, token._store);
       case '_name_':
-        return this._formatDescription(token._handleConn, token._handle);
+        return this._formatDescription(token._handleConn, token._store);
       default: {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!token.extra, `Unrecognized extra ${token.extra}`);
 
         // Transformation's hosted particle.
         if (token._handleConn.type.isInterface) {
-          let particleSpec = __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* ParticleSpec */].fromLiteral(await token._handle.get());
+          let particleSpec = __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__["a" /* ParticleSpec */].fromLiteral(await token._store.get());
           // TODO: call this.patternToSuggestion(...) to resolved expressions in the pattern template.
           return particleSpec.pattern;
         }
 
         // singleton handle property.
         if (token.properties && token.properties.length > 0) {
-          return this._propertyTokenToString(token.handleName, token._handle, token.properties);
+          return this._propertyTokenToString(token.handleName, token._store, token.properties);
         }
 
         // full handle description
         let description = (await this._formatDescriptionPattern(token._handleConn)) ||
-                          this._formatHandleDescription(token._handleConn, token._handle);
-        let handleValue = await this._formatHandleValue(token.handleName, token._handle);
+                          this._formatStoreDescription(token._handleConn, token._store);
+        let storeValue = await this._formatStoreValue(token.handleName, token._store);
         if (!description) {
           // For singleton handle, if there is no real description (the type was used), use the plain value for description.
-          if (handleValue && !token._handle.type.isCollection && !this.excludeValues) {
-            return handleValue;
+          if (storeValue && !token._store.type.isCollection && !this.excludeValues) {
+            return storeValue;
           }
         }
 
         description = description || this._formatHandleType(token._handleConn);
-        if (handleValue && !this.excludeValues && !this.seenHandles.has(token._handle.id)) {
-          this.seenHandles.add(token._handle.id);
-          return this._combineDescriptionAndValue(token, description, handleValue);
+        if (storeValue && !this.excludeValues && !this.seenHandles.has(token._store.id)) {
+          this.seenHandles.add(token._store.id);
+          return this._combineDescriptionAndValue(token, description, storeValue);
         }
         return description;
       }
     }
   }
 
-  _combineDescriptionAndValue(token, description, handleValue) {
-    return `${description} (${handleValue})`;
+  _combineDescriptionAndValue(token, description, storeValue) {
+    return `${description} (${storeValue})`;
   }
 
   async _slotTokenToString(token) {
@@ -4330,12 +4330,12 @@ class DescriptionFormatter {
     return this._joinDescriptions(results);
   }
 
-  async _propertyTokenToString(handleName, handle, properties) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!handle.type.isCollection, `Cannot return property ${properties.join(',')} for collection`);
+  async _propertyTokenToString(handleName, store, properties) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!store.type.isCollection, `Cannot return property ${properties.join(',')} for collection`);
     // Use singleton value's property (eg. "09/15" for person's birthday)
-    let handleVar = await handle.get();
-    if (handleVar) {
-      let value = handleVar.rawData;
+    let valueVar = await store.get();
+    if (valueVar) {
+      let value = valueVar.rawData;
       properties.forEach(p => {
         if (value) {
           value = value[p];
@@ -4351,51 +4351,51 @@ class DescriptionFormatter {
     return value;
   }
 
-  async _formatHandleValue(handleName, handle) {
-    if (!handle) {
+  async _formatStoreValue(handleName, store) {
+    if (!store) {
       return;
     }
-    if (handle.type.isCollection) {
-      let handleList = await handle.toList();
-      if (handleList && handleList.length > 0) {
-        return this._formatSetHandle(handleName, handleList);
+    if (store.type.isCollection) {
+      let values = await store.toList();
+      if (values && values.length > 0) {
+        return this._formatCollection(handleName, values);
       }
     } else {
-      let handleVar = await handle.get();
-      if (handleVar) {
-        return this._formatSingleton(handleName, handleVar, handle.type.data.description.value);
+      let value = await store.get();
+      if (value) {
+        return this._formatSingleton(handleName, value, store.type.data.description.value);
       }
     }
   }
 
-  _formatSetHandle(handleName, handleList) {
-    if (handleList[0].rawData.name) {
-      if (handleList.length > 2) {
-        return `${handleList[0].rawData.name} plus ${handleList.length-1} other items`;
+  _formatCollection(handleName, values) {
+    if (values[0].rawData.name) {
+      if (values.length > 2) {
+        return `${values[0].rawData.name} plus ${values.length-1} other items`;
       }
-      return handleList.map(v => v.rawData.name).join(', ');
+      return values.map(v => v.rawData.name).join(', ');
     } else {
-      return `${handleList.length} items`;
+      return `${values.length} items`;
     }
   }
 
-  _formatSingleton(handleName, handleVar, handleDescription) {
+  _formatSingleton(handleName, value, handleDescription) {
     if (handleDescription) {
       let valueDescription = handleDescription;
       let matches;
       while (matches = valueDescription.match(/\${([a-zA-Z0-9\.]+)}/)) {
-        valueDescription = valueDescription.replace(matches[0], handleVar.rawData[matches[1]]);
+        valueDescription = valueDescription.replace(matches[0], value.rawData[matches[1]]);
       }
       return valueDescription;
     }
-    if (handleVar.rawData.name) {
-      return handleVar.rawData.name;
+    if (value.rawData.name) {
+      return value.rawData.name;
     }
   }
 
-  async _formatDescription(handleConnection, handle) {
+  async _formatDescription(handleConnection, store) {
     return (await this._formatDescriptionPattern(handleConnection)) ||
-           this._formatHandleDescription(handleConnection, handle) ||
+           this._formatStoreDescription(handleConnection, store) ||
            this._formatHandleType(handleConnection);
   }
 
@@ -4419,13 +4419,13 @@ class DescriptionFormatter {
       return await this.patternToSuggestion(handleDescription.pattern, chosenParticleDescription);
     }
   }
-  _formatHandleDescription(handleConn, handle) {
-    if (handle) {
-      let handleDescription = this._arc.getStoreDescription(handle);
+  _formatStoreDescription(handleConn, store) {
+    if (store) {
+      let storeDescription = this._arc.getStoreDescription(store);
       let handleType = this._formatHandleType(handleConn);
       // Use the handle description available in the arc (if it is different than type name).
-      if (!!handleDescription && handleDescription != handleType) {
-        return handleDescription;
+      if (!!storeDescription && storeDescription != handleType) {
+        return storeDescription;
       }
     }
   }
@@ -20166,17 +20166,17 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
     };
   }
 
-  _combineDescriptionAndValue(token, description, handleValue) {
+  _combineDescriptionAndValue(token, description, storeValue) {
     if (!!description.template && !!description.model) {
       return {
-        template: `${description.template} (${handleValue.template})`,
-        model: Object.assign(description.model, handleValue.model)
+        template: `${description.template} (${storeValue.template})`,
+        model: Object.assign(description.model, storeValue.model)
       };
     }
     let descKey = `${token.handleName}Description${++this._nextID}`;
     return {
-      template: `<span>{{${descKey}}}</span> (${handleValue.template})`,
-      model: Object.assign({[descKey]: description}, handleValue.model)
+      template: `<span>{{${descKey}}}</span> (${storeValue.template})`,
+      model: Object.assign({[descKey]: description}, storeValue.model)
     };
   }
 
@@ -20188,32 +20188,32 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
     };
   }
 
-  _formatSetHandle(handleName, handleList) {
+  _formatCollection(handleName, values) {
     let handleKey = `${handleName}${++this._nextID}`;
-    if (handleList[0].rawData.name) {
-      if (handleList.length > 2) {
+    if (values[0].rawData.name) {
+      if (values.length > 2) {
         return {
           template: `<b>{{${handleKey}FirstName}}</b> plus <b>{{${handleKey}OtherCount}}</b> other items`,
-          model: {[`${handleKey}FirstName`]: handleList[0].rawData.name, [`${handleKey}OtherCount`]: handleList.length - 1}
+          model: {[`${handleKey}FirstName`]: values[0].rawData.name, [`${handleKey}OtherCount`]: values.length - 1}
         };
       }
       return {
-        template: handleList.map((v, i) => `<b>{{${handleKey}${i}}}</b>`).join(', '),
-        model: Object.assign(...handleList.map((v, i) => ({[`${handleKey}${i}`]: v.rawData.name} )))
+        template: values.map((v, i) => `<b>{{${handleKey}${i}}}</b>`).join(', '),
+        model: Object.assign(...values.map((v, i) => ({[`${handleKey}${i}`]: v.rawData.name} )))
       };
     }
     return {
       template: `<b>{{${handleKey}Length}}</b> items`,
-      model: {[`${handleKey}Length`]: handleList.length}
+      model: {[`${handleKey}Length`]: values.length}
     };
   }
 
-  _formatSingleton(handleName, handleVar, handleDescription) {
-    let value = super._formatSingleton(handleName, handleVar, handleDescription);
-    if (value) {
+  _formatSingleton(handleName, value, handleDescription) {
+    let formattedValue = super._formatSingleton(handleName, value, handleDescription);
+    if (formattedValue) {
       return {
         template: `<b>{{${handleName}Var}}</b>`,
-        model: {[`${handleName}Var`]: value}
+        model: {[`${handleName}Var`]: formattedValue}
       };
     }
   }

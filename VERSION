@@ -1,5 +1,5 @@
-commit f39bf4ccba607a35d2094e182f6ee7e64f6f1c25
+commit 1696091362c96df99dab27f236419d8f77bca58c
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Sun Jun 10 20:21:28 2018 -0700
+Date:   Mon Jun 11 10:09:11 2018 -0700
 
-    allow empty string template (#1440)
+    rename handle to store in description (#1452)
