@@ -1,5 +1,5 @@
-commit 1e744a4552556406c332c9be5a20bab413b4543d
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Jun 11 14:37:06 2018 -0700
+commit a2f83cd36f4762106f58fa3be793b91608412af1
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon Jun 11 14:50:33 2018 -0700
 
-    Fully resolve iframe URL, use `src` not `location` (#1459)
+    Stepwise log factoring for use in runtime. (#1458)
