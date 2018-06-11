@@ -1,5 +1,5 @@
-commit 101ce27392c1f0410ad374607321795ba1b643d1
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri Jun 8 17:14:31 2018 -0700
+commit f39bf4ccba607a35d2094e182f6ee7e64f6f1c25
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Sun Jun 10 20:21:28 2018 -0700
 
-    Enhance Planificator log formatting. (#1451)
+    allow empty string template (#1440)
