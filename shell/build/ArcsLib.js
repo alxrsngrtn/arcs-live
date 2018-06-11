@@ -4171,7 +4171,7 @@ class DescriptionFormatter {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(sentence);
     // "Capitalize, punctuate." (if the sentence doesn't end with a punctuation character).
     let last = sentence.length - 1;
-    return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9\(\)'>\]]/i) ? '.' : ''}`;
+    return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9()'>\]]/i) ? '.' : ''}`;
   }
 
   async patternToSuggestion(pattern, particleDescription) {
@@ -4187,7 +4187,7 @@ class DescriptionFormatter {
     pattern = pattern.replace(/</g, '&lt;');
     let results = [];
     while (pattern.length > 0) {
-      let tokens = pattern.match(/\${[a-zA-Z0-9\.]+}(?:\.[_a-zA-Z]+)?/g);
+      let tokens = pattern.match(/\${[a-zA-Z0-9.]+}(?:\.[_a-zA-Z]+)?/g);
       let firstToken;
       let tokenIndex;
       if (tokens) {
@@ -4210,7 +4210,7 @@ class DescriptionFormatter {
   }
 
   _initHandleToken(pattern, particleDescription) {
-    let valueTokens = pattern.match(/\${([a-zA-Z0-9\.]+)}(?:\.([_a-zA-Z]+))?/);
+    let valueTokens = pattern.match(/\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/);
     let handleNames = valueTokens[1].split('.');
     let extra = valueTokens.length == 3 ? valueTokens[2] : undefined;
     let valueToken;
@@ -4383,7 +4383,7 @@ class DescriptionFormatter {
     if (handleDescription) {
       let valueDescription = handleDescription;
       let matches;
-      while (matches = valueDescription.match(/\${([a-zA-Z0-9\.]+)}/)) {
+      while (matches = valueDescription.match(/\${([a-zA-Z0-9.]+)}/)) {
         valueDescription = valueDescription.replace(matches[0], value.rawData[matches[1]]);
       }
       return valueDescription;
@@ -7838,7 +7838,7 @@ function schemaLocationFor(name) {
 
 class Loader {
   path(fileName) {
-    let path = fileName.replace(/[\/][^\/]+$/, '/');
+    let path = fileName.replace(/[/][^/]+$/, '/');
     return path;
   }
 
@@ -20098,7 +20098,7 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
       if (token.text) {
         template = template.concat(`${index == 0 && i == 0 ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
       } else { // handle or slot handle.
-        let sanitizedFullName = token.fullName.replace(/[.{}_\$]/g, '');
+        let sanitizedFullName = token.fullName.replace(/[.{}_$]/g, '');
         let attribute = '';
         // TODO(mmandlis): capitalize the data in the model instead.
         if (i == 0) {

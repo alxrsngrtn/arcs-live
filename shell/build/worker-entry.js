@@ -4447,7 +4447,7 @@ function schemaLocationFor(name) {
 
 class Loader {
   path(fileName) {
-    let path = fileName.replace(/[\/][^\/]+$/, '/');
+    let path = fileName.replace(/[/][^/]+$/, '/');
     return path;
   }
 

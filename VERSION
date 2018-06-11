@@ -1,5 +1,7 @@
-commit fec975f732bfe171f8ed264d3a360d79e062cae0
+commit 999d663e3af8ca0a1a0b2eb50038d98a491d52b8
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Jun 11 16:17:36 2018 -0700
+Date:   Mon Jun 11 16:21:11 2018 -0700
 
-    Add more emacs patterns to .gitignore (#1456)
+    Fix usages of no-useless-escape lint check (#1454)
+    
+    Manually fixed warnings. Removes override from .eslintrc.
