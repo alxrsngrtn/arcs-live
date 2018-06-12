@@ -1,10 +1,7 @@
-commit 4878e1db46f6501e5110672904bf85b3c26c84f9
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Jun 12 09:12:14 2018 -0700
+commit fe93181cf31a325c04094d768235aa5268bb6a87
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Jun 12 12:14:56 2018 -0700
 
-    Implement simplified tag naming syntax for connections (#1453)
+    fully qualify right-side of app path (#1467)
     
-    - Adds tag support for particle arguments.
-    - Allows for 'name' to be optional if tags are specified
-    
-    Addresses #1149
+    in case a server doesn't support the usual niceities
