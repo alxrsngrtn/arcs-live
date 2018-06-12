@@ -5102,27 +5102,12 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
   async setHandles(handles) {
     this.handles = handles;
     let config = this.config;
-
-    // this.config isn't a static property; not sure how important it is to avoid re-generating
-    // it in the onHandle* functions
-    this._configSnapshot = config;
-    this._modelCount = this._configSnapshot.handles.length;
-
+    this.when([new __WEBPACK_IMPORTED_MODULE_1__particle_js__["b" /* HandleChanges */](handles, config.handles, 'change')], async () => {
+      await this._handlesToProps(handles, config);
+    });
     // make sure we invalidate once, even if there are no incoming handles
     this._invalidate();
   }
-
-  // onHandleSync should replace the afterAllModels logic
-  // onHandleUpdate should replace the .on listener updates
-  async onHandleSync(handle, model, version) {
-    if (--this._modelCount == 0) {
-      await this._handlesToProps(this.handles, this._configSnapshot);
-    }
-  }
-  async onHandleUpdate(handle, update, version) {
-    await this._handlesToProps(this.handles, this._configSnapshot);
-  }
-
   async _handlesToProps(handles, config) {
     // acquire (async) list data from handles
     let data = await Promise.all(
@@ -5427,23 +5412,16 @@ class Particle {
 
 
 class HandleChanges {
-  constructor(handles, names, type, particleId) {
+  constructor(handles, names, type) {
     if (typeof names == 'string')
       names = [names];
     this.names = names;
     this.handles = handles;
     this.type = type;
-    this.particleId = particleId;
   }
   register(particle, f) {
     let modelCount = 0;
-    let afterAllModels = () => { 
-      console.log(this.particleId, 'afterAllModels', modelCount + 1);
-      if (++modelCount == this.names.length) { 
-        console.log(this.particleId, '-> calling _handlesToProps');
-        f();
-      }
-    };
+    let afterAllModels = () => { if (++modelCount == this.names.length) { f(); } };
 
     for (let name of this.names) {
       let handle = this.handles.get(name);
@@ -5451,7 +5429,7 @@ class HandleChanges {
     }
   }
 }
-/* unused harmony export HandleChanges */
+/* harmony export (immutable) */ __webpack_exports__["b"] = HandleChanges;
 
 
 class SlotChanges {
@@ -6993,8 +6971,8 @@ class Scheduler {
     let totalRecords = 0;
     for (let [handle, kinds] of frame.handles.entries()) {
       for (let [kind, records] of kinds.entries()) {
-        for (let record of records)
-          record.callback(record.details);
+        let record = records[records.length - 1];
+        record.callback(record.details);
       }
     }
 
@@ -21011,7 +20989,7 @@ class OuterPEC extends __WEBPACK_IMPORTED_MODULE_0__particle_execution_context_j
     };
 
     this._apiPort.onInitializeProxy = async ({handle, callback}) => {
-      let target = {_handle: handle, _scheduler: this._arc.scheduler};
+      let target = {_scheduler: this._arc.scheduler};
       handle.on('change', data => this._apiPort.SimpleCallback({callback, data}), target);
     };
 

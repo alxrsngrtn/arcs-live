@@ -1,7 +1,11 @@
-commit fe93181cf31a325c04094d768235aa5268bb6a87
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Jun 12 12:14:56 2018 -0700
+commit 9cd5fa28cdface864c779d4a9e3d9e2443982e82
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Jun 13 09:40:18 2018 +1000
 
-    fully qualify right-side of app path (#1467)
+    Revert "Replace handle.synchronize with new API" (#1468)
     
-    in case a server doesn't support the usual niceities
+    * Revert "Replace handle.synchronize with new API (#1446)"
+    
+    This reverts commit 8594838b0e61fb91b8368985d547cf8a4058ddb2.
+    
+    (I don't know why github thinks this PR reverts the other two commits shown above.)
