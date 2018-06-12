@@ -1,9 +1,7 @@
-commit 3c9f0f054b8cd0b5f4f3361388d61fbd11a09363
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Tue Jun 12 10:54:39 2018 +1000
+commit d1a2b736d3b1f365370aeff666b4e76c45e8eb63
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Jun 11 18:12:28 2018 -0700
 
-    Remove `version` from Particle.onHandle* handlers (#1435)
+    Remove async from populateHandleDescriptions (#1463)
     
-    We should avoid passing this to particles this until we have a need
-    for it. Once we start accepting local mutations at the storage-proxy
-    or storage object the notion of version gets hairy (remote vs client vs pec).
+    Fixes #1462
