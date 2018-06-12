@@ -1,11 +1,7 @@
-commit 1974a4de6d3c5c885feeb85a07afdde9bb8ae22c
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Jun 11 19:09:05 2018 -0700
+commit 8594838b0e61fb91b8368985d547cf8a4058ddb2
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Jun 13 00:34:20 2018 +1000
 
-    Fix template in handle-explorer.js (#1464)
+    Replace handle.synchronize with new API (#1446)
     
-    * templates used for sub-template expansions must have a single root-node
-    
-    * remove dead code
-    
-    * style: add divider
+    Replace handle.synchronize with new API
