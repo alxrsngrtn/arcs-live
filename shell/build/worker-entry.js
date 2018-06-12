@@ -4277,14 +4277,14 @@ class Collection extends Handle {
   _notify(forSync, particle, version, details) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, '_notify should not be called for non-readable handles');
     if (forSync) {
-      particle.onHandleSync(this, this._restore(details), version);
+      particle.onHandleSync(this, this._restore(details));
     } else {
       let update = {};
       if ('add' in details)
         update.added = this._restore(details.add);
       if ('remove' in details)
         update.removed = this._restore(details.remove);
-      particle.onHandleUpdate(this, update, version);
+      particle.onHandleUpdate(this, update);
     }
   }
 
@@ -4343,9 +4343,9 @@ class Variable extends Handle {
   _notify(forSync, particle, version, details) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, '_notify should not be called for non-readable handles');
     if (forSync) {
-      particle.onHandleSync(this, this._restore(details), version);
+      particle.onHandleSync(this, this._restore(details));
     } else {
-      particle.onHandleUpdate(this, {data: this._restore(details.data)}, version);
+      particle.onHandleUpdate(this, {data: this._restore(details.data)});
     }
   }
 
