@@ -5256,7 +5256,7 @@ class Particle {
   setViews(views) {
   }
 
-  /** @method onHandleSync(handle, model, version)
+  /** @method onHandleSync(handle, model)
    * Called for handles that are configured with both keepSynced and notifySync, when they are
    * updated with the full model of their data. This will occur once after setHandles() and any time
    * thereafter if the handle is resynchronized.
@@ -5264,12 +5264,11 @@ class Particle {
    * handle: The Handle instance that was updated.
    * model: For Variable-backed Handles, the Entity data or null if the Variable is not set.
    *        For Collection-backed Handles, the Array of Entities, which may be empty.
-   * version: The received version number.
    */
-  onHandleSync(handle, model, version) {
+  onHandleSync(handle, model) {
   }
 
-  /** @method onHandleUpdate(handle, update, version)
+  /** @method onHandleUpdate(handle, update)
    * Called for handles that are configued with notifyUpdate, when change events are received from
    * the backing store. For handles also configured with keepSynced these events will be correctly
    * ordered, with some potential skips if a desync occurs. For handles not configured with
@@ -5280,12 +5279,11 @@ class Particle {
    *    data: The full Entity for a Variable-backed Handle.
    *    added: An Array of Entities added to a Collection-backed Handle.
    *    removed: An Array of Entities removed from a Collection-backed Handle.
-   * version: The received version number.
    */
-  onHandleUpdate(handle, update, version) {
+  onHandleUpdate(handle, update) {
   }
 
-  /** @method onHandleDesync(handle, version)
+  /** @method onHandleDesync(handle)
    * Called for handles that are configured with both keepSynced and notifyDesync, when they are
    * detected as being out-of-date against the backing store. For Variables, the event that triggers
    * this will also resync the data and thus this call may usually be ignored. For Collections, the
@@ -5293,10 +5291,8 @@ class Particle {
    * onHandleSync will be invoked when that is received.
    *
    * handle: The Handle instance that was desynchronized.
-   * version: The received version number, which will be more than one ahead of the previously
-   *          stored data.
    */
-  onHandleDesync(handle, version) {
+  onHandleDesync(handle) {
   }
 
   constructInnerArc() {
@@ -7666,7 +7662,7 @@ class Collection extends Handle {
   }
 
   // Called by StorageProxy.
-  _notify(forSync, particle, version, details) {
+  _notify(forSync, particle, details) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, '_notify should not be called for non-readable handles');
     if (forSync) {
       particle.onHandleSync(this, this._restore(details));
@@ -7732,7 +7728,7 @@ class Variable extends Handle {
   }
 
   // Called by StorageProxy.
-  _notify(forSync, particle, version, details) {
+  _notify(forSync, particle, details) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, '_notify should not be called for non-readable handles');
     if (forSync) {
       particle.onHandleSync(this, this._restore(details));
@@ -22466,7 +22462,7 @@ class StorageProxy {
       // model, notify it immediately.
       // TODO: add a unit test to cover this case
       if (handle.options.notifySync && this._synchronized) {
-        handle._notify(true, particle, this._version, this._model);
+        handle._notify(true, particle, this._model);
       }
     }
   }
@@ -22497,7 +22493,7 @@ class StorageProxy {
     }
     for (let {handle, particle} of this._observers) {
       if (handle.options.keepSynced && handle.options.notifySync) {
-        handle._notify(true, particle, this._version, this._model, null);
+        handle._notify(true, particle, this._model, null);
       }
     }
     this._processUpdates();
@@ -22508,7 +22504,7 @@ class StorageProxy {
     // Immediately notify any handles that are not configured with keepSynced but do want updates.
     for (let {handle, particle} of this._observers) {
       if (!handle.options.keepSynced && handle.options.notifyUpdate) {
-        handle._notify(false, particle, update.version, update);
+        handle._notify(false, particle, update);
       }
     }
 
@@ -22560,7 +22556,7 @@ class StorageProxy {
       // notified as updates are received).
       for (let {handle, particle} of this._observers) {
         if (handle.options.keepSynced && handle.options.notifyUpdate) {
-          handle._notify(false, particle, this._version, update);
+          handle._notify(false, particle, update);
         }
       }
     }

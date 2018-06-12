@@ -1,11 +1,5 @@
-commit 9cd5fa28cdface864c779d4a9e3d9e2443982e82
+commit df18d7e39c0f6833a6018ab294dde0832c1922d4
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Jun 13 09:40:18 2018 +1000
+Date:   Wed Jun 13 09:47:47 2018 +1000
 
-    Revert "Replace handle.synchronize with new API" (#1468)
-    
-    * Revert "Replace handle.synchronize with new API (#1446)"
-    
-    This reverts commit 8594838b0e61fb91b8368985d547cf8a4058ddb2.
-    
-    (I don't know why github thinks this PR reverts the other two commits shown above.)
+    Remove remaining instances of  from Particle.onHandle* (#1465)
