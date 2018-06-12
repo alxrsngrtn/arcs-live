@@ -1,7 +1,10 @@
-commit 8594838b0e61fb91b8368985d547cf8a4058ddb2
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed Jun 13 00:34:20 2018 +1000
+commit 4878e1db46f6501e5110672904bf85b3c26c84f9
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Jun 12 09:12:14 2018 -0700
 
-    Replace handle.synchronize with new API (#1446)
+    Implement simplified tag naming syntax for connections (#1453)
     
-    Replace handle.synchronize with new API
+    - Adds tag support for particle arguments.
+    - Allows for 'name' to be optional if tags are specified
+    
+    Addresses #1149

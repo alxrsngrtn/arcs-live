@@ -735,6 +735,7 @@ class ConnectionSpec {
     this.name = rawData.name;
     this.type = rawData.type.mergeTypeVariablesByName(typeVarMap);
     this.isOptional = rawData.isOptional;
+    this.tags = rawData.tags || [];
     this.dependentConnections = [];
   }
 
