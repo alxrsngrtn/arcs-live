@@ -1,7 +1,11 @@
-commit d1a2b736d3b1f365370aeff666b4e76c45e8eb63
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Jun 11 18:12:28 2018 -0700
+commit 1974a4de6d3c5c885feeb85a07afdde9bb8ae22c
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Jun 11 19:09:05 2018 -0700
 
-    Remove async from populateHandleDescriptions (#1463)
+    Fix template in handle-explorer.js (#1464)
     
-    Fixes #1462
+    * templates used for sub-template expansions must have a single root-node
+    
+    * remove dead code
+    
+    * style: add divider
