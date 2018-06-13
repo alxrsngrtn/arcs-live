@@ -1,13 +1,5 @@
-commit 45fd17d0815b3daf16fd53a762d59510b274bef0
-Author: Bernhard Seefeld <seefeld@gmail.com>
-Date:   Tue Jun 12 17:59:04 2018 -0700
+commit 0c3f247cdc1b946cecb61dedcc1b198c868faf76
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jun 13 11:50:55 2018 -0700
 
-    Serviceworker (#1469)
-    
-    * Simple service worker, set up to flush cache on reload
-    
-    * nicer way of testing for 'nosw' parameter, which skips service worker installation
-    
-    * actually uninstall serviceworker with 'nosw'
-    
-    * simplify flushing: fetching the shell clears the cache
+    check for slot existence when updating inner slots (#1474)

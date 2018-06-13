@@ -11129,7 +11129,10 @@ class SlotComposer {
       let providedSlot = slot.consumeConn.providedSlots[providedSlotName];
       providedSlot.consumeConnections.forEach(cc => {
         // This will trigger 'start' or 'stop' render, if applicable.
-        this.getSlot(cc.particle, cc.name).updateContext(providedContext);
+        let innerSlot = this.getSlot(cc.particle, cc.name);
+        if (innerSlot) {
+          innerSlot.updateContext(providedContext);
+        }
       });
     });
   }
