@@ -1,5 +1,5 @@
-commit 0c3f247cdc1b946cecb61dedcc1b198c868faf76
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jun 13 11:50:55 2018 -0700
+commit 8e1d75f1db3857ea1c766774c60ccc27aa6a2184
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Jun 13 12:01:15 2018 -0700
 
-    check for slot existence when updating inner slots (#1474)
+    move service-worker handler into common code, make it opt-in (#1475)
