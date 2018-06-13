@@ -1,5 +1,13 @@
-commit df18d7e39c0f6833a6018ab294dde0832c1922d4
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Jun 13 09:47:47 2018 +1000
+commit 45fd17d0815b3daf16fd53a762d59510b274bef0
+Author: Bernhard Seefeld <seefeld@gmail.com>
+Date:   Tue Jun 12 17:59:04 2018 -0700
 
-    Remove remaining instances of  from Particle.onHandle* (#1465)
+    Serviceworker (#1469)
+    
+    * Simple service worker, set up to flush cache on reload
+    
+    * nicer way of testing for 'nosw' parameter, which skips service worker installation
+    
+    * actually uninstall serviceworker with 'nosw'
+    
+    * simplify flushing: fetching the shell clears the cache
