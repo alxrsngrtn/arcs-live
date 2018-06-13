@@ -1,5 +1,9 @@
-commit aa515d38f64bbde442473e2809614a962e1be885
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jun 13 12:46:37 2018 -0700
+commit 3615dbc2f72afc225de02034b6891e919d7d33fe
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Jun 14 09:34:55 2018 +1000
 
-    rename DomContext's context to container (#1473)
+    Moves devtools to Polymer 3 (#1472)
+    
+    * Moves devtools to Polymer 3
+    
+    * Trying to fix windows with cross-env
