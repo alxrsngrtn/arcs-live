@@ -4790,45 +4790,45 @@ async function digest(str) {
 const templateByName = new Map();
 
 class DomContext {
-  constructor(context, containerKind, subId, templateName) {
-    this._context = context;
-    this._containerKind = containerKind;
+  constructor(container, containerKind, subId, templateName) {
+    this._container = container; // html node, e.g. <div>
+    this._containerKind = containerKind; // string, e.g 'div'
     // TODO(sjmiles): _liveDom needs new name
     this._liveDom = null;
-    this._innerContextBySlotName = {};
+    this._innerContainerBySlotName = {};
     this._templateName = templateName || null;
     this._subId = subId || null;
   }
   get subId() {return this._subId; }
   set subId(subId) { this._subId = subId; }
-  static clear(context) {
-    context.textContent = '';
+  static clear(container) {
+    container.textContent = '';
   }
-  static createContext(context, content) {
-    let domContext = new DomContext(context);
-    domContext._stampTemplate(domContext.createTemplateElement(content.template), () => {});
-    domContext.updateModel(content.model);
-    return domContext;
+  static createContext(container, content) {
+    let context = new DomContext(container);
+    context._stampTemplate(context.createTemplateElement(content.template), () => {});
+    context.updateModel(content.model);
+    return context;
   }
-  initContext(context) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(context);
-    if (!this._context) {
-      this._context = document.createElement(this._containerKind || 'div');
+  initContainer(container) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(container);
+    if (!this._container) {
+      this._container = document.createElement(this._containerKind || 'div');
       this._setParticleName('');
-      context.appendChild(this._context);
+      container.appendChild(this._container);
     } else {
-      //assert(this._context.parentNode == context, 'TODO: add support for moving slot to different context');
+      //assert(this._container.parentNode == container, 'TODO: add support for moving slot to different container');
     }
   }
   updateParticleName(slotName, particleName) {
     this._setParticleName(`${slotName}::${particleName}`);
   }
   _setParticleName(name) {
-    this._context.setAttribute('particle-host', name);
+    this._container.setAttribute('particle-host', name);
   }
-  get context() { return this._context; }
-  isEqual(context) {
-    return this._context.parentNode == context;
+  get container() { return this._container; }
+  isSameContainer(container) {
+    return this._container.parentNode == container;
   }
   setTemplate(templatePrefix, templateName, template) {
     this._templateName = [templatePrefix, templateName].filter(s => s).join('::');
@@ -4861,7 +4861,7 @@ class DomContext {
       this._liveDom.root.textContent = '';
     }
     this._liveDom = null;
-    this._innerContextBySlotName = {};
+    this._innerContainerBySlotName = {};
   }
   static createTemplateElement(template) {
     return Object.assign(document.createElement('template'), {innerHTML: template});
@@ -4879,26 +4879,26 @@ class DomContext {
   _stampTemplate(template, eventHandler) {
     if (!this._liveDom) {
       // TODO(sjmiles): hack to allow subtree elements (e.g. x-list) to marshal events
-      this._context._eventMapper = this._eventMapper.bind(this, eventHandler);
+      this._container._eventMapper = this._eventMapper.bind(this, eventHandler);
       this._liveDom = __WEBPACK_IMPORTED_MODULE_1__shell_components_xen_xen_template_js__["a" /* default */]
           .stamp(template)
-          .events(this._context._eventMapper)
-          .appendTo(this._context);
+          .events(this._container._eventMapper)
+          .appendTo(this._container);
     }
   }
   observe(observer) {
-    observer.observe(this._context, {childList: true, subtree: true});
+    observer.observe(this._container, {childList: true, subtree: true});
   }
-  getInnerContext(innerSlotName) {
-    return this._innerContextBySlotName[innerSlotName];
+  getInnerContainer(innerSlotName) {
+    return this._innerContainerBySlotName[innerSlotName];
   }
-  isDirectInnerSlot(slot) {
-    if (slot === this._context) {
+  isDirectInnerSlot(container) {
+    if (container === this._container) {
       return true;
     }
-    let parentNode = slot.parentNode;
+    let parentNode = container.parentNode;
     while (parentNode) {
-      if (parentNode == this._context) {
+      if (parentNode == this._container) {
         return true;
       }
       if (parentNode.getAttribute('slotid')) {
@@ -4914,33 +4914,33 @@ class DomContext {
     // TODO(sjmiles): remember that attribute names from HTML are lower-case
     return node[name] || node.getAttribute(name);
   }
-  initInnerContexts(slotSpec) {
-    this._innerContextBySlotName = {};
-    Array.from(this._context.querySelectorAll('[slotid]')).forEach(elem => {
-      if (!this.isDirectInnerSlot(elem)) {
+  initInnerContainers(slotSpec) {
+    this._innerContainerBySlotName = {};
+    Array.from(this._container.querySelectorAll('[slotid]')).forEach(container => {
+      if (!this.isDirectInnerSlot(container)) {
         // Skip inner slots of an inner slot of the given slot.
         return;
       }
-      const slotId = this.getNodeValue(elem, 'slotid');
+      const slotId = this.getNodeValue(container, 'slotid');
       const providedSlotSpec = slotSpec.getProvidedSlotSpec(slotId);
       if (!providedSlotSpec) { // Skip non-declared slots
         console.warn(`Slot ${slotSpec.name} has unexpected inner slot ${slotId}`);
         return;
       }
-      const subId = this.getNodeValue(elem, 'subid');
+      const subId = this.getNodeValue(container, 'subid');
       this._validateSubId(providedSlotSpec, subId);
-      this._initInnerSlotContext(slotId, subId, elem);
+      this._initInnerSlotContainer(slotId, subId, container);
     });
   }
-  _initInnerSlotContext(slotId, subId, elem) {
+  _initInnerSlotContainer(slotId, subId, container) {
     if (subId) {
-      if (!this._innerContextBySlotName[slotId]) {
-        this._innerContextBySlotName[slotId] = {};
+      if (!this._innerContainerBySlotName[slotId]) {
+        this._innerContainerBySlotName[slotId] = {};
       }
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this._innerContextBySlotName[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
-      this._innerContextBySlotName[slotId][subId] = elem;
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this._innerContainerBySlotName[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
+      this._innerContainerBySlotName[slotId][subId] = container;
     } else {
-      this._innerContextBySlotName[slotId] = elem;
+      this._innerContainerBySlotName[slotId] = container;
     }
   }
   _validateSubId(providedSlotSpec, subId) {
@@ -4948,15 +4948,15 @@ class DomContext {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Boolean(this.subId || subId) === providedSlotSpec.isSet,
         `Sub-id ${subId} for provided slot ${providedSlotSpec.name} doesn't match set spec: ${providedSlotSpec.isSet}`);
   }
-  findRootSlots() {
-    let innerSlotById = {};
-    Array.from(this._context.querySelectorAll('[slotid]')).forEach(s => {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.isDirectInnerSlot(s), 'Unexpected inner slot');
-      let slotId = s.getAttribute('slotid');
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!innerSlotById[slotId], `Duplicate root slot ${slotId}`);
-      innerSlotById[slotId] = s;
+  findRootContainers() {
+    let containerBySlotId = {};
+    Array.from(this._container.querySelectorAll('[slotid]')).forEach(container => {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.isDirectInnerSlot(container), 'Unexpected inner slot');
+      let slotId = container.getAttribute('slotid');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!containerBySlotId[slotId], `Duplicate root slot ${slotId}`);
+      containerBySlotId[slotId] = container;
     });
-    return innerSlotById;
+    return containerBySlotId;
   }
   _eventMapper(eventHandler, node, eventName, handlerName) {
     node.addEventListener(eventName, event => {
@@ -6749,18 +6749,18 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_2__slot_js__["a" /* Slot */] {
     return `${this.consumeConn.particle.name}::${this.consumeConn.name}`;
   }
 
-  setContext(context) {
+  setContainer(container) {
     let wasNull = true;
     if (this.getContext()) {
       this.getContext().clear();
       wasNull = false;
     }
 
-    if (context) {
+    if (container) {
       if (!this.getContext()) {
         this._context = this._createDomContext();
       }
-      this.getContext().initContext(context);
+      this.getContext().initContainer(container);
       if (!wasNull) {
         this._doRender();
       }
@@ -6782,7 +6782,7 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_2__slot_js__["a" /* Slot */] {
       this._observer.disconnect();
       if (this.getContext() && records.some(r => this.getContext().isDirectInnerSlot(r.target))) {
         // Update inner slots.
-        this.getContext().initInnerContexts(this.consumeConn.slotSpec);
+        this.getContext().initInnerContainers(this.consumeConn.slotSpec);
         this.innerSlotsUpdateCallback(this);
         // Reactivate the observer.
         this.getContext().observe(this._observer);
@@ -6790,8 +6790,8 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_2__slot_js__["a" /* Slot */] {
     });
     return observer;
   }
-  isSameContext(context) {
-    return this.getContext().isEqual(context);
+  isSameContainer(container) {
+    return this.getContext().isSameContainer(container);
   }
   // TODO(sjmiles): triggered when innerPEC sends Render message to outerPEC,
   // (usually by request of DomParticle::render())
@@ -6832,8 +6832,8 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_2__slot_js__["a" /* Slot */] {
       this.getContext().updateModel(this._model);
     }
   }
-  getInnerContext(slotName) {
-    return this.getContext() && this.getContext().getInnerContext(slotName);
+  getInnerContainer(slotName) {
+    return this.getContext() && this.getContext().getInnerContainer(slotName);
   }
   constructRenderRequest(hostedSlot) {
     let request = ['model'];
@@ -6858,8 +6858,8 @@ class DomSlot extends __WEBPACK_IMPORTED_MODULE_2__slot_js__["a" /* Slot */] {
     }
     return content;
   }
-  static findRootSlots(context) {
-    return new __WEBPACK_IMPORTED_MODULE_3__dom_context_js__["a" /* DomContext */](context, this._containerKind).findRootSlots(context);
+  static findRootContainers(container) {
+    return new __WEBPACK_IMPORTED_MODULE_3__dom_context_js__["a" /* DomContext */](container, this._containerKind).findRootContainers(container);
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = DomSlot;
@@ -8267,19 +8267,19 @@ class Slot {
   get consumeConn() { return this._consumeConn; }
   get arc() { return this._arc; }
   getContext() { return this._context; }
-  setContext(context) { this._context = context; }
-  isSameContext(context) { return this._context == context; }
+  setContainer(container) { this._context = container; }
+  isSameContainer(container) { return this._context == container; }
 
-  updateContext(context) {
-    // do nothing, if context unchanged.
-    if ((!this.getContext() && !context) ||
-        (this.getContext() && context && this.isSameContext(context))) {
+  updateContainer(container) {
+    // do nothing, if container unchanged.
+    if ((!this.getContext() && !container) ||
+        (this.getContext() && container && this.isSameContainer(container))) {
       return;
     }
 
-    // update the context;
+    // update the container;
     let wasNull = !this.getContext();
-    this.setContext(context);
+    this.setContainer(container);
     if (this.getContext()) {
       if (wasNull) {
         this.startRender();
@@ -8371,10 +8371,10 @@ class Slot {
 
   // Abstract methods.
   async setContent(content, handler) {}
-  getInnerContext(slotName) {}
+  getInnerContainer(slotName) {}
   constructRenderRequest(hostedSlot) {}
   dispose() {}
-  static findRootSlots(context) {}
+  static findRootContainers(container) {}
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Slot;
 
@@ -10970,27 +10970,38 @@ class SlotComposer {
   /**
    * |options| must contain:
    * - affordance: the UI affordance the slots composer render to (for example: dom).
-   * - rootContext: the context containing top level context to be used for slots.
+   * - rootContainer: the top level container to be used for slots.
    * and may contain:
-   * - containerKind: the type of container wrapping each slot's context (for example, div).
+   * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
    */
   constructor(options) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(options.affordance, 'Affordance is mandatory');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(options.rootContext, 'Root context is mandatory');
+    // TODO: Support rootContext for backward compatibility, remove when unused.
+    options.rootContainer == options.rootContainer || options.rootContext;
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(options.rootContainer, 'Root container is mandatory');
 
     this._containerKind = options.containerKind;
     this._affordance = __WEBPACK_IMPORTED_MODULE_1__affordance_js__["a" /* Affordance */].forName(options.affordance);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._affordance.slotClass);
 
-    let slotContextByName = this._affordance.slotClass.findRootSlots(options.rootContext) || {};
-    if (Object.keys(slotContextByName).length == 0) {
-      // fallback to single 'root' slot using the rootContext.
-      slotContextByName['root'] = options.rootContext;
+    let containerByName = this._affordance.slotClass.findRootContainers(options.rootContainer) || {};
+    if (Object.keys(containerByName).length == 0) {
+      // fallback to single 'root' slot using the rootContainer.
+      containerByName['root'] = options.rootContainer;
     }
 
+    // TODO: refactor and rename _contextSlots: regular slots hold a context, that holds a container.
+    // These are pseudo slots and hold the container directly. Should instead mimic the regular slots.
     this._contextSlots = [];
-    Object.keys(slotContextByName).forEach(slotName => {
-      this._contextSlots.push({id: `rootslotid-${slotName}`, name: slotName, tags: [`${slotName}`], context: slotContextByName[slotName], handleConnections: [], handles: 0, getProvidedSlotSpec: () => { return {isSet: false}; }});
+    Object.keys(containerByName).forEach(slotName => {
+      this._contextSlots.push({
+        id: `rootslotid-${slotName}`,
+        name: slotName,
+        tags: [`${slotName}`],
+        container: containerByName[slotName],
+        handleConnections: [],
+        handles: 0,
+        getProvidedSlotSpec: () => { return {isSet: false}; }});
     });
 
     this._slots = [];
@@ -11002,10 +11013,10 @@ class SlotComposer {
     return this._slots.find(s => s.consumeConn.particle == particle && s.consumeConn.name == slotName);
   }
 
-  _findContext(slotId) {
+  _findContainer(slotId) {
     let contextSlot = this._contextSlots.find(slot => slot.id == slotId);
     if (contextSlot) {
-      return contextSlot.context;
+      return contextSlot.container;
     }
   }
 
@@ -11062,21 +11073,21 @@ class SlotComposer {
     newSlots.forEach(s => {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!s.getContext(), `Unexpected context in new slot`);
 
-      let context = null;
+      let container = null;
       let sourceConnection = s.consumeConn.targetSlot && s.consumeConn.targetSlot.sourceConnection;
       if (sourceConnection) {
         let sourceConnSlot = this.getSlot(sourceConnection.particle, sourceConnection.name);
         if (sourceConnSlot) {
-          context = sourceConnSlot.getInnerContext(s.consumeConn.name);
+          container = sourceConnSlot.getInnerContainer(s.consumeConn.name);
         }
       } else { // External slots provided at SlotComposer ctor (eg 'root')
-        context = this._findContext(s.consumeConn.targetSlot.id);
+        container = this._findContainer(s.consumeConn.targetSlot.id);
       }
 
       this._slots.push(s);
 
-      if (context) {
-        s.updateContext(context);
+      if (container) {
+        s.updateContainer(container);
       }
     });
   }
@@ -11125,13 +11136,15 @@ class SlotComposer {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(slot, 'Cannot update inner slots of null');
     // Update provided slot contexts.
     Object.keys(slot.consumeConn.providedSlots).forEach(providedSlotName => {
-      let providedContext = slot.getInnerContext(providedSlotName);
+      let providedContainer = slot.getInnerContainer(providedSlotName);
       let providedSlot = slot.consumeConn.providedSlots[providedSlotName];
       providedSlot.consumeConnections.forEach(cc => {
         // This will trigger 'start' or 'stop' render, if applicable.
         let innerSlot = this.getSlot(cc.particle, cc.name);
+        // Note: slot may not exist yet, if providing particle's context was updated after arc's
+        // active recipe was updated, but before slot-composer initialized the new recipe.
         if (innerSlot) {
-          innerSlot.updateContext(providedContext);
+          innerSlot.updateContainer(providedContainer);
         }
       });
     });
@@ -11152,7 +11165,7 @@ class SlotComposer {
     this._slots.forEach(slot => slot.dispose());
     this._slots.forEach(slot => slot.setContext(null));
     this._affordance.contextClass.dispose();
-    this._contextSlots.forEach(contextSlot => this._affordance.contextClass.clear(contextSlot));
+    this._contextSlots.forEach(contextSlot => this._affordance.contextClass.clear(contextSlot.container));
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = SlotComposer;
@@ -20353,20 +20366,20 @@ class DomSetContext {
     this._containerKind = containerKind;
     this._contextClass = contextClass || __WEBPACK_IMPORTED_MODULE_1__dom_context_js__["a" /* DomContext */];
   }
-  initContext(context) {
-    Object.keys(context).forEach(subId => {
+  initContainer(container) {
+    Object.keys(container).forEach(subId => {
       let subContext = this._contextBySubId[subId];
-      if (!subContext || !subContext.isEqual(context[subId])) {
+      if (!subContext || !subContext.isSameContainer(container[subId])) {
         // Replace the context corresponding to subId with a newly created context,
         // while maintaining the template name.
         subContext = new this._contextClass(null, this._containerKind, subId, subContext ? subContext._templateName : null);
         this._contextBySubId[subId] = subContext;
       }
-      subContext.initContext(context[subId]);
+      subContext.initContainer(container[subId]);
     });
-    // Delete sub-contexts that are not found in the new context.
+    // Delete sub-contexts that don't have a container in the new containers map.
     Object.keys(this._contextBySubId).forEach(subId => {
-      if (!context[subId]) {
+      if (!container[subId]) {
         delete this._contextBySubId[subId];
       }
     });
@@ -20374,9 +20387,9 @@ class DomSetContext {
   updateParticleName(slotName, particleName) {
     Object.values(this._contextBySubId).forEach(context => context.updateParticleName(slotName, particleName));
   }
-  isEqual(context) {
-    return Object.keys(this._contextBySubId).length == Object.keys(context).length &&
-           !Object.keys(this._contextBySubId).find(c => this._contextBySubId[c] != context[c]);
+  isSameContainer(container) { // container is an Object {subId, dom-element}
+    return Object.keys(this._contextBySubId).length == Object.keys(container).length &&
+           !Object.keys(this._contextBySubId).find(subId => this._contextBySubId[subId].isSameContainer(container[subId]));
   }
   setTemplate(templatePrefix, templateName, template) {
     let isStringTemplateName = typeof templateName == 'string';
@@ -20425,15 +20438,15 @@ class DomSetContext {
   observe(observer) {
     Object.values(this._contextBySubId).forEach(context => context.observe(observer));
   }
-  getInnerContext(innerSlotName) {
-    let innerContexts = {};
+  getInnerContainer(innerSlotName) {
+    let innerContainers = {};
     Object.keys(this._contextBySubId).forEach(subId => {
-      innerContexts[subId] = this._contextBySubId[subId].getInnerContext(innerSlotName);
+      innerContainers[subId] = this._contextBySubId[subId].getInnerContainer(innerSlotName);
     });
-    return innerContexts;
+    return innerContainers;
   }
-  initInnerContexts(slotSpec) {
-    Object.keys(this._contextBySubId).forEach(subId => this._contextBySubId[subId].initInnerContexts(slotSpec, subId));
+  initInnerContainers(slotSpec) {
+    Object.values(this._contextBySubId).forEach(context => context.initInnerContainers(slotSpec));
   }
   isDirectInnerSlot(slot) {
     return Object.values(this._contextBySubId).find(context => context.isDirectInnerSlot(slot)) != null;
@@ -23691,7 +23704,7 @@ class SuggestionComposer {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(slotComposer);
     this._affordance = __WEBPACK_IMPORTED_MODULE_1__affordance_js__["a" /* Affordance */].forName(slotComposer.affordance);
     // TODO(mmandlis): find a cleaner way to fetch suggestions context.
-    this._context = slotComposer._contextSlots.find(slot => slot.name == 'suggestions').context;
+    this._context = slotComposer._contextSlots.find(context => context.name == 'suggestions').container;
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._context);
 
     this._suggestions = [];
