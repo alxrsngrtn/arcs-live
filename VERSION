@@ -1,9 +1,13 @@
-commit 3615dbc2f72afc225de02034b6891e919d7d33fe
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jun 14 09:34:55 2018 +1000
+commit ce05f2ef691672ec53cd0342c0c0f333b534a731
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Thu Jun 14 10:25:50 2018 +1000
 
-    Moves devtools to Polymer 3 (#1472)
+    Remove old scheduler in preparation for moving to inner-pec (#1470)
     
-    * Moves devtools to Polymer 3
+    * Unhook scheduler from planificator
     
-    * Trying to fix windows with cross-env
+    * Remove scheduler
+    
+    * Remove scheduler from arcslib
+    
+    * Update arc.js
