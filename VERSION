@@ -1,5 +1,5 @@
-commit aa401463cec87e168665a34e58e3f63069cdb2d2
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jun 14 11:58:31 2018 +1000
+commit 4ce608cc0d96828307ae20a5f295c1408a94b589
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jun 13 20:02:31 2018 -0700
 
-    Updates our mocha to version 5, which uses updated growl (#1480)
+    Relax demo-flow test slots expectations. (#1481)
