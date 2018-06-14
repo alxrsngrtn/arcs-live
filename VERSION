@@ -1,5 +1,11 @@
-commit 4ce608cc0d96828307ae20a5f295c1408a94b589
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jun 13 20:02:31 2018 -0700
+commit 4f24b79563bb313dd1cd44d2f23e11963c46c096
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Thu Jun 14 16:29:43 2018 +1000
 
-    Relax demo-flow test slots expectations. (#1481)
+    Abort tests on unhandled promise rejection (#1485)
+    
+    * Abort tests on unhandled promise rejection
+    
+    * Fix test
+    
+    * Update handle-test.js
