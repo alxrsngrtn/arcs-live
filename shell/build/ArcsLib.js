@@ -10257,7 +10257,7 @@ ${this.activeRecipe.toString()}`;
   }
 
   async instantiate(recipe, innerArc) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipe.isResolved(), 'Cannot instantiate an unresolved recipe');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({showUnresolved: true})}`);
 
     let currentArc = {activeRecipe: this._activeRecipe, recipes: this._recipes};
     if (innerArc) {
@@ -10859,7 +10859,7 @@ class SlotComposer {
   constructor(options) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(options.affordance, 'Affordance is mandatory');
     // TODO: Support rootContext for backward compatibility, remove when unused.
-    options.rootContainer == options.rootContainer || options.rootContext;
+    options.rootContainer = options.rootContainer || options.rootContext;
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(options.rootContainer, 'Root container is mandatory');
 
     this._containerKind = options.containerKind;
@@ -11045,7 +11045,7 @@ class SlotComposer {
 
   dispose() {
     this._slots.forEach(slot => slot.dispose());
-    this._slots.forEach(slot => slot.setContext(null));
+    this._slots.forEach(slot => slot.setContainer(null));
     this._affordance.contextClass.dispose();
     this._contextSlots.forEach(contextSlot => this._affordance.contextClass.clear(contextSlot.container));
   }
