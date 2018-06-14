@@ -4492,6 +4492,7 @@ class Loader {
   }
 
   async requireParticle(fileName) {
+    if (fileName === null) fileName = '';
     let src = await this.loadResource(fileName);
     // Note. This is not real isolation.
     let script = new __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__["a" /* vm */].Script(src, {filename: fileName, displayErrors: true});

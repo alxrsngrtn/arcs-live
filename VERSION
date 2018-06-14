@@ -1,19 +1,11 @@
-commit e9eee933626ccc2b406a82fb7e35863f429aa24d
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Jun 14 11:11:36 2018 -0700
+commit c0e00ed2c57777e5e2fd477b1d49aafe59f98874
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Thu Jun 14 16:09:11 2018 -0700
 
-    Shell Tweaks (#1486)
+    Default particle source filename to empty string in loader. (#1487)
     
-    * experimentally, support ShellTheme using CSS variables instead of Handles
+    Fixes two failing recipe description unit tests under Node v10.
     
-    * don't end up in a broken state if plan instantiation fails
-    
-    * remove junk, disable `tools` section for performance testing
-    
-    * restore tools panel
-    
-    * sw tweak
-    
-    * List sub-template requires containing dev
-    
-    * remove ShellTheme styling support
+    In Node v10 `vm.Script` throws an error if `options.filename` is null.
+    For cases such as trivial particle definitions used in tests we may
+    not bother specifying an implementation file.
