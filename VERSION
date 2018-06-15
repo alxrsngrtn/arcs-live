@@ -1,9 +1,5 @@
-commit 71467fbb124198a418c817129443257467c6f3d3
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Jun 14 21:12:16 2018 -0700
+commit d9974e582f4221e67a5010f1dea9fc994969b043
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Jun 15 14:50:28 2018 +1000
 
-    Update UsersGen -- firebase path and add'l users. (#1489)
-    
-    * Update UsersGen -- firebase path and add'l users.
-    
-    * Update UsersGen.html
+    global devtools status object (#1484)
