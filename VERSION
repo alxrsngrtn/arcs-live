@@ -1,5 +1,9 @@
-commit 58b9a8a430e03cc8629e0d83c8456ffe58bebf91
+commit 71467fbb124198a418c817129443257467c6f3d3
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Jun 14 21:07:28 2018 -0700
+Date:   Thu Jun 14 21:12:16 2018 -0700
 
-    Updated package-lock.json with 'npm install' with Node v9.4.0. (#1488)
+    Update UsersGen -- firebase path and add'l users. (#1489)
+    
+    * Update UsersGen -- firebase path and add'l users.
+    
+    * Update UsersGen.html
