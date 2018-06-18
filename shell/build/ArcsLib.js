@@ -10787,9 +10787,10 @@ class Planificator {
   }
 
   _onPlanInstantiated(plan) {
-    // Check that plan is in this._current.plans;
-    if (!this._current.plans.find(currentPlan => currentPlan.plan == plan)) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `The plan being instantiated (${plan.description}) doesn't appear in the current list of plans`);
+    // Check that plan is in this._current.plans
+    if (!this._current.plans.some(currentPlan => currentPlan.plan == plan)) {
+      let hasSamePlan = this._current.plans.some(currentPlan => currentPlan.plan.toString() == plan.toString());
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `The instantiated plan (${plan.toString()}) doesn't appear in the current plans${hasSamePlan ? ', but an identical plan does' : ''}`);
     }
     // Move current to past, and clear current;
     this._past = {plan, plans: this._current.plans, generations: this._current.generations};

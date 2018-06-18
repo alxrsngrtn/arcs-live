@@ -1,5 +1,5 @@
-commit 04f2325c64d314844f0c96e4d8f4029f4face390
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Jun 18 13:33:53 2018 -0700
+commit 712f239b82a34dd77012a89c3a5e14407a09fe6e
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jun 18 13:45:12 2018 -0700
 
-    Words: Preserve game id and state on shuffle. (#1493)
+    add info to help debug planificator assert. (#1476)
