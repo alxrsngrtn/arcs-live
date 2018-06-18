@@ -1,9 +1,11 @@
-commit 0f40873d833f4067ea4bdacfba36fce5b0d39e9f
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri Jun 15 16:16:13 2018 -0700
+commit 59df0a27dd6c2764a81b2f70e277376576e8c728
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Jun 18 13:01:53 2018 +1000
 
-    Update Node version notes. (#1494)
+    Replace handle.synchronize with new API (#1482)
     
-    * Update Node version notes.
+    * Replace handle.synchronize with new API
     
-    * Update README.md
+    * No need to snapshot this.config; s/handles/handleNames/ in config for clarity
+    
+    * Restored timeout hooks for the demo test to catch missed expectations.
