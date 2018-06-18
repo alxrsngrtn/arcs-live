@@ -1,7 +1,5 @@
-commit 7d0bd855d6c4a4da916e09f193c6cfc940b1b3e3
+commit 04f2325c64d314844f0c96e4d8f4029f4face390
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Jun 18 10:22:32 2018 -0700
+Date:   Mon Jun 18 13:33:53 2018 -0700
 
-    Fix Windows wrapper scripts to support spaces in paths. (#1498)
-    
-    Update install notes to further explicate Windows antics.
+    Words: Preserve game id and state on shuffle. (#1493)
