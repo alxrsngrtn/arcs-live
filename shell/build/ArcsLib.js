@@ -2113,7 +2113,7 @@ class RecipeUtil {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__build_manifest_parser_js__ = __webpack_require__(74);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__recipe_search_js__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__shape_js__ = __webpack_require__(23);
@@ -3165,6 +3165,80 @@ ${e.message}
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_devtools_channel_web_js__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__testing_devtools_channel_stub_js__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__devtools_shared_devtools_broker_js__ = __webpack_require__(64);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+let channel = null;
+let isConnected = false;
+let onceConnectedResolve = null;
+let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
+
+__WEBPACK_IMPORTED_MODULE_3__devtools_shared_devtools_broker_js__["a" /* DevtoolsBroker */].onceConnected.then(() => {
+  DevtoolsConnection.ensure();
+  onceConnectedResolve(channel);
+  isConnected = true;
+});
+
+class DevtoolsConnection {
+  static get isConnected() {
+    return isConnected;
+  }
+  static get onceConnected() {
+    return onceConnected;
+  }
+  static get() {
+    return channel;
+  }
+  static ensure() {
+    if (!channel) channel = new __WEBPACK_IMPORTED_MODULE_1__platform_devtools_channel_web_js__["a" /* DevtoolsChannel */]();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = DevtoolsConnection;
+
+
+class DevtoolsForTests {
+  static get channel() {
+    return channel;
+  }
+  static ensureStub() {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!channel);
+    channel = new __WEBPACK_IMPORTED_MODULE_2__testing_devtools_channel_stub_js__["a" /* DevtoolsChannelStub */]();
+    onceConnectedResolve(channel);
+    isConnected = true;
+  }
+  static reset() {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(channel);
+    isConnected = false;
+    onceConnectedResolve = null;
+    onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
+    channel = null;
+  }
+}
+/* unused harmony export DevtoolsForTests */
+
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_type_checker_js__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shape_js__ = __webpack_require__(23);
@@ -3429,80 +3503,6 @@ class ParticleSpec {
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ParticleSpec;
-
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_devtools_channel_web_js__ = __webpack_require__(68);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__testing_devtools_channel_stub_js__ = __webpack_require__(80);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__devtools_shared_devtools_broker_js__ = __webpack_require__(64);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-let channel = null;
-let isConnected = false;
-let onceConnectedResolve = null;
-let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
-
-__WEBPACK_IMPORTED_MODULE_3__devtools_shared_devtools_broker_js__["a" /* DevtoolsBroker */].onceConnected.then(() => {
-  DevtoolsConnection.ensure();
-  onceConnectedResolve(channel);
-  isConnected = true;
-});
-
-class DevtoolsConnection {
-  static get isConnected() {
-    return isConnected;
-  }
-  static get onceConnected() {
-    return onceConnected;
-  }
-  static get() {
-    return channel;
-  }
-  static ensure() {
-    if (!channel) channel = new __WEBPACK_IMPORTED_MODULE_1__platform_devtools_channel_web_js__["a" /* DevtoolsChannel */]();
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = DevtoolsConnection;
-
-
-class DevtoolsForTests {
-  static get channel() {
-    return channel;
-  }
-  static ensureStub() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!channel);
-    channel = new __WEBPACK_IMPORTED_MODULE_2__testing_devtools_channel_stub_js__["a" /* DevtoolsChannelStub */]();
-    onceConnectedResolve(channel);
-    isConnected = true;
-  }
-  static reset() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(channel);
-    isConnected = false;
-    onceConnectedResolve = null;
-    onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
-    channel = null;
-  }
-}
-/* unused harmony export DevtoolsForTests */
 
 
 
@@ -4125,7 +4125,7 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(10);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4677,7 +4677,7 @@ class DescriptionFormatter {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__speculator_js__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__tracelib_trace_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__debug_strategy_explorer_adapter_js__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__debug_devtools_connection_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__debug_devtools_connection_js__ = __webpack_require__(9);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -7172,7 +7172,7 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_0__dom_particl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__recipe_util_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__fake_pec_factory_js__ = __webpack_require__(84);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__storage_storage_provider_factory_js__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__debug_devtools_connection_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__debug_devtools_connection_js__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__id_js__ = __webpack_require__(86);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__debug_arc_debug_handler_js__ = __webpack_require__(77);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__recipe_index_js__ = __webpack_require__(93);
@@ -8248,10 +8248,10 @@ let _affordances = {};
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__debug_outer_port_attachment_js__ = __webpack_require__(79);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__debug_devtools_connection_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__debug_devtools_connection_js__ = __webpack_require__(9);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8778,7 +8778,7 @@ class Entity {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(60);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__ = __webpack_require__(10);
 /** @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -9059,7 +9059,7 @@ function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = tr
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__transformation_dom_particle_js__ = __webpack_require__(30);
 /**
  * @license
@@ -19700,6 +19700,7 @@ class AbstractDevtoolsChannel {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tracing_adapter_js__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__arc_planner_invoker_js__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__devtools_connection_js__ = __webpack_require__(9);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -19713,9 +19714,14 @@ class AbstractDevtoolsChannel {
 
 
 
+
+// Arc-independent handlers for devtools logic.
+__WEBPACK_IMPORTED_MODULE_2__devtools_connection_js__["a" /* DevtoolsConnection */].onceConnected.then(devtoolsChannel => {
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__tracing_adapter_js__["a" /* enableTracingAdapter */])(devtoolsChannel);
+});
+
 class ArcDebugHandler {
   constructor(arc, devtoolsChannel) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__tracing_adapter_js__["a" /* enableTracingAdapter */])(devtoolsChannel);
 
     // Message handles go here.
     new __WEBPACK_IMPORTED_MODULE_1__arc_planner_invoker_js__["a" /* ArcPlannerInvoker */](arc, devtoolsChannel);
@@ -21235,7 +21241,7 @@ class Random {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__strategies_init_population_js__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_add_use_handles_js__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_rulesets_js__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__debug_devtools_connection_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__debug_devtools_connection_js__ = __webpack_require__(9);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.

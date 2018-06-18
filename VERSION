@@ -1,5 +1,5 @@
-commit 6e9efb0695af9c28287963469a78da4185e1aac3
+commit 4eed1f2943e76c49586e8d9c7119d30c39844f3c
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Jun 19 08:18:46 2018 +1000
+Date:   Tue Jun 19 08:26:00 2018 +1000
 
-    Early implementation of the Recipe Index (#1436)
+    Enable devtools tracing before creation of an Arc (#1503)
