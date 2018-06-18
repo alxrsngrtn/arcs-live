@@ -1,5 +1,18 @@
-commit 712f239b82a34dd77012a89c3a5e14407a09fe6e
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jun 18 13:45:12 2018 -0700
+commit bd6de55842f0062d69130c027f8fdfcf6b64e934
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon Jun 18 14:42:50 2018 -0700
 
-    add info to help debug planificator assert. (#1476)
+    Simplify speculative execution logic: remove plan groups. (#1501)
+    
+    Experiment with removing plan grouping and instead (go back to?)
+    kicking off an async task for each plan. This may be similar to what
+    we did in the past which (I understand may have) caused OOM or other
+    performance issues particularly on mobile devices.
+    
+    However, the plan grouping logic as written was confusing as the V8 VM
+    doesn't actually use multiple threads for these async tasks, and, the
+    grouping was inefficient since one group could finish ahead of another
+    and thus tasks weren't as evenly distributed as they could have been.
+    
+    Before potentially doing that rework I figure we should see whether
+    it's actually needed.
