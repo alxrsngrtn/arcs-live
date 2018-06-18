@@ -1,18 +1,5 @@
-commit bd6de55842f0062d69130c027f8fdfcf6b64e934
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Jun 18 14:42:50 2018 -0700
+commit 6e9efb0695af9c28287963469a78da4185e1aac3
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Jun 19 08:18:46 2018 +1000
 
-    Simplify speculative execution logic: remove plan groups. (#1501)
-    
-    Experiment with removing plan grouping and instead (go back to?)
-    kicking off an async task for each plan. This may be similar to what
-    we did in the past which (I understand may have) caused OOM or other
-    performance issues particularly on mobile devices.
-    
-    However, the plan grouping logic as written was confusing as the V8 VM
-    doesn't actually use multiple threads for these async tasks, and, the
-    grouping was inefficient since one group could finish ahead of another
-    and thus tasks weren't as evenly distributed as they could have been.
-    
-    Before potentially doing that rework I figure we should see whether
-    it's actually needed.
+    Early implementation of the Recipe Index (#1436)
