@@ -1,11 +1,7 @@
-commit 59df0a27dd6c2764a81b2f70e277376576e8c728
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Jun 18 13:01:53 2018 +1000
+commit 7d0bd855d6c4a4da916e09f193c6cfc940b1b3e3
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon Jun 18 10:22:32 2018 -0700
 
-    Replace handle.synchronize with new API (#1482)
+    Fix Windows wrapper scripts to support spaces in paths. (#1498)
     
-    * Replace handle.synchronize with new API
-    
-    * No need to snapshot this.config; s/handles/handleNames/ in config for clarity
-    
-    * Restored timeout hooks for the demo test to catch missed expectations.
+    Update install notes to further explicate Windows antics.
