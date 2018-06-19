@@ -1,5 +1,9 @@
-commit 6b3f9fc8886d753eacb9b571eb5a6b054fdabcd2
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Jun 20 03:32:46 2018 +1000
+commit 11daf199df3b7c4351deb5696d23115fba79dca0
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Tue Jun 19 13:05:35 2018 -0700
 
-    Adds a recipe index design doc (#1406)
+    Rename {inner,outer}-PEC.js towards improved self-documentation. (#1496)
+    
+    * Rename {inner,outer}-PEC.js for improved clarity.
+    
+    * Rename {Inner,OuterPEC} classes to ParticleExecution{Context,Host}.

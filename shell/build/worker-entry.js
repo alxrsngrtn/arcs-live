@@ -2737,7 +2737,7 @@ class TypeVariable {
 
 
 
-class InnerPEC {
+class ParticleExecutionContext {
   constructor(port, idBase, loader) {
     this._apiPort = new __WEBPACK_IMPORTED_MODULE_2__api_channel_js__["a" /* PECInnerPort */](port);
     this._particles = [];
@@ -2969,7 +2969,7 @@ class InnerPEC {
     return Promise.all(this._pendingLoads.concat(this._particles.map(particle => particle.idle))).then(() => this.idle);
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = InnerPEC;
+/* harmony export (immutable) */ __webpack_exports__["a"] = ParticleExecutionContext;
 
 
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(6)))
@@ -4669,7 +4669,7 @@ class StorageProxy {
     return this._type;
   }
 
-  // Called by InnerPEC to associate (potentially multiple) particle/handle pairs with this proxy.
+  // Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
   register(particle, handle) {
     if (!handle.canRead)
       return;
@@ -5079,7 +5079,7 @@ const nob = () => Object.create(null);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_inner_PEC_js__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_particle_execution_context_js__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__browser_loader_js__ = __webpack_require__(15);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5098,7 +5098,7 @@ self.onmessage = function(e) {
   self.onmessage = null;
   let {id, base} = e.data;
   //log('starting worker', id);
-  new __WEBPACK_IMPORTED_MODULE_0__runtime_inner_PEC_js__["a" /* InnerPEC */](e.ports[0], id, new __WEBPACK_IMPORTED_MODULE_1__browser_loader_js__["a" /* BrowserLoader */](base));
+  new __WEBPACK_IMPORTED_MODULE_0__runtime_particle_execution_context_js__["a" /* ParticleExecutionContext */](e.ports[0], id, new __WEBPACK_IMPORTED_MODULE_1__browser_loader_js__["a" /* BrowserLoader */](base));
 };
 
 
