@@ -8614,12 +8614,12 @@ class PECInnerPort extends APIPort {
  */
 
 class StrategyExplorerAdapter {
-  static processGenerations(generations, devtoolsChannel) {
+  static processGenerations(generations, devtoolsChannel, options = {}) {
     devtoolsChannel.send({
       messageType: 'generations',
       // TODO: Implement simple serialization and move the logic in adapt()
       //       into the Strategy Explorer proper.
-      messageBody: StrategyExplorerAdapter.adapt(generations)
+      messageBody: {results: StrategyExplorerAdapter.adapt(generations), options}
     });
   }
   static adapt(generations) {
@@ -21298,7 +21298,8 @@ class RecipeIndex {
       } while (strategizer.generated.length + strategizer.terminal.length > 0);
 
       if (__WEBPACK_IMPORTED_MODULE_12__debug_devtools_connection_js__["a" /* DevtoolsConnection */].isConnected) {
-        __WEBPACK_IMPORTED_MODULE_5__debug_strategy_explorer_adapter_js__["a" /* StrategyExplorerAdapter */].processGenerations(generations, __WEBPACK_IMPORTED_MODULE_12__debug_devtools_connection_js__["a" /* DevtoolsConnection */].get());
+        __WEBPACK_IMPORTED_MODULE_5__debug_strategy_explorer_adapter_js__["a" /* StrategyExplorerAdapter */].processGenerations(
+            generations, __WEBPACK_IMPORTED_MODULE_12__debug_devtools_connection_js__["a" /* DevtoolsConnection */].get(), {label: 'Index', keep: true});
       }
 
       let population = strategizer.population;

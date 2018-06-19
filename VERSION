@@ -1,5 +1,5 @@
-commit 2cc958f7b896ef0a830c0977ea4fcc241d54e799
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Jun 19 09:05:51 2018 +1000
+commit 284543db7abcc6260cdea284d605d67913d1f940
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Jun 19 12:35:50 2018 +1000
 
-    Add readme comment for grep flag in wdio tests. (#1499)
+    Display Index as an entry in the Strategy Explorer (#1507)
