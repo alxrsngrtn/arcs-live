@@ -1,5 +1,27 @@
-commit bd19cf6759459a85d60335c96daa73570026d120
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Jun 19 17:07:55 2018 -0700
+commit c28c62c130c2e3abd00d2e6b8a02dc664d5a6775
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Jun 20 12:00:53 2018 -0700
 
-    Small fix after Polymer 3 migration (#1512)
+    Improve sigh linting speed (#1517)
+    
+    - Uses native eslint api, avoids spawning eslint processes
+    - Also enable caching to speed up subsequent lint runs
+    
+    Rough Performance Improvement (macOS)
+    
+    BASELINE
+    real    0m10.329s
+    user    0m13.845s
+    sys     0m0.918s
+    
+    COLD LINT
+    real    0m6.330s
+    user    0m8.710s
+    sys     0m0.468s
+    
+    CACHED LINT
+    real    0m0.911s
+    user    0m0.710s
+    sys     0m0.185s
+    
+    Fixes #1506
