@@ -4728,6 +4728,10 @@ class DescriptionFormatter {
 
 
 class Planner {
+  constructor() {
+    this._relevances = [];
+  }
+
   // TODO: Use context.arc instead of arc
   init(arc, {strategies, ruleset} = {}) {
     this._arc = arc;
@@ -4790,6 +4794,7 @@ class Planner {
       // TODO(wkorman): Look at restoring trace.wait() here, and whether we
       // should do similar for the async getRecipeSuggestion() below as well?
       let relevance = await speculator.speculate(this._arc, plan, hash);
+      this._relevances.push(relevance);
       if (!relevance.isRelevant(plan)) {
         this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
         return;
@@ -4815,6 +4820,8 @@ class Planner {
       });
     })));
 
+    this._relevances = [];
+
     if (generations && __WEBPACK_IMPORTED_MODULE_30__debug_devtools_connection_js__["a" /* DevtoolsConnection */].isConnected) {
       __WEBPACK_IMPORTED_MODULE_29__debug_strategy_explorer_adapter_js__["a" /* StrategyExplorerAdapter */].processGenerations(generations, __WEBPACK_IMPORTED_MODULE_30__debug_devtools_connection_js__["a" /* DevtoolsConnection */].get());
     }
@@ -4831,6 +4838,13 @@ class Planner {
         });
       });
     }
+  }
+  dispose() {
+    // The speculative arc particle execution contexts are are worklets,
+    // so they need to be cleanly shut down, otherwise they would persist,
+    // as an idle eventLoop in a process waiting for messages.
+    this._relevances.forEach(relevance => relevance.newArc.dispose());
+    this._relevances = [];
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Planner;
@@ -11043,6 +11057,8 @@ class Planificator {
     this._arc = arc;
     this._speculator = new __WEBPACK_IMPORTED_MODULE_5__speculator_js__["a" /* Speculator */]();
 
+    // The currently running Planner object.
+    this._planner = null;
     // The latest results of a Planner session. These may become 'current', or be disposed as transient,
     // if a new replanning request came in during the Planner execution.
     this._next = {plans: [], generations: []}; // {plans, generations}
@@ -11132,7 +11148,8 @@ class Planificator {
 
     if (this._arc.search !== search) {
       this._arc.search = search;
-      this._requestPlanning({}, {
+      this._requestPlanning({
+        cancelOngoingPlanning: true
         // TODO(mmandlis): this excludes InitPopulation from planner strategies and prevents CoalesceRecipes strategy from
         // working properly. Consider reenabling, if possible.
         // // Don't include InitPopulation strategies in replanning.
@@ -11196,7 +11213,7 @@ class Planificator {
     // Move current to past, and clear current;
     this._past = {plan, plans: this._current.plans, generations: this._current.generations};
     this._setCurrent({plans: [], generations: []});
-    this._requestPlanning();
+    this._requestPlanning({cancelOngoingPlanning: true});
   }
 
 
@@ -11204,14 +11221,18 @@ class Planificator {
     this._dataChangesQueue.addChange();
   }
 
-  _requestPlanning(event, options) {
+  _requestPlanning(options) {
+    options = options || {};
+    if (options.cancelOngoingPlanning && this.isPlanning) {
+      this._cancelPlanning();
+    }
+
     // Activate replanning and trigger subscribed callbacks.
     return this._schedulePlanning(options || {});
   }
 
   async _schedulePlanning(options) {
     this._valid = false;
-    let results;
     if (!this.isPlanning) {
       this.isPlanning = true;
       try {
@@ -11235,7 +11256,22 @@ class Planificator {
     log(`Produced plans [count=${this._next.plans.length}, elapsed=${time}s].`);
   }
 
+  _cancelPlanning() {
+    if (this._planner) {
+      this._planner.dispose();
+      this._planner = null;
+    }
+    this._next = {plans: [], generations: []};
+    this.isPlanning = false; // using the setter method to trigger callbacks.
+    this._valid = true;
+    log(`Cancel planning`);
+  }
+
   _plansDiffer(newPlans, oldPlans) {
+    if (!newPlans) {
+      // Ignore change, if new plans were removed by subsequent replanning (avoids race condition).
+      return;
+    }
     return !oldPlans ||
         oldPlans.length !== newPlans.length ||
         oldPlans.some((s, i) => newPlans[i].hash !== s.hash || newPlans[i].descriptionText != s.descriptionText);
@@ -11243,9 +11279,10 @@ class Planificator {
 
   async _doNextPlans(options) {
     this._next = {generations: []};
-    let planner = new __WEBPACK_IMPORTED_MODULE_4__planner_js__["a" /* Planner */]();
-    planner.init(this._arc, {strategies: (options.strategies || null)});
-    this._next.plans = await planner.suggest(options.timeout || defaultTimeoutMs, this._next.generations, this._speculator);
+    this._planner = new __WEBPACK_IMPORTED_MODULE_4__planner_js__["a" /* Planner */]();
+    this._planner.init(this._arc, {strategies: (options.strategies || null)});
+    this._next.plans = await this._planner.suggest(options.timeout || defaultTimeoutMs, this._next.generations, this._speculator);
+    this._planner = null;
   }
 
   _setCurrent(current, append) {

@@ -1,5 +1,14 @@
-commit be009dc304d6a268b577fc9c90f5ae9d45878479
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Jun 20 15:46:52 2018 -0700
+commit 1616cc54a73f62841184b06c6dcb480672bfa485
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jun 20 16:30:41 2018 -0700
 
-    Social: Wrap subtemplate with div to fit new Xen requirement. (#1522)
+    cancel ongoing planning if search changed, or plan instantiated (#1509)
+    
+    * cancel ongoing planning if search changed, or plan instantiated
+    and fix race condition
+    
+    * keep dispose planner speculative arcs on cancel
+    
+    * add comment
+    
+    add test
