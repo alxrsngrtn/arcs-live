@@ -1,9 +1,5 @@
-commit 9c3ebc0cfa5f2d080ecdce45d9dbd489c7e96954
+commit 6718a66cc48081da928ef7e14d4f3c68c21dd4b4
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jun 20 12:05:22 2018 -0700
+Date:   Wed Jun 20 13:58:59 2018 -0700
 
-    Support full particle description in recipe description (#1511)
-    
-    * Support full particle description in recipe description
-    
-    * fix selenium gift shopping test
+    suggestion slots proposal (#1497)
