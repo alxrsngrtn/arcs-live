@@ -4358,14 +4358,14 @@ class DescriptionFormatter {
       if (nextToken.length > 0)
         results.push({text: nextToken});
       if (firstToken.length > 0) {
-        results.push(this._initHandleToken(firstToken, particleDescription));
+        results = results.concat(this._initSubTokens(firstToken, particleDescription));
       }
       pattern = pattern.substring(tokenIndex + firstToken.length);
     }
     return results;
   }
 
-  _initHandleToken(pattern, particleDescription) {
+  _initSubTokens(pattern, particleDescription) {
     let valueTokens = pattern.match(/\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/);
     let handleNames = valueTokens[1].split('.');
     let extra = valueTokens.length == 3 ? valueTokens[2] : undefined;
@@ -4373,7 +4373,6 @@ class DescriptionFormatter {
 
     // Fetch the particle description by name from the value token - if it wasn't passed, this is a recipe description.
     if (!particleDescription._particle) {
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handleNames.length > 1, `'${valueTokens[1]}' must contain dot-separated particle and handle connection name.`);
       let particleName = handleNames.shift();
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particleName[0] === particleName[0].toUpperCase(), `Expected particle name, got '${particleName}' instead.`);
       let particleDescriptions = this._particleDescriptions.filter(desc => {
@@ -4388,23 +4387,34 @@ class DescriptionFormatter {
     }
     let particle = particleDescription._particle;
 
+    if (handleNames.length == 0) {
+      // Use the full particle description
+      return this._initTokens(particle.spec.pattern || '', particleDescription);
+    }
+
     let handleConn = particle.connections[handleNames[0]];
     if (handleConn) { // handle connection
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handleConn.handle && handleConn.handle.id, 'Missing id???');
-      return {
+      return [{
         fullName: valueTokens[0],
         handleName: handleConn.name,
         properties: handleNames.splice(1),
         extra,
         _handleConn: handleConn,
-        _store: this._arc.findStoreById(handleConn.handle.id)};
+        _store: this._arc.findStoreById(handleConn.handle.id)}];
     }
 
     // slot connection
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handleNames.length == 2, 'slot connections tokens must have 2 names');
     let providedSlotConn = particle.consumedSlotConnections[handleNames[0]].providedSlots[handleNames[1]];
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(providedSlotConn, `Could not find handle ${handleNames.join('.')}`);
-    return {fullName: valueTokens[0], consumeSlotName: handleNames[0], provideSlotName: handleNames[1], extra, _providedSlotConn: providedSlotConn};
+    return [{
+      fullName: valueTokens[0],
+      consumeSlotName: handleNames[0],
+      provideSlotName: handleNames[1],
+      extra,
+      _providedSlotConn: providedSlotConn
+    }];
   }
 
   async tokenToString(token) {
@@ -20113,24 +20123,26 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
       let {template, model} = this._retrieveTemplateAndModel(particleDesc, index);
 
       let success = await Promise.all(Object.keys(model).map(async tokenKey => {
-        let token = this._initHandleToken(model[tokenKey], particleDesc);
-        let tokenValue = await this.tokenToString(token);
-
-        if (tokenValue == undefined) {
-          return false;
-        } else if (tokenValue && tokenValue.template && tokenValue.model) {
-          // Dom token.
-          template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
-          delete model[tokenKey];
-          model = Object.assign(model, tokenValue.model);
-        } else { // Text token.
-          // Replace tokenKey, in case multiple selected suggestions use the same key.
-          let newTokenKey = `${tokenKey}${++this._nextID}`;
-          template = template.replace(`{{${tokenKey}}}`, `{{${newTokenKey}}}`);
-          delete model[tokenKey];
-          model[newTokenKey] = tokenValue;
-        }
-        return true;
+        let tokens = this._initSubTokens(model[tokenKey], particleDesc);
+        let token = tokens[0];
+        return (await Promise.all(tokens.map(async token => {
+          let tokenValue = await this.tokenToString(token);
+          if (tokenValue == undefined) {
+            return false;
+          } else if (tokenValue && tokenValue.template && tokenValue.model) {
+            // Dom token.
+            template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
+            delete model[tokenKey];
+            model = Object.assign(model, tokenValue.model);
+          } else { // Text token.
+            // Replace tokenKey, in case multiple selected suggestions use the same key.
+            let newTokenKey = `${tokenKey}${++this._nextID}`;
+            template = template.replace(`{{${tokenKey}}}`, `{{${newTokenKey}}}`);
+            delete model[tokenKey];
+            model[newTokenKey] = tokenValue;
+          }
+          return true;
+        }))).every(t => !!t);
       }));
 
       if (success.every(s => !!s)) {

@@ -1,27 +1,9 @@
-commit c28c62c130c2e3abd00d2e6b8a02dc664d5a6775
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Jun 20 12:00:53 2018 -0700
+commit 9c3ebc0cfa5f2d080ecdce45d9dbd489c7e96954
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jun 20 12:05:22 2018 -0700
 
-    Improve sigh linting speed (#1517)
+    Support full particle description in recipe description (#1511)
     
-    - Uses native eslint api, avoids spawning eslint processes
-    - Also enable caching to speed up subsequent lint runs
+    * Support full particle description in recipe description
     
-    Rough Performance Improvement (macOS)
-    
-    BASELINE
-    real    0m10.329s
-    user    0m13.845s
-    sys     0m0.918s
-    
-    COLD LINT
-    real    0m6.330s
-    user    0m8.710s
-    sys     0m0.468s
-    
-    CACHED LINT
-    real    0m0.911s
-    user    0m0.710s
-    sys     0m0.185s
-    
-    Fixes #1506
+    * fix selenium gift shopping test
