@@ -1,5 +1,5 @@
-commit 6718a66cc48081da928ef7e14d4f3c68c21dd4b4
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jun 20 13:58:59 2018 -0700
+commit 3fefb36c397e942c4ecda8f5532fb5fa4b698d6a
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Jun 20 15:20:45 2018 -0700
 
-    suggestion slots proposal (#1497)
+    retry launcher suggestion if not in plans (#1523)
