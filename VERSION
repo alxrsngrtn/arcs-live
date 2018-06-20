@@ -1,9 +1,5 @@
-commit 11daf199df3b7c4351deb5696d23115fba79dca0
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Tue Jun 19 13:05:35 2018 -0700
+commit bd19cf6759459a85d60335c96daa73570026d120
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Jun 19 17:07:55 2018 -0700
 
-    Rename {inner,outer}-PEC.js towards improved self-documentation. (#1496)
-    
-    * Rename {inner,outer}-PEC.js for improved clarity.
-    
-    * Rename {Inner,OuterPEC} classes to ParticleExecution{Context,Host}.
+    Small fix after Polymer 3 migration (#1512)
