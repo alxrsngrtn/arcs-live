@@ -1,5 +1,5 @@
-commit 3fefb36c397e942c4ecda8f5532fb5fa4b698d6a
+commit 12380783ac17b10c7381906993e9f7d16e6fdb20
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Jun 20 15:20:45 2018 -0700
+Date:   Wed Jun 20 15:46:40 2018 -0700
 
-    retry launcher suggestion if not in plans (#1523)
+    if deserialization fails, retry when there is more context (#1524)
