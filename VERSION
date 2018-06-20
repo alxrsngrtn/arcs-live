@@ -1,5 +1,5 @@
-commit 12380783ac17b10c7381906993e9f7d16e6fdb20
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Jun 20 15:46:40 2018 -0700
+commit be009dc304d6a268b577fc9c90f5ae9d45878479
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Jun 20 15:46:52 2018 -0700
 
-    if deserialization fails, retry when there is more context (#1524)
+    Social: Wrap subtemplate with div to fit new Xen requirement. (#1522)
