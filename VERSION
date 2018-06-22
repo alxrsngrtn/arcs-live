@@ -1,5 +1,5 @@
-commit c909dfbe8e80d2421735f78b0d6678887e2b270a
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jun 21 16:55:48 2018 -0700
+commit 5d3e36dbb078383559d6268a7d04b53e76bd7248
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Jun 21 18:45:06 2018 -0700
 
-    fix "The instantiated plan doesnt appear in the current plans" assert (#1533)
+    Disable CoalesceRecipes strategy (#1537)
