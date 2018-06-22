@@ -1,5 +1,5 @@
-commit 6c3abb5a81c5d1270a6eb18346468df35bd2593a
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jun 21 14:30:47 2018 -0700
+commit c909dfbe8e80d2421735f78b0d6678887e2b270a
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Jun 21 16:55:48 2018 -0700
 
-    Uses 'must provide' syntax to cut down no-op suggestions (#1530)
+    fix "The instantiated plan doesnt appear in the current plans" assert (#1533)
