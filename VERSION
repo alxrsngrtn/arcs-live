@@ -1,5 +1,11 @@
-commit 1b9c6b8df7302bd35fa13a91ce774486addea100
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Jun 22 11:19:59 2018 -0700
+commit 48f632ac058d3f3c95239249bdcee78ef7ce1973
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Fri Jun 22 15:05:58 2018 -0700
 
-    handle duplicate particle's description in active recipe (#1535)
+    Update styling of social to fit better under responsive layout. (#1540)
+    
+    - update write-post and feed to center amidst wider page.
+    - fix broken position of edit post control buttons
+    - dynamically position write post button below right of content
+      until we can do fancier positioning.
+    - inset game stats to better fit with message post text position.
