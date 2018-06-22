@@ -1148,7 +1148,7 @@ class Type {
     }
 
     if (this.isInterface) {
-      let shape = this.interfaceShape.clone();
+      let shape = this.interfaceShape.clone(new Map());
       shape._typeVars.map(({object, field}) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
       // TODO: only build a new type when a variable is modified
       return Type.newInterface(shape);
@@ -1302,6 +1302,10 @@ class Type {
     return Type._canMergeCanReadSubset(type1, type2) && Type._canMergeCanWriteSuperset(type1, type2);
   }
 
+  // Clone a type object.
+  // When cloning multiple types, variables that were associated with the same name
+  // before cloning should still be associated after cloning. To maintain this 
+  // property, create a Map() and pass it into all clone calls in the group.
   clone(variableMap) {
     let type = this.resolvedType();
     if (type.isVariable) {
@@ -1317,6 +1321,32 @@ class Type {
       return new Type(type.tag, type.data.clone(variableMap));
     }
     return Type.fromLiteral(type.toLiteral());
+  }
+
+  // Clone a type object, maintaining resolution information.
+  // This function SHOULD NOT BE USED at the type level. In order for type variable
+  // information to be maintained correctly, an entire context root needs to be
+  // cloned.
+  _cloneWithResolutions(variableMap) {
+    if (this.isVariable) {
+      if (variableMap.has(this.variable)) {
+        return new Type('Variable', variableMap.get(this.variable));
+      } else {
+        let newTypeVariable = __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */].fromLiteral(this.variable.toLiteralIgnoringResolutions());
+        if (this.variable.resolution)
+          newTypeVariable.resolution = this.variable.resolution._cloneWithResolutions(variableMap);
+        if (this.variable._canReadSubset)
+          newTypeVariable.canReadSubset = this.variable.canReadSubset._cloneWithResolutions(variableMap);
+        if (this.variable._canWriteSuperset)
+          newTypeVariable.canWriteSuperset = this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
+        variableMap.set(this.variable, newTypeVariable);
+        return new Type('Variable', newTypeVariable);
+      }
+    }
+    if (this.data._cloneWithResolutions) {
+      return new Type(this.tag, this.data._cloneWithResolutions(variableMap));
+    }
+    return Type.fromLiteral(this.toLiteral());
   }
 
   toLiteral() {
@@ -2929,8 +2959,8 @@ ${e.message}
                 `Could not find hosted particle '${connectionItem.target.particle}'`);
           }
           __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!connection.type.hasVariableReference);
-          let type = __WEBPACK_IMPORTED_MODULE_12__recipe_type_checker_js__["a" /* TypeChecker */].restrictType(connection.type, hostedParticle);
-          if (!type) {
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(connection.type.isInterface);
+          if (!connection.type.interfaceShape.restrictType(hostedParticle)) {
             throw new ManifestError(
                 connectionItem.target.location,
                 `Hosted particle '${hostedParticle.name}' does not match shape '${connection.name}'`);
@@ -2944,7 +2974,7 @@ ${e.message}
           let id = `${manifest.generateID()}:${particleSpecHash}:${hostedParticle.name}`;
           targetHandle = recipe.newHandle();
           targetHandle.fate = 'copy';
-          let store = await manifest.newStore(type, null, id, []);
+          let store = await manifest.newStore(connection.type, null, id, []);
           store.set(hostedParticleLiteral);
           targetHandle.mapToStorage(store);
         }
@@ -3538,9 +3568,10 @@ class TypeChecker {
   // NOTE: you probably don't want to call this function, if you think you
   // do, talk to shans@.
   static processTypeList(baseType, list) {
-    baseType = baseType == undefined
-        ? __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */]('a'))
-        : __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].fromLiteral(baseType.toLiteral()); // Copy for mutating.
+    let newBaseType = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */](''));
+    if (baseType)
+      newBaseType.data.resolution = baseType;
+    baseType = newBaseType;
     
     let concreteTypes = [];
 
@@ -3602,6 +3633,8 @@ class TypeChecker {
         let result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
         if (result == false)
           return null;
+        // Here onto grows, one level at a time,
+        // as we assign new resolution to primitiveOnto, which is a leaf.
         primitiveOnto.variable.resolution = primitiveBase;
       } else {
         // base variable, onto not.
@@ -3611,6 +3644,11 @@ class TypeChecker {
       // onto variable, base not.
       primitiveOnto.variable.resolution = primitiveBase;
       return onto;
+    } else if (primitiveBase.isInterface && primitiveOnto.isInterface) {
+      let result = primitiveBase.interfaceShape.tryMergeTypeVariablesWith(primitiveOnto.interfaceShape);
+      if (result == null)
+        return null;
+      return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newInterface(result);
     } else {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(false, 'tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
     }
@@ -3686,16 +3724,6 @@ class TypeChecker {
     if (handleType.canWriteSuperset.isMoreSpecificThan(readType))
       return true;
     return false;
-  }
-
-  // TODO: what is this? Does it still belong here?
-  static restrictType(type, instance) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(type.isInterface, `restrictType not implemented for ${type}`);
-
-    let shape = type.interfaceShape.restrictType(instance);
-    if (shape == false)
-      return false;
-    return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newInterface(shape);
   }
 
   // Compare two types to see if they could be potentially resolved (in the absence of other
@@ -5727,8 +5755,16 @@ class Handle {
   set pattern(pattern) { this._pattern = pattern; }
 
   static effectiveType(handleType, connections) {
+    let variableMap = new Map();
+    // It's OK to use _cloneWithResolutions here as for the purpose of this test, the handle set + handleType 
+    // contain the full set of type variable information that needs to be maintained across the clone.
+    let typeSet = connections.filter(connection => connection.type != null).map(connection => ({type: connection.type._cloneWithResolutions(variableMap), direction: connection.direction}));
+    return __WEBPACK_IMPORTED_MODULE_2__type_checker_js__["a" /* TypeChecker */].processTypeList(handleType ? handleType._cloneWithResolutions(variableMap) : null, typeSet);
+  }
+
+  static resolveEffectiveType(handleType, connections) {
     let typeSet = connections.filter(connection => connection.type != null).map(connection => ({type: connection.type, direction: connection.direction}));
-    return __WEBPACK_IMPORTED_MODULE_2__type_checker_js__["a" /* TypeChecker */].processTypeList(handleType, typeSet);
+    return __WEBPACK_IMPORTED_MODULE_2__type_checker_js__["a" /* TypeChecker */].processTypeList(handleType, typeSet);   
   }
 
   _isValid(options) {
@@ -5743,7 +5779,7 @@ class Handle {
       }
       connection.tags.forEach(tag => tags.add(tag));
     }
-    let type = Handle.effectiveType(this._mappedType, this._connections);
+    let type = Handle.resolveEffectiveType(this._mappedType, this._connections);
     if (type) {
       this._type = type;
       this._tags.forEach(tag => tags.add(tag));
@@ -6177,6 +6213,7 @@ class Schema {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_type_checker_js__ = __webpack_require__(11);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6296,10 +6333,20 @@ ${this._slotsToManifestString()}
     return {name: this.name, handles, slots};
   }
 
-  clone() {
-    let handles = this.handles.map(({name, direction, type}) => ({name, direction, type}));
+  clone(variableMap) {
+    let handles = this.handles.map(({name, direction, type}) => ({name, direction, type: type ? type.clone(variableMap) : undefined}));
     let slots = this.slots.map(({name, direction, isRequired, isSet}) => ({name, direction, isRequired, isSet}));
     return new Shape(this.name, handles, slots);
+  }
+
+  cloneWithResolutions(variableMap) {
+    return this._cloneWithResolutions(variableMap);
+  }
+
+  _cloneWithResolutions(variableMap) {
+    let handles = this.handles.map(({name, direction, type}) => ({name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined}));
+    let slots = this.slots.map(({name, direction, isRequired, isSet}) => ({name, direction, isRequired, isSet}));
+    return new Shape(this.name, handles, slots);  
   }
 
   canEnsureResolved() {
@@ -6317,6 +6364,55 @@ ${this._slotsToManifestString()}
     for (let typeVar of this._typeVars)
       typeVar.object[typeVar.field].maybeEnsureResolved();
     return true;
+  }
+
+  tryMergeTypeVariablesWith(other) {
+    // Type variable enabled slot matching will Just Work when we
+    // unify slots and handles.
+    if (!this._equalItems(other.slots, this.slots, this._equalSlot))
+      return null;
+    if (other.handles.length !== this.handles.length)
+      return null;
+    
+    let handles = new Set(this.handles);
+    let otherHandles = new Set(other.handles);
+    let handleMap = new Map();
+    let sizeCheck = handles.size;
+    while (handles.size > 0) {
+      let handleMatches = [...handles.values()].map(
+        handle => ({handle, match: [...otherHandles.values()].filter(otherHandle =>this._equalHandle(handle, otherHandle))}));
+    
+      for (let handleMatch of handleMatches) {
+        // no match!
+        if (handleMatch.match.length == 0)
+          return null;
+        if (handleMatch.match.length == 1) {
+          handleMap.set(handleMatch.handle, handleMatch.match[0]);
+          otherHandles.delete(handleMatch.match[0]);
+          handles.delete(handleMatch.handle);
+        }
+      }
+      // no progress!
+      if (handles.size == sizeCheck)
+        return null;
+      sizeCheck = handles.size;
+    }
+  
+    handles = [];
+    for (let handle of this.handles) {
+      let otherHandle = handleMap.get(handle);
+      let resultType;
+      if (handle.type.hasVariable || otherHandle.type.hasVariable) {
+        resultType = __WEBPACK_IMPORTED_MODULE_2__recipe_type_checker_js__["a" /* TypeChecker */]._tryMergeTypeVariable(handle.type, otherHandle.type);
+        if (!resultType)
+          return null;
+      } else {
+        resultType = handle.type || otherHandle.type;
+      }
+      handles.push({name: handle.name || otherHandle.name, direction: handle.direction || otherHandle.direction, type: resultType}); 
+    }
+    let slots = this.slots.map(({name, direction, isRequired, isSet}) => ({name, direction, isRequired, isSet}));
+    return new Shape(this.name, handles, slots);
   }
 
   resolvedType() {
@@ -6363,7 +6459,7 @@ ${this._slotsToManifestString()}
   }
 
   _cloneAndUpdate(update) {
-    let copy = this.clone();
+    let copy = this.clone(new Map());
     copy._typeVars.forEach(typeVar => Shape._updateTypeVar(typeVar, update));
     return copy;
   }
@@ -6412,12 +6508,12 @@ ${this._slotsToManifestString()}
   }
 
   particleMatches(particleSpec) {
-    return this.restrictType(particleSpec) !== false;
+    let shape = this.cloneWithResolutions(new Map());
+    return shape.restrictType(particleSpec) !== false;
   }
 
   restrictType(particleSpec) {
-    let newShape = this.clone();
-    return newShape._restrictThis(particleSpec);
+    return this._restrictThis(particleSpec);
   }
 
   _restrictThis(particleSpec) {
@@ -6471,6 +6567,8 @@ ${this._slotsToManifestString()}
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Shape;
+
+
 
 
 
@@ -10887,6 +10985,10 @@ class TypeVariable {
 
   toLiteral() {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(this.resolution == null);
+    return this.toLiteralIgnoringResolutions();
+  }
+
+  toLiteralIgnoringResolutions() {
     return {
       name: this.name,
       canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
