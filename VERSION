@@ -1,5 +1,5 @@
-commit 15904373ac5d69cb1e3769d3bb48bf7d13f382c4
+commit 1b9c6b8df7302bd35fa13a91ce774486addea100
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Jun 22 09:41:52 2018 -0700
+Date:   Fri Jun 22 11:19:59 2018 -0700
 
-    examine plan's stores versions to determine whether speculator cache can be used (#1539)
+    handle duplicate particle's description in active recipe (#1535)

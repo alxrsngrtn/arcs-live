@@ -4171,9 +4171,11 @@ class DescriptionFormatter {
             && particleDescription._recipe.particles.find(p => p == desc._particle);
       });
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particleDescriptions.length > 0, `Cannot find particles with name ${particleName}.`);
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(particleDescriptions.length == 1,
-             `Cannot reference duplicate particle '${particleName}' in recipe description.`);
-      particleDescription = particleDescriptions[0];
+      // Note: when an arc's active recipes contains several recipes, the last recipe's description
+      // is used as the arc's description. If this last recipe's description has a description pattern
+      // that references a particle that is also used in one of the previous recipes,
+      // there will be a duplicate particle-description.
+      particleDescription = particleDescriptions[particleDescriptions.length - 1];
     }
     let particle = particleDescription._particle;
 
@@ -23622,13 +23624,14 @@ class SuggestionComposer {
 
   async _updateSuggestions(suggestions) {
     this._affordance.contextClass.clear(this._context);
-    return Promise.all(suggestions.map(async suggestion => {
+    let sortedSuggestions = suggestions.sort((s1, s2) => s2.rank - s1.rank);
+    for (let suggestion of sortedSuggestions) {
       let suggestionContent =
         await suggestion.description.getRecipeSuggestion(this._affordance.descriptionFormatter);
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(suggestionContent, 'No suggestion content available');
       this._affordance.contextClass.createContext(
           this.createSuggestionElement(this._context, suggestion), suggestionContent);
-    }));
+    }
   }
 
   createSuggestionElement(container, plan) {
