@@ -1,17 +1,5 @@
-commit 67cf416cbd04465e519978b41cc0f56cce05797b
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Jun 22 15:01:43 2018 +1000
+commit 12364790c26798635dd223cdae014ed5a456233f
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Jun 22 09:42:12 2018 -0700
 
-    Type cloning2 (#1532)
-    
-    This allows effectiveType to be used for speculative resolution inside strategies.
-    
-    Note that this uncovered a more fundamental problem around type cloning:
-    
-    There's a clone() method on type which works on individual types. However, type variables work by linking all instances of the same variable to a single TypeVariable object, which means that cloning can't maintain type variable information. So clone() flattens out type variables to their resolved values.
-    
-    This means that clone() can't be used to try speculative type changes (like what strategies are trying to do with effectiveType), because all the linkages are lost and the effect of the change isn't correctly evaluated.
-    
-    To get around this, I've added a cloneWithResolutions() method; but there's an important caveat here: it can only be used with an understanding of the domain of the test that the clone is going to be used for. In this case, we only care about this specific handle and it's connections, so it's OK to cloneWithResolutions() across that set of types.
-    
-    This investigation also uncovered some bugs with the way we were cloning shapes, and a place where shapes were being cloned but shouldn't have been.
+    consistent suggestions ordering (#1528)

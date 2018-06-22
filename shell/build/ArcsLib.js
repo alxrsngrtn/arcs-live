@@ -9634,8 +9634,10 @@ class Speculator {
 
   async speculate(arc, plan, hash) {
     if (this._relevanceByHash.has(hash)) {
+      let arcStoreVersionById = arc.getStoresState();
       let relevance = this._relevanceByHash.get(hash);
-      if (arc.isSameState(relevance.arcState)) {
+      let relevanceStoreVersionById = relevance.arcState;
+      if (plan.handles.every(handle => arcStoreVersionById.get(handle.id) == relevanceStoreVersionById.get(handle.id))) {
         return relevance;
       }
     }
@@ -23620,13 +23622,14 @@ class SuggestionComposer {
 
   async _updateSuggestions(suggestions) {
     this._affordance.contextClass.clear(this._context);
-    return Promise.all(suggestions.map(async suggestion => {
+    let sortedSuggestions = suggestions.sort((s1, s2) => s2.rank - s1.rank);
+    for (let suggestion of sortedSuggestions) {
       let suggestionContent =
         await suggestion.description.getRecipeSuggestion(this._affordance.descriptionFormatter);
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(suggestionContent, 'No suggestion content available');
       this._affordance.contextClass.createContext(
           this.createSuggestionElement(this._context, suggestion), suggestionContent);
-    }));
+    }
   }
 
   createSuggestionElement(container, plan) {
