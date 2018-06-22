@@ -1,5 +1,5 @@
-commit 5d3e36dbb078383559d6268a7d04b53e76bd7248
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jun 21 18:45:06 2018 -0700
+commit dbd9928135ea26cd9522c423d1a466b77dd79502
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Thu Jun 21 18:48:35 2018 -0700
 
-    Disable CoalesceRecipes strategy (#1537)
+    Reland #1503: Restore speculative plan grouping. (#1538)
