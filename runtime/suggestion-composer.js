@@ -39,14 +39,13 @@ export class SuggestionComposer {
 
   async _updateSuggestions(suggestions) {
     this._affordance.contextClass.clear(this._context);
-    let sortedSuggestions = suggestions.sort((s1, s2) => s2.rank - s1.rank);
-    for (let suggestion of sortedSuggestions) {
+    return Promise.all(suggestions.map(async suggestion => {
       let suggestionContent =
         await suggestion.description.getRecipeSuggestion(this._affordance.descriptionFormatter);
       assert(suggestionContent, 'No suggestion content available');
       this._affordance.contextClass.createContext(
           this.createSuggestionElement(this._context, suggestion), suggestionContent);
-    }
+    }));
   }
 
   createSuggestionElement(container, plan) {
