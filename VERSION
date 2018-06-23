@@ -1,5 +1,5 @@
-commit eac80e63be1809d0a1a1e29d1321343971a150e4
-Author: Bernhard Seefeld <seefeld@gmail.com>
-Date:   Fri Jun 22 15:45:24 2018 -0700
+commit f3f2f97226ac31d8eba03f897bb74c858742dbcf
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Jun 22 17:27:14 2018 -0700
 
-    Make date input not disappear on change (#1549)
+    Enables stricer CoalesceRecipes strategy (#1547)
