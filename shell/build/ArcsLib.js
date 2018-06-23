@@ -11214,12 +11214,9 @@ class Planificator {
     if (this._arc.search !== search) {
       this._arc.search = search;
       this._requestPlanning({
-        cancelOngoingPlanning: true
-        // TODO(mmandlis): this excludes InitPopulation from planner strategies and prevents CoalesceRecipes strategy from
-        // working properly. Consider reenabling, if possible.
-        // // Don't include InitPopulation strategies in replanning.
-        // strategies: [InitSearch].concat(Planner.ResolutionStrategies).map(strategy => new strategy(this._arc)),
-        // append: true
+        cancelOngoingPlanning: true,
+        strategies: [__WEBPACK_IMPORTED_MODULE_2__strategies_init_search_js__["a" /* InitSearch */]].concat(__WEBPACK_IMPORTED_MODULE_4__planner_js__["a" /* Planner */].ResolutionStrategies).map(strategy => new strategy(this._arc)),
+        append: true
       });
     }
   }

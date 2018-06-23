@@ -1,5 +1,5 @@
-commit f3f2f97226ac31d8eba03f897bb74c858742dbcf
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Jun 22 17:27:14 2018 -0700
+commit 6d8dae8908d2165cd51412bdcd6dab493758fb94
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Jun 22 17:44:49 2018 -0700
 
-    Enables stricer CoalesceRecipes strategy (#1547)
+    exclude InitPopulation from replanning when triggered by search text change (#1525)
