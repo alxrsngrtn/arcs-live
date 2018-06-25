@@ -1,5 +1,5 @@
-commit 86d6a4c3cf94163519b27cb2c52eec84dae4870a
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Jun 25 17:40:08 2018 +1000
+commit 76fdbab0b61794703baacbe53619bb7b222d1edd
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Mon Jun 25 11:21:28 2018 -0700
 
-    Better handling of proxy syncing and write ops; fixes #1543 (#1554)
+    Prepare to tag v0.4.1 stable. (#1557)
