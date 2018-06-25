@@ -1,5 +1,5 @@
-commit 6d8dae8908d2165cd51412bdcd6dab493758fb94
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Jun 22 17:44:49 2018 -0700
+commit 86d6a4c3cf94163519b27cb2c52eec84dae4870a
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Jun 25 17:40:08 2018 +1000
 
-    exclude InitPopulation from replanning when triggered by search text change (#1525)
+    Better handling of proxy syncing and write ops; fixes #1543 (#1554)

@@ -4635,6 +4635,8 @@ class Loader {
 
 
 
+const SyncState = {none: 0, pending: 1, full: 2};
+
 /** @class StorageProxy
  * Mediates between one or more Handles and the backing store outside the PEC.
  *
@@ -4667,7 +4669,7 @@ class StorageProxy {
     this._version = undefined;
     this._listenerAttached = false;
     this._keepSynced = false;
-    this._synchronized = false;
+    this._synchronized = SyncState.none;
     this._observers = [];
     this._updates = [];
   }
@@ -4708,7 +4710,7 @@ class StorageProxy {
       // If a handle configured for sync notifications registers after we've received the full
       // model, notify it immediately.
       // TODO: add a unit test to cover this case
-      if (handle.options.notifySync && this._synchronized) {
+      if (handle.options.notifySync && this._synchronized == SyncState.full) {
         handle._notify(true, particle, this._model);
       }
     }
@@ -4724,7 +4726,7 @@ class StorageProxy {
 
     // We may have queued updates that were received after a desync; discard any that are stale
     // with respect to the received model.
-    this._synchronized = true;
+    this._synchronized = SyncState.full;
     while (this._updates.length > 0 && this._updates[0].version <= model.version) {
       this._updates.shift();
     }
@@ -4811,8 +4813,8 @@ class StorageProxy {
     // If we still have update events queued, we must have received a future version are are now
     // desynchronized. Send a request for the full model and notify handles configured for it.
     if (this._updates.length > 0) {
-      if (this._synchronized) {
-        this._synchronized = false;
+      if (this._synchronized != SyncState.none) {
+        this._synchronized = SyncState.none;
         this._port.SynchronizeProxy({handle: this, callback: x => this._onSynchronize(x)});
         for (let {handle, particle} of this._observers) {
           if (handle.options.notifyDesync) {
@@ -4820,9 +4822,9 @@ class StorageProxy {
           }
         }
       }
-    } else if (!this._synchronized) {
+    } else if (this._synchronized != SyncState.full) {
       // If we were desynced but have now consumed all update events, we've caught up.
-      this._synchronized = true;
+      this._synchronized = SyncState.full;
     }
   }
 
@@ -4835,7 +4837,7 @@ class StorageProxy {
   // TODO: in synchronized mode, these should integrate with SynchronizeProxy rather than
   //       sending a parallel request
   get(particleId) {
-    if (this._synchronized) {
+    if (this._synchronized == SyncState.full) {
       return new Promise((resolve, reject) => resolve(this._model));
     } else {
       return new Promise((resolve, reject) =>
@@ -4844,7 +4846,7 @@ class StorageProxy {
   }
 
   toList(particleId) {
-    if (this._synchronized) {
+    if (this._synchronized == SyncState.full) {
       return new Promise((resolve, reject) => resolve(this._model));
     } else {
       return new Promise((resolve, reject) =>
@@ -4858,22 +4860,22 @@ class StorageProxy {
   // TODO: handle concurrent writes from other parties to the backing store
   set(entity, particleId) {
     this._port.HandleSet({data: entity, handle: this, particleId});
-    this._synchronized = false;
+    this._synchronized = SyncState.pending;
   }
 
   store(entity, particleId) {
     this._port.HandleStore({data: entity, handle: this, particleId});
-    this._synchronized = false;
+    this._synchronized = SyncState.pending;
   }
 
   remove(entityId, particleId) {
     this._port.HandleRemove({data: entityId, handle: this, particleId});
-    this._synchronized = false;
+    this._synchronized = SyncState.pending;
   }
 
   clear(particleId) {
     this._port.HandleClear({handle: this, particleId});
-    this._synchronized = false;
+    this._synchronized = SyncState.pending;
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = StorageProxy;
