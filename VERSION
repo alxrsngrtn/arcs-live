@@ -1,5 +1,5 @@
-commit 76fdbab0b61794703baacbe53619bb7b222d1edd
+commit c8029fc401859d546e0f28586f6a40bc3b07d7dc
 Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Jun 25 11:21:28 2018 -0700
+Date:   Mon Jun 25 11:44:20 2018 -0700
 
-    Prepare to tag v0.4.1 stable. (#1557)
+    Update version to new mainline v0.4.1-alpha. (#1558)
