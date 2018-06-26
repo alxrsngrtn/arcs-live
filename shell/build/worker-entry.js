@@ -2774,6 +2774,7 @@ class ParticleExecutionContext {
     this._nextLocalID = 0;
     this._loader = loader;
     this._pendingLoads = [];
+    this._scheduler = new __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__["a" /* StorageProxyScheduler */]();
 
     /*
      * This code ensures that the relevant types are known
@@ -2786,11 +2787,11 @@ class ParticleExecutionContext {
      * only keeping type information on the arc side.
      */
     this._apiPort.onDefineHandle = ({type, identifier, name}) => {
-      return new __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__["a" /* StorageProxy */](identifier, type, this._apiPort, this, name);
+      return new __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__["b" /* StorageProxy */](identifier, type, this._apiPort, this, this._scheduler, name);
     };
 
     this._apiPort.onCreateHandleCallback = ({type, id, name, callback}) => {
-      let proxy = new __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__["a" /* StorageProxy */](id, type, this._apiPort, this, name);
+      let proxy = new __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__["b" /* StorageProxy */](id, type, this._apiPort, this, this._scheduler, name);
       return [proxy, () => callback(proxy)];
     };
 
@@ -2989,7 +2990,7 @@ class ParticleExecutionContext {
   }
 
   get busy() {
-    if (this._pendingLoads.length > 0)
+    if (this._pendingLoads.length > 0 || this._scheduler.busy)
       return true;
     return false;
   }
@@ -2998,7 +2999,7 @@ class ParticleExecutionContext {
     if (!this.busy) {
       return Promise.resolve();
     }
-    return Promise.all(this._pendingLoads.concat(this._particles.map(particle => particle.idle))).then(() => this.idle);
+    return Promise.all([this._scheduler.idle, ...this._pendingLoads]).then(() => this.idle);
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ParticleExecutionContext;
@@ -3621,6 +3622,7 @@ class APIPort {
   registerCall(name, argumentTypes) {
     this[name] = args => {
       let call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
+      this.messageCount++;
       this._port.postMessage(call);
       if (this._debugAttachment && this._debugAttachment[name]) {
         this._debugAttachment[name](args);
@@ -3650,6 +3652,7 @@ class APIPort {
       let call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
       let requestedId = mappingIdArg && args[mappingIdArg];
       call.messageBody.identifier = this._mapper.createMappingForThing(thing, requestedId);
+      this.messageCount++;
       this._port.postMessage(call);
       if (this._debugAttachment && this._debugAttachment[name]) {
         this._debugAttachment[name](thing, args);
@@ -4369,17 +4372,24 @@ class Collection extends Handle {
   }
 
   // Called by StorageProxy.
-  _notify(forSync, particle, details) {
+  _notify(kind, particle, details) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, '_notify should not be called for non-readable handles');
-    if (forSync) {
-      particle.onHandleSync(this, this._restore(details));
-    } else {
-      let update = {};
-      if ('add' in details)
-        update.added = this._restore(details.add);
-      if ('remove' in details)
-        update.removed = this._restore(details.remove);
-      particle.onHandleUpdate(this, update);
+    switch (kind) {
+      case 'sync':
+        particle.onHandleSync(this, this._restore(details));
+        return;
+      case 'update': {
+        let update = {};
+        if ('add' in details)
+          update.added = this._restore(details.add);
+        if ('remove' in details)
+          update.removed = this._restore(details.remove);
+        particle.onHandleUpdate(this, update);
+        return;
+      }
+      case 'desync':
+        particle.onHandleDesync(this);
+        return;
     }
   }
 
@@ -4435,12 +4445,19 @@ class Variable extends Handle {
   }
 
   // Called by StorageProxy.
-  _notify(forSync, particle, details) {
+  _notify(kind, particle, details) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.canRead, '_notify should not be called for non-readable handles');
-    if (forSync) {
-      particle.onHandleSync(this, this._restore(details));
-    } else {
-      particle.onHandleUpdate(this, {data: this._restore(details.data)});
+    switch (kind) {
+      case 'sync':
+        particle.onHandleSync(this, this._restore(details));
+        return;
+      case 'update': {
+        particle.onHandleUpdate(this, {data: this._restore(details.data)});
+        return;
+      }
+      case 'desync':
+        particle.onHandleDesync(this);
+        return;
     }
   }
 
@@ -4657,11 +4674,12 @@ const SyncState = {none: 0, pending: 1, full: 2};
  *   are applied.
  */
 class StorageProxy {
-  constructor(id, type, port, pec, name) {
+  constructor(id, type, port, pec, scheduler, name) {
     this._id = id;
     this._type = type;
     this._port = port;
     this._pec = pec;
+    this._scheduler = scheduler;
     this.name = name;
 
     // _model is an Entity for Variables or [Entity] for Collections.
@@ -4711,7 +4729,11 @@ class StorageProxy {
       // model, notify it immediately.
       // TODO: add a unit test to cover this case
       if (handle.options.notifySync && this._synchronized == SyncState.full) {
-        handle._notify(true, particle, this._model);
+        let model = this._model;
+        if (Array.isArray(model)) {
+          model = [...model];
+        }
+        this._scheduler.enqueue(particle, handle, ['sync', particle, model]);
       }
     }
   }
@@ -4742,7 +4764,11 @@ class StorageProxy {
     }
     for (let {handle, particle} of this._observers) {
       if (handle.options.keepSynced && handle.options.notifySync) {
-        handle._notify(true, particle, this._model, null);
+        let model = this._model;
+        if (Array.isArray(model)) {
+          model = [...model];
+        }
+        this._scheduler.enqueue(particle, handle, ['sync', particle, model]);
       }
     }
     this._processUpdates();
@@ -4753,7 +4779,7 @@ class StorageProxy {
     // Immediately notify any handles that are not configured with keepSynced but do want updates.
     for (let {handle, particle} of this._observers) {
       if (!handle.options.keepSynced && handle.options.notifyUpdate) {
-        handle._notify(false, particle, update);
+        this._scheduler.enqueue(particle, handle, ['update', particle, update]);
       }
     }
 
@@ -4805,7 +4831,7 @@ class StorageProxy {
       // notified as updates are received).
       for (let {handle, particle} of this._observers) {
         if (handle.options.keepSynced && handle.options.notifyUpdate) {
-          handle._notify(false, particle, update);
+          this._scheduler.enqueue(particle, handle, ['update', particle, update]);
         }
       }
     }
@@ -4818,7 +4844,7 @@ class StorageProxy {
         this._port.SynchronizeProxy({handle: this, callback: x => this._onSynchronize(x)});
         for (let {handle, particle} of this._observers) {
           if (handle.options.notifyDesync) {
-            particle.onHandleDesync(handle, this._updates[0].version);
+            this._scheduler.enqueue(particle, handle, ['desync', particle]);
           }
         }
       }
@@ -4878,7 +4904,88 @@ class StorageProxy {
     this._synchronized = SyncState.pending;
   }
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = StorageProxy;
+/* harmony export (immutable) */ __webpack_exports__["b"] = StorageProxy;
+
+
+class StorageProxyScheduler {
+  constructor() {
+    this._scheduled = false;
+    // Particle -> {Handle -> [Queue of events]}
+    this._queues = new Map();
+  }
+
+  // TODO: break apart args here, sync events should flush the queue.
+  enqueue(particle, handle, args) {
+    if (!this._queues.has(particle)) {
+      this._queues.set(particle, new Map());
+    }
+    let byHandle = this._queues.get(particle);
+    if (!byHandle.has(handle)) {
+      byHandle.set(handle, []);
+    }
+    let queue = byHandle.get(handle);
+    queue.push(args);
+    this._schedule();
+  }
+
+  get busy() {
+    return this._queues.size > 0;
+  }
+
+  _updateIdle() {
+    if (this._idleResolver && !this.busy) {
+      this._idleResolver();
+      this._idle = null;
+      this._idleResolver = null;
+    }
+  }
+  
+  get idle() {
+    if (!this.busy) {
+      return Promise.resolve();
+    }
+    if (this._idle) {
+      return this._idle;
+    }
+    this._idle = new Promise(resolver => {
+      this._idleResolver = resolver;
+    });
+    return this._idle;
+  }
+
+  _schedule() {
+    if (this._scheduled) {
+      return;
+    }
+    this._scheduled = true;
+    setTimeout(() => {
+      this._scheduled = false;
+      this._dispatch();
+    }, 0);
+  }
+
+  _dispatch() {
+    // TODO: should we process just one particle per task?
+    while (this._queues.size > 0) {
+      let particle = [...this._queues.keys()][0];
+      let byHandle = this._queues.get(particle);
+      this._queues.delete(particle);
+      for (let [handle, queue] of byHandle.entries()) {
+        for (let args of queue) {
+          try {
+            handle._notify(...args);
+          } catch (e) {
+            // TODO: report it via channel?
+            // console.error(e);
+          }
+        }
+      }
+    }
+
+    this._updateIdle();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = StorageProxyScheduler;
 
 
 

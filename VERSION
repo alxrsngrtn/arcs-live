@@ -1,7 +1,8 @@
-commit 3c7644a95e15061cc5acc15695b058d2bcee9668
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Jun 25 17:19:00 2018 -0700
+commit 7f3001b00714c39cff60e5b412c86ece7bcbeec8
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Tue Jun 26 13:24:27 2018 +1000
 
-    Output lint fixes when tools/sigh lint --fix is run (#1553)
+    Add a scheduler to coordinate delivery of events from storage proxies (#1500)
     
-    Fixes #1552
+    * Add a scheduler to coordinate delivery of events from storage proxies
+    * Fix idle signal
