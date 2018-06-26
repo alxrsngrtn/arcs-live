@@ -3572,7 +3572,7 @@ class TypeChecker {
     if (baseType)
       newBaseType.data.resolution = baseType;
     baseType = newBaseType;
-    
+
     let concreteTypes = [];
 
     // baseType might be a variable (and is definitely a variable if no baseType was available).
@@ -3650,6 +3650,12 @@ class TypeChecker {
         return null;
       return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newInterface(result);
     } else {
+      if ((primitiveBase.isCollection && primitiveBase.hasVariable)
+          || (primitiveOnto.isCollection && primitiveOnto.hasVariable)) {
+        // Cannot merge [~a] with a type that is not a variable and not a collection.
+        return null;
+      }
+
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(false, 'tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
     }
 
