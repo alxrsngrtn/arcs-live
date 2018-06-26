@@ -1,5 +1,7 @@
-commit c8029fc401859d546e0f28586f6a40bc3b07d7dc
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Jun 25 11:44:20 2018 -0700
+commit 3c7644a95e15061cc5acc15695b058d2bcee9668
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Jun 25 17:19:00 2018 -0700
 
-    Update version to new mainline v0.4.1-alpha. (#1558)
+    Output lint fixes when tools/sigh lint --fix is run (#1553)
+    
+    Fixes #1552
