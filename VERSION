@@ -1,5 +1,12 @@
-commit 83914f761f96838e14aa21978eff46525fe92744
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Jun 27 15:23:57 2018 +1000
+commit 1f025a3b42f355d0586f90d27c21e594c1d41347
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Jun 27 15:53:53 2018 +1000
 
-    Some improvements to arcs-tracing panel (#1563)
+    Better event handling in StorageProxy tests (#1562)
+    
+    * Better event handling in StorageProxy tests
+    
+    Events are now triggered directly by the backing stores (no need to use
+    engine.sendUpdate), with an option to block them for specific write ops.
+    
+    * Inverted flag for events on test stores, fixed styling.
