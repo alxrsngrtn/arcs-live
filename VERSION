@@ -1,5 +1,5 @@
-commit 413dce1db744b7badcb11fdb681bf2e562543e0b
+commit 438c0d99f0042385d9b958d9ceebf52861b2ac58
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Jun 26 00:07:13 2018 -0700
+Date:   Wed Jun 27 14:39:48 2018 +1000
 
-    A fix for type checking entity and collection of type var (#1548)
+    Makes dataflow relaxed about missing particleId (#1561)

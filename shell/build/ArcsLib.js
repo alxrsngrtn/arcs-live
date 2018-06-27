@@ -19994,13 +19994,14 @@ class OuterPortAttachment {
     }
   }
 
-  // TODO: particle IDs for proxy calls?
   onInitializeProxy({handle, callback}) {
-    this._callbackRegistry[callback] = this._describeHandleCall({operation: 'on-change', handle});
+    this._callbackRegistry[callback] = this._describeHandleCall(
+      {operation: 'on-change', handle});
   }
 
   onSynchronizeProxy({handle, callback}) {
-    this._callbackRegistry[callback] = this._describeHandleCall({operation: 'sync-model', handle});
+    this._callbackRegistry[callback] = this._describeHandleCall(
+      {operation: 'sync-model', handle});
   }
 
   onHandleGet({handle, callback, particleId}) {
@@ -20040,11 +20041,12 @@ class OuterPortAttachment {
   }
 
   _describeHandleCall({operation, handle, particleId}) {
-    return Object.assign(this._arcMetadata(), {
+    let metadata = Object.assign(this._arcMetadata(), {
       operation,
-      particle: this._describeParticle(particleId),
       handle: this._describeHandle(handle)
     });
+    if (particleId) metadata.particle = this._describeParticle(particleId);
+    return metadata;
   }
 
   _arcMetadata() {
@@ -22652,7 +22654,6 @@ class StorageProxy {
 
       // If a handle configured for sync notifications registers after we've received the full
       // model, notify it immediately.
-      // TODO: add a unit test to cover this case
       if (handle.options.notifySync && this._synchronized == SyncState.full) {
         let model = this._model;
         if (Array.isArray(model)) {
