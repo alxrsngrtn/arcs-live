@@ -1677,7 +1677,7 @@ function init() {
       addArgs: function(extraArgs) {
         args = Object.assign(args || {}, extraArgs);
       },
-      end: function(endInfo) {
+      end: function(endInfo, flow) {
         if (endInfo && endInfo.args) {
           args = Object.assign(args || {}, endInfo.args);
         }
@@ -1690,6 +1690,8 @@ function init() {
           name: info.name,
           ov: info.overview,
           args: args,
+          // Arcs Devtools Specific:
+          flowId: flow && flow.id()
         });
       },
       beginTs: begin
@@ -1701,11 +1703,15 @@ function init() {
     let baseInfo = {cat: info.cat, name: info.name + ' (async)', overview: info.overview};
     return {
       async wait(v, info) {
-        trace.end(info);
-        if (!flow) {
-          flow = module.exports.flow(Object.assign({ts: trace.endTs}, baseInfo)).start();
-        } else {
+        let flowExisted = !!flow;
+        if (!flowExisted) {
+          flow = module.exports.flow(baseInfo);
+        }
+        trace.end(info, flow);
+        if (flowExisted) {
           flow.step(Object.assign({ts: trace.beginTs}, baseInfo));
+        } else {
+          flow.start({ts: trace.endTs});
         }
         trace = null;
         try {
@@ -1718,7 +1724,7 @@ function init() {
         trace.addArgs(extraArgs);
       },
       end(endInfo) {
-        trace.end(endInfo);
+        trace.end(endInfo, flow);
         if (flow) {
           flow.end({ts: trace.beginTs});
         }
@@ -1743,12 +1749,12 @@ function init() {
     let id = flowId++;
     let started = false;
     return {
-      start: function() {
-        let begin = (info && info.ts) || now();
+      start: function(startInfo) {
+        let ts = (startInfo && startInfo.ts) || now();
         started = true;
         pushEvent({
           ph: 's',
-          ts: begin,
+          ts,
           cat: info.cat,
           name: info.name,
           ov: info.overview,
@@ -1788,6 +1794,7 @@ function init() {
         });
         return this;
       },
+      id: () => id
     };
   };
   module.exports.save = function() {

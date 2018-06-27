@@ -1,5 +1,5 @@
-commit 438c0d99f0042385d9b958d9ceebf52861b2ac58
+commit 83914f761f96838e14aa21978eff46525fe92744
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Jun 27 14:39:48 2018 +1000
+Date:   Wed Jun 27 15:23:57 2018 +1000
 
-    Makes dataflow relaxed about missing particleId (#1561)
+    Some improvements to arcs-tracing panel (#1563)
