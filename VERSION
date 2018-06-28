@@ -1,5 +1,5 @@
-commit 117bad6a400df2eb1ed4fc151913d4fb0e31e146
+commit a6780bd4c08dc7a09459e4e6fdf141998b6b6caa
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jun 28 14:51:06 2018 +1000
+Date:   Fri Jun 29 09:47:59 2018 +1000
 
-    Stops test-helper from setting arc._context (#1568)
+    Make init-population read from the index (#1569)
