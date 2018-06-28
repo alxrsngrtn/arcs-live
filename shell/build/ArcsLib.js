@@ -1677,21 +1677,24 @@ function init() {
       addArgs: function(extraArgs) {
         args = Object.assign(args || {}, extraArgs);
       },
-      end: function(endInfo, flow) {
-        if (endInfo && endInfo.args) {
+      end: function(endInfo = {}, flow) {
+        endInfo = parseInfo(endInfo);
+        if (endInfo.args) {
           args = Object.assign(args || {}, endInfo.args);
         }
+        endInfo = Object.assign({}, info, endInfo);
         this.endTs = now();
         pushEvent({
           ph: 'X',
           ts: begin,
           dur: this.endTs - begin,
-          cat: info.cat,
-          name: info.name,
-          ov: info.overview,
+          cat: endInfo.cat,
+          name: endInfo.name,
+          ov: endInfo.overview,
           args: args,
           // Arcs Devtools Specific:
-          flowId: flow && flow.id()
+          flowId: flow && flow.id(),
+          seq: endInfo.sequence
         });
       },
       beginTs: begin
@@ -1700,7 +1703,7 @@ function init() {
   module.exports.start = function(info) {
     let trace = startSyncTrace(info);
     let flow;
-    let baseInfo = {cat: info.cat, name: info.name + ' (async)', overview: info.overview};
+    let baseInfo = {cat: info.cat, name: info.name + ' (async)', overview: info.overview, sequence: info.sequence};
     return {
       async wait(v, info) {
         let flowExisted = !!flow;
@@ -1760,6 +1763,7 @@ function init() {
           ov: info.overview,
           args: info.args,
           id: id,
+          seq: info.sequence
         });
         return this;
       },
@@ -1776,6 +1780,7 @@ function init() {
           ov: info.overview,
           args: endInfo && endInfo.args,
           id: id,
+          seq: info.sequence
         });
         return this;
       },
@@ -1791,6 +1796,7 @@ function init() {
           ov: info.overview,
           args: stepInfo && stepInfo.args,
           id: id,
+          seq: info.sequence
         });
         return this;
       },
@@ -4799,6 +4805,7 @@ class Planner {
       let generated = this.strategizer.generated;
       trace.addArgs({
         generated: generated.length,
+        generation: this.strategizer.generation
       });
       if (generations) {
         generations.push({generated, record});
@@ -4884,11 +4891,19 @@ class Planner {
           continue;
         }
 
+        let planTrace = __WEBPACK_IMPORTED_MODULE_27__tracelib_trace_js__["a" /* Tracing */].start({
+          cat: 'speculating',
+          sequence: `speculator_${groupIndex}`,
+          overview: true,
+          args: {groupIndex}
+        });
+
         // TODO(wkorman): Look at restoring trace.wait() here, and whether we
         // should do similar for the async getRecipeSuggestion() below as well?
         let relevance = await speculator.speculate(this._arc, plan, hash);
         if (!relevance.isRelevant(plan)) {
           this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
+          planTrace.end({name: '[Irrelevant suggestion]', hash, groupIndex});
           continue;
         }
         let rank = relevance.calcRelevanceScore();
@@ -4910,6 +4925,8 @@ class Planner {
           hash,
           groupIndex
         });
+
+        planTrace.end({name: description, args: {rank, hash, groupIndex}});
       }
       return results;
     })));
@@ -9675,7 +9692,6 @@ class Speculator {
       }
     }
 
-    let trace = __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__["a" /* Tracing */].start({cat: 'speculator', name: 'Speculator::speculate'});
     let newArc = await arc.cloneForSpeculativeExecution();
     let relevance = new __WEBPACK_IMPORTED_MODULE_1__relevance_js__["a" /* Relevance */](arc.getStoresState());
     let relevanceByHash = this._relevanceByHash;
@@ -9693,7 +9709,7 @@ class Speculator {
       }
     }
 
-    return trace.endWith(newArc.instantiate(plan).then(a => awaitCompletion()));
+    return newArc.instantiate(plan).then(a => awaitCompletion());
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Speculator;
@@ -21366,7 +21382,7 @@ const IndexStrategies = [
 
 class RecipeIndex {
   constructor(context) {
-    let trace = __WEBPACK_IMPORTED_MODULE_6__tracelib_trace_js__["a" /* Tracing */].start({cat: 'index', name: 'RecipeIndex::constructor', overview: true});
+    let trace = __WEBPACK_IMPORTED_MODULE_6__tracelib_trace_js__["a" /* Tracing */].start({cat: 'indexing', name: 'RecipeIndex::constructor', overview: true});
     let arcStub = new __WEBPACK_IMPORTED_MODULE_2__arc_js__["a" /* Arc */]({
       id: 'index-stub',
       slotComposer: new __WEBPACK_IMPORTED_MODULE_3__slot_composer_js__["a" /* SlotComposer */]({affordance: 'mock', noRoot: true}),
