@@ -1,5 +1,5 @@
-commit 4d8f6d12d8b59cb03d1a04d5cd653d3cf8c7263a
+commit 117bad6a400df2eb1ed4fc151913d4fb0e31e146
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jun 28 11:43:37 2018 +1000
+Date:   Thu Jun 28 14:51:06 2018 +1000
 
-    Adds traces of speculative execution (#1565)
+    Stops test-helper from setting arc._context (#1568)
