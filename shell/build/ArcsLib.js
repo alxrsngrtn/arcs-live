@@ -9032,6 +9032,7 @@ class Collection extends Handle {
           update.added = this._restore(details.add);
         if ('remove' in details)
           update.removed = this._restore(details.remove);
+        update.originator = details.originatorId == this._particleId;
         particle.onHandleUpdate(this, update);
         return;
       }
@@ -21140,10 +21141,10 @@ class ParticleExecutionHost {
       this._apiPort.SimpleCallback({callback, data: await handle.toList()});
     };
 
-    this._apiPort.onHandleSet = ({handle, data}) => {handle.set(data);};
-    this._apiPort.onHandleStore = ({handle, data}) => handle.store(data);
-    this._apiPort.onHandleClear = ({handle}) => handle.clear();
-    this._apiPort.onHandleRemove = ({handle, data}) => handle.remove(data);
+    this._apiPort.onHandleSet = ({handle, data, particleId}) => handle.set(data, particleId);
+    this._apiPort.onHandleStore = ({handle, data, particleId}) => handle.store(data, particleId);
+    this._apiPort.onHandleClear = ({handle, particleId}) => handle.clear(particleId);
+    this._apiPort.onHandleRemove = ({handle, data, particleId}) => handle.remove(data, particleId);
 
     this._apiPort.onIdle = ({version, relevance}) => {
       if (version == this._idleVersion) {
@@ -23368,7 +23369,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
     return {list: [...this._items.values()], version: this._version};
   }
 
-  async store(entity) {
+  async store(entity, originatorId) {
     let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'handle', name: 'InMemoryCollection::store', args: {name: this.name}});
     let entityWasPresent = this._items.has(entity.id);
     if (entityWasPresent && (JSON.stringify(this._items.get(entity.id)) == JSON.stringify(entity))) {
@@ -23378,11 +23379,11 @@ class InMemoryCollection extends InMemoryStorageProvider {
     this._items.set(entity.id, entity);
     this._version++;
     if (!entityWasPresent)
-      this._fire('change', {add: [entity], version: this._version});
+      this._fire('change', {add: [entity], version: this._version, originatorId});
     trace.end({args: {entity}});
   }
 
-  async remove(id) {
+  async remove(id, originatorId) {
     let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'handle', name: 'InMemoryCollection::remove', args: {name: this.name}});
     if (!this._items.has(id)) {
       return;
@@ -23390,7 +23391,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
     let entity = this._items.get(id);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._items.delete(id));
     this._version++;
-    this._fire('change', {remove: [entity], version: this._version});
+    this._fire('change', {remove: [entity], version: this._version, originatorId});
     trace.end({args: {entity}});
   }
 
@@ -23440,16 +23441,16 @@ class InMemoryVariable extends InMemoryStorageProvider {
     return {data: this._stored, version: this._version};
   }
 
-  async set(entity) {
+  async set(entity, originatorId) {
     if (JSON.stringify(this._stored) == JSON.stringify(entity))
       return;
     this._stored = entity;
     this._version++;
-    this._fire('change', {data: this._stored, version: this._version});
+    this._fire('change', {data: this._stored, version: this._version, originatorId});
   }
 
-  async clear() {
-    this.set(null);
+  async clear(originatorId) {
+    this.set(null, originatorId);
   }
 
   serializedData() {
