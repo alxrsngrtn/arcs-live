@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 33);
+/******/ 	return __webpack_require__(__webpack_require__.s = 34);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -96,7 +96,7 @@ function assert(test, message) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(5);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -509,9 +509,8 @@ addType('Tuple', 'fields');
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shell_components_xen_xen_state_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dom_particle_base_js__ = __webpack_require__(27);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -526,35 +525,16 @@ addType('Tuple', 'fields');
 
 
 
-
 /** @class DomParticle
- * Particle that does stuff with DOM.
+ * Particle that interoperates with DOM and uses a simple state system
+ * to handle updates.
  */
-class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_state_js__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_1__particle_js__["a" /* Particle */]) {
+class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__shell_components_xen_xen_state_js__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_1__dom_particle_base_js__["a" /* DomParticleBase */]) {
   constructor() {
     super();
+    // alias properties to remove `_`
     this.state = this._state;
     this.props = this._props;
-  }
-  /** @method get template()
-   * Override to return a String defining primary markup.
-   */
-  get template() {
-    return '';
-  }
-  /** @method getTemplate(slotName)
-   * Override to return a String defining primary markup for the given slot name.
-   */
-  getTemplate(slotName) {
-    // TODO: only supports a single template for now. add multiple templates support.
-    return this.template;
-  }
-  /** @method getTemplateName(slotName)
-   * Override to return a String defining the name of the template for the given slot name.
-   */
-  getTemplateName(slotName) {
-    // TODO: only supports a single template for now. add multiple templates support.
-    return `default`;
   }
   /** @method willReceiveProps(props, state, oldProps, oldState)
    * Override if necessary, to do things when props change.
@@ -579,6 +559,10 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
   render() {
     return {};
   }
+  /** @method setState(state)
+   * Copy values from `state` into the particle's internal state,
+   * triggering an update cycle unless currently updating.
+   */
   setState(state) {
     return this._setState(state);
   }
@@ -586,16 +570,6 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
   setIfDirty(state) {
     console.warn('DomParticle: `setIfDirty` is deprecated, please use `setState` instead');
     return this._setState(state);
-  }
-  _willReceiveProps(...args) {
-    this.willReceiveProps(...args);
-  }
-  _update(...args) {
-    this.update(...args);
-    if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
-      this.relevance = 1; // TODO: improve relevance signal.
-    }
-    this.config.slotNames.forEach(s => this.renderSlot(s, ['model']));
   }
   /** @method get config()
    * Override if necessary, to modify superclass config.
@@ -609,9 +583,19 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
       slotNames: [...this.spec.slots.values()].map(s => s.name)
     };
   }
-  _info() {
-    return `---------- DomParticle::[${this.spec.name}]`;
+  // affordances for aliasing methods to remove `_`
+  _willReceiveProps(...args) {
+    this.willReceiveProps(...args);
   }
+  _update(...args) {
+    this.update(...args);
+    if (this.shouldRender(...args)) { // TODO: should shouldRender be slot specific?
+      this.relevance = 1; // TODO: improve relevance signal.
+    }
+    this.config.slotNames.forEach(s => this.renderSlot(s, ['model']));
+  }
+  //
+  // deprecated
   get _views() {
     console.warn(`Particle ${this.spec.name} uses deprecated _views getter.`);
     return this.handles;
@@ -620,10 +604,11 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     console.warn(`Particle ${this.spec.name} uses deprecated setViews method.`);
     return this.setHandles(views);
   }
+  // end deprecated
+  //
   async setHandles(handles) {
     this.handles = handles;
     this._handlesToSync = new Set(this.config.handleNames);
-
     // make sure we invalidate once, even if there are no incoming handles
     this._invalidate();
   }
@@ -651,76 +636,11 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__she
     });
     this._setProps(props);
   }
-  renderSlot(slotName, contentTypes) {
-    const stateArgs = this._getStateArgs();
-    let slot = this.getSlot(slotName);
-    if (!slot) {
-      return; // didn't receive StartRender.
-    }
-
-    // Set this to support multiple slots consumed by a particle, without needing
-    // to pass slotName to particle's render method, where it useless in most cases.
-    this.currentSlotName = slotName;
-
-    contentTypes.forEach(ct => slot._requestedContentTypes.add(ct));
-    // TODO(sjmiles): redundant, same answer for every slot
-    if (this.shouldRender(...stateArgs)) {
-      let content = {};
-      if (slot._requestedContentTypes.has('template')) {
-        content.template = this.getTemplate(slot.slotName);
-      }
-      if (slot._requestedContentTypes.has('model')) {
-        content.model = this.render(...stateArgs);
-      }
-      content.templateName = this.getTemplateName(slot.slotName);
-
-      slot.render(content);
-    } else if (slot.isRendered) {
-      // Send empty object, to clear rendered slot contents.
-      slot.render({});
-    }
-
-    this.currentSlotName = undefined;
-  }
-  forceRenderTemplate(slotName) {
-    this._slotByName.forEach((slot, name) => {
-      if (!slotName || (name == slotName)) {
-        slot._requestedContentTypes.add('template');
-      }
-    });
-  }
-
   fireEvent(slotName, {handler, data}) {
     if (this[handler]) {
       // TODO(sjmiles): remove `this._state` parameter
       this[handler]({data}, this._state);
     }
-  }
-  setParticleDescription(pattern) {
-    if (typeof pattern === 'string') {
-      return super.setParticleDescription(pattern);
-    }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
-    super.setDescriptionPattern('_template_', pattern.template);
-    super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
-  }
-  updateVariable(handleName, record) {
-    const handle = this.handles.get(handleName);
-    const newRecord = new (handle.entityClass)(record);
-    handle.set(newRecord);
-    return newRecord;
-  }
-  updateSet(handleName, record) {
-    // Set the record into the right place in the set. If we find it
-    // already present replace it, otherwise, add it.
-    // TODO(dstockwell): Replace this with happy entity mutation approach.
-    const handle = this.handles.get(handleName);
-    const records = this._props[handleName];
-    const target = records.find(r => r.id === record.id);
-    if (target) {
-      handle.remove(target);
-    }
-    handle.store(record);
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = DomParticle;
@@ -1004,7 +924,7 @@ class ParticleSpec {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
 /**
  * @license
@@ -2762,10 +2682,10 @@ class TypeVariable {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_js__ = __webpack_require__(28);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_js__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_channel_js__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__ = __webpack_require__(31);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3028,7 +2948,7 @@ class ParticleExecutionContext {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__ = __webpack_require__(9);
@@ -4234,6 +4154,153 @@ class DevtoolsChannelStub {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_js__ = __webpack_require__(4);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+/** @class DomParticleBase
+ * Particle that interoperates with DOM.
+ */
+class DomParticleBase extends __WEBPACK_IMPORTED_MODULE_1__particle_js__["a" /* Particle */] {
+  constructor() {
+    super();
+  }
+  /** @method get template()
+   * Override to return a String defining primary markup.
+   */
+  get template() {
+    return '';
+  }
+  /** @method getTemplate(slotName)
+   * Override to return a String defining primary markup for the given slot name.
+   */
+  getTemplate(slotName) {
+    // TODO: only supports a single template for now. add multiple templates support.
+    return this.template;
+  }
+  /** @method getTemplateName(slotName)
+   * Override to return a String defining the name of the template for the given slot name.
+   */
+  getTemplateName(slotName) {
+    // TODO: only supports a single template for now. add multiple templates support.
+    return `default`;
+  }
+  /** @method shouldRender(props, state, oldProps, oldState)
+   * Override to return false if the Particle won't use
+   * it's slot.
+   */
+  shouldRender() {
+    return true;
+  }
+  /** @method render()
+   * Override to return a dictionary to map into the template.
+   */
+  render() {
+    return {};
+  }
+  renderSlot(slotName, contentTypes) {
+    const stateArgs = this._getStateArgs();
+    let slot = this.getSlot(slotName);
+    if (!slot) {
+      return; // didn't receive StartRender.
+    }
+    // Set this to support multiple slots consumed by a particle, without needing
+    // to pass slotName to particle's render method, where it useless in most cases.
+    this.currentSlotName = slotName;
+    contentTypes.forEach(ct => slot._requestedContentTypes.add(ct));
+    // TODO(sjmiles): redundant, same answer for every slot
+    if (this.shouldRender(...stateArgs)) {
+      let content = {};
+      if (slot._requestedContentTypes.has('template')) {
+        content.template = this.getTemplate(slot.slotName);
+      }
+      if (slot._requestedContentTypes.has('model')) {
+        content.model = this.render(...stateArgs);
+      }
+      content.templateName = this.getTemplateName(slot.slotName);
+      slot.render(content);
+    } else if (slot.isRendered) {
+      // Send empty object, to clear rendered slot contents.
+      slot.render({});
+    }
+    this.currentSlotName = undefined;
+  }
+  _getStateArgs() {
+    return [];
+  }
+  forceRenderTemplate(slotName) {
+    this._slotByName.forEach((slot, name) => {
+      if (!slotName || (name == slotName)) {
+        slot._requestedContentTypes.add('template');
+      }
+    });
+  }
+  fireEvent(slotName, {handler, data}) {
+    if (this[handler]) {
+      this[handler]({data});
+    }
+  }
+  setParticleDescription(pattern) {
+    if (typeof pattern === 'string') {
+      return super.setParticleDescription(pattern);
+    }
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
+    super.setDescriptionPattern('_template_', pattern.template);
+    super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+  }
+  /** @method updateVariable(handleName, record)
+   * Modify value of named handle.
+   */
+  updateVariable(handleName, record) {
+    const handle = this.handles.get(handleName);
+    const newRecord = new (handle.entityClass)(record);
+    handle.set(newRecord);
+    return newRecord;
+  }
+  /** @method updateSet(handleName, record)
+   * Modify or insert `record` into named handle.
+   * Modification is done by removing the old record and reinserting the new one.
+   */
+  updateSet(handleName, record) {
+    // Set the record into the right place in the set. If we find it
+    // already present replace it, otherwise, add it.
+    // TODO(dstockwell): Replace this with happy entity mutation approach.
+    const handle = this.handles.get(handleName);
+    const records = this._props[handleName];
+    const target = records.find(r => r.id === record.id);
+    if (target) {
+      handle.remove(target);
+    }
+    handle.store(record);
+  }
+  /** @method boxQuery(box, userid)
+   * Returns array of Entities found in BOXED data `box` that are owned by `userid`
+   */
+  boxQuery(box, userid) {
+    return box.filter(item => userid === item.$id.split('|')[0]);
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = DomParticleBase;
+
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return local_fetch; });
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -4252,7 +4319,7 @@ const local_fetch = fetch;
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4538,13 +4605,13 @@ function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = tr
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(2);
@@ -4653,7 +4720,7 @@ class Loader {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5008,7 +5075,7 @@ class StorageProxyScheduler {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5057,7 +5124,7 @@ class TupleFields {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5207,7 +5274,7 @@ const nob = () => Object.create(null);
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5236,7 +5303,7 @@ self.onmessage = function(e) {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
