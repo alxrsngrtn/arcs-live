@@ -1,7 +1,5 @@
-commit 06afb621ec7f4f6ee5f5d28dafa91df60cf79527
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri Jun 29 13:40:53 2018 -0700
+commit 8454652ee336cc2da20ebc283e7381c4c1f335c9
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Jun 29 20:36:03 2018 -0700
 
-    Restyle Words game. (#1576)
-    
-    Reduction from the original work in #1516.
+    create `$id` alias for accessing an Entity's (symbol) id. (#1575)
