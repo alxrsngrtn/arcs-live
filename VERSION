@@ -1,9 +1,15 @@
-commit 515c8c0bed30532cb284e69f2456495c35b4096b
+commit 888fff6a30fba95d59d23af89dfdedaad38542ab
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Sat Jun 30 07:15:12 2018 -0700
+Date:   Sat Jun 30 08:18:57 2018 -0700
 
-    Standardize on `createStore` for manifest and arc API (#1580)
+    Warn on bad sub-template, other minor changes (#1579)
     
-    * manifest.(s/newStore/createStore)
+    * factor dom-particle into two classes
     
-    * plumb storageKey argument into mainfest.createStore
+    * fix import syntax
+    
+    * improve import structure and class names
+    
+    * fix import syntax
+    
+    * more tolerant handling of ill-formed sub-templates, plus warning

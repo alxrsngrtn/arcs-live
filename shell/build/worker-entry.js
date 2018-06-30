@@ -529,7 +529,7 @@ addType('Tuple', 'fields');
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
-class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__shell_components_xen_xen_state_js__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_1__dom_particle_base_js__["a" /* DomParticleBase */]) {
+class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__shell_components_xen_xen_state_js__["a" /* XenStateMixin */])(__WEBPACK_IMPORTED_MODULE_1__dom_particle_base_js__["a" /* DomParticleBase */]) {
   constructor() {
     super();
     // alias properties to remove `_`
@@ -5128,6 +5128,9 @@ class TupleFields {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return XenStateMixin; });
+/* unused harmony export nob */
+/* unused harmony export debounce */
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5140,7 +5143,16 @@ class TupleFields {
 
 const nob = () => Object.create(null);
 
-/* harmony default export */ __webpack_exports__["a"] = (Base => class extends Base {
+const debounce = (key, action, delay) => {
+  if (key) {
+    window.clearTimeout(key);
+  }
+  if (action && delay) {
+    return window.setTimeout(action, delay);
+  }
+};
+
+const XenStateMixin = Base => class extends Base {
   constructor() {
     super();
     this._pendingProps = nob();
@@ -5270,7 +5282,13 @@ const nob = () => Object.create(null);
   }
   _didUpdate() {
   }
-});
+  _debounce(key, func, delay) {
+    key = `_debounce_${key}`;
+    this._state[key] = debounce(this._state[key], func, delay != null ? delay : 16);
+  }
+};
+
+
 
 
 /***/ }),
