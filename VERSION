@@ -1,5 +1,9 @@
-commit 8454652ee336cc2da20ebc283e7381c4c1f335c9
+commit f286f76854a44f68057c3ce31a7686ca80bfb10b
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Jun 29 20:36:03 2018 -0700
+Date:   Fri Jun 29 20:37:17 2018 -0700
 
-    create `$id` alias for accessing an Entity's (symbol) id. (#1575)
+    Clean '.' and '/' characters from ID's used as Firebase keys  (#1573)
+    
+    * clean fb keys of '.' and '/' chars
+    
+    * sub-templates must have a single root node
