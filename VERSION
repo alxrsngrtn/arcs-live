@@ -1,9 +1,9 @@
-commit 33b7e327770858a08c6f26ec1ab2176e2519bb1c
+commit 515c8c0bed30532cb284e69f2456495c35b4096b
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Sat Jun 30 07:14:31 2018 -0700
+Date:   Sat Jun 30 07:15:12 2018 -0700
 
-    factor dom-particle into two classes (#1578)
+    Standardize on `createStore` for manifest and arc API (#1580)
     
-    * factor dom-particle into two classes
+    * manifest.(s/newStore/createStore)
     
-    * fix import syntax
+    * plumb storageKey argument into mainfest.createStore
