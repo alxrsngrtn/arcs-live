@@ -2655,13 +2655,19 @@ class TypeVariable {
   set resolution(value) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(value instanceof __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */]);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!this._resolution);
+    let resolvedValue = value.resolvedType();
+    if (resolvedValue.isCollection && resolvedValue.collectionType.isVariable) {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(resolvedValue.collectionType.variable != this,
+        'variable cannot resolve to collection of itself');
+    }
+
     let probe = value;
     while (probe) {
       if (!probe.isVariable)
         break;
       if (probe.variable == this)
         return;
-      probe = probe.resolution;
+      probe = probe.variable.resolution;
     }
 
     this._resolution = value;

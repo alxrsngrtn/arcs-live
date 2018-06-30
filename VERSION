@@ -1,9 +1,5 @@
-commit f286f76854a44f68057c3ce31a7686ca80bfb10b
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Jun 29 20:37:17 2018 -0700
+commit faa6612432abd3eb8aaa3272b80ea3ae317438f3
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Sat Jun 30 20:25:29 2018 +1000
 
-    Clean '.' and '/' characters from ID's used as Firebase keys  (#1573)
-    
-    * clean fb keys of '.' and '/' chars
-    
-    * sub-templates must have a single root node
+    Probe the type of the collection before setting variable resolution (#1502)
