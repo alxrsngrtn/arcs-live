@@ -4809,9 +4809,10 @@ class Planner {
   }
 
   // TODO: Use context.arc instead of arc
-  init(arc, {strategies, ruleset} = {}) {
+  init(arc, {strategies, ruleset, strategyArgs = {}} = {}) {
+    strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
     this._arc = arc;
-    strategies = strategies || Planner.AllStrategies.map(strategy => new strategy(arc));
+    strategies = (strategies || Planner.AllStrategies).map(strategy => new strategy(arc, strategyArgs));
     this.strategizer = new __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__["a" /* Strategizer */](strategies, [], ruleset || __WEBPACK_IMPORTED_MODULE_2__strategies_rulesets_js__["a" /* Empty */]);
   }
 
@@ -6936,10 +6937,9 @@ class HandleMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategi
 
 
 class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["b" /* Strategy */] {
-  constructor(arc) {
+  constructor(arc, {search}) {
     super();
-    // TODO: Figure out where this should really come from.
-    this._search = arc.search;
+    this._search = search;
   }
   async generate({generation}) {
     if (this._search == null || generation != 0) {
@@ -7261,7 +7261,6 @@ class Arc {
     // Map from each store to its description (originating in the manifest).
     this._storeDescriptions = new Map();
 
-    this._search = null;
     this._description = new __WEBPACK_IMPORTED_MODULE_6__description_js__["a" /* Description */](this);
 
     this._instantiatePlanCallbacks = [];
@@ -7272,14 +7271,6 @@ class Arc {
   }
   get loader() {
     return this._loader;
-  }
-
-  set search(search) {
-    this._search = search ? search.toLowerCase().trim() : null;
-  }
-
-  get search() {
-    return this._search;
   }
 
   get description() {
@@ -11182,6 +11173,7 @@ class Planificator {
   constructor(arc, options) {
     this._arc = arc;
     this._speculator = new __WEBPACK_IMPORTED_MODULE_5__speculator_js__["a" /* Speculator */]();
+    this._search = null;
 
     // The currently running Planner object.
     this._planner = null;
@@ -11272,11 +11264,11 @@ class Planificator {
       return;
     }
 
-    if (this._arc.search !== search) {
-      this._arc.search = search;
+    if (this._search !== search) {
+      this._search = search;
       this._requestPlanning({
         cancelOngoingPlanning: true,
-        strategies: [__WEBPACK_IMPORTED_MODULE_2__strategies_init_search_js__["a" /* InitSearch */]].concat(__WEBPACK_IMPORTED_MODULE_4__planner_js__["a" /* Planner */].ResolutionStrategies).map(strategy => new strategy(this._arc)),
+        strategies: [__WEBPACK_IMPORTED_MODULE_2__strategies_init_search_js__["a" /* InitSearch */]].concat(__WEBPACK_IMPORTED_MODULE_4__planner_js__["a" /* Planner */].ResolutionStrategies),
         append: true
       });
     }
@@ -11402,7 +11394,10 @@ class Planificator {
   async _doNextPlans(options) {
     this._next = {generations: []};
     this._planner = new __WEBPACK_IMPORTED_MODULE_4__planner_js__["a" /* Planner */]();
-    this._planner.init(this._arc, {strategies: (options.strategies || null)});
+    this._planner.init(this._arc, {
+      strategies: (options.strategies || null),
+      strategyArgs: {search: this._search}
+    });
     this._next.plans = await this._planner.suggest(options.timeout || defaultTimeoutMs, this._next.generations, this._speculator);
     this._planner = null;
   }
