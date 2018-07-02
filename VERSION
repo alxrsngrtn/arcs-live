@@ -1,12 +1,11 @@
-commit 71edfb686c88ef24c0e405a4bccb3aba4d012069
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Jul 2 16:32:14 2018 +1000
+commit c5feb547c60cc7d7317272c6e52dd0614570dfc0
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Mon Jul 2 17:00:33 2018 +1000
 
-    Slandles part 1: parsing (#1584)
+    Last-writer-wins scheme for in-memory variables (#1585)
     
-    This is the first patch towards unification of slots and handles.
+    * Last-writer-wins scheme for in-memory variables
     
-    Until this effort is completed, slots that are implemented as handles will be parsed via a
-    secondary pathway that uses backticks before each production (`slot, `consume, `provide, etc). Duplicates of relevant tests will be created, tagged with 'SLANDLES'.
-    
-    Once the unification is complete and all tests pass both via the old slot code and via the new unified pathway, then I'll remove these duplicate tests, delete the slot code, and remove the backticks from parsing.
+    * updates storage-proxy to allow writes to variables to take place
+      synchronously without a roundtrip via storage
+    * uses a barrier scheme to suppress concurrent (but losing) writes
