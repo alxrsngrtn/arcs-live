@@ -1,7 +1,5 @@
-commit 2686615c2680c8a8789a18ca18f9e2977fa4fbf6
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Jul 2 11:36:57 2018 +1000
+commit e88e2101cffc0b0d4c60ea8c9fdb6016998c2b3f
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Mon Jul 2 14:34:50 2018 +1000
 
-    Implicitly create handles when a localName is referenced that (#1581)
-    
-    doesn't exist.
+    Remove unused handle.generateID* (#1583)
