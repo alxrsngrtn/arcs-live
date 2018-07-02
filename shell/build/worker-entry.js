@@ -437,6 +437,8 @@ class Type {
       return this.data;
     if (this.isVariable)
       return `~${this.data.name}`;
+    if (this.isSlot)
+      return 'Slot';
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `Add support to serializing type: ${JSON.stringify(this)}`);
   }
 
@@ -496,6 +498,7 @@ addType('Collection', 'type');
 addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Tuple', 'fields');
+addType('Slot');
 
 
 
