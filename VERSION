@@ -1,11 +1,5 @@
-commit 343c704529fd6cc20f0893179cb9ab00052536ed
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Jul 2 21:32:22 2018 -0700
+commit 11a3dcb16af6524c85f4fc540c639ded2c831511
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Jul 3 15:53:37 2018 +1000
 
-    Stabilize Arc loading (including Launcher) (#1593)
-    
-    * reset serialization when doing arc teardown
-    
-    * be sure to send friends array, even if it's empty
-    
-    * fix ui cursors
+    Displa arc and context handles of the arc in DevTools (#1592)
