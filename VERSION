@@ -1,5 +1,119 @@
-commit 79649f0aa55614eb1f4ea64873f288ece6d26f8d
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Mon Jul 2 12:56:52 2018 -0700
+commit e6ce63f7798317bf02510bf67947782cbf049a9c
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Jul 2 17:45:19 2018 -0700
 
-    Restyle Words social posts. (#1588)
+    Persist user context across arcs, rationalize Firebase utilization (#1589)
+    
+    * remove junk, disable `tools` section for performance testing
+    
+    * restore tools panel
+    
+    * explore abstract firebase query logic
+    
+    * remove bak
+    
+    * collate profiles by key not by arc
+    
+    * more wip
+    
+    * add debounce to Xen utility set
+    
+    * latest FBGraph impl
+    
+    * refining
+    
+    * factoring
+    
+    * more factoring
+    
+    * fix import syntax
+    
+    * fix import syntax
+    
+    * more WIP
+    
+    * more WIP
+    
+    * take advantage of FbGraph code in shell \o/
+    
+    * eliminate could-users/user/shared-handler/profile-handles
+    
+    * tweak invalid messaging logic
+    
+    * add cx-button
+    
+    * protect against missing data
+    
+    * make more compatible with containers
+    
+    * experimental recipes
+    
+    * slowly s/handle/store
+    
+    * ws
+    
+    * import cx-button
+    
+    * increase readability
+    
+    * make modal slot fit better
+    
+    * put $fromJoin flag on field itself (it might not have a schema)
+    
+    * try yet another name for synthetic manifest
+    
+    * use embedded schema and `createContextStore` for `arcstore`, touch arc in Fb when it's loaded
+    
+    * make FbStore work with Arc or Manifest contexts, remove old code
+    
+    * observe a deeper subtree for `friendChanged` (might be a mistake)
+    
+    * include People recipes in canonical set
+    
+    * factor DomParticle into Xen-less base class (DomRenderParticle) and an Xen-ful subclass (DomParticle)
+    
+    * remove debug log
+    
+    * capitalize name of the #friends Store
+    
+    * modernize chat particles
+    
+    * mix merge error
+    
+    * replaced by dom-particle-base
+    
+    * remove old interface
+    
+    * rollback custom storage (for another PR)
+    
+    * s/arc-handle/arc-store
+    
+    * put FbGraph in it's own folder, move some files to `third-party`
+    
+    * remove unused stuff
+    
+    * have a default avatar
+    
+    * s/lookupUser/boxQuery
+    
+    * replumb arc into shell-stores
+    
+    * use `boxQuery` instead of `owner` field
+    
+    * promote element-version of FBGraph to top level
+    
+    * cleanups, plumb `friends` map through shell
+    
+    * arc prep depends on `context` not `manifest`
+    
+    * modernize particle
+    
+    * various repairs
+    
+    * fix capitalization
+    
+    * add copyright headers
+    
+    * restore affordance for creating testing user
+    
+    * more careful state-management, more fault tolerance

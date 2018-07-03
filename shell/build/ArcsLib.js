@@ -9205,14 +9205,14 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
       this._itemSubIdByHostedSlotId.set(slotId, item.id);
 
       try {
-        await arc.loadRecipe(
-            this.constructInnerRecipe(
-                resolvedHostedParticle,
-                item,
-                itemHandle,
-                {name: hostedSlotName, id: slotId},
-                {connections: otherConnections, handles: otherMappedHandles}),
-            this);
+        const recipe = this.constructInnerRecipe(
+          resolvedHostedParticle,
+          item,
+          itemHandle,
+          {name: hostedSlotName, id: slotId},
+          {connections: otherConnections, handles: otherMappedHandles}
+        );
+        await arc.loadRecipe(recipe, this);
         itemHandle.set(item);
       } catch (e) {
         console.log(e);
@@ -23588,7 +23588,7 @@ class FirebaseStorage {
       if (!shouldExist) {
         return {version: 0};
       }
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(data);     
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(data);
       return data;
     });
 
@@ -24786,7 +24786,7 @@ const _renderSubtemplates = function(container, controller, template, models) {
         if (child) {
           child._subtreeDom = dom;
           container.appendChild(child);
-          if (!template._shapeWarning && child.nextSibling) {
+          if (!template._shapeWarning && dom.root.firstElementChild) {
             template._shapeWarning = true;
             console.warn(`xen-template: subtemplate has multiple root nodes: only the first is used.`, template);
           }

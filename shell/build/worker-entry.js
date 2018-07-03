@@ -1685,14 +1685,14 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
       this._itemSubIdByHostedSlotId.set(slotId, item.id);
 
       try {
-        await arc.loadRecipe(
-            this.constructInnerRecipe(
-                resolvedHostedParticle,
-                item,
-                itemHandle,
-                {name: hostedSlotName, id: slotId},
-                {connections: otherConnections, handles: otherMappedHandles}),
-            this);
+        const recipe = this.constructInnerRecipe(
+          resolvedHostedParticle,
+          item,
+          itemHandle,
+          {name: hostedSlotName, id: slotId},
+          {connections: otherConnections, handles: otherMappedHandles}
+        );
+        await arc.loadRecipe(recipe, this);
         itemHandle.set(item);
       } catch (e) {
         console.log(e);
