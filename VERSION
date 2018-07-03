@@ -1,5 +1,5 @@
-commit 11a3dcb16af6524c85f4fc540c639ded2c831511
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Jul 3 15:53:37 2018 +1000
+commit a9b7bc50f1475c590defb00d10862bb43116709b
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Jul 3 16:17:25 2018 +1000
 
-    Displa arc and context handles of the arc in DevTools (#1592)
+    Adjust parsing of slandles to use "consume" and "provide" as directions. (#1595)

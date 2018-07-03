@@ -2938,7 +2938,7 @@ ${e.message}
           // TODO: else, merge tags? merge directions?
         }
         connection.tags = connectionItem.target ? connectionItem.target.tags : [];
-        let direction = {'->': 'out', '<-': 'in', '=': 'inout'}[connectionItem.dir];
+        let direction = {'->': 'out', '<-': 'in', '=': 'inout', 'consume': '`consume', 'provide': '`provide'}[connectionItem.dir];
         if (connection.direction) {
           if (connection.direction != direction && 
               direction != 'inout' && 
@@ -17240,6 +17240,24 @@ const parser = /*
           } else {
             s0 = peg$FAILED;
             if (peg$silentFails === 0) { peg$fail(peg$c162); }
+          }
+          if (s0 === peg$FAILED) {
+            if (input.substr(peg$currPos, 7) === peg$c53) {
+              s0 = peg$c53;
+              peg$currPos += 7;
+            } else {
+              s0 = peg$FAILED;
+              if (peg$silentFails === 0) { peg$fail(peg$c54); }
+            }
+            if (s0 === peg$FAILED) {
+              if (input.substr(peg$currPos, 7) === peg$c55) {
+                s0 = peg$c55;
+                peg$currPos += 7;
+              } else {
+                s0 = peg$FAILED;
+                if (peg$silentFails === 0) { peg$fail(peg$c56); }
+              }
+            }
           }
         }
       }
