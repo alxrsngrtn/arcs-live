@@ -1,5 +1,9 @@
-commit e880a5e2a50facffd1ec962d29d1e5f1e5fe2859
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Jul 3 18:16:33 2018 +1000
+commit 1c4ebd826520e40250982ab96d4b834048762965
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Jul 3 10:13:55 2018 -0700
 
-    Removes one more race condition in DevTools message passing (#1596)
+    Unknown user is forced to be Barney (#1594)
+    
+    * Unknown user is forced to be Barney
+    
+    * add note about verifyUser
