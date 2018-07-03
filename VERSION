@@ -1,5 +1,11 @@
-commit 971ab098fb86898be365bdfa3bda36348581c9c5
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Jul 3 12:52:14 2018 +1000
+commit 343c704529fd6cc20f0893179cb9ab00052536ed
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Jul 2 21:32:22 2018 -0700
 
-    Removes the race condition in arcs<->devtools messaging (#1587)
+    Stabilize Arc loading (including Launcher) (#1593)
+    
+    * reset serialization when doing arc teardown
+    
+    * be sure to send friends array, even if it's empty
+    
+    * fix ui cursors
