@@ -20096,7 +20096,7 @@ class AbstractDevtoolsChannel {
   }
 
   _handleMessage(msg) {
-    let listeners = this.messageListeners.get(`${msg.targetArcId}/${msg.messageType}`);
+    let listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
     if (!listeners) {
       console.warn(`No one is listening to ${msg.messageType} message`);
     } else {
@@ -20145,6 +20145,8 @@ class ArcDebugHandler {
     // Message handles go here.
     new __WEBPACK_IMPORTED_MODULE_1__arc_planner_invoker_js__["a" /* ArcPlannerInvoker */](arc, devtoolsChannel);
 
+    // TODO: Disconnect when arc is disposed?
+
     devtoolsChannel.send({
       messageType: 'arc-available',
       messageBody: {
@@ -20185,7 +20187,7 @@ class ArcPlannerInvoker {
     this.planner.init(arc);
 
     devtoolsChannel.listen(arc, 'fetch-strategies', () => devtoolsChannel.send({
-      messageType: 'planner-strategies',
+      messageType: 'fetch-strategies-result',
       messageBody: this.planner.strategizer._strategies.map(a => a.constructor.name)
     }));
 
@@ -21835,6 +21837,8 @@ class RecipeIndex {
       context: new __WEBPACK_IMPORTED_MODULE_1__manifest_js__["a" /* Manifest */]({id: 'empty-context'}),
       slotComposer: affordance ? new __WEBPACK_IMPORTED_MODULE_3__slot_composer_js__["a" /* SlotComposer */]({affordance, noRoot: true}) : null,
       recipeIndex: {},
+      // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
+      speculative: true
     });
     let strategizer = new __WEBPACK_IMPORTED_MODULE_4__strategizer_strategizer_js__["a" /* Strategizer */](
       [
