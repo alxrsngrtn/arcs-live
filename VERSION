@@ -1,9 +1,5 @@
-commit 1c4ebd826520e40250982ab96d4b834048762965
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Jul 3 10:13:55 2018 -0700
+commit 4a71445773adf2c504c500497d5df20246bfece0
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Jul 4 11:10:45 2018 +1000
 
-    Unknown user is forced to be Barney (#1594)
-    
-    * Unknown user is forced to be Barney
-    
-    * add note about verifyUser
+    Arc Stores fix: Clear arcId on page refresh (#1598)
