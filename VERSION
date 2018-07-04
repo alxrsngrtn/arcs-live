@@ -1,5 +1,9 @@
-commit 35f0fb15e6133225f28d8a73d347613d5be26e68
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Jul 4 17:30:30 2018 +1000
+commit a7c1eccb4f22a991d7bc80b3fb520a2346cabc1c
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jul 4 11:26:46 2018 -0700
 
-    Maps handles specified with an ID to storage (#1601)
+    search strategy finds particle by user friendly name (#1550)
+    
+    * search strategy finds particle by user friendly name
+    
+    * address comments
