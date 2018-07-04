@@ -1,5 +1,5 @@
-commit 93ad7371e03edffce771b7c15f602452c109ce7c
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Jul 4 16:28:25 2018 +1000
+commit 35f0fb15e6133225f28d8a73d347613d5be26e68
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Jul 4 17:30:30 2018 +1000
 
-    Remove dead code from Particle (#1590)
+    Maps handles specified with an ID to storage (#1601)

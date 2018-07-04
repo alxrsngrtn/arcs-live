@@ -4117,32 +4117,53 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
     let arc = this._arc;
     return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* Walker */] {
       onHandle(recipe, handle) {
-        if (handle.connections.length == 0 || handle.id || (!handle.type) || (!handle.fate))
+        if (handle.connections.length == 0 || (handle.id && handle.storageKey) || (!handle.type) || (!handle.fate))
           return;
-
-        const counts = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* RecipeUtil */].directionCounts(handle);
 
         let mappable;
 
-        switch (handle.fate) {
-          case 'use':
-            mappable = arc.findStoresByType(handle.type, {tags: handle.tags, subtype: counts.out == 0});
-            break;
-          case 'map':
-          case 'copy':
-            mappable = arc.context.findStoreByType(handle.type, {tags: handle.tags, subtype: true});
-            break;
-          case 'create':
-          case '?':
-            mappable = [];
-            break;
-          default:
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* assert */])(false, `unexpected fate ${handle.fate}`);
+        if (!handle.id) {
+          // Handle doesn't have an ID, finding by type and tags.
+          const counts = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* RecipeUtil */].directionCounts(handle);
+          switch (handle.fate) {
+            case 'use':
+              mappable = arc.findStoresByType(handle.type, {tags: handle.tags, subtype: counts.out == 0});
+              break;
+            case 'map':
+            case 'copy':
+              mappable = arc.context.findStoreByType(handle.type, {tags: handle.tags, subtype: true});
+              break;
+            case 'create':
+            case '?':
+              mappable = [];
+              break;
+            default:
+              __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* assert */])(false, `unexpected fate ${handle.fate}`);
+          }
+        } else if (!handle.storageKey) {
+          // Handle specified by the ID, but not yet mapped to storage.
+          let storeById;
+          switch (handle.fate) {
+            case 'use':
+              storeById = arc.findStoreById(handle.id);
+              break;
+            case 'map':
+            case 'copy':
+              storeById = arc.context.findStoreById(handle.id);
+              break;
+            case 'create':
+            case '?':
+              break;
+            default:
+              __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* assert */])(false, `unexpected fate ${handle.fate}`);
+          }
+          mappable = storeById ? [storeById] : [];
         }
 
         mappable = mappable.filter(incomingHandle => {
           for (let existingHandle of recipe.handles)
-            if (incomingHandle.id == existingHandle.id)
+            if (incomingHandle.id == existingHandle.id
+                && existingHandle !== handle)
               return false;
           return true;
         });
