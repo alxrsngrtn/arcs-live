@@ -954,11 +954,7 @@ class Particle {
       this.extraData = true;
     this.relevances = [];
     this._idle = Promise.resolve();
-    this._idleResolver = null;
     this._busy = 0;
-    this.slotHandlers = [];
-    this.stateHandlers = new Map();
-    this.states = new Map();
     this._slotByName = new Map();
     this.capabilities = capabilities || {};
   }
@@ -1050,31 +1046,6 @@ class Particle {
    */
   getSlot(name) {
     return this._slotByName.get(name);
-  }
-
-  addSlotHandler(f) {
-    this.slotHandlers.push(f);
-  }
-
-  addStateHandler(states, f) {
-    states.forEach(state => {
-      if (!this.stateHandlers.has(state)) {
-        this.stateHandlers.set(state, []);
-      }
-      this.stateHandlers.get(state).push(f);
-    });
-  }
-
-  emit(state, value) {
-    this.states.set(state, value);
-    this.stateHandlers.get(state).forEach(f => f(value));
-  }
-
-  fireEvent(slotName, event) {
-    // TODO(sjmiles): tests can get here without a `this.slot`, maybe this needs to be fixed in MockSlotManager?
-    let slot = this.getSlot(slotName);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(slot, `Particle::fireEvent: slot ${slotName} is falsey`);
-    slot.fireEvent(event);
   }
 
   static buildManifest(strings, ...bits) {
