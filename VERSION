@@ -1,9 +1,5 @@
-commit a7c1eccb4f22a991d7bc80b3fb520a2346cabc1c
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jul 4 11:26:46 2018 -0700
+commit de10c4d8a91452f4cafdcde41fb9bd884066b0d8
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Thu Jul 5 20:05:22 2018 +1000
 
-    search strategy finds particle by user friendly name (#1550)
-    
-    * search strategy finds particle by user friendly name
-    
-    * address comments
+    Use originator-id in cloud-handles to suppress event cycles (#1591)
