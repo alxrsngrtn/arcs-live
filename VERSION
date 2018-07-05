@@ -1,5 +1,13 @@
-commit de10c4d8a91452f4cafdcde41fb9bd884066b0d8
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Thu Jul 5 20:05:22 2018 +1000
+commit dfd664ccd0e676b35e9bad2712d390b478d135ab
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Jul 5 10:52:19 2018 -0700
 
-    Use originator-id in cloud-handles to suppress event cycles (#1591)
+    Slot coalescing strategy (#1560)
+    
+    * Slot coalescing strategy
+    
+    * address comments
+    
+    * add fates verification when coalescing recipes on slots
+    
+    * Address comments.
