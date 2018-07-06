@@ -1,13 +1,5 @@
-commit dfd664ccd0e676b35e9bad2712d390b478d135ab
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jul 5 10:52:19 2018 -0700
+commit bc0d638b6c67daf82cfa916693df10d11245fb94
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Jul 6 10:14:34 2018 +1000
 
-    Slot coalescing strategy (#1560)
-    
-    * Slot coalescing strategy
-    
-    * address comments
-    
-    * add fates verification when coalescing recipes on slots
-    
-    * Address comments.
+    Fix to cloning of types in particle connections (#1605)
