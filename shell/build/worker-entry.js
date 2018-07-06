@@ -1478,10 +1478,6 @@ class Entity {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!!this.isIdentified());
     return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier];
   }
-  get $id() {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!!this.isIdentified());
-    return this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier];
-  }
   identify(identifier) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
     this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = identifier;
@@ -4271,7 +4267,7 @@ class DomParticleBase extends __WEBPACK_IMPORTED_MODULE_1__particle_js__["a" /* 
    * Returns array of Entities found in BOXED data `box` that are owned by `userid`
    */
   boxQuery(box, userid) {
-    return box.filter(item => userid === item.$id.split('|')[0]);
+    return box.filter(item => userid === item.getUserID().split('|')[0]);
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = DomParticleBase;
