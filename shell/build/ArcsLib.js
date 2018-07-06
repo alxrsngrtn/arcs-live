@@ -6742,7 +6742,8 @@ class AddUseHandles extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
 
         // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
         // not being properly supported in arc instantiation). For now just hardcode skiping them.
-        let disconnectedConnections = recipe.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name != 'descriptions');
+        let disconnectedConnections = recipe.handleConnections.filter(
+            hc => hc.handle == null && !hc.isOptional && hc.name != 'descriptions' && hc.direction !== 'host');
         if (disconnectedConnections.length == 0) {
           return;
         }
@@ -22035,8 +22036,9 @@ class RecipeIndex {
             // Find potential handle connections to coalesce
             slot.handleConnections.forEach(slotHandleConn => {
               let matchingConns = Object.values(slotConn.particle.connections).filter(particleConn => {
-                return (!particleConn.handle || !particleConn.handle.id || particleConn.handle.id == slotHandleConn.handle.id) &&
-                       __WEBPACK_IMPORTED_MODULE_15__recipe_handle_js__["a" /* Handle */].effectiveType(slotHandleConn.handle._mappedType, [particleConn]);
+                return particleConn.direction !== 'host'
+                    && (!particleConn.handle || !particleConn.handle.id || particleConn.handle.id == slotHandleConn.handle.id)
+                    && __WEBPACK_IMPORTED_MODULE_15__recipe_handle_js__["a" /* Handle */].effectiveType(slotHandleConn.handle._mappedType, [particleConn]);
               });
               matchingConns.forEach(matchingConn => {
                 if (this._fatesAndDirectionsMatch(slotHandleConn, matchingConn)) {
