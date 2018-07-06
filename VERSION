@@ -1,5 +1,5 @@
-commit bc0d638b6c67daf82cfa916693df10d11245fb94
+commit 7f38e0e068bfc372a998aa5703e5fb398d233102
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Jul 6 10:14:34 2018 +1000
+Date:   Fri Jul 6 13:20:20 2018 +1000
 
-    Fix to cloning of types in particle connections (#1605)
+    Restricting shape type can constraint type variables (#1606)
