@@ -1,17 +1,5 @@
-commit 7a84e76ff744cece46a312d2a489fe549ecad4d4
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Jul 6 10:59:29 2018 -0700
+commit ee9ca79b86d310d03f51b0d4725ac48a693f4cc1
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Jul 9 15:41:27 2018 +1000
 
-    Use uid component of id's for BOXED indexing, instead of ad-hoc method (#1611)
-    
-    * use `uid:` instead of custom id hacking
-    
-    * fix conditional (null serialization prop should be captured)
-    
-    * flag is on config
-    
-    * enable logging
-    
-    * add comment about search-term filter
-    
-    * revert accidental commit
+    Small bugfix in restricting type for shapes (#1612)

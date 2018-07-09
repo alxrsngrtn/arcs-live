@@ -2415,10 +2415,10 @@ ${this._slotsToManifestString()}
       } else if (constraint.var.variable.resolution.isVariable) {
         // TODO(shans): revisit how this should be done,
         // consider reusing tryMergeTypeVariablesWith(other).
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(__WEBPACK_IMPORTED_MODULE_2__recipe_type_checker_js__["a" /* TypeChecker */]._tryMergeConstraints(constraint.var, {
-          type: constraint.value, direction: constraint.direction}));
+        if (!__WEBPACK_IMPORTED_MODULE_2__recipe_type_checker_js__["a" /* TypeChecker */].processTypeList(constraint.var, [{
+            type: constraint.value, direction: constraint.direction}])) return false;
       } else {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(constraint.var.variable.resolution.equals(constraint.value));
+        if (!constraint.var.variable.resolution.equals(constraint.value)) return false;
       }
     }
 
