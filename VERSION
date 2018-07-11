@@ -1,5 +1,5 @@
-commit 08eb141fa1c0f94ee98d4a9c48dc8132106c185e
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Jul 11 13:46:23 2018 -0700
+commit f5400f189d028bb5c03c9ec0587cbdc896381fca
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Jul 12 08:17:32 2018 +1000
 
-    Restore Words move count and longest/highest stats display. (#1627)
+    Enable recipe coalescing again (#1623)
