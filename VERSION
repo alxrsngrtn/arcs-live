@@ -1,5 +1,5 @@
-commit ee9ca79b86d310d03f51b0d4725ac48a693f4cc1
+commit 98909b23affc672b8b3d30bc59cfc944006d9479
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Jul 9 15:41:27 2018 +1000
+Date:   Wed Jul 11 10:18:16 2018 +1000
 
-    Small bugfix in restricting type for shapes (#1612)
+    Strategy finding a particle to host (#1613)
