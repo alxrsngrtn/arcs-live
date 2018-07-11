@@ -1,33 +1,5 @@
-commit 963782ee9b4e9bd3f9bbc7ed82dd8df566ca0d3e
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Jul 11 11:15:13 2018 -0700
+commit 08eb141fa1c0f94ee98d4a9c48dc8132106c185e
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Jul 11 13:46:23 2018 -0700
 
-    Sheriff roundup 2 (#1619)
-    
-    * sort Launcher Arcs by most recent use
-    
-    * code cleanup
-    
-    * particle cleanups, mostly around Product
-    
-    * reduce amount of 'plan.plan' and 'plans.plans'
-    
-    * let collapseBar collapse all the way
-    
-    * move `artifacts` folder from `arcs/shell/` to `arcs/`, refurbish Products
-    
-    * remove 'old' folder
-    
-    * fix test environment after moving artifacts, try to fix Gifts test and mostly fail
-    
-    * BC artifact path for PostMuxer
-    
-    * Fix 'recent' tab, use alternate column population method
-    
-    * fix lint error
-    
-    * update test path
-    
-    * Tweak some particle text, make tests pass
-    
-    * fix PersonBar avatars
+    Restore Words move count and longest/highest stats display. (#1627)
