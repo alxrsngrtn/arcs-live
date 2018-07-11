@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 114);
+/******/ 	return __webpack_require__(__webpack_require__.s = 115);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -450,9 +450,9 @@ Ruleset.Builder = class {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategizer_strategizer_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__connection_constraint_js__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(97);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(98);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__search_js__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__slot_js__ = __webpack_require__(100);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__slot_js__ = __webpack_require__(101);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__handle_js__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__util_js__ = __webpack_require__(5);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -980,7 +980,7 @@ class Recipe {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__walker_base_js__ = __webpack_require__(101);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__walker_base_js__ = __webpack_require__(102);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -1065,8 +1065,8 @@ Walker.Independent = __WEBPACK_IMPORTED_MODULE_0__walker_base_js__["a" /* Walker
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(62);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(111);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(63);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(112);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(8);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1827,7 +1827,7 @@ function init() {
 
 init();
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(66)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(67)))
 
 /***/ }),
 /* 7 */
@@ -2156,7 +2156,7 @@ class RecipeUtil {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(62);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_variable_js__ = __webpack_require__(63);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -2423,7 +2423,7 @@ class TypeChecker {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__build_manifest_parser_js__ = __webpack_require__(75);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__build_manifest_parser_js__ = __webpack_require__(76);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_spec_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__schema_js__ = __webpack_require__(23);
@@ -2431,8 +2431,8 @@ class TypeChecker {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__shape_js__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__recipe_util_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__storage_storage_provider_factory_js__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__manifest_meta_js__ = __webpack_require__(90);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__storage_storage_provider_factory_js__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__manifest_meta_js__ = __webpack_require__(91);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__recipe_type_checker_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__recipe_connection_constraint_js__ = __webpack_require__(22);
 /**
@@ -3414,8 +3414,11 @@ ${e.message}
     if (unitType.isEntity) {
       let hasSerializedId = false;
       entities = entities.map(entity => {
-        if (entity == null)
+        if (entity == null) {
+          // FIXME: perhaps this happens when we have an empty variable?
+          // we should just generate an empty list in that case.
           return null;
+        }
         hasSerializedId = hasSerializedId || entity.$id;
         let id = entity.$id || manifest.generateID();
         delete entity.$id;
@@ -3431,13 +3434,11 @@ ${e.message}
     }
 
     let version = item.version || 0;
-
     let store = await Manifest._createStore(manifest, type, name, id, tags, item);
-    if (type.isCollection) {
-      store._fromListWithVersion(entities, version);
-    } else {
-      store._setWithVersion(entities[0], version);
-    }
+    store.fromLiteral({
+      version,
+      model: entities.map(value => ({id: value.id, value})),
+    });
   }
   static async _createStore(manifest, type, name, id, tags, item) {
     let store = await manifest.createStore(type, name, id, tags);
@@ -3496,9 +3497,9 @@ ${e.message}
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_devtools_channel_web_js__ = __webpack_require__(69);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__testing_devtools_channel_stub_js__ = __webpack_require__(82);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__devtools_shared_devtools_broker_js__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_devtools_channel_web_js__ = __webpack_require__(70);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__testing_devtools_channel_stub_js__ = __webpack_require__(83);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__devtools_shared_devtools_broker_js__ = __webpack_require__(66);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -4918,30 +4919,30 @@ class DescriptionFormatter {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_date_web_js__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_rulesets_js__ = __webpack_require__(59);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_deviceinfo_web_js__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_rulesets_js__ = __webpack_require__(60);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_deviceinfo_web_js__ = __webpack_require__(69);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_recipe_util_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__strategies_convert_constraints_to_connections_js__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__strategies_assign_remote_handles_js__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__strategies_copy_remote_handles_js__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__strategies_assign_handles_by_tag_and_type_js__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__strategies_init_population_js__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__strategies_assign_remote_handles_js__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__strategies_copy_remote_handles_js__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__strategies_assign_handles_by_tag_and_type_js__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__strategies_init_population_js__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_map_slots_js__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_match_particle_by_verb_js__ = __webpack_require__(57);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_match_recipe_by_verb_js__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_name_unnamed_connections_js__ = __webpack_require__(108);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_match_particle_by_verb_js__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_match_recipe_by_verb_js__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_name_unnamed_connections_js__ = __webpack_require__(109);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__strategies_add_use_handles_js__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__strategies_create_description_handle_js__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__strategies_create_description_handle_js__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__strategies_init_search_js__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__strategies_search_tokens_to_handles_js__ = __webpack_require__(109);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__strategies_search_tokens_to_particles_js__ = __webpack_require__(60);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__strategies_fallback_fate_js__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__strategies_group_handle_connections_js__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__strategies_search_tokens_to_handles_js__ = __webpack_require__(110);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__strategies_search_tokens_to_particles_js__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__strategies_fallback_fate_js__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__strategies_group_handle_connections_js__ = __webpack_require__(56);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__strategies_match_free_handles_to_connections_js__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__strategies_create_handles_js__ = __webpack_require__(53);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__strategies_create_handle_group_js__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__strategies_combined_strategy_js__ = __webpack_require__(106);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__strategies_find_hosted_particle_js__ = __webpack_require__(107);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__strategies_create_handles_js__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__strategies_create_handle_group_js__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__strategies_combined_strategy_js__ = __webpack_require__(107);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__strategies_find_hosted_particle_js__ = __webpack_require__(108);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__strategies_resolve_recipe_js__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__speculator_js__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__tracelib_trace_js__ = __webpack_require__(6);
@@ -5223,7 +5224,7 @@ async function digest(str) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shell_components_xen_xen_template_js__ = __webpack_require__(113);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shell_components_xen_xen_template_js__ = __webpack_require__(114);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5439,8 +5440,8 @@ class DomContext {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shell_components_xen_xen_state_js__ = __webpack_require__(112);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dom_particle_base_js__ = __webpack_require__(85);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shell_components_xen_xen_state_js__ = __webpack_require__(113);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dom_particle_base_js__ = __webpack_require__(86);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5582,15 +5583,15 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__she
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(71);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__ = __webpack_require__(73);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(88);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_vm_web_js__ = __webpack_require__(74);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetch_web_js__ = __webpack_require__(89);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__ = __webpack_require__(77);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7243,17 +7244,17 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_0__dom_particl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__handle_js__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_execution_host_js__ = __webpack_require__(93);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_execution_host_js__ = __webpack_require__(94);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_recipe_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__manifest_js__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__description_js__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__recipe_util_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__fake_pec_factory_js__ = __webpack_require__(87);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__storage_storage_provider_factory_js__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__fake_pec_factory_js__ = __webpack_require__(88);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__storage_storage_provider_factory_js__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__debug_devtools_connection_js__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__id_js__ = __webpack_require__(89);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__debug_arc_debug_handler_js__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__recipe_index_js__ = __webpack_require__(95);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__id_js__ = __webpack_require__(90);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__debug_arc_debug_handler_js__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__recipe_index_js__ = __webpack_require__(96);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7423,18 +7424,19 @@ class Arc {
           let indent = '  ';
           resources += indent + 'start\n';
 
-          let serializedData = (await handle.serializedData()).map(a => {
-            if (a == null)
+          let serializedData = (await handle.toLiteral()).model.map(({id, value}) => {
+            if (value == null)
               return null;
-            if (a.rawData) {
+            if (value.rawData) {
               let result = {};
-              result.$id = a.id;
-              for (let field in a.rawData) {
-                result[field] = a.rawData[field];
+              for (let field in value.rawData) {
+                result[field] = value.rawData[field];
               }
+              result.$id = id;
               return result;
+            } else {
+              return value;
             }
-            return a;
           });
           let data = JSON.stringify(serializedData);
           resources += data.split('\n').map(line => indent + line).join('\n');
@@ -7849,7 +7851,7 @@ ${this.activeRecipe.toString()}`;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__slot_js__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dom_context_js__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__dom_set_context_js__ = __webpack_require__(86);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__dom_set_context_js__ = __webpack_require__(87);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8280,7 +8282,7 @@ function now() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_js__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom_slot_js__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dom_context_js__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__description_dom_formatter_js__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__description_dom_formatter_js__ = __webpack_require__(85);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -8331,7 +8333,7 @@ let _affordances = {};
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__debug_outer_port_attachment_js__ = __webpack_require__(81);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__debug_outer_port_attachment_js__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__debug_devtools_connection_js__ = __webpack_require__(10);
 /**
  * @license
@@ -8779,7 +8781,7 @@ class StrategyExplorerAdapter {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(62);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type_js__ = __webpack_require__(4);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8853,7 +8855,7 @@ class Entity {
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = handleFor;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(62);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__ = __webpack_require__(11);
 /** @license
@@ -9022,7 +9024,8 @@ class Collection extends Handle {
     if (!this.canWrite)
       throw new Error('Handle not writeable');
     let serialization = this._serialize(entity);
-    return this._proxy.store(serialization, this._particleId);
+    let keys = [this._proxy.generateID('key')];
+    return this._proxy.store(serialization, keys, this._particleId);
   }
 
   /** @method remove(entity)
@@ -9034,7 +9037,9 @@ class Collection extends Handle {
     if (!this.canWrite)
       throw new Error('Handle not writeable');
     let serialization = this._serialize(entity);
-    return this._proxy.remove(serialization.id, this._particleId);
+    // Remove the keys that exist at storage/proxy.
+    let keys = [];
+    return this._proxy.remove(serialization.id, keys, this._particleId);
   }
 }
 
@@ -9600,7 +9605,7 @@ class Slot {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__relevance_js__ = __webpack_require__(102);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__relevance_js__ = __webpack_require__(103);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -9659,6 +9664,113 @@ class Speculator {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+// Bulding block for CRDT collections. Tracks the membership (keys) of
+// values identified by unique IDs. A value is considered to be part
+// of the collection if the set of keys added by calls to
+// `add(id, ..., keys)` minus the set of keys removed by calls to
+// `remove(id, keys)` is non-empty.
+//
+// Note: This implementation does not guard against the case of the
+// same membership key being added more than once. Don't do that.
+class CrdtCollectionModel {
+  constructor(model) {
+    // id => {value, Set[keys]}
+    this._items = new Map();
+    if (model) {
+      for (let {id, value, keys} of model) {
+        if (!keys) {
+          keys = [];
+        }
+        this._items.set(id, {value, keys: new Set(keys)});
+      }
+    }
+  }
+  // Adds membership, `keys`, of `value` indexed by `id` to this collection.
+  // Returns whether the change is effective (`id` is new to the collection,
+  // or `value` is different to the value previously stored).
+  add(id, value, keys) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(keys.length > 0, 'add requires keys');
+    let item = this._items.get(id);
+    let effective = false;
+    if (!item) {
+      item = {value, keys: new Set(keys)};
+      this._items.set(id, item);
+      effective = true;
+    } else {
+      let newKeys = false;
+      for (let key of keys) {
+        if (!item.keys.has(key)) {
+          newKeys = true;
+        }
+        item.keys.add(key);
+      }
+      if (JSON.stringify(item.value) != JSON.stringify(value)) {
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(newKeys, 'cannot add without new keys');
+        item.value = value;
+        effective = true;
+      }
+    }
+    return effective;
+  }
+  // Removes the membership, `keys`, of the value indexed by `id` from this collection.
+  // Returns whether the change is effective (the value is no longer present
+  // in the collection because all of the keys have been removed).
+  remove(id, keys) {
+    let item = this._items.get(id);
+    if (!item) {
+      return false;
+    }
+    for (let key of keys) {
+      item.keys.delete(key);
+    }
+    let effective = item.keys.size == 0;
+    if (effective) {
+      this._items.delete(id);
+    }
+    return effective;
+  }
+  // [{id, value, keys: []}]
+  toLiteral() {
+    let result = [];
+    for (let [id, {value, keys}] of this._items.entries()) {
+      result.push({id, value, keys: [...keys]});
+    }
+    return result;
+  }
+  toList() {
+    return [...this._items.values()].map(item => item.value);
+  }
+  getKeys(id) {
+    let item = this._items.get(id);
+    return item ? [...item.keys] : [];
+  }
+  getValue(id) {
+    let item = this._items.get(id);
+    return item ? item.value : null;
+  }
+  get size() {
+    return this._items.size;
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CrdtCollectionModel;
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -9678,7 +9790,7 @@ class KeyBase {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9737,22 +9849,24 @@ class StorageProviderBase {
     this._listeners.set(kind, listeners);
   }
 
-  _fire(kind, details) {
+  async _fire(kind, details) {
     let listenerMap = this._listeners.get(kind);
     if (!listenerMap || listenerMap.size == 0)
       return;
 
-    let callTrace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'handle', name: 'StorageProviderBase::_fire', args: {kind, type: this._type.key,
+    let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'handle', name: 'StorageProviderBase::_fire', args: {kind, type: this._type.key,
         name: this.name, listeners: listenerMap.size}});
 
     let callbacks = [];
     for (let [callback] of listenerMap.entries()) {
       callbacks.push(callback);
     }
+    // Yield so that event firing is not re-entrant with mutation.
+    await trace.wait(0);
     for (let callback of callbacks) {
       callback(details);
     }
-    callTrace.end();
+    trace.end();
   }
 
   _compareTo(other) {
@@ -9796,12 +9910,12 @@ class StorageProviderBase {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__in_memory_storage_js__ = __webpack_require__(105);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__firebase_storage_js__ = __webpack_require__(104);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__in_memory_storage_js__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__firebase_storage_js__ = __webpack_require__(105);
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -9846,7 +9960,7 @@ class StorageProviderFactory {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9883,7 +9997,7 @@ class AssignHandlesByTagAndType extends __WEBPACK_IMPORTED_MODULE_0__handle_mapp
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9913,7 +10027,7 @@ class AssignRemoteHandles extends __WEBPACK_IMPORTED_MODULE_0__handle_mapper_bas
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9943,7 +10057,7 @@ class CopyRemoteHandles extends __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9985,7 +10099,7 @@ class CreateDescriptionHandle extends __WEBPACK_IMPORTED_MODULE_0__strategizer_s
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10066,7 +10180,7 @@ class CreateHandleGroup extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10112,7 +10226,7 @@ class CreateHandles extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10173,7 +10287,7 @@ class FallbackFate extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10300,7 +10414,7 @@ class GroupHandleConnections extends __WEBPACK_IMPORTED_MODULE_1__strategizer_st
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10369,7 +10483,7 @@ class InitPopulation extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategize
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10424,7 +10538,7 @@ class MatchParticleByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strat
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10657,27 +10771,27 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__convert_constraints_to_connections_js__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__assign_remote_handles_js__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__copy_remote_handles_js__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__assign_handles_by_tag_and_type_js__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__init_population_js__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__assign_remote_handles_js__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__copy_remote_handles_js__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__assign_handles_by_tag_and_type_js__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__init_population_js__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__map_slots_js__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__match_particle_by_verb_js__ = __webpack_require__(57);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__match_recipe_by_verb_js__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__match_particle_by_verb_js__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__match_recipe_by_verb_js__ = __webpack_require__(59);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__add_use_handles_js__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__create_description_handle_js__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__create_description_handle_js__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__init_search_js__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__search_tokens_to_particles_js__ = __webpack_require__(60);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__fallback_fate_js__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__group_handle_connections_js__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__search_tokens_to_particles_js__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__fallback_fate_js__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__group_handle_connections_js__ = __webpack_require__(56);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__match_free_handles_to_connections_js__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__create_handles_js__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__create_handles_js__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__resolve_recipe_js__ = __webpack_require__(14);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -10761,7 +10875,7 @@ const ExperimentalLinear = new __WEBPACK_IMPORTED_MODULE_0__strategizer_strategi
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10896,7 +11010,7 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10915,7 +11029,7 @@ const Symbols = {identifier: Symbol('id')};
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11119,17 +11233,17 @@ class TypeVariable {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_date_web_js__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_init_search_js__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_log_web_js__ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_log_web_js__ = __webpack_require__(73);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__planner_js__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__speculator_js__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__suggestion_composer_js__ = __webpack_require__(110);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__suggestion_composer_js__ = __webpack_require__(111);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -11526,7 +11640,7 @@ class Planificator {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11627,7 +11741,7 @@ class BrowserLoader extends __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__["a"
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11670,7 +11784,7 @@ class DevtoolsBroker {
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(34)))
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -11860,7 +11974,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11879,7 +11993,7 @@ const btoa = window.btoa;
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11906,11 +12020,11 @@ class DeviceInfo {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstract_devtools_channel_js__ = __webpack_require__(78);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -11939,7 +12053,7 @@ class DevtoolsChannel extends __WEBPACK_IMPORTED_MODULE_0__runtime_debug_abstrac
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11958,7 +12072,7 @@ const firebase = window.firebase;
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11975,7 +12089,7 @@ const fs = {};
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11996,7 +12110,7 @@ const logFactory = (preamble, color, log='log') => {
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12013,7 +12127,7 @@ const vm = {};
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12050,7 +12164,7 @@ function removeSystemExceptionHandler(handler) {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20045,7 +20159,7 @@ const parser = /*
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20159,7 +20273,7 @@ class JsonldToManifest {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20224,13 +20338,13 @@ class AbstractDevtoolsChannel {
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tracing_adapter_js__ = __webpack_require__(83);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__arc_planner_invoker_js__ = __webpack_require__(79);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__arc_stores_fetcher_js__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tracing_adapter_js__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__arc_planner_invoker_js__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__arc_stores_fetcher_js__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__devtools_connection_js__ = __webpack_require__(10);
 /**
  * @license
@@ -20277,7 +20391,7 @@ class ArcDebugHandler {
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20356,7 +20470,7 @@ class ArcPlannerInvoker {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20421,7 +20535,7 @@ class ArcStoresFetcher {
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20583,7 +20697,7 @@ class OuterPortAttachment {
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20621,7 +20735,7 @@ class DevtoolsChannelStub {
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20666,7 +20780,7 @@ function enableTracingAdapter(devtoolsChannel) {
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20918,7 +21032,7 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21065,7 +21179,7 @@ class DomParticleBase extends __WEBPACK_IMPORTED_MODULE_1__particle_js__["a" /* 
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21183,13 +21297,13 @@ class DomSetContext {
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = FakePecFactory;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__particle_execution_context_js__ = __webpack_require__(92);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__message_channel_js__ = __webpack_require__(91);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__particle_execution_context_js__ = __webpack_require__(93);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__message_channel_js__ = __webpack_require__(92);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__loader_js__ = __webpack_require__(20);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -21215,7 +21329,7 @@ function FakePecFactory(id) {
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21237,11 +21351,11 @@ const local_fetch = fetch;
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__random_js__ = __webpack_require__(94);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__random_js__ = __webpack_require__(95);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -21321,7 +21435,7 @@ class Id {
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21350,7 +21464,7 @@ class ManifestMeta {
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21417,14 +21531,14 @@ class MessageChannel {
 
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_js__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_channel_js__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__ = __webpack_require__(103);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__ = __webpack_require__(104);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -21683,15 +21797,15 @@ class ParticleExecutionContext {
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(34)))
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_channel_js__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__manifest_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_resolver_js__ = __webpack_require__(98);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__arc_exceptions_js__ = __webpack_require__(74);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_resolver_js__ = __webpack_require__(99);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__arc_exceptions_js__ = __webpack_require__(75);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -21733,12 +21847,7 @@ class ParticleExecutionHost {
     };
 
     this._apiPort.onSynchronizeProxy = async ({handle, callback}) => {
-      let data;
-      if (handle.toListWithVersion) {
-        data = await handle.toListWithVersion();
-      } else {
-        data = await handle.getWithVersion();
-      }
+      let data = await handle.toLiteral();
       this._apiPort.SimpleCallback({callback, data});
     };
 
@@ -21751,9 +21860,9 @@ class ParticleExecutionHost {
     };
 
     this._apiPort.onHandleSet = ({handle, data, particleId, barrier}) => handle.set(data, particleId, barrier);
-    this._apiPort.onHandleStore = ({handle, data, particleId}) => handle.store(data, particleId);
     this._apiPort.onHandleClear = ({handle, particleId, barrier}) => handle.clear(particleId, barrier);
-    this._apiPort.onHandleRemove = ({handle, data, particleId}) => handle.remove(data, particleId);
+    this._apiPort.onHandleStore = ({handle, data: {value, keys}, particleId}) => handle.store(value, keys, particleId);
+    this._apiPort.onHandleRemove = ({handle, data: {value, keys}, particleId}) => handle.remove(value, keys, particleId);
 
     this._apiPort.onIdle = ({version, relevance}) => {
       if (version == this._idleVersion) {
@@ -21886,7 +21995,7 @@ class ParticleExecutionHost {
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21921,7 +22030,7 @@ class Random {
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21935,9 +22044,9 @@ class Random {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__strategies_convert_constraints_to_connections_js__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__strategies_match_free_handles_to_connections_js__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__strategies_resolve_recipe_js__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_create_handle_group_js__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_create_handle_group_js__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_add_use_handles_js__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_rulesets_js__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_rulesets_js__ = __webpack_require__(60);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_map_slots_js__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__debug_devtools_connection_js__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__recipe_recipe_util_js__ = __webpack_require__(7);
@@ -22191,7 +22300,7 @@ class RecipeIndex {
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22416,13 +22525,13 @@ class HandleConnection {
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_connection_js__ = __webpack_require__(99);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__handle_connection_js__ = __webpack_require__(96);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_connection_js__ = __webpack_require__(100);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__handle_connection_js__ = __webpack_require__(97);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__util_js__ = __webpack_require__(5);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -22689,7 +22798,7 @@ class Particle {
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22731,7 +22840,7 @@ class RecipeResolver {
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22939,7 +23048,7 @@ class SlotConnection {
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23092,7 +23201,7 @@ class Slot {
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23228,7 +23337,7 @@ WalkerBase.Independent = 'independent';
 
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23320,11 +23429,12 @@ class Relevance {
 
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__storage_crdt_collection_model_js__ = __webpack_require__(45);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -23334,6 +23444,7 @@ class Relevance {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -23422,11 +23533,8 @@ class StorageProxyBase {
       // If a handle configured for sync notifications registers after we've received the full
       // model, notify it immediately.
       if (handle.options.notifySync && this._synchronized == SyncState.full) {
-        let model = this._model;
-        if (Array.isArray(model)) {
-          model = [...model];
-        }
-        this._scheduler.enqueue(particle, handle, ['sync', particle, model]);
+        let syncModel = this._getModelForSync();
+        this._scheduler.enqueue(particle, handle, ['sync', particle, syncModel]);
       }
     }
   }
@@ -23448,27 +23556,18 @@ class StorageProxyBase {
 
     // Replace the stored data with the new one and notify handles that are configured for it.
     this._synchronizeModel(model);
-    this._version = model.version;
 
-    for (let {handle, particle} of this._observers) {
-      if (handle.options.keepSynced && handle.options.notifySync) {
-        let model = this._model;
-        if (Array.isArray(model)) {
-          model = [...model];
-        }
-        this._scheduler.enqueue(particle, handle, ['sync', particle, model]);
-      }
-    }
+    let syncModel = this._getModelForSync();
+    this._notify('sync', syncModel, options => options.keepSynced && options.notifySync);
     this._processUpdates();
   }
 
   // `update` contains 'version' and one of 'data', 'add' or 'remove'.
   _onUpdate(update) {
     // Immediately notify any handles that are not configured with keepSynced but do want updates.
-    for (let {handle, particle} of this._observers) {
-      if (!handle.options.keepSynced && handle.options.notifyUpdate) {
-        this._scheduler.enqueue(particle, handle, ['update', particle, update]);
-      }
+    if (this._observers.find(({handle}) => !handle.options.keepSynced && handle.options.notifyUpdate)) {
+      let handleUpdate = this._processUpdate(update, false);
+      this._notify('update', handleUpdate, options => !options.keepSynced && options.notifyUpdate);
     }
 
     // Bail if we're not in synchronized mode or this is a stale event.
@@ -23487,10 +23586,10 @@ class StorageProxyBase {
     this._processUpdates();
   }
 
-  _notify(kind, update, predicate=() => true) {
+  _notify(kind, details, predicate=() => true) {
     for (let {handle, particle} of this._observers) {
       if (predicate(handle.options)) {
-        this._scheduler.enqueue(particle, handle, [kind, particle, update]);
+        this._scheduler.enqueue(particle, handle, [kind, particle, details]);
       }
     }
   }
@@ -23501,13 +23600,13 @@ class StorageProxyBase {
       let update = this._updates.shift();
 
       // Fold the update into our stored model.
-      let notify = this._updateModel(update);
+      let handleUpdate = this._processUpdate(update);
       this._version = update.version;
 
       // Notify handles configured with keepSynced and notifyUpdates (non-keepSynced handles are
       // notified as updates are received).
-      if (notify) {
-        this._notify('update', update, options => options.keepSynced && options.notifyUpdate);
+      if (handleUpdate) {
+        this._notify('update', handleUpdate, options => options.keepSynced && options.notifyUpdate);
       }
     }
 
@@ -23529,65 +23628,140 @@ class StorageProxyBase {
     }
   }
 
+  generateID(component) {
+    return this._pec.generateID(component);
+  }
+
   generateIDComponents() {
     return this._pec.generateIDComponents();
   }
 }
 
+
+// Collections are synchronized in a CRDT Observed/Removed scheme. 
+// Each value is identified by an ID and a set of membership keys.
+// Concurrent adds of the same value will specify the same ID but different
+// keys. A value is removed by removing all of the observed keys. A value
+// is considered to be removed if all of it's keys have been removed.
+//
+// In synchronized mode mutation takes place synchronously inside the proxy.
+// The proxy uses the originatorId to skip over redundant events sent back
+// by the storage object.
+//
+// In unsynchronized mode removal is not based on the keys observed at the
+// proxy, since the proxy does not remember the state, but instead the set
+// of keys that exist at the storage object at the time it receives the
+// request.
 class CollectionProxy extends StorageProxyBase {
   constructor(...args) {
     super(...args);
-    this._model = null;
+    this._model = new __WEBPACK_IMPORTED_MODULE_1__storage_crdt_collection_model_js__["a" /* CrdtCollectionModel */]();
   }
-  _synchronizeModel(model) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])('list' in model);
-    this._model = model.list;
+  _getModelForSync() {
+    return this._model.toList();
   }
-  _updateModel(update) {
-    if ('add' in update) {
-      this._model.push(...update.add);
-    } else if ('remove' in update) {
-      let keep = [];
-      for (let held of this._model) {
-        keep.push(held);
-        // TODO: avoid revisiting removed items? (eg. use a set of ids, prune as they are matched)
-        for (let item of update.remove) {
-          if (held.id === item.id) {
-            keep.pop();
-            break;
-          }
+  _synchronizeModel({version, model}) {
+    this._version = version;
+    this._model = new __WEBPACK_IMPORTED_MODULE_1__storage_crdt_collection_model_js__["a" /* CrdtCollectionModel */](model);
+  }
+  _processUpdate(update, apply=true) {
+    if (this._synchronized == SyncState.full) {
+      // If we're synchronized, then any updates we sent have
+      // already been applied/notified.
+      for (let {handle} of this._observers) {
+        if (update.originatorId == handle._particleId) {
+          return null;
         }
       }
-      this._model = keep;
+    }
+    let added = [];
+    let removed = [];
+    if ('add' in update) {
+      for (let {value, keys, effective} of update.add) {
+        if (apply && this._model.add(value.id, value, keys) || !apply && effective) {
+          added.push(value);
+        }
+      }
+    } else if ('remove' in update) {
+      for (let {value, keys, effective} of update.remove) {
+        if (apply && this._model.remove(value.id, keys) || !apply && effective) {
+          removed.push(value);
+        }
+      }
     } else {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `StorageProxy received invalid update event: ${JSON.stringify(update)}`);
     }
-    return true;
+    if (added.length || removed.length) {
+      let result = {};
+      if (added.length) result.add = added;
+      if (removed.length) result.remove = removed;
+      result.originatorId = update.originatorId;
+      return result;
+    }
+    return null;
   }
   // Read ops: if we're synchronized we can just return the local copy of the data.
   // Otherwise, send a request to the backing store.
-  // TODO: in synchronized mode, these should integrate with SynchronizeProxy rather than
-  //       sending a parallel request
   toList(particleId) {
     if (this._synchronized == SyncState.full) {
-      return new Promise((resolve, reject) => resolve(this._model));
+      return Promise.resolve(this._model.toList());
     } else {
+      // TODO: in synchronized mode, this should integrate with SynchronizeProxy rather than
+      //       sending a parallel request
       return new Promise((resolve, reject) =>
         this._port.HandleToList({callback: r => resolve(r), handle: this, particleId}));
     }
   }
-  // Write ops: in synchronized mode, any write operation will desynchronize the proxy, so
-  // subsequent reads will call to the backing store until resync is established via the update
-  // event triggered by the write.
-  // TODO: handle concurrent writes from other parties to the backing store
-  store(entity, particleId) {
-    this._port.HandleStore({data: entity, handle: this, particleId});
-    this._synchronized = SyncState.pending;
+  store(value, keys, particleId) {
+    let id = value.id;
+    let data = {
+      value,
+      keys,
+    };
+    this._port.HandleStore({data, handle: this, particleId});
+
+    if (this._synchronized != SyncState.full) {
+      return;
+    }
+    if (!this._model.add(id, value, keys)) {
+      return;
+    }
+    let update = {
+      originatorId: particleId,
+      add: [value],
+    };
+    this._notify('update', update, options => options.notifyUpdate);
   }
 
-  remove(entityId, particleId) {
-    this._port.HandleRemove({data: entityId, handle: this, particleId});
-    this._synchronized = SyncState.pending;
+  remove(id, keys, particleId) {
+    if (this._synchronized != SyncState.full) {
+      let data = {
+        id,
+        keys: [],
+      };
+      this._port.HandleRemove({data, handle: this, particleId});
+      return;
+    }
+
+    let value = this._model.getValue(id);
+    if (!value) return;
+    if (keys.length == 0) {
+      keys = this._model.getKeys(id);
+    }
+    let data = {
+      id,
+      keys,
+    };
+    this._port.HandleRemove({data, handle: this, particleId});
+
+    if (!this._model.remove(id, keys)) {
+      return;
+    }
+    let update = {
+      originatorId: particleId,
+      remove: [value],
+    };
+    this._notify('update', update, options => options.notifyUpdate);
   }
 }
 
@@ -23602,22 +23776,27 @@ class VariableProxy extends StorageProxyBase {
     this._model = null;
     this._barrier = null;
   }
-  _synchronizeModel(model) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])('data' in model);
-    this._model = model.data;
+  _getModelForSync() {
+    return this._model;
   }
-  _updateModel(update) {
+  _synchronizeModel({version, model}) {
+    this._version = version;
+    this._model = model.length == 0 ? null : model[0].value;
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._model !== undefined);
+  }
+  _processUpdate(update, apply=true) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])('data' in update);
+    if (!apply) return update;
     // If we have set a barrier, suppress updates until after
     // we have seen the barrier return via an update.
     if (this._barrier != null) {
       if (update.barrier == this._barrier) {
         this._barrier = null;
       }
-      return false;
+      return null;
     }
     this._model = update.data;
-    return true;
+    return update;
   }
   // Read ops: if we're synchronized we can just return the local copy of the data.
   // Otherwise, send a request to the backing store.
@@ -23632,10 +23811,11 @@ class VariableProxy extends StorageProxyBase {
     }
   }
   set(entity, particleId) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(entity !== undefined);
     if (JSON.stringify(this._model) == JSON.stringify(entity)) {
       return;
     }
-    let barrier = this._pec.generateID();
+    let barrier = this.generateID('barrier');
     // TODO: is this already a clone?
     this._model = JSON.parse(JSON.stringify(entity));
     this._barrier = barrier;
@@ -23651,7 +23831,7 @@ class VariableProxy extends StorageProxyBase {
     if (this._model == null) {
       return;
     }
-    let barrier = this._pec.generateID();
+    let barrier = this.generateID('barrier');
     this._model = null;
     this._barrier = barrier;
     this._port.HandleClear({handle: this, particleId, barrier});
@@ -23732,7 +23912,7 @@ class StorageProxyScheduler {
             handle._notify(...args);
           } catch (e) {
             // TODO: report it via channel?
-            // console.error(e);
+            console.error('Error dispatching to particle', e);
           }
         }
       }
@@ -23746,15 +23926,15 @@ class StorageProxyScheduler {
 
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__storage_provider_base_js__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__ = __webpack_require__(70);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__storage_provider_base_js__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__ = __webpack_require__(71);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base_js__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_btoa_web_js__ = __webpack_require__(67);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base_js__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_btoa_web_js__ = __webpack_require__(68);
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -24051,14 +24231,15 @@ class FirebaseCollection extends FirebaseStorageProvider {
 
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__storage_provider_base_js__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base_js__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__storage_provider_base_js__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base_js__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model_js__ = __webpack_require__(45);
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -24066,6 +24247,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -24155,7 +24337,7 @@ class InMemoryStorageProvider extends __WEBPACK_IMPORTED_MODULE_2__storage_provi
 class InMemoryCollection extends InMemoryStorageProvider {
   constructor(type, arcId, name, id, key) {
     super(type, arcId, name, id, key);
-    this._items = new Map();
+    this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model_js__["a" /* CrdtCollectionModel */]();
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._version !== null);
   }
 
@@ -24166,66 +24348,55 @@ class InMemoryCollection extends InMemoryStorageProvider {
   }
 
   async cloneFrom(handle) {
-    let {list, version} = await handle.toListWithVersion();
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(version !== null);
-    await this._fromListWithVersion(list, version);
+    this.fromLiteral(await handle.toLiteral());
   }
 
-  async _fromListWithVersion(list, version) {
+  // Returns {version, model: [{id, value, keys: []}]}
+  toLiteral() {
+    return {
+      version: this._version,
+      model: this._model.toLiteral(),
+    };
+  }
+
+  fromLiteral({version, model}) {
     this._version = version;
-    list.forEach(item => this._items.set(item.id, item));
+    this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model_js__["a" /* CrdtCollectionModel */](model);
   }
 
-  async get(id) {
-    return this._items.get(id);
+  toList() {
+    return this.toLiteral().model.map(item => item.value);
   }
+
   traceInfo() {
-    return {items: this._items.size};
-  }
-  // HACK: replace this with some kind of iterator thing?
-  async toList() {
-    return [...this._items.values()];
+    return {items: this._model.size};
   }
 
-  async toListWithVersion() {
-    return {list: [...this._items.values()], version: this._version};
-  }
-
-  async store(entity, originatorId) {
+  async store(value, keys, originatorId=null) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(keys != null && keys.length > 0, 'keys required');
     let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'handle', name: 'InMemoryCollection::store', args: {name: this.name}});
-    let entityWasPresent = this._items.has(entity.id);
-    if (entityWasPresent && (JSON.stringify(this._items.get(entity.id)) == JSON.stringify(entity))) {
-      trace.end({args: {entity}});
-      return;
-    }
-    this._items.set(entity.id, entity);
+    let effective = this._model.add(value.id, value, keys);
     this._version++;
-    if (!entityWasPresent)
-      this._fire('change', {add: [entity], version: this._version, originatorId});
-    trace.end({args: {entity}});
+    await trace.wait(
+        this._fire('change', {add: [{value, keys, effective}], version: this._version, originatorId}));
+    trace.end({args: {value}});
   }
 
-  async remove(id, originatorId) {
+  async remove(id, keys=[], originatorId=null) {
     let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'handle', name: 'InMemoryCollection::remove', args: {name: this.name}});
-    if (!this._items.has(id)) {
-      return;
+    if (keys.length == 0) {
+      keys = this._model.getKeys(id);
     }
-    let entity = this._items.get(id);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._items.delete(id));
+    let value = this._model.getValue(id);
+    let effective = this._model.remove(id, keys);
     this._version++;
-    this._fire('change', {remove: [entity], version: this._version, originatorId});
-    trace.end({args: {entity}});
+    await trace.wait(
+        this._fire('change', {remove: [{value, keys, effective}], version: this._version, originatorId}));
+    trace.end({args: {entity: value}});
   }
 
   clearItemsForTesting() {
-    this._items.clear();
-  }
-
-  // TODO: Something about iterators??
-  // TODO: Something about changing order?
-
-  serializedData() {
-    return this.toList();
+    this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model_js__["a" /* CrdtCollectionModel */]();
   }
 }
 
@@ -24242,12 +24413,30 @@ class InMemoryVariable extends InMemoryStorageProvider {
   }
 
   async cloneFrom(handle) {
-    let {data, version} = await handle.getWithVersion();
-    await this._setWithVersion(data, version);
+    let literal = await handle.toLiteral();
+    await this.fromLiteral(literal);
   }
 
-  async _setWithVersion(data, version) {
-    this._stored = data;
+  // Returns {version, model: [{id, value}]}
+  async toLiteral() {
+    let value = this._stored;
+    let model = [];
+    if (value != null) {
+      model = [{
+        id: value.id,
+        value,
+      }];
+    }
+    return {
+      version: this._version,
+      model,
+    };
+  }
+
+  fromLiteral({version, model}) {
+    let value = model.length == 0 ? null : model[0].value;
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(value !== undefined);
+    this._stored = value;
     this._version = version;
   }
 
@@ -24259,32 +24448,25 @@ class InMemoryVariable extends InMemoryStorageProvider {
     return this._stored;
   }
 
-  async getWithVersion() {
-    return {data: this._stored, version: this._version};
-  }
-
-  async set(entity, originatorId, barrier) {
+  async set(value, originatorId=null, barrier=null) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(value !== undefined);
     // If there's a barrier set, then the originating storage-proxy is expecting
     // a result so we cannot suppress the event here.
-    if (JSON.stringify(this._stored) == JSON.stringify(entity) && barrier == null)
+    if (JSON.stringify(this._stored) == JSON.stringify(value) && barrier == null)
       return;
-    this._stored = entity;
+    this._stored = value;
     this._version++;
-    this._fire('change', {data: this._stored, version: this._version, originatorId, barrier});
+    await this._fire('change', {data: this._stored, version: this._version, originatorId, barrier});
   }
 
-  async clear(originatorId, barrier) {
+  async clear(originatorId=null, barrier=null) {
     this.set(null, originatorId, barrier);
-  }
-
-  serializedData() {
-    return [this._stored];
   }
 }
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24350,7 +24532,7 @@ class CombinedStrategy extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategi
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24434,7 +24616,7 @@ class FindHostedParticle extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strate
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24484,7 +24666,7 @@ class NameUnnamedConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_st
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24560,7 +24742,7 @@ class SearchTokensToHandles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_str
 
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24629,7 +24811,7 @@ class SuggestionComposer {
 
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24678,7 +24860,7 @@ class TupleFields {
 
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24846,7 +25028,7 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -25246,7 +25428,7 @@ const createTemplate = innerHTML => {
 
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -25254,12 +25436,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_arc_js__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_description_js__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_manifest_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_planificator_js__ = __webpack_require__(63);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_planificator_js__ = __webpack_require__(64);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_planner_js__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__runtime_slot_composer_js__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__runtime_dom_slot_js__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__runtime_type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__browser_loader_js__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__browser_loader_js__ = __webpack_require__(65);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__tracelib_trace_js__ = __webpack_require__(6);
 /**
  * @license

@@ -1,5 +1,5 @@
-commit 58fc45abe1a706d1a0a40504fe10f6bb5c9335f2
+commit 7ea26b56fb1426b4631ffe1e9d5e017af452582c
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Jul 11 11:10:48 2018 +1000
+Date:   Wed Jul 11 16:16:35 2018 +1000
 
-    Introduces contextual init-population if arc is not empty. (#1551)
+    Make Strategy Explorer displaying synchronous (#1622)

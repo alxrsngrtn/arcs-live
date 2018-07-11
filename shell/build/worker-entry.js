@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 34);
+/******/ 	return __webpack_require__(__webpack_require__.s = 35);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -96,7 +96,7 @@ function assert(test, message) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__shape_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schema_js__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type_variable_js__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tuple_fields_js__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__ = __webpack_require__(5);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -512,7 +512,7 @@ addType('Slot');
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shell_components_xen_xen_state_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shell_components_xen_xen_state_js__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dom_particle_base_js__ = __webpack_require__(27);
 /**
  * @license
@@ -927,7 +927,7 @@ class ParticleSpec {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tracelib_trace_js__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
 /**
  * @license
@@ -4472,7 +4472,8 @@ class Collection extends Handle {
     if (!this.canWrite)
       throw new Error('Handle not writeable');
     let serialization = this._serialize(entity);
-    return this._proxy.store(serialization, this._particleId);
+    let keys = [this._proxy.generateID('key')];
+    return this._proxy.store(serialization, keys, this._particleId);
   }
 
   /** @method remove(entity)
@@ -4484,7 +4485,9 @@ class Collection extends Handle {
     if (!this.canWrite)
       throw new Error('Handle not writeable');
     let serialization = this._serialize(entity);
-    return this._proxy.remove(serialization.id, this._particleId);
+    // Remove the keys that exist at storage/proxy.
+    let keys = [];
+    return this._proxy.remove(serialization.id, keys, this._particleId);
   }
 }
 
@@ -4693,6 +4696,7 @@ class Loader {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__storage_crdt_collection_model_js__ = __webpack_require__(32);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4702,6 +4706,7 @@ class Loader {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -4790,11 +4795,8 @@ class StorageProxyBase {
       // If a handle configured for sync notifications registers after we've received the full
       // model, notify it immediately.
       if (handle.options.notifySync && this._synchronized == SyncState.full) {
-        let model = this._model;
-        if (Array.isArray(model)) {
-          model = [...model];
-        }
-        this._scheduler.enqueue(particle, handle, ['sync', particle, model]);
+        let syncModel = this._getModelForSync();
+        this._scheduler.enqueue(particle, handle, ['sync', particle, syncModel]);
       }
     }
   }
@@ -4816,27 +4818,18 @@ class StorageProxyBase {
 
     // Replace the stored data with the new one and notify handles that are configured for it.
     this._synchronizeModel(model);
-    this._version = model.version;
 
-    for (let {handle, particle} of this._observers) {
-      if (handle.options.keepSynced && handle.options.notifySync) {
-        let model = this._model;
-        if (Array.isArray(model)) {
-          model = [...model];
-        }
-        this._scheduler.enqueue(particle, handle, ['sync', particle, model]);
-      }
-    }
+    let syncModel = this._getModelForSync();
+    this._notify('sync', syncModel, options => options.keepSynced && options.notifySync);
     this._processUpdates();
   }
 
   // `update` contains 'version' and one of 'data', 'add' or 'remove'.
   _onUpdate(update) {
     // Immediately notify any handles that are not configured with keepSynced but do want updates.
-    for (let {handle, particle} of this._observers) {
-      if (!handle.options.keepSynced && handle.options.notifyUpdate) {
-        this._scheduler.enqueue(particle, handle, ['update', particle, update]);
-      }
+    if (this._observers.find(({handle}) => !handle.options.keepSynced && handle.options.notifyUpdate)) {
+      let handleUpdate = this._processUpdate(update, false);
+      this._notify('update', handleUpdate, options => !options.keepSynced && options.notifyUpdate);
     }
 
     // Bail if we're not in synchronized mode or this is a stale event.
@@ -4855,10 +4848,10 @@ class StorageProxyBase {
     this._processUpdates();
   }
 
-  _notify(kind, update, predicate=() => true) {
+  _notify(kind, details, predicate=() => true) {
     for (let {handle, particle} of this._observers) {
       if (predicate(handle.options)) {
-        this._scheduler.enqueue(particle, handle, [kind, particle, update]);
+        this._scheduler.enqueue(particle, handle, [kind, particle, details]);
       }
     }
   }
@@ -4869,13 +4862,13 @@ class StorageProxyBase {
       let update = this._updates.shift();
 
       // Fold the update into our stored model.
-      let notify = this._updateModel(update);
+      let handleUpdate = this._processUpdate(update);
       this._version = update.version;
 
       // Notify handles configured with keepSynced and notifyUpdates (non-keepSynced handles are
       // notified as updates are received).
-      if (notify) {
-        this._notify('update', update, options => options.keepSynced && options.notifyUpdate);
+      if (handleUpdate) {
+        this._notify('update', handleUpdate, options => options.keepSynced && options.notifyUpdate);
       }
     }
 
@@ -4897,65 +4890,140 @@ class StorageProxyBase {
     }
   }
 
+  generateID(component) {
+    return this._pec.generateID(component);
+  }
+
   generateIDComponents() {
     return this._pec.generateIDComponents();
   }
 }
 
+
+// Collections are synchronized in a CRDT Observed/Removed scheme. 
+// Each value is identified by an ID and a set of membership keys.
+// Concurrent adds of the same value will specify the same ID but different
+// keys. A value is removed by removing all of the observed keys. A value
+// is considered to be removed if all of it's keys have been removed.
+//
+// In synchronized mode mutation takes place synchronously inside the proxy.
+// The proxy uses the originatorId to skip over redundant events sent back
+// by the storage object.
+//
+// In unsynchronized mode removal is not based on the keys observed at the
+// proxy, since the proxy does not remember the state, but instead the set
+// of keys that exist at the storage object at the time it receives the
+// request.
 class CollectionProxy extends StorageProxyBase {
   constructor(...args) {
     super(...args);
-    this._model = null;
+    this._model = new __WEBPACK_IMPORTED_MODULE_1__storage_crdt_collection_model_js__["a" /* CrdtCollectionModel */]();
   }
-  _synchronizeModel(model) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])('list' in model);
-    this._model = model.list;
+  _getModelForSync() {
+    return this._model.toList();
   }
-  _updateModel(update) {
-    if ('add' in update) {
-      this._model.push(...update.add);
-    } else if ('remove' in update) {
-      let keep = [];
-      for (let held of this._model) {
-        keep.push(held);
-        // TODO: avoid revisiting removed items? (eg. use a set of ids, prune as they are matched)
-        for (let item of update.remove) {
-          if (held.id === item.id) {
-            keep.pop();
-            break;
-          }
+  _synchronizeModel({version, model}) {
+    this._version = version;
+    this._model = new __WEBPACK_IMPORTED_MODULE_1__storage_crdt_collection_model_js__["a" /* CrdtCollectionModel */](model);
+  }
+  _processUpdate(update, apply=true) {
+    if (this._synchronized == SyncState.full) {
+      // If we're synchronized, then any updates we sent have
+      // already been applied/notified.
+      for (let {handle} of this._observers) {
+        if (update.originatorId == handle._particleId) {
+          return null;
         }
       }
-      this._model = keep;
+    }
+    let added = [];
+    let removed = [];
+    if ('add' in update) {
+      for (let {value, keys, effective} of update.add) {
+        if (apply && this._model.add(value.id, value, keys) || !apply && effective) {
+          added.push(value);
+        }
+      }
+    } else if ('remove' in update) {
+      for (let {value, keys, effective} of update.remove) {
+        if (apply && this._model.remove(value.id, keys) || !apply && effective) {
+          removed.push(value);
+        }
+      }
     } else {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `StorageProxy received invalid update event: ${JSON.stringify(update)}`);
     }
-    return true;
+    if (added.length || removed.length) {
+      let result = {};
+      if (added.length) result.add = added;
+      if (removed.length) result.remove = removed;
+      result.originatorId = update.originatorId;
+      return result;
+    }
+    return null;
   }
   // Read ops: if we're synchronized we can just return the local copy of the data.
   // Otherwise, send a request to the backing store.
-  // TODO: in synchronized mode, these should integrate with SynchronizeProxy rather than
-  //       sending a parallel request
   toList(particleId) {
     if (this._synchronized == SyncState.full) {
-      return new Promise((resolve, reject) => resolve(this._model));
+      return Promise.resolve(this._model.toList());
     } else {
+      // TODO: in synchronized mode, this should integrate with SynchronizeProxy rather than
+      //       sending a parallel request
       return new Promise((resolve, reject) =>
         this._port.HandleToList({callback: r => resolve(r), handle: this, particleId}));
     }
   }
-  // Write ops: in synchronized mode, any write operation will desynchronize the proxy, so
-  // subsequent reads will call to the backing store until resync is established via the update
-  // event triggered by the write.
-  // TODO: handle concurrent writes from other parties to the backing store
-  store(entity, particleId) {
-    this._port.HandleStore({data: entity, handle: this, particleId});
-    this._synchronized = SyncState.pending;
+  store(value, keys, particleId) {
+    let id = value.id;
+    let data = {
+      value,
+      keys,
+    };
+    this._port.HandleStore({data, handle: this, particleId});
+
+    if (this._synchronized != SyncState.full) {
+      return;
+    }
+    if (!this._model.add(id, value, keys)) {
+      return;
+    }
+    let update = {
+      originatorId: particleId,
+      add: [value],
+    };
+    this._notify('update', update, options => options.notifyUpdate);
   }
 
-  remove(entityId, particleId) {
-    this._port.HandleRemove({data: entityId, handle: this, particleId});
-    this._synchronized = SyncState.pending;
+  remove(id, keys, particleId) {
+    if (this._synchronized != SyncState.full) {
+      let data = {
+        id,
+        keys: [],
+      };
+      this._port.HandleRemove({data, handle: this, particleId});
+      return;
+    }
+
+    let value = this._model.getValue(id);
+    if (!value) return;
+    if (keys.length == 0) {
+      keys = this._model.getKeys(id);
+    }
+    let data = {
+      id,
+      keys,
+    };
+    this._port.HandleRemove({data, handle: this, particleId});
+
+    if (!this._model.remove(id, keys)) {
+      return;
+    }
+    let update = {
+      originatorId: particleId,
+      remove: [value],
+    };
+    this._notify('update', update, options => options.notifyUpdate);
   }
 }
 
@@ -4970,22 +5038,27 @@ class VariableProxy extends StorageProxyBase {
     this._model = null;
     this._barrier = null;
   }
-  _synchronizeModel(model) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])('data' in model);
-    this._model = model.data;
+  _getModelForSync() {
+    return this._model;
   }
-  _updateModel(update) {
+  _synchronizeModel({version, model}) {
+    this._version = version;
+    this._model = model.length == 0 ? null : model[0].value;
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._model !== undefined);
+  }
+  _processUpdate(update, apply=true) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])('data' in update);
+    if (!apply) return update;
     // If we have set a barrier, suppress updates until after
     // we have seen the barrier return via an update.
     if (this._barrier != null) {
       if (update.barrier == this._barrier) {
         this._barrier = null;
       }
-      return false;
+      return null;
     }
     this._model = update.data;
-    return true;
+    return update;
   }
   // Read ops: if we're synchronized we can just return the local copy of the data.
   // Otherwise, send a request to the backing store.
@@ -5000,10 +5073,11 @@ class VariableProxy extends StorageProxyBase {
     }
   }
   set(entity, particleId) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(entity !== undefined);
     if (JSON.stringify(this._model) == JSON.stringify(entity)) {
       return;
     }
-    let barrier = this._pec.generateID();
+    let barrier = this.generateID('barrier');
     // TODO: is this already a clone?
     this._model = JSON.parse(JSON.stringify(entity));
     this._barrier = barrier;
@@ -5019,7 +5093,7 @@ class VariableProxy extends StorageProxyBase {
     if (this._model == null) {
       return;
     }
-    let barrier = this._pec.generateID();
+    let barrier = this.generateID('barrier');
     this._model = null;
     this._barrier = barrier;
     this._port.HandleClear({handle: this, particleId, barrier});
@@ -5100,7 +5174,7 @@ class StorageProxyScheduler {
             handle._notify(...args);
           } catch (e) {
             // TODO: report it via channel?
-            // console.error(e);
+            console.error('Error dispatching to particle', e);
           }
         }
       }
@@ -5115,6 +5189,113 @@ class StorageProxyScheduler {
 
 /***/ }),
 /* 32 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+// Bulding block for CRDT collections. Tracks the membership (keys) of
+// values identified by unique IDs. A value is considered to be part
+// of the collection if the set of keys added by calls to
+// `add(id, ..., keys)` minus the set of keys removed by calls to
+// `remove(id, keys)` is non-empty.
+//
+// Note: This implementation does not guard against the case of the
+// same membership key being added more than once. Don't do that.
+class CrdtCollectionModel {
+  constructor(model) {
+    // id => {value, Set[keys]}
+    this._items = new Map();
+    if (model) {
+      for (let {id, value, keys} of model) {
+        if (!keys) {
+          keys = [];
+        }
+        this._items.set(id, {value, keys: new Set(keys)});
+      }
+    }
+  }
+  // Adds membership, `keys`, of `value` indexed by `id` to this collection.
+  // Returns whether the change is effective (`id` is new to the collection,
+  // or `value` is different to the value previously stored).
+  add(id, value, keys) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(keys.length > 0, 'add requires keys');
+    let item = this._items.get(id);
+    let effective = false;
+    if (!item) {
+      item = {value, keys: new Set(keys)};
+      this._items.set(id, item);
+      effective = true;
+    } else {
+      let newKeys = false;
+      for (let key of keys) {
+        if (!item.keys.has(key)) {
+          newKeys = true;
+        }
+        item.keys.add(key);
+      }
+      if (JSON.stringify(item.value) != JSON.stringify(value)) {
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(newKeys, 'cannot add without new keys');
+        item.value = value;
+        effective = true;
+      }
+    }
+    return effective;
+  }
+  // Removes the membership, `keys`, of the value indexed by `id` from this collection.
+  // Returns whether the change is effective (the value is no longer present
+  // in the collection because all of the keys have been removed).
+  remove(id, keys) {
+    let item = this._items.get(id);
+    if (!item) {
+      return false;
+    }
+    for (let key of keys) {
+      item.keys.delete(key);
+    }
+    let effective = item.keys.size == 0;
+    if (effective) {
+      this._items.delete(id);
+    }
+    return effective;
+  }
+  // [{id, value, keys: []}]
+  toLiteral() {
+    let result = [];
+    for (let [id, {value, keys}] of this._items.entries()) {
+      result.push({id, value, keys: [...keys]});
+    }
+    return result;
+  }
+  toList() {
+    return [...this._items.values()].map(item => item.value);
+  }
+  getKeys(id) {
+    let item = this._items.get(id);
+    return item ? [...item.keys] : [];
+  }
+  getValue(id) {
+    let item = this._items.get(id);
+    return item ? item.value : null;
+  }
+  get size() {
+    return this._items.size;
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CrdtCollectionModel;
+
+
+/***/ }),
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5163,7 +5344,7 @@ class TupleFields {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5331,7 +5512,7 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5360,7 +5541,7 @@ self.onmessage = function(e) {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
