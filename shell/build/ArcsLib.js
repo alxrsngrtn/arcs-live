@@ -11079,7 +11079,7 @@ class TypeVariable {
   maybeMergeCanReadSubset(constraint) {
     if (constraint == null)
       return true;
-    
+
     if (this.canReadSubset == null) {
       this.canReadSubset = constraint;
       return true;
@@ -11088,7 +11088,7 @@ class TypeVariable {
     let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
     if (!mergedSchema)
       return false;
-    
+
     this.canReadSubset = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newEntity(mergedSchema);
     return true;
   }
@@ -11197,11 +11197,11 @@ class TypeVariable {
     if (this._resolution)
       return this._resolution.maybeEnsureResolved();
     if (this._canWriteSuperset) {
-      this._resolution = this._canWriteSuperset;
+      this.resolution = this._canWriteSuperset;
       return true;
     }
     if (this._canReadSubset) {
-      this._resolution = this._canReadSubset;
+      this.resolution = this._canReadSubset;
       return true;
     }
     return false;

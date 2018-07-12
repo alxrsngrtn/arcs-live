@@ -1,5 +1,5 @@
-commit f5400f189d028bb5c03c9ec0587cbdc896381fca
+commit b70641b2cf083aa69df5955a482fc197866898f4
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jul 12 08:17:32 2018 +1000
+Date:   Thu Jul 12 10:30:32 2018 +1000
 
-    Enable recipe coalescing again (#1623)
+    maybeEnsureResolved clears canReadSubset and canWriteSuperset (#1631)
