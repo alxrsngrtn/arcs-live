@@ -22224,10 +22224,9 @@ class RecipeIndex {
               || otherCounts.out + counts.out === 0) continue;
         }
 
-        // If one or the handles have tags, we need to have overlap.
-        if (handle.tags.length > 0 || otherHandle.tags.length > 0) {
-          if (!handle.tags.some(t => otherHandle.tags.includes(t))) continue;
-        }
+        // If requesting handle has tags, we should have overlap.
+        if (handle.tags.length > 0 && !handle.tags.some(t => otherHandle.tags.includes(t))) continue;
+
 
         // If types don't match.
         if (!__WEBPACK_IMPORTED_MODULE_16__recipe_handle_js__["a" /* Handle */].effectiveType(handle._mappedType,
