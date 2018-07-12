@@ -1,9 +1,5 @@
-commit 062d690abb525f0b59aebc2b05a2d6742fbad248
-Author: Douglas Stockwell <dstockwell@chromium.org>
-Date:   Thu Jul 12 10:41:54 2018 +1000
+commit 1635f3497c3c518c1768e722a1529e7380658bd4
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Jul 12 10:44:25 2018 +1000
 
-    Fix collection.remove plumbing between storage-proxy and provider (#1633)
-    
-    * Fix collection.remove plumbing between storage-proxy and storage provider
-    
-    Fixes #1628
+    FindHostedParticle bugfix (#1632)

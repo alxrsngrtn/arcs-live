@@ -24734,8 +24734,19 @@ class FindHostedParticle extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strate
             //      then type system has to ensure ~a is at least Entity.
             // The type of a handle hosting the particle literal has to be
             // concrete, so we concretize connection type with maybeEnsureResolved().
-            let handleType = hc.type.clone(new Map());
+            const handleType = hc.type.clone(new Map());
             handleType.maybeEnsureResolved();
+
+            const id = `${arc.id}:particle-literal:${particle.name}`;
+
+            // Reuse a handle if we already hold this particle spec in the recipe.
+            for (let handle of recipe.handles) {
+              if (handle.id === id && handle.fate === 'copy'
+                  && handle._mappedType && handle._mappedType.equals(handleType)) {
+                hc.connectToHandle(handle);
+                return;
+              }
+            }
 
             // TODO: Add a digest of a particle literal to the ID, so that we
             //       can ensure we load the correct particle. It is currently
@@ -24744,13 +24755,13 @@ class FindHostedParticle extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strate
             let handle = recipe.newHandle();
             handle._mappedType = handleType;
             handle.fate = 'copy';
-            handle.id = `${arc.generateID()}:particle-literal:${particle.name}`;
+            handle.id = id;
             hc.connectToHandle(handle);
           });
         }
         return results;
       }
-    }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* Walker */].Independent), this);
+    }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* Walker */].Permuted), this);
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = FindHostedParticle;
