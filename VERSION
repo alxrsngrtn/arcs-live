@@ -1,5 +1,9 @@
-commit d1c84cc0c286b544f9fcb0fc6a52ccd7ad25ec6d
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jul 12 14:54:41 2018 -0700
+commit 3258f2e26ef889afdd4ac991c973a9ddeea7369f
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Thu Jul 12 15:23:27 2018 -0700
 
-    fix restaurants selenium test - use regex to find the suggestion (#1647)
+    secure storage PoC (enclaved via Asylo) (#1504)
+    
+    A small PoC of a secure storage mechanism
+    
+    For more information see enclave/README.md.
