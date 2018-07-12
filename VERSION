@@ -1,5 +1,5 @@
-commit 1635f3497c3c518c1768e722a1529e7380658bd4
+commit 4675b7dad805984ca7515dcb8787774091d87fe3
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jul 12 10:44:25 2018 +1000
+Date:   Thu Jul 12 13:25:47 2018 +1000
 
-    FindHostedParticle bugfix (#1632)
+    Simple filter on type in arc/manifest.findStoresByType (#1637)
