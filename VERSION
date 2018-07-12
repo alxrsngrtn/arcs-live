@@ -1,5 +1,9 @@
-commit b70641b2cf083aa69df5955a482fc197866898f4
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jul 12 10:30:32 2018 +1000
+commit 062d690abb525f0b59aebc2b05a2d6742fbad248
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Thu Jul 12 10:41:54 2018 +1000
 
-    maybeEnsureResolved clears canReadSubset and canWriteSuperset (#1631)
+    Fix collection.remove plumbing between storage-proxy and provider (#1633)
+    
+    * Fix collection.remove plumbing between storage-proxy and storage provider
+    
+    Fixes #1628
