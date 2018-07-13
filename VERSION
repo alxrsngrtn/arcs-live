@@ -1,9 +1,5 @@
-commit 3258f2e26ef889afdd4ac991c973a9ddeea7369f
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Thu Jul 12 15:23:27 2018 -0700
+commit 133a00f7744a072e27f6b55070f836694b52bf61
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Jul 12 17:09:25 2018 -0700
 
-    secure storage PoC (enclaved via Asylo) (#1504)
-    
-    A small PoC of a secure storage mechanism
-    
-    For more information see enclave/README.md.
+    update rendering expectations in demo-flow-test to match the updated particles&recipes (#1648)
