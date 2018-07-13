@@ -731,13 +731,15 @@ class SlotSpec {
 class ProvidedSlotSpec {
   constructor(slotModel) {
     this.name = slotModel.name;
-    this.isRequired = slotModel.isRequired;
-    this.isSet = slotModel.isSet;
+    this.isRequired = slotModel.isRequired || false;
+    this.isSet = slotModel.isSet || false;
     this.tags = slotModel.tags || [];
     this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
     this.handles = slotModel.handles || [];
   }
 }
+/* unused harmony export ProvidedSlotSpec */
+
 
 class ParticleSpec {
   constructor(model) {

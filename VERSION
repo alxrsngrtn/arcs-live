@@ -1,5 +1,11 @@
-commit 133a00f7744a072e27f6b55070f836694b52bf61
+commit b93d699d4a18c973fefb9a79ca89cc774420860b
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jul 12 17:09:25 2018 -0700
+Date:   Fri Jul 13 12:10:22 2018 -0700
 
-    update rendering expectations in demo-flow-test to match the updated particles&recipes (#1648)
+    slot composer refactoring (#1634)
+    
+    * slot composer refactoring (step #1 - slot-context)
+    
+    * refactoring of slots & contexts
+    
+    * address comments
