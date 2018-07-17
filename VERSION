@@ -1,7 +1,7 @@
-commit 65bdb6f2258b14c2940d6c5bd0bd9d389da35694
-Author: Matt Small <smalls@users.noreply.github.com>
-Date:   Tue Jul 17 11:07:54 2018 -0700
+commit 4381cdb78dde4165ea798623dc9aec0d13e26860
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jul 17 11:25:04 2018 -0700
 
-    disable request logs for the built-in server (#1661)
+    singleton slots inline suggestion & (#1659)
     
-    Other options (for future reference) https://www.npmjs.com/package/http-server
+    suggestion-dom-consumer implementation used for suggestions everywhere.
