@@ -1,11 +1,10 @@
-commit b93d699d4a18c973fefb9a79ca89cc774420860b
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Jul 13 12:10:22 2018 -0700
+commit faa7b8ee91ab80cc51e1f248139c61a93007b201
+Author: Douglas Stockwell <dstockwell@chromium.org>
+Date:   Tue Jul 17 14:36:37 2018 +1000
 
-    slot composer refactoring (#1634)
+    Reimplement Firebase storage using CRDT (#1624)
     
-    * slot composer refactoring (step #1 - slot-context)
+    * variable uses LWW (client always wins)
+    * collection synchronizes the set of membership keys for each entry
     
-    * refactoring of slots & contexts
-    
-    * address comments
+    Part of #1471

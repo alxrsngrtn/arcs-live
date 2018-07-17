@@ -447,11 +447,11 @@ Ruleset.Builder = class {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategizer_strategizer_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__connection_constraint_js__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(97);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__search_js__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__search_js__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__slot_js__ = __webpack_require__(100);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__handle_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__util_js__ = __webpack_require__(5);
@@ -2942,13 +2942,13 @@ class TypeChecker {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_digest_web_js__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__build_manifest_parser_js__ = __webpack_require__(75);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_handle_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__particle_spec_js__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__schema_js__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__recipe_search_js__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__recipe_search_js__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__shape_js__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__recipe_util_js__ = __webpack_require__(5);
@@ -4927,12 +4927,12 @@ class DescriptionFormatter {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_date_web_js__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_date_web_js__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_rulesets_js__ = __webpack_require__(59);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_deviceinfo_web_js__ = __webpack_require__(68);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_recipe_util_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__strategies_convert_constraints_to_connections_js__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__strategies_convert_constraints_to_connections_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__strategies_assign_remote_handles_js__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__strategies_copy_remote_handles_js__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__strategies_assign_handles_by_tag_and_type_js__ = __webpack_require__(48);
@@ -4941,23 +4941,23 @@ class DescriptionFormatter {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_match_particle_by_verb_js__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_match_recipe_by_verb_js__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_name_unnamed_connections_js__ = __webpack_require__(110);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__strategies_add_use_handles_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__strategies_add_use_handles_js__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__strategies_create_description_handle_js__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__strategies_init_search_js__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__strategies_init_search_js__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__strategies_search_tokens_to_handles_js__ = __webpack_require__(111);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__strategies_search_tokens_to_particles_js__ = __webpack_require__(60);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__strategies_fallback_fate_js__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__strategies_group_handle_connections_js__ = __webpack_require__(55);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__strategies_match_free_handles_to_connections_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__strategies_match_free_handles_to_connections_js__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__strategies_create_handles_js__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__strategies_create_handle_group_js__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__strategies_combined_strategy_js__ = __webpack_require__(108);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__strategies_find_hosted_particle_js__ = __webpack_require__(109);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__strategies_coalesce_recipes_js__ = __webpack_require__(107);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__strategies_resolve_recipe_js__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__speculator_js__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__speculator_js__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__tracelib_trace_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__debug_strategy_explorer_adapter_js__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__debug_strategy_explorer_adapter_js__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__debug_devtools_connection_js__ = __webpack_require__(12);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -5365,8 +5365,8 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__she
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__particle_js__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__dom_particle_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__multiplexer_dom_particle_js__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__transformation_dom_particle_js__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__converters_jsonldToManifest_js__ = __webpack_require__(76);
 /**
  * @license
@@ -5789,7 +5789,7 @@ class ConnectionConstraint {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__entity_js__ = __webpack_require__(38);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6493,6 +6493,116 @@ ${this._slotsToManifestString()}
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+// Bulding block for CRDT collections. Tracks the membership (keys) of
+// values identified by unique IDs. A value is considered to be part
+// of the collection if the set of keys added by calls to
+// `add(id, ..., keys)` minus the set of keys removed by calls to
+// `remove(id, keys)` is non-empty.
+//
+// Note: This implementation does not guard against the case of the
+// same membership key being added more than once. Don't do that.
+class CrdtCollectionModel {
+  constructor(model) {
+    // id => {value, Set[keys]}
+    this._items = new Map();
+    if (model) {
+      for (let {id, value, keys} of model) {
+        if (!keys) {
+          keys = [];
+        }
+        this._items.set(id, {value, keys: new Set(keys)});
+      }
+    }
+  }
+  // Adds membership, `keys`, of `value` indexed by `id` to this collection.
+  // Returns whether the change is effective (`id` is new to the collection,
+  // or `value` is different to the value previously stored).
+  add(id, value, keys) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(keys.length > 0, 'add requires keys');
+    let item = this._items.get(id);
+    let effective = false;
+    if (!item) {
+      item = {value, keys: new Set(keys)};
+      this._items.set(id, item);
+      effective = true;
+    } else {
+      let newKeys = false;
+      for (let key of keys) {
+        if (!item.keys.has(key)) {
+          newKeys = true;
+        }
+        item.keys.add(key);
+      }
+      if (JSON.stringify(item.value) != JSON.stringify(value)) {
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(newKeys, 'cannot add without new keys');
+        item.value = value;
+        effective = true;
+      }
+    }
+    return effective;
+  }
+  // Removes the membership, `keys`, of the value indexed by `id` from this collection.
+  // Returns whether the change is effective (the value is no longer present
+  // in the collection because all of the keys have been removed).
+  remove(id, keys) {
+    let item = this._items.get(id);
+    if (!item) {
+      return false;
+    }
+    for (let key of keys) {
+      item.keys.delete(key);
+    }
+    let effective = item.keys.size == 0;
+    if (effective) {
+      this._items.delete(id);
+    }
+    return effective;
+  }
+  // [{id, value, keys: []}]
+  toLiteral() {
+    let result = [];
+    for (let [id, {value, keys}] of this._items.entries()) {
+      result.push({id, value, keys: [...keys]});
+    }
+    return result;
+  }
+  toList() {
+    return [...this._items.values()].map(item => item.value);
+  }
+  has(id) {
+    return this._items.has(id);
+  }
+  getKeys(id) {
+    let item = this._items.get(id);
+    return item ? [...item.keys] : [];
+  }
+  getValue(id) {
+    let item = this._items.get(id);
+    return item ? item.value : null;
+  }
+  get size() {
+    return this._items.size;
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = CrdtCollectionModel;
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__ = __webpack_require__(3);
@@ -6546,7 +6656,7 @@ class AddUseHandles extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6763,7 +6873,7 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6859,7 +6969,7 @@ class HandleMapperBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategi
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6905,7 +7015,7 @@ class InitSearch extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6954,7 +7064,7 @@ class MatchFreeHandlesToConnections extends __WEBPACK_IMPORTED_MODULE_0__strateg
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7013,13 +7123,13 @@ class TransformationDomParticle extends __WEBPACK_IMPORTED_MODULE_0__dom_particl
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__type_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__handle_js__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__handle_js__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_execution_host_js__ = __webpack_require__(93);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_handle_js__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__recipe_recipe_js__ = __webpack_require__(2);
@@ -7624,12 +7734,12 @@ ${this.activeRecipe.toString()}`;
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__affordance_js__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__affordance_js__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__slot_context_js__ = __webpack_require__(103);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__hosted_slot_consumer_js__ = __webpack_require__(88);
 /**
@@ -7790,7 +7900,7 @@ class SlotComposer {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports) {
 
 var g;
@@ -7817,7 +7927,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7835,7 +7945,7 @@ function now() {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7855,12 +7965,12 @@ async function digest(str) {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_dom_consumer_js__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_dom_consumer_js__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__testing_mock_slot_dom_consumer_js__ = __webpack_require__(113);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__description_dom_formatter_js__ = __webpack_require__(84);
 /**
@@ -7905,7 +8015,7 @@ let _affordances = {};
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8257,7 +8367,7 @@ class PECInnerPort extends APIPort {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8355,7 +8465,7 @@ class StrategyExplorerAdapter {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8428,12 +8538,12 @@ class Entity {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = handleFor;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__entity_js__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__symbols_js__ = __webpack_require__(61);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__particle_spec_js__ = __webpack_require__(9);
@@ -8707,13 +8817,13 @@ function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = tr
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__particle_spec_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__transformation_dom_particle_js__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__transformation_dom_particle_js__ = __webpack_require__(29);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8925,7 +9035,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9033,7 +9143,7 @@ class Search {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9189,12 +9299,12 @@ class SlotConsumer {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_consumer_js__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_consumer_js__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shell_components_xen_xen_template_js__ = __webpack_require__(116);
 /**
  * @license
@@ -9511,7 +9621,7 @@ class SlotDomConsumer extends __WEBPACK_IMPORTED_MODULE_1__slot_consumer_js__["a
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9568,113 +9678,6 @@ class Speculator {
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Speculator;
 
-
-
-/***/ }),
-/* 44 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-// Bulding block for CRDT collections. Tracks the membership (keys) of
-// values identified by unique IDs. A value is considered to be part
-// of the collection if the set of keys added by calls to
-// `add(id, ..., keys)` minus the set of keys removed by calls to
-// `remove(id, keys)` is non-empty.
-//
-// Note: This implementation does not guard against the case of the
-// same membership key being added more than once. Don't do that.
-class CrdtCollectionModel {
-  constructor(model) {
-    // id => {value, Set[keys]}
-    this._items = new Map();
-    if (model) {
-      for (let {id, value, keys} of model) {
-        if (!keys) {
-          keys = [];
-        }
-        this._items.set(id, {value, keys: new Set(keys)});
-      }
-    }
-  }
-  // Adds membership, `keys`, of `value` indexed by `id` to this collection.
-  // Returns whether the change is effective (`id` is new to the collection,
-  // or `value` is different to the value previously stored).
-  add(id, value, keys) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(keys.length > 0, 'add requires keys');
-    let item = this._items.get(id);
-    let effective = false;
-    if (!item) {
-      item = {value, keys: new Set(keys)};
-      this._items.set(id, item);
-      effective = true;
-    } else {
-      let newKeys = false;
-      for (let key of keys) {
-        if (!item.keys.has(key)) {
-          newKeys = true;
-        }
-        item.keys.add(key);
-      }
-      if (JSON.stringify(item.value) != JSON.stringify(value)) {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(newKeys, 'cannot add without new keys');
-        item.value = value;
-        effective = true;
-      }
-    }
-    return effective;
-  }
-  // Removes the membership, `keys`, of the value indexed by `id` from this collection.
-  // Returns whether the change is effective (the value is no longer present
-  // in the collection because all of the keys have been removed).
-  remove(id, keys) {
-    let item = this._items.get(id);
-    if (!item) {
-      return false;
-    }
-    for (let key of keys) {
-      item.keys.delete(key);
-    }
-    let effective = item.keys.size == 0;
-    if (effective) {
-      this._items.delete(id);
-    }
-    return effective;
-  }
-  // [{id, value, keys: []}]
-  toLiteral() {
-    let result = [];
-    for (let [id, {value, keys}] of this._items.entries()) {
-      result.push({id, value, keys: [...keys]});
-    }
-    return result;
-  }
-  toList() {
-    return [...this._items.values()].map(item => item.value);
-  }
-  getKeys(id) {
-    let item = this._items.get(id);
-    return item ? [...item.keys] : [];
-  }
-  getValue(id) {
-    let item = this._items.get(id);
-    return item ? item.value : null;
-  }
-  get size() {
-    return this._items.size;
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = CrdtCollectionModel;
 
 
 /***/ }),
@@ -9760,6 +9763,7 @@ class StorageProviderBase {
     this._listeners.set(kind, listeners);
   }
 
+  // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
   async _fire(kind, details) {
     let listenerMap = this._listeners.get(kind);
     if (!listenerMap || listenerMap.size == 0)
@@ -9875,7 +9879,7 @@ class StorageProviderFactory {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(26);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -9912,7 +9916,7 @@ class AssignHandlesByTagAndType extends __WEBPACK_IMPORTED_MODULE_0__handle_mapp
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(26);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -9942,7 +9946,7 @@ class AssignRemoteHandles extends __WEBPACK_IMPORTED_MODULE_0__handle_mapper_bas
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_mapper_base_js__ = __webpack_require__(26);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -10687,7 +10691,7 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__convert_constraints_to_connections_js__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__convert_constraints_to_connections_js__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__assign_remote_handles_js__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__copy_remote_handles_js__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__assign_handles_by_tag_and_type_js__ = __webpack_require__(48);
@@ -10695,13 +10699,13 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__map_slots_js__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__match_particle_by_verb_js__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__match_recipe_by_verb_js__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__add_use_handles_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__add_use_handles_js__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__create_description_handle_js__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__init_search_js__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__init_search_js__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__search_tokens_to_particles_js__ = __webpack_require__(60);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__fallback_fate_js__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__group_handle_connections_js__ = __webpack_require__(55);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__match_free_handles_to_connections_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__match_free_handles_to_connections_js__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__create_handles_js__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__resolve_recipe_js__ = __webpack_require__(14);
 // Copyright (c) 2018 Google Inc. All rights reserved.
@@ -11149,11 +11153,11 @@ class TypeVariable {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_date_web_js__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_init_search_js__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_date_web_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategies_init_search_js__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__platform_log_web_js__ = __webpack_require__(72);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__planner_js__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__speculator_js__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__speculator_js__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__suggestion_composer_js__ = __webpack_require__(112);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -11558,8 +11562,8 @@ class Planificator {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_loader_js__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_particle_js__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_dom_particle_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_multiplexer_dom_particle_js__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_transformation_dom_particle_js__ = __webpack_require__(29);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11692,7 +11696,7 @@ class DevtoolsBroker {
 /* harmony export (immutable) */ __webpack_exports__["a"] = DevtoolsBroker;
 
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(31)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(32)))
 
 /***/ }),
 /* 66 */
@@ -21149,7 +21153,7 @@ const local_fetch = fetch;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_consumer_js__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_consumer_js__ = __webpack_require__(42);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -21393,9 +21397,9 @@ class MessageChannel {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_js__ = __webpack_require__(38);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__handle_js__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_channel_js__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__api_channel_js__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__storage_proxy_js__ = __webpack_require__(104);
 /**
  * @license
@@ -21652,7 +21656,7 @@ class ParticleExecutionContext {
 /* harmony export (immutable) */ __webpack_exports__["a"] = ParticleExecutionContext;
 
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(31)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(32)))
 
 /***/ }),
 /* 93 */
@@ -21660,7 +21664,7 @@ class ParticleExecutionContext {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_channel_js__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_channel_js__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__manifest_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_resolver_js__ = __webpack_require__(98);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__arc_exceptions_js__ = __webpack_require__(74);
@@ -21894,16 +21898,16 @@ class Random {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__loader_js__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__manifest_js__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__arc_js__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__slot_composer_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__arc_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__slot_composer_js__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__strategizer_strategizer_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__debug_strategy_explorer_adapter_js__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__debug_strategy_explorer_adapter_js__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__tracelib_trace_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__strategies_convert_constraints_to_connections_js__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__strategies_match_free_handles_to_connections_js__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__strategies_convert_constraints_to_connections_js__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__strategies_match_free_handles_to_connections_js__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__strategies_resolve_recipe_js__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__strategies_create_handle_group_js__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_add_use_handles_js__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__strategies_add_use_handles_js__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__strategies_rulesets_js__ = __webpack_require__(59);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__strategies_map_slots_js__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__debug_devtools_connection_js__ = __webpack_require__(12);
@@ -23413,7 +23417,7 @@ class SlotContext {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__storage_crdt_collection_model_js__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__storage_crdt_collection_model_js__ = __webpack_require__(23);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -23909,11 +23913,13 @@ class StorageProxyScheduler {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* unused harmony export resetStorageForTesting */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__storage_provider_base_js__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__ = __webpack_require__(70);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base_js__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_btoa_web_js__ = __webpack_require__(67);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__crdt_collection_model_js__ = __webpack_require__(23);
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -23927,6 +23933,21 @@ class StorageProxyScheduler {
 
 
 
+
+
+async function resetStorageForTesting(key) {
+  key = new FirebaseKey(key);
+  let app = __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__["a" /* firebase */].initializeApp({
+    apiKey: key.apiKey,
+    databaseURL: key.databaseUrl
+  });
+
+  let reference = __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__["a" /* firebase */].database(app).ref(key.location);
+  await new Promise(resolve => {
+    reference.remove(resolve);
+  });
+  app.delete();
+}
 
 class FirebaseKey extends __WEBPACK_IMPORTED_MODULE_3__key_base_js__["a" /* KeyBase */] {
   constructor(key) {
@@ -23981,6 +24002,10 @@ let _nextAppNameSuffix = 0;
 class FirebaseStorage {
   constructor(arcId) {
     this._arcId = arcId;
+    // TODO: We need a mechanism to shut call `app.delete()` in tests,
+    // otherwise the test process will not exit. Perhaps each store should
+    // have a `close` function, and once all the stores for a given app
+    // are closed, the app is deleted.
     this._apps = {};
   }
 
@@ -24045,6 +24070,11 @@ class FirebaseStorageProvider extends __WEBPACK_IMPORTED_MODULE_0__storage_provi
     super(type, arcId, undefined, id, key.toString());
     this.firebaseKey = key;
     this.reference = reference;
+
+    // Resolved when local modifications complete being persisted
+    // to firebase. Null when not persisting.
+    this._persisting = null;
+
   }
 
   static newProvider(type, arcId, id, reference, key) {
@@ -24061,150 +24091,558 @@ class FirebaseStorageProvider extends __WEBPACK_IMPORTED_MODULE_0__storage_provi
     key = key.replace(/\*/g, '/');
     return atob(key);
   }
+
+  get _hasLocalChanges() {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(false, 'subclass should implement _hasLocalChanges');
+  }
+  
+  async _persistChangesImpl() {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(false, 'subclass should implement _persistChangesImpl');
+  }
+
+  async _persistChanges() {
+    if (!this._hasLocalChanges) {
+      return;
+    }
+    if (this._persisting) {
+      return this._persisting;
+    }
+    // Ensure we only have one persist process running at a time.
+    this._persisting = this._persistChangesImpl();
+    await this._persisting;
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(!this._hasLocalChanges);
+    this._persisting = null;
+  }
 }
 
+// Models a Variable that is persisted to firebase in a
+// last-writer-wins scheme.
+//
+// Initialization: After construct/connect the variable is
+// not fully initialized, calls to `get` and `toLiteral`
+// will not complete until either:
+//  * The initial value is supplied via the firebase `.on`
+//    subscription.
+//  * A value is written to the store by a call to `set`.
+//
+// Updates from firebase: Each time an update is received
+// from firebase we update the local version and value,
+// unless there is a pending local modification (see below).
+//
+// Local modifications: When a local modification is applied
+// by a call to `set` we increment the version number,
+// mark this variable as locally modified, and start a
+// process to atomically persist the change to firebase.
+// Until this process has completed we suppress incoming
+// changes from firebase. The version that we have chosen
+// (by incrementing) may not match the final state that is
+// written to firebase (if there are concurrent changes in
+// firebase, or if we have queued up multiple local
+// modiciations), but the result will always be
+// monotonically increasing.
 class FirebaseVariable extends FirebaseStorageProvider {
   constructor(type, arcId, id, reference, firebaseKey) {
     super(type, arcId, id, reference, firebaseKey);
-    this.dataSnapshot = undefined;
-    this._pendingGets = [];
-    this._version = 0;
-    this.reference.on('value', dataSnapshot => {
-      this.dataSnapshot = dataSnapshot;
-      let data = dataSnapshot.val();
-      this._pendingGets.forEach(_get => _get(data));
-      this._pendingGets = [];
-      this._version = data.version;
-      this._fire('change', {data: data.data, version: data.version});
+
+    // Current value stored in this variable. Reflects either a
+    // value that was stored in firebase, or a value that was
+    // written locally.
+    this._value = null;
+
+    // Monotonic version, initialized via response from firebase,
+    // or a call to `set` (as 0). Updated on changes from firebase
+    // or during local modifications.
+    this._version = null;
+
+    // Whether `this._value` is affected by a local modification.
+    // When this is true we are still in the process of writing
+    // the value to the remote store and will suppress any
+    // incoming changes from firebase.
+    this._localModified = false;
+    
+    // Resolved when data is first available. The earlier of
+    // * the initial value is supplied via firebase `reference.on`
+    // * a value is written to the variable by a call to `set`.
+    this._initialized = new Promise(resolve => {
+      this._resolveInitialized = resolve;
     });
+
+    this.reference.on('value', dataSnapshot => this._remoteValueChanged(dataSnapshot));
   }
 
-  async cloneFrom(store) {
-    let {data, version} = await store.getWithVersion();
-    await this._setWithVersion(data, version);
+  _remoteValueChanged(dataSnapshot) {
+    if (this._localModified) {
+      return;
+    }
+    let data = dataSnapshot.val();
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this._version == null || data.version > this._version);
+
+    this._value = data.value;
+    this._version = data.version;
+
+    this._resolveInitialized();
+    this._fire('change', {data: data.value, version: this._version});
+  }
+
+  get _hasLocalChanges() {
+    return this._localModified;
+  }
+  
+  async _persistChangesImpl() {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this._localModified);
+    // Guard the specific version that we're writing. If we receive another
+    // local mutation, these versions will be different when the transaction
+    // completes indicating that we need to continue the process of sending
+    // local modifications.
+    let version = this._version;
+    let value = this._value;
+    let result = await realTransaction(this.reference, data => {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this._version >= version);
+      return {
+        version: Math.max(data.version + 1, version),
+        value: value,
+      };
+    });
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(result.committed, 'uncommited transaction (offline?) not supported yet');
+    let data = result.snapshot.val();
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(data.version >= this._version);
+    if (this._version != version) {
+      // A new local modification happened while we were writing the previous one.
+      return this._persistChangesImpl();
+    }
+
+    this._localModified = false;
+    this._version = data.version;
+    this._value = data.value;
+  }
+
+  get versionForTesting() {
+    return this._version;
   }
 
   async get() {
-    return this.dataSnapshot.val().data;
+    await this._initialized;
+    return this._value;
   }
 
-  async getWithVersion() {
-    if (this.dataSnapshot == undefined) {
-      return new Promise((resolve, reject) => {
-        this._pendingGets.push(resolve);
-      });
+  async set(value, originatorId=null, barrier=null) {
+    if (this._version == null) {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(!this._localModified);
+      // If the first modification happens before init, this becomes
+      // init. We pick the initial version which will be updated by the
+      // transaction in _persistChanges.
+      this._version = 0;
+      this._resolveInitialized();
+    } else {
+      if (JSON.stringify(this._value) == JSON.stringify(value))
+         return;
+      this._version++;
     }
-    return this.dataSnapshot.val();
+    this._localModified = true;
+    this._value = value;
+    this._fire('change', {data: this._value, version: this._version, originatorId, barrier});
+    await this._persistChanges();
   }
 
-  async _setWithVersion(data, version) {
-    await realTransaction(this.reference, _ => ({data, version}));
+  async clear(originatorId=null, barrier=null) {
+    return this.set(null, originatorId, barrier);
   }
 
-  async set(value) {
-    return realTransaction(this.reference, data => {
-      if (JSON.stringify(data.data) == JSON.stringify(value))
-        return data;
-      return {data: value, version: data.version + 1};
-    });
+  async cloneFrom(handle) {
+    let literal = await handle.toLiteral();
+    await this.fromLiteral(literal);
   }
 
-  async clear() {
-    return this.set(null);
+  // Returns {version, model: [{id, value}]}
+  async toLiteral() {
+    await this._initialized;
+    // fixme: think about if there are local mutations...
+    let value = this._value;
+    let model = [];
+    if (value != null) {
+      model = [{
+        id: value.id,
+        value,
+      }];
+    }
+    return {
+      version: this._version,
+      model,
+    };
+  }
+
+  fromLiteral({version, model}) {
+    let value = model.length == 0 ? null : model[0].value;
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(value !== undefined);
+    this._value = value;
+    this._version = version;
   }
 }
 
+
+function setDiff(from, to) {
+  let add = [];
+  let remove = [];
+  let items = new Set([...from, ...to]);
+  from = new Set(from);
+  to = new Set(to);
+  for (let item of items) {
+    if (from.has(item)) {
+      if (to.has(item)) {
+        continue;
+      }
+      remove.push(item);
+      continue;
+    }
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(to.has(item));
+    add.push(item);
+  }
+  return {remove, add};
+}
+
+// Models a Collection that is persisted to firebase in scheme similar
+// to the CRDT OR-set. We don't model sets of both observed
+// and removed keys but instead we maintain a list of current keys and
+// add/remove as the corresponding operations are received. We're
+// able to do this as we only ever synchronize between the same two points
+// (the client & firebase).
+//
+// Initialization: The collection is not initialized and calls to read
+// and mutate the collection will not complete until the initial state
+// is received via the firebase `.on` subscription.
+// Note, this is different to FirebaseVariable as mutations do not cause
+// the collection to become initialized (since we do not have enough state
+// to generate events).
+//
+// Updates from firebase: Each time an update is received from firebase
+// we compare the new remote state with the previous remote state. We are
+// able to detect which entries (and the corresponding keys) that have been
+// added and removed remotely. These are filtered by a set of suppressions
+// for adds that we have previously issued and then applied to our local
+// model. Each time we receive an update from firebase, we update our local
+// version number. We align it with the remote version when possible.
+//
+// Local modifications: Additions and removal of entries (and membership
+// keys) are tracked in a local structure, `_localChanges`, and a process
+// is started to persist remotely. These changes are applied to the remote
+// state and committed atomically. Any added keys are added to sets in
+// `_addSuppressions` to prevent applying our own writes when they
+// are received back in a subsequent update from firebase. Each time we
+// receive a local modification we increment our local version number.
+// When we persist our changes to firebase we align it with the remote
+// version.
 class FirebaseCollection extends FirebaseStorageProvider {
   constructor(type, arcId, id, reference, firebaseKey) {
     super(type, arcId, id, reference, firebaseKey);
-    this.dataSnapshot = undefined;
-    this._pendingGets = [];
-    this.reference.on('value', dataSnapshot => {
-      this.dataSnapshot = dataSnapshot;
-      let data = dataSnapshot.val();
-      this._pendingGets.forEach(_get => _get(data));
-      this._pendingGets = [];
-      this._fire('change', {list: this._setToList(data.data), version: data.version});
+
+    // Lists mapped by id containing membership keys that have been
+    // added or removed by local modifications. Entries in this
+    // structure are still pending persistance remotely. Empty
+    // when there are no pending local modifications.
+    // id => {add: [key], remove: [key]}
+    this._localChanges = new Map();
+
+    // Sets mapped by id containing keys that were added locally
+    // and have been persisted to firebase. Entries here must be
+    // suppressed when they are echoed back as updates from firebase.
+    // They can be removed once the state received from firebase
+    // reaches `barrierVersion`.
+    // id => {keys: Set[key], barrierVersion}
+    this._addSuppressions = new Map(); 
+
+    // Local model of entries stored in this collection. Updated
+    // by local modifications and when we receive remote updates
+    // from firebase.
+    this._model = new __WEBPACK_IMPORTED_MODULE_5__crdt_collection_model_js__["a" /* CrdtCollectionModel */]();
+
+    // Monotonic version. Updated each time we receive an update
+    // from firebase, or when a local modification is applied.
+    this._version = null;
+
+    // The last copy of the serialized state received from firebase.
+    // {items: id => {value, keys: {[key]: null}}}
+    this._remoteState = {items: {}};
+
+    // Whether our model has been initialized after receiving the first
+    // copy of state from firebase.
+    this._initialized = new Promise(resolve => this._resolveInitialized = resolve);
+
+    this.reference.on('value', dataSnapshot => this._remoteStateChange(dataSnapshot));
+  }
+
+  _remoteStateChange(dataSnapshot) {
+    let newRemoteState = dataSnapshot.val();
+    if (!newRemoteState.items) {
+      // This is the inital remote state, where we have only {version: 0}
+      // fixme: assert this.
+      newRemoteState.items = {};
+    }
+
+    // [{id, value, keys}]
+    let add = [];
+    // [{id, keys}]
+    let remove = [];
+
+    let ids = new Set([
+      ...Object.keys(newRemoteState.items),
+      ...Object.keys(this._remoteState.items),
+    ]);
+
+    // Diff the old state (this._remoteState) with the new state (newRemoteState) to determine
+    // which keys have been added/removed.
+    for (let id of ids) {
+      let suppression = this._addSuppressions.get(id);
+      if (id in newRemoteState.items) {
+        let {keys, value} = newRemoteState.items[id];
+        keys = Object.keys(keys);
+        if (id in this._remoteState.items) {
+          // 1. possibly updated remotely.
+          let oldkeys = Object.keys(this._remoteState.items[id].keys);
+          let {add: addKeys, remove: removeKeys} = setDiff(oldkeys, keys);
+          if (suppression) {
+            addKeys = addKeys.filter(key => !suppression.keys.has(key));
+          }
+          if (addKeys.length) {
+            // If there's a local add for this id, retain the existing value,
+            // to preserve the legacy behavior of updating in place.
+            if (this._localChanges.has(id) && this._localChanges.get(id).add.length > 0 && this._model.has(id)) {
+              value = this._model.getValue(id);
+            }
+            let effective = this._model.add(id, value, addKeys);
+            add.push({value, keys: addKeys, effective});
+          }
+          if (removeKeys.length) {
+            let value = this._model.getValue(id);
+            let effective = this._model.remove(id, removeKeys);
+            remove.push({value, keys: removeKeys, effective});
+          }
+        } else {
+          // 2. added remotely.
+          let addKeys = keys;
+          if (suppression) {
+            // Remove any keys that *we* added previously.
+            addKeys = addKeys.filter(key => !suppression.keys.has(key));
+          }
+          if (addKeys.length) {
+            // If there's a local add for this id, retain the existing value,
+            // to preserve the legacy behavior of updating in place.
+            if (this._localChanges.has(id) && this._localChanges.get(id).add.length > 0 && this._model.has(id)) {
+              value = this._model.getValue(id);
+            }
+            let effective = this._model.add(id, value, keys);
+            add.push({value, keys, effective});
+          }
+        }
+      } else {
+        // 3. Removed remotely.
+        let {keys, value} = this._remoteState.items[id];
+        keys = Object.keys(keys);
+        let effective = this._model.remove(id, keys);
+        remove.push({value, keys: keys, effective});
+      }
+    }
+
+    // Clean up any suppressions that have reached the barrier version.
+    for (let [id, {barrierVersion}] of this._addSuppressions.entries()) {
+      if (newRemoteState.version >= barrierVersion) {
+        this._addSuppressions.delete(id);
+      }
+    }
+
+    // Bump version monotonically. Ideally we would use the remote
+    // version, but we might not be able to if there have been local
+    // modifications in the meantime. We'll recover the remote version
+    // once we persist those.
+    this._version = Math.max(this._version + 1, newRemoteState.version);
+    this._remoteState = newRemoteState;
+    this._resolveInitialized();
+
+    if (add.length == 0 && remove.length == 0) {
+      // The update had no effect.
+      return;
+    }
+
+    this._fire('change', {
+      originatorId: null,
+      version: this._version,
+      add,
+      remove,
     });
+  }
+
+  get versionForTesting() {
+    return this._version;
   }
 
   async get(id) {
-    let set = this.dataSnapshot.val().data;
-    let encId = FirebaseStorageProvider.encodeKey(id);
-    if (set)
-      return set[encId];
-    return undefined;
+    await this._initialized;
+    return this._model.getValue(id);
   }
 
-  async remove(id) {
-    return realTransaction(this.reference, data => {
-      if (!data.data)
-        data.data = {};
-      let encId = FirebaseStorageProvider.encodeKey(id);
-      data.data[encId] = null;
-      data.version += 1;
-      return data;
-    });
+  async remove(id, keys=[], originatorId=null) {
+    await this._initialized;
+    if (keys.length == 0) {
+      keys = this._model.getKeys(id);
+    }
+
+    // 1. Apply the change to the local model.
+    let value = this._model.getValue(id);
+    // TODO: These keys might already have been removed (concurrently).
+    // We should exit early in that case.
+    let effective = this._model.remove(id, keys);
+    this._version++;
+
+    // 2. Notify listeners.
+    this._fire('change', {remove: [{value, keys, effective}], version: this._version, originatorId});
+
+    // 3. Add this modification to the set of local changes that need to be persisted.
+    if (!this._localChanges.has(id)) {
+      this._localChanges.set(id, {add: [], remove: []});
+    }
+    let localChange = this._localChanges.get(id);
+    for (let key of keys) {
+      localChange.remove.push(key);
+    }
+
+    // 4. Wait for the changes to persist.
+    await this._persistChanges();
   }
 
-  async store(entity) {
-    return realTransaction(this.reference, data => {
-      if (!data.data)
-        data.data = {};
-      let encId = FirebaseStorageProvider.encodeKey(entity.id);
-      if (data.data[encId] && JSON.stringify(data.data[encId]) == JSON.stringify(entity))
+  async store(value, keys, originatorId=null) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(keys != null && keys.length > 0, 'keys required');
+    await this._initialized;
+
+    // 1. Apply the change to the local model.
+    let id = value.id;
+    let effective = this._model.add(value.id, value, keys);
+    this._version++;
+
+    // 2. Notify listeners.
+    this._fire('change', {add: [{value, keys, effective}], version: this._version, originatorId});
+
+    // 3. Add this modification to the set of local changes that need to be persisted.
+    if (!this._localChanges.has(id)) {
+      this._localChanges.set(id, {add: [], remove: []});
+    }
+    let localChange = this._localChanges.get(id);
+    for (let key of keys) {
+      localChange.add.push(key);
+    }
+
+    // 4. Wait for persistence to complete.
+    await this._persistChanges();
+  }
+
+  get _hasLocalChanges() {
+    return this._localChanges.size > 0;
+  }
+
+  async _persistChangesImpl() {
+    while (this._localChanges.size > 0) {
+      // Record the changes that are persisted by the transaction.
+      let changesPersisted;
+      let result = await realTransaction(this.reference, data => {
+        // Updating the inital state with no items.
+        if (!data.items) {
+          // Ideally we would be able to assert that version is 0 here.
+          // However it seems firebase will remove an empty object.
+          data.items = {};
+        }
+        data.version = Math.max(data.version + 1, this._version);
+        // Record the changes that we're attempting to write. We'll remove
+        // these from this._localChanges if this transaction commits.
+        changesPersisted = new Map();
+        for (let [id, {add, remove}] of this._localChanges.entries()) {
+          changesPersisted.set(id, {add: [...add], remove: [...remove]});
+          // Don't add keys that we have also removed.
+          add = add.filter(key => !(remove.indexOf(key) >= 0));
+          let item = data.items[id] || {value: null, keys: {}};
+          // Propagate keys added locally.
+          for (let key of add) {
+            item.keys[key] = data.version;
+          }
+          // Remove keys removed locally.
+          for (let key of remove) {
+            delete item.keys[key];
+          }
+          // If we've added a key, also propagate the value. (legacy mutation).
+          if (add.length > 0) {
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this._model.has(id));
+            item.value = this._model.getValue(id);
+          }
+          let keys = Object.keys(item.keys);
+          if (keys.length > 0) {
+            data.items[id] = item;
+          } else {
+            // Remove the entry entirely if there are no keys left.
+            delete data.items[id];
+          }
+        }
         return data;
-      data.data[encId] = entity;
-      data.version += 1;
-      return data;
-    });
-  }
-
-  async cloneFrom(store) {
-    let {list, version} = await store.toListWithVersion();
-    await this._fromListWithVersion(list, version);
-  }
-
-  async _fromListWithVersion(list, version) {
-    return realTransaction(this.reference, data => {
-      if (!data.data)
-        data.data = {};
-      list.forEach(item => {
-        let encId = FirebaseStorageProvider.encodeKey(item.id);
-        data.data[encId] = item;
       });
-      data.version = version;
-      return data;
-    });
+
+      // We're assuming that firebase won't deliver updates between the
+      // transaction committing and the result promise resolving :/
+
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(result.committed);
+      let data = result.snapshot.val();
+
+      // While we were persisting changes, we may have received new ones.
+      // We remove any changes that were just persisted, `changesPersisted`
+      // from `this._localChanges`.
+      for (let [id, {add, remove}] of changesPersisted.entries()) {
+        add = new Set(add);
+        remove = new Set(remove);
+        let localChange = this._localChanges.get(id);
+        localChange.add = localChange.add.filter(key => !add.has(key));
+        localChange.remove = localChange.remove.filter(key => !remove.has(key));
+        if (localChange.add.length == 0 && localChange.remove.length == 0) {
+          this._localChanges.delete(id);
+        }
+        // Record details about keys added, so that we can suppress them
+        // when echoed back in an update from firebase.
+        if (this._addSuppressions.has(id)) {
+          // If we already have a suppression, we augment it and bump the
+          // barrier version.
+          let suppression = this._addSuppressions.get(id);
+          for (let key of add) {
+            suppression.keys.add(key);
+          }
+          suppression.barrierVersion = data.version;
+        } else {
+          this._addSuppressions.set(id, {
+            keys: add,
+            barrierVersion: data.version,
+          });
+        }
+      }
+    }
   }
 
   async toList() {
-    if (this.dataSnapshot == undefined) {
-      return new Promise((resolve, reject) => {
-        this._pendingGets.push(resolve);
-      }).then(data => this._setToList(data.data));
-    }
-    return this._setToList(this.dataSnapshot.val().data);
+    await this._initialized;
+    return this._model.toList();
   }
 
-  async toListWithVersion() {
-    if (this.dataSnapshot == undefined) {
-      return new Promise((resolve, reject) => {
-        this._pendingGets.push(resolve);
-      }).then(data => ({list: this._setToList(data.data), version: data.version}));
-    }
-    let data = this.dataSnapshot.val();
-    return {list: this._setToList(data.data), version: data.version};
+  async cloneFrom(handle) {
+    this.fromLiteral(await handle.toLiteral());
   }
 
-  _setToList(set) {
-    let list = [];
-    if (set) {
-      for (let key in set) {
-        list.push(set[key]);
-      }
-    }
-    return list;
+  // Returns {version, model: [{id, value, keys: []}]}
+  async toLiteral() {
+    await this._initialized;
+    // TODO: think about what to do here, do we really need toLiteral for a firebase store?
+    // if yes, how should it represent local modifications?
+    await this._persisting;
+    return {
+      version: this._version,
+      model: this._model.toLiteral(),
+    };
+  }
+
+  fromLiteral({version, model}) {
+    this._version = version;
+    this._model = new __WEBPACK_IMPORTED_MODULE_5__crdt_collection_model_js__["a" /* CrdtCollectionModel */](model);
   }
 }
 
@@ -24218,7 +24656,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__storage_provider_base_js__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base_js__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model_js__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model_js__ = __webpack_require__(23);
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -24876,7 +25314,7 @@ class SearchTokensToHandles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_str
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__affordance_js__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__affordance_js__ = __webpack_require__(35);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -24945,7 +25383,7 @@ class SuggestionComposer {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_dom_consumer_js__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__slot_dom_consumer_js__ = __webpack_require__(43);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -25643,12 +26081,12 @@ const createTemplate = innerHTML => {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_arc_js__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_arc_js__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__runtime_description_js__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_manifest_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_planificator_js__ = __webpack_require__(63);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__runtime_planner_js__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__runtime_slot_composer_js__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__runtime_slot_composer_js__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__runtime_type_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__browser_loader_js__ = __webpack_require__(64);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__tracelib_trace_js__ = __webpack_require__(6);
