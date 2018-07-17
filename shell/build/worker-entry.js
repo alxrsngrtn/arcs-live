@@ -278,7 +278,7 @@ class Type {
   get canWriteSuperset() {
     if (this.isVariable)
       return this.variable.canWriteSuperset;
-    if (this.isEntity)
+    if (this.isEntity || this.isSlot)
       return this;
     if (this.isInterface)
       return Type.newInterface(this.interfaceShape.canWriteSuperset);
@@ -288,7 +288,7 @@ class Type {
   get canReadSubset() {
     if (this.isVariable)
       return this.variable.canReadSubset;
-    if (this.isEntity)
+    if (this.isEntity || this.isSlot)
       return this;
     if (this.isInterface)
       return Type.newInterface(this.interfaceShape.canReadSubset);
@@ -302,6 +302,10 @@ class Type {
       return this.entitySchema.isMoreSpecificThan(type.entitySchema);
     if (this.isInterface)
       return this.interfaceShape.isMoreSpecificThan(type.interfaceShape);
+    if (this.isSlot) {
+      // TODO: formFactor checking, etc.
+      return true;
+    }
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `contains not implemented for ${this}`);
   }
 
@@ -1230,14 +1234,14 @@ class TypeChecker {
         primitiveConnectionType = unwrap[1];
       }
 
-      if (direction == 'out' || direction == 'inout') {
+      if (direction == 'out' || direction == 'inout' || direction == '`provide') {
         // the canReadSubset of the handle represents the maximal type that can be read from the
         // handle, so we need to intersect out any type that is more specific than the maximal type
         // that could be written.
         if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset))
           return false;
       }
-      if (direction == 'in' || direction == 'inout') {
+      if (direction == 'in' || direction == 'inout' || direction == '`consume') {
         // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
         // so we need to union it with the type that wants to be read here.
         if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset))
@@ -1305,9 +1309,17 @@ class TypeChecker {
       return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].canMergeConstraints(leftType, rightType);
     }
 
-    if (leftType.type != rightType.type) {
+    if ((leftType == undefined) !== (rightType == undefined))
+      return false;
+    if (leftType == rightType)
+      return true;
+
+    if (leftType.tag != rightType.tag) {
       return false;
     }
+
+    if (leftType.isSlot)
+      return true;
 
     // TODO: we need a generic way to evaluate type compatibility
     //       shapes + entities + etc
@@ -2507,6 +2519,11 @@ class TypeVariable {
       return true;
     }
 
+    if (this.canReadSubset.isSlot && constraint.isSlot) {
+      // TODO: formFactor compatibility, etc.
+      return true;
+    }
+
     let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
     if (!mergedSchema)
       return false;
@@ -2523,6 +2540,11 @@ class TypeVariable {
 
     if (this.canWriteSuperset == null) {
       this.canWriteSuperset = constraint;
+      return true;
+    }
+
+    if (this.canWriteSuperset.isSlot && constraint.isSlot) {
+      // TODO: formFactor compatibility, etc.
       return true;
     }
 
