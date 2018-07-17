@@ -1,9 +1,5 @@
-commit dc2e86417e719d2e52af10110ea8ee65507573bd
+commit fce25c067e8031a0ad628d18fa5f9d3c4dcbc153
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jul 17 09:16:05 2018 -0700
+Date:   Tue Jul 17 09:22:41 2018 -0700
 
-    exclude the may-resolved type from recipe hash calculation (#1652)
-    
-    * exclude the may-resolved type from recipe hash calculation
-    
-    * fix tests and add a todo
+    get rid of ShowCollection particle (duplicate of List) (#1653)
