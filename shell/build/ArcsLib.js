@@ -11576,7 +11576,12 @@ class Planificator {
       });
     }
     time = ((__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_date_web_js__["a" /* now */])() - time) / 1000).toFixed(2);
-    log(`Produced plans [count=${this._next.plans.length}, elapsed=${time}s].`);
+
+    if (this._next.plans) {
+      // Can be null, if a new planning has already been scheduled.
+      // TODO: this is a race condition, proper fix is part of #1620.
+      log(`Produced plans [count=${this._next.plans.length}, elapsed=${time}s].`);
+    }
   }
 
   _cancelPlanning() {

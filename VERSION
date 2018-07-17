@@ -1,5 +1,5 @@
-commit 8b4914d7f0decf459400fde88c67093a730df50b
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Jul 17 16:09:37 2018 -0700
+commit bf5f56280cd69e81dee9c5ee30d1dc824710234e
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jul 17 16:11:09 2018 -0700
 
-    add missing bullet (#1663)
+    avoid assert in planificator (#1664)
