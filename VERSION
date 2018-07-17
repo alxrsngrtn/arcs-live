@@ -1,21 +1,7 @@
-commit e26662b50b3729f69d4838ad372d4a98d6a5a36e
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Jul 17 10:55:22 2018 -0700
+commit 65bdb6f2258b14c2940d6c5bd0bd9d389da35694
+Author: Matt Small <smalls@users.noreply.github.com>
+Date:   Tue Jul 17 11:07:54 2018 -0700
 
-    UI and Particle Tweaks (Sheriff Roundup 3) (#1656)
+    disable request logs for the built-in server (#1661)
     
-    * make sure 'glow' turns off when planificator is done
-    
-    * remove unused imports
-    
-    * make `friends` list optional (for avatars) when rendering `users` list
-    
-    * tweak descriptions, allow list items to be full bleed, fix typo
-    
-    * fix test text
-    
-    * once again ensure BOXED_avatar exists a-priori
-    
-    * restrict suggestions so desired suggestion is visible (for clicking)
-    
-    * use `canonical.manifest` for sjmiles*
+    Other options (for future reference) https://www.npmjs.com/package/http-server
