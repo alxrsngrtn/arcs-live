@@ -1,7 +1,5 @@
-commit 4381cdb78dde4165ea798623dc9aec0d13e26860
+commit 681325b4d949810a9a77714d58c80da948e73575
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jul 17 11:25:04 2018 -0700
+Date:   Tue Jul 17 11:37:47 2018 -0700
 
-    singleton slots inline suggestion & (#1659)
-    
-    suggestion-dom-consumer implementation used for suggestions everywhere.
+    add more debug logs to demo-flow-test and refactor particle-shape-loading-with-slots test (#1660)
