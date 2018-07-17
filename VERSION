@@ -1,11 +1,21 @@
-commit 33e79bd6ca840cca8a8916255496281aa24ab343
+commit e26662b50b3729f69d4838ad372d4a98d6a5a36e
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Jul 17 09:44:43 2018 -0700
+Date:   Tue Jul 17 10:55:22 2018 -0700
 
-    Context-aware deserialization (#1654)
+    UI and Particle Tweaks (Sheriff Roundup 3) (#1656)
     
-    * support a `context` option for resolution against existing objects
+    * make sure 'glow' turns off when planificator is done
     
-    * plumb `context` argument from Arc.Deserialize into Manifest.parse
+    * remove unused imports
     
-    * minor cleanup
+    * make `friends` list optional (for avatars) when rendering `users` list
+    
+    * tweak descriptions, allow list items to be full bleed, fix typo
+    
+    * fix test text
+    
+    * once again ensure BOXED_avatar exists a-priori
+    
+    * restrict suggestions so desired suggestion is visible (for clicking)
+    
+    * use `canonical.manifest` for sjmiles*
