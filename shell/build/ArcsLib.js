@@ -24010,18 +24010,6 @@ class FirebaseKey extends __WEBPACK_IMPORTED_MODULE_3__key_base_js__["a" /* KeyB
   }
 }
 
-async function realTransaction(reference, transactionFunction) {
-  let realData = undefined;
-  await reference.once('value', data => {realData = data.val(); });
-  return reference.transaction(data => {
-    if (data == null)
-      data = realData;
-    let result = transactionFunction(data);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(result);
-    return result;
-  }, undefined, false);
-}
-
 let _nextAppNameSuffix = 0;
 
 class FirebaseStorage {
@@ -24070,19 +24058,22 @@ class FirebaseStorage {
 
     let reference = __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__["a" /* firebase */].database(this._apps[key.projectId]).ref(key.location);
 
-    let result = await realTransaction(reference, data => {
-      if ((data == null) == shouldExist)
-        return; // abort transaction
-      if (!shouldExist) {
-        return {version: 0};
-      }
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(data);
-      return data;
-    });
-
-
-    if (!result.committed)
+    let currentSnapshot;
+    await reference.once('value', snapshot => currentSnapshot = snapshot);
+    if (shouldExist != currentSnapshot.exists()) {
       return null;
+    }
+
+    if (!shouldExist) {
+      let result = await reference.transaction(data => {
+        if (data != null)
+          return undefined;
+        return {version: 0};
+      }, undefined, false);
+
+      if (!result.committed)
+        return null;
+    }
 
     return FirebaseStorageProvider.newProvider(type, this._arcId, id, reference, key);
   }
@@ -24093,13 +24084,12 @@ class FirebaseStorage {
 class FirebaseStorageProvider extends __WEBPACK_IMPORTED_MODULE_0__storage_provider_base_js__["a" /* StorageProviderBase */] {
   constructor(type, arcId, id, reference, key) {
     super(type, arcId, undefined, id, key.toString());
-    this.firebaseKey = key;
-    this.reference = reference;
+    this._firebaseKey = key;
+    this._reference = reference;
 
     // Resolved when local modifications complete being persisted
     // to firebase. Null when not persisting.
     this._persisting = null;
-
   }
 
   static newProvider(type, arcId, id, reference, key) {
@@ -24116,6 +24106,26 @@ class FirebaseStorageProvider extends __WEBPACK_IMPORTED_MODULE_0__storage_provi
     key = key.replace(/\*/g, '/');
     return atob(key);
   }
+
+  async _transaction(transactionFunction) {
+    let result = await this._reference.transaction(data => {
+      if (data == null) {
+        // If the data is not cached locally, firebase will speculatively
+        // attempt to run the transaction against `null`. This should never
+        // actually commit, but we can't just abort the transaction or
+        // raise an error here -- both will prevent firebase from continuing
+        // to apply our write. So we return a dummy value and assert that
+        // we never actually commit it.
+        return 0;
+      }
+      return transactionFunction(data);
+    }, undefined, false);
+    if (result.committed) {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(result.snapshot.val() !== 0);
+    }
+    return result;
+  }
+
 
   get _hasLocalChanges() {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(false, 'subclass should implement _hasLocalChanges');
@@ -24192,10 +24202,10 @@ class FirebaseVariable extends FirebaseStorageProvider {
       this._resolveInitialized = resolve;
     });
 
-    this.reference.on('value', dataSnapshot => this._remoteValueChanged(dataSnapshot));
+    this._reference.on('value', dataSnapshot => this._remoteStateChanged(dataSnapshot));
   }
 
-  _remoteValueChanged(dataSnapshot) {
+  _remoteStateChanged(dataSnapshot) {
     if (this._localModified) {
       return;
     }
@@ -24221,7 +24231,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
     // local modifications.
     let version = this._version;
     let value = this._value;
-    let result = await realTransaction(this.reference, data => {
+    let result = await this._transaction(data => {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this._version >= version);
       return {
         version: Math.max(data.version + 1, version),
@@ -24230,6 +24240,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
     });
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(result.committed, 'uncommited transaction (offline?) not supported yet');
     let data = result.snapshot.val();
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(data !== 0);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(data.version >= this._version);
     if (this._version != version) {
       // A new local modification happened while we were writing the previous one.
@@ -24392,10 +24403,10 @@ class FirebaseCollection extends FirebaseStorageProvider {
     // copy of state from firebase.
     this._initialized = new Promise(resolve => this._resolveInitialized = resolve);
 
-    this.reference.on('value', dataSnapshot => this._remoteStateChange(dataSnapshot));
+    this._reference.on('value', dataSnapshot => this._remoteStateChanged(dataSnapshot));
   }
 
-  _remoteStateChange(dataSnapshot) {
+  _remoteStateChanged(dataSnapshot) {
     let newRemoteState = dataSnapshot.val();
     if (!newRemoteState.items) {
       // This is the inital remote state, where we have only {version: 0}
@@ -24566,7 +24577,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
     while (this._localChanges.size > 0) {
       // Record the changes that are persisted by the transaction.
       let changesPersisted;
-      let result = await realTransaction(this.reference, data => {
+      let result = await this._transaction(data => {
         // Updating the inital state with no items.
         if (!data.items) {
           // Ideally we would be able to assert that version is 0 here.

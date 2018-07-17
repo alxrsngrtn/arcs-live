@@ -1,5 +1,5 @@
-commit f15e69ddc14056262780955ad37736b94a33686a
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Jul 17 14:53:50 2018 +1000
+commit c782519c676bf3661ea4cfc48c6ca73675af5e9e
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jul 17 08:29:41 2018 -0700
 
-    Some type matching for Slot types. (#1608)
+    keep detailed debug messages in mock-slot-composer and show on failure (#1655)
