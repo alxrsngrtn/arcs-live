@@ -1,5 +1,11 @@
-commit fce25c067e8031a0ad628d18fa5f9d3c4dcbc153
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jul 17 09:22:41 2018 -0700
+commit 33e79bd6ca840cca8a8916255496281aa24ab343
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Jul 17 09:44:43 2018 -0700
 
-    get rid of ShowCollection particle (duplicate of List) (#1653)
+    Context-aware deserialization (#1654)
+    
+    * support a `context` option for resolution against existing objects
+    
+    * plumb `context` argument from Arc.Deserialize into Manifest.parse
+    
+    * minor cleanup
