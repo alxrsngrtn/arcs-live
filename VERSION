@@ -1,5 +1,9 @@
-commit c782519c676bf3661ea4cfc48c6ca73675af5e9e
+commit dc2e86417e719d2e52af10110ea8ee65507573bd
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jul 17 08:29:41 2018 -0700
+Date:   Tue Jul 17 09:16:05 2018 -0700
 
-    keep detailed debug messages in mock-slot-composer and show on failure (#1655)
+    exclude the may-resolved type from recipe hash calculation (#1652)
+    
+    * exclude the may-resolved type from recipe hash calculation
+    
+    * fix tests and add a todo

@@ -2381,12 +2381,15 @@ class Handle {
       result.push('//');
       if (this.type.isResolved()) {
         result.push(this.type.resolvedType().toString());
-      } else if (this.type.canEnsureResolved()) {
-        let type = __WEBPACK_IMPORTED_MODULE_3__type_js__["a" /* Type */].fromLiteral(this.type.toLiteral());
-        type.maybeEnsureResolved();
-        result.push(type.resolvedType().toString());
       } else {
+        // TODO: include the unresolved constraints in toString (ie in the hash).
         result.push(this.type.toString());
+        if (options && options.showUnresolved && this.type.canEnsureResolved()) {
+          let type = __WEBPACK_IMPORTED_MODULE_3__type_js__["a" /* Type */].fromLiteral(this.type.toLiteral());
+          type.maybeEnsureResolved();
+          result.push('//');
+          result.push(type.resolvedType().toString());
+        }
       }
     }
     if (options && options.showUnresolved) {
