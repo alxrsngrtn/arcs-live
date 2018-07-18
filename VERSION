@@ -1,5 +1,15 @@
-commit bf5f56280cd69e81dee9c5ee30d1dc824710234e
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jul 17 16:11:09 2018 -0700
+commit 65dd09057bf3b579cbae6b38578bfc052cc9b49e
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Jul 18 15:36:44 2018 -0700
 
-    avoid assert in planificator (#1664)
+    Serialization Compatibility for Words and Posts (#1666)
+    
+    * give shell-stores fixed ids
+    
+    * allow arc-store to re-use a Store, and only create as needed
+    
+    * avoid emitting system data into serializations by filtering on 'nosync' tag
+    
+    * Fix the FAB in space
+    
+    * Auto-start the game if board data is streamed
