@@ -9546,7 +9546,7 @@ class SlotConsumer {
           this._renderingBySubId.set(subId, {});
         }
         let rendering = this.getRendering(subId);
-        if (!rendering.container || this.isSameContainer(rendering.container, container)) {
+        if (!rendering.container || !this.isSameContainer(rendering.container, container)) {
           rendering.container = this.createNewContainer(container, subId);
         }
       }
