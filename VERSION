@@ -1,5 +1,27 @@
-commit dac5d0bc247e8c531490029c2d5a2648a2e27ef7
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jul 18 20:14:11 2018 -0700
+commit 5c8a1561e9d2c4e860d1a95861a1f5ba9f808fcd
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Jul 19 12:48:58 2018 -0700
 
-    fix slot consumer container update (#1668)
+    More Particle Work (esp for Demos) (#1667)
+    
+    * Introduce TabbedLayout pure layout particle
+    
+    * Re-sort manifests, include Common
+    
+    * Make List recipes part of a Common set
+    
+    * use `consume root #content` trick to make *List work with content slots
+    
+    * Merge Generic and Common list recipes into one set
+    
+    * Genericize some product Recipes while maintaining Demo flow
+    
+    * simple reformatting
+    
+    * remove dead code
+    
+    * test fix from @mmandlis
+    
+    * fix one, skip one
+    
+    * tweak descriptions, add note about wishlist problems
