@@ -426,15 +426,15 @@ class Type {
     return false;
   }
 
-  toString() {
+  toString(options) {
     if (this.isCollection)
-      return `[${this.primitiveType().toString()}]`;
+      return `[${this.primitiveType().toString(options)}]`;
     if (this.isEntity)
-      return this.entitySchema.toInlineSchemaString();
+      return this.entitySchema.toInlineSchemaString(options);
     if (this.isInterface)
       return this.interfaceShape.name;
     if (this.isTuple)
-      return this.tupleFields.toString();
+      return this.tupleFields.toString(options);
     if (this.isVariableReference)
       return `~${this.data}`;
     if (this.isManifestReference)
@@ -1657,7 +1657,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
       let hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
       let slotName = [...this.spec.slots.values()][0].name;
       let slotId = await arc.createSlot(
-          this, slotName, resolvedHostedParticle.name, hostedSlotName);
+          this, slotName, resolvedHostedParticle.name, hostedSlotName, itemHandle._id);
 
       if (!slotId) {
         continue;
@@ -1707,6 +1707,9 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
 
     if (content.template) {
       let template = content.template;
+      // Append subid={{subid}} attribute to all provided slots, to make it usable for the transformation particle.
+      template = template.replace(new RegExp('slotid="[a-z]+"', 'g'), '$& subid="{{subId}}"');
+
       // Replace hosted particle connection in template with the corresponding particle connection names.
       // TODO: make this generic!
       this._connByHostedConn.forEach((conn, hostedConn) => {
@@ -2045,10 +2048,10 @@ class Schema {
     return clazz;
   }
 
-  toInlineSchemaString() {
+  toInlineSchemaString(options) {
     let names = (this.names || ['*']).join(' ');
     let fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
-    return `${names} {${fields}}`;
+    return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
   }
 
   toManifestString() {
@@ -2851,9 +2854,11 @@ class ParticleExecutionContext {
             resolve(id);
           }}));
       },
-      createSlot: function(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName) {
+      createSlot: function(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) {
+        // handleId: the ID of a handle (returned by `createHandle` above) this slot is rendering; null - if not applicable.
+        // TODO: support multiple handle IDs.
         return new Promise((resolve, reject) =>
-          pec._apiPort.ArcCreateSlot({arc: arcId, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, callback: hostedSlotId => {
+          pec._apiPort.ArcCreateSlot({arc: arcId, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId, callback: hostedSlotId => {
             resolve(hostedSlotId);
           }}));
       },
@@ -3635,7 +3640,7 @@ class PECOuterPort extends APIPort {
     this.registerInitializer('MapHandleCallback', {callback: this.Direct, id: this.Direct});
 
     this.registerHandler('ArcCreateSlot',
-      {callback: this.Direct, arc: this.LocalMapped, transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedParticleName: this.Direct, hostedSlotName: this.Direct});
+      {callback: this.Direct, arc: this.LocalMapped, transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedParticleName: this.Direct, hostedSlotName: this.Direct, handleId: this.Direct});
     this.registerInitializer('CreateSlotCallback', {callback: this.Direct, hostedSlotId: this.Direct});
     this.registerCall('InnerArcRender', {transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedSlotId: this.Direct, content: this.Direct});
 
@@ -3684,7 +3689,7 @@ class PECInnerPort extends APIPort {
     this.registerCall('ArcMapHandle', {callback: this.LocalMapped, arc: this.Direct, handle: this.Mapped});
     this.registerInitializerHandler('MapHandleCallback', {callback: this.LocalMapped, id: this.Direct});
     this.registerCall('ArcCreateSlot',
-      {callback: this.LocalMapped, arc: this.Direct, transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedParticleName: this.Direct, hostedSlotName: this.Direct});
+      {callback: this.LocalMapped, arc: this.Direct, transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedParticleName: this.Direct, hostedSlotName: this.Direct, handleId: this.Direct});
     this.registerInitializerHandler('CreateSlotCallback', {callback: this.LocalMapped, hostedSlotId: this.Direct});
     this.registerHandler('InnerArcRender', {transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedSlotId: this.Direct, content: this.Direct});
 
