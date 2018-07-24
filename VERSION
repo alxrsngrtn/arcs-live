@@ -1,5 +1,5 @@
-commit b1224145e613b3aadd90677bb199fad0f5b7cdf3
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jul 24 09:44:21 2018 -0700
+commit 35debbd263191440fc1ec1eeaf4522b437d66866
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Jul 24 11:30:55 2018 -0700
 
-    primitive recipe description coalescing (#1683)
+    Don't fire storage events when removing an id that is not in the Collection (#1684)
