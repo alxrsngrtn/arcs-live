@@ -4228,7 +4228,7 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
 
   // Returns the given slot candidates, sorted by "quality".
   static _findSlotCandidates(slotConnection, slots) {
-    let possibleSlots = slots.filter(s => this._filterSlot(slotConnection, s));
+    let possibleSlots = slots.filter(s => this.slotMatches(slotConnection, s));
     possibleSlots.sort((slot1, slot2) => {
         // TODO: implement.
         return slot1.name < slot2.name;
@@ -4237,7 +4237,7 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
   }
 
   // Returns true, if the given slot is a viable candidate for the slotConnection.
-  static _filterSlot(slotConnection, slot) {
+  static slotMatches(slotConnection, slot) {
     if (!MapSlots.specMatch(slotConnection, slot)) {
       return false;
     }
@@ -22450,6 +22450,22 @@ class RecipeIndex {
     return consumeConns;
   }
 
+  findProvidedSlot(slotConn) {
+    this.ensureReady();
+
+    let providedSlots = [];
+    for (let recipe of this._recipes) {
+      for (let consumeConn of recipe.slotConnections) {
+        for (let providedSlot of Object.values(consumeConn.providedSlots)) {
+          if (__WEBPACK_IMPORTED_MODULE_13__strategies_map_slots_js__["a" /* MapSlots */].slotMatches(slotConn, providedSlot)) {
+            providedSlots.push(providedSlot);
+          }
+        }
+      }
+    }
+    return providedSlots;
+  }
+
   // Helper function that determines whether handle connections in a provided slot
   // and a potential consuming slot connection could be match, considering their fates and directions.
   // `slotHandleConn` is a handle connection restricting the provided slot.
@@ -25149,6 +25165,36 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
     await index.ready;
 
     return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* Walker */] {
+      onSlotConnection(recipe, slotConnection) {
+        if (slotConnection.isResolved()) {
+          return;
+        }
+        if (!slotConnection.name || !slotConnection.particle) {
+          return;
+        }
+
+        // TODO: also support a consume slot connection that is NOT required,
+        // but no other connections are resolved.
+
+        let results = [];
+        for (let providedSlot of index.findProvidedSlot(slotConnection)) {
+          results.push((recipe, slotConnection) => {
+            let {cloneMap} = providedSlot.recipe.mergeInto(slotConnection.recipe);
+            let mergedSlot = cloneMap.get(providedSlot);
+            slotConnection.connectToSlot(mergedSlot);
+
+            // Clear verbs and recipe name after coalescing two recipes.
+            recipe.verbs.splice(0);
+            recipe.name = null;
+            return 1;
+          });
+        }
+
+        if (results.length > 0) {
+          return results;
+        }
+      }
+
       onSlot(recipe, slot) {
         // Find slots that according to their provided-spec must be consumed, but have no consume connection.
         if (slot.consumeConnections.length > 0) {

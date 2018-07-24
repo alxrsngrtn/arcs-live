@@ -1,5 +1,5 @@
-commit 35debbd263191440fc1ec1eeaf4522b437d66866
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Jul 24 11:30:55 2018 -0700
+commit 433793eda7c4600a09dbc5f80ca6c3a558916daf
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jul 24 16:17:03 2018 -0700
 
-    Don't fire storage events when removing an id that is not in the Collection (#1684)
+    coalesce recipe to find provided slot for an unresolved consume connection (#1685)
