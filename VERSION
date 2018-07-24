@@ -1,5 +1,5 @@
-commit f5ef4aceb66d110d4aab5037c2c1a961c7aad6df
+commit b1224145e613b3aadd90677bb199fad0f5b7cdf3
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jul 23 21:04:34 2018 -0700
+Date:   Tue Jul 24 09:44:21 2018 -0700
 
-    properly capitalize dom description (#1681)
+    primitive recipe description coalescing (#1683)
