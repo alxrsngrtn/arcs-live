@@ -20999,12 +20999,12 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
 
   async _combineSelectedDescriptions(selectedDescriptions) {
     let suggestionByParticleDesc = new Map();
-    await Promise.all(selectedDescriptions.map(async (particleDesc, index) => {
+    for (let particleDesc of selectedDescriptions) {
       if (this.seenParticles.has(particleDesc._particle)) {
-        return;
+        continue;
       }
 
-      let {template, model} = this._retrieveTemplateAndModel(particleDesc, index);
+      let {template, model} = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size);
 
       let success = await Promise.all(Object.keys(model).map(async tokenKey => {
         let tokens = this._initSubTokens(model[tokenKey], particleDesc);
@@ -21032,7 +21032,7 @@ class DescriptionDomFormatter extends __WEBPACK_IMPORTED_MODULE_1__description_j
       if (success.every(s => !!s)) {
         suggestionByParticleDesc.set(particleDesc, {template, model});
       }
-    }));
+    }
 
     // Populate suggestions list while maintaining original particles order.
     let suggestions = [];
