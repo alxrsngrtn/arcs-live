@@ -1,5 +1,9 @@
-commit 7bc8651cba88319f48d2a0979ba5693dda0882a7
+commit 319be6d96769661e9c7c5c2a6c83df358ba0a645
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jul 25 10:05:36 2018 -0700
+Date:   Wed Jul 25 15:30:14 2018 -0700
 
-    reenable demo-flow-test and gift-shopping selenuum test (#1688)
+    fix shape matching for recipe with repeating particles (#1693)
+    
+    * fix shape matching for recipe with repeating particles
+    
+    * fix typo
