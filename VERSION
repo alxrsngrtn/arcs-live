@@ -1,10 +1,13 @@
-commit 58fa47ccde2ccf84056aa58eb269dcd6ca844bff
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Jul 24 17:36:30 2018 -0700
+commit 620f19c39bec7b0de9034e4e861471cc3e9896e0
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jul 24 19:26:56 2018 -0700
 
-    cloud-handles fixes (#1687)
+    update products demo to use coalescing (#1686)
     
-    Fixes #1680:
-    - If FB reports a null Variable, only write it locally if there is also metadata (meaning it's been written to FB at least once).
-    Fixes #1657:
-    - add type-specificity to cloud-handles generated ids, to avoid remote-handle collisions
+    * update products demo to use coalescing
+    
+    * remove hostedParticle from Muxer recipe
+    
+    * remove ShowProducts.manifest and update products-test
+    
+    * temporarily unite List and ItemMultiplexer recipes for products
