@@ -1,5 +1,10 @@
-commit 433793eda7c4600a09dbc5f80ca6c3a558916daf
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jul 24 16:17:03 2018 -0700
+commit 58fa47ccde2ccf84056aa58eb269dcd6ca844bff
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Jul 24 17:36:30 2018 -0700
 
-    coalesce recipe to find provided slot for an unresolved consume connection (#1685)
+    cloud-handles fixes (#1687)
+    
+    Fixes #1680:
+    - If FB reports a null Variable, only write it locally if there is also metadata (meaning it's been written to FB at least once).
+    Fixes #1657:
+    - add type-specificity to cloud-handles generated ids, to avoid remote-handle collisions
