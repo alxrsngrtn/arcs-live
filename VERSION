@@ -1,5 +1,5 @@
-commit 073c7d0ee12c708362f442d3e4515504a381a7fe
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jul 25 18:19:06 2018 -0700
+commit fb00498b47e14406e21f71c7a5002b39e0bda42c
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri Jul 27 06:10:12 2018 +1000
 
-    Avoid duplicate "Claire (Claire)" in the descriptions (#1694)
+    Fix for suggestion set-slots test on Windows 10 (#1695)
