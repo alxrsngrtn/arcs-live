@@ -1,5 +1,5 @@
-commit 1db4e1a7f6ed54d0369d8a00dea6e3712d031a64
+commit 073c7d0ee12c708362f442d3e4515504a381a7fe
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jul 25 17:10:12 2018 -0700
+Date:   Wed Jul 25 18:19:06 2018 -0700
 
-    Split ShowProducts recipe into separate List and (a generic) ItemMultiplexer. (#1690)
+    Avoid duplicate "Claire (Claire)" in the descriptions (#1694)
