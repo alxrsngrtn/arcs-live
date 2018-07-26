@@ -2598,9 +2598,10 @@ class ParticleSpec {
 
   static fromLiteral(literal) {
     let {args, name, verbs, description, implFile, affordance, slots} = literal;
-    let connectionFromLiteral = ({type, direction, name, isOptional, dependentConnections}) => ({type: __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].fromLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionFromLiteral)}); 
+    let connectionFromLiteral = ({type, direction, name, isOptional, dependentConnections}) =>
+      ({type: __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].fromLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : []});
     args = args.map(connectionFromLiteral);
-    return new ParticleSpec({args, name, verbs, description, implFile, affordance, slots});
+    return new ParticleSpec({args, name, verbs: verbs || [], description, implFile, affordance, slots});
   }
 
   clone() {
@@ -3042,7 +3043,7 @@ class StorageStub {
     this.id = id;
     this.name = name;
     this.storageKey = storageKey;
-    this.storageProviderFactory;
+    this.storageProviderFactory = storageProviderFactory;
   }
 
   inflate() {
@@ -7842,11 +7843,11 @@ ${this.activeRecipe.toString()}`;
       storageProviderFactory: manifest._storageProviderFactory,
       context
     });
-    manifest.stores.forEach(store => {
+    await Promise.all(manifest.stores.map(async store => {
       if (store.constructor.name == 'StorageStub')
-        store = store.inflate();
+        store = await store.inflate();
       arc._registerStore(store, manifest._storeTags.get(store));
-    });
+    }));
     let recipe = manifest.activeRecipe.clone();
     let options = {errors: new Map()};
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(recipe.normalize(options), `Couldn't normalize recipe ${recipe.toString()}:\n${[...options.errors.values()].join('\n')}`);
@@ -24335,7 +24336,9 @@ class FirebaseStorageProvider extends __WEBPACK_IMPORTED_MODULE_0__storage_provi
         // we never actually commit it.
         return 0;
       }
-      return transactionFunction(data);
+      const newData = transactionFunction(data);
+      // TODO(sjmiles): remove `undefined` values from the object tree
+      return JSON.parse(JSON.stringify(newData));
     }, undefined, false);
     if (result.committed) {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(result.snapshot.val() !== 0);
@@ -24347,7 +24350,7 @@ class FirebaseStorageProvider extends __WEBPACK_IMPORTED_MODULE_0__storage_provi
   get _hasLocalChanges() {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(false, 'subclass should implement _hasLocalChanges');
   }
-  
+
   async _persistChangesImpl() {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(false, 'subclass should implement _persistChangesImpl');
   }
@@ -24411,7 +24414,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
     // the value to the remote store and will suppress any
     // incoming changes from firebase.
     this._localModified = false;
-    
+
     // Resolved when data is first available. The earlier of
     // * the initial value is supplied via firebase `reference.on`
     // * a value is written to the variable by a call to `set`.
@@ -24439,7 +24442,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
   get _hasLocalChanges() {
     return this._localModified;
   }
-  
+
   async _persistChangesImpl() {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this._localModified);
     // Guard the specific version that we're writing. If we receive another
@@ -24601,7 +24604,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
     // They can be removed once the state received from firebase
     // reaches `barrierVersion`.
     // id => {keys: Set[key], barrierVersion}
-    this._addSuppressions = new Map(); 
+    this._addSuppressions = new Map();
 
     // Local model of entries stored in this collection. Updated
     // by local modifications and when we receive remote updates

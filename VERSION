@@ -1,5 +1,19 @@
-commit fb00498b47e14406e21f71c7a5002b39e0bda42c
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Jul 27 06:10:12 2018 +1000
+commit efea53aa6d91b3a5f99c73659d2bd77178e52d83
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Jul 26 14:08:53 2018 -0700
 
-    Fix for suggestion set-slots test on Windows 10 (#1695)
+    Runtime store option (#1698)
+    
+    * make `useStorage` param-configurable
+    
+    * wait for `inflate`
+    
+    * actually record `storageProviderFactory`
+    
+    * restore empty arrays that have been evacipated by Firebase
+    
+    * remove undefined values from object-graph as required by Firebase
+    
+    * plumb config into cloud-handles so it can disable itself when using runtime-storage
+    
+    * support storageKey in FbStore, use `in-memory` for arcmetadata store
