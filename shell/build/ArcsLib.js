@@ -2101,7 +2101,7 @@ class RecipeUtil {
       let matches = _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles);
       let newMatches = [];
       for (let match of matches) {
-        let nullHandles = Object.values(shape.handle).filter(handle => match.forward.get(handle) == null);
+        let nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) == null);
         if (nullHandles.length > 0)
           newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, [thisHandle], nullHandles));
         else
@@ -25189,6 +25189,10 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
           return;
         }
         if (!slotConnection.name || !slotConnection.particle) {
+          return;
+        }
+
+        if (slotConnection.targetSlot) {
           return;
         }
 
