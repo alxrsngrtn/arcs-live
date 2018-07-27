@@ -1,19 +1,5 @@
-commit efea53aa6d91b3a5f99c73659d2bd77178e52d83
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Jul 26 14:08:53 2018 -0700
+commit cb2c530dd92cd14d5bf638443bc0196c55d0373c
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Jul 26 17:00:34 2018 -0700
 
-    Runtime store option (#1698)
-    
-    * make `useStorage` param-configurable
-    
-    * wait for `inflate`
-    
-    * actually record `storageProviderFactory`
-    
-    * restore empty arrays that have been evacipated by Firebase
-    
-    * remove undefined values from object-graph as required by Firebase
-    
-    * plumb config into cloud-handles so it can disable itself when using runtime-storage
-    
-    * support storageKey in FbStore, use `in-memory` for arcmetadata store
+    avoid assert when disposing arc with particle that doesnt provide a slot declared (#1703)

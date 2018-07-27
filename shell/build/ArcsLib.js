@@ -21497,10 +21497,12 @@ class HostedSlotConsumer extends __WEBPACK_IMPORTED_MODULE_1__slot_consumer_js__
   }
 
   getInnerContainer(name) {
-    if (this.storeId) {
+    let innerContainer = this.transformationSlotConsumer.getInnerContainer(name);
+    if (innerContainer && this.storeId) {
       let subId = this.arc.findStoreById(this.storeId)._stored.id;
-      return this.transformationSlotConsumer.getInnerContainer(name)[subId];
+      return innerContainer[subId];
     }
+    return innerContainer;
   }
 
   createProvidedContexts() {
