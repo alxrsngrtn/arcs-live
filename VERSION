@@ -1,5 +1,9 @@
-commit 63ccc30901a3a1d660760f979bcd1a1cac1fe0fa
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jul 30 08:53:56 2018 -0700
+commit 9b3998f343d80f17af745e32bff9401d754d89ca
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Jul 31 09:07:26 2018 +1000
 
-    clear parent container when the subi-id reassigned to a different one (#1705)
+    Allow handles with 'copy' fate to persist to firebase (#1707)
+    
+    1) Ensure that cloning a handle into a firebase-collection persists.
+    2) re-add btoa/atob on firebase keys to prevent invalid keys being
+    generated.
