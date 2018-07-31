@@ -1,9 +1,9 @@
-commit 35418fcc75b2a148f3419896385cc6c6aa0f7f50
+commit cb25e06a42f7e28311a989dffe10bed520d92291
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jul 30 18:22:23 2018 -0700
+Date:   Mon Jul 30 18:23:32 2018 -0700
 
-    require 'create' fate to be explicit in a recipe (#1709)
+    Symmetric fates in coalesce-recipes and avoid coalescing with earlier generations of same recipe. (#1711)
     
-    * require 'create' fate to be explicit in a recipe
+    * Symmetric fates in coalesce-recipes and avoid coalescing with earlier generations of same recipe.
     
-    * address comments and get rid of CreateHandles strategy
+    * keep `use` fate if both handles have it

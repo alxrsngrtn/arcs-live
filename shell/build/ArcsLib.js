@@ -22371,6 +22371,11 @@ class RecipeIndex {
 
     let results = [];
     for (let recipe of this._recipes) {
+      if (recipe.particles.some(particle => !particle.name)) {
+        // Skip recipes where not all verbs are resolved to specific particles
+        // to avoid trying to coalesce a recipe with itself.
+        continue;
+      }
       for (let otherHandle of recipe.handles) {
         if (requestedFates && !(requestedFates.includes(otherHandle.fate))
             || otherHandle.connections.length === 0
@@ -22416,6 +22421,11 @@ class RecipeIndex {
 
     let consumeConns = [];
     for (let recipe of this._recipes) {
+      if (recipe.particles.some(particle => !particle.name)) {
+        // Skip recipes where not all verbs are resolved to specific particles
+        // to avoid trying to coalesce a recipe with itself.
+        continue;
+      }
       for (let slotConn of recipe.slotConnections) {
         if (!slotConn.targetSlot && __WEBPACK_IMPORTED_MODULE_13__strategies_map_slots_js__["a" /* MapSlots */].specMatch(slotConn, slot) && __WEBPACK_IMPORTED_MODULE_13__strategies_map_slots_js__["a" /* MapSlots */].tagsOrNameMatch(slotConn, slot)) {
           let matchingHandles = [];
@@ -22450,6 +22460,11 @@ class RecipeIndex {
 
     let providedSlots = [];
     for (let recipe of this._recipes) {
+      if (recipe.particles.some(particle => !particle.name)) {
+        // Skip recipes where not all verbs are resolved to specific particles
+        // to avoid trying to coalesce a recipe with itself.
+        continue;
+      }
       for (let consumeConn of recipe.slotConnections) {
         for (let providedSlot of Object.values(consumeConn.providedSlots)) {
           if (__WEBPACK_IMPORTED_MODULE_13__strategies_map_slots_js__["a" /* MapSlots */].slotMatches(slotConn, providedSlot)) {
@@ -25179,6 +25194,7 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
   async generate(inputParams) {
     const index = this._index;
     await index.ready;
+    const coalescableFates = ['create', 'use', '?'];
 
     return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* Walker */] {
       onSlotConnection(recipe, slotConnection) {
@@ -25269,14 +25285,13 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
       }
 
       onHandle(recipe, handle) {
-        if ((handle.fate !== 'use' && handle.fate !== '?')
+        if (!coalescableFates.includes(handle.fate)
             || handle.id
             || handle.connections.length === 0
             || handle.name === 'descriptions') return;
-
         let results = [];
 
-        for (let otherHandle of index.findHandleMatch(handle, ['create', '?'])) {
+        for (let otherHandle of index.findHandleMatch(handle, coalescableFates)) {
           // Don't grow recipes above 10 particles, otherwise we might never stop.
           if (recipe.particles.length + otherHandle.recipe.particles.length > 10) continue;
 
@@ -25307,7 +25322,8 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
             }
             handle.tags = handle.tags.concat(otherHandle.tags);
             recipe.removeHandle(mergedOtherHandle);
-            handle.fate = 'create';
+            // If both handles' fates were `use` keep their fate, otherwise set to `create`.
+            handle.fate = handle.fate == 'use' && otherHandle.fate == 'use' ? 'use' : 'create';
 
             // Clear verbs and recipe name after coalescing two recipes.
             recipe.verbs.splice(0);
