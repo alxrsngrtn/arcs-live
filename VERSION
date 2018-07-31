@@ -1,9 +1,9 @@
-commit 9b3998f343d80f17af745e32bff9401d754d89ca
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Jul 31 09:07:26 2018 +1000
+commit 35418fcc75b2a148f3419896385cc6c6aa0f7f50
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jul 30 18:22:23 2018 -0700
 
-    Allow handles with 'copy' fate to persist to firebase (#1707)
+    require 'create' fate to be explicit in a recipe (#1709)
     
-    1) Ensure that cloning a handle into a firebase-collection persists.
-    2) re-add btoa/atob on firebase keys to prevent invalid keys being
-    generated.
+    * require 'create' fate to be explicit in a recipe
+    
+    * address comments and get rid of CreateHandles strategy
