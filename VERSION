@@ -1,9 +1,5 @@
-commit cb25e06a42f7e28311a989dffe10bed520d92291
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jul 30 18:23:32 2018 -0700
+commit fe72835c2f3727b83ca4383889a1fe7d90b1589e
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Aug 1 07:38:34 2018 +1000
 
-    Symmetric fates in coalesce-recipes and avoid coalescing with earlier generations of same recipe. (#1711)
-    
-    * Symmetric fates in coalesce-recipes and avoid coalescing with earlier generations of same recipe.
-    
-    * keep `use` fate if both handles have it
+    Ensure inner handles don't get stored in firebase. (#1712)
