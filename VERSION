@@ -1,5 +1,5 @@
-commit fe72835c2f3727b83ca4383889a1fe7d90b1589e
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed Aug 1 07:38:34 2018 +1000
+commit 88e364b5b4227385465af31347b6bf74d47f9279
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Aug 1 09:05:44 2018 -0700
 
-    Ensure inner handles don't get stored in firebase. (#1712)
+    Coalesce-recipes strategy support for coalescing multiple handles, if applicable. (#1713)

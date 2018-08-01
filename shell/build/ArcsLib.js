@@ -10310,13 +10310,14 @@ class FallbackFate extends __WEBPACK_IMPORTED_MODULE_1__strategizer_strategizer_
           return;
         }
 
-        // Only apply to handles whose fate is set, but wasn't explicitly defined in the recipe.
-        if (handle.isResolved() || handle.fate == '?' || handle.originalFate != '?') {
+        // Only apply to handles whose fate is set, but was explicitly defined as ? in the recipe.
+        if (handle.isResolved() || handle.fate == '?' || !handle.originalFate || handle.originalFate != '?') {
           return;
         }
 
         let hasOutConns = handle.connections.some(hc => hc.isOutput);
         let newFate = hasOutConns ? 'copy' : 'map';
+
         if (handle.fate == newFate) {
           return;
         }
@@ -22370,7 +22371,6 @@ class RecipeIndex {
   findHandleMatch(handle, requestedFates) {
     this.ensureReady();
 
-    let counts = __WEBPACK_IMPORTED_MODULE_15__recipe_recipe_util_js__["a" /* RecipeUtil */].directionCounts(handle);
     let particleNames = handle.connections.map(conn => conn.particle.name);
 
     let results = [];
@@ -22381,30 +22381,13 @@ class RecipeIndex {
         continue;
       }
       for (let otherHandle of recipe.handles) {
-        if (requestedFates && !(requestedFates.includes(otherHandle.fate))
-            || otherHandle.connections.length === 0
-            || otherHandle.name === 'descriptions') continue;
-
-        // If we're connecting only create/use/? handles, we require communication.
-        // We don't do that if at least one handle is map/copy, as in such case
-        // everyone can be a reader.
-        // We inspect both fate and originalFate as copy ends up as use in an
-        // active recipe, and ? could end up as anything.
-        let fates = [handle.originalFate, handle.fate, otherHandle.originalFate, otherHandle.fate];
-        if (!fates.includes('copy') && !fates.includes('map')) {
-          let otherCounts = __WEBPACK_IMPORTED_MODULE_15__recipe_recipe_util_js__["a" /* RecipeUtil */].directionCounts(otherHandle);
-          // Someone has to read and someone has to write.
-          if (otherCounts.in + counts.in === 0
-              || otherCounts.out + counts.out === 0) continue;
+        if (requestedFates && !(requestedFates.includes(otherHandle.fate))) {
+          continue;
         }
 
-        // If requesting handle has tags, we should have overlap.
-        if (handle.tags.length > 0 && !handle.tags.some(t => otherHandle.tags.includes(t))) continue;
-
-
-        // If types don't match.
-        if (!__WEBPACK_IMPORTED_MODULE_16__recipe_handle_js__["a" /* Handle */].effectiveType(handle._mappedType,
-            [...handle.connections, ...otherHandle.connections])) continue;
+        if (!this.doesHandleMatch(handle, otherHandle)) {
+          continue;
+        }
 
         // If we're connecting the same sets of particles, that's probably not OK.
         // This is a poor workaround for connecting the exact same recipes together, to be improved.
@@ -22417,6 +22400,43 @@ class RecipeIndex {
       }
     }
     return results;
+  }
+
+  doesHandleMatch(handle, otherHandle) {
+    if (Boolean(handle.id) && Boolean(otherHandle.id) && handle.id !== otherHandle.id) {
+      // Either at most one of the handles has an ID, or they are the same.
+      return false;
+    }
+    if (otherHandle.connections.length === 0 || otherHandle.name === 'descriptions') {
+      return false;
+    }
+
+    // If we're connecting only create/use/? handles, we require communication.
+    // We don't do that if at least one handle is map/copy, as in such case
+    // everyone can be a reader.
+    // We inspect both fate and originalFate as copy ends up as use in an
+    // active recipe, and ? could end up as anything.
+    let fates = [handle.originalFate, handle.fate, otherHandle.originalFate, otherHandle.fate];
+    if (!fates.includes('copy') && !fates.includes('map')) {
+      let counts = __WEBPACK_IMPORTED_MODULE_15__recipe_recipe_util_js__["a" /* RecipeUtil */].directionCounts(handle);
+      let otherCounts = __WEBPACK_IMPORTED_MODULE_15__recipe_recipe_util_js__["a" /* RecipeUtil */].directionCounts(otherHandle);
+      // Someone has to read and someone has to write.
+      if (otherCounts.in + counts.in === 0 || otherCounts.out + counts.out === 0) {
+        return false;
+      }
+    }
+
+    // If requesting handle has tags, we should have overlap.
+    if (handle.tags.length > 0 && !handle.tags.some(t => otherHandle.tags.includes(t))) {
+      return false;
+    }
+
+    // If types don't match.
+    if (!__WEBPACK_IMPORTED_MODULE_16__recipe_handle_js__["a" /* Handle */].effectiveType(handle._mappedType, [...handle.connections, ...otherHandle.connections])) {
+      return false;
+    }
+
+    return true;
   }
 
   // Given a slot, find consume slot connections that could be connected to it.
@@ -25167,12 +25187,14 @@ class InMemoryVariable extends InMemoryStorageProvider {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__recipe_handle_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__type_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__platform_assert_web_js__ = __webpack_require__(0);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -25201,6 +25223,7 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
     const coalescableFates = ['create', 'use', '?'];
 
     return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* Walker */] {
+      // Find a provided slot for unfulfilled consume connection.
       onSlotConnection(recipe, slotConnection) {
         if (slotConnection.isResolved()) {
           return;
@@ -25217,11 +25240,17 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
         // but no other connections are resolved.
 
         let results = [];
+        // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
+        // these handles are coalescable? Add support for this.
         for (let providedSlot of index.findProvidedSlot(slotConnection)) {
           results.push((recipe, slotConnection) => {
+            let otherToHandle = this._findCoalescableHandles(recipe, providedSlot.recipe);
+
             let {cloneMap} = providedSlot.recipe.mergeInto(slotConnection.recipe);
             let mergedSlot = cloneMap.get(providedSlot);
             slotConnection.connectToSlot(mergedSlot);
+
+            this._connectOtherHandles(otherToHandle, cloneMap);
 
             // Clear verbs and recipe name after coalescing two recipes.
             recipe.verbs.splice(0);
@@ -25252,6 +25281,10 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
           }
 
           results.push((recipe, slot) => {
+            // Find other handles that may be merged, as recipes are being coalesced.
+            let otherToHandle = this._findCoalescableHandles(recipe, slotConn.recipe,
+              new Set(slot.handleConnections.map(hc => hc.handle).concat(matchingHandles.map(({handle, matchingConn}) => matchingConn.handle))));
+
             let {cloneMap} = slotConn.recipe.mergeInto(slot.recipe);
             let mergedSlotConn = cloneMap.get(slotConn);
             mergedSlotConn.connectToSlot(slot);
@@ -25271,6 +25304,8 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
               }
               recipe.removeHandle(disconnectedHandle);
             }
+
+            this._connectOtherHandles(otherToHandle, cloneMap);
 
             // Clear verbs and recipe name after coalescing two recipes.
             recipe.verbs.splice(0);
@@ -25316,18 +25351,16 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
           }
 
           results.push((recipe, handle) => {
-            let {cloneMap} = otherHandle.recipe.mergeInto(recipe);
-            let mergedOtherHandle = cloneMap.get(otherHandle);
-            if (!mergedOtherHandle) return null;
-            while (mergedOtherHandle.connections.length > 0) {
-              let [connection] = mergedOtherHandle.connections;
-              connection.disconnectHandle();
-              connection.connectToHandle(handle);
-            }
-            handle.tags = handle.tags.concat(otherHandle.tags);
-            recipe.removeHandle(mergedOtherHandle);
-            // If both handles' fates were `use` keep their fate, otherwise set to `create`.
-            handle.fate = handle.fate == 'use' && otherHandle.fate == 'use' ? 'use' : 'create';
+            // Find other handles in the original recipe that could be coalesced with handles in otherHandle's recipe.
+            let otherToHandle = this._findCoalescableHandles(recipe, otherHandle.recipe, new Set([handle, otherHandle]));
+
+            let {cloneMap} = otherHandle.recipe.mergeInto(handle.recipe);
+
+            // Connect the handle that the recipes are being coalesced on.
+            this._connectOtherHandleToHandle(handle, cloneMap.get(otherHandle));
+
+            // Connect all other connectable handles.
+            this._connectOtherHandles(otherToHandle, cloneMap);
 
             // Clear verbs and recipe name after coalescing two recipes.
             recipe.verbs.splice(0);
@@ -25340,6 +25373,47 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
         }
 
         return results;
+      }
+
+      _findCoalescableHandles(recipe, otherRecipe, usedHandles) {
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__platform_assert_web_js__["a" /* assert */])(recipe != otherRecipe, 'Cannot coalesce handles in the same recipe');
+        let otherToHandle = new Map();
+        usedHandles = usedHandles || new Set();
+        for (let handle of recipe.handles) {
+          if (usedHandles.has(handle) || !coalescableFates.includes(handle.fate)) {
+            continue;
+          }
+          for (let otherHandle of otherRecipe.handles) {
+            if (usedHandles.has(otherHandle) || !coalescableFates.includes(otherHandle.fate)) {
+              continue;
+            }
+            if (index.doesHandleMatch(handle, otherHandle)) {
+              otherToHandle.set(handle, otherHandle);
+              usedHandles.add(handle);
+              usedHandles.add(otherHandle);
+            }
+          }
+        }
+        return otherToHandle;
+      }
+
+      _connectOtherHandles(otherToHandle, cloneMap) {
+        otherToHandle.forEach((otherHandle, handle) => {
+          this._connectOtherHandleToHandle(handle, cloneMap.get(otherHandle));
+        });
+      }
+
+      _connectOtherHandleToHandle(handle, mergedOtherHandle) {
+        if (!mergedOtherHandle) return null;
+        while (mergedOtherHandle.connections.length > 0) {
+          let [connection] = mergedOtherHandle.connections;
+          connection.disconnectHandle();
+          connection.connectToHandle(handle);
+        }
+        handle.tags = handle.tags.concat(mergedOtherHandle.tags);
+        handle.recipe.removeHandle(mergedOtherHandle);
+        // If both handles' fates were `use` keep their fate, otherwise set to `create`.
+        handle.fate = handle.fate == 'use' && mergedOtherHandle.fate == 'use' ? 'use' : 'create';
       }
     }(__WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* Walker */].Independent), this);
   }
