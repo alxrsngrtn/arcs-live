@@ -6898,7 +6898,9 @@ class SlotDomConsumer extends __WEBPACK_IMPORTED_MODULE_1__slot_consumer_js__["a
       }
       parentNode = parentNode.parentNode;
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false);
+    // innerContainer won't be a child node of container if the method is triggered
+    // by mutation observer record and innerContainer was removed.
+    return false;
   }
 
   _initMutationObserver() {

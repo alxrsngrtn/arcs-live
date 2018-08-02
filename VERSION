@@ -1,5 +1,5 @@
-commit 88e364b5b4227385465af31347b6bf74d47f9279
+commit 25b3be4a8fc3c14915619e4135827476e878e3c9
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Aug 1 09:05:44 2018 -0700
+Date:   Wed Aug 1 16:57:58 2018 -0700
 
-    Coalesce-recipes strategy support for coalescing multiple handles, if applicable. (#1713)
+    Replace inappropriate assert in dom slot. (#1718)
