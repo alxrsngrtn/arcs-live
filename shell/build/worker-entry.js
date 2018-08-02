@@ -503,6 +503,7 @@ addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Tuple', 'fields');
 addType('Slot');
+addType('Pointer', 'dereference');
 
 
 

@@ -1,5 +1,11 @@
-commit 0fc690122e0b53cc4a7d035380de96f6fa1a3619
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Aug 2 16:09:19 2018 -0700
+commit 8b23495e2a55547e0af8a516af3b2a1a7523499a
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri Aug 3 09:20:56 2018 +1000
 
-    Coalesce handles in search-tokens-to-particles/recipes. (#1719)
+    Very tentative early steps towards data being separate from container ptrs (#1716)
+    
+    * Very tentative early steps towards data being separate from container ptrs
+    
+    * Add a test
+    
+    * Missing underscore.

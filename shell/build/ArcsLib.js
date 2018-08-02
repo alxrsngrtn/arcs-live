@@ -1479,6 +1479,7 @@ addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Tuple', 'fields');
 addType('Slot');
+addType('Pointer', 'dereference');
 
 
 
@@ -9928,12 +9929,11 @@ class KeyBase {
 
 
 class StorageProviderBase {
-  constructor(type, arcId, name, id, key) {
+  constructor(type, name, id, key) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(id, 'id must be provided when constructing StorageProviders');
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!type.hasUnresolvedVariable, 'Storage types must be concrete');
     let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'handle', name: 'StorageProviderBase::constructor', args: {type: type.key, name: name}});
     this._type = type;
-    this._arcId = arcId;
     this._listeners = new Map();
     this.name = name;
     this._version = 0;
@@ -25000,6 +25000,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* unused harmony export resetInMemoryStorageForTesting */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__storage_provider_base_js__ = __webpack_require__(47);
@@ -25019,6 +25020,11 @@ class FirebaseCollection extends FirebaseStorageProvider {
 
 
 
+
+function resetInMemoryStorageForTesting() {
+  for (let key in __storageCache)
+    __storageCache[key]._memoryMap = {};
+}
 
 class InMemoryKey extends __WEBPACK_IMPORTED_MODULE_3__key_base_js__["a" /* KeyBase */] {
   constructor(key) {
@@ -25064,7 +25070,8 @@ class InMemoryStorage {
       key.arcId = this._arcId;
     if (key.location == undefined)
       key.location = 'in-memory-' + this.localIDBase++;
-    let provider = InMemoryStorageProvider.newProvider(type, this._arcId, undefined, id, key.toString());
+    // TODO(shanestephens): should pass in factory, not 'this' here.
+    let provider = InMemoryStorageProvider.newProvider(type, this, undefined, id, key.toString());
     if (this._memoryMap[key.toString()] !== undefined)
       return null;
     this._memoryMap[key.toString()] = provider;
@@ -25092,22 +25099,23 @@ class InMemoryStorage {
 
 
 class InMemoryStorageProvider extends __WEBPACK_IMPORTED_MODULE_2__storage_provider_base_js__["a" /* StorageProviderBase */] {
-  static newProvider(type, arcId, name, id, key) {
+  static newProvider(type, storageEngine, name, id, key) {
     if (type.isCollection)
-      return new InMemoryCollection(type, arcId, name, id, key);
-    return new InMemoryVariable(type, arcId, name, id, key);
+      return new InMemoryCollection(type, storageEngine, name, id, key);
+    return new InMemoryVariable(type, storageEngine, name, id, key);
   }
 }
 
 class InMemoryCollection extends InMemoryStorageProvider {
-  constructor(type, arcId, name, id, key) {
-    super(type, arcId, name, id, key);
+  constructor(type, storageEngine, name, id, key) {
+    super(type, name, id, key);
     this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model_js__["a" /* CrdtCollectionModel */]();
+    this._storageEngine = storageEngine;
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._version !== null);
   }
 
   clone() {
-    let handle = new InMemoryCollection(this._type, this._arcId, this.name, this.id);
+    let handle = new InMemoryCollection(this._type, this._storageEngine, this.name, this.id);
     handle.cloneFrom(this);
     return handle;
   }
@@ -25168,13 +25176,14 @@ class InMemoryCollection extends InMemoryStorageProvider {
 }
 
 class InMemoryVariable extends InMemoryStorageProvider {
-  constructor(type, arcId, name, id, key) {
-    super(type, arcId, name, id, key);
+  constructor(type, storageEngine, name, id, key) {
+    super(type, name, id, key);
+    this._storageEngine = storageEngine;
     this._stored = null;
   }
 
   clone() {
-    let variable = new InMemoryVariable(this._type, this._arcId, this.name, this.id);
+    let variable = new InMemoryVariable(this._type, this._storageEngine, this.name, this.id);
     variable.cloneFrom(this);
     return variable;
   }
@@ -25212,6 +25221,14 @@ class InMemoryVariable extends InMemoryStorageProvider {
   }
 
   async get() {
+    if (this.type.isPointer) {
+      let value = this._stored;
+      let pointedType = this.type.pointerDereference;
+      // TODO: string version of dereferenced type as ID?
+      let store = await this._storageEngine.connect(pointedType.toString(), pointedType, value.storageKey);
+      let result = await store.get();
+      return result;
+    }
     return this._stored;
   }
 
