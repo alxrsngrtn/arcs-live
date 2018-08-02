@@ -1903,6 +1903,28 @@ class Handle {
     return handle;
   }
 
+  // Merges `this` recipe handle into `handle`
+  mergeInto(handle) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.recipe == handle.recipe, 'Cannot merge handles from different recipes.');
+    while (this.connections.length > 0) {
+      let [connection] = this.connections;
+      connection.disconnectHandle();
+      connection.connectToHandle(handle);
+    }
+    handle.tags = handle.tags.concat(this.tags);
+    handle.recipe.removeHandle(this);
+    handle.fate = this._mergedFate([this.fate, handle.fate]);
+  }
+
+  _mergedFate(fates) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(fates.length > 0, `Cannot merge empty fates list`);
+    // Merging handles only used in coalesce-recipe strategy, which is only done for use/create/? fates.
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!fates.includes('map') && !fates.includes('copy'), `Merging map/copy not supported yet`);
+
+    // If all fates were `use` keep their fate, otherwise set to `create`.
+    return fates.every(fate => fate == 'use') ? 'use' : 'create';
+  }
+
   _startNormalize() {
     this._localName = null;
     this._tags.sort();
@@ -10960,6 +10982,11 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
     }
 
     class SearchWalker extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* Walker */] {
+      constructor(tactic, arc) {
+        super(tactic);
+        this.index = arc.recipeIndex;
+      }
+
       onRecipe(recipe) {
         if (!recipe.search || !recipe.search.unresolvedTokens.length) {
           return;
@@ -11010,8 +11037,10 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
                 let particle = recipe.newParticle(spec.name);
                 particle.spec = spec;
               } else {
+                let otherToHandle = this.index.findCoalescableHandles(recipe, innerRecipe);
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(innerRecipe);
-                innerRecipe.mergeInto(recipe);
+                let {cloneMap} = innerRecipe.mergeInto(recipe);
+                otherToHandle.forEach((otherHandle, handle) => cloneMap.get(otherHandle).mergeInto(handle));
               }
             });
             return resolvedTokens.size;
@@ -11019,7 +11048,7 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
         });
       }
     }
-    this._walker = new SearchWalker(__WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* Walker */].Permuted);
+    this._walker = new SearchWalker(__WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* Walker */].Permuted, arc);
   }
 
   get walker() {
@@ -11054,6 +11083,7 @@ class SearchTokensToParticles extends __WEBPACK_IMPORTED_MODULE_1__strategizer_s
   }
 
   async generate(inputParams) {
+    await this.walker.index.ready;
     return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), this.walker, this);
   }
 }
@@ -22531,6 +22561,30 @@ class RecipeIndex {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_17__platform_assert_web_js__["a" /* assert */])(false, `Unexpected fate ${slotHandleConn.handle.fate}`);
     }
   }
+
+  get coalescableFates() { return ['create', 'use', '?']; }
+
+  findCoalescableHandles(recipe, otherRecipe, usedHandles) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_17__platform_assert_web_js__["a" /* assert */])(recipe != otherRecipe, 'Cannot coalesce handles in the same recipe');
+    let otherToHandle = new Map();
+    usedHandles = usedHandles || new Set();
+    for (let handle of recipe.handles) {
+      if (usedHandles.has(handle) || !this.coalescableFates.includes(handle.fate)) {
+        continue;
+      }
+      for (let otherHandle of otherRecipe.handles) {
+        if (usedHandles.has(otherHandle) || !this.coalescableFates.includes(otherHandle.fate)) {
+          continue;
+        }
+        if (this.doesHandleMatch(handle, otherHandle)) {
+          otherToHandle.set(handle, otherHandle);
+          usedHandles.add(handle);
+          usedHandles.add(otherHandle);
+        }
+      }
+    }
+    return otherToHandle;
+  }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = RecipeIndex;
 
@@ -25212,17 +25266,19 @@ class InMemoryVariable extends InMemoryStorageProvider {
 class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__["b" /* Strategy */] {
   constructor(arc) {
     super();
-    this._index = arc.recipeIndex;
+    this._arc = arc;
   }
+
+  get arc() { return this._arc; }
 
   getResults(inputParams) {
     return inputParams.terminal.filter(result => !result.result.isResolved());
   }
 
   async generate(inputParams) {
-    const index = this._index;
+    const arc = this.arc;
+    const index = this.arc.recipeIndex;
     await index.ready;
-    const coalescableFates = ['create', 'use', '?'];
 
     return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* Walker */] {
       // Find a provided slot for unfulfilled consume connection.
@@ -25245,8 +25301,16 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
         // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
         // these handles are coalescable? Add support for this.
         for (let providedSlot of index.findProvidedSlot(slotConnection)) {
+          // Don't grow recipes above 10 particles, otherwise we might never stop.
+          if (recipe.particles.length + providedSlot.recipe.particles.length > 10) continue;
+
+          if (__WEBPACK_IMPORTED_MODULE_2__recipe_recipe_util_js__["a" /* RecipeUtil */].matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
+            // skip candidate recipe, if matches the shape of the arc's active recipe
+            continue;
+          }
+
           results.push((recipe, slotConnection) => {
-            let otherToHandle = this._findCoalescableHandles(recipe, providedSlot.recipe);
+            let otherToHandle = index.findCoalescableHandles(recipe, providedSlot.recipe);
 
             let {cloneMap} = providedSlot.recipe.mergeInto(slotConnection.recipe);
             let mergedSlot = cloneMap.get(providedSlot);
@@ -25277,14 +25341,22 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
 
         let results = [];
         for (let {slotConn, matchingHandles} of index.findConsumeSlotConnectionMatch(slot)) {
+          // Don't grow recipes above 10 particles, otherwise we might never stop.
+          if (recipe.particles.length + slotConn.recipe.particles.length > 10) continue;
+
+          if (__WEBPACK_IMPORTED_MODULE_2__recipe_recipe_util_js__["a" /* RecipeUtil */].matchesRecipe(arc.activeRecipe, slotConn.recipe)) {
+            // skip candidate recipe, if matches the shape of the arc's active recipe
+            continue;
+          }
+
           if (__WEBPACK_IMPORTED_MODULE_2__recipe_recipe_util_js__["a" /* RecipeUtil */].matchesRecipe(recipe, slotConn.recipe)) {
-            // skip candidate recipe, if matches the shape of the current recipe
+            // skip candidate recipe, if matches the shape of the currently explored recipe
             continue;
           }
 
           results.push((recipe, slot) => {
             // Find other handles that may be merged, as recipes are being coalesced.
-            let otherToHandle = this._findCoalescableHandles(recipe, slotConn.recipe,
+            let otherToHandle = index.findCoalescableHandles(recipe, slotConn.recipe,
               new Set(slot.handleConnections.map(hc => hc.handle).concat(matchingHandles.map(({handle, matchingConn}) => matchingConn.handle))));
 
             let {cloneMap} = slotConn.recipe.mergeInto(slot.recipe);
@@ -25326,13 +25398,13 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
       }
 
       onHandle(recipe, handle) {
-        if (!coalescableFates.includes(handle.fate)
+        if (!index.coalescableFates.includes(handle.fate)
             || handle.id
             || handle.connections.length === 0
             || handle.name === 'descriptions') return;
         let results = [];
 
-        for (let otherHandle of index.findHandleMatch(handle, coalescableFates)) {
+        for (let otherHandle of index.findHandleMatch(handle, index.coalescableFates)) {
           // Don't grow recipes above 10 particles, otherwise we might never stop.
           if (recipe.particles.length + otherHandle.recipe.particles.length > 10) continue;
 
@@ -25347,19 +25419,24 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
             if (resolved.isVariable && !resolved.canReadSubset) continue;
           }
 
+          if (__WEBPACK_IMPORTED_MODULE_2__recipe_recipe_util_js__["a" /* RecipeUtil */].matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
+            // skip candidate recipe, if matches the shape of the arc's active recipe
+            continue;
+          }
+
           if (__WEBPACK_IMPORTED_MODULE_2__recipe_recipe_util_js__["a" /* RecipeUtil */].matchesRecipe(recipe, otherHandle.recipe)) {
-            // skip candidate recipe, if matches the shape of the current recipe
+            // skip candidate recipe, if matches the shape of the currently explored recipe
             continue;
           }
 
           results.push((recipe, handle) => {
             // Find other handles in the original recipe that could be coalesced with handles in otherHandle's recipe.
-            let otherToHandle = this._findCoalescableHandles(recipe, otherHandle.recipe, new Set([handle, otherHandle]));
+            let otherToHandle = index.findCoalescableHandles(recipe, otherHandle.recipe, new Set([handle, otherHandle]));
 
             let {cloneMap} = otherHandle.recipe.mergeInto(handle.recipe);
 
             // Connect the handle that the recipes are being coalesced on.
-            this._connectOtherHandleToHandle(handle, cloneMap.get(otherHandle));
+            cloneMap.get(otherHandle).mergeInto(handle);
 
             // Connect all other connectable handles.
             this._connectOtherHandles(otherToHandle, cloneMap);
@@ -25377,45 +25454,8 @@ class CoalesceRecipes extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategiz
         return results;
       }
 
-      _findCoalescableHandles(recipe, otherRecipe, usedHandles) {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__platform_assert_web_js__["a" /* assert */])(recipe != otherRecipe, 'Cannot coalesce handles in the same recipe');
-        let otherToHandle = new Map();
-        usedHandles = usedHandles || new Set();
-        for (let handle of recipe.handles) {
-          if (usedHandles.has(handle) || !coalescableFates.includes(handle.fate)) {
-            continue;
-          }
-          for (let otherHandle of otherRecipe.handles) {
-            if (usedHandles.has(otherHandle) || !coalescableFates.includes(otherHandle.fate)) {
-              continue;
-            }
-            if (index.doesHandleMatch(handle, otherHandle)) {
-              otherToHandle.set(handle, otherHandle);
-              usedHandles.add(handle);
-              usedHandles.add(otherHandle);
-            }
-          }
-        }
-        return otherToHandle;
-      }
-
       _connectOtherHandles(otherToHandle, cloneMap) {
-        otherToHandle.forEach((otherHandle, handle) => {
-          this._connectOtherHandleToHandle(handle, cloneMap.get(otherHandle));
-        });
-      }
-
-      _connectOtherHandleToHandle(handle, mergedOtherHandle) {
-        if (!mergedOtherHandle) return null;
-        while (mergedOtherHandle.connections.length > 0) {
-          let [connection] = mergedOtherHandle.connections;
-          connection.disconnectHandle();
-          connection.connectToHandle(handle);
-        }
-        handle.tags = handle.tags.concat(mergedOtherHandle.tags);
-        handle.recipe.removeHandle(mergedOtherHandle);
-        // If both handles' fates were `use` keep their fate, otherwise set to `create`.
-        handle.fate = handle.fate == 'use' && mergedOtherHandle.fate == 'use' ? 'use' : 'create';
+        otherToHandle.forEach((otherHandle, handle) => cloneMap.get(otherHandle).mergeInto(handle));
       }
     }(__WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* Walker */].Independent), this);
   }

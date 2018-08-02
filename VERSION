@@ -1,5 +1,5 @@
-commit 25b3be4a8fc3c14915619e4135827476e878e3c9
+commit 0fc690122e0b53cc4a7d035380de96f6fa1a3619
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Aug 1 16:57:58 2018 -0700
+Date:   Thu Aug 2 16:09:19 2018 -0700
 
-    Replace inappropriate assert in dom slot. (#1718)
+    Coalesce handles in search-tokens-to-particles/recipes. (#1719)
