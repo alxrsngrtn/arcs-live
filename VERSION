@@ -1,5 +1,5 @@
-commit 22543b79a00f388bddc0f2332cb7b7c18ac643a3
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Aug 3 14:46:39 2018 +1000
+commit 83e749512bb2d81361c06b304242bcc7ec2d034e
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Aug 2 21:49:46 2018 -0700
 
-    Rename pointers to references and re-use ptr ID as entity ID. (#1722)
+    AddUseHandles -> AddMissingHandles, refactor HandleMapperBase strategies, delete FallbackFate. (#1720)
