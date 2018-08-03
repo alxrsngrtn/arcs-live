@@ -1,9 +1,5 @@
-commit a0e903d494bea603faf15642284bef8fdf55fda9
+commit 22543b79a00f388bddc0f2332cb7b7c18ac643a3
 Author: shans <shane.stephens@gmail.com>
-Date:   Fri Aug 3 13:12:25 2018 +1000
+Date:   Fri Aug 3 14:46:39 2018 +1000
 
-    Handle pointers when reading from collections. (#1721)
-    
-    * Handle pointers when reading from collections.
-    
-    * missing semi
+    Rename pointers to references and re-use ptr ID as entity ID. (#1722)
