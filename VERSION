@@ -1,11 +1,9 @@
-commit 8b23495e2a55547e0af8a516af3b2a1a7523499a
+commit a0e903d494bea603faf15642284bef8fdf55fda9
 Author: shans <shane.stephens@gmail.com>
-Date:   Fri Aug 3 09:20:56 2018 +1000
+Date:   Fri Aug 3 13:12:25 2018 +1000
 
-    Very tentative early steps towards data being separate from container ptrs (#1716)
+    Handle pointers when reading from collections. (#1721)
     
-    * Very tentative early steps towards data being separate from container ptrs
+    * Handle pointers when reading from collections.
     
-    * Add a test
-    
-    * Missing underscore.
+    * missing semi
