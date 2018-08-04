@@ -1,5 +1,5 @@
-commit 83e749512bb2d81361c06b304242bcc7ec2d034e
+commit 1bbfd60b04f14182e70a3d4e66bd4f2baad5c210
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Aug 2 21:49:46 2018 -0700
+Date:   Fri Aug 3 21:42:37 2018 -0700
 
-    AddUseHandles -> AddMissingHandles, refactor HandleMapperBase strategies, delete FallbackFate. (#1720)
+    slot connection considered unresolved, if its providing slot connection is not fulfilled (#1727)
