@@ -6921,10 +6921,16 @@ class SlotDomConsumer extends __WEBPACK_IMPORTED_MODULE_1__slot_consumer_js__["a
     if (this.consumeConn) {
       return new MutationObserver(async (records) => {
         this._observer.disconnect();
-        let containers = this.renderings.map(([subId, {container}]) => container)
-          .filter(container => records.some(r => this.isDirectInnerSlot(container, r.target)));
+
+        let updateContainersBySubId = new Map();
+        for (let [subId, {container}] of this.renderings) {
+          if (records.some(r => this.isDirectInnerSlot(container, r.target))) {
+            updateContainersBySubId.set(subId, container);
+          }
+        }
+        let containers = [...updateContainersBySubId.values()];
         if (containers.length > 0) {
-          this._innerContainerBySlotName = {};
+          this._clearInnerSlotContainers([...updateContainersBySubId.keys()]);
           containers.forEach(container => this.initInnerContainers(container));
           this.updateProvidedContexts();
 
@@ -9408,7 +9414,7 @@ class MultiplexerDomParticle extends __WEBPACK_IMPORTED_MODULE_2__transformation
     if (content.template) {
       let template = content.template;
       // Append subid={{subid}} attribute to all provided slots, to make it usable for the transformation particle.
-      template = template.replace(new RegExp('slotid="[a-z]+"', 'g'), '$& subid="{{subId}}"');
+      template = template.replace(new RegExp('slotid="[a-z]+"', 'gi'), '$& subid="{{subId}}"');
 
       // Replace hosted particle connection in template with the corresponding particle connection names.
       // TODO: make this generic!
@@ -9702,6 +9708,15 @@ class SlotConsumer {
     } else {
       this._innerContainerBySlotName[slotId] = container;
     }
+  }
+  _clearInnerSlotContainers(subIds) {
+    subIds.forEach(subId => {
+      if (subId) {
+        Object.values(this._innerContainerBySlotName).forEach(inner => delete inner[subId]);
+      } else {
+        this._innerContainerBySlotName = {};
+      }
+    });
   }
 
   isSameContainer(container, contextContainer) { return container == contextContainer; }
