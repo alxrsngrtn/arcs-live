@@ -11479,16 +11479,14 @@ class Planificator {
       // If search changed and we already how all plans (i.e. including
       // non-contextual ones) then it's enough to initialize with InitSearch
       // with a new search phrase.
-      this._search = search;
       this._requestPlanning({
-        cancelOngoingPlanning: true,
+        cancelOngoingPlanning: this._current.plans.length > 0,
         strategies: [__WEBPACK_IMPORTED_MODULE_2__strategies_init_search_js__["a" /* InitSearch */]].concat(__WEBPACK_IMPORTED_MODULE_4__planner_js__["a" /* Planner */].ResolutionStrategies),
         append: true
       });
     } else if (this._current.contextual) {
       // Else if we're searching but currently only have contextual plans,
       // we need get non-contextual plans as well.
-      this._search = search;
       this._requestPlanning({
         cancelOngoingPlanning: true,
         contextual: false

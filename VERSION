@@ -1,5 +1,5 @@
-commit 3d098d6f774460c2d25d6812780e2b7c403f0b77
+commit c0694cff97e74c8d804305df666a67fa14ce622d
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Aug 6 15:10:37 2018 -0700
+Date:   Mon Aug 6 15:13:20 2018 -0700
 
-    fix "id must be provided when constructing StorageProviders" exception (#1730)
+    avoid planificator search update incorrectly cancelling ongoing planning (#1732)
