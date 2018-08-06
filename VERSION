@@ -1,9 +1,5 @@
-commit 34bafa4441849ed635f28f2ce72394e658d36e77
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Aug 6 17:15:58 2018 +1000
+commit 3d098d6f774460c2d25d6812780e2b7c403f0b77
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Aug 6 15:10:37 2018 -0700
 
-    Implement writing to the backing store for in-memory ref stores. (#1728)
-    
-    * Implement writing to the backing store for in-memory ref stores.
-    
-    * Review comments
+    fix "id must be provided when constructing StorageProviders" exception (#1730)

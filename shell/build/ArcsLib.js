@@ -24245,7 +24245,7 @@ class FirebaseStorage {
 
 class FirebaseStorageProvider extends __WEBPACK_IMPORTED_MODULE_0__storage_provider_base_js__["a" /* StorageProviderBase */] {
   constructor(type, arcId, id, reference, key) {
-    super(type, arcId, undefined, id, key.toString());
+    super(type, undefined, id, key.toString());
     this._firebaseKey = key;
     this._reference = reference;
 
