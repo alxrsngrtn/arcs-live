@@ -9968,6 +9968,10 @@ class StorageProviderFactory {
     return this._storageInstances[protocol];
   }
 
+  async share(id, type, key) {
+    return this._storageForKey(key).share(id, type, keyFragment);
+  }
+
   async construct(id, type, keyFragment) {
     return this._storageForKey(keyFragment).construct(id, type, keyFragment);
   }
@@ -24926,6 +24930,7 @@ class InMemoryStorage {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(arcId !== undefined, 'Arcs with storage must have ids');
       this._arcId = arcId;
       this._memoryMap = {};
+      this._typeMap = new Map();
       this.localIDBase = 0;
       // TODO(shans): re-add this assert once we have a runtime object to put it on.
       // assert(__storageCache[this._arc.id] == undefined, `${this._arc.id} already exists in local storage cache`);
@@ -24959,6 +24964,22 @@ class InMemoryStorage {
     return this._memoryMap[keyString];
   }
 
+  async share(id, type, keyString) {
+    let key = new InMemoryKey(keyString);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(key.arcId == this._arcId.toString());
+    if (this._memoryMap[keyString] == undefined)
+      return this.construct(id, type, keyString);
+    return this._memoryMap[keyString];
+  }
+
+  async baseStorageFor(type) {
+    if (this._typeMap.has(type))
+      return this._typeMap.get(type);
+    let storage = await this.construct(type.toString(), type.collectionOf(), 'in-memory');
+    this._typeMap.set(type, storage);
+    return storage;
+  }
+
   parseStringAsKey(string) {
     return new InMemoryKey(string);
   }
@@ -24979,6 +25000,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
     super(type, name, id, key);
     this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model_js__["a" /* CrdtCollectionModel */]();
     this._storageEngine = storageEngine;
+    this._backingStore = null;
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._version !== null);
   }
 
@@ -25010,11 +25032,18 @@ class InMemoryCollection extends InMemoryStorageProvider {
       let items = this.toLiteral().model;
       let referredType = this.type.primitiveType().referenceReferredType;
 
-      // TODO: batch by store.
+      let refSet = new Set();
+
+      items.forEach(item => refSet.add(item.value.storageKey));
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(refSet.size == 1);
+      let ref = refSet.values().next().value;
+
+      if (this._backingStore == null)
+        this._backingStore = await this._storageEngine.share(referredType.toString(), referredType, ref);
+
       let retrieveItem = async item => {
         let ref = item.value;
-        let store = await this._storageEngine.connect(referredType.toString(), referredType, ref.storageKey);
-        return await store.get(ref.id);
+        return this._backingStore.get(ref.id);
       };
 
       return await Promise.all(items.map(retrieveItem));
@@ -25028,8 +25057,9 @@ class InMemoryCollection extends InMemoryStorageProvider {
       if (ref == null)
         return null;
       let referredType = this.type.primitiveType().referenceReferredType;
-      let store = await this._storageEngine.connect(referredType.toString(), referredType, ref.storageKey);
-      let result = await store.get(ref.id);
+      if (this._backingStore == null)
+        this._backingStore = await this._storageEngine.share(referredType.toString(), referredType.collectionOf(), ref.storageKey);
+      let result = await this._backingStore.get(ref.id);
       return result;
     }
     return this._model.getValue(id);
@@ -25042,6 +25072,15 @@ class InMemoryCollection extends InMemoryStorageProvider {
   async store(value, keys, originatorId=null) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(keys != null && keys.length > 0, 'keys required');
     let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({cat: 'handle', name: 'InMemoryCollection::store', args: {name: this.name}});
+
+    if (this.type.primitiveType().isReference) {
+      let referredType = this.type.primitiveType().referenceReferredType;
+      if (this._backingStore == null)
+        this._backingStore = await this._storageEngine.baseStorageFor(referredType);
+      this._backingStore.store(value, [this.storageKey]);
+      value = {id: value.id, storageKey: this._backingStore.storageKey};
+    }
+
     let effective = this._model.add(value.id, value, keys);
     this._version++;
     await trace.wait(
@@ -25074,6 +25113,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
     super(type, name, id, key);
     this._storageEngine = storageEngine;
     this._stored = null;
+    this._backingStore = null;
   }
 
   clone() {
@@ -25119,9 +25159,9 @@ class InMemoryVariable extends InMemoryStorageProvider {
       let value = this._stored;
       let referredType = this.type.referenceReferredType;
       // TODO: string version of ReferredTyped as ID?
-      // TODO: remember to use/check the ID of the reference too.
-      let store = await this._storageEngine.connect(referredType.toString(), referredType, value.storageKey);
-      let result = await store.get();
+      if (this._backingStore == null)
+        this._backingStore = await this._storageEngine.share(referredType.toString(), referredType.collectionOf(), value.storageKey);
+      let result = await this._backingStore.get(value.id);
       return result;
     }
     return this._stored;
@@ -25129,11 +25169,24 @@ class InMemoryVariable extends InMemoryStorageProvider {
 
   async set(value, originatorId=null, barrier=null) {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(value !== undefined);
-    // If there's a barrier set, then the originating storage-proxy is expecting
-    // a result so we cannot suppress the event here.
-    if (JSON.stringify(this._stored) == JSON.stringify(value) && barrier == null)
-      return;
-    this._stored = value;
+    if (this.type.isReference) {
+      // If there's a barrier set, then the originating storage-proxy is expecting
+      // a result so we cannot suppress the event here.
+      if (this.__stored && this.__stored.id == value.id && barrier == null)
+        return;
+      
+      let referredType = this.type.referenceReferredType;
+      if (this._backingStore == null)
+        this._backingStore = await this._storageEngine.baseStorageFor(referredType);
+      this._backingStore.store(value, [this.storageKey]);
+      this._stored = {id: value.id, storageKey: this._backingStore.storageKey};
+    } else {
+      // If there's a barrier set, then the originating storage-proxy is expecting
+      // a result so we cannot suppress the event here.
+      if (JSON.stringify(this._stored) == JSON.stringify(value) && barrier == null)
+        return;
+      this._stored = value;
+    }
     this._version++;
     await this._fire('change', {data: this._stored, version: this._version, originatorId, barrier});
   }

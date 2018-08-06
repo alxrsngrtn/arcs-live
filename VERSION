@@ -1,5 +1,9 @@
-commit f7caec04284e140b37be36f036ea6927dbcc06e6
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Aug 3 21:43:48 2018 -0700
+commit 34bafa4441849ed635f28f2ce72394e658d36e77
+Author: shans <shane.stephens@gmail.com>
+Date:   Mon Aug 6 17:15:58 2018 +1000
 
-    set slot fixes: (1) case insensitive slot name suport (2) preserve set slot's inner slot when just single sub-id slot updates (#1725)
+    Implement writing to the backing store for in-memory ref stores. (#1728)
+    
+    * Implement writing to the backing store for in-memory ref stores.
+    
+    * Review comments
