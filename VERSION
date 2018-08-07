@@ -1,5 +1,8 @@
-commit c0694cff97e74c8d804305df666a67fa14ce622d
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Aug 6 15:13:20 2018 -0700
+commit e529253970b9c60dc32d2db5a478ffa999428fdc
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Aug 7 11:05:15 2018 -0700
 
-    avoid planificator search update incorrectly cancelling ongoing planning (#1732)
+    Update chokidar dependency to 2.0.4 (#1734)
+    
+    This update addresses issues on macos where the optional fsevents dep
+    fails to compile and generate lots of output on install.
