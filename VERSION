@@ -1,8 +1,14 @@
-commit f06b30302485510c3c536681529ebbc0ff9ff6d0
+commit 61a602f5f36512e2784129d75a5ab5630a1b555e
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Aug 8 06:40:31 2018 -0700
+Date:   Wed Aug 8 10:30:20 2018 -0700
 
-    Update to grammkit 0.6.1 (#1740)
+    Various cleanups for package.json (#1735)
     
-    - This retires the use of shans fork
-    - The ohm dep was updated in dundalek/GrammKit@b1dfe878260be58a6379b5c892c460ebc440b6c9
+    * Various cleanups for package.json
+    
+    - Add license file and header. Use the BSD 3 clause, same as Polymer.
+    - Add metadata about issues and source repos.
+    - Add an engines config to match up with the requirements in README.md
+      requiring 9.4.0 or higher.
+    
+    Addresses #1724
