@@ -1,9 +1,8 @@
-commit d52c63db6a61e7ffee28097ec9ddb6231c388226
+commit f06b30302485510c3c536681529ebbc0ff9ff6d0
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Aug 7 21:48:46 2018 -0700
+Date:   Wed Aug 8 06:40:31 2018 -0700
 
-    Update to elint 5.3.0 and fix getter-return issues (#1737)
+    Update to grammkit 0.6.1 (#1740)
     
-    More details about the new getter-return check are here:
-    
-      https://eslint.org/docs/rules/getter-return
+    - This retires the use of shans fork
+    - The ohm dep was updated in dundalek/GrammKit@b1dfe878260be58a6379b5c892c460ebc440b6c9
