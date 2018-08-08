@@ -394,7 +394,8 @@ Ruleset.Builder = class {
    */
   order(...strategiesOrGroups) {
     for (let i = 0; i < strategiesOrGroups.length - 1; i++) {
-      let current = strategiesOrGroups[i], next = strategiesOrGroups[i + 1];
+      let current = strategiesOrGroups[i];
+      let next = strategiesOrGroups[i + 1];
       for (let strategy of Array.isArray(current) ? current : [current]) {
         let set = this._orderingRules.get(strategy);
         if (!set) {
@@ -1259,6 +1260,7 @@ class Type {
     if (this.isInterface)
       return Type.newInterface(this.interfaceShape.canWriteSuperset);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canWriteSuperset not implemented for ${this}`);
+    return undefined;
   }
 
   get canReadSubset() {
@@ -1269,6 +1271,7 @@ class Type {
     if (this.isInterface)
       return Type.newInterface(this.interfaceShape.canReadSubset);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canReadSubset not implemented for ${this}`);
+    return undefined;
   }
 
   isMoreSpecificThan(type) {
@@ -2603,9 +2606,7 @@ class ParticleSpec {
   }
 
   get primaryVerb() {
-    if (this.verbs.length > 0) {
-      return this.verbs[0];
-    }
+    return (this.verbs.length > 0) ? this.verbs[0] : undefined;
   }
 
   matchAffordance(affordance) {
@@ -4991,7 +4992,8 @@ class DescriptionFormatter {
     }
 
     // Sort by number of singleton slots.
-    let p1Slots = 0, p2Slots = 0;
+    let p1Slots = 0;
+    let p2Slots = 0;
     p1._particle.spec.slots.forEach((slotSpec) => { if (!slotSpec.isSet) ++p1Slots; });
     p2._particle.spec.slots.forEach((slotSpec) => { if (!slotSpec.isSet) ++p2Slots; });
     return p2Slots - p1Slots;
@@ -7847,7 +7849,10 @@ ${this.activeRecipe.toString()}`;
     });
 
    let {particles, handles, slots} = this._activeRecipe.mergeInto(arc._activeRecipe);
-   let particleIndex = 0, handleIndex = 0, slotIndex = 0;
+   let particleIndex = 0;
+   let handleIndex = 0;
+   let slotIndex = 0;
+    
    this._recipes.forEach(recipe => {
      let arcRecipe = {particles: [], handles: [], slots: [], innerArcs: new Map(), pattern: recipe.pattern};
      recipe.particles.forEach(p => {
@@ -8840,7 +8845,8 @@ class StrategyExplorerAdapter {
 
       population.forEach(item => {
         item.derivation = item.derivation.map(derivItem => {
-          let parent, strategy;
+          let parent;
+          let strategy;
           if (derivItem.parent)
             parent = idMap.get(derivItem.parent);
           if (derivItem.strategy)
@@ -22837,7 +22843,7 @@ class Particle {
   get connections() { return this._connections; } // {parameter -> HandleConnection}
   get unnamedConnections() { return this._unnamedConnections; } // HandleConnection*
   get consumedSlotConnections() { return this._consumedSlotConnections; }
-  get primaryVerb() { if (this._verbs.length > 0) return this._verbs[0]; }
+  get primaryVerb() { return (this._verbs.length > 0) ? this._verbs[0] : undefined; }
   set verbs(verbs) { this._verbs = verbs; }
 
   set spec(spec) {
@@ -24291,6 +24297,7 @@ class FirebaseStorageProvider extends __WEBPACK_IMPORTED_MODULE_0__storage_provi
 
   get _hasLocalChanges() {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(false, 'subclass should implement _hasLocalChanges');
+    return undefined;
   }
 
   async _persistChangesImpl() {
@@ -26459,7 +26466,8 @@ const _setSubTemplate = function(node, value, controller) {
 
 const _renderSubtemplates = function(container, controller, template, models) {
   //console.log('XList::_renderList:', props);
-  let next, child = container.firstElementChild;
+  let child = container.firstElementChild;
+  let next;
   if (template && models) {
     models && models.forEach((model, i)=>{
       next = child && child.nextElementSibling;

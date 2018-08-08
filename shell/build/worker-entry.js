@@ -283,6 +283,7 @@ class Type {
     if (this.isInterface)
       return Type.newInterface(this.interfaceShape.canWriteSuperset);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canWriteSuperset not implemented for ${this}`);
+    return undefined;
   }
 
   get canReadSubset() {
@@ -293,6 +294,7 @@ class Type {
     if (this.isInterface)
       return Type.newInterface(this.interfaceShape.canReadSubset);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canReadSubset not implemented for ${this}`);
+    return undefined;
   }
 
   isMoreSpecificThan(type) {
@@ -800,9 +802,7 @@ class ParticleSpec {
   }
 
   get primaryVerb() {
-    if (this.verbs.length > 0) {
-      return this.verbs[0];
-    }
+    return (this.verbs.length > 0) ? this.verbs[0] : undefined;
   }
 
   matchAffordance(affordance) {
