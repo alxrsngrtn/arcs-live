@@ -1,14 +1,5 @@
-commit 61a602f5f36512e2784129d75a5ab5630a1b555e
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Aug 8 10:30:20 2018 -0700
+commit 99d8ee80de04ba3b51e88d38a37535475a04419b
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu Aug 9 17:00:01 2018 +1000
 
-    Various cleanups for package.json (#1735)
-    
-    * Various cleanups for package.json
-    
-    - Add license file and header. Use the BSD 3 clause, same as Polymer.
-    - Add metadata about issues and source repos.
-    - Add an engines config to match up with the requirements in README.md
-      requiring 9.4.0 or higher.
-    
-    Addresses #1724
+    Implement data/ptr separation for firebase handles (#1744)
