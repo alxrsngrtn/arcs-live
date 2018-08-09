@@ -1,5 +1,5 @@
-commit 99d8ee80de04ba3b51e88d38a37535475a04419b
+commit 1d47c52dd682a80379a690b69239595d3ccc5191
 Author: shans <shane.stephens@gmail.com>
-Date:   Thu Aug 9 17:00:01 2018 +1000
+Date:   Thu Aug 9 17:23:22 2018 +1000
 
-    Implement data/ptr separation for firebase handles (#1744)
+    Start incremental move to typeScript (#1733)
