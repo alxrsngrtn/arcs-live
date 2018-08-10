@@ -1,5 +1,9 @@
-commit e18f06a46604a9771b3ef7a95da4f3b1472d1421
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Aug 10 11:30:18 2018 +1000
+commit ed11258d08a8f057f07743125b7428d3daf5264a
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Aug 9 18:44:47 2018 -0700
 
-    move firebase-storage to typescript (#1748)
+    Better detection of errors in commands spawned by sigh (#1746)
+    
+    * Better detection of errors in commands spawned by sigh
+    
+    * Use npm path for tsc
