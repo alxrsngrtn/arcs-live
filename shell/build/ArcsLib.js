@@ -6681,15 +6681,15 @@ class SlotDomConsumer extends __WEBPACK_IMPORTED_MODULE_1__slot_consumer_js__["a
 // Note: This implementation does not guard against the case of the
 // same membership key being added more than once. Don't do that.
 class CrdtCollectionModel {
-    constructor(model) {
+    constructor(model = undefined) {
         // id => {value, Set[keys]}
-        this._items = new Map();
+        this.items = new Map();
         if (model) {
             for (let { id, value, keys } of model) {
                 if (!keys) {
                     keys = [];
                 }
-                this._items.set(id, { value, keys: new Set(keys) });
+                this.items.set(id, { value, keys: new Set(keys) });
             }
         }
     }
@@ -6698,11 +6698,11 @@ class CrdtCollectionModel {
     // or `value` is different to the value previously stored).
     add(id, value, keys) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(keys.length > 0, 'add requires keys');
-        let item = this._items.get(id);
+        let item = this.items.get(id);
         let effective = false;
         if (!item) {
             item = { value, keys: new Set(keys) };
-            this._items.set(id, item);
+            this.items.set(id, item);
             effective = true;
         }
         else {
@@ -6725,7 +6725,7 @@ class CrdtCollectionModel {
     // Returns whether the change is effective (the value is no longer present
     // in the collection because all of the keys have been removed).
     remove(id, keys) {
-        let item = this._items.get(id);
+        let item = this.items.get(id);
         if (!item) {
             return false;
         }
@@ -6734,34 +6734,34 @@ class CrdtCollectionModel {
         }
         let effective = item.keys.size == 0;
         if (effective) {
-            this._items.delete(id);
+            this.items.delete(id);
         }
         return effective;
     }
     // [{id, value, keys: []}]
     toLiteral() {
         let result = [];
-        for (let [id, { value, keys }] of this._items.entries()) {
+        for (let [id, { value, keys }] of this.items.entries()) {
             result.push({ id, value, keys: [...keys] });
         }
         return result;
     }
     toList() {
-        return [...this._items.values()].map(item => item.value);
+        return [...this.items.values()].map(item => item.value);
     }
     has(id) {
-        return this._items.has(id);
+        return this.items.has(id);
     }
     getKeys(id) {
-        let item = this._items.get(id);
+        let item = this.items.get(id);
         return item ? [...item.keys] : [];
     }
     getValue(id) {
-        let item = this._items.get(id);
+        let item = this.items.get(id);
         return item ? item.value : null;
     }
     get size() {
-        return this._items.size;
+        return this.items.size;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = CrdtCollectionModel;
@@ -24286,7 +24286,7 @@ class StorageProxyScheduler {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base_js__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_atob_web_js__ = __webpack_require__(63);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__platform_btoa_web_js__ = __webpack_require__(64);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__crdt_collection_model_js__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__crdt_collection_model__ = __webpack_require__(24);
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -24781,7 +24781,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         // Local model of entries stored in this collection. Updated
         // by local modifications and when we receive remote updates
         // from firebase.
-        this.model = new __WEBPACK_IMPORTED_MODULE_6__crdt_collection_model_js__["a" /* CrdtCollectionModel */]();
+        this.model = new __WEBPACK_IMPORTED_MODULE_6__crdt_collection_model__["a" /* CrdtCollectionModel */]();
         // Monotonic version. Updated each time we receive an update
         // from firebase, or when a local modification is applied.
         this._version = null;
@@ -25088,7 +25088,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             this.fromLiteral(yield handle.toLiteral());
             // Don't notify about the contents that have just been cloned.
             // However, do record local changes for persistence.
-            for (let item of this.model._items.values()) {
+            for (let item of this.model.toLiteral()) {
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(item.value.id !== undefined);
                 this.localChanges.set(item.value.id, { add: [...item.keys], remove: [] });
             }
@@ -25110,7 +25110,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
     }
     fromLiteral({ version, model }) {
         this._version = version;
-        this.model = new __WEBPACK_IMPORTED_MODULE_6__crdt_collection_model_js__["a" /* CrdtCollectionModel */](model);
+        this.model = new __WEBPACK_IMPORTED_MODULE_6__crdt_collection_model__["a" /* CrdtCollectionModel */](model);
     }
 }
 var CursorState;
@@ -25334,7 +25334,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__storage_provider_base_js__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base_js__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model_js__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model__ = __webpack_require__(24);
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -25471,7 +25471,7 @@ class InMemoryStorageProvider extends __WEBPACK_IMPORTED_MODULE_2__storage_provi
 class InMemoryCollection extends InMemoryStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, name, id, key);
-        this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model_js__["a" /* CrdtCollectionModel */]();
+        this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model__["a" /* CrdtCollectionModel */]();
         this._storageEngine = storageEngine;
         this._backingStore = null;
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._version !== null);
@@ -25495,7 +25495,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
     }
     fromLiteral({ version, model }) {
         this._version = version;
-        this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model_js__["a" /* CrdtCollectionModel */](model);
+        this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model__["a" /* CrdtCollectionModel */](model);
     }
     toList() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -25573,7 +25573,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
         });
     }
     clearItemsForTesting() {
-        this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model_js__["a" /* CrdtCollectionModel */]();
+        this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model__["a" /* CrdtCollectionModel */]();
     }
 }
 class InMemoryVariable extends InMemoryStorageProvider {

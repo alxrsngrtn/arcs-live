@@ -19,7 +19,7 @@ import { assert } from '../../platform/assert-web.js';
 import { KeyBase } from './key-base.js';
 import { atob } from '../../platform/atob-web.js';
 import { btoa } from '../../platform/btoa-web.js';
-import { CrdtCollectionModel } from './crdt-collection-model.js';
+import { CrdtCollectionModel } from './crdt-collection-model';
 export function resetStorageForTesting(key) {
     return __awaiter(this, void 0, void 0, function* () {
         key = new FirebaseKey(key);
@@ -797,7 +797,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             this.fromLiteral(yield handle.toLiteral());
             // Don't notify about the contents that have just been cloned.
             // However, do record local changes for persistence.
-            for (let item of this.model._items.values()) {
+            for (let item of this.model.toLiteral()) {
                 assert(item.value.id !== undefined);
                 this.localChanges.set(item.value.id, { add: [...item.keys], remove: [] });
             }

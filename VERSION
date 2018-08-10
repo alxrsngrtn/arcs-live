@@ -1,9 +1,7 @@
-commit ed11258d08a8f057f07743125b7428d3daf5264a
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Aug 9 18:44:47 2018 -0700
+commit 185242606dd77169986686fb8cf70c12d55fd6aa
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Fri Aug 10 15:29:18 2018 -0700
 
-    Better detection of errors in commands spawned by sigh (#1746)
+    Fix ArcsUtils.clearStore to reference model items via new name. (#1751)
     
-    * Better detection of errors in commands spawned by sigh
-    
-    * Use npm path for tsc
+    This was broken by #1749.

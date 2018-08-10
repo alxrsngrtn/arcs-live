@@ -18,7 +18,7 @@ import { assert } from '../../platform/assert-web.js';
 import { Tracing } from '../../tracelib/trace.js';
 import { StorageProviderBase } from './storage-provider-base.js';
 import { KeyBase } from './key-base.js';
-import { CrdtCollectionModel } from './crdt-collection-model.js';
+import { CrdtCollectionModel } from './crdt-collection-model';
 export function resetInMemoryStorageForTesting() {
     for (let key in __storageCache) {
         __storageCache[key]._memoryMap = {};
