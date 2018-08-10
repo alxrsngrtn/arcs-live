@@ -1,5 +1,5 @@
-commit 1d47c52dd682a80379a690b69239595d3ccc5191
+commit efd9d048b06d43c1383e03fbfbaf49f4c08e5d13
 Author: shans <shane.stephens@gmail.com>
-Date:   Thu Aug 9 17:23:22 2018 +1000
+Date:   Fri Aug 10 10:02:40 2018 +1000
 
-    Start incremental move to typeScript (#1733)
+    Ensure intermediate build target gets deployed to arcs-live (#1745)
