@@ -1,5 +1,5 @@
-commit 8fca7f86ddbb55bb85a5f94b43dd724a7b6c107b
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Aug 9 17:50:39 2018 -0700
+commit e18f06a46604a9771b3ef7a95da4f3b1472d1421
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri Aug 10 11:30:18 2018 +1000
 
-    Update firebase dependency from 4.13.1 to 5.3.1 (#1747)
+    move firebase-storage to typescript (#1748)
