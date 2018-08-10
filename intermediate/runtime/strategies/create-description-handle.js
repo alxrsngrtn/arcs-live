@@ -20,10 +20,12 @@ export class CreateDescriptionHandle extends Strategy {
         return __awaiter(this, void 0, void 0, function* () {
             return Recipe.over(this.getResults(inputParams), new class extends Walker {
                 onHandleConnection(recipe, handleConnection) {
-                    if (handleConnection.handle)
+                    if (handleConnection.handle) {
                         return;
-                    if (handleConnection.name != 'descriptions')
+                    }
+                    if (handleConnection.name != 'descriptions') {
                         return;
+                    }
                     return (recipe, handleConnection) => {
                         let handle = recipe.newHandle();
                         handle.fate = 'create';

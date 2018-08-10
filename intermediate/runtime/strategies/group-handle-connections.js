@@ -90,7 +90,7 @@ export class GroupHandleConnections extends Strategy {
                         groupsByType.set(type, groups);
                     }
                 });
-                if (groupsByType.size > 0)
+                if (groupsByType.size > 0) {
                     return recipe => {
                         groupsByType.forEach((groups, type) => {
                             groups.forEach(group => {
@@ -103,6 +103,7 @@ export class GroupHandleConnections extends Strategy {
                         });
                         // TODO: score!
                     };
+                }
             }
         }(Walker.Permuted);
     }

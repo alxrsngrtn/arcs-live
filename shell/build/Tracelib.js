@@ -103,12 +103,15 @@ if (typeof document == 'object') {
 let flowId = 0;
 
 function parseInfo(info) {
-  if (!info)
+  if (!info) {
     return {};
-  if (typeof info == 'function')
+  }
+  if (typeof info == 'function') {
     return parseInfo(info());
-  if (info.toTraceInfo)
+  }
+  if (info.toTraceInfo) {
     return parseInfo(info.toTraceInfo());
+  }
   return info;
 }
 

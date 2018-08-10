@@ -76,8 +76,9 @@ class Handle {
     }
     _serialize(entity) {
         assert(entity, 'can\'t serialize a null entity');
-        if (!entity.isIdentified())
+        if (!entity.isIdentified()) {
             entity.createIdentity(this._proxy.generateIDComponents());
+        }
         let id = entity[Symbols.identifier];
         let rawData = entity.dataClone();
         return {
@@ -119,10 +120,12 @@ class Collection extends Handle {
                 return;
             case 'update': {
                 let update = {};
-                if ('add' in details)
+                if ('add' in details) {
                     update.added = this._restore(details.add);
-                if ('remove' in details)
+                }
+                if ('remove' in details) {
                     update.removed = this._restore(details.remove);
+                }
                 update.originator = details.originatorId == this._particleId;
                 particle.onHandleUpdate(this, update);
                 return;
@@ -140,8 +143,9 @@ class Collection extends Handle {
     toList() {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: remove this and use query instead
-            if (!this.canRead)
+            if (!this.canRead) {
                 throw new Error('Handle not readable');
+            }
             return this._restore(yield this._proxy.toList(this._particleId));
         });
     }
@@ -155,8 +159,9 @@ class Collection extends Handle {
      */
     store(entity) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canWrite)
+            if (!this.canWrite) {
                 throw new Error('Handle not writeable');
+            }
             let serialization = this._serialize(entity);
             let keys = [this._proxy.generateID('key')];
             return this._proxy.store(serialization, keys, this._particleId);
@@ -169,8 +174,9 @@ class Collection extends Handle {
      */
     remove(entity) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canWrite)
+            if (!this.canWrite) {
                 throw new Error('Handle not writeable');
+            }
             let serialization = this._serialize(entity);
             // Remove the keys that exist at storage/proxy.
             let keys = [];
@@ -211,15 +217,17 @@ class Variable extends Handle {
      */
     get() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canRead)
+            if (!this.canRead) {
                 throw new Error('Handle not readable');
+            }
             let model = yield this._proxy.get(this._particleId);
             return this._restore(model);
         });
     }
     _restore(model) {
-        if (model === null)
+        if (model === null) {
             return null;
+        }
         if (this.type.isEntity) {
             return restore(model, this.entityClass);
         }
@@ -233,8 +241,9 @@ class Variable extends Handle {
     set(entity) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!this.canWrite)
+                if (!this.canWrite) {
                     throw new Error('Handle not writeable');
+                }
                 return this._proxy.set(this._serialize(entity), this._particleId);
             }
             catch (e) {
@@ -250,8 +259,9 @@ class Variable extends Handle {
      */
     clear() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canWrite)
+            if (!this.canWrite) {
                 throw new Error('Handle not writeable');
+            }
             yield this._proxy.clear(this._particleId);
         });
     }

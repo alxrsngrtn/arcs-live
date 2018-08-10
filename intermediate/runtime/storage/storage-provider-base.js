@@ -54,8 +54,9 @@ export class StorageProviderBase {
     _fire(kind, details) {
         return __awaiter(this, void 0, void 0, function* () {
             let listenerMap = this._listeners.get(kind);
-            if (!listenerMap || listenerMap.size == 0)
+            if (!listenerMap || listenerMap.size == 0) {
                 return;
+            }
             let trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::_fire', args: { kind, type: this._type.key,
                     name: this.name, listeners: listenerMap.size } });
             let callbacks = [];
@@ -100,8 +101,9 @@ export class StorageProviderBase {
             handleStr.push(`in '${this.source}'`);
         }
         results.push(handleStr.join(' '));
-        if (this.description)
+        if (this.description) {
             results.push(`  description \`${this.description}\``);
+        }
         return results.join('\n');
     }
     get apiChannelMappingId() {

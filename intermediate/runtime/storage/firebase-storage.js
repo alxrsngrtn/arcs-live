@@ -61,14 +61,16 @@ class FirebaseKey extends KeyBase {
     }
     childKeyForHandle(id) {
         let location = '';
-        if (this.location != undefined && this.location.length > 0)
+        if (this.location != undefined && this.location.length > 0) {
             location = this.location + '/';
+        }
         location += `handles/${id}`;
         return new FirebaseKey(`${this.protocol}://${this.databaseUrl}/${this.apiKey}/${location}`);
     }
     toString() {
-        if (this.databaseUrl && this.apiKey)
+        if (this.databaseUrl && this.apiKey) {
             return `${this.protocol}://${this.databaseUrl}/${this.apiKey}/${this.location}`;
+        }
         return `${this.protocol}://`;
     }
 }
@@ -98,8 +100,9 @@ export class FirebaseStorage {
     }
     share(id, type, key) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this._sharedStores[id])
+            if (!this._sharedStores[id]) {
                 this._sharedStores[id] = yield this._join(id, type, key, true);
+            }
             return this._sharedStores[id];
         });
     }
@@ -121,8 +124,9 @@ export class FirebaseStorage {
             assert(typeof id == 'string');
             key = new FirebaseKey(key);
             // TODO: is it ever going to be possible to autoconstruct new firebase datastores?
-            if (key.databaseUrl == undefined || key.apiKey == undefined)
+            if (key.databaseUrl == undefined || key.apiKey == undefined) {
                 throw new Error('Can\'t complete partial firebase keys');
+            }
             if (this._apps[key.projectId] == undefined) {
                 for (let app of firebase.apps) {
                     if (app.options.databaseURL == key.databaseURL) {
@@ -145,12 +149,14 @@ export class FirebaseStorage {
             }
             if (shouldExist == false || (shouldExist == 'unknown' && currentSnapshot.exists() == false)) {
                 let result = yield reference.transaction(data => {
-                    if (data != null)
+                    if (data != null) {
                         return undefined;
+                    }
                     return { version: 0 };
                 }, undefined, false);
-                if (!result.committed)
+                if (!result.committed) {
                     return null;
+                }
             }
             return FirebaseStorageProvider.newProvider(type, this, id, reference, key);
         });
@@ -178,10 +184,12 @@ class FirebaseStorageProvider extends StorageProviderBase {
     static newProvider(type, storageEngine, id, reference, key) {
         if (type.isCollection) {
             // FIXME: implement a mechanism for specifying BigCollections in manifests
-            if (id.startsWith('~big~'))
+            if (id.startsWith('~big~')) {
                 return new FirebaseBigCollection(type, storageEngine, id, reference, key);
-            else
+            }
+            else {
                 return new FirebaseCollection(type, storageEngine, id, reference, key);
+            }
         }
         return new FirebaseVariable(type, storageEngine, id, reference, key);
     }
@@ -332,8 +340,9 @@ class FirebaseVariable extends FirebaseStorageProvider {
             yield this._initialized;
             if (this.type.isReference) {
                 let referredType = this.type.referenceReferredType;
-                if (this._backingStore == null)
+                if (this._backingStore == null) {
                     this._backingStore = yield this._storageEngine.share(referredType.toString(), referredType.collectionOf(), this._value.storageKey);
+                }
                 return yield this._backingStore.get(this._value.id);
             }
             return this._value;
@@ -358,8 +367,9 @@ class FirebaseVariable extends FirebaseStorageProvider {
                 this._resolveInitialized();
             }
             else {
-                if (JSON.stringify(this._value) == JSON.stringify(value))
+                if (JSON.stringify(this._value) == JSON.stringify(value)) {
                     return;
+                }
                 this._version++;
             }
             if (this.type.isReference) {
@@ -597,11 +607,13 @@ class FirebaseCollection extends FirebaseStorageProvider {
             yield this._initialized;
             if (this.type.primitiveType().isReference) {
                 let ref = this._model.getValue(id);
-                if (ref == null)
+                if (ref == null) {
                     return null;
+                }
                 let referredType = this.type.primitiveType().referenceReferredType;
-                if (this._backingStore == null)
+                if (this._backingStore == null) {
                     this._backingStore = yield this._storageEngine.share(referredType.toString(), referredType.collectionOf(), ref.storageKey);
+                }
                 let result = yield this._backingStore.get(ref.id);
                 return result;
             }
@@ -613,8 +625,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
             yield this._initialized;
             // 1. Apply the change to the local model.
             let value = this._model.getValue(id);
-            if (value === null)
+            if (value === null) {
                 return;
+            }
             if (keys.length == 0) {
                 keys = this._model.getKeys(id);
             }
@@ -643,8 +656,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
             // 1. Apply the change to the local model.
             if (this.type.primitiveType().isReference) {
                 let referredType = this.type.primitiveType().referenceReferredType;
-                if (this._backingStore == null)
+                if (this._backingStore == null) {
                     this._backingStore = yield this._storageEngine.baseStorageFor(referredType, this.storageKey);
+                }
                 yield this._backingStore.store(value, [this.storageKey]);
                 value = { id: value.id, storageKey: this._backingStore.storageKey };
             }
@@ -763,8 +777,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
                 items.forEach(item => refSet.add(item.storageKey));
                 assert(refSet.size == 1);
                 let ref = refSet.values().next().value;
-                if (this._backingStore == null)
+                if (this._backingStore == null) {
                     this._backingStore = yield this._storageEngine.share(referredType.toString(), referredType.collectionOf(), ref);
+                }
                 let retrieveItem = (item) => __awaiter(this, void 0, void 0, function* () {
                     return this._backingStore.get(item.id);
                 });

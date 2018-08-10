@@ -180,20 +180,24 @@ class Strategizer {
                     if (existingResult) {
                         if (result.derivation[0].parent == existingResult) {
                             record.nullDerivations += 1;
-                            if (record.nullDerivationsByStrategy[strategy] == undefined)
+                            if (record.nullDerivationsByStrategy[strategy] == undefined) {
                                 record.nullDerivationsByStrategy[strategy] = 0;
+                            }
                             record.nullDerivationsByStrategy[strategy]++;
                         }
                         else if (existingResult.derivation.map(a => a.parent).indexOf(result.derivation[0].parent) != -1) {
                             record.duplicateSameParentDerivations += 1;
-                            if (record.duplicateSameParentDerivationsByStrategy[strategy] == undefined)
+                            if (record.duplicateSameParentDerivationsByStrategy[strategy] ==
+                                undefined) {
                                 record.duplicateSameParentDerivationsByStrategy[strategy] = 0;
+                            }
                             record.duplicateSameParentDerivationsByStrategy[strategy]++;
                         }
                         else {
                             record.duplicateDerivations += 1;
-                            if (record.duplicateDerivationsByStrategy[strategy] == undefined)
+                            if (record.duplicateDerivationsByStrategy[strategy] == undefined) {
                                 record.duplicateDerivationsByStrategy[strategy] = 0;
+                            }
                             record.duplicateDerivationsByStrategy[strategy]++;
                             this.populationHash.get(result.hash).derivation.push(result.derivation[0]);
                         }
@@ -223,10 +227,12 @@ class Strategizer {
             terminal = [...terminal.values()];
             record.survivingDerivations = generated.length;
             generated.sort((a, b) => {
-                if (a.score > b.score)
+                if (a.score > b.score) {
                     return -1;
-                if (a.score < b.score)
+                }
+                if (a.score < b.score) {
                     return 1;
+                }
                 return 0;
             });
             // Evalute
@@ -302,8 +308,9 @@ class Walker {
     createDescendant(result, score, hash, valid) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.currentResult, 'no current result');
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.currentStrategy, 'no current strategy');
-        if (this.currentResult.score)
+        if (this.currentResult.score) {
             score += this.currentResult.score;
+        }
         this.descendants.push({
             result,
             score,
@@ -520,8 +527,9 @@ class Recipe {
         let idx = this._particles.indexOf(particle);
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(idx > -1);
         this._particles.splice(idx, 1);
-        for (let slotConnection of Object.values(particle._consumedSlotConnections))
+        for (let slotConnection of Object.values(particle._consumedSlotConnections)) {
             slotConnection.remove();
+        }
     }
     newHandle() {
         let handle = new __WEBPACK_IMPORTED_MODULE_7__handle_js__["a" /* Handle */](this);
@@ -547,8 +555,9 @@ class Recipe {
     }
     isResolved() {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(Object.isFrozen(this), 'Recipe must be normalized to be resolved.');
-        if (this._obligations.length > 0)
+        if (this._obligations.length > 0) {
             return false;
+        }
         return this._connectionConstraints.length == 0
             && (this._search === null || this._search.isResolved())
             && this._handles.every(handle => handle.isResolved())
@@ -630,14 +639,16 @@ class Recipe {
     }
     findHandle(id) {
         for (let handle of this.handles) {
-            if (handle.id == id)
+            if (handle.id == id) {
                 return handle;
+            }
         }
     }
     findSlot(id) {
         for (let slot of this.slots) {
-            if (slot.id == id)
+            if (slot.id == id) {
                 return slot;
+            }
         }
     }
     get pattern() { return this._pattern; }
@@ -767,8 +778,9 @@ class Recipe {
     clone(cloneMap) {
         // for now, just copy everything
         let recipe = new Recipe(this.name);
-        if (cloneMap == undefined)
+        if (cloneMap == undefined) {
             cloneMap = new Map();
+        }
         this._copyInto(recipe, cloneMap);
         // TODO: figure out a better approach than stashing the cloneMap permanently
         // on the recipe
@@ -942,49 +954,56 @@ class Walker extends __WEBPACK_IMPORTED_MODULE_0__walker_base_js__["a" /* Walker
         // onHandle, etc.
         if (this.onRecipe) {
             result = this.onRecipe(recipe, result);
-            if (!this.isEmptyResult(result))
+            if (!this.isEmptyResult(result)) {
                 updateList.push({ continuation: result });
+            }
         }
         for (let particle of recipe.particles) {
             if (this.onParticle) {
                 let result = this.onParticle(recipe, particle);
-                if (!this.isEmptyResult(result))
+                if (!this.isEmptyResult(result)) {
                     updateList.push({ continuation: result, context: particle });
+                }
             }
         }
         for (let handleConnection of recipe.handleConnections) {
             if (this.onHandleConnection) {
                 let result = this.onHandleConnection(recipe, handleConnection);
-                if (!this.isEmptyResult(result))
+                if (!this.isEmptyResult(result)) {
                     updateList.push({ continuation: result, context: handleConnection });
+                }
             }
         }
         for (let handle of recipe.handles) {
             if (this.onHandle) {
                 let result = this.onHandle(recipe, handle);
-                if (!this.isEmptyResult(result))
+                if (!this.isEmptyResult(result)) {
                     updateList.push({ continuation: result, context: handle });
+                }
             }
         }
         for (let slotConnection of recipe.slotConnections) {
             if (this.onSlotConnection) {
                 let result = this.onSlotConnection(recipe, slotConnection);
-                if (!this.isEmptyResult(result))
+                if (!this.isEmptyResult(result)) {
                     updateList.push({ continuation: result, context: slotConnection });
+                }
             }
         }
         for (let slot of recipe.slots) {
             if (this.onSlot) {
                 let result = this.onSlot(recipe, slot);
-                if (!this.isEmptyResult(result))
+                if (!this.isEmptyResult(result)) {
                     updateList.push({ continuation: result, context: slot });
+                }
             }
         }
         for (let obligation of recipe.obligations) {
             if (this.onObligation) {
                 let result = this.onObligation(recipe, obligation);
-                if (!this.isEmptyResult(result))
+                if (!this.isEmptyResult(result)) {
                     updateList.push({ continuation: result, context: obligation });
+                }
             }
         }
         this._runUpdateList(recipe, updateList);
@@ -1021,8 +1040,9 @@ function addType(name, arg = undefined) {
     let upperArg = arg ? arg[0].toUpperCase() + arg.substring(1) : '';
     Object.defineProperty(Type.prototype, `${lowerName}${upperArg}`, {
         get: function () {
-            if (!this[`is${name}`])
+            if (!this[`is${name}`]) {
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this[`is${name}`], `{${this.tag}, ${this.data}} is not of type ${name}`);
+            }
             return this.data;
         }
     });
@@ -1110,8 +1130,9 @@ class Type {
     static unwrapPair(type1, type2) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type1 instanceof Type);
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type2 instanceof Type);
-        if (type1.isCollection && type2.isCollection)
+        if (type1.isCollection && type2.isCollection) {
             return Type.unwrapPair(type1.primitiveType(), type2.primitiveType());
+        }
         return [type1, type2];
     }
     // TODO: update call sites to use the type checker instead (since they will
@@ -1120,10 +1141,12 @@ class Type {
         return __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__["a" /* TypeChecker */].compareTypes({ type: this }, { type });
     }
     _applyExistenceTypeTest(test) {
-        if (this.isCollection)
+        if (this.isCollection) {
             return this.primitiveType()._applyExistenceTypeTest(test);
-        if (this.isInterface)
+        }
+        if (this.isInterface) {
             return this.interfaceShape._applyExistenceTypeTest(test);
+        }
         return test(this);
     }
     get hasVariable() {
@@ -1150,8 +1173,9 @@ class Type {
         }
         if (this.isVariable) {
             let resolution = this.variable.resolution;
-            if (resolution)
+            if (resolution) {
                 return resolution;
+            }
         }
         if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.resolvedType());
@@ -1163,52 +1187,68 @@ class Type {
         return !this.hasUnresolvedVariable;
     }
     canEnsureResolved() {
-        if (this.isResolved())
+        if (this.isResolved()) {
             return true;
-        if (this.isInterface)
+        }
+        if (this.isInterface) {
             return this.interfaceShape.canEnsureResolved();
-        if (this.isVariable)
+        }
+        if (this.isVariable) {
             return this.variable.canEnsureResolved();
-        if (this.isCollection)
+        }
+        if (this.isCollection) {
             return this.primitiveType().canEnsureResolved();
+        }
         return true;
     }
     maybeEnsureResolved() {
-        if (this.isInterface)
+        if (this.isInterface) {
             return this.interfaceShape.maybeEnsureResolved();
-        if (this.isVariable)
+        }
+        if (this.isVariable) {
             return this.variable.maybeEnsureResolved();
-        if (this.isCollection)
+        }
+        if (this.isCollection) {
             return this.primitiveType().maybeEnsureResolved();
+        }
         return true;
     }
     get canWriteSuperset() {
-        if (this.isVariable)
+        if (this.isVariable) {
             return this.variable.canWriteSuperset;
-        if (this.isEntity || this.isSlot)
+        }
+        if (this.isEntity || this.isSlot) {
             return this;
-        if (this.isInterface)
+        }
+        if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canWriteSuperset);
+        }
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canWriteSuperset not implemented for ${this}`);
         return undefined;
     }
     get canReadSubset() {
-        if (this.isVariable)
+        if (this.isVariable) {
             return this.variable.canReadSubset;
-        if (this.isEntity || this.isSlot)
+        }
+        if (this.isEntity || this.isSlot) {
             return this;
-        if (this.isInterface)
+        }
+        if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canReadSubset);
+        }
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canReadSubset not implemented for ${this}`);
         return undefined;
     }
     isMoreSpecificThan(type) {
-        if (this.tag !== type.tag)
+        if (this.tag !== type.tag) {
             return false;
-        if (this.isEntity)
+        }
+        if (this.isEntity) {
             return this.entitySchema.isMoreSpecificThan(type.entitySchema);
-        if (this.isInterface)
+        }
+        if (this.isInterface) {
             return this.interfaceShape.isMoreSpecificThan(type.interfaceShape);
+        }
         if (this.isSlot) {
             // TODO: formFactor checking, etc.
             return true;
@@ -1217,20 +1257,24 @@ class Type {
     }
     static _canMergeCanReadSubset(type1, type2) {
         if (type1.canReadSubset && type2.canReadSubset) {
-            if (type1.canReadSubset.tag !== type2.canReadSubset.tag)
+            if (type1.canReadSubset.tag !== type2.canReadSubset.tag) {
                 return false;
-            if (type1.canReadSubset.isEntity)
+            }
+            if (type1.canReadSubset.isEntity) {
                 return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
+            }
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
         }
         return true;
     }
     static _canMergeCanWriteSuperset(type1, type2) {
         if (type1.canWriteSuperset && type2.canWriteSuperset) {
-            if (type1.canWriteSuperset.tag !== type2.canWriteSuperset.tag)
+            if (type1.canWriteSuperset.tag !== type2.canWriteSuperset.tag) {
                 return false;
-            if (type1.canWriteSuperset.isEntity)
+            }
+            if (type1.canWriteSuperset.isEntity) {
                 return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
+            }
         }
         return true;
     }
@@ -1270,12 +1314,18 @@ class Type {
             }
             else {
                 let newTypeVariable = __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */].fromLiteral(this.variable.toLiteralIgnoringResolutions());
-                if (this.variable.resolution)
-                    newTypeVariable.resolution = this.variable.resolution._cloneWithResolutions(variableMap);
-                if (this.variable._canReadSubset)
-                    newTypeVariable.canReadSubset = this.variable.canReadSubset._cloneWithResolutions(variableMap);
-                if (this.variable._canWriteSuperset)
-                    newTypeVariable.canWriteSuperset = this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
+                if (this.variable.resolution) {
+                    newTypeVariable.resolution =
+                        this.variable.resolution._cloneWithResolutions(variableMap);
+                }
+                if (this.variable._canReadSubset) {
+                    newTypeVariable.canReadSubset =
+                        this.variable.canReadSubset._cloneWithResolutions(variableMap);
+                }
+                if (this.variable._canWriteSuperset) {
+                    newTypeVariable.canWriteSuperset =
+                        this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
+                }
                 variableMap.set(this.variable, newTypeVariable);
                 return new Type('Variable', newTypeVariable);
             }
@@ -1290,8 +1340,9 @@ class Type {
             return this.variable.resolution.toLiteral();
         }
         if (this.data instanceof Type || this.data instanceof __WEBPACK_IMPORTED_MODULE_1__shape_js__["a" /* Shape */] || this.data instanceof __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */] ||
-            this.data instanceof __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */])
+            this.data instanceof __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */]) {
             return { tag: this.tag, data: this.data.toLiteral() };
+        }
         return this;
     }
     static _deliteralizer(tag) {
@@ -1319,23 +1370,30 @@ class Type {
     }
     // TODO: is this the same as _applyExistenceTypeTest
     hasProperty(property) {
-        if (property(this))
+        if (property(this)) {
             return true;
-        if (this.isCollection)
+        }
+        if (this.isCollection) {
             return this.collectionType.hasProperty(property);
+        }
         return false;
     }
     toString(options) {
-        if (this.isCollection)
+        if (this.isCollection) {
             return `[${this.primitiveType().toString(options)}]`;
-        if (this.isEntity)
+        }
+        if (this.isEntity) {
             return this.entitySchema.toInlineSchemaString(options);
-        if (this.isInterface)
+        }
+        if (this.isInterface) {
             return this.interfaceShape.name;
-        if (this.isVariable)
+        }
+        if (this.isVariable) {
             return `~${this.variable.name}`;
-        if (this.isSlot)
+        }
+        if (this.isSlot) {
             return 'Slot';
+        }
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `Add support to serializing type: ${JSON.stringify(this)}`);
     }
     getEntitySchema() {
@@ -1368,8 +1426,9 @@ class Type {
         if (this.isCollection) {
             return `${this.primitiveType().toPrettyString()} List`;
         }
-        if (this.isVariable)
+        if (this.isVariable) {
             return this.variable.isResolved() ? this.resolvedType().toPrettyString() : `[~${this.variable.name}]`;
+        }
         if (this.isEntity) {
             // Spit MyTypeFOO to My Type FOO
             if (this.entitySchema.name) {
@@ -1377,8 +1436,9 @@ class Type {
             }
             return JSON.stringify(this.entitySchema._model);
         }
-        if (this.isInterface)
+        if (this.isInterface) {
             return this.interfaceShape.toPrettyString();
+        }
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Type;
@@ -1490,12 +1550,15 @@ class Shape {
         this.particles = particles;
         this.handles = handles;
         this.reverse = new Map();
-        for (let p in particles)
+        for (let p in particles) {
             this.reverse.set(particles[p], p);
-        for (let h of handles.keys())
+        }
+        for (let h of handles.keys()) {
             this.reverse.set(handles.get(h), h);
-        for (let hc in hcs)
+        }
+        for (let hc in hcs) {
             this.reverse.set(hcs[hc], hc);
+        }
     }
 }
 class RecipeUtil {
@@ -1519,8 +1582,9 @@ class RecipeUtil {
                     tags = handle.tags || [];
                     handle = handle.handle;
                 }
-                if (handle.localName)
+                if (handle.localName) {
                     hMap.get(handle).localName = handle.localName;
+                }
                 let connection = pMap[key].addConnectionName(name);
                 connection.direction = direction;
                 hMap.get(handle).tags = tags;
@@ -1547,26 +1611,33 @@ class RecipeUtil {
             for (let recipeHC of recipe.handleConnections) {
                 // TODO are there situations where multiple handleConnections should
                 // be allowed to point to the same one in the recipe?
-                if (reverse.has(recipeHC))
+                if (reverse.has(recipeHC)) {
                     continue;
+                }
                 // TODO support unnamed shape particles.
-                if (recipeHC.particle.name != shapeHC.particle.name)
+                if (recipeHC.particle.name != shapeHC.particle.name) {
                     continue;
-                if (shapeHC.name && shapeHC.name != recipeHC.name)
+                }
+                if (shapeHC.name && shapeHC.name != recipeHC.name) {
                     continue;
+                }
                 let acceptedDirections = { 'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host'] };
                 if (recipeHC.direction) {
-                    if (!acceptedDirections[shapeHC.direction].includes(recipeHC.direction))
+                    if (!acceptedDirections[shapeHC.direction].includes(recipeHC.direction)) {
                         continue;
+                    }
                 }
-                if (shapeHC.handle && recipeHC.handle && shapeHC.handle.localName && shapeHC.handle.localName !== recipeHC.handle.localName)
+                if (shapeHC.handle && recipeHC.handle && shapeHC.handle.localName &&
+                    shapeHC.handle.localName !== recipeHC.handle.localName) {
                     continue;
+                }
                 // recipeHC is a candidate for shapeHC. shapeHC references a
                 // particle, so recipeHC must reference the matching particle,
                 // or a particle that isn't yet mapped from shape.
                 if (reverse.has(recipeHC.particle)) {
-                    if (reverse.get(recipeHC.particle) != shapeHC.particle)
+                    if (reverse.get(recipeHC.particle) != shapeHC.particle) {
                         continue;
+                    }
                 }
                 else if (forward.has(shapeHC.particle)) {
                     // we've already mapped the particle referenced by shapeHC
@@ -1579,8 +1650,9 @@ class RecipeUtil {
                 // that isn't yet mapped, or no handle yet.
                 if (shapeHC.handle && recipeHC.handle) {
                     if (reverse.has(recipeHC.handle)) {
-                        if (reverse.get(recipeHC.handle) != shapeHC.handle)
+                        if (reverse.get(recipeHC.handle) != shapeHC.handle) {
                             continue;
+                        }
                     }
                     else if (forward.has(shapeHC.handle) && forward.get(shapeHC.handle) !== null) {
                         continue;
@@ -1645,23 +1717,27 @@ class RecipeUtil {
             let { forward, reverse, score } = match;
             let matchFound = false;
             for (let recipeParticle of recipe.particles) {
-                if (reverse.has(recipeParticle))
+                if (reverse.has(recipeParticle)) {
                     continue;
-                if (recipeParticle.name != shapeParticle.name)
+                }
+                if (recipeParticle.name != shapeParticle.name) {
                     continue;
+                }
                 let handleNamesMatch = true;
                 for (let connectionName in recipeParticle.connections) {
                     let recipeConnection = recipeParticle.connections[connectionName];
-                    if (!recipeConnection.handle)
+                    if (!recipeConnection.handle) {
                         continue;
+                    }
                     let shapeConnection = shapeParticle.connections[connectionName];
                     if (shapeConnection && shapeConnection.handle && shapeConnection.handle.localName && shapeConnection.handle.localName !== recipeConnection.handle.localName) {
                         handleNamesMatch = false;
                         break;
                     }
                 }
-                if (!handleNamesMatch)
+                if (!handleNamesMatch) {
                     continue;
+                }
                 let newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!newMatch.forward.has(shapeParticle) || newMatch.forward.get(shapeParticle) == recipeParticle);
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(!newMatch.reverse.has(recipeParticle) || newMatch.reverse.get(recipeParticle) == shapeParticle);
@@ -1699,8 +1775,9 @@ class RecipeUtil {
                             break;
                         }
                     }
-                    if (!tagsMatch)
+                    if (!tagsMatch) {
                         continue;
+                    }
                     let newMatch = { forward: new Map(forward), reverse: new Map(reverse), score: score + 1 };
                     newMatch.forward.set(nullHandle, emptyHandles[0]);
                     newMatch.reverse.set(emptyHandles[0], nullHandle);
@@ -1713,10 +1790,12 @@ class RecipeUtil {
             let newMatches = [];
             for (let match of matches) {
                 let nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) == null);
-                if (nullHandles.length > 0)
+                if (nullHandles.length > 0) {
                     newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, [thisHandle], nullHandles));
-                else
+                }
+                else {
                     newMatches.concat(match);
+                }
             }
             return newMatches;
         }
@@ -1735,13 +1814,16 @@ class RecipeUtil {
             matches = newMatches;
         }
         for (let shapeParticle of shape.recipe.particles) {
-            if (Object.keys(shapeParticle.connections).length > 0)
+            if (Object.keys(shapeParticle.connections).length > 0) {
                 continue;
-            if (shapeParticle.unnamedConnections.length > 0)
+            }
+            if (shapeParticle.unnamedConnections.length > 0) {
                 continue;
+            }
             let newMatches = [];
-            for (let match of matches)
+            for (let match of matches) {
                 _buildNewParticleMatches(recipe, shapeParticle, match, newMatches);
+            }
             matches = newMatches;
         }
         let emptyHandles = recipe.handles.filter(handle => handle.connections.length == 0);
@@ -1749,10 +1831,12 @@ class RecipeUtil {
             let newMatches = [];
             for (let match of matches) {
                 let nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) == null);
-                if (nullHandles.length > 0)
+                if (nullHandles.length > 0) {
                     newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, emptyHandles, nullHandles));
-                else
+                }
+                else {
                     newMatches.concat(match);
+                }
             }
             matches = newMatches;
         }
@@ -1766,8 +1850,9 @@ class RecipeUtil {
         let counts = { 'in': 0, 'out': 0, 'inout': 0, 'unknown': 0 };
         for (let connection of handle.connections) {
             let direction = connection.direction;
-            if (counts[direction] == undefined)
+            if (counts[direction] == undefined) {
                 direction = 'unknown';
+            }
             counts[direction]++;
         }
         counts.in += counts.inout;
@@ -1843,8 +1928,9 @@ class SlotSpec {
         this.tags = slotModel.tags || [];
         this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
         this.providedSlots = [];
-        if (!slotModel.providedSlots)
+        if (!slotModel.providedSlots) {
             return;
+        }
         slotModel.providedSlots.forEach(ps => {
             this.providedSlots.push(new ProvidedSlotSpec(ps));
         });
@@ -1887,8 +1973,9 @@ class ParticleSpec {
         this.implFile = model.implFile;
         this.affordance = model.affordance;
         this.slots = new Map();
-        if (model.slots)
+        if (model.slots) {
             model.slots.forEach(s => this.slots.set(s.name, new SlotSpec(s)));
+        }
         // Verify provided slots use valid handle connection names.
         this.slots.forEach(slot => {
             slot.providedSlots.forEach(ps => {
@@ -1957,8 +2044,9 @@ class ParticleSpec {
     toString() {
         let results = [];
         let verbs = '';
-        if (this.verbs.length > 0)
+        if (this.verbs.length > 0) {
             verbs = ' ' + this.verbs.map(verb => `&${verb}`).join(' ');
+        }
         results.push(`particle ${this.name}${verbs} in '${this.implFile}'`.trim());
         let indent = '  ';
         let writeConnection = (connection, indent) => {
@@ -1968,8 +2056,9 @@ class ParticleSpec {
             }
         };
         for (let connection of this.connections) {
-            if (connection.parentConnection)
+            if (connection.parentConnection) {
                 continue;
+            }
             writeConnection(connection, indent);
         }
         this.affordance.filter(a => a != 'mock').forEach(a => results.push(`  affordance ${a}`));
@@ -2070,8 +2159,9 @@ class Handle {
     }
     _copyInto(recipe) {
         let handle = undefined;
-        if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate))
+        if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate)) {
             handle = recipe.findHandle(this._id);
+        }
         if (handle == undefined) {
             handle = recipe.newHandle();
             handle._id = this._id;
@@ -2209,8 +2299,9 @@ class Handle {
         let resolved = true;
         if (this.type) {
             let mustBeResolved = true;
-            if (this.fate == 'create' || this.fate == '`slot')
+            if (this.fate == 'create' || this.fate == '`slot') {
                 mustBeResolved = false;
+            }
             if ((mustBeResolved && !this.type.isResolved()) || !this.type.canEnsureResolved()) {
                 if (options) {
                     options.details.push('unresolved type');
@@ -2417,13 +2508,15 @@ class Manifest {
         this._warnings = [];
     }
     get id() {
-        if (this._meta.name)
+        if (this._meta.name) {
             return this._meta.name;
+        }
         return this._id;
     }
     get storageProviderFactory() {
-        if (this._storageProviderFactory == undefined)
+        if (this._storageProviderFactory == undefined) {
             this._storageProviderFactory = new __WEBPACK_IMPORTED_MODULE_11__storage_storage_provider_factory_js__["a" /* StorageProviderFactory */](this.id);
+        }
         return this._storageProviderFactory;
     }
     get recipes() {
@@ -2457,8 +2550,9 @@ class Manifest {
         return this._resources;
     }
     applyMeta(section) {
-        if (this._storageProviderFactory !== undefined)
+        if (this._storageProviderFactory !== undefined) {
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(section.name == this._meta.name || section.name == undefined, `can't change manifest ID after storage is constructed`);
+        }
         this._meta.apply(section);
     }
     // TODO: newParticle, Schema, etc.
@@ -2504,11 +2598,13 @@ class Manifest {
     }
     findTypeByName(name) {
         let schema = this.findSchemaByName(name);
-        if (schema)
+        if (schema) {
             return __WEBPACK_IMPORTED_MODULE_9__type_js__["a" /* Type */].newEntity(schema);
+        }
         let shape = this.findShapeByName(name);
-        if (shape)
+        if (shape) {
             return __WEBPACK_IMPORTED_MODULE_9__type_js__["a" /* Type */].newInterface(shape);
+        }
         return null;
     }
     findParticleByName(name) {
@@ -2600,8 +2696,9 @@ class Manifest {
                     //       be a responsibility of the caller.
                     // TODO: figure out how to have node print the correct message and stack trace
                     if (warning.key) {
-                        if (globalWarningKeys.has(warning.key))
+                        if (globalWarningKeys.has(warning.key)) {
                             continue;
+                        }
                         globalWarningKeys.add(warning.key);
                     }
                     console.warn(processError(warning).message);
@@ -2629,17 +2726,20 @@ class Manifest {
                     highlight += '^';
                 }
                 let preamble;
-                if (parseError)
+                if (parseError) {
                     preamble = 'Parse error in';
-                else
+                }
+                else {
                     preamble = 'Post-parse processing error caused by';
+                }
                 let message = `${preamble} '${fileName}' line ${e.location.start.line}.
 ${e.message}
   ${line}
   ${highlight}`;
                 let err = new Error(message);
-                if (!parseError)
+                if (!parseError) {
                     err.stack = e.stack;
+                }
                 return err;
             }
             let items = [];
@@ -2762,8 +2862,9 @@ ${e.message}
                     }
                     case 'slot-type': {
                         let slotInfo = {};
-                        for (let field of node.fields)
+                        for (let field of node.fields) {
                             slotInfo[field.name] = field.value;
+                        }
                         node.model = __WEBPACK_IMPORTED_MODULE_9__type_js__["a" /* Type */].newSlot(slotInfo);
                         return;
                     }
@@ -2936,8 +3037,9 @@ ${e.message}
                 if (ref.id) {
                     handle.id = ref.id;
                     let targetStore = manifest.findStoreById(handle.id);
-                    if (targetStore)
+                    if (targetStore) {
                         handle.mapToStorage(targetStore);
+                    }
                 }
                 else if (ref.name) {
                     let targetStore = manifest.findStoreByName(ref.name);
@@ -2958,17 +3060,22 @@ ${e.message}
                 switch (info.targetType) {
                     case 'particle': {
                         let particle = manifest.findParticleByName(info.particle);
-                        if (!particle)
+                        if (!particle) {
                             throw new ManifestError(connection.location, `could not find particle '${info.particle}'`);
-                        if (info.param !== null && !particle.connectionMap.has(info.param))
+                        }
+                        if (info.param !== null && !particle.connectionMap.has(info.param)) {
                             throw new ManifestError(connection.location, `param '${info.param}' is not defined by '${info.particle}'`);
+                        }
                         return new __WEBPACK_IMPORTED_MODULE_13__recipe_connection_constraint_js__["b" /* ParticleEndPoint */](particle, info.param);
                     }
                     case 'localName': {
-                        if (!items.byName.has(info.name))
+                        if (!items.byName.has(info.name)) {
                             throw new ManifestError(connection.location, `local name '${info.name}' does not exist in recipe`);
-                        if (info.param == null && info.tags.length == 0 && items.byName.get(info.name).handle)
+                        }
+                        if (info.param == null && info.tags.length == 0 &&
+                            items.byName.get(info.name).handle) {
                             return new __WEBPACK_IMPORTED_MODULE_13__recipe_connection_constraint_js__["c" /* HandleEndPoint */](items.byName.get(info.name).handle);
+                        }
                         throw new ManifestError(connection.location, `references to particles by local name not yet supported`);
                     }
                     case 'tag': {
@@ -3035,8 +3142,9 @@ ${e.message}
                             }
                             items.bySlot.set(providedSlot, ps);
                         }
-                        else
+                        else {
                             providedSlot = items.byName.get(ps.name);
+                        }
                         if (!providedSlot) {
                             providedSlot = recipe.newSlot(ps.param);
                             providedSlot.localName = ps.name;
@@ -3181,8 +3289,9 @@ ${e.message}
                     else if (slotConnectionItem.name) {
                         targetSlot = recipe.newSlot(slotConnectionItem.param);
                         targetSlot.localName = slotConnectionItem.name;
-                        if (slotConnectionItem.name)
+                        if (slotConnectionItem.name) {
                             items.byName.set(slotConnectionItem.name, targetSlot);
+                        }
                         items.bySlot.set(targetSlot, slotConnectionItem);
                     }
                     if (targetSlot) {
@@ -3215,8 +3324,9 @@ ${e.message}
                 id = `${manifest._id}store${manifest._stores.length}`;
             }
             let tags = item.tags;
-            if (tags == null)
+            if (tags == null) {
                 tags = [];
+            }
             // Instead of creating links to remote firebase during manifest parsing,
             // we generate storage stubs that contain the relevant information.
             if (item.origin == 'storage') {
@@ -3233,8 +3343,9 @@ ${e.message}
             else if (item.origin == 'resource') {
                 source = item.source;
                 json = manifest.resources[source];
-                if (json == undefined)
+                if (json == undefined) {
                     throw new Error(`Resource '${source}' referenced by store '${id}' is not defined in this manifest`);
+                }
             }
             let entities;
             try {
@@ -3446,12 +3557,15 @@ else {
 }
 let flowId = 0;
 function parseInfo(info) {
-    if (!info)
+    if (!info) {
         return {};
-    if (typeof info == 'function')
+    }
+    if (typeof info == 'function') {
         return parseInfo(info());
-    if (info.toTraceInfo)
+    }
+    if (info.toTraceInfo) {
         return parseInfo(info.toTraceInfo());
+    }
     return info;
 }
 let streamingCallbacks = [];
@@ -3730,8 +3844,9 @@ class TypeChecker {
     // do, talk to shans@.
     static processTypeList(baseType, list) {
         let newBaseType = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */](''));
-        if (baseType)
+        if (baseType) {
             newBaseType.data.resolution = baseType;
+        }
         baseType = newBaseType;
         let concreteTypes = [];
         // baseType might be a variable (and is definitely a variable if no baseType was available).
@@ -3743,8 +3858,9 @@ class TypeChecker {
         for (let item of list) {
             if (item.type.resolvedType().hasVariable) {
                 baseType = TypeChecker._tryMergeTypeVariable(baseType, item.type);
-                if (baseType == null)
+                if (baseType == null) {
                     return null;
+                }
             }
             else {
                 concreteTypes.push(item);
@@ -3752,17 +3868,22 @@ class TypeChecker {
         }
         for (let item of concreteTypes) {
             let success = TypeChecker._tryMergeConstraints(baseType, item);
-            if (!success)
+            if (!success) {
                 return null;
+            }
         }
         let getResolution = candidate => {
-            if (candidate.isVariable == false)
+            if (candidate.isVariable == false) {
                 return candidate;
-            if (candidate.canReadSubset == null || candidate.canWriteSuperset == null)
+            }
+            if (candidate.canReadSubset == null ||
+                candidate.canWriteSuperset == null) {
                 return candidate;
+            }
             if (candidate.canReadSubset.isMoreSpecificThan(candidate.canWriteSuperset)) {
-                if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset))
+                if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset)) {
                     candidate.variable.resolution = candidate.canReadSubset;
+                }
                 return candidate;
             }
             return null;
@@ -3771,8 +3892,9 @@ class TypeChecker {
         if (candidate.isCollection) {
             candidate = candidate.primitiveType();
             let resolution = getResolution(candidate);
-            if (resolution == null)
+            if (resolution == null) {
                 return null;
+            }
             return resolution.collectionOf();
         }
         return getResolution(candidate);
@@ -3783,8 +3905,9 @@ class TypeChecker {
             if (primitiveOnto.isVariable) {
                 // base, onto both variables.
                 let result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
-                if (result == false)
+                if (result == false) {
                     return null;
+                }
                 // Here onto grows, one level at a time,
                 // as we assign new resolution to primitiveOnto, which is a leaf.
                 primitiveOnto.variable.resolution = primitiveBase;
@@ -3801,8 +3924,9 @@ class TypeChecker {
         }
         else if (primitiveBase.isInterface && primitiveOnto.isInterface) {
             let result = primitiveBase.interfaceShape.tryMergeTypeVariablesWith(primitiveOnto.interfaceShape);
-            if (result == null)
+            if (result == null) {
                 return null;
+            }
             return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newInterface(result);
         }
         else {
@@ -3837,25 +3961,31 @@ class TypeChecker {
                 // the canReadSubset of the handle represents the maximal type that can be read from the
                 // handle, so we need to intersect out any type that is more specific than the maximal type
                 // that could be written.
-                if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset))
+                if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset)) {
                     return false;
+                }
             }
             if (direction == 'in' || direction == 'inout' || direction == '`consume') {
                 // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
                 // so we need to union it with the type that wants to be read here.
-                if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset))
+                if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset)) {
                     return false;
+                }
             }
         }
         else {
             if (primitiveConnectionType.tag !== primitiveHandleType.tag)
                 return false;
-            if (direction == 'out' || direction == 'inout')
-                if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType))
+            if (direction == 'out' || direction == 'inout') {
+                if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
                     return false;
-            if (direction == 'in' || direction == 'inout')
-                if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType))
+                }
+            }
+            if (direction == 'in' || direction == 'inout') {
+                if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
                     return false;
+                }
+            }
         }
         return true;
     }
@@ -3864,10 +3994,12 @@ class TypeChecker {
         // more specific than the canReadSubset then it isn't violating the maximal type
         // that can be read.
         let writtenType = connectionType.canWriteSuperset;
-        if (writtenType == null || handleType.canReadSubset == null)
+        if (writtenType == null || handleType.canReadSubset == null) {
             return true;
-        if (writtenType.isMoreSpecificThan(handleType.canReadSubset))
+        }
+        if (writtenType.isMoreSpecificThan(handleType.canReadSubset)) {
             return true;
+        }
         return false;
     }
     static _readConstraintsApply(handleType, connectionType) {
@@ -3875,10 +4007,12 @@ class TypeChecker {
         // is less specific than the canWriteSuperset, then it isn't violating
         // the maximum lower-bound read type.
         let readType = connectionType.canReadSubset;
-        if (readType == null || handleType.canWriteSuperset == null)
+        if (readType == null || handleType.canWriteSuperset == null) {
             return true;
-        if (handleType.canWriteSuperset.isMoreSpecificThan(readType))
+        }
+        if (handleType.canWriteSuperset.isMoreSpecificThan(readType)) {
             return true;
+        }
         return false;
     }
     // Compare two types to see if they could be potentially resolved (in the absence of other
@@ -3893,24 +4027,31 @@ class TypeChecker {
         let resolvedRight = right.type.resolvedType();
         let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].unwrapPair(resolvedLeft, resolvedRight);
         // a variable is compatible with a set only if it is unconstrained.
-        if (leftType.isVariable && rightType.isCollection)
-            return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
-        if (rightType.isVariable && leftType.isCollection)
-            return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
+        if (leftType.isVariable && rightType.isCollection) {
+            return !(leftType.variable.canReadSubset ||
+                leftType.variable.canWriteSuperset);
+        }
+        if (rightType.isVariable && leftType.isCollection) {
+            return !(rightType.variable.canReadSubset ||
+                rightType.variable.canWriteSuperset);
+        }
         if (leftType.isVariable || rightType.isVariable) {
             // TODO: everything should use this, eventually. Need to implement the
             // right functionality in Shapes first, though.
             return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].canMergeConstraints(leftType, rightType);
         }
-        if ((leftType == undefined) !== (rightType == undefined))
+        if ((leftType == undefined) !== (rightType == undefined)) {
             return false;
-        if (leftType == rightType)
+        }
+        if (leftType == rightType) {
             return true;
+        }
         if (leftType.tag != rightType.tag) {
             return false;
         }
-        if (leftType.isSlot)
+        if (leftType.isSlot) {
             return true;
+        }
         // TODO: we need a generic way to evaluate type compatibility
         //       shapes + entities + etc
         if (leftType.isInterface && rightType.isInterface) {
@@ -3989,8 +4130,9 @@ class MapSlots extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js__
                     // don't try to connect verb constraints
                     // TODO: is this right? Should constraints be connectible, in order to precompute the
                     // recipe side once the verb is substituted?
-                    if (slotConnection.slotSpec == undefined)
+                    if (slotConnection.slotSpec == undefined) {
                         return;
+                    }
                     if (slotConnection.isConnected()) {
                         return;
                     }
@@ -4135,8 +4277,11 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
             let arc = this._arc;
             return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* Walker */] {
                 onHandle(recipe, handle) {
-                    if (handle.connections.length == 0 || (handle.id && handle.storageKey) || (!handle.type) || (!handle.fate))
+                    if (handle.connections.length == 0 ||
+                        (handle.id && handle.storageKey) || (!handle.type) ||
+                        (!handle.fate)) {
                         return;
+                    }
                     let mappable;
                     if (!handle.id) {
                         // Handle doesn't have an ID, finding by type and tags.
@@ -4177,10 +4322,12 @@ class ResolveRecipe extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
                         mappable = storeById ? [storeById] : [];
                     }
                     mappable = mappable.filter(incomingHandle => {
-                        for (let existingHandle of recipe.handles)
-                            if (incomingHandle.id == existingHandle.id
-                                && existingHandle !== handle)
+                        for (let existingHandle of recipe.handles) {
+                            if (incomingHandle.id == existingHandle.id &&
+                                existingHandle !== handle) {
                                 return false;
+                            }
+                        }
                         return true;
                     });
                     if (mappable.length == 1) {
@@ -4461,8 +4608,9 @@ class DescriptionFormatter {
             }
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(tokenIndex >= 0);
             let nextToken = pattern.substring(0, tokenIndex);
-            if (nextToken.length > 0)
+            if (nextToken.length > 0) {
                 results.push({ text: nextToken });
+            }
             if (firstToken.length > 0) {
                 results = results.concat(this._initSubTokens(firstToken, particleDescription));
             }
@@ -5193,8 +5341,9 @@ class DomParticle extends __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__she
 class Particle {
     constructor(capabilities) {
         this.spec = this.constructor.spec;
-        if (this.spec.inputs.length == 0)
+        if (this.spec.inputs.length == 0) {
             this.extraData = true;
+        }
         this.relevances = [];
         this._idle = Promise.resolve();
         this._busy = 0;
@@ -5253,8 +5402,9 @@ class Particle {
     onHandleDesync(handle) {
     }
     constructInnerArc() {
-        if (!this.capabilities.constructInnerArc)
+        if (!this.capabilities.constructInnerArc) {
             throw new Error('This particle is not allowed to construct inner arcs');
+        }
         return this.capabilities.constructInnerArc(this);
     }
     get busy() {
@@ -5284,16 +5434,19 @@ class Particle {
             let str = strings[i];
             let indent = / *$/.exec(str)[0];
             let bitStr;
-            if (typeof bits[i] == 'string')
+            if (typeof bits[i] == 'string') {
                 bitStr = bits[i];
-            else
+            }
+            else {
                 bitStr = bits[i].toManifestString();
+            }
             bitStr = bitStr.replace(/(\n)/g, '$1' + indent);
             output.push(str);
             output.push(bitStr);
         }
-        if (strings.length > bits.length)
+        if (strings.length > bits.length) {
             output.push(strings[strings.length - 1]);
+        }
         return output.join('');
     }
     setParticleDescription(pattern) {
@@ -5344,8 +5497,9 @@ class ParticleEndPoint {
         return 0;
     }
     toString() {
-        if (!this.connection)
+        if (!this.connection) {
             return `${this.particle.name}`;
+        }
         return `${this.particle.name}.${this.connection}`;
     }
 }
@@ -5370,8 +5524,9 @@ class InstanceEndPoint {
         return 0;
     }
     toString(nameMap) {
-        if (!this.connection)
+        if (!this.connection) {
             return `${nameMap.get(this.instance)}`;
+        }
         return `${nameMap.get(this.instance)}.${this.connection}`;
     }
 }
@@ -5426,8 +5581,9 @@ class ConnectionConstraint {
         Object.freeze(this);
     }
     _copyInto(recipe, cloneMap) {
-        if (this.type == 'constraint')
+        if (this.type == 'constraint') {
             return recipe.newConnectionConstraint(this.from._clone(), this.to._clone(), this.direction);
+        }
         return recipe.newObligation(this.from._clone(cloneMap), this.to._clone(cloneMap), this.direction);
     }
     _compareTo(other) {
@@ -5593,8 +5749,9 @@ class Schema {
             fields[name] = type;
         }
         for (let [name, type] of Object.entries(otherSchema.fields)) {
-            if (fields[name] == undefined)
+            if (fields[name] == undefined) {
                 return false;
+            }
             if (!Schema.typesEqual(fields[name], type)) {
                 return false;
             }
@@ -5698,8 +5855,9 @@ class Schema {
             dataClone() {
                 let clone = {};
                 for (let name of Object.keys(schema.fields)) {
-                    if (this.rawData[name] !== undefined)
+                    if (this.rawData[name] !== undefined) {
                         clone[name] = this.rawData[name];
+                    }
                 }
                 return clone;
             }
@@ -5770,13 +5928,15 @@ class Schema {
 // ShapeHandle {name, direction, type}
 // Slot {name, direction, isRequired, isSet}
 function _fromLiteral(member) {
-    if (!!member && typeof member == 'object')
+    if (!!member && typeof member == 'object') {
         return __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */].fromLiteral(member);
+    }
     return member;
 }
 function _toLiteral(member) {
-    if (!!member && member.toLiteral)
+    if (!!member && member.toLiteral) {
         return member.toLiteral();
+    }
     return member;
 }
 const handleFields = ['type', 'name', 'direction'];
@@ -5790,14 +5950,20 @@ class Shape {
         this.handles = handles;
         this.slots = slots;
         this._typeVars = [];
-        for (let handle of handles)
-            for (let field of handleFields)
-                if (Shape.isTypeVar(handle[field]))
+        for (let handle of handles) {
+            for (let field of handleFields) {
+                if (Shape.isTypeVar(handle[field])) {
                     this._typeVars.push({ object: handle, field });
-        for (let slot of slots)
-            for (let field of slotFields)
-                if (Shape.isTypeVar(slot[field]))
+                }
+            }
+        }
+        for (let slot of slots) {
+            for (let field of slotFields) {
+                if (Shape.isTypeVar(slot[field])) {
                     this._typeVars.push({ object: slot, field });
+                }
+            }
+        }
     }
     toPrettyString() {
         return 'SHAAAAPE';
@@ -5809,21 +5975,25 @@ class Shape {
         return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
     }
     isMoreSpecificThan(other) {
-        if (this.handles.length !== other.handles.length || this.slots.length !== other.slots.length)
+        if (this.handles.length !== other.handles.length ||
+            this.slots.length !== other.slots.length) {
             return false;
+        }
         // TODO: should probably confirm that handles and slots actually match.
         for (let i = 0; i < this._typeVars.length; i++) {
             let thisTypeVar = this._typeVars[i];
             let otherTypeVar = other._typeVars[i];
-            if (!thistypeVar.object[thistypeVar.field].isMoreSpecificThan(othertypeVar.object[othertypeVar.field]))
+            if (!thistypeVar.object[thistypeVar.field].isMoreSpecificThan(othertypeVar.object[othertypeVar.field])) {
                 return false;
+            }
         }
         return true;
     }
     _applyExistenceTypeTest(test) {
         for (let typeRef of this._typeVars) {
-            if (test(typeRef.object[typeRef.field]))
+            if (test(typeRef.object[typeRef.field])) {
                 return true;
+            }
         }
         return false;
     }
@@ -5872,9 +6042,11 @@ ${this._slotsToManifestString()}
         return new Shape(this.name, handles, slots);
     }
     canEnsureResolved() {
-        for (let typeVar of this._typeVars)
-            if (!typeVar.object[typeVar.field].canEnsureResolved())
+        for (let typeVar of this._typeVars) {
+            if (!typeVar.object[typeVar.field].canEnsureResolved()) {
                 return false;
+            }
+        }
         return true;
     }
     maybeEnsureResolved() {
@@ -5884,17 +6056,20 @@ ${this._slotsToManifestString()}
             if (!variable.maybeEnsureResolved())
                 return false;
         }
-        for (let typeVar of this._typeVars)
+        for (let typeVar of this._typeVars) {
             typeVar.object[typeVar.field].maybeEnsureResolved();
+        }
         return true;
     }
     tryMergeTypeVariablesWith(other) {
         // Type variable enabled slot matching will Just Work when we
         // unify slots and handles.
-        if (!this._equalItems(other.slots, this.slots, this._equalSlot))
+        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
             return null;
-        if (other.handles.length !== this.handles.length)
+        }
+        if (other.handles.length !== this.handles.length) {
             return null;
+        }
         let handles = new Set(this.handles);
         let otherHandles = new Set(other.handles);
         let handleMap = new Map();
@@ -5903,8 +6078,9 @@ ${this._slotsToManifestString()}
             let handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
             for (let handleMatch of handleMatches) {
                 // no match!
-                if (handleMatch.match.length == 0)
+                if (handleMatch.match.length == 0) {
                     return null;
+                }
                 if (handleMatch.match.length == 1) {
                     handleMap.set(handleMatch.handle, handleMatch.match[0]);
                     otherHandles.delete(handleMatch.match[0]);
@@ -5912,8 +6088,9 @@ ${this._slotsToManifestString()}
                 }
             }
             // no progress!
-            if (handles.size == sizeCheck)
+            if (handles.size == sizeCheck) {
                 return null;
+            }
             sizeCheck = handles.size;
         }
         handles = [];
@@ -5922,8 +6099,9 @@ ${this._slotsToManifestString()}
             let resultType;
             if (handle.type.hasVariable || otherHandle.type.hasVariable) {
                 resultType = __WEBPACK_IMPORTED_MODULE_2__recipe_type_checker_js__["a" /* TypeChecker */]._tryMergeTypeVariable(handle.type, otherHandle.type);
-                if (!resultType)
+                if (!resultType) {
                     return null;
+                }
             }
             else {
                 resultType = handle.type || otherHandle.type;
@@ -5937,8 +6115,9 @@ ${this._slotsToManifestString()}
         return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
     }
     equals(other) {
-        if (this.handles.length !== other.handles.length)
+        if (this.handles.length !== other.handles.length) {
             return false;
+        }
         // TODO: this isn't quite right as it doesn't deal with duplicates properly
         if (!this._equalItems(other.handles, this.handles, this._equalHandle)) {
             return false;
@@ -5963,8 +6142,9 @@ ${this._slotsToManifestString()}
                     break;
                 }
             }
-            if (!exists)
+            if (!exists) {
                 return false;
+            }
         }
         return true;
     }
@@ -5983,15 +6163,21 @@ ${this._slotsToManifestString()}
         return !(reference == undefined || Shape.isTypeVar(reference));
     }
     static handlesMatch(shapeHandle, particleHandle) {
-        if (Shape.mustMatch(shapeHandle.name) && shapeHandle.name !== particleHandle.name)
+        if (Shape.mustMatch(shapeHandle.name) &&
+            shapeHandle.name !== particleHandle.name) {
             return false;
+        }
         // TODO: direction subsetting?
-        if (Shape.mustMatch(shapeHandle.direction) && shapeHandle.direction !== particleHandle.direction)
+        if (Shape.mustMatch(shapeHandle.direction) &&
+            shapeHandle.direction !== particleHandle.direction) {
             return false;
-        if (shapeHandle.type == undefined)
+        }
+        if (shapeHandle.type == undefined) {
             return true;
-        if (shapeHandle.type.isVariableReference)
+        }
+        if (shapeHandle.type.isVariableReference) {
             return false;
+        }
         let [left, right] = __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */].unwrapPair(shapeHandle.type, particleHandle.type);
         if (left.isVariable) {
             return [{ var: left, value: right, direction: shapeHandle.direction }];
@@ -6001,14 +6187,22 @@ ${this._slotsToManifestString()}
         }
     }
     static slotsMatch(shapeSlot, particleSlot) {
-        if (Shape.mustMatch(shapeSlot.name) && shapeSlot.name !== particleSlot.name)
+        if (Shape.mustMatch(shapeSlot.name) &&
+            shapeSlot.name !== particleSlot.name) {
             return false;
-        if (Shape.mustMatch(shapeSlot.direction) && shapeSlot.direction !== particleSlot.direction)
+        }
+        if (Shape.mustMatch(shapeSlot.direction) &&
+            shapeSlot.direction !== particleSlot.direction) {
             return false;
-        if (Shape.mustMatch(shapeSlot.isRequired) && shapeSlot.isRequired !== particleSlot.isRequired)
+        }
+        if (Shape.mustMatch(shapeSlot.isRequired) &&
+            shapeSlot.isRequired !== particleSlot.isRequired) {
             return false;
-        if (Shape.mustMatch(shapeSlot.isSet) && shapeSlot.isSet !== particleSlot.isSet)
+        }
+        if (Shape.mustMatch(shapeSlot.isSet) &&
+            shapeSlot.isSet !== particleSlot.isSet) {
             return false;
+        }
         return true;
     }
     particleMatches(particleSpec) {
@@ -6033,12 +6227,14 @@ ${this._slotsToManifestString()}
         let exclusions = [];
         // TODO: this probably doesn't deal with multiple match options.
         function choose(list, exclusions) {
-            if (list.length == 0)
+            if (list.length == 0) {
                 return [];
+            }
             let thisLevel = list.pop();
             for (let connection of thisLevel) {
-                if (exclusions.includes(connection.match))
+                if (exclusions.includes(connection.match)) {
                     continue;
+                }
                 let newExclusions = exclusions.slice();
                 newExclusions.push(connection.match);
                 let constraints = choose(list, newExclusions);
@@ -6050,8 +6246,9 @@ ${this._slotsToManifestString()}
         }
         let handleOptions = choose(handleMatches, []);
         let slotOptions = choose(slotMatches, []);
-        if (handleOptions === false || slotOptions === false)
+        if (handleOptions === false || slotOptions === false) {
             return false;
+        }
         for (let constraint of handleOptions) {
             if (!constraint.var.variable.resolution) {
                 constraint.var.variable.resolution = constraint.value;
@@ -6271,8 +6468,9 @@ class SlotDomConsumer extends __WEBPACK_IMPORTED_MODULE_1__slot_consumer_js__["a
         return newContent;
     }
     setContainerContent(rendering, content, subId) {
-        if (!rendering.container)
+        if (!rendering.container) {
             return;
+        }
         if (Object.keys(content).length == 0) {
             this.clearContainer(rendering);
             return;
@@ -6602,12 +6800,14 @@ class AddMissingHandles extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
             return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* Walker */] {
                 onRecipe(recipe) {
                     // Don't add use handles while there are outstanding constraints
-                    if (recipe.connectionConstraints.length > 0)
+                    if (recipe.connectionConstraints.length > 0) {
                         return;
+                    }
                     // Don't add use handles to a recipe with free handles
                     let freeHandles = recipe.handles.filter(handle => handle.connections.length == 0);
-                    if (freeHandles.length > 0)
+                    if (freeHandles.length > 0) {
                         return;
+                    }
                     // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
                     // not being properly supported in arc instantiation). For now just hardcode skiping them.
                     let disconnectedConnections = recipe.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name != 'descriptions' && hc.direction !== 'host');
@@ -6721,8 +6921,10 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
                             }
                             if (constraint.to.connection) {
                                 handleIsConcrete = true;
-                                if (!handle)
-                                    handle = map[constraint.to.particle.name][constraint.to.connection];
+                                if (!handle) {
+                                    handle =
+                                        map[constraint.to.particle.name][constraint.to.connection];
+                                }
                             }
                             else {
                                 createObligation = true;
@@ -6734,8 +6936,9 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
                         }
                         if (handle == undefined) {
                             handle = { handle: 'v' + handleCount++, direction: constraint.direction };
-                            if (handleIsConcrete)
+                            if (handleIsConcrete) {
                                 handles.add(handle.handle);
+                            }
                         }
                         if (constraint.from instanceof __WEBPACK_IMPORTED_MODULE_4__recipe_connection_constraint_js__["d" /* TagEndPoint */]) {
                             handle.tags = constraint.from.tags;
@@ -6743,15 +6946,23 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
                         else if (constraint.to instanceof __WEBPACK_IMPORTED_MODULE_4__recipe_connection_constraint_js__["d" /* TagEndPoint */]) {
                             handle.tags = constraint.to.tags;
                         }
-                        if (createObligation)
-                            obligations.push({ from: constraint.from._clone(), to: constraint.to._clone(), direction: constraint.direction });
+                        if (createObligation) {
+                            obligations.push({
+                                from: constraint.from._clone(),
+                                to: constraint.to._clone(),
+                                direction: constraint.direction
+                            });
+                        }
                         let unionDirections = (a, b) => {
-                            if (a == '=')
+                            if (a == '=') {
                                 return '=';
-                            if (b == '=')
+                            }
+                            if (b == '=') {
                                 return '=';
-                            if (a !== b)
+                            }
+                            if (a !== b) {
                                 return '=';
+                            }
                             return a;
                         };
                         let direction = constraint.direction;
@@ -6761,8 +6972,9 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
                                 let existingHandle = map[constraint.from.particle.name][connection];
                                 if (existingHandle) {
                                     direction = unionDirections(direction, existingHandle.direction);
-                                    if (direction == null)
+                                    if (direction == null) {
                                         return;
+                                    }
                                 }
                                 map[constraint.from.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags };
                             }
@@ -6774,8 +6986,9 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
                                 let existingHandle = map[constraint.to.particle.name][connection];
                                 if (existingHandle) {
                                     direction = unionDirections(direction, existingHandle.direction);
-                                    if (direction == null)
+                                    if (direction == null) {
                                         return;
+                                    }
                                 }
                                 map[constraint.to.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags };
                             }
@@ -6817,8 +7030,10 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
                                 for (let connection in map[particle]) {
                                     let handle = map[particle][connection];
                                     let recipeHandleConnection = recipeParticle.connections[connection];
-                                    if (recipeHandleConnection == undefined)
-                                        recipeHandleConnection = recipeParticle.addConnectionName(connection);
+                                    if (recipeHandleConnection == undefined) {
+                                        recipeHandleConnection =
+                                            recipeParticle.addConnectionName(connection);
+                                    }
                                     let recipeHandle = recipeMap[handle.handle];
                                     if (recipeHandle == null && recipeHandleConnection.handle == null) {
                                         recipeHandle = recipe.newHandle();
@@ -6826,8 +7041,9 @@ class ConvertConstraintsToConnections extends __WEBPACK_IMPORTED_MODULE_0__strat
                                         recipeHandle.tags = handle.tags || [];
                                         recipeMap[handle.handle] = recipeHandle;
                                     }
-                                    if (recipeHandleConnection.handle == null)
+                                    if (recipeHandleConnection.handle == null) {
                                         recipeHandleConnection.connectToHandle(recipeHandle);
+                                    }
                                 }
                             }
                             recipe.clearConnectionConstraints();
@@ -6936,8 +7152,9 @@ class MatchFreeHandlesToConnections extends __WEBPACK_IMPORTED_MODULE_0__strateg
             let self = this;
             return __WEBPACK_IMPORTED_MODULE_2__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* Walker */] {
                 onHandle(recipe, handle) {
-                    if (handle.connections.length > 0)
+                    if (handle.connections.length > 0) {
                         return;
+                    }
                     let matchingConnections = recipe.handleConnections.filter(connection => connection.handle == undefined && connection.name !== 'descriptions');
                     return matchingConnections.map(connection => {
                         return (recipe, handle) => {
@@ -7158,19 +7375,24 @@ class Arc {
             let importSet = new Set();
             let handleSet = new Set();
             for (let handle of this._activeRecipe.handles) {
-                if (handle.fate == 'map')
+                if (handle.fate == 'map') {
                     importSet.add(this.context.findManifestUrlForHandleId(handle.id));
-                else
+                }
+                else {
                     handleSet.add(handle.id);
+                }
             }
-            for (let url of importSet.values())
+            for (let url of importSet.values()) {
                 resources += `import '${url}'\n`;
+            }
             for (let handle of this._stores) {
-                if (!handleSet.has(handle.id))
+                if (!handleSet.has(handle.id)) {
                     continue;
+                }
                 let type = handle.type;
-                if (type.isCollection)
+                if (type.isCollection) {
                     type = type.primitiveType();
+                }
                 if (type.isInterface) {
                     interfaces += type.interfaceShape.toString() + '\n';
                 }
@@ -7186,21 +7408,24 @@ class Arc {
                         resources += indent + 'start\n';
                         // TODO(sjmiles): emit empty data for stores marked `nosync`: shell will supply data
                         const nosync = handleTags.includes('nosync');
-                        let serializedData = nosync ? [] : (yield handle.toLiteral()).model.map(({ id, value }) => {
-                            if (value == null)
-                                return null;
-                            if (value.rawData) {
-                                let result = {};
-                                for (let field in value.rawData) {
-                                    result[field] = value.rawData[field];
+                        let serializedData = nosync ?
+                            [] :
+                            (yield handle.toLiteral()).model.map(({ id, value }) => {
+                                if (value == null) {
+                                    return null;
                                 }
-                                result.$id = id;
-                                return result;
-                            }
-                            else {
-                                return value;
-                            }
-                        });
+                                if (value.rawData) {
+                                    let result = {};
+                                    for (let field in value.rawData) {
+                                        result[field] = value.rawData[field];
+                                    }
+                                    result.$id = id;
+                                    return result;
+                                }
+                                else {
+                                    return value;
+                                }
+                            });
                         let data = JSON.stringify(serializedData);
                         resources += data.split('\n').map(line => indent + line).join('\n');
                         resources += '\n';
@@ -7216,8 +7441,9 @@ class Arc {
         return this._activeRecipe.particles.map(entry => entry.spec.toString()).join('\n');
     }
     _serializeStorageKey() {
-        if (this._storageKey)
+        if (this._storageKey) {
             return `storageKey: '${this._storageKey}'\n`;
+        }
         return '';
     }
     serialize() {
@@ -7249,8 +7475,9 @@ ${this.activeRecipe.toString()}`;
                 context
             });
             yield Promise.all(manifest.stores.map((store) => __awaiter(this, void 0, void 0, function* () {
-                if (store.constructor.name == 'StorageStub')
+                if (store.constructor.name == 'StorageStub') {
                     store = yield store.inflate();
+                }
                 arc._registerStore(store, manifest._storeTags.get(store));
             })));
             let recipe = manifest.activeRecipe.clone();
@@ -7379,8 +7606,9 @@ ${this.activeRecipe.toString()}`;
             for (let recipeHandle of handles) {
                 if (['copy', 'create'].includes(recipeHandle.fate)) {
                     let type = recipeHandle.type;
-                    if (recipeHandle.fate == 'create')
+                    if (recipeHandle.fate == 'create') {
                         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);
+                    }
                     type = type.resolvedType();
                     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type.isResolved(), `Can't create handle for unresolved type ${type}`);
                     let newStore = yield this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags);
@@ -7408,8 +7636,9 @@ ${this.activeRecipe.toString()}`;
                     // TODO: move the call to ParticleExecutionHost's DefineHandle to here
                 }
                 let storageKey = recipeHandle.storageKey;
-                if (!storageKey)
+                if (!storageKey) {
                     storageKey = this.keyForId(recipeHandle.id);
+                }
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
                 let store = yield this._storageProviderFactory.connect(recipeHandle.id, recipeHandle.type, storageKey);
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(store, `store '${recipeHandle.id}' was not found`);
@@ -7437,12 +7666,18 @@ ${this.activeRecipe.toString()}`;
             if (type.isRelation) {
                 type = __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */].newCollection(type);
             }
-            if (id == undefined)
+            if (id == undefined) {
                 id = this.generateID();
-            if (storageKey == undefined && this._storageKey)
-                storageKey = this._storageProviderFactory.parseStringAsKey(this._storageKey).childKeyForHandle(id).toString();
-            if (storageKey == undefined)
+            }
+            if (storageKey == undefined && this._storageKey) {
+                storageKey =
+                    this._storageProviderFactory.parseStringAsKey(this._storageKey)
+                        .childKeyForHandle(id)
+                        .toString();
+            }
+            if (storageKey == undefined) {
                 storageKey = 'in-memory';
+            }
             let store = yield this._storageProviderFactory.construct(id, type, storageKey);
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(store, 'stopre with id ${id} already exists');
             store.name = name;
@@ -7965,8 +8200,9 @@ class APIPort {
                 },
                 unconvert: a => {
                     let r = new Map();
-                    for (let key in a)
+                    for (let key in a) {
                         r.set(keyprimitive.unconvert(key), valueprimitive.unconvert(a[key]));
+                    }
                     return r;
                 }
             };
@@ -8021,14 +8257,16 @@ class APIPort {
     }
     _processArguments(argumentTypes, args) {
         let messageBody = {};
-        for (let argument in argumentTypes)
+        for (let argument in argumentTypes) {
             messageBody[argument] = argumentTypes[argument].convert(args[argument]);
+        }
         return messageBody;
     }
     _unprocessArguments(argumentTypes, args) {
         let messageBody = {};
-        for (let argument in argumentTypes)
+        for (let argument in argumentTypes) {
             messageBody[argument] = argumentTypes[argument].unconvert(args[argument]);
+        }
         return messageBody;
     }
     registerCall(name, argumentTypes) {
@@ -8204,18 +8442,21 @@ class StrategyExplorerAdapter {
                 item.derivation = item.derivation.map(derivItem => {
                     let parent;
                     let strategy;
-                    if (derivItem.parent)
+                    if (derivItem.parent) {
                         parent = idMap.get(derivItem.parent);
-                    if (derivItem.strategy)
+                    }
+                    if (derivItem.strategy) {
                         strategy = derivItem.strategy.constructor.name;
+                    }
                     return { parent, strategy };
                 });
                 item.resolved = item.result.isResolved();
                 if (item.resolved) {
                     record.resolvedDerivations++;
                     let strategy = item.derivation[0].strategy;
-                    if (record.resolvedDerivationsByStrategy[strategy] === undefined)
+                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
                         record.resolvedDerivationsByStrategy[strategy] = 0;
+                    }
                     record.resolvedDerivationsByStrategy[strategy]++;
                 }
                 let options = { showUnresolved: true, showInvalid: false, details: '' };
@@ -8223,8 +8464,9 @@ class StrategyExplorerAdapter {
             });
             let populationMap = {};
             population.forEach(item => {
-                if (populationMap[item.derivation[0].strategy] == undefined)
+                if (populationMap[item.derivation[0].strategy] == undefined) {
                     populationMap[item.derivation[0].strategy] = [];
+                }
                 populationMap[item.derivation[0].strategy].push(item);
             });
             let result = { population: [], record };
@@ -8289,26 +8531,31 @@ class Loader {
         return path;
     }
     join(prefix, path) {
-        if (/^https?:\/\//.test(path))
+        if (/^https?:\/\//.test(path)) {
             return path;
+        }
         // TODO: replace this with something that isn't hacky
-        if (path[0] == '/' || path[1] == ':')
+        if (path[0] == '/' || path[1] == ':') {
             return path;
+        }
         prefix = this.path(prefix);
         return prefix + path;
     }
     loadResource(file) {
-        if (/^https?:\/\//.test(file))
+        if (/^https?:\/\//.test(file)) {
             return this._loadURL(file);
+        }
         return this._loadFile(file);
     }
     _loadFile(file) {
         return new Promise((resolve, reject) => {
             __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__["a" /* fs */].readFile(file, (err, data) => {
-                if (err)
+                if (err) {
                     reject(err);
-                else
+                }
+                else {
                     resolve(data.toString('utf-8'));
+                }
             });
         });
     }
@@ -8864,8 +9111,9 @@ class Speculator {
                     let messageCount = newArc.pec.messageCount;
                     relevance.apply(yield newArc.pec.idle);
                     // We expect two messages here, one requesting the idle status, and one answering it.
-                    if (newArc.pec.messageCount !== messageCount + 2)
+                    if (newArc.pec.messageCount !== messageCount + 2) {
                         return awaitCompletion();
+                    }
                     else {
                         relevance.newArc = newArc;
                         relevanceByHash.set(hash, relevance);
@@ -8967,8 +9215,9 @@ class StorageProviderBase {
     _fire(kind, details) {
         return __awaiter(this, void 0, void 0, function* () {
             let listenerMap = this._listeners.get(kind);
-            if (!listenerMap || listenerMap.size == 0)
+            if (!listenerMap || listenerMap.size == 0) {
                 return;
+            }
             let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({ cat: 'handle', name: 'StorageProviderBase::_fire', args: { kind, type: this._type.key,
                     name: this.name, listeners: listenerMap.size } });
             let callbacks = [];
@@ -9013,8 +9262,9 @@ class StorageProviderBase {
             handleStr.push(`in '${this.source}'`);
         }
         results.push(handleStr.join(' '));
-        if (this.description)
+        if (this.description) {
             results.push(`  description \`${this.description}\``);
+        }
         return results.join('\n');
     }
     get apiChannelMappingId() {
@@ -9133,18 +9383,22 @@ class AssignHandles extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
                     if (!['?', 'use', 'copy', 'map'].includes(handle.fate)) {
                         return;
                     }
-                    if (handle.connections.length == 0)
+                    if (handle.connections.length == 0) {
                         return;
-                    if (handle.id)
+                    }
+                    if (handle.id) {
                         return;
-                    if (!handle.type)
+                    }
+                    if (!handle.type) {
                         return;
+                    }
                     // TODO: using the connection to retrieve type information is wrong.
                     // Once validation of recipes generates type information on the handle
                     // we should switch to using that instead.
                     let counts = __WEBPACK_IMPORTED_MODULE_3__recipe_recipe_util_js__["a" /* RecipeUtil */].directionCounts(handle);
-                    if (counts.unknown > 0)
+                    if (counts.unknown > 0) {
                         return;
+                    }
                     let score = this._getScore(counts, handle.tags);
                     if (counts.out > 0 && handle.fate == 'map') {
                         return;
@@ -9174,14 +9428,17 @@ class AssignHandles extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer
                 _getScore(counts, tags) {
                     let score = -1;
                     if (counts.in == 0 || counts.out == 0) {
-                        if (counts.out == 0)
+                        if (counts.out == 0) {
                             score = 1;
-                        else
+                        }
+                        else {
                             score = 0;
+                        }
                     }
                     // TODO: Why is score negative, where there are both - in and out?
-                    if (tags.length > 0)
+                    if (tags.length > 0) {
                         score += 4;
+                    }
                     return score;
                 }
             }(__WEBPACK_IMPORTED_MODULE_1__recipe_walker_js__["a" /* Walker */].Permuted), this);
@@ -9234,10 +9491,12 @@ class CreateDescriptionHandle extends __WEBPACK_IMPORTED_MODULE_0__strategizer_s
         return __awaiter(this, void 0, void 0, function* () {
             return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* Walker */] {
                 onHandleConnection(recipe, handleConnection) {
-                    if (handleConnection.handle)
+                    if (handleConnection.handle) {
                         return;
-                    if (handleConnection.name != 'descriptions')
+                    }
+                    if (handleConnection.name != 'descriptions') {
                         return;
+                    }
                     return (recipe, handleConnection) => {
                         let handle = recipe.newHandle();
                         handle.fate = 'create';
@@ -9320,7 +9579,7 @@ class CreateHandleGroup extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
                             maximalGroup = compatibleConnections;
                         }
                     }
-                    if (maximalGroup)
+                    if (maximalGroup) {
                         return recipe => {
                             let newHandle = recipe.newHandle();
                             newHandle.fate = 'create';
@@ -9329,6 +9588,7 @@ class CreateHandleGroup extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
                                 cloneConn.connectToHandle(newHandle);
                             }
                         };
+                    }
                 }
             }(__WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* Walker */].Independent), this);
         });
@@ -9439,7 +9699,7 @@ class GroupHandleConnections extends __WEBPACK_IMPORTED_MODULE_1__strategizer_st
                         groupsByType.set(type, groups);
                     }
                 });
-                if (groupsByType.size > 0)
+                if (groupsByType.size > 0) {
                     return recipe => {
                         groupsByType.forEach((groups, type) => {
                             groups.forEach(group => {
@@ -9452,6 +9712,7 @@ class GroupHandleConnections extends __WEBPACK_IMPORTED_MODULE_1__strategizer_st
                         });
                         // TODO: score!
                     };
+                }
             }
         }(__WEBPACK_IMPORTED_MODULE_3__recipe_walker_js__["a" /* Walker */].Permuted);
     }
@@ -9693,8 +9954,9 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
                                             }
                                             for (let slotName in slotConstraints[consumeSlot].providedSlots) {
                                                 let slot = slotConstraints[consumeSlot].providedSlots[slotName];
-                                                if (slot == null)
+                                                if (slot == null) {
                                                     continue;
+                                                }
                                                 let { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slot });
                                                 let oldSlot = particle.consumedSlotConnections[consumeSlot].providedSlots[slotName];
                                                 oldSlot.remove();
@@ -9709,10 +9971,12 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
                                 }
                             }
                             function tryApplyHandleConstraint(name, connection, constraint, handle) {
-                                if (connection.handle != null)
+                                if (connection.handle != null) {
                                     return false;
-                                if (!MatchRecipeByVerb.connectionMatchesConstraint(connection, constraint))
+                                }
+                                if (!MatchRecipeByVerb.connectionMatchesConstraint(connection, constraint)) {
                                     return false;
+                                }
                                 for (let i = 0; i < handle.connections.length; i++) {
                                     let candidate = handle.connections[i];
                                     if (candidate.particle == particleForReplacing && candidate.name == name) {
@@ -9727,25 +9991,29 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
                                 let { mappedHandle } = outputRecipe.updateToClone({ mappedHandle: handle });
                                 for (let particle of particles) {
                                     if (name) {
-                                        if (tryApplyHandleConstraint(name, particle.connections[name], constraint, mappedHandle))
+                                        if (tryApplyHandleConstraint(name, particle.connections[name], constraint, mappedHandle)) {
                                             return true;
+                                        }
                                     }
                                     else {
                                         for (let connection of Object.values(particle.connections)) {
-                                            if (tryApplyHandleConstraint(name, connection, constraint, mappedHandle))
+                                            if (tryApplyHandleConstraint(name, connection, constraint, mappedHandle)) {
                                                 return true;
+                                            }
                                         }
                                     }
                                 }
                                 return false;
                             }
                             for (let name in handleConstraints.named) {
-                                if (handleConstraints.named[name].handle)
+                                if (handleConstraints.named[name].handle) {
                                     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* assert */])(applyHandleConstraint(name, handleConstraints.named[name], handleConstraints.named[name].handle));
+                                }
                             }
                             for (let connection of handleConstraints.unnamed) {
-                                if (connection.handle)
+                                if (connection.handle) {
                                     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__platform_assert_web_js__["a" /* assert */])(applyHandleConstraint(null, connection, connection.handle));
+                                }
                             }
                             return 1;
                         };
@@ -9755,23 +10023,28 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
         });
     }
     static satisfiesHandleConstraints(recipe, handleConstraints) {
-        for (let handleName in handleConstraints.named)
-            if (!MatchRecipeByVerb.satisfiesHandleConnection(recipe, handleName, handleConstraints.named[handleName]))
+        for (let handleName in handleConstraints.named) {
+            if (!MatchRecipeByVerb.satisfiesHandleConnection(recipe, handleName, handleConstraints.named[handleName])) {
                 return false;
+            }
+        }
         for (let handleData of handleConstraints.unnamed) {
-            if (!MatchRecipeByVerb.satisfiesUnnamedHandleConnection(recipe, handleData))
+            if (!MatchRecipeByVerb.satisfiesUnnamedHandleConnection(recipe, handleData)) {
                 return false;
+            }
         }
         return true;
     }
     static satisfiesUnnamedHandleConnection(recipe, handleData) {
         // refuse to match unnamed handle connections unless some type information is present.
-        if (!handleData.handle)
+        if (!handleData.handle) {
             return false;
+        }
         for (let particle of recipe.particles) {
             for (let connection of Object.values(particle.connections)) {
-                if (MatchRecipeByVerb.connectionMatchesConstraint(connection, handleData))
+                if (MatchRecipeByVerb.connectionMatchesConstraint(connection, handleData)) {
                     return true;
+                }
             }
         }
         return false;
@@ -9779,40 +10052,51 @@ class MatchRecipeByVerb extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strateg
     static satisfiesHandleConnection(recipe, handleName, handleData) {
         for (let particle of recipe.particles) {
             if (particle.connections[handleName]) {
-                if (MatchRecipeByVerb.connectionMatchesConstraint(particle.connections[handleName], handleData))
+                if (MatchRecipeByVerb.connectionMatchesConstraint(particle.connections[handleName], handleData)) {
                     return true;
+                }
             }
         }
         return false;
     }
     static connectionMatchesConstraint(connection, handleData) {
-        if (connection.direction !== handleData.direction)
+        if (connection.direction !== handleData.direction) {
             return false;
-        if (!handleData.handle)
+        }
+        if (!handleData.handle) {
             return true;
+        }
         return __WEBPACK_IMPORTED_MODULE_3__recipe_handle_js__["a" /* Handle */].effectiveType(handleData.handle._mappedType, handleData.handle.connections.concat(connection)) != null;
     }
     static satisfiesSlotConstraints(recipe, slotConstraints) {
-        for (let slotName in slotConstraints)
-            if (!MatchRecipeByVerb.satisfiesSlotConnection(recipe, slotName, slotConstraints[slotName]))
+        for (let slotName in slotConstraints) {
+            if (!MatchRecipeByVerb.satisfiesSlotConnection(recipe, slotName, slotConstraints[slotName])) {
                 return false;
+            }
+        }
         return true;
     }
     static satisfiesSlotConnection(recipe, slotName, constraints) {
         for (let particle of recipe.particles) {
-            if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, slotName, constraints))
+            if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, slotName, constraints)) {
                 return true;
+            }
         }
         return false;
     }
     static slotsMatchConstraint(connections, name, constraints) {
-        if (connections[name] == null)
+        if (connections[name] == null) {
             return false;
-        if (connections[name]._targetSlot != null && constraints.targetSlot != null)
+        }
+        if (connections[name]._targetSlot != null &&
+            constraints.targetSlot != null) {
             return false;
-        for (let provideName in constraints.providedSlots)
-            if (connections[name].providedSlots[provideName] == null)
+        }
+        for (let provideName in constraints.providedSlots) {
+            if (connections[name].providedSlots[provideName] == null) {
                 return false;
+            }
+        }
         return true;
     }
 }
@@ -10152,15 +10436,17 @@ class TypeVariable {
     // to the same value.
     maybeMergeConstraints(variable) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(variable instanceof TypeVariable);
-        if (!this.maybeMergeCanReadSubset(variable.canReadSubset))
+        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
             return false;
+        }
         return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
     }
     // merge a type variable's read subset (upper bound) constraints into this variable.
     // This is used to accumulate read constraints when resolving a handle's type.
     maybeMergeCanReadSubset(constraint) {
-        if (constraint == null)
+        if (constraint == null) {
             return true;
+        }
         if (this.canReadSubset == null) {
             this.canReadSubset = constraint;
             return true;
@@ -10170,16 +10456,18 @@ class TypeVariable {
             return true;
         }
         let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
-        if (!mergedSchema)
+        if (!mergedSchema) {
             return false;
+        }
         this.canReadSubset = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newEntity(mergedSchema);
         return true;
     }
     // merge a type variable's write superset (lower bound) constraints into this variable.
     // This is used to accumulate write constraints when resolving a handle's type.
     maybeMergeCanWriteSuperset(constraint) {
-        if (constraint == null)
+        if (constraint == null) {
             return true;
+        }
         if (this.canWriteSuperset == null) {
             this.canWriteSuperset = constraint;
             return true;
@@ -10189,8 +10477,9 @@ class TypeVariable {
             return true;
         }
         let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
-        if (!mergedSchema)
+        if (!mergedSchema) {
             return false;
+        }
         this.canWriteSuperset = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newEntity(mergedSchema);
         return true;
     }
@@ -10219,10 +10508,12 @@ class TypeVariable {
         }
         let probe = value;
         while (probe) {
-            if (!probe.isVariable)
+            if (!probe.isVariable) {
                 break;
-            if (probe.variable == this)
+            }
+            if (probe.variable == this) {
                 return;
+            }
             probe = probe.variable.resolution;
         }
         this._resolution = value;
@@ -10261,15 +10552,18 @@ class TypeVariable {
         return this._canReadSubset !== null || this._canWriteSuperset !== null;
     }
     canEnsureResolved() {
-        if (this._resolution)
+        if (this._resolution) {
             return this._resolution.canEnsureResolved();
-        if (this._canWriteSuperset || this._canReadSubset)
+        }
+        if (this._canWriteSuperset || this._canReadSubset) {
             return true;
+        }
         return false;
     }
     maybeEnsureResolved() {
-        if (this._resolution)
+        if (this._resolution) {
             return this._resolution.maybeEnsureResolved();
+        }
         if (this._canWriteSuperset) {
             this.resolution = this._canWriteSuperset;
             return true;
@@ -11044,12 +11338,15 @@ if (typeof document == 'object') {
 let flowId = 0;
 
 function parseInfo(info) {
-  if (!info)
+  if (!info) {
     return {};
-  if (typeof info == 'function')
+  }
+  if (typeof info == 'function') {
     return parseInfo(info());
-  if (info.toTraceInfo)
+  }
+  if (info.toTraceInfo) {
     return parseInfo(info.toTraceInfo());
+  }
   return info;
 }
 
@@ -11508,17 +11805,20 @@ const vm = {};
  */
 let systemHandlers = [];
 function reportSystemException(exception, methodName, particle) {
-    for (let handler of systemHandlers)
+    for (let handler of systemHandlers) {
         handler(exception, methodName, particle);
+    }
 }
 function registerSystemExceptionHandler(handler) {
-    if (!systemHandlers.includes(handler))
+    if (!systemHandlers.includes(handler)) {
         systemHandlers.push(handler);
+    }
 }
 function removeSystemExceptionHandler(handler) {
     let idx = systemHandlers.indexOf(handler);
-    if (idx > -1)
+    if (idx > -1) {
         systemHandlers.splice(idx, 1);
+    }
 }
 registerSystemExceptionHandler((exception, methodName, particle) => {
     console.log(methodName, particle);
@@ -20010,8 +20310,9 @@ class JsonldToManifest {
             obj['@graph'] = [obj];
         }
         for (let item of obj['@graph']) {
-            if (item['@type'] == 'rdf:Property')
+            if (item['@type'] == 'rdf:Property') {
                 properties[item['@id']] = item;
+            }
             else if (item['@type'] == 'rdfs:Class') {
                 classes[item['@id']] = item;
                 item.subclasses = [];
@@ -20020,12 +20321,14 @@ class JsonldToManifest {
         }
         for (let clazz of Object.values(classes)) {
             if (clazz['rdfs:subClassOf'] !== undefined) {
-                if (clazz['rdfs:subClassOf'].length == undefined)
+                if (clazz['rdfs:subClassOf'].length == undefined) {
                     clazz['rdfs:subClassOf'] = [clazz['rdfs:subClassOf']];
+                }
                 for (let subClass of clazz['rdfs:subClassOf']) {
                     let superclass = subClass['@id'];
-                    if (clazz.superclass == undefined)
+                    if (clazz.superclass == undefined) {
                         clazz.superclass = [];
+                    }
                     if (classes[superclass]) {
                         classes[superclass].subclasses.push(clazz);
                         clazz.superclass.push(classes[superclass]);
@@ -20044,39 +20347,48 @@ class JsonldToManifest {
         let relevantProperties = [];
         for (let property of Object.values(properties)) {
             let domains = property['schema:domainIncludes'];
-            if (!domains)
+            if (!domains) {
                 domains = { '@id': theClass['@id'] };
-            if (!domains.length)
+            }
+            if (!domains.length) {
                 domains = [domains];
+            }
             domains = domains.map(a => a['@id']);
             if (domains.includes(theClass['@id'])) {
                 let name = property['@id'].split(':')[1];
                 let type = property['schema:rangeIncludes'];
-                if (!type)
+                if (!type) {
                     console.log(property);
-                if (!type.length)
+                }
+                if (!type.length) {
                     type = [type];
+                }
                 type = type.map(a => a['@id'].split(':')[1]);
                 type = type.filter(type => supportedTypes.includes(type));
-                if (type.length > 0)
+                if (type.length > 0) {
                     relevantProperties.push({ name, type });
+                }
             }
         }
         let className = theClass['@id'].split(':')[1];
         let superNames = theClass.superclass ? theClass.superclass.map(a => a['@id'].split(':')[1]) : [];
         let s = '';
-        for (let superName of superNames)
+        for (let superName of superNames) {
             s += `import 'https://schema.org/${superName}'\n\n`;
+        }
         s += `schema ${className}`;
-        if (superNames.length > 0)
+        if (superNames.length > 0) {
             s += ` extends ${superNames.join(', ')}`;
+        }
         if (relevantProperties.length > 0) {
             for (let property of relevantProperties) {
                 let type;
-                if (property.type.length > 1)
+                if (property.type.length > 1) {
                     type = '(' + property.type.join(' or ') + ')';
-                else
+                }
+                else {
                     type = property.type[0];
+                }
                 s += `\n  ${type} ${property.name}`;
             }
         }
@@ -20992,16 +21304,19 @@ class Entity {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
         this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = identifier;
         let components = identifier.split(':');
-        if (components[components.length - 2] == 'uid')
+        if (components[components.length - 2] == 'uid') {
             this._userIDComponent = components[components.length - 1];
+        }
     }
     createIdentity(components) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
         let id;
-        if (this._userIDComponent)
+        if (this._userIDComponent) {
             id = `${components.base}:uid:${this._userIDComponent}`;
-        else
+        }
+        else {
             id = `${components.base}:${components.component()}`;
+        }
         this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = id;
     }
     toLiteral() {
@@ -21153,8 +21468,9 @@ class Handle {
     }
     _serialize(entity) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(entity, 'can\'t serialize a null entity');
-        if (!entity.isIdentified())
+        if (!entity.isIdentified()) {
             entity.createIdentity(this._proxy.generateIDComponents());
+        }
         let id = entity[__WEBPACK_IMPORTED_MODULE_0__symbols_js__["a" /* Symbols */].identifier];
         let rawData = entity.dataClone();
         return {
@@ -21196,10 +21512,12 @@ class Collection extends Handle {
                 return;
             case 'update': {
                 let update = {};
-                if ('add' in details)
+                if ('add' in details) {
                     update.added = this._restore(details.add);
-                if ('remove' in details)
+                }
+                if ('remove' in details) {
                     update.removed = this._restore(details.remove);
+                }
                 update.originator = details.originatorId == this._particleId;
                 particle.onHandleUpdate(this, update);
                 return;
@@ -21217,8 +21535,9 @@ class Collection extends Handle {
     toList() {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: remove this and use query instead
-            if (!this.canRead)
+            if (!this.canRead) {
                 throw new Error('Handle not readable');
+            }
             return this._restore(yield this._proxy.toList(this._particleId));
         });
     }
@@ -21232,8 +21551,9 @@ class Collection extends Handle {
      */
     store(entity) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canWrite)
+            if (!this.canWrite) {
                 throw new Error('Handle not writeable');
+            }
             let serialization = this._serialize(entity);
             let keys = [this._proxy.generateID('key')];
             return this._proxy.store(serialization, keys, this._particleId);
@@ -21246,8 +21566,9 @@ class Collection extends Handle {
      */
     remove(entity) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canWrite)
+            if (!this.canWrite) {
                 throw new Error('Handle not writeable');
+            }
             let serialization = this._serialize(entity);
             // Remove the keys that exist at storage/proxy.
             let keys = [];
@@ -21288,15 +21609,17 @@ class Variable extends Handle {
      */
     get() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canRead)
+            if (!this.canRead) {
                 throw new Error('Handle not readable');
+            }
             let model = yield this._proxy.get(this._particleId);
             return this._restore(model);
         });
     }
     _restore(model) {
-        if (model === null)
+        if (model === null) {
             return null;
+        }
         if (this.type.isEntity) {
             return restore(model, this.entityClass);
         }
@@ -21310,8 +21633,9 @@ class Variable extends Handle {
     set(entity) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!this.canWrite)
+                if (!this.canWrite) {
                     throw new Error('Handle not writeable');
+                }
                 return this._proxy.set(this._serialize(entity), this._particleId);
             }
             catch (e) {
@@ -21327,8 +21651,9 @@ class Variable extends Handle {
      */
     clear() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canWrite)
+            if (!this.canWrite) {
                 throw new Error('Handle not writeable');
+            }
             yield this._proxy.clear(this._particleId);
         });
     }
@@ -21494,25 +21819,30 @@ class Id {
         return this._components.join(':');
     }
     createId(component) {
-        if (component == undefined)
+        if (component == undefined) {
             component = '';
+        }
         let id = new Id(this._currentSession);
         id._components = this._components.slice();
         id._components.push(component + this._nextIdComponent++);
         return id;
     }
     equal(id) {
-        if (id._session !== this._session)
+        if (id._session !== this._session) {
             return false;
+        }
         return this.equalWithoutSession(id);
     }
     // Only use this for testing!
     equalWithoutSessionForTesting(id) {
-        if (id._components.length !== this._components.length)
+        if (id._components.length !== this._components.length) {
             return false;
-        for (let i = 0; i < id._components.length; i++)
-            if (id._components[i] !== this._components[i])
+        }
+        for (let i = 0; i < id._components.length; i++) {
+            if (id._components[i] !== this._components[i]) {
                 return false;
+            }
+        }
         return true;
     }
 }
@@ -21783,12 +22113,18 @@ class ParticleExecutionContext {
             },
             loadRecipe: function (recipe) {
                 // TODO: do we want to return a promise on completion?
-                return new Promise((resolve, reject) => pec._apiPort.ArcLoadRecipe({ arc: arcId, recipe, callback: a => {
-                        if (a == undefined)
+                return new Promise((resolve, reject) => pec._apiPort.ArcLoadRecipe({
+                    arc: arcId,
+                    recipe,
+                    callback: a => {
+                        if (a == undefined) {
                             resolve();
-                        else
+                        }
+                        else {
                             reject(a);
-                    } }));
+                        }
+                    }
+                }));
             }
         };
     }
@@ -21837,16 +22173,18 @@ class ParticleExecutionContext {
     get relevance() {
         let rMap = new Map();
         this._particles.forEach(p => {
-            if (p.relevances.length == 0)
+            if (p.relevances.length == 0) {
                 return;
+            }
             rMap.set(p, p.relevances);
             p.relevances = [];
         });
         return rMap;
     }
     get busy() {
-        if (this._pendingLoads.length > 0 || this._scheduler.busy)
+        if (this._pendingLoads.length > 0 || this._scheduler.busy) {
             return true;
+        }
         return false;
     }
     get idle() {
@@ -22476,8 +22814,9 @@ class HandleConnection {
     getQualifiedName() { return `${this.particle.name}::${this.name}`; }
     get tags() { return this._tags; }
     get type() {
-        if (this._type)
+        if (this._type) {
             return this._type;
+        }
         return this._rawType;
     }
     get rawType() {
@@ -22503,13 +22842,15 @@ class HandleConnection {
         this._resetHandleType();
     }
     get spec() {
-        if (this.particle.spec == null)
+        if (this.particle.spec == null) {
             return null;
+        }
         return this.particle.spec.connectionMap.get(this.name);
     }
     get isOptional() {
-        if (this.spec == null)
+        if (this.spec == null) {
             return false;
+        }
         return this.spec.isOptional;
     }
     _isValid(options) {
@@ -22542,8 +22883,9 @@ class HandleConnection {
             return true;
         }
         let parent;
-        if (this.spec && this.spec.parentConnection)
+        if (this.spec && this.spec.parentConnection) {
             parent = this.particle.connections[this.spec.parentConnection.name];
+        }
         // TODO: This should use this._type, or possibly not consider type at all.
         if (!this.type) {
             if (options) {
@@ -22558,8 +22900,9 @@ class HandleConnection {
             return false;
         }
         if (!this.handle) {
-            if (parent && parent.isOptional && !parent.handle)
+            if (parent && parent.isOptional && !parent.handle) {
                 return true;
+            }
             if (options) {
                 options.details = 'missing handle';
             }
@@ -22576,8 +22919,9 @@ class HandleConnection {
         return true;
     }
     _resetHandleType() {
-        if (this._handle)
+        if (this._handle) {
             this._handle._type = undefined;
+        }
     }
     connectToHandle(handle) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(handle.recipe == this.recipe);
@@ -22663,12 +23007,16 @@ class Particle {
     _cloneConnectionRawTypes() {
         // TODO(shans): evaluate whether this is the appropriate context root for cloneWithResolution
         let map = new Map();
-        for (let connection of Object.values(this._connections))
-            if (connection._rawType)
+        for (let connection of Object.values(this._connections)) {
+            if (connection._rawType) {
                 connection._rawType = connection._rawType._cloneWithResolutions(map);
-        for (let connection of this._unnamedConnections)
-            if (connection._rawType)
+            }
+        }
+        for (let connection of this._unnamedConnections) {
+            if (connection._rawType) {
                 connection._rawType = connection._rawType._cloneWithResolutions(map);
+            }
+        }
     }
     _startNormalize() {
         this._localName = null;
@@ -22774,8 +23122,9 @@ class Particle {
             connection.direction = speccedConnection.direction;
         }
         spec.slots.forEach(slotSpec => {
-            if (this._consumedSlotConnections[slotSpec.name] == undefined)
+            if (this._consumedSlotConnections[slotSpec.name] == undefined) {
                 this.addSlotConnection(slotSpec.name);
+            }
             this._consumedSlotConnections[slotSpec.name].slotSpec = slotSpec;
         });
     }
@@ -23066,8 +23415,10 @@ class SlotConnection {
         let consumeRes = [];
         consumeRes.push('consume');
         consumeRes.push(`${this.name}`);
-        if (this.targetSlot)
-            consumeRes.push(`as ${(nameMap && nameMap.get(this.targetSlot)) || this.targetSlot.localName}`);
+        if (this.targetSlot) {
+            consumeRes.push(`as ${(nameMap && nameMap.get(this.targetSlot)) ||
+                this.targetSlot.localName}`);
+        }
         if (options && options.showUnresolved) {
             if (!this.isResolved(options)) {
                 consumeRes.push(`// unresolved slot-connection: ${options.details}`);
@@ -23148,8 +23499,9 @@ class Slot {
     }
     _copyInto(recipe, cloneMap) {
         let slot = undefined;
-        if (!this.sourceConnection && this.id)
+        if (!this.sourceConnection && this.id) {
             slot = recipe.findSlot(this.id);
+        }
         if (slot == undefined) {
             slot = recipe.newSlot(this.name);
             slot._id = this.id;
@@ -23158,8 +23510,9 @@ class Slot {
             slot._tags = [...this._tags];
             // the connections are re-established when Particles clone their attached SlotConnection objects.
             slot._sourceConnection = cloneMap.get(this._sourceConnection);
-            if (slot.sourceConnection)
+            if (slot.sourceConnection) {
                 slot.sourceConnection._providedSlots[slot.name] = slot;
+            }
             this._handleConnections.forEach(connection => slot._handleConnections.push(cloneMap.get(connection)));
         }
         this._consumeConnections.forEach(connection => cloneMap.get(connection).connectToSlot(slot));
@@ -23191,8 +23544,9 @@ class Slot {
         let idx = this._consumeConnections.indexOf(slotConnection);
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(idx > -1);
         this._consumeConnections.splice(idx, 1);
-        if (this._consumeConnections.length == 0)
+        if (this._consumeConnections.length == 0) {
             this.remove();
+        }
     }
     remove() {
         this._recipe.removeSlot(this);
@@ -23292,8 +23646,9 @@ class WalkerBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
                     let permutations = [[]];
                     updateList.forEach(({ continuation, context }) => {
                         let newResults = [];
-                        if (typeof continuation == 'function')
+                        if (typeof continuation == 'function') {
                             continuation = [continuation];
+                        }
                         continuation.forEach(f => {
                             permutations.forEach(p => {
                                 let newP = p.slice();
@@ -23308,8 +23663,9 @@ class WalkerBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
                         let newRecipe = recipe.clone(cloneMap);
                         let score = 0;
                         permutation = permutation.filter(p => p.f !== null);
-                        if (permutation.length == 0)
+                        if (permutation.length == 0) {
                             continue;
+                        }
                         permutation.forEach(({ f, context }) => {
                             score += f(newRecipe, cloneMap.get(context));
                         });
@@ -23319,11 +23675,13 @@ class WalkerBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
                 }
                 case WalkerBase.Independent:
                     updateList.forEach(({ continuation, context }) => {
-                        if (typeof continuation == 'function')
+                        if (typeof continuation == 'function') {
                             continuation = [continuation];
+                        }
                         continuation.forEach(f => {
-                            if (f == null)
+                            if (f == null) {
                                 f = () => 0;
+                            }
                             let cloneMap = new Map();
                             let newRecipe = recipe.clone(cloneMap);
                             let score = f(newRecipe, cloneMap.get(context));
@@ -23347,10 +23705,12 @@ class WalkerBase extends __WEBPACK_IMPORTED_MODULE_0__strategizer_strategizer_js
         super.createDescendant(recipe, score, hash, valid);
     }
     isEmptyResult(result) {
-        if (!result)
+        if (!result) {
             return true;
-        if (result.constructor == Array && result.length <= 0)
+        }
+        if (result.constructor == Array && result.length <= 0) {
             return true;
+        }
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(typeof result == 'function' || result.length);
         return false;
     }
@@ -23383,10 +23743,12 @@ class Relevance {
     }
     apply(relevance) {
         for (let key of relevance.keys()) {
-            if (this.relevanceMap.has(key))
+            if (this.relevanceMap.has(key)) {
                 this.relevanceMap.set(key, this.relevanceMap.get(key).concat(relevance.get(key)));
-            else
+            }
+            else {
                 this.relevanceMap.set(key, relevance.get(key));
+            }
         }
     }
     calcRelevanceScore() {
@@ -23521,8 +23883,9 @@ class StorageProxyBase {
     }
     // Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
     register(particle, handle) {
-        if (!handle.canRead)
+        if (!handle.canRead) {
             return;
+        }
         this._observers.push({ particle, handle });
         // Attach an event listener to the backing store when the first readable handle is registered.
         if (!this._listenerAttached) {
@@ -23572,8 +23935,9 @@ class StorageProxyBase {
             this._notify('update', handleUpdate, options => !options.keepSynced && options.notifyUpdate);
         }
         // Bail if we're not in synchronized mode or this is a stale event.
-        if (!this._keepSynced)
+        if (!this._keepSynced) {
             return;
+        }
         if (update.version <= this._version) {
             console.warn(`StorageProxy '${this._id}' received stale update version ${update.version}; ` +
                 `current is ${this._version}`);
@@ -23986,14 +24350,16 @@ class FirebaseKey extends __WEBPACK_IMPORTED_MODULE_3__key_base_js__["a" /* KeyB
     }
     childKeyForHandle(id) {
         let location = '';
-        if (this.location != undefined && this.location.length > 0)
+        if (this.location != undefined && this.location.length > 0) {
             location = this.location + '/';
+        }
         location += `handles/${id}`;
         return new FirebaseKey(`${this.protocol}://${this.databaseUrl}/${this.apiKey}/${location}`);
     }
     toString() {
-        if (this.databaseUrl && this.apiKey)
+        if (this.databaseUrl && this.apiKey) {
             return `${this.protocol}://${this.databaseUrl}/${this.apiKey}/${this.location}`;
+        }
         return `${this.protocol}://`;
     }
 }
@@ -24023,8 +24389,9 @@ class FirebaseStorage {
     }
     share(id, type, key) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this._sharedStores[id])
+            if (!this._sharedStores[id]) {
                 this._sharedStores[id] = yield this._join(id, type, key, true);
+            }
             return this._sharedStores[id];
         });
     }
@@ -24046,8 +24413,9 @@ class FirebaseStorage {
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(typeof id == 'string');
             key = new FirebaseKey(key);
             // TODO: is it ever going to be possible to autoconstruct new firebase datastores?
-            if (key.databaseUrl == undefined || key.apiKey == undefined)
+            if (key.databaseUrl == undefined || key.apiKey == undefined) {
                 throw new Error('Can\'t complete partial firebase keys');
+            }
             if (this._apps[key.projectId] == undefined) {
                 for (let app of __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__["a" /* firebase */].apps) {
                     if (app.options.databaseURL == key.databaseURL) {
@@ -24070,12 +24438,14 @@ class FirebaseStorage {
             }
             if (shouldExist == false || (shouldExist == 'unknown' && currentSnapshot.exists() == false)) {
                 let result = yield reference.transaction(data => {
-                    if (data != null)
+                    if (data != null) {
                         return undefined;
+                    }
                     return { version: 0 };
                 }, undefined, false);
-                if (!result.committed)
+                if (!result.committed) {
                     return null;
+                }
             }
             return FirebaseStorageProvider.newProvider(type, this, id, reference, key);
         });
@@ -24105,10 +24475,12 @@ class FirebaseStorageProvider extends __WEBPACK_IMPORTED_MODULE_0__storage_provi
     static newProvider(type, storageEngine, id, reference, key) {
         if (type.isCollection) {
             // FIXME: implement a mechanism for specifying BigCollections in manifests
-            if (id.startsWith('~big~'))
+            if (id.startsWith('~big~')) {
                 return new FirebaseBigCollection(type, storageEngine, id, reference, key);
-            else
+            }
+            else {
                 return new FirebaseCollection(type, storageEngine, id, reference, key);
+            }
         }
         return new FirebaseVariable(type, storageEngine, id, reference, key);
     }
@@ -24259,8 +24631,9 @@ class FirebaseVariable extends FirebaseStorageProvider {
             yield this._initialized;
             if (this.type.isReference) {
                 let referredType = this.type.referenceReferredType;
-                if (this._backingStore == null)
+                if (this._backingStore == null) {
                     this._backingStore = yield this._storageEngine.share(referredType.toString(), referredType.collectionOf(), this._value.storageKey);
+                }
                 return yield this._backingStore.get(this._value.id);
             }
             return this._value;
@@ -24285,8 +24658,9 @@ class FirebaseVariable extends FirebaseStorageProvider {
                 this._resolveInitialized();
             }
             else {
-                if (JSON.stringify(this._value) == JSON.stringify(value))
+                if (JSON.stringify(this._value) == JSON.stringify(value)) {
                     return;
+                }
                 this._version++;
             }
             if (this.type.isReference) {
@@ -24524,11 +24898,13 @@ class FirebaseCollection extends FirebaseStorageProvider {
             yield this._initialized;
             if (this.type.primitiveType().isReference) {
                 let ref = this._model.getValue(id);
-                if (ref == null)
+                if (ref == null) {
                     return null;
+                }
                 let referredType = this.type.primitiveType().referenceReferredType;
-                if (this._backingStore == null)
+                if (this._backingStore == null) {
                     this._backingStore = yield this._storageEngine.share(referredType.toString(), referredType.collectionOf(), ref.storageKey);
+                }
                 let result = yield this._backingStore.get(ref.id);
                 return result;
             }
@@ -24540,8 +24916,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
             yield this._initialized;
             // 1. Apply the change to the local model.
             let value = this._model.getValue(id);
-            if (value === null)
+            if (value === null) {
                 return;
+            }
             if (keys.length == 0) {
                 keys = this._model.getKeys(id);
             }
@@ -24570,8 +24947,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
             // 1. Apply the change to the local model.
             if (this.type.primitiveType().isReference) {
                 let referredType = this.type.primitiveType().referenceReferredType;
-                if (this._backingStore == null)
+                if (this._backingStore == null) {
                     this._backingStore = yield this._storageEngine.baseStorageFor(referredType, this.storageKey);
+                }
                 yield this._backingStore.store(value, [this.storageKey]);
                 value = { id: value.id, storageKey: this._backingStore.storageKey };
             }
@@ -24690,8 +25068,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
                 items.forEach(item => refSet.add(item.storageKey));
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(refSet.size == 1);
                 let ref = refSet.values().next().value;
-                if (this._backingStore == null)
+                if (this._backingStore == null) {
                     this._backingStore = yield this._storageEngine.share(referredType.toString(), referredType.collectionOf(), ref);
+                }
                 let retrieveItem = (item) => __awaiter(this, void 0, void 0, function* () {
                     return this._backingStore.get(item.id);
                 });
@@ -24964,8 +25343,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 
 
 function resetInMemoryStorageForTesting() {
-    for (let key in __storageCache)
+    for (let key in __storageCache) {
         __storageCache[key]._memoryMap = {};
+    }
 }
 class InMemoryKey extends __WEBPACK_IMPORTED_MODULE_3__key_base_js__["a" /* KeyBase */] {
     constructor(key) {
@@ -24982,10 +25362,12 @@ class InMemoryKey extends __WEBPACK_IMPORTED_MODULE_3__key_base_js__["a" /* KeyB
         return new InMemoryKey('in-memory://');
     }
     toString() {
-        if (this.location !== undefined && this.arcId !== undefined)
+        if (this.location !== undefined && this.arcId !== undefined) {
             return `${this.protocol}://${this.arcId}^^${this.location}`;
-        if (this.arcId !== undefined)
+        }
+        if (this.arcId !== undefined) {
             return `${this.protocol}://${this.arcId}`;
+        }
         return `${this.protocol}`;
     }
 }
@@ -25004,14 +25386,17 @@ class InMemoryStorage {
     construct(id, type, keyFragment) {
         return __awaiter(this, void 0, void 0, function* () {
             let key = new InMemoryKey(keyFragment);
-            if (key.arcId == undefined)
+            if (key.arcId == undefined) {
                 key.arcId = this._arcId;
-            if (key.location == undefined)
+            }
+            if (key.location == undefined) {
                 key.location = 'in-memory-' + this.localIDBase++;
+            }
             // TODO(shanestephens): should pass in factory, not 'this' here.
             let provider = InMemoryStorageProvider.newProvider(type, this, undefined, id, key.toString());
-            if (this._memoryMap[key.toString()] !== undefined)
+            if (this._memoryMap[key.toString()] !== undefined) {
                 return null;
+            }
             this._memoryMap[key.toString()] = provider;
             return provider;
         });
@@ -25020,12 +25405,14 @@ class InMemoryStorage {
         return __awaiter(this, void 0, void 0, function* () {
             let key = new InMemoryKey(keyString);
             if (key.arcId !== this._arcId.toString()) {
-                if (__storageCache[key.arcId] == undefined)
+                if (__storageCache[key.arcId] == undefined) {
                     return null;
+                }
                 return __storageCache[key.arcId].connect(id, type, keyString);
             }
-            if (this._memoryMap[keyString] == undefined)
+            if (this._memoryMap[keyString] == undefined) {
                 return null;
+            }
             // TODO assert types match?
             return this._memoryMap[keyString];
         });
@@ -25034,15 +25421,17 @@ class InMemoryStorage {
         return __awaiter(this, void 0, void 0, function* () {
             let key = new InMemoryKey(keyString);
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(key.arcId == this._arcId.toString());
-            if (this._memoryMap[keyString] == undefined)
+            if (this._memoryMap[keyString] == undefined) {
                 return this.construct(id, type, keyString);
+            }
             return this._memoryMap[keyString];
         });
     }
     baseStorageFor(type) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this._typeMap.has(type))
+            if (this._typeMap.has(type)) {
                 return this._typeMap.get(type);
+            }
             let storage = yield this.construct(type.toString(), type.collectionOf(), 'in-memory');
             this._typeMap.set(type, storage);
             return storage;
@@ -25059,8 +25448,9 @@ class InMemoryStorage {
 
 class InMemoryStorageProvider extends __WEBPACK_IMPORTED_MODULE_2__storage_provider_base_js__["a" /* StorageProviderBase */] {
     static newProvider(type, storageEngine, name, id, key) {
-        if (type.isCollection)
+        if (type.isCollection) {
             return new InMemoryCollection(type, storageEngine, name, id, key);
+        }
         return new InMemoryVariable(type, storageEngine, name, id, key);
     }
 }
@@ -25102,8 +25492,9 @@ class InMemoryCollection extends InMemoryStorageProvider {
                 items.forEach(item => refSet.add(item.value.storageKey));
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(refSet.size == 1);
                 let ref = refSet.values().next().value;
-                if (this._backingStore == null)
+                if (this._backingStore == null) {
                     this._backingStore = (yield this._storageEngine.share(referredType.toString(), referredType, ref));
+                }
                 let retrieveItem = (item) => __awaiter(this, void 0, void 0, function* () {
                     let ref = item.value;
                     return this._backingStore.get(ref.id);
@@ -25117,11 +25508,13 @@ class InMemoryCollection extends InMemoryStorageProvider {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.type.primitiveType().isReference) {
                 let ref = this._model.getValue(id);
-                if (ref == null)
+                if (ref == null) {
                     return null;
+                }
                 let referredType = this.type.primitiveType().referenceReferredType;
-                if (this._backingStore == null)
+                if (this._backingStore == null) {
                     this._backingStore = (yield this._storageEngine.share(referredType.toString(), referredType.collectionOf(), ref.storageKey));
+                }
                 let result = yield this._backingStore.get(ref.id);
                 return result;
             }
@@ -25137,8 +25530,10 @@ class InMemoryCollection extends InMemoryStorageProvider {
             let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({ cat: 'handle', name: 'InMemoryCollection::store', args: { name: this.name } });
             if (this.type.primitiveType().isReference) {
                 let referredType = this.type.primitiveType().referenceReferredType;
-                if (this._backingStore == null)
-                    this._backingStore = yield this._storageEngine.baseStorageFor(referredType);
+                if (this._backingStore == null) {
+                    this._backingStore =
+                        yield this._storageEngine.baseStorageFor(referredType);
+                }
                 this._backingStore.store(value, [this.storageKey]);
                 value = { id: value.id, storageKey: this._backingStore.storageKey };
             }
@@ -25217,8 +25612,9 @@ class InMemoryVariable extends InMemoryStorageProvider {
                 let value = this._stored;
                 let referredType = this.type.referenceReferredType;
                 // TODO: string version of ReferredTyped as ID?
-                if (this._backingStore == null)
+                if (this._backingStore == null) {
                     this._backingStore = (yield this._storageEngine.share(referredType.toString(), referredType.collectionOf(), value.storageKey));
+                }
                 let result = yield this._backingStore.get(value.id);
                 return result;
             }
@@ -25232,19 +25628,24 @@ class InMemoryVariable extends InMemoryStorageProvider {
                 // If there's a barrier set, then the originating storage-proxy is expecting
                 // a result so we cannot suppress the event here.
                 // TODO(shans): Make sure this is tested.
-                if (this._stored && this._stored.id == value.id && barrier == null)
+                if (this._stored && this._stored.id == value.id && barrier == null) {
                     return;
+                }
                 let referredType = this.type.referenceReferredType;
-                if (this._backingStore == null)
-                    this._backingStore = yield this._storageEngine.baseStorageFor(referredType);
+                if (this._backingStore == null) {
+                    this._backingStore =
+                        yield this._storageEngine.baseStorageFor(referredType);
+                }
                 this._backingStore.store(value, [this.storageKey]);
                 this._stored = { id: value.id, storageKey: this._backingStore.storageKey };
             }
             else {
                 // If there's a barrier set, then the originating storage-proxy is expecting
                 // a result so we cannot suppress the event here.
-                if (JSON.stringify(this._stored) == JSON.stringify(value) && barrier == null)
+                if (JSON.stringify(this._stored) == JSON.stringify(value) &&
+                    barrier == null) {
                     return;
+                }
                 this._stored = value;
             }
             this._version++;
@@ -25585,10 +25986,14 @@ class NameUnnamedConnections extends __WEBPACK_IMPORTED_MODULE_0__strategizer_st
         return __awaiter(this, void 0, void 0, function* () {
             return __WEBPACK_IMPORTED_MODULE_1__recipe_recipe_js__["a" /* Recipe */].over(this.getResults(inputParams), new class extends __WEBPACK_IMPORTED_MODULE_2__recipe_walker_js__["a" /* Walker */] {
                 onHandleConnection(recipe, handleConnection) {
-                    if (handleConnection.name)
-                        return; // it is already named.
-                    if (!handleConnection.particle.spec)
-                        return; // the particle doesn't have spec yet.
+                    if (handleConnection.name) {
+                        // it is already named.
+                        return;
+                    }
+                    if (!handleConnection.particle.spec) {
+                        // the particle doesn't have spec yet.
+                        return;
+                    }
                     let possibleSpecConns = handleConnection.particle.spec.connections.filter(specConn => {
                         // filter specs with matching types that don't have handles bound to the corresponding handle connection.
                         return !specConn.isOptional &&
@@ -25932,11 +26337,13 @@ class TupleFields {
         return new TupleFields(this.fieldList.map(a => a.clone()));
     }
     equals(other) {
-        if (this.fieldList.length !== other.fieldList.length)
+        if (this.fieldList.length !== other.fieldList.length) {
             return false;
+        }
         for (let i = 0; i < this.fieldList.length; i++) {
-            if (!this.fieldList[i].equals(other.fieldList[i]))
+            if (!this.fieldList[i].equals(other.fieldList[i])) {
                 return false;
+            }
         }
         return true;
     }

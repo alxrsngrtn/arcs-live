@@ -28,8 +28,9 @@ export class Handle {
     }
     _copyInto(recipe) {
         let handle = undefined;
-        if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate))
+        if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate)) {
             handle = recipe.findHandle(this._id);
+        }
         if (handle == undefined) {
             handle = recipe.newHandle();
             handle._id = this._id;
@@ -167,8 +168,9 @@ export class Handle {
         let resolved = true;
         if (this.type) {
             let mustBeResolved = true;
-            if (this.fate == 'create' || this.fate == '`slot')
+            if (this.fate == 'create' || this.fate == '`slot') {
                 mustBeResolved = false;
+            }
             if ((mustBeResolved && !this.type.isResolved()) || !this.type.canEnsureResolved()) {
                 if (options) {
                     options.details.push('unresolved type');

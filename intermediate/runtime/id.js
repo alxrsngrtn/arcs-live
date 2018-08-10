@@ -39,25 +39,30 @@ export class Id {
         return this._components.join(':');
     }
     createId(component) {
-        if (component == undefined)
+        if (component == undefined) {
             component = '';
+        }
         let id = new Id(this._currentSession);
         id._components = this._components.slice();
         id._components.push(component + this._nextIdComponent++);
         return id;
     }
     equal(id) {
-        if (id._session !== this._session)
+        if (id._session !== this._session) {
             return false;
+        }
         return this.equalWithoutSession(id);
     }
     // Only use this for testing!
     equalWithoutSessionForTesting(id) {
-        if (id._components.length !== this._components.length)
+        if (id._components.length !== this._components.length) {
             return false;
-        for (let i = 0; i < id._components.length; i++)
-            if (id._components[i] !== this._components[i])
+        }
+        for (let i = 0; i < id._components.length; i++) {
+            if (id._components[i] !== this._components[i]) {
                 return false;
+            }
+        }
         return true;
     }
 }

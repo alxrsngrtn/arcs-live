@@ -77,8 +77,10 @@ export class ConvertConstraintsToConnections extends Strategy {
                             }
                             if (constraint.to.connection) {
                                 handleIsConcrete = true;
-                                if (!handle)
-                                    handle = map[constraint.to.particle.name][constraint.to.connection];
+                                if (!handle) {
+                                    handle =
+                                        map[constraint.to.particle.name][constraint.to.connection];
+                                }
                             }
                             else {
                                 createObligation = true;
@@ -90,8 +92,9 @@ export class ConvertConstraintsToConnections extends Strategy {
                         }
                         if (handle == undefined) {
                             handle = { handle: 'v' + handleCount++, direction: constraint.direction };
-                            if (handleIsConcrete)
+                            if (handleIsConcrete) {
                                 handles.add(handle.handle);
+                            }
                         }
                         if (constraint.from instanceof TagEndPoint) {
                             handle.tags = constraint.from.tags;
@@ -99,15 +102,23 @@ export class ConvertConstraintsToConnections extends Strategy {
                         else if (constraint.to instanceof TagEndPoint) {
                             handle.tags = constraint.to.tags;
                         }
-                        if (createObligation)
-                            obligations.push({ from: constraint.from._clone(), to: constraint.to._clone(), direction: constraint.direction });
+                        if (createObligation) {
+                            obligations.push({
+                                from: constraint.from._clone(),
+                                to: constraint.to._clone(),
+                                direction: constraint.direction
+                            });
+                        }
                         let unionDirections = (a, b) => {
-                            if (a == '=')
+                            if (a == '=') {
                                 return '=';
-                            if (b == '=')
+                            }
+                            if (b == '=') {
                                 return '=';
-                            if (a !== b)
+                            }
+                            if (a !== b) {
                                 return '=';
+                            }
                             return a;
                         };
                         let direction = constraint.direction;
@@ -117,8 +128,9 @@ export class ConvertConstraintsToConnections extends Strategy {
                                 let existingHandle = map[constraint.from.particle.name][connection];
                                 if (existingHandle) {
                                     direction = unionDirections(direction, existingHandle.direction);
-                                    if (direction == null)
+                                    if (direction == null) {
                                         return;
+                                    }
                                 }
                                 map[constraint.from.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags };
                             }
@@ -130,8 +142,9 @@ export class ConvertConstraintsToConnections extends Strategy {
                                 let existingHandle = map[constraint.to.particle.name][connection];
                                 if (existingHandle) {
                                     direction = unionDirections(direction, existingHandle.direction);
-                                    if (direction == null)
+                                    if (direction == null) {
                                         return;
+                                    }
                                 }
                                 map[constraint.to.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags };
                             }
@@ -173,8 +186,10 @@ export class ConvertConstraintsToConnections extends Strategy {
                                 for (let connection in map[particle]) {
                                     let handle = map[particle][connection];
                                     let recipeHandleConnection = recipeParticle.connections[connection];
-                                    if (recipeHandleConnection == undefined)
-                                        recipeHandleConnection = recipeParticle.addConnectionName(connection);
+                                    if (recipeHandleConnection == undefined) {
+                                        recipeHandleConnection =
+                                            recipeParticle.addConnectionName(connection);
+                                    }
                                     let recipeHandle = recipeMap[handle.handle];
                                     if (recipeHandle == null && recipeHandleConnection.handle == null) {
                                         recipeHandle = recipe.newHandle();
@@ -182,8 +197,9 @@ export class ConvertConstraintsToConnections extends Strategy {
                                         recipeHandle.tags = handle.tags || [];
                                         recipeMap[handle.handle] = recipeHandle;
                                     }
-                                    if (recipeHandleConnection.handle == null)
+                                    if (recipeHandleConnection.handle == null) {
                                         recipeHandleConnection.connectToHandle(recipeHandle);
+                                    }
                                 }
                             }
                             recipe.clearConnectionConstraints();

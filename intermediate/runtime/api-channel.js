@@ -124,8 +124,9 @@ class APIPort {
                 },
                 unconvert: a => {
                     let r = new Map();
-                    for (let key in a)
+                    for (let key in a) {
                         r.set(keyprimitive.unconvert(key), valueprimitive.unconvert(a[key]));
+                    }
                     return r;
                 }
             };
@@ -180,14 +181,16 @@ class APIPort {
     }
     _processArguments(argumentTypes, args) {
         let messageBody = {};
-        for (let argument in argumentTypes)
+        for (let argument in argumentTypes) {
             messageBody[argument] = argumentTypes[argument].convert(args[argument]);
+        }
         return messageBody;
     }
     _unprocessArguments(argumentTypes, args) {
         let messageBody = {};
-        for (let argument in argumentTypes)
+        for (let argument in argumentTypes) {
             messageBody[argument] = argumentTypes[argument].unconvert(args[argument]);
+        }
         return messageBody;
     }
     registerCall(name, argumentTypes) {

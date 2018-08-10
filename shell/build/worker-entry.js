@@ -111,8 +111,9 @@ function addType(name, arg = undefined) {
     let upperArg = arg ? arg[0].toUpperCase() + arg.substring(1) : '';
     Object.defineProperty(Type.prototype, `${lowerName}${upperArg}`, {
         get: function () {
-            if (!this[`is${name}`])
+            if (!this[`is${name}`]) {
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this[`is${name}`], `{${this.tag}, ${this.data}} is not of type ${name}`);
+            }
             return this.data;
         }
     });
@@ -200,8 +201,9 @@ class Type {
     static unwrapPair(type1, type2) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type1 instanceof Type);
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(type2 instanceof Type);
-        if (type1.isCollection && type2.isCollection)
+        if (type1.isCollection && type2.isCollection) {
             return Type.unwrapPair(type1.primitiveType(), type2.primitiveType());
+        }
         return [type1, type2];
     }
     // TODO: update call sites to use the type checker instead (since they will
@@ -210,10 +212,12 @@ class Type {
         return __WEBPACK_IMPORTED_MODULE_5__recipe_type_checker_js__["a" /* TypeChecker */].compareTypes({ type: this }, { type });
     }
     _applyExistenceTypeTest(test) {
-        if (this.isCollection)
+        if (this.isCollection) {
             return this.primitiveType()._applyExistenceTypeTest(test);
-        if (this.isInterface)
+        }
+        if (this.isInterface) {
             return this.interfaceShape._applyExistenceTypeTest(test);
+        }
         return test(this);
     }
     get hasVariable() {
@@ -240,8 +244,9 @@ class Type {
         }
         if (this.isVariable) {
             let resolution = this.variable.resolution;
-            if (resolution)
+            if (resolution) {
                 return resolution;
+            }
         }
         if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.resolvedType());
@@ -253,52 +258,68 @@ class Type {
         return !this.hasUnresolvedVariable;
     }
     canEnsureResolved() {
-        if (this.isResolved())
+        if (this.isResolved()) {
             return true;
-        if (this.isInterface)
+        }
+        if (this.isInterface) {
             return this.interfaceShape.canEnsureResolved();
-        if (this.isVariable)
+        }
+        if (this.isVariable) {
             return this.variable.canEnsureResolved();
-        if (this.isCollection)
+        }
+        if (this.isCollection) {
             return this.primitiveType().canEnsureResolved();
+        }
         return true;
     }
     maybeEnsureResolved() {
-        if (this.isInterface)
+        if (this.isInterface) {
             return this.interfaceShape.maybeEnsureResolved();
-        if (this.isVariable)
+        }
+        if (this.isVariable) {
             return this.variable.maybeEnsureResolved();
-        if (this.isCollection)
+        }
+        if (this.isCollection) {
             return this.primitiveType().maybeEnsureResolved();
+        }
         return true;
     }
     get canWriteSuperset() {
-        if (this.isVariable)
+        if (this.isVariable) {
             return this.variable.canWriteSuperset;
-        if (this.isEntity || this.isSlot)
+        }
+        if (this.isEntity || this.isSlot) {
             return this;
-        if (this.isInterface)
+        }
+        if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canWriteSuperset);
+        }
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canWriteSuperset not implemented for ${this}`);
         return undefined;
     }
     get canReadSubset() {
-        if (this.isVariable)
+        if (this.isVariable) {
             return this.variable.canReadSubset;
-        if (this.isEntity || this.isSlot)
+        }
+        if (this.isEntity || this.isSlot) {
             return this;
-        if (this.isInterface)
+        }
+        if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canReadSubset);
+        }
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `canReadSubset not implemented for ${this}`);
         return undefined;
     }
     isMoreSpecificThan(type) {
-        if (this.tag !== type.tag)
+        if (this.tag !== type.tag) {
             return false;
-        if (this.isEntity)
+        }
+        if (this.isEntity) {
             return this.entitySchema.isMoreSpecificThan(type.entitySchema);
-        if (this.isInterface)
+        }
+        if (this.isInterface) {
             return this.interfaceShape.isMoreSpecificThan(type.interfaceShape);
+        }
         if (this.isSlot) {
             // TODO: formFactor checking, etc.
             return true;
@@ -307,20 +328,24 @@ class Type {
     }
     static _canMergeCanReadSubset(type1, type2) {
         if (type1.canReadSubset && type2.canReadSubset) {
-            if (type1.canReadSubset.tag !== type2.canReadSubset.tag)
+            if (type1.canReadSubset.tag !== type2.canReadSubset.tag) {
                 return false;
-            if (type1.canReadSubset.isEntity)
+            }
+            if (type1.canReadSubset.isEntity) {
                 return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
+            }
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
         }
         return true;
     }
     static _canMergeCanWriteSuperset(type1, type2) {
         if (type1.canWriteSuperset && type2.canWriteSuperset) {
-            if (type1.canWriteSuperset.tag !== type2.canWriteSuperset.tag)
+            if (type1.canWriteSuperset.tag !== type2.canWriteSuperset.tag) {
                 return false;
-            if (type1.canWriteSuperset.isEntity)
+            }
+            if (type1.canWriteSuperset.isEntity) {
                 return __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
+            }
         }
         return true;
     }
@@ -360,12 +385,18 @@ class Type {
             }
             else {
                 let newTypeVariable = __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */].fromLiteral(this.variable.toLiteralIgnoringResolutions());
-                if (this.variable.resolution)
-                    newTypeVariable.resolution = this.variable.resolution._cloneWithResolutions(variableMap);
-                if (this.variable._canReadSubset)
-                    newTypeVariable.canReadSubset = this.variable.canReadSubset._cloneWithResolutions(variableMap);
-                if (this.variable._canWriteSuperset)
-                    newTypeVariable.canWriteSuperset = this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
+                if (this.variable.resolution) {
+                    newTypeVariable.resolution =
+                        this.variable.resolution._cloneWithResolutions(variableMap);
+                }
+                if (this.variable._canReadSubset) {
+                    newTypeVariable.canReadSubset =
+                        this.variable.canReadSubset._cloneWithResolutions(variableMap);
+                }
+                if (this.variable._canWriteSuperset) {
+                    newTypeVariable.canWriteSuperset =
+                        this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
+                }
                 variableMap.set(this.variable, newTypeVariable);
                 return new Type('Variable', newTypeVariable);
             }
@@ -380,8 +411,9 @@ class Type {
             return this.variable.resolution.toLiteral();
         }
         if (this.data instanceof Type || this.data instanceof __WEBPACK_IMPORTED_MODULE_1__shape_js__["a" /* Shape */] || this.data instanceof __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */] ||
-            this.data instanceof __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */])
+            this.data instanceof __WEBPACK_IMPORTED_MODULE_3__type_variable_js__["a" /* TypeVariable */]) {
             return { tag: this.tag, data: this.data.toLiteral() };
+        }
         return this;
     }
     static _deliteralizer(tag) {
@@ -409,23 +441,30 @@ class Type {
     }
     // TODO: is this the same as _applyExistenceTypeTest
     hasProperty(property) {
-        if (property(this))
+        if (property(this)) {
             return true;
-        if (this.isCollection)
+        }
+        if (this.isCollection) {
             return this.collectionType.hasProperty(property);
+        }
         return false;
     }
     toString(options) {
-        if (this.isCollection)
+        if (this.isCollection) {
             return `[${this.primitiveType().toString(options)}]`;
-        if (this.isEntity)
+        }
+        if (this.isEntity) {
             return this.entitySchema.toInlineSchemaString(options);
-        if (this.isInterface)
+        }
+        if (this.isInterface) {
             return this.interfaceShape.name;
-        if (this.isVariable)
+        }
+        if (this.isVariable) {
             return `~${this.variable.name}`;
-        if (this.isSlot)
+        }
+        if (this.isSlot) {
             return 'Slot';
+        }
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(false, `Add support to serializing type: ${JSON.stringify(this)}`);
     }
     getEntitySchema() {
@@ -458,8 +497,9 @@ class Type {
         if (this.isCollection) {
             return `${this.primitiveType().toPrettyString()} List`;
         }
-        if (this.isVariable)
+        if (this.isVariable) {
             return this.variable.isResolved() ? this.resolvedType().toPrettyString() : `[~${this.variable.name}]`;
+        }
         if (this.isEntity) {
             // Spit MyTypeFOO to My Type FOO
             if (this.entitySchema.name) {
@@ -467,8 +507,9 @@ class Type {
             }
             return JSON.stringify(this.entitySchema._model);
         }
-        if (this.isInterface)
+        if (this.isInterface) {
             return this.interfaceShape.toPrettyString();
+        }
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Type;
@@ -702,8 +743,9 @@ class SlotSpec {
         this.tags = slotModel.tags || [];
         this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
         this.providedSlots = [];
-        if (!slotModel.providedSlots)
+        if (!slotModel.providedSlots) {
             return;
+        }
         slotModel.providedSlots.forEach(ps => {
             this.providedSlots.push(new ProvidedSlotSpec(ps));
         });
@@ -746,8 +788,9 @@ class ParticleSpec {
         this.implFile = model.implFile;
         this.affordance = model.affordance;
         this.slots = new Map();
-        if (model.slots)
+        if (model.slots) {
             model.slots.forEach(s => this.slots.set(s.name, new SlotSpec(s)));
+        }
         // Verify provided slots use valid handle connection names.
         this.slots.forEach(slot => {
             slot.providedSlots.forEach(ps => {
@@ -816,8 +859,9 @@ class ParticleSpec {
     toString() {
         let results = [];
         let verbs = '';
-        if (this.verbs.length > 0)
+        if (this.verbs.length > 0) {
             verbs = ' ' + this.verbs.map(verb => `&${verb}`).join(' ');
+        }
         results.push(`particle ${this.name}${verbs} in '${this.implFile}'`.trim());
         let indent = '  ';
         let writeConnection = (connection, indent) => {
@@ -827,8 +871,9 @@ class ParticleSpec {
             }
         };
         for (let connection of this.connections) {
-            if (connection.parentConnection)
+            if (connection.parentConnection) {
                 continue;
+            }
             writeConnection(connection, indent);
         }
         this.affordance.filter(a => a != 'mock').forEach(a => results.push(`  affordance ${a}`));
@@ -912,8 +957,9 @@ class ParticleSpec {
 class Particle {
     constructor(capabilities) {
         this.spec = this.constructor.spec;
-        if (this.spec.inputs.length == 0)
+        if (this.spec.inputs.length == 0) {
             this.extraData = true;
+        }
         this.relevances = [];
         this._idle = Promise.resolve();
         this._busy = 0;
@@ -972,8 +1018,9 @@ class Particle {
     onHandleDesync(handle) {
     }
     constructInnerArc() {
-        if (!this.capabilities.constructInnerArc)
+        if (!this.capabilities.constructInnerArc) {
             throw new Error('This particle is not allowed to construct inner arcs');
+        }
         return this.capabilities.constructInnerArc(this);
     }
     get busy() {
@@ -1003,16 +1050,19 @@ class Particle {
             let str = strings[i];
             let indent = / *$/.exec(str)[0];
             let bitStr;
-            if (typeof bits[i] == 'string')
+            if (typeof bits[i] == 'string') {
                 bitStr = bits[i];
-            else
+            }
+            else {
                 bitStr = bits[i].toManifestString();
+            }
             bitStr = bitStr.replace(/(\n)/g, '$1' + indent);
             output.push(str);
             output.push(bitStr);
         }
-        if (strings.length > bits.length)
+        if (strings.length > bits.length) {
             output.push(strings[strings.length - 1]);
+        }
         return output.join('');
     }
     setParticleDescription(pattern) {
@@ -1061,8 +1111,9 @@ class TypeChecker {
     // do, talk to shans@.
     static processTypeList(baseType, list) {
         let newBaseType = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newVariable(new __WEBPACK_IMPORTED_MODULE_1__type_variable_js__["a" /* TypeVariable */](''));
-        if (baseType)
+        if (baseType) {
             newBaseType.data.resolution = baseType;
+        }
         baseType = newBaseType;
         let concreteTypes = [];
         // baseType might be a variable (and is definitely a variable if no baseType was available).
@@ -1074,8 +1125,9 @@ class TypeChecker {
         for (let item of list) {
             if (item.type.resolvedType().hasVariable) {
                 baseType = TypeChecker._tryMergeTypeVariable(baseType, item.type);
-                if (baseType == null)
+                if (baseType == null) {
                     return null;
+                }
             }
             else {
                 concreteTypes.push(item);
@@ -1083,17 +1135,22 @@ class TypeChecker {
         }
         for (let item of concreteTypes) {
             let success = TypeChecker._tryMergeConstraints(baseType, item);
-            if (!success)
+            if (!success) {
                 return null;
+            }
         }
         let getResolution = candidate => {
-            if (candidate.isVariable == false)
+            if (candidate.isVariable == false) {
                 return candidate;
-            if (candidate.canReadSubset == null || candidate.canWriteSuperset == null)
+            }
+            if (candidate.canReadSubset == null ||
+                candidate.canWriteSuperset == null) {
                 return candidate;
+            }
             if (candidate.canReadSubset.isMoreSpecificThan(candidate.canWriteSuperset)) {
-                if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset))
+                if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset)) {
                     candidate.variable.resolution = candidate.canReadSubset;
+                }
                 return candidate;
             }
             return null;
@@ -1102,8 +1159,9 @@ class TypeChecker {
         if (candidate.isCollection) {
             candidate = candidate.primitiveType();
             let resolution = getResolution(candidate);
-            if (resolution == null)
+            if (resolution == null) {
                 return null;
+            }
             return resolution.collectionOf();
         }
         return getResolution(candidate);
@@ -1114,8 +1172,9 @@ class TypeChecker {
             if (primitiveOnto.isVariable) {
                 // base, onto both variables.
                 let result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
-                if (result == false)
+                if (result == false) {
                     return null;
+                }
                 // Here onto grows, one level at a time,
                 // as we assign new resolution to primitiveOnto, which is a leaf.
                 primitiveOnto.variable.resolution = primitiveBase;
@@ -1132,8 +1191,9 @@ class TypeChecker {
         }
         else if (primitiveBase.isInterface && primitiveOnto.isInterface) {
             let result = primitiveBase.interfaceShape.tryMergeTypeVariablesWith(primitiveOnto.interfaceShape);
-            if (result == null)
+            if (result == null) {
                 return null;
+            }
             return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newInterface(result);
         }
         else {
@@ -1168,25 +1228,31 @@ class TypeChecker {
                 // the canReadSubset of the handle represents the maximal type that can be read from the
                 // handle, so we need to intersect out any type that is more specific than the maximal type
                 // that could be written.
-                if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset))
+                if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset)) {
                     return false;
+                }
             }
             if (direction == 'in' || direction == 'inout' || direction == '`consume') {
                 // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
                 // so we need to union it with the type that wants to be read here.
-                if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset))
+                if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset)) {
                     return false;
+                }
             }
         }
         else {
             if (primitiveConnectionType.tag !== primitiveHandleType.tag)
                 return false;
-            if (direction == 'out' || direction == 'inout')
-                if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType))
+            if (direction == 'out' || direction == 'inout') {
+                if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
                     return false;
-            if (direction == 'in' || direction == 'inout')
-                if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType))
+                }
+            }
+            if (direction == 'in' || direction == 'inout') {
+                if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
                     return false;
+                }
+            }
         }
         return true;
     }
@@ -1195,10 +1261,12 @@ class TypeChecker {
         // more specific than the canReadSubset then it isn't violating the maximal type
         // that can be read.
         let writtenType = connectionType.canWriteSuperset;
-        if (writtenType == null || handleType.canReadSubset == null)
+        if (writtenType == null || handleType.canReadSubset == null) {
             return true;
-        if (writtenType.isMoreSpecificThan(handleType.canReadSubset))
+        }
+        if (writtenType.isMoreSpecificThan(handleType.canReadSubset)) {
             return true;
+        }
         return false;
     }
     static _readConstraintsApply(handleType, connectionType) {
@@ -1206,10 +1274,12 @@ class TypeChecker {
         // is less specific than the canWriteSuperset, then it isn't violating
         // the maximum lower-bound read type.
         let readType = connectionType.canReadSubset;
-        if (readType == null || handleType.canWriteSuperset == null)
+        if (readType == null || handleType.canWriteSuperset == null) {
             return true;
-        if (handleType.canWriteSuperset.isMoreSpecificThan(readType))
+        }
+        if (handleType.canWriteSuperset.isMoreSpecificThan(readType)) {
             return true;
+        }
         return false;
     }
     // Compare two types to see if they could be potentially resolved (in the absence of other
@@ -1224,24 +1294,31 @@ class TypeChecker {
         let resolvedRight = right.type.resolvedType();
         let [leftType, rightType] = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].unwrapPair(resolvedLeft, resolvedRight);
         // a variable is compatible with a set only if it is unconstrained.
-        if (leftType.isVariable && rightType.isCollection)
-            return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
-        if (rightType.isVariable && leftType.isCollection)
-            return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
+        if (leftType.isVariable && rightType.isCollection) {
+            return !(leftType.variable.canReadSubset ||
+                leftType.variable.canWriteSuperset);
+        }
+        if (rightType.isVariable && leftType.isCollection) {
+            return !(rightType.variable.canReadSubset ||
+                rightType.variable.canWriteSuperset);
+        }
         if (leftType.isVariable || rightType.isVariable) {
             // TODO: everything should use this, eventually. Need to implement the
             // right functionality in Shapes first, though.
             return __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].canMergeConstraints(leftType, rightType);
         }
-        if ((leftType == undefined) !== (rightType == undefined))
+        if ((leftType == undefined) !== (rightType == undefined)) {
             return false;
-        if (leftType == rightType)
+        }
+        if (leftType == rightType) {
             return true;
+        }
         if (leftType.tag != rightType.tag) {
             return false;
         }
-        if (leftType.isSlot)
+        if (leftType.isSlot) {
             return true;
+        }
         // TODO: we need a generic way to evaluate type compatibility
         //       shapes + entities + etc
         if (leftType.isInterface && rightType.isInterface) {
@@ -1666,8 +1743,9 @@ class Schema {
             fields[name] = type;
         }
         for (let [name, type] of Object.entries(otherSchema.fields)) {
-            if (fields[name] == undefined)
+            if (fields[name] == undefined) {
                 return false;
+            }
             if (!Schema.typesEqual(fields[name], type)) {
                 return false;
             }
@@ -1771,8 +1849,9 @@ class Schema {
             dataClone() {
                 let clone = {};
                 for (let name of Object.keys(schema.fields)) {
-                    if (this.rawData[name] !== undefined)
+                    if (this.rawData[name] !== undefined) {
                         clone[name] = this.rawData[name];
+                    }
                 }
                 return clone;
             }
@@ -1843,13 +1922,15 @@ class Schema {
 // ShapeHandle {name, direction, type}
 // Slot {name, direction, isRequired, isSet}
 function _fromLiteral(member) {
-    if (!!member && typeof member == 'object')
+    if (!!member && typeof member == 'object') {
         return __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */].fromLiteral(member);
+    }
     return member;
 }
 function _toLiteral(member) {
-    if (!!member && member.toLiteral)
+    if (!!member && member.toLiteral) {
         return member.toLiteral();
+    }
     return member;
 }
 const handleFields = ['type', 'name', 'direction'];
@@ -1863,14 +1944,20 @@ class Shape {
         this.handles = handles;
         this.slots = slots;
         this._typeVars = [];
-        for (let handle of handles)
-            for (let field of handleFields)
-                if (Shape.isTypeVar(handle[field]))
+        for (let handle of handles) {
+            for (let field of handleFields) {
+                if (Shape.isTypeVar(handle[field])) {
                     this._typeVars.push({ object: handle, field });
-        for (let slot of slots)
-            for (let field of slotFields)
-                if (Shape.isTypeVar(slot[field]))
+                }
+            }
+        }
+        for (let slot of slots) {
+            for (let field of slotFields) {
+                if (Shape.isTypeVar(slot[field])) {
                     this._typeVars.push({ object: slot, field });
+                }
+            }
+        }
     }
     toPrettyString() {
         return 'SHAAAAPE';
@@ -1882,21 +1969,25 @@ class Shape {
         return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
     }
     isMoreSpecificThan(other) {
-        if (this.handles.length !== other.handles.length || this.slots.length !== other.slots.length)
+        if (this.handles.length !== other.handles.length ||
+            this.slots.length !== other.slots.length) {
             return false;
+        }
         // TODO: should probably confirm that handles and slots actually match.
         for (let i = 0; i < this._typeVars.length; i++) {
             let thisTypeVar = this._typeVars[i];
             let otherTypeVar = other._typeVars[i];
-            if (!thistypeVar.object[thistypeVar.field].isMoreSpecificThan(othertypeVar.object[othertypeVar.field]))
+            if (!thistypeVar.object[thistypeVar.field].isMoreSpecificThan(othertypeVar.object[othertypeVar.field])) {
                 return false;
+            }
         }
         return true;
     }
     _applyExistenceTypeTest(test) {
         for (let typeRef of this._typeVars) {
-            if (test(typeRef.object[typeRef.field]))
+            if (test(typeRef.object[typeRef.field])) {
                 return true;
+            }
         }
         return false;
     }
@@ -1945,9 +2036,11 @@ ${this._slotsToManifestString()}
         return new Shape(this.name, handles, slots);
     }
     canEnsureResolved() {
-        for (let typeVar of this._typeVars)
-            if (!typeVar.object[typeVar.field].canEnsureResolved())
+        for (let typeVar of this._typeVars) {
+            if (!typeVar.object[typeVar.field].canEnsureResolved()) {
                 return false;
+            }
+        }
         return true;
     }
     maybeEnsureResolved() {
@@ -1957,17 +2050,20 @@ ${this._slotsToManifestString()}
             if (!variable.maybeEnsureResolved())
                 return false;
         }
-        for (let typeVar of this._typeVars)
+        for (let typeVar of this._typeVars) {
             typeVar.object[typeVar.field].maybeEnsureResolved();
+        }
         return true;
     }
     tryMergeTypeVariablesWith(other) {
         // Type variable enabled slot matching will Just Work when we
         // unify slots and handles.
-        if (!this._equalItems(other.slots, this.slots, this._equalSlot))
+        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
             return null;
-        if (other.handles.length !== this.handles.length)
+        }
+        if (other.handles.length !== this.handles.length) {
             return null;
+        }
         let handles = new Set(this.handles);
         let otherHandles = new Set(other.handles);
         let handleMap = new Map();
@@ -1976,8 +2072,9 @@ ${this._slotsToManifestString()}
             let handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
             for (let handleMatch of handleMatches) {
                 // no match!
-                if (handleMatch.match.length == 0)
+                if (handleMatch.match.length == 0) {
                     return null;
+                }
                 if (handleMatch.match.length == 1) {
                     handleMap.set(handleMatch.handle, handleMatch.match[0]);
                     otherHandles.delete(handleMatch.match[0]);
@@ -1985,8 +2082,9 @@ ${this._slotsToManifestString()}
                 }
             }
             // no progress!
-            if (handles.size == sizeCheck)
+            if (handles.size == sizeCheck) {
                 return null;
+            }
             sizeCheck = handles.size;
         }
         handles = [];
@@ -1995,8 +2093,9 @@ ${this._slotsToManifestString()}
             let resultType;
             if (handle.type.hasVariable || otherHandle.type.hasVariable) {
                 resultType = __WEBPACK_IMPORTED_MODULE_2__recipe_type_checker_js__["a" /* TypeChecker */]._tryMergeTypeVariable(handle.type, otherHandle.type);
-                if (!resultType)
+                if (!resultType) {
                     return null;
+                }
             }
             else {
                 resultType = handle.type || otherHandle.type;
@@ -2010,8 +2109,9 @@ ${this._slotsToManifestString()}
         return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
     }
     equals(other) {
-        if (this.handles.length !== other.handles.length)
+        if (this.handles.length !== other.handles.length) {
             return false;
+        }
         // TODO: this isn't quite right as it doesn't deal with duplicates properly
         if (!this._equalItems(other.handles, this.handles, this._equalHandle)) {
             return false;
@@ -2036,8 +2136,9 @@ ${this._slotsToManifestString()}
                     break;
                 }
             }
-            if (!exists)
+            if (!exists) {
                 return false;
+            }
         }
         return true;
     }
@@ -2056,15 +2157,21 @@ ${this._slotsToManifestString()}
         return !(reference == undefined || Shape.isTypeVar(reference));
     }
     static handlesMatch(shapeHandle, particleHandle) {
-        if (Shape.mustMatch(shapeHandle.name) && shapeHandle.name !== particleHandle.name)
+        if (Shape.mustMatch(shapeHandle.name) &&
+            shapeHandle.name !== particleHandle.name) {
             return false;
+        }
         // TODO: direction subsetting?
-        if (Shape.mustMatch(shapeHandle.direction) && shapeHandle.direction !== particleHandle.direction)
+        if (Shape.mustMatch(shapeHandle.direction) &&
+            shapeHandle.direction !== particleHandle.direction) {
             return false;
-        if (shapeHandle.type == undefined)
+        }
+        if (shapeHandle.type == undefined) {
             return true;
-        if (shapeHandle.type.isVariableReference)
+        }
+        if (shapeHandle.type.isVariableReference) {
             return false;
+        }
         let [left, right] = __WEBPACK_IMPORTED_MODULE_1__type_js__["a" /* Type */].unwrapPair(shapeHandle.type, particleHandle.type);
         if (left.isVariable) {
             return [{ var: left, value: right, direction: shapeHandle.direction }];
@@ -2074,14 +2181,22 @@ ${this._slotsToManifestString()}
         }
     }
     static slotsMatch(shapeSlot, particleSlot) {
-        if (Shape.mustMatch(shapeSlot.name) && shapeSlot.name !== particleSlot.name)
+        if (Shape.mustMatch(shapeSlot.name) &&
+            shapeSlot.name !== particleSlot.name) {
             return false;
-        if (Shape.mustMatch(shapeSlot.direction) && shapeSlot.direction !== particleSlot.direction)
+        }
+        if (Shape.mustMatch(shapeSlot.direction) &&
+            shapeSlot.direction !== particleSlot.direction) {
             return false;
-        if (Shape.mustMatch(shapeSlot.isRequired) && shapeSlot.isRequired !== particleSlot.isRequired)
+        }
+        if (Shape.mustMatch(shapeSlot.isRequired) &&
+            shapeSlot.isRequired !== particleSlot.isRequired) {
             return false;
-        if (Shape.mustMatch(shapeSlot.isSet) && shapeSlot.isSet !== particleSlot.isSet)
+        }
+        if (Shape.mustMatch(shapeSlot.isSet) &&
+            shapeSlot.isSet !== particleSlot.isSet) {
             return false;
+        }
         return true;
     }
     particleMatches(particleSpec) {
@@ -2106,12 +2221,14 @@ ${this._slotsToManifestString()}
         let exclusions = [];
         // TODO: this probably doesn't deal with multiple match options.
         function choose(list, exclusions) {
-            if (list.length == 0)
+            if (list.length == 0) {
                 return [];
+            }
             let thisLevel = list.pop();
             for (let connection of thisLevel) {
-                if (exclusions.includes(connection.match))
+                if (exclusions.includes(connection.match)) {
                     continue;
+                }
                 let newExclusions = exclusions.slice();
                 newExclusions.push(connection.match);
                 let constraints = choose(list, newExclusions);
@@ -2123,8 +2240,9 @@ ${this._slotsToManifestString()}
         }
         let handleOptions = choose(handleMatches, []);
         let slotOptions = choose(slotMatches, []);
-        if (handleOptions === false || slotOptions === false)
+        if (handleOptions === false || slotOptions === false) {
             return false;
+        }
         for (let constraint of handleOptions) {
             if (!constraint.var.variable.resolution) {
                 constraint.var.variable.resolution = constraint.value;
@@ -2203,15 +2321,17 @@ class TypeVariable {
     // to the same value.
     maybeMergeConstraints(variable) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(variable instanceof TypeVariable);
-        if (!this.maybeMergeCanReadSubset(variable.canReadSubset))
+        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
             return false;
+        }
         return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
     }
     // merge a type variable's read subset (upper bound) constraints into this variable.
     // This is used to accumulate read constraints when resolving a handle's type.
     maybeMergeCanReadSubset(constraint) {
-        if (constraint == null)
+        if (constraint == null) {
             return true;
+        }
         if (this.canReadSubset == null) {
             this.canReadSubset = constraint;
             return true;
@@ -2221,16 +2341,18 @@ class TypeVariable {
             return true;
         }
         let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
-        if (!mergedSchema)
+        if (!mergedSchema) {
             return false;
+        }
         this.canReadSubset = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newEntity(mergedSchema);
         return true;
     }
     // merge a type variable's write superset (lower bound) constraints into this variable.
     // This is used to accumulate write constraints when resolving a handle's type.
     maybeMergeCanWriteSuperset(constraint) {
-        if (constraint == null)
+        if (constraint == null) {
             return true;
+        }
         if (this.canWriteSuperset == null) {
             this.canWriteSuperset = constraint;
             return true;
@@ -2240,8 +2362,9 @@ class TypeVariable {
             return true;
         }
         let mergedSchema = __WEBPACK_IMPORTED_MODULE_2__schema_js__["a" /* Schema */].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
-        if (!mergedSchema)
+        if (!mergedSchema) {
             return false;
+        }
         this.canWriteSuperset = __WEBPACK_IMPORTED_MODULE_0__type_js__["a" /* Type */].newEntity(mergedSchema);
         return true;
     }
@@ -2270,10 +2393,12 @@ class TypeVariable {
         }
         let probe = value;
         while (probe) {
-            if (!probe.isVariable)
+            if (!probe.isVariable) {
                 break;
-            if (probe.variable == this)
+            }
+            if (probe.variable == this) {
                 return;
+            }
             probe = probe.variable.resolution;
         }
         this._resolution = value;
@@ -2312,15 +2437,18 @@ class TypeVariable {
         return this._canReadSubset !== null || this._canWriteSuperset !== null;
     }
     canEnsureResolved() {
-        if (this._resolution)
+        if (this._resolution) {
             return this._resolution.canEnsureResolved();
-        if (this._canWriteSuperset || this._canReadSubset)
+        }
+        if (this._canWriteSuperset || this._canReadSubset) {
             return true;
+        }
         return false;
     }
     maybeEnsureResolved() {
-        if (this._resolution)
+        if (this._resolution) {
             return this._resolution.maybeEnsureResolved();
+        }
         if (this._canWriteSuperset) {
             this.resolution = this._canWriteSuperset;
             return true;
@@ -2545,12 +2673,18 @@ class ParticleExecutionContext {
             },
             loadRecipe: function (recipe) {
                 // TODO: do we want to return a promise on completion?
-                return new Promise((resolve, reject) => pec._apiPort.ArcLoadRecipe({ arc: arcId, recipe, callback: a => {
-                        if (a == undefined)
+                return new Promise((resolve, reject) => pec._apiPort.ArcLoadRecipe({
+                    arc: arcId,
+                    recipe,
+                    callback: a => {
+                        if (a == undefined) {
                             resolve();
-                        else
+                        }
+                        else {
                             reject(a);
-                    } }));
+                        }
+                    }
+                }));
             }
         };
     }
@@ -2599,16 +2733,18 @@ class ParticleExecutionContext {
     get relevance() {
         let rMap = new Map();
         this._particles.forEach(p => {
-            if (p.relevances.length == 0)
+            if (p.relevances.length == 0) {
                 return;
+            }
             rMap.set(p, p.relevances);
             p.relevances = [];
         });
         return rMap;
     }
     get busy() {
-        if (this._pendingLoads.length > 0 || this._scheduler.busy)
+        if (this._pendingLoads.length > 0 || this._scheduler.busy) {
             return true;
+        }
         return false;
     }
     get idle() {
@@ -2961,8 +3097,9 @@ class APIPort {
                 },
                 unconvert: a => {
                     let r = new Map();
-                    for (let key in a)
+                    for (let key in a) {
                         r.set(keyprimitive.unconvert(key), valueprimitive.unconvert(a[key]));
+                    }
                     return r;
                 }
             };
@@ -3017,14 +3154,16 @@ class APIPort {
     }
     _processArguments(argumentTypes, args) {
         let messageBody = {};
-        for (let argument in argumentTypes)
+        for (let argument in argumentTypes) {
             messageBody[argument] = argumentTypes[argument].convert(args[argument]);
+        }
         return messageBody;
     }
     _unprocessArguments(argumentTypes, args) {
         let messageBody = {};
-        for (let argument in argumentTypes)
+        for (let argument in argumentTypes) {
             messageBody[argument] = argumentTypes[argument].unconvert(args[argument]);
+        }
         return messageBody;
     }
     registerCall(name, argumentTypes) {
@@ -3164,8 +3303,9 @@ class JsonldToManifest {
             obj['@graph'] = [obj];
         }
         for (let item of obj['@graph']) {
-            if (item['@type'] == 'rdf:Property')
+            if (item['@type'] == 'rdf:Property') {
                 properties[item['@id']] = item;
+            }
             else if (item['@type'] == 'rdfs:Class') {
                 classes[item['@id']] = item;
                 item.subclasses = [];
@@ -3174,12 +3314,14 @@ class JsonldToManifest {
         }
         for (let clazz of Object.values(classes)) {
             if (clazz['rdfs:subClassOf'] !== undefined) {
-                if (clazz['rdfs:subClassOf'].length == undefined)
+                if (clazz['rdfs:subClassOf'].length == undefined) {
                     clazz['rdfs:subClassOf'] = [clazz['rdfs:subClassOf']];
+                }
                 for (let subClass of clazz['rdfs:subClassOf']) {
                     let superclass = subClass['@id'];
-                    if (clazz.superclass == undefined)
+                    if (clazz.superclass == undefined) {
                         clazz.superclass = [];
+                    }
                     if (classes[superclass]) {
                         classes[superclass].subclasses.push(clazz);
                         clazz.superclass.push(classes[superclass]);
@@ -3198,39 +3340,48 @@ class JsonldToManifest {
         let relevantProperties = [];
         for (let property of Object.values(properties)) {
             let domains = property['schema:domainIncludes'];
-            if (!domains)
+            if (!domains) {
                 domains = { '@id': theClass['@id'] };
-            if (!domains.length)
+            }
+            if (!domains.length) {
                 domains = [domains];
+            }
             domains = domains.map(a => a['@id']);
             if (domains.includes(theClass['@id'])) {
                 let name = property['@id'].split(':')[1];
                 let type = property['schema:rangeIncludes'];
-                if (!type)
+                if (!type) {
                     console.log(property);
-                if (!type.length)
+                }
+                if (!type.length) {
                     type = [type];
+                }
                 type = type.map(a => a['@id'].split(':')[1]);
                 type = type.filter(type => supportedTypes.includes(type));
-                if (type.length > 0)
+                if (type.length > 0) {
                     relevantProperties.push({ name, type });
+                }
             }
         }
         let className = theClass['@id'].split(':')[1];
         let superNames = theClass.superclass ? theClass.superclass.map(a => a['@id'].split(':')[1]) : [];
         let s = '';
-        for (let superName of superNames)
+        for (let superName of superNames) {
             s += `import 'https://schema.org/${superName}'\n\n`;
+        }
         s += `schema ${className}`;
-        if (superNames.length > 0)
+        if (superNames.length > 0) {
             s += ` extends ${superNames.join(', ')}`;
+        }
         if (relevantProperties.length > 0) {
             for (let property of relevantProperties) {
                 let type;
-                if (property.type.length > 1)
+                if (property.type.length > 1) {
                     type = '(' + property.type.join(' or ') + ')';
-                else
+                }
+                else {
                     type = property.type[0];
+                }
                 s += `\n  ${type} ${property.name}`;
             }
         }
@@ -3733,16 +3884,19 @@ class Entity {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
         this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = identifier;
         let components = identifier.split(':');
-        if (components[components.length - 2] == 'uid')
+        if (components[components.length - 2] == 'uid') {
             this._userIDComponent = components[components.length - 1];
+        }
     }
     createIdentity(components) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!this.isIdentified());
         let id;
-        if (this._userIDComponent)
+        if (this._userIDComponent) {
             id = `${components.base}:uid:${this._userIDComponent}`;
-        else
+        }
+        else {
             id = `${components.base}:${components.component()}`;
+        }
         this[__WEBPACK_IMPORTED_MODULE_1__symbols_js__["a" /* Symbols */].identifier] = id;
     }
     toLiteral() {
@@ -3865,8 +4019,9 @@ class Handle {
     }
     _serialize(entity) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__platform_assert_web_js__["a" /* assert */])(entity, 'can\'t serialize a null entity');
-        if (!entity.isIdentified())
+        if (!entity.isIdentified()) {
             entity.createIdentity(this._proxy.generateIDComponents());
+        }
         let id = entity[__WEBPACK_IMPORTED_MODULE_0__symbols_js__["a" /* Symbols */].identifier];
         let rawData = entity.dataClone();
         return {
@@ -3908,10 +4063,12 @@ class Collection extends Handle {
                 return;
             case 'update': {
                 let update = {};
-                if ('add' in details)
+                if ('add' in details) {
                     update.added = this._restore(details.add);
-                if ('remove' in details)
+                }
+                if ('remove' in details) {
                     update.removed = this._restore(details.remove);
+                }
                 update.originator = details.originatorId == this._particleId;
                 particle.onHandleUpdate(this, update);
                 return;
@@ -3929,8 +4086,9 @@ class Collection extends Handle {
     toList() {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: remove this and use query instead
-            if (!this.canRead)
+            if (!this.canRead) {
                 throw new Error('Handle not readable');
+            }
             return this._restore(yield this._proxy.toList(this._particleId));
         });
     }
@@ -3944,8 +4102,9 @@ class Collection extends Handle {
      */
     store(entity) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canWrite)
+            if (!this.canWrite) {
                 throw new Error('Handle not writeable');
+            }
             let serialization = this._serialize(entity);
             let keys = [this._proxy.generateID('key')];
             return this._proxy.store(serialization, keys, this._particleId);
@@ -3958,8 +4117,9 @@ class Collection extends Handle {
      */
     remove(entity) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canWrite)
+            if (!this.canWrite) {
                 throw new Error('Handle not writeable');
+            }
             let serialization = this._serialize(entity);
             // Remove the keys that exist at storage/proxy.
             let keys = [];
@@ -4000,15 +4160,17 @@ class Variable extends Handle {
      */
     get() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canRead)
+            if (!this.canRead) {
                 throw new Error('Handle not readable');
+            }
             let model = yield this._proxy.get(this._particleId);
             return this._restore(model);
         });
     }
     _restore(model) {
-        if (model === null)
+        if (model === null) {
             return null;
+        }
         if (this.type.isEntity) {
             return restore(model, this.entityClass);
         }
@@ -4022,8 +4184,9 @@ class Variable extends Handle {
     set(entity) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!this.canWrite)
+                if (!this.canWrite) {
                     throw new Error('Handle not writeable');
+                }
                 return this._proxy.set(this._serialize(entity), this._particleId);
             }
             catch (e) {
@@ -4039,8 +4202,9 @@ class Variable extends Handle {
      */
     clear() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canWrite)
+            if (!this.canWrite) {
                 throw new Error('Handle not writeable');
+            }
             yield this._proxy.clear(this._particleId);
         });
     }
@@ -4102,26 +4266,31 @@ class Loader {
         return path;
     }
     join(prefix, path) {
-        if (/^https?:\/\//.test(path))
+        if (/^https?:\/\//.test(path)) {
             return path;
+        }
         // TODO: replace this with something that isn't hacky
-        if (path[0] == '/' || path[1] == ':')
+        if (path[0] == '/' || path[1] == ':') {
             return path;
+        }
         prefix = this.path(prefix);
         return prefix + path;
     }
     loadResource(file) {
-        if (/^https?:\/\//.test(file))
+        if (/^https?:\/\//.test(file)) {
             return this._loadURL(file);
+        }
         return this._loadFile(file);
     }
     _loadFile(file) {
         return new Promise((resolve, reject) => {
             __WEBPACK_IMPORTED_MODULE_0__platform_fs_web_js__["a" /* fs */].readFile(file, (err, data) => {
-                if (err)
+                if (err) {
                     reject(err);
-                else
+                }
+                else {
                     resolve(data.toString('utf-8'));
+                }
             });
         });
     }
@@ -4243,8 +4412,9 @@ class StorageProxyBase {
     }
     // Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
     register(particle, handle) {
-        if (!handle.canRead)
+        if (!handle.canRead) {
             return;
+        }
         this._observers.push({ particle, handle });
         // Attach an event listener to the backing store when the first readable handle is registered.
         if (!this._listenerAttached) {
@@ -4294,8 +4464,9 @@ class StorageProxyBase {
             this._notify('update', handleUpdate, options => !options.keepSynced && options.notifyUpdate);
         }
         // Bail if we're not in synchronized mode or this is a stale event.
-        if (!this._keepSynced)
+        if (!this._keepSynced) {
             return;
+        }
         if (update.version <= this._version) {
             console.warn(`StorageProxy '${this._id}' received stale update version ${update.version}; ` +
                 `current is ${this._version}`);
@@ -4772,11 +4943,13 @@ class TupleFields {
         return new TupleFields(this.fieldList.map(a => a.clone()));
     }
     equals(other) {
-        if (this.fieldList.length !== other.fieldList.length)
+        if (this.fieldList.length !== other.fieldList.length) {
             return false;
+        }
         for (let i = 0; i < this.fieldList.length; i++) {
-            if (!this.fieldList[i].equals(other.fieldList[i]))
+            if (!this.fieldList[i].equals(other.fieldList[i])) {
                 return false;
+            }
         }
         return true;
     }

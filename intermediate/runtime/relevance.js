@@ -15,10 +15,12 @@ export class Relevance {
     }
     apply(relevance) {
         for (let key of relevance.keys()) {
-            if (this.relevanceMap.has(key))
+            if (this.relevanceMap.has(key)) {
                 this.relevanceMap.set(key, this.relevanceMap.get(key).concat(relevance.get(key)));
-            else
+            }
+            else {
                 this.relevanceMap.set(key, relevance.get(key));
+            }
         }
     }
     calcRelevanceScore() {

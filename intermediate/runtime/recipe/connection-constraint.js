@@ -23,8 +23,9 @@ export class ParticleEndPoint {
         return 0;
     }
     toString() {
-        if (!this.connection)
+        if (!this.connection) {
             return `${this.particle.name}`;
+        }
         return `${this.particle.name}.${this.connection}`;
     }
 }
@@ -47,8 +48,9 @@ export class InstanceEndPoint {
         return 0;
     }
     toString(nameMap) {
-        if (!this.connection)
+        if (!this.connection) {
             return `${nameMap.get(this.instance)}`;
+        }
         return `${nameMap.get(this.instance)}.${this.connection}`;
     }
 }
@@ -97,8 +99,9 @@ export class ConnectionConstraint {
         Object.freeze(this);
     }
     _copyInto(recipe, cloneMap) {
-        if (this.type == 'constraint')
+        if (this.type == 'constraint') {
             return recipe.newConnectionConstraint(this.from._clone(), this.to._clone(), this.direction);
+        }
         return recipe.newObligation(this.from._clone(cloneMap), this.to._clone(cloneMap), this.direction);
     }
     _compareTo(other) {

@@ -63,8 +63,9 @@ class StorageProxyBase {
     }
     // Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
     register(particle, handle) {
-        if (!handle.canRead)
+        if (!handle.canRead) {
             return;
+        }
         this._observers.push({ particle, handle });
         // Attach an event listener to the backing store when the first readable handle is registered.
         if (!this._listenerAttached) {
@@ -114,8 +115,9 @@ class StorageProxyBase {
             this._notify('update', handleUpdate, options => !options.keepSynced && options.notifyUpdate);
         }
         // Bail if we're not in synchronized mode or this is a stale event.
-        if (!this._keepSynced)
+        if (!this._keepSynced) {
             return;
+        }
         if (update.version <= this._version) {
             console.warn(`StorageProxy '${this._id}' received stale update version ${update.version}; ` +
                 `current is ${this._version}`);

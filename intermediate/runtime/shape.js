@@ -11,13 +11,15 @@ import { assert } from '../platform/assert-web.js';
 // ShapeHandle {name, direction, type}
 // Slot {name, direction, isRequired, isSet}
 function _fromLiteral(member) {
-    if (!!member && typeof member == 'object')
+    if (!!member && typeof member == 'object') {
         return Type.fromLiteral(member);
+    }
     return member;
 }
 function _toLiteral(member) {
-    if (!!member && member.toLiteral)
+    if (!!member && member.toLiteral) {
         return member.toLiteral();
+    }
     return member;
 }
 const handleFields = ['type', 'name', 'direction'];
@@ -31,14 +33,20 @@ export class Shape {
         this.handles = handles;
         this.slots = slots;
         this._typeVars = [];
-        for (let handle of handles)
-            for (let field of handleFields)
-                if (Shape.isTypeVar(handle[field]))
+        for (let handle of handles) {
+            for (let field of handleFields) {
+                if (Shape.isTypeVar(handle[field])) {
                     this._typeVars.push({ object: handle, field });
-        for (let slot of slots)
-            for (let field of slotFields)
-                if (Shape.isTypeVar(slot[field]))
+                }
+            }
+        }
+        for (let slot of slots) {
+            for (let field of slotFields) {
+                if (Shape.isTypeVar(slot[field])) {
                     this._typeVars.push({ object: slot, field });
+                }
+            }
+        }
     }
     toPrettyString() {
         return 'SHAAAAPE';
@@ -50,21 +58,25 @@ export class Shape {
         return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
     }
     isMoreSpecificThan(other) {
-        if (this.handles.length !== other.handles.length || this.slots.length !== other.slots.length)
+        if (this.handles.length !== other.handles.length ||
+            this.slots.length !== other.slots.length) {
             return false;
+        }
         // TODO: should probably confirm that handles and slots actually match.
         for (let i = 0; i < this._typeVars.length; i++) {
             let thisTypeVar = this._typeVars[i];
             let otherTypeVar = other._typeVars[i];
-            if (!thistypeVar.object[thistypeVar.field].isMoreSpecificThan(othertypeVar.object[othertypeVar.field]))
+            if (!thistypeVar.object[thistypeVar.field].isMoreSpecificThan(othertypeVar.object[othertypeVar.field])) {
                 return false;
+            }
         }
         return true;
     }
     _applyExistenceTypeTest(test) {
         for (let typeRef of this._typeVars) {
-            if (test(typeRef.object[typeRef.field]))
+            if (test(typeRef.object[typeRef.field])) {
                 return true;
+            }
         }
         return false;
     }
@@ -113,9 +125,11 @@ ${this._slotsToManifestString()}
         return new Shape(this.name, handles, slots);
     }
     canEnsureResolved() {
-        for (let typeVar of this._typeVars)
-            if (!typeVar.object[typeVar.field].canEnsureResolved())
+        for (let typeVar of this._typeVars) {
+            if (!typeVar.object[typeVar.field].canEnsureResolved()) {
                 return false;
+            }
+        }
         return true;
     }
     maybeEnsureResolved() {
@@ -125,17 +139,20 @@ ${this._slotsToManifestString()}
             if (!variable.maybeEnsureResolved())
                 return false;
         }
-        for (let typeVar of this._typeVars)
+        for (let typeVar of this._typeVars) {
             typeVar.object[typeVar.field].maybeEnsureResolved();
+        }
         return true;
     }
     tryMergeTypeVariablesWith(other) {
         // Type variable enabled slot matching will Just Work when we
         // unify slots and handles.
-        if (!this._equalItems(other.slots, this.slots, this._equalSlot))
+        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
             return null;
-        if (other.handles.length !== this.handles.length)
+        }
+        if (other.handles.length !== this.handles.length) {
             return null;
+        }
         let handles = new Set(this.handles);
         let otherHandles = new Set(other.handles);
         let handleMap = new Map();
@@ -144,8 +161,9 @@ ${this._slotsToManifestString()}
             let handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
             for (let handleMatch of handleMatches) {
                 // no match!
-                if (handleMatch.match.length == 0)
+                if (handleMatch.match.length == 0) {
                     return null;
+                }
                 if (handleMatch.match.length == 1) {
                     handleMap.set(handleMatch.handle, handleMatch.match[0]);
                     otherHandles.delete(handleMatch.match[0]);
@@ -153,8 +171,9 @@ ${this._slotsToManifestString()}
                 }
             }
             // no progress!
-            if (handles.size == sizeCheck)
+            if (handles.size == sizeCheck) {
                 return null;
+            }
             sizeCheck = handles.size;
         }
         handles = [];
@@ -163,8 +182,9 @@ ${this._slotsToManifestString()}
             let resultType;
             if (handle.type.hasVariable || otherHandle.type.hasVariable) {
                 resultType = TypeChecker._tryMergeTypeVariable(handle.type, otherHandle.type);
-                if (!resultType)
+                if (!resultType) {
                     return null;
+                }
             }
             else {
                 resultType = handle.type || otherHandle.type;
@@ -178,8 +198,9 @@ ${this._slotsToManifestString()}
         return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
     }
     equals(other) {
-        if (this.handles.length !== other.handles.length)
+        if (this.handles.length !== other.handles.length) {
             return false;
+        }
         // TODO: this isn't quite right as it doesn't deal with duplicates properly
         if (!this._equalItems(other.handles, this.handles, this._equalHandle)) {
             return false;
@@ -204,8 +225,9 @@ ${this._slotsToManifestString()}
                     break;
                 }
             }
-            if (!exists)
+            if (!exists) {
                 return false;
+            }
         }
         return true;
     }
@@ -224,15 +246,21 @@ ${this._slotsToManifestString()}
         return !(reference == undefined || Shape.isTypeVar(reference));
     }
     static handlesMatch(shapeHandle, particleHandle) {
-        if (Shape.mustMatch(shapeHandle.name) && shapeHandle.name !== particleHandle.name)
+        if (Shape.mustMatch(shapeHandle.name) &&
+            shapeHandle.name !== particleHandle.name) {
             return false;
+        }
         // TODO: direction subsetting?
-        if (Shape.mustMatch(shapeHandle.direction) && shapeHandle.direction !== particleHandle.direction)
+        if (Shape.mustMatch(shapeHandle.direction) &&
+            shapeHandle.direction !== particleHandle.direction) {
             return false;
-        if (shapeHandle.type == undefined)
+        }
+        if (shapeHandle.type == undefined) {
             return true;
-        if (shapeHandle.type.isVariableReference)
+        }
+        if (shapeHandle.type.isVariableReference) {
             return false;
+        }
         let [left, right] = Type.unwrapPair(shapeHandle.type, particleHandle.type);
         if (left.isVariable) {
             return [{ var: left, value: right, direction: shapeHandle.direction }];
@@ -242,14 +270,22 @@ ${this._slotsToManifestString()}
         }
     }
     static slotsMatch(shapeSlot, particleSlot) {
-        if (Shape.mustMatch(shapeSlot.name) && shapeSlot.name !== particleSlot.name)
+        if (Shape.mustMatch(shapeSlot.name) &&
+            shapeSlot.name !== particleSlot.name) {
             return false;
-        if (Shape.mustMatch(shapeSlot.direction) && shapeSlot.direction !== particleSlot.direction)
+        }
+        if (Shape.mustMatch(shapeSlot.direction) &&
+            shapeSlot.direction !== particleSlot.direction) {
             return false;
-        if (Shape.mustMatch(shapeSlot.isRequired) && shapeSlot.isRequired !== particleSlot.isRequired)
+        }
+        if (Shape.mustMatch(shapeSlot.isRequired) &&
+            shapeSlot.isRequired !== particleSlot.isRequired) {
             return false;
-        if (Shape.mustMatch(shapeSlot.isSet) && shapeSlot.isSet !== particleSlot.isSet)
+        }
+        if (Shape.mustMatch(shapeSlot.isSet) &&
+            shapeSlot.isSet !== particleSlot.isSet) {
             return false;
+        }
         return true;
     }
     particleMatches(particleSpec) {
@@ -274,12 +310,14 @@ ${this._slotsToManifestString()}
         let exclusions = [];
         // TODO: this probably doesn't deal with multiple match options.
         function choose(list, exclusions) {
-            if (list.length == 0)
+            if (list.length == 0) {
                 return [];
+            }
             let thisLevel = list.pop();
             for (let connection of thisLevel) {
-                if (exclusions.includes(connection.match))
+                if (exclusions.includes(connection.match)) {
                     continue;
+                }
                 let newExclusions = exclusions.slice();
                 newExclusions.push(connection.match);
                 let constraints = choose(list, newExclusions);
@@ -291,8 +329,9 @@ ${this._slotsToManifestString()}
         }
         let handleOptions = choose(handleMatches, []);
         let slotOptions = choose(slotMatches, []);
-        if (handleOptions === false || slotOptions === false)
+        if (handleOptions === false || slotOptions === false) {
             return false;
+        }
         for (let constraint of handleOptions) {
             if (!constraint.var.variable.resolution) {
                 constraint.var.variable.resolution = constraint.value;

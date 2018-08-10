@@ -56,7 +56,7 @@ export class CreateHandleGroup extends Strategy {
                             maximalGroup = compatibleConnections;
                         }
                     }
-                    if (maximalGroup)
+                    if (maximalGroup) {
                         return recipe => {
                             let newHandle = recipe.newHandle();
                             newHandle.fate = 'create';
@@ -65,6 +65,7 @@ export class CreateHandleGroup extends Strategy {
                                 cloneConn.connectToHandle(newHandle);
                             }
                         };
+                    }
                 }
             }(Walker.Independent), this);
         });

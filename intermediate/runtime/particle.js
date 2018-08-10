@@ -15,8 +15,9 @@
 export class Particle {
     constructor(capabilities) {
         this.spec = this.constructor.spec;
-        if (this.spec.inputs.length == 0)
+        if (this.spec.inputs.length == 0) {
             this.extraData = true;
+        }
         this.relevances = [];
         this._idle = Promise.resolve();
         this._busy = 0;
@@ -75,8 +76,9 @@ export class Particle {
     onHandleDesync(handle) {
     }
     constructInnerArc() {
-        if (!this.capabilities.constructInnerArc)
+        if (!this.capabilities.constructInnerArc) {
             throw new Error('This particle is not allowed to construct inner arcs');
+        }
         return this.capabilities.constructInnerArc(this);
     }
     get busy() {
@@ -106,16 +108,19 @@ export class Particle {
             let str = strings[i];
             let indent = / *$/.exec(str)[0];
             let bitStr;
-            if (typeof bits[i] == 'string')
+            if (typeof bits[i] == 'string') {
                 bitStr = bits[i];
-            else
+            }
+            else {
                 bitStr = bits[i].toManifestString();
+            }
             bitStr = bitStr.replace(/(\n)/g, '$1' + indent);
             output.push(str);
             output.push(bitStr);
         }
-        if (strings.length > bits.length)
+        if (strings.length > bits.length) {
             output.push(strings[strings.length - 1]);
+        }
         return output.join('');
     }
     setParticleDescription(pattern) {

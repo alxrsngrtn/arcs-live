@@ -1,5 +1,9 @@
-commit efd9d048b06d43c1383e03fbfbaf49f4c08e5d13
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Aug 10 10:02:40 2018 +1000
+commit ca89c6dd0031bf902a776aca059d216e7df1a327
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Aug 9 17:13:09 2018 -0700
 
-    Ensure intermediate build target gets deployed to arcs-live (#1745)
+    Enable the eslint curly check
+    
+    - Run eslint fix on affected files
+    - Run clang-format on affected lines
+    - Update to latest clang-format
