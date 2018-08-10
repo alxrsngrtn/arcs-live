@@ -1,9 +1,5 @@
-commit ca89c6dd0031bf902a776aca059d216e7df1a327
+commit 8fca7f86ddbb55bb85a5f94b43dd724a7b6c107b
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Aug 9 17:13:09 2018 -0700
+Date:   Thu Aug 9 17:50:39 2018 -0700
 
-    Enable the eslint curly check
-    
-    - Run eslint fix on affected files
-    - Run clang-format on affected lines
-    - Update to latest clang-format
+    Update firebase dependency from 4.13.1 to 5.3.1 (#1747)
