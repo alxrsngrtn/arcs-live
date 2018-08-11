@@ -16,29 +16,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { assert } from '../../platform/assert-web.js';
 import { Tracing } from '../../tracelib/trace.js';
 import * as util from '../recipe/util.js';
+var EventKind;
+(function (EventKind) {
+    EventKind[EventKind["change"] = 0] = "change";
+})(EventKind || (EventKind = {}));
+;
 export class StorageProviderBase {
     constructor(type, name, id, key) {
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
         let trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::constructor', args: { type: type.key, name: name } });
         this._type = type;
-        this._listeners = new Map();
+        this.listeners = new Map();
         this.name = name;
-        this._version = 0;
+        this.version = 0;
         this.id = id;
         this.source = null;
         this._storageKey = key;
-        this._nextLocalID = 0;
+        this.nextLocalID = 0;
         trace.end();
     }
     get storageKey() {
         return this._storageKey;
     }
     generateID() {
-        return `${this.id}:${this._nextLocalID++}`;
+        return `${this.id}:${this.nextLocalID++}`;
     }
     generateIDComponents() {
-        return { base: this.id, component: () => this._nextLocalID++ };
+        return { base: this.id, component: () => this.nextLocalID++ };
     }
     get type() {
         return this._type;
@@ -46,18 +51,18 @@ export class StorageProviderBase {
     // TODO: add 'once' which returns a promise.
     on(kind, callback, target) {
         assert(target !== undefined, 'must provide a target to register a storage event handler');
-        let listeners = this._listeners.get(kind) || new Map();
+        let listeners = this.listeners.get(kind) || new Map();
         listeners.set(callback, { target });
-        this._listeners.set(kind, listeners);
+        this.listeners.set(kind, listeners);
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
     _fire(kind, details) {
         return __awaiter(this, void 0, void 0, function* () {
-            let listenerMap = this._listeners.get(kind);
+            let listenerMap = this.listeners.get(kind);
             if (!listenerMap || listenerMap.size == 0) {
                 return;
             }
-            let trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::_fire', args: { kind, type: this._type.key,
+            let trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::_fire', args: { kind, type: this.type.tag,
                     name: this.name, listeners: listenerMap.size } });
             let callbacks = [];
             for (let [callback] of listenerMap.entries()) {
@@ -75,7 +80,7 @@ export class StorageProviderBase {
         let cmp;
         if ((cmp = util.compareStrings(this.name, other.name)) != 0)
             return cmp;
-        if ((cmp = util.compareNumbers(this._version, other._version)) != 0)
+        if ((cmp = util.compareNumbers(this.version, other.version)) != 0)
             return cmp;
         if ((cmp = util.compareStrings(this.source, other.source)) != 0)
             return cmp;

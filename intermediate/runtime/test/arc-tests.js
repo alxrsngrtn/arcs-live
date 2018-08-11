@@ -95,16 +95,16 @@ describe('Arc', function () {
         recipe.normalize();
         yield arc.instantiate(recipe);
         yield util.assertSingletonWillChangeTo(arc, barStore, 'value', 'a Foo1');
-        assert.equal(fooStore._version, 1);
-        assert.equal(barStore._version, 1);
+        assert.equal(fooStore.version, 1);
+        assert.equal(barStore.version, 1);
         let serialization = yield arc.serialize();
         arc.stop();
         let slotComposer = createSlotComposer();
         let newArc = yield Arc.deserialize({ serialization, loader, slotComposer });
         fooStore = newArc.findStoreById(fooStore.id);
         barStore = newArc.findStoreById(barStore.id);
-        assert.equal(fooStore._version, 1);
-        assert.equal(barStore._version, 1);
+        assert.equal(fooStore.version, 1);
+        assert.equal(barStore.version, 1);
         assert.lengthOf(newArc.findStoresByType(Bar.type, { tags: ['tag1'] }), 1);
     }));
     it('deserializing a serialized arc with a Transformation produces that arc', () => __awaiter(this, void 0, void 0, function* () {

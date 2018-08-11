@@ -14,8 +14,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { InMemoryStorage } from './in-memory-storage.js';
-import { FirebaseStorage } from './firebase-storage.js';
+import { InMemoryStorage } from './in-memory-storage';
+import { FirebaseStorage } from './firebase-storage';
 export class StorageProviderFactory {
     constructor(arcId) {
         this._arcId = arcId;
@@ -27,7 +27,7 @@ export class StorageProviderFactory {
     }
     share(id, type, key) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this._storageForKey(key).share(id, type, keyFragment);
+            return this._storageForKey(key).share(id, type, key);
         });
     }
     construct(id, type, keyFragment) {
@@ -48,7 +48,7 @@ export class StorageProviderFactory {
     // For testing
     shutdown() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield Promise.all(Object.values(this._storageInstances).map(s => s.shutdown()));
+            yield Promise.all(Object.keys(this._storageInstances).map(k => this._storageInstances[k].shutdown()));
         });
     }
 }

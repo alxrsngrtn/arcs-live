@@ -60,7 +60,7 @@ describe('Handle', function () {
         let version = 0;
         barStore.on('change', ({ add: [{ effective }] }) => { if (effective)
             version++; }, {});
-        assert.equal(barStore._version, 0);
+        assert.equal(barStore.version, 0);
         let bar1 = { id: 'an id', value: 'a Bar' };
         yield barStore.store(bar1, ['key1']);
         assert.equal(version, 1);

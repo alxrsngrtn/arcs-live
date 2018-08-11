@@ -1,7 +1,12 @@
-commit 185242606dd77169986686fb8cf70c12d55fd6aa
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Fri Aug 10 15:29:18 2018 -0700
+commit 6e6aa7341b35ce283b03fc03e9fb8842e5468800
+Author: shans <shane.stephens@gmail.com>
+Date:   Sat Aug 11 11:45:36 2018 +1000
 
-    Fix ArcsUtils.clearStore to reference model items via new name. (#1751)
+     Complete typescriptifying of storage. (#1750)
     
-    This was broken by #1749.
+    * typescriptify crdt-collection-model.
+    
+    This uncovered an issue with our custom-loader, which was treating
+    import statements without a '.js' specifier as cjs imports.
+    
+    * Complete typescriptifying of storage.

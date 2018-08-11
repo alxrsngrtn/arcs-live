@@ -1378,7 +1378,7 @@ class Type {
         }
         return false;
     }
-    toString(options) {
+    toString(options = undefined) {
         if (this.isCollection) {
             return `[${this.primitiveType().toString(options)}]`;
         }
@@ -7400,7 +7400,7 @@ class Arc {
                 let handleTags = [...this._storeTags.get(handle)].map(a => `#${a}`).join(' ');
                 switch (key.protocol) {
                     case 'firebase':
-                        handles += `store Store${id++} of ${handle.type.toString()} '${handle.id}' @${handle._version} ${handleTags} at '${handle.storageKey}'\n`;
+                        handles += `store Store${id++} of ${handle.type.toString()} '${handle.id}' @${handle.version} ${handleTags} at '${handle.storageKey}'\n`;
                         break;
                     case 'in-memory': {
                         resources += `resource Store${id}Resource\n`;
@@ -7429,7 +7429,7 @@ class Arc {
                         let data = JSON.stringify(serializedData);
                         resources += data.split('\n').map(line => indent + line).join('\n');
                         resources += '\n';
-                        handles += `store Store${id} of ${handle.type.toString()} '${handle.id}' @${handle._version} ${handleTags} in Store${id++}Resource\n`;
+                        handles += `store Store${id} of ${handle.type.toString()} '${handle.id}' @${handle.version} ${handleTags} in Store${id++}Resource\n`;
                         break;
                     }
                 }
@@ -7622,7 +7622,7 @@ ${this.activeRecipe.toString()}`;
                     }
                     else if (recipeHandle.fate === 'copy') {
                         let copiedStore = this.findStoreById(recipeHandle.id);
-                        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(copiedStore._version !== null);
+                        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(copiedStore.version !== null);
                         yield newStore.cloneFrom(copiedStore);
                         this._tagStore(newStore, this.findStoreTags(copiedStore));
                         let copiedStoreDesc = this.getStoreDescription(copiedStore);
@@ -7780,12 +7780,12 @@ ${this.activeRecipe.toString()}`;
     }
     getStoresState() {
         let versionById = new Map();
-        this._storesById.forEach((handle, id) => versionById.set(id, handle._version));
+        this._storesById.forEach((handle, id) => versionById.set(id, handle.version));
         return versionById;
     }
     isSameState(storesState) {
         for (let [id, version] of storesState) {
-            if (!this._storesById.has(id) || this._storesById.get(id)._version != version) {
+            if (!this._storesById.has(id) || this._storesById.get(id).version != version) {
                 return false;
             }
         }
@@ -9177,29 +9177,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 
 
 
+var EventKind;
+(function (EventKind) {
+    EventKind[EventKind["change"] = 0] = "change";
+})(EventKind || (EventKind = {}));
+;
 class StorageProviderBase {
     constructor(type, name, id, key) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(id, 'id must be provided when constructing StorageProviders');
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(!type.hasUnresolvedVariable, 'Storage types must be concrete');
         let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({ cat: 'handle', name: 'StorageProviderBase::constructor', args: { type: type.key, name: name } });
         this._type = type;
-        this._listeners = new Map();
+        this.listeners = new Map();
         this.name = name;
-        this._version = 0;
+        this.version = 0;
         this.id = id;
         this.source = null;
         this._storageKey = key;
-        this._nextLocalID = 0;
+        this.nextLocalID = 0;
         trace.end();
     }
     get storageKey() {
         return this._storageKey;
     }
     generateID() {
-        return `${this.id}:${this._nextLocalID++}`;
+        return `${this.id}:${this.nextLocalID++}`;
     }
     generateIDComponents() {
-        return { base: this.id, component: () => this._nextLocalID++ };
+        return { base: this.id, component: () => this.nextLocalID++ };
     }
     get type() {
         return this._type;
@@ -9207,18 +9212,18 @@ class StorageProviderBase {
     // TODO: add 'once' which returns a promise.
     on(kind, callback, target) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(target !== undefined, 'must provide a target to register a storage event handler');
-        let listeners = this._listeners.get(kind) || new Map();
+        let listeners = this.listeners.get(kind) || new Map();
         listeners.set(callback, { target });
-        this._listeners.set(kind, listeners);
+        this.listeners.set(kind, listeners);
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
     _fire(kind, details) {
         return __awaiter(this, void 0, void 0, function* () {
-            let listenerMap = this._listeners.get(kind);
+            let listenerMap = this.listeners.get(kind);
             if (!listenerMap || listenerMap.size == 0) {
                 return;
             }
-            let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({ cat: 'handle', name: 'StorageProviderBase::_fire', args: { kind, type: this._type.key,
+            let trace = __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__["a" /* Tracing */].start({ cat: 'handle', name: 'StorageProviderBase::_fire', args: { kind, type: this.type.tag,
                     name: this.name, listeners: listenerMap.size } });
             let callbacks = [];
             for (let [callback] of listenerMap.entries()) {
@@ -9236,7 +9241,7 @@ class StorageProviderBase {
         let cmp;
         if ((cmp = __WEBPACK_IMPORTED_MODULE_2__recipe_util_js__["b" /* compareStrings */](this.name, other.name)) != 0)
             return cmp;
-        if ((cmp = __WEBPACK_IMPORTED_MODULE_2__recipe_util_js__["d" /* compareNumbers */](this._version, other._version)) != 0)
+        if ((cmp = __WEBPACK_IMPORTED_MODULE_2__recipe_util_js__["d" /* compareNumbers */](this.version, other.version)) != 0)
             return cmp;
         if ((cmp = __WEBPACK_IMPORTED_MODULE_2__recipe_util_js__["b" /* compareStrings */](this.source, other.source)) != 0)
             return cmp;
@@ -9280,8 +9285,8 @@ class StorageProviderBase {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__in_memory_storage_js__ = __webpack_require__(105);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__firebase_storage_js__ = __webpack_require__(104);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__in_memory_storage__ = __webpack_require__(105);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__firebase_storage__ = __webpack_require__(104);
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -9303,7 +9308,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 class StorageProviderFactory {
     constructor(arcId) {
         this._arcId = arcId;
-        this._storageInstances = { 'in-memory': new __WEBPACK_IMPORTED_MODULE_0__in_memory_storage_js__["a" /* InMemoryStorage */](arcId), 'firebase': new __WEBPACK_IMPORTED_MODULE_1__firebase_storage_js__["a" /* FirebaseStorage */](arcId) };
+        this._storageInstances = { 'in-memory': new __WEBPACK_IMPORTED_MODULE_0__in_memory_storage__["a" /* InMemoryStorage */](arcId), 'firebase': new __WEBPACK_IMPORTED_MODULE_1__firebase_storage__["a" /* FirebaseStorage */](arcId) };
     }
     _storageForKey(key) {
         let protocol = key.split(':')[0];
@@ -9311,7 +9316,7 @@ class StorageProviderFactory {
     }
     share(id, type, key) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this._storageForKey(key).share(id, type, keyFragment);
+            return this._storageForKey(key).share(id, type, key);
         });
     }
     construct(id, type, keyFragment) {
@@ -9332,7 +9337,7 @@ class StorageProviderFactory {
     // For testing
     shutdown() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield Promise.all(Object.values(this._storageInstances).map(s => s.shutdown()));
+            yield Promise.all(Object.keys(this._storageInstances).map(k => this._storageInstances[k].shutdown()));
         });
     }
 }
@@ -24280,10 +24285,10 @@ class StorageProxyScheduler {
 
 "use strict";
 /* unused harmony export resetStorageForTesting */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__storage_provider_base_js__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__storage_provider_base__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__platform_firebase_web_js__ = __webpack_require__(67);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base_js__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__platform_atob_web_js__ = __webpack_require__(63);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__platform_btoa_web_js__ = __webpack_require__(64);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__crdt_collection_model__ = __webpack_require__(24);
@@ -24327,7 +24332,7 @@ function resetStorageForTesting(key) {
         app.delete();
     });
 }
-class FirebaseKey extends __WEBPACK_IMPORTED_MODULE_3__key_base_js__["a" /* KeyBase */] {
+class FirebaseKey extends __WEBPACK_IMPORTED_MODULE_3__key_base__["a" /* KeyBase */] {
     constructor(key) {
         super();
         let parts = key.split('://');
@@ -24384,7 +24389,7 @@ class FirebaseStorage {
     // Unit tests should call this in an 'after' block.
     shutdown() {
         return __awaiter(this, void 0, void 0, function* () {
-            return Promise.all(Object.keys(this.apps).map(k => this.apps[k].delete()));
+            return Promise.all(Object.keys(this.apps).map(k => this.apps[k].delete())).then(a => { return; });
         });
     }
     share(id, type, key) {
@@ -24462,7 +24467,7 @@ class FirebaseStorage {
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = FirebaseStorage;
 
-class FirebaseStorageProvider extends __WEBPACK_IMPORTED_MODULE_0__storage_provider_base_js__["a" /* StorageProviderBase */] {
+class FirebaseStorageProvider extends __WEBPACK_IMPORTED_MODULE_0__storage_provider_base__["a" /* StorageProviderBase */] {
     constructor(type, storageEngine, id, reference, key) {
         super(type, undefined, id, key.toString());
         this.storageEngine = storageEngine;
@@ -24567,7 +24572,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         // Monotonic version, initialized via response from firebase,
         // or a call to `set` (as 0). Updated on changes from firebase
         // or during local modifications.
-        this._version = null;
+        this.version = null;
         // Whether `this.value` is affected by a local modification.
         // When this is true we are still in the process of writing
         // the value to the remote store and will suppress any
@@ -24586,11 +24591,11 @@ class FirebaseVariable extends FirebaseStorageProvider {
             return;
         }
         let data = dataSnapshot.val();
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this._version == null || data.version > this._version);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.version == null || data.version > this.version);
         this.value = data.value;
-        this._version = data.version;
+        this.version = data.version;
         this.resolveInitialized();
-        this._fire('change', { data: data.value, version: this._version });
+        this._fire('change', { data: data.value, version: this.version });
     }
     get _hasLocalChanges() {
         return this.localModified;
@@ -24602,10 +24607,10 @@ class FirebaseVariable extends FirebaseStorageProvider {
             // local mutation, these versions will be different when the transaction
             // completes indicating that we need to continue the process of sending
             // local modifications.
-            let version = this._version;
+            let version = this.version;
             let value = this.value;
             let result = yield this._transaction(data => {
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this._version >= version);
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(this.version >= version);
                 return {
                     version: Math.max(data.version + 1, version),
                     value: value,
@@ -24614,18 +24619,18 @@ class FirebaseVariable extends FirebaseStorageProvider {
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(result.committed, 'uncommited transaction (offline?) not supported yet');
             let data = result.snapshot.val();
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(data !== 0);
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(data.version >= this._version);
-            if (this._version != version) {
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(data.version >= this.version);
+            if (this.version != version) {
                 // A new local modification happened while we were writing the previous one.
                 return this._persistChangesImpl();
             }
             this.localModified = false;
-            this._version = data.version;
+            this.version = data.version;
             this.value = data.value;
         });
     }
     get versionForTesting() {
-        return this._version;
+        return this.version;
     }
     get() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -24651,19 +24656,19 @@ class FirebaseVariable extends FirebaseStorageProvider {
                 referredType = this.type.referenceReferredType;
                 this.backingStore = yield this.storageEngine.baseStorageFor(referredType, this.storageKey);
             }
-            if (this._version == null) {
+            if (this.version == null) {
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(!this.localModified);
                 // If the first modification happens before init, this becomes
                 // init. We pick the initial version which will be updated by the
                 // transaction in _persistChanges.
-                this._version = 0;
+                this.version = 0;
                 this.resolveInitialized();
             }
             else {
                 if (JSON.stringify(this.value) == JSON.stringify(value)) {
                     return;
                 }
-                this._version++;
+                this.version++;
             }
             if (this.type.isReference) {
                 yield this.backingStore.store(value, [this.storageKey]);
@@ -24671,7 +24676,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
             }
             this.localModified = true;
             this.value = value;
-            this._fire('change', { data: this.value, version: this._version, originatorId, barrier });
+            this._fire('change', { data: this.value, version: this.version, originatorId, barrier });
             yield this._persistChanges();
         });
     }
@@ -24700,7 +24705,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
                     }];
             }
             return {
-                version: this._version,
+                version: this.version,
                 model,
             };
         });
@@ -24709,7 +24714,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         let value = model.length == 0 ? null : model[0].value;
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__platform_assert_web_js__["a" /* assert */])(value !== undefined);
         this.value = value;
-        this._version = version;
+        this.version = version;
     }
 }
 function setDiff(from, to) {
@@ -24784,7 +24789,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         this.model = new __WEBPACK_IMPORTED_MODULE_6__crdt_collection_model__["a" /* CrdtCollectionModel */]();
         // Monotonic version. Updated each time we receive an update
         // from firebase, or when a local modification is applied.
-        this._version = null;
+        this.version = null;
         // The last copy of the serialized state received from firebase.
         // {items: id => {value, keys: {[key]: null}}}
         this.remoteState = { items: {} };
@@ -24878,7 +24883,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         // version, but we might not be able to if there have been local
         // modifications in the meantime. We'll recover the remote version
         // once we persist those.
-        this._version = Math.max(this._version + 1, newRemoteState.version);
+        this.version = Math.max(this.version + 1, newRemoteState.version);
         this.remoteState = newRemoteState;
         this.resolveInitialized();
         if (add.length == 0 && remove.length == 0) {
@@ -24887,13 +24892,13 @@ class FirebaseCollection extends FirebaseStorageProvider {
         }
         this._fire('change', {
             originatorId: null,
-            version: this._version,
+            version: this.version,
             add,
             remove,
         });
     }
     get versionForTesting() {
-        return this._version;
+        return this.version;
     }
     get(id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -24928,9 +24933,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
             // TODO: These keys might already have been removed (concurrently).
             // We should exit early in that case.
             let effective = this.model.remove(id, keys);
-            this._version++;
+            this.version++;
             // 2. Notify listeners.
-            this._fire('change', { remove: [{ value, keys, effective }], version: this._version, originatorId });
+            this._fire('change', { remove: [{ value, keys, effective }], version: this.version, originatorId });
             // 3. Add this modification to the set of local changes that need to be persisted.
             if (!this.localChanges.has(id)) {
                 this.localChanges.set(id, { add: [], remove: [] });
@@ -24958,9 +24963,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
             }
             let id = value.id;
             let effective = this.model.add(value.id, value, keys);
-            this._version++;
+            this.version++;
             // 2. Notify listeners.
-            this._fire('change', { add: [{ value, keys, effective }], version: this._version, originatorId });
+            this._fire('change', { add: [{ value, keys, effective }], version: this.version, originatorId });
             // 3. Add this modification to the set of local changes that need to be persisted.
             if (!this.localChanges.has(id)) {
                 this.localChanges.set(id, { add: [], remove: [] });
@@ -24988,7 +24993,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
                         // However it seems firebase will remove an empty object.
                         data.items = {};
                     }
-                    data.version = Math.max(data.version + 1, this._version);
+                    data.version = Math.max(data.version + 1, this.version);
                     // Record the changes that we're attempting to write. We'll remove
                     // these from this.localChanges if this transaction commits.
                     changesPersisted = new Map();
@@ -25103,13 +25108,13 @@ class FirebaseCollection extends FirebaseStorageProvider {
             // if yes, how should it represent local modifications?
             yield this.persisting;
             return {
-                version: this._version,
+                version: this.version,
                 model: this.model.toLiteral(),
             };
         });
     }
     fromLiteral({ version, model }) {
-        this._version = version;
+        this.version = version;
         this.model = new __WEBPACK_IMPORTED_MODULE_6__crdt_collection_model__["a" /* CrdtCollectionModel */](model);
     }
 }
@@ -25332,8 +25337,8 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
 /* unused harmony export resetInMemoryStorageForTesting */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tracelib_trace_js__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__storage_provider_base_js__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base_js__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__storage_provider_base__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__key_base__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model__ = __webpack_require__(24);
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -25361,7 +25366,7 @@ function resetInMemoryStorageForTesting() {
         __storageCache[key]._memoryMap = {};
     }
 }
-class InMemoryKey extends __WEBPACK_IMPORTED_MODULE_3__key_base_js__["a" /* KeyBase */] {
+class InMemoryKey extends __WEBPACK_IMPORTED_MODULE_3__key_base__["a" /* KeyBase */] {
     constructor(key) {
         super();
         let parts = key.split('://');
@@ -25455,12 +25460,12 @@ class InMemoryStorage {
         return new InMemoryKey(string);
     }
     shutdown() {
-        // No-op
+        return Promise.resolve();
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = InMemoryStorage;
 
-class InMemoryStorageProvider extends __WEBPACK_IMPORTED_MODULE_2__storage_provider_base_js__["a" /* StorageProviderBase */] {
+class InMemoryStorageProvider extends __WEBPACK_IMPORTED_MODULE_2__storage_provider_base__["a" /* StorageProviderBase */] {
     static newProvider(type, storageEngine, name, id, key) {
         if (type.isCollection) {
             return new InMemoryCollection(type, storageEngine, name, id, key);
@@ -25474,10 +25479,10 @@ class InMemoryCollection extends InMemoryStorageProvider {
         this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model__["a" /* CrdtCollectionModel */]();
         this._storageEngine = storageEngine;
         this._backingStore = null;
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this._version !== null);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(this.version !== null);
     }
     clone() {
-        let handle = new InMemoryCollection(this._type, this._storageEngine, this.name, this.id, null);
+        let handle = new InMemoryCollection(this.type, this._storageEngine, this.name, this.id, null);
         handle.cloneFrom(this);
         return handle;
     }
@@ -25489,12 +25494,12 @@ class InMemoryCollection extends InMemoryStorageProvider {
     // Returns {version, model: [{id, value, keys: []}]}
     toLiteral() {
         return {
-            version: this._version,
+            version: this.version,
             model: this._model.toLiteral(),
         };
     }
     fromLiteral({ version, model }) {
-        this._version = version;
+        this.version = version;
         this._model = new __WEBPACK_IMPORTED_MODULE_4__crdt_collection_model__["a" /* CrdtCollectionModel */](model);
     }
     toList() {
@@ -25552,8 +25557,8 @@ class InMemoryCollection extends InMemoryStorageProvider {
                 value = { id: value.id, storageKey: this._backingStore.storageKey };
             }
             let effective = this._model.add(value.id, value, keys);
-            this._version++;
-            yield trace.wait(this._fire('change', { add: [{ value, keys, effective }], version: this._version, originatorId }));
+            this.version++;
+            yield trace.wait(this._fire('change', { add: [{ value, keys, effective }], version: this.version, originatorId }));
             trace.end({ args: { value } });
         });
     }
@@ -25566,8 +25571,8 @@ class InMemoryCollection extends InMemoryStorageProvider {
             let value = this._model.getValue(id);
             if (value !== null) {
                 let effective = this._model.remove(id, keys);
-                this._version++;
-                yield trace.wait(this._fire('change', { remove: [{ value, keys, effective }], version: this._version, originatorId }));
+                this.version++;
+                yield trace.wait(this._fire('change', { remove: [{ value, keys, effective }], version: this.version, originatorId }));
             }
             trace.end({ args: { entity: value } });
         });
@@ -25584,7 +25589,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
         this._backingStore = null;
     }
     clone() {
-        let variable = new InMemoryVariable(this._type, this._storageEngine, this.name, this.id, null);
+        let variable = new InMemoryVariable(this.type, this._storageEngine, this.name, this.id, null);
         variable.cloneFrom(this);
         return variable;
     }
@@ -25606,7 +25611,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
                     }];
             }
             return {
-                version: this._version,
+                version: this.version,
                 model,
             };
         });
@@ -25615,7 +25620,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
         let value = model.length == 0 ? null : model[0].value;
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__platform_assert_web_js__["a" /* assert */])(value !== undefined);
         this._stored = value;
-        this._version = version;
+        this.version = version;
     }
     traceInfo() {
         return { stored: this._stored !== null };
@@ -25662,8 +25667,8 @@ class InMemoryVariable extends InMemoryStorageProvider {
                 }
                 this._stored = value;
             }
-            this._version++;
-            yield this._fire('change', { data: this._stored, version: this._version, originatorId, barrier });
+            this.version++;
+            yield this._fire('change', { data: this._stored, version: this.version, originatorId, barrier });
         });
     }
     clear(originatorId = null, barrier = null) {

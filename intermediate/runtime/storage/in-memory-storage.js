@@ -16,8 +16,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { assert } from '../../platform/assert-web.js';
 import { Tracing } from '../../tracelib/trace.js';
-import { StorageProviderBase } from './storage-provider-base.js';
-import { KeyBase } from './key-base.js';
+import { StorageProviderBase } from './storage-provider-base';
+import { KeyBase } from './key-base';
 import { CrdtCollectionModel } from './crdt-collection-model';
 export function resetInMemoryStorageForTesting() {
     for (let key in __storageCache) {
@@ -118,7 +118,7 @@ export class InMemoryStorage {
         return new InMemoryKey(string);
     }
     shutdown() {
-        // No-op
+        return Promise.resolve();
     }
 }
 class InMemoryStorageProvider extends StorageProviderBase {
@@ -135,10 +135,10 @@ class InMemoryCollection extends InMemoryStorageProvider {
         this._model = new CrdtCollectionModel();
         this._storageEngine = storageEngine;
         this._backingStore = null;
-        assert(this._version !== null);
+        assert(this.version !== null);
     }
     clone() {
-        let handle = new InMemoryCollection(this._type, this._storageEngine, this.name, this.id, null);
+        let handle = new InMemoryCollection(this.type, this._storageEngine, this.name, this.id, null);
         handle.cloneFrom(this);
         return handle;
     }
@@ -150,12 +150,12 @@ class InMemoryCollection extends InMemoryStorageProvider {
     // Returns {version, model: [{id, value, keys: []}]}
     toLiteral() {
         return {
-            version: this._version,
+            version: this.version,
             model: this._model.toLiteral(),
         };
     }
     fromLiteral({ version, model }) {
-        this._version = version;
+        this.version = version;
         this._model = new CrdtCollectionModel(model);
     }
     toList() {
@@ -213,8 +213,8 @@ class InMemoryCollection extends InMemoryStorageProvider {
                 value = { id: value.id, storageKey: this._backingStore.storageKey };
             }
             let effective = this._model.add(value.id, value, keys);
-            this._version++;
-            yield trace.wait(this._fire('change', { add: [{ value, keys, effective }], version: this._version, originatorId }));
+            this.version++;
+            yield trace.wait(this._fire('change', { add: [{ value, keys, effective }], version: this.version, originatorId }));
             trace.end({ args: { value } });
         });
     }
@@ -227,8 +227,8 @@ class InMemoryCollection extends InMemoryStorageProvider {
             let value = this._model.getValue(id);
             if (value !== null) {
                 let effective = this._model.remove(id, keys);
-                this._version++;
-                yield trace.wait(this._fire('change', { remove: [{ value, keys, effective }], version: this._version, originatorId }));
+                this.version++;
+                yield trace.wait(this._fire('change', { remove: [{ value, keys, effective }], version: this.version, originatorId }));
             }
             trace.end({ args: { entity: value } });
         });
@@ -245,7 +245,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
         this._backingStore = null;
     }
     clone() {
-        let variable = new InMemoryVariable(this._type, this._storageEngine, this.name, this.id, null);
+        let variable = new InMemoryVariable(this.type, this._storageEngine, this.name, this.id, null);
         variable.cloneFrom(this);
         return variable;
     }
@@ -267,7 +267,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
                     }];
             }
             return {
-                version: this._version,
+                version: this.version,
                 model,
             };
         });
@@ -276,7 +276,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
         let value = model.length == 0 ? null : model[0].value;
         assert(value !== undefined);
         this._stored = value;
-        this._version = version;
+        this.version = version;
     }
     traceInfo() {
         return { stored: this._stored !== null };
@@ -323,8 +323,8 @@ class InMemoryVariable extends InMemoryStorageProvider {
                 }
                 this._stored = value;
             }
-            this._version++;
-            yield this._fire('change', { data: this._stored, version: this._version, originatorId, barrier });
+            this.version++;
+            yield this._fire('change', { data: this._stored, version: this.version, originatorId, barrier });
         });
     }
     clear(originatorId = null, barrier = null) {
