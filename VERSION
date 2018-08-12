@@ -1,12 +1,5 @@
-commit 6e6aa7341b35ce283b03fc03e9fb8842e5468800
-Author: shans <shane.stephens@gmail.com>
-Date:   Sat Aug 11 11:45:36 2018 +1000
+commit 38a585182fe3ab7b72a84cde58702422e37cd7f0
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Sun Aug 12 16:53:02 2018 -0700
 
-     Complete typescriptifying of storage. (#1750)
-    
-    * typescriptify crdt-collection-model.
-    
-    This uncovered an issue with our custom-loader, which was treating
-    import statements without a '.js' specifier as cjs imports.
-    
-    * Complete typescriptifying of storage.
+    sigh: tsc writes errors to stdout, so show all possible output on failure (#1755)
