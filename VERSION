@@ -1,5 +1,5 @@
-commit 357970c8d4abd91f34d1d13d31ded660c2eae214
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Sun Aug 12 21:40:40 2018 -0700
+commit 5f06325591cc17dce4ca2c009aa5305d7ab0b619
+Author: shans <shane.stephens@gmail.com>
+Date:   Mon Aug 13 15:13:00 2018 +1000
 
-    sigh: spawn result may have null stdout/stderr (#1758)
+    Fix the manual tests. (#1759)
