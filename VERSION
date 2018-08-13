@@ -1,16 +1,5 @@
-commit 5e3a0373f12be57f928bb56d4e8000c4005c4593
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Aug 13 12:10:32 2018 +1000
+commit 560c715106207b17b6bcc1d38b5c17cb747bba5d
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Sun Aug 12 21:26:03 2018 -0700
 
-    Make tsc dramatically faster. (#1757)
-    
-    * typescriptify crdt-collection-model.
-    
-    This uncovered an issue with our custom-loader, which was treating
-    import statements without a '.js' specifier as cjs imports.
-    
-    * Start moving things around
-    
-    * Only compile the typeScript files
-    
-    * Fix all the other bits.
+    Convert random to TypeScript (#1752)
