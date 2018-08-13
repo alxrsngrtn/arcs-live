@@ -1,5 +1,16 @@
-commit 38a585182fe3ab7b72a84cde58702422e37cd7f0
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Sun Aug 12 16:53:02 2018 -0700
+commit 5e3a0373f12be57f928bb56d4e8000c4005c4593
+Author: shans <shane.stephens@gmail.com>
+Date:   Mon Aug 13 12:10:32 2018 +1000
 
-    sigh: tsc writes errors to stdout, so show all possible output on failure (#1755)
+    Make tsc dramatically faster. (#1757)
+    
+    * typescriptify crdt-collection-model.
+    
+    This uncovered an issue with our custom-loader, which was treating
+    import statements without a '.js' specifier as cjs imports.
+    
+    * Start moving things around
+    
+    * Only compile the typeScript files
+    
+    * Fix all the other bits.
