@@ -25016,6 +25016,9 @@ var CursorState;
 //
 // This class technically conforms to the iterator protocol but is not marked as iterable because
 // next() is async, which is currently not supported by implicit iteration in Javascript.
+//
+// NOTE: entity mutation removes elements from a streamed read; the entity will be updated with an
+// index past the cursor's end but Firebase doesn't issue a child_removed event for it.
 class Cursor {
     constructor(reference, pageSize) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(!isNaN(pageSize) && pageSize > 0);
@@ -25045,7 +25048,7 @@ class Cursor {
             this.removedFn = snapshot => {
                 if (snapshot.val().index <= this.end &&
                     (this.nextStart === null || snapshot.val().index >= this.nextStart)) {
-                    this.removed.push(snapshot.val());
+                    this.removed.push(snapshot.val().value);
                 }
             };
             yield this.orderByIndex.on('child_removed', this.removedFn);
@@ -25078,7 +25081,7 @@ class Cursor {
                 this.nextStart = null;
                 yield query.once('value', snapshot => snapshot.forEach(entry => {
                     if (value.length < this.pageSize) {
-                        value.push(entry.val());
+                        value.push(entry.val().value);
                     }
                     else {
                         this.nextStart = entry.val().index;
@@ -25357,7 +25360,13 @@ class InMemoryStorage {
 class InMemoryStorageProvider extends _storage_provider_base__WEBPACK_IMPORTED_MODULE_2__["StorageProviderBase"] {
     static newProvider(type, storageEngine, name, id, key) {
         if (type.isCollection) {
-            return new InMemoryCollection(type, storageEngine, name, id, key);
+            // FIXME: implement a mechanism for specifying BigCollections in manifests
+            if (id.startsWith('~big~')) {
+                return new InMemoryBigCollection(type, storageEngine, name, id, key);
+            }
+            else {
+                return new InMemoryCollection(type, storageEngine, name, id, key);
+            }
         }
         return new InMemoryVariable(type, storageEngine, name, id, key);
     }
@@ -25563,6 +25572,63 @@ class InMemoryVariable extends InMemoryStorageProvider {
     clear(originatorId = null, barrier = null) {
         return __awaiter(this, void 0, void 0, function* () {
             this.set(null, originatorId, barrier);
+        });
+    }
+}
+// In-memory version of the BigCollection API; primarily for testing.
+class InMemoryBigCollection extends InMemoryStorageProvider {
+    constructor(type, storageEngine, name, id, key) {
+        super(type, name, id, key);
+        this.version = 0;
+        this.items = new Map();
+    }
+    get(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let data = this.items.get(id);
+            return (data !== undefined) ? data.value : null;
+        });
+    }
+    store(value, keys) {
+        return __awaiter(this, void 0, void 0, function* () {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(keys != null && keys.length > 0, 'keys required');
+            this.version++;
+            if (!this.items.has(value.id)) {
+                this.items.set(value.id, { index: null, value: null, keys: {} });
+            }
+            let data = this.items.get(value.id);
+            data.index = this.version;
+            data.value = value;
+            keys.forEach(k => data.keys[k] = this.version);
+            return data;
+        });
+    }
+    remove(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.version++;
+            this.items.delete(id);
+        });
+    }
+    stream(pageSize) {
+        return __awaiter(this, void 0, void 0, function* () {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!isNaN(pageSize) && pageSize > 0);
+            let copy = [...this.items.values()];
+            copy.sort((a, b) => a.index - b.index);
+            return {
+                version: this.version,
+                next: function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        if (copy.length === 0) {
+                            return { done: true };
+                        }
+                        return { value: copy.splice(0, pageSize).map(v => v.value), done: false };
+                    });
+                },
+                close: function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        copy = [];
+                    });
+                }
+            };
         });
     }
 }

@@ -124,7 +124,13 @@ export class InMemoryStorage {
 class InMemoryStorageProvider extends StorageProviderBase {
     static newProvider(type, storageEngine, name, id, key) {
         if (type.isCollection) {
-            return new InMemoryCollection(type, storageEngine, name, id, key);
+            // FIXME: implement a mechanism for specifying BigCollections in manifests
+            if (id.startsWith('~big~')) {
+                return new InMemoryBigCollection(type, storageEngine, name, id, key);
+            }
+            else {
+                return new InMemoryCollection(type, storageEngine, name, id, key);
+            }
         }
         return new InMemoryVariable(type, storageEngine, name, id, key);
     }
@@ -330,6 +336,63 @@ class InMemoryVariable extends InMemoryStorageProvider {
     clear(originatorId = null, barrier = null) {
         return __awaiter(this, void 0, void 0, function* () {
             this.set(null, originatorId, barrier);
+        });
+    }
+}
+// In-memory version of the BigCollection API; primarily for testing.
+class InMemoryBigCollection extends InMemoryStorageProvider {
+    constructor(type, storageEngine, name, id, key) {
+        super(type, name, id, key);
+        this.version = 0;
+        this.items = new Map();
+    }
+    get(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let data = this.items.get(id);
+            return (data !== undefined) ? data.value : null;
+        });
+    }
+    store(value, keys) {
+        return __awaiter(this, void 0, void 0, function* () {
+            assert(keys != null && keys.length > 0, 'keys required');
+            this.version++;
+            if (!this.items.has(value.id)) {
+                this.items.set(value.id, { index: null, value: null, keys: {} });
+            }
+            let data = this.items.get(value.id);
+            data.index = this.version;
+            data.value = value;
+            keys.forEach(k => data.keys[k] = this.version);
+            return data;
+        });
+    }
+    remove(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.version++;
+            this.items.delete(id);
+        });
+    }
+    stream(pageSize) {
+        return __awaiter(this, void 0, void 0, function* () {
+            assert(!isNaN(pageSize) && pageSize > 0);
+            let copy = [...this.items.values()];
+            copy.sort((a, b) => a.index - b.index);
+            return {
+                version: this.version,
+                next: function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        if (copy.length === 0) {
+                            return { done: true };
+                        }
+                        return { value: copy.splice(0, pageSize).map(v => v.value), done: false };
+                    });
+                },
+                close: function () {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        copy = [];
+                    });
+                }
+            };
         });
     }
 }

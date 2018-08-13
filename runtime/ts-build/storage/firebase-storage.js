@@ -836,6 +836,9 @@ var CursorState;
 //
 // This class technically conforms to the iterator protocol but is not marked as iterable because
 // next() is async, which is currently not supported by implicit iteration in Javascript.
+//
+// NOTE: entity mutation removes elements from a streamed read; the entity will be updated with an
+// index past the cursor's end but Firebase doesn't issue a child_removed event for it.
 class Cursor {
     constructor(reference, pageSize) {
         assert(!isNaN(pageSize) && pageSize > 0);
@@ -865,7 +868,7 @@ class Cursor {
             this.removedFn = snapshot => {
                 if (snapshot.val().index <= this.end &&
                     (this.nextStart === null || snapshot.val().index >= this.nextStart)) {
-                    this.removed.push(snapshot.val());
+                    this.removed.push(snapshot.val().value);
                 }
             };
             yield this.orderByIndex.on('child_removed', this.removedFn);
@@ -898,7 +901,7 @@ class Cursor {
                 this.nextStart = null;
                 yield query.once('value', snapshot => snapshot.forEach(entry => {
                     if (value.length < this.pageSize) {
-                        value.push(entry.val());
+                        value.push(entry.val().value);
                     }
                     else {
                         this.nextStart = entry.val().index;
