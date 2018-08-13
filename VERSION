@@ -1,5 +1,5 @@
-commit 560c715106207b17b6bcc1d38b5c17cb747bba5d
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Sun Aug 12 21:26:03 2018 -0700
+commit 357970c8d4abd91f34d1d13d31ded660c2eae214
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Sun Aug 12 21:40:40 2018 -0700
 
-    Convert random to TypeScript (#1752)
+    sigh: spawn result may have null stdout/stderr (#1758)
