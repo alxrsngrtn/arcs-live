@@ -93,7 +93,7 @@ export class Type {
         }
         if (this.isInterface) {
             const shape = this.interfaceShape.clone(new Map());
-            shape._typeVars.map(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
+            shape.mergeTypeVariablesByName(variableMap);
             // TODO: only build a new type when a variable is modified
             return Type.newInterface(shape);
         }
@@ -406,7 +406,7 @@ export class Type {
             if (this.entitySchema.name) {
                 return this.entitySchema.name.replace(/([^A-Z])([A-Z])/g, '$1 $2').replace(/([A-Z][^A-Z])/g, ' $1').replace(/[\s]+/g, ' ').trim();
             }
-            return JSON.stringify(this.entitySchema._model);
+            return JSON.stringify(this.entitySchema.toLiteral());
         }
         if (this.isInterface) {
             return this.interfaceShape.toPrettyString();
@@ -420,8 +420,8 @@ addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Slot');
 addType('Reference', 'referredType');
-import { Shape } from '../shape.js';
-import { Schema } from '../schema.js';
+import { Shape } from './shape.js';
+import { Schema } from './schema.js';
 import { TypeVariable } from '../type-variable.js';
 import { TupleFields } from '../tuple-fields.js';
 import { TypeChecker } from '../recipe/type-checker.js';

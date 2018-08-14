@@ -2661,7 +2661,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleSpec", function() { return ParticleSpec; });
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
-/* harmony import */ var _shape_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shape.js */ "./runtime/shape.js");
+/* harmony import */ var _ts_build_shape_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/shape.js */ "./runtime/ts-build/shape.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /**
  * @license
@@ -2844,7 +2844,7 @@ class ParticleSpec {
     // TODO: wat do?
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(!this.slots.length, 'please implement slots toShape');
     const slots = [];
-    return new _shape_js__WEBPACK_IMPORTED_MODULE_2__["Shape"](handles, slots);
+    return new _ts_build_shape_js__WEBPACK_IMPORTED_MODULE_2__["Shape"](handles, slots);
   }
 
   toString() {
@@ -3408,765 +3408,6 @@ class TypeChecker {
     return false;
   }
 }
-
-
-/***/ }),
-
-/***/ "./runtime/schema.js":
-/*!***************************!*\
-  !*** ./runtime/schema.js ***!
-  \***************************/
-/*! exports provided: Schema */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Schema", function() { return Schema; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./entity.js */ "./runtime/entity.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class Schema {
-  constructor(model) {
-    let legacy = [];
-    // TODO: remove this (remnants of normative/optional)
-    if (model.sections) {
-      legacy.push('sections');
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!model.fields);
-      model.fields = {};
-      for (let section of model.sections) {
-        Object.assign(model.fields, section.fields);
-      }
-      delete model.sections;
-    }
-    if (model.name) {
-      legacy.push('name');
-      model.names = [model.name];
-      delete model.name;
-    }
-    if (model.parents) {
-      legacy.push('parents');
-      for (let parent of model.parents) {
-        let parentSchema = new Schema(parent);
-        model.names.push(...parent.names);
-        Object.assign(model.fields, parent.fields);
-      }
-      model.names = [...new Set(model.names)];
-    }
-    if (legacy.length > 0) {
-      console.warn(`Schema ${model.names[0] || '*'} was serialized with legacy format (${legacy.join(', ')})`, new Error());
-    }
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(model.fields);
-    this._model = model;
-    this.description = {};
-    if (model.description) {
-      model.description.description.forEach(desc => this.description[desc.name] = desc.pattern);
-    }
-  }
-
-  toLiteral() {
-    return this._model;
-  }
-
-  static fromLiteral(data) {
-    return new Schema(data);
-  }
-
-  get fields() {
-    return this._model.fields;
-  }
-
-  get names() {
-    return this._model.names;
-  }
-
-  // TODO: This should only be an ident used in manifest parsing.
-  get name() {
-    return this.names[0];
-  }
-
-  static typesEqual(fieldType1, fieldType2) {
-    // TODO: structural check instead of stringification.
-    return Schema._typeString(fieldType1) == Schema._typeString(fieldType2);
-  }
-
-  static _typeString(type) {
-    if (typeof(type) != 'object') {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof type == 'string');
-      return type;
-    }
-    switch (type.kind) {
-      case 'schema-union':
-        return `(${type.types.join(' or ')})`;
-      case 'schema-tuple':
-        return `(${type.types.join(', ')})`;
-      default:
-        throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
-    }
-  }
-
-  static union(schema1, schema2) {
-    let names = [...new Set([...schema1.names, ...schema2.names])];
-    let fields = {};
-
-    for (let [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
-      if (fields[field]) {
-        if (!Schema.typesEqual(fields[field], type)) {
-          return null;
-        }
-      } else {
-        fields[field] = type;
-      }
-    }
-
-    return new Schema({
-      names,
-      fields,
-    });
-  }
-
-  static intersect(schema1, schema2) {
-    let names = [...schema1.names].filter(name => schema2.names.includes(name));
-    let fields = {};
-
-    for (let [field, type] of Object.entries(schema1.fields)) {
-      let otherType = schema2.fields[field];
-      if (otherType && Schema.typesEqual(type, otherType)) {
-        fields[field] = type;
-      }
-    }
-
-    return new Schema({
-      names,
-      fields,
-    });
-  }
-
-  equals(otherSchema) {
-    return this === otherSchema || (this.name == otherSchema.name
-       // TODO: Check equality without calling contains.
-       && this.isMoreSpecificThan(otherSchema)
-       && otherSchema.isMoreSpecificThan(this));
-  }
-
-  isMoreSpecificThan(otherSchema) {
-    let names = new Set(this.names);
-    for (let name of otherSchema.names) {
-      if (!names.has(name)) {
-        return false;
-      }
-    }
-    let fields = {};
-    for (let [name, type] of Object.entries(this.fields)) {
-      fields[name] = type;
-    }
-    for (let [name, type] of Object.entries(otherSchema.fields)) {
-      if (fields[name] == undefined) {
-        return false;
-      }
-      if (!Schema.typesEqual(fields[name], type)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  get type() {
-    return _ts_build_type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newEntity(this);
-  }
-
-  entityClass() {
-    let schema = this;
-    let className = this.name;
-    let classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
-
-    let convertToJsType = fieldType => {
-      switch (fieldType) {
-        case 'Text':
-          return 'string';
-        case 'URL':
-          return 'string';
-        case 'Number':
-          return 'number';
-        case 'Boolean':
-          return 'boolean';
-        case 'Object':
-          return 'object';
-        default:
-          throw new Error(`Unknown field type ${fieldType} in schema ${className}`);
-      }
-    };
-
-    const fieldTypes = this.fields;
-    let validateFieldAndTypes = (op, name, value) => {
-      let fieldType = fieldTypes[name];
-      if (fieldType === undefined) {
-        throw new Error(`Can't ${op} field ${name}; not in schema ${className}`);
-      }
-      if (value === undefined || value === null) {
-        return;
-      }
-
-      if (typeof(fieldType) !== 'object') {
-        // Primitive fields.
-        if (typeof(value) !== convertToJsType(fieldType)) {
-          throw new TypeError(
-              `Type mismatch ${op}ting field ${name} (type ${fieldType}); ` +
-              `value '${value}' is type ${typeof(value)}`);
-        }
-        return;
-      }
-
-      switch (fieldType.kind) {
-        case 'schema-union':
-          // Value must be a primitive that matches one of the union types.
-          for (let innerType of fieldType.types) {
-            if (typeof(value) === convertToJsType(innerType)) {
-              return;
-            }
-          }
-          throw new TypeError(
-              `Type mismatch ${op}ting field ${name} (union [${fieldType.types}]); ` +
-              `value '${value}' is type ${typeof(value)}`);
-
-        case 'schema-tuple':
-          // Value must be an array whose contents match each of the tuple types.
-          if (!Array.isArray(value)) {
-            throw new TypeError(`Cannot ${op} tuple ${name} with non-array value '${value}'`);
-          }
-          if (value.length != fieldType.types.length) {
-            throw new TypeError(`Length mismatch ${op}ting tuple ${name} ` +
-                                `[${fieldType.types}] with value '${value}'`);
-          }
-          fieldType.types.map((innerType, i) => {
-            if (value[i] !== undefined && value[i] !== null &&
-                typeof(value[i]) !== convertToJsType(innerType)) {
-              throw new TypeError(
-                  `Type mismatch ${op}ting field ${name} (tuple [${fieldType.types}]); ` +
-                  `value '${value}' has type ${typeof(value[i])} at index ${i}`);
-            }
-          });
-          break;
-
-        default:
-          throw new Error(`Unknown kind ${fieldType.kind} in schema ${className}`);
-      }
-    };
-
-    let clazz = class extends _entity_js__WEBPACK_IMPORTED_MODULE_2__["Entity"] {
-      constructor(data, userIDComponent) {
-        super(userIDComponent);
-        this.rawData = new Proxy({}, {
-          get: (target, name) => {
-            if (classJunk.includes(name) || name.constructor == Symbol) {
-              return undefined;
-            }
-            let value = target[name];
-            validateFieldAndTypes('get', name, value);
-            return value;
-          },
-          set: (target, name, value) => {
-            validateFieldAndTypes('set', name, value);
-            target[name] = value;
-            return true;
-          }
-        });
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data, `can't construct entity with null data`);
-        for (let [name, value] of Object.entries(data)) {
-          this.rawData[name] = value;
-        }
-      }
-
-      dataClone() {
-        let clone = {};
-        for (let name of Object.keys(schema.fields)) {
-          if (this.rawData[name] !== undefined) {
-            clone[name] = this.rawData[name];
-          }
-        }
-        return clone;
-      }
-
-      static get key() {
-        return {
-          tag: 'entity',
-          schema: schema.toLiteral(),
-        };
-      }
-    };
-
-    Object.defineProperty(clazz, 'type', {value: this.type});
-    Object.defineProperty(clazz, 'name', {value: this.name});
-    // TODO: add query / getter functions for user properties
-    for (let name of Object.keys(this.fields)) {
-      Object.defineProperty(clazz.prototype, name, {
-        get: function() {
-          return this.rawData[name];
-        },
-        set: function(v) {
-          this.rawData[name] = v;
-        }
-      });
-    }
-    return clazz;
-  }
-
-  toInlineSchemaString(options) {
-    let names = (this.names || ['*']).join(' ');
-    let fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
-    return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
-  }
-
-  toManifestString() {
-    let results = [];
-    results.push(`schema ${this.names.join(' ')}`);
-    results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
-    if (Object.keys(this.description).length > 0) {
-      results.push(`  description \`${this.description.pattern}\``);
-      for (let name of Object.keys(this.description)) {
-        if (name != 'pattern') {
-          results.push(`    ${name} \`${this.description[name]}\``);
-        }
-      }
-    }
-    return results.join('\n');
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/shape.js":
-/*!**************************!*\
-  !*** ./runtime/shape.js ***!
-  \**************************/
-/*! exports provided: Shape */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Shape", function() { return Shape; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-// ShapeHandle {name, direction, type}
-// Slot {name, direction, isRequired, isSet}
-
-function _fromLiteral(member) {
-  if (!!member && typeof member == 'object') {
-    return _ts_build_type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(member);
-  }
-  return member;
-}
-
-function _toLiteral(member) {
-  if (!!member && member.toLiteral) {
-    return member.toLiteral();
-  }
-  return member;
-}
-
-const handleFields = ['type', 'name', 'direction'];
-const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
-
-class Shape {
-  constructor(name, handles, slots) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(name);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handles !== undefined);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slots !== undefined);
-    this.name = name;
-    this.handles = handles;
-    this.slots = slots;
-    this._typeVars = [];
-    for (let handle of handles) {
-      for (let field of handleFields) {
-        if (Shape.isTypeVar(handle[field])) {
-          this._typeVars.push({object: handle, field});
-        }
-      }
-    }
-
-    for (let slot of slots) {
-      for (let field of slotFields) {
-        if (Shape.isTypeVar(slot[field])) {
-          this._typeVars.push({object: slot, field});
-        }
-      }
-    }
-  }
-
-  toPrettyString() {
-    return 'SHAAAAPE';
-  }
-
-  get canReadSubset() {
-    return this._cloneAndUpdate(typeVar => typeVar.canReadSubset);
-  }
-
-  get canWriteSuperset() {
-    return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
-  }
-
-  isMoreSpecificThan(other) {
-    if (this.handles.length !== other.handles.length ||
-        this.slots.length !== other.slots.length) {
-      return false;
-    }
-    // TODO: should probably confirm that handles and slots actually match.
-    for (let i = 0; i < this._typeVars.length; i++) {
-      let thisTypeVar = this._typeVars[i];
-      let otherTypeVar = other._typeVars[i];
-      if (!thistypeVar.object[thistypeVar.field].isMoreSpecificThan(
-              othertypeVar.object[othertypeVar.field])) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  _applyExistenceTypeTest(test) {
-    for (let typeRef of this._typeVars) {
-      if (test(typeRef.object[typeRef.field])) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  _handlesToManifestString() {
-    return this.handles
-      .map(handle => {
-        let type = handle.type.resolvedType();
-        return `  ${handle.direction ? handle.direction + ' ': ''}${type.toString()} ${handle.name ? handle.name : '*'}`;
-      }).join('\n');
-  }
-
-  _slotsToManifestString() {
-    // TODO deal with isRequired
-    return this.slots
-      .map(slot => `  ${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name ? slot.name + ' ' : ''}`)
-      .join('\n');
-  }
-  // TODO: Include name as a property of the shape and normalize this to just
-  // toString().
-  toString() {
-    return `shape ${this.name}
-${this._handlesToManifestString()}
-${this._slotsToManifestString()}
-`;
-  }
-
-  static fromLiteral(data) {
-    let handles = data.handles.map(handle => ({type: _fromLiteral(handle.type), name: _fromLiteral(handle.name), direction: _fromLiteral(handle.direction)}));
-    let slots = data.slots.map(slot => ({name: _fromLiteral(slot.name), direction: _fromLiteral(slot.direction), isRequired: _fromLiteral(slot.isRequired), isSet: _fromLiteral(slot.isSet)}));
-    return new Shape(data.name, handles, slots);
-  }
-
-  toLiteral() {
-    let handles = this.handles.map(handle => ({type: _toLiteral(handle.type), name: _toLiteral(handle.name), direction: _toLiteral(handle.direction)}));
-    let slots = this.slots.map(slot => ({name: _toLiteral(slot.name), direction: _toLiteral(slot.direction), isRequired: _toLiteral(slot.isRequired), isSet: _toLiteral(slot.isSet)}));
-    return {name: this.name, handles, slots};
-  }
-
-  clone(variableMap) {
-    let handles = this.handles.map(({name, direction, type}) => ({name, direction, type: type ? type.clone(variableMap) : undefined}));
-    let slots = this.slots.map(({name, direction, isRequired, isSet}) => ({name, direction, isRequired, isSet}));
-    return new Shape(this.name, handles, slots);
-  }
-
-  cloneWithResolutions(variableMap) {
-    return this._cloneWithResolutions(variableMap);
-  }
-
-  _cloneWithResolutions(variableMap) {
-    let handles = this.handles.map(({name, direction, type}) => ({name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined}));
-    let slots = this.slots.map(({name, direction, isRequired, isSet}) => ({name, direction, isRequired, isSet}));
-    return new Shape(this.name, handles, slots);
-  }
-
-  canEnsureResolved() {
-    for (let typeVar of this._typeVars) {
-      if (!typeVar.object[typeVar.field].canEnsureResolved()) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  maybeEnsureResolved() {
-    for (let typeVar of this._typeVars) {
-      let variable = typeVar.object[typeVar.field];
-      variable = variable.clone(new Map());
-      if (!variable.maybeEnsureResolved()) return false;
-    }
-    for (let typeVar of this._typeVars) {
-      typeVar.object[typeVar.field].maybeEnsureResolved();
-    }
-    return true;
-  }
-
-  tryMergeTypeVariablesWith(other) {
-    // Type variable enabled slot matching will Just Work when we
-    // unify slots and handles.
-    if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
-      return null;
-    }
-    if (other.handles.length !== this.handles.length) {
-      return null;
-    }
-
-    let handles = new Set(this.handles);
-    let otherHandles = new Set(other.handles);
-    let handleMap = new Map();
-    let sizeCheck = handles.size;
-    while (handles.size > 0) {
-      let handleMatches = [...handles.values()].map(
-        handle => ({handle, match: [...otherHandles.values()].filter(otherHandle =>this._equalHandle(handle, otherHandle))}));
-
-      for (let handleMatch of handleMatches) {
-        // no match!
-        if (handleMatch.match.length == 0) {
-          return null;
-        }
-        if (handleMatch.match.length == 1) {
-          handleMap.set(handleMatch.handle, handleMatch.match[0]);
-          otherHandles.delete(handleMatch.match[0]);
-          handles.delete(handleMatch.handle);
-        }
-      }
-      // no progress!
-      if (handles.size == sizeCheck) {
-        return null;
-      }
-      sizeCheck = handles.size;
-    }
-
-    handles = [];
-    for (let handle of this.handles) {
-      let otherHandle = handleMap.get(handle);
-      let resultType;
-      if (handle.type.hasVariable || otherHandle.type.hasVariable) {
-        resultType = _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"]._tryMergeTypeVariable(handle.type, otherHandle.type);
-        if (!resultType) {
-          return null;
-        }
-      } else {
-        resultType = handle.type || otherHandle.type;
-      }
-      handles.push({name: handle.name || otherHandle.name, direction: handle.direction || otherHandle.direction, type: resultType});
-    }
-    let slots = this.slots.map(({name, direction, isRequired, isSet}) => ({name, direction, isRequired, isSet}));
-    return new Shape(this.name, handles, slots);
-  }
-
-  resolvedType() {
-    return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
-  }
-
-  equals(other) {
-    if (this.handles.length !== other.handles.length) {
-      return false;
-    }
-
-    // TODO: this isn't quite right as it doesn't deal with duplicates properly
-    if (!this._equalItems(other.handles, this.handles, this._equalHandle)) {
-      return false;
-    }
-
-    if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
-      return false;
-    }
-    return true;
-  }
-
-  _equalHandle(handle, otherHandle) {
-    return handle.name == otherHandle.name && handle.direction == otherHandle.direction && handle.type.equals(otherHandle.type);
-  }
-
-  _equalSlot(slot, otherSlot) {
-    return slot.name == otherSlot.name && slot.direction == otherSlot.direction && slot.isRequired == otherSlot.isRequired && slot.isSet == otherSlot.isSet;
-  }
-
-  _equalItems(otherItems, items, compareItem) {
-    for (let otherItem of otherItems) {
-      let exists = false;
-      for (let item of items) {
-        if (compareItem(item, otherItem)) {
-          exists = true;
-          break;
-        }
-      }
-      if (!exists) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  _cloneAndUpdate(update) {
-    let copy = this.clone(new Map());
-    copy._typeVars.forEach(typeVar => Shape._updateTypeVar(typeVar, update));
-    return copy;
-  }
-
-  static _updateTypeVar(typeVar, update) {
-    typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
-  }
-
-  static isTypeVar(reference) {
-    return (reference instanceof _ts_build_type_js__WEBPACK_IMPORTED_MODULE_1__["Type"]) && reference.hasProperty(r => r.isVariable);
-  }
-
-  static mustMatch(reference) {
-    return !(reference == undefined || Shape.isTypeVar(reference));
-  }
-
-  static handlesMatch(shapeHandle, particleHandle) {
-    if (Shape.mustMatch(shapeHandle.name) &&
-        shapeHandle.name !== particleHandle.name) {
-      return false;
-    }
-    // TODO: direction subsetting?
-    if (Shape.mustMatch(shapeHandle.direction) &&
-        shapeHandle.direction !== particleHandle.direction) {
-      return false;
-    }
-    if (shapeHandle.type == undefined) {
-      return true;
-    }
-    if (shapeHandle.type.isVariableReference) {
-      return false;
-    }
-    let [left, right] = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].unwrapPair(shapeHandle.type, particleHandle.type);
-    if (left.isVariable) {
-      return [{var: left, value: right, direction: shapeHandle.direction}];
-    } else {
-      return left.equals(right);
-    }
-
-  }
-
-  static slotsMatch(shapeSlot, particleSlot) {
-    if (Shape.mustMatch(shapeSlot.name) &&
-        shapeSlot.name !== particleSlot.name) {
-      return false;
-    }
-    if (Shape.mustMatch(shapeSlot.direction) &&
-        shapeSlot.direction !== particleSlot.direction) {
-      return false;
-    }
-    if (Shape.mustMatch(shapeSlot.isRequired) &&
-        shapeSlot.isRequired !== particleSlot.isRequired) {
-      return false;
-    }
-    if (Shape.mustMatch(shapeSlot.isSet) &&
-        shapeSlot.isSet !== particleSlot.isSet) {
-      return false;
-    }
-    return true;
-  }
-
-  particleMatches(particleSpec) {
-    let shape = this.cloneWithResolutions(new Map());
-    return shape.restrictType(particleSpec) !== false;
-  }
-
-  restrictType(particleSpec) {
-    return this._restrictThis(particleSpec);
-  }
-
-  _restrictThis(particleSpec) {
-
-    let handleMatches = this.handles.map(
-      handle => particleSpec.connections.map(connection => ({match: connection, result: Shape.handlesMatch(handle, connection)}))
-                                      .filter(a => a.result !== false));
-
-    let particleSlots = [];
-    particleSpec.slots.forEach(consumedSlot => {
-      particleSlots.push({name: consumedSlot.name, direction: 'consume', isRequired: consumedSlot.isRequired, isSet: consumedSlot.isSet});
-      consumedSlot.providedSlots.forEach(providedSlot => {
-        particleSlots.push({name: providedSlot.name, direction: 'provide', isRequired: false, isSet: providedSlot.isSet});
-      });
-    });
-    let slotMatches = this.slots.map(slot => particleSlots.filter(particleSlot => Shape.slotsMatch(slot, particleSlot)));
-    slotMatches = slotMatches.map(matchList => matchList.map(slot => ({match: slot, result: true})));
-
-    let exclusions = [];
-
-    // TODO: this probably doesn't deal with multiple match options.
-    function choose(list, exclusions) {
-      if (list.length == 0) {
-        return [];
-      }
-      let thisLevel = list.pop();
-      for (let connection of thisLevel) {
-        if (exclusions.includes(connection.match)) {
-          continue;
-        }
-        let newExclusions = exclusions.slice();
-        newExclusions.push(connection.match);
-        let constraints = choose(list, newExclusions);
-        if (constraints !== false) {
-          return connection.result.length ? constraints.concat(connection.result) : constraints;
-        }
-      }
-
-      return false;
-    }
-
-    let handleOptions = choose(handleMatches, []);
-    let slotOptions = choose(slotMatches, []);
-
-    if (handleOptions === false || slotOptions === false) {
-      return false;
-    }
-
-    for (let constraint of handleOptions) {
-      if (!constraint.var.variable.resolution) {
-        constraint.var.variable.resolution = constraint.value;
-      } else if (constraint.var.variable.resolution.isVariable) {
-        // TODO(shans): revisit how this should be done,
-        // consider reusing tryMergeTypeVariablesWith(other).
-        if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"].processTypeList(constraint.var, [{
-            type: constraint.value, direction: constraint.direction}])) return false;
-      } else {
-        if (!constraint.var.variable.resolution.equals(constraint.value)) return false;
-      }
-    }
-
-    return this;
-  }
-}
-
-
-
 
 
 /***/ }),
@@ -4762,6 +4003,686 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 
+/***/ "./runtime/ts-build/schema.js":
+/*!************************************!*\
+  !*** ./runtime/ts-build/schema.js ***!
+  \************************************/
+/*! exports provided: Schema */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Schema", function() { return Schema; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../entity.js */ "./runtime/entity.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class Schema {
+    constructor(model) {
+        let legacy = [];
+        // TODO: remove this (remnants of normative/optional)
+        if (model.sections) {
+            legacy.push('sections');
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!model.fields);
+            model.fields = {};
+            for (let section of model.sections) {
+                Object.assign(model.fields, section.fields);
+            }
+            delete model.sections;
+        }
+        if (model.name) {
+            legacy.push('name');
+            model.names = [model.name];
+            delete model.name;
+        }
+        if (model.parents) {
+            legacy.push('parents');
+            for (let parent of model.parents) {
+                let parentSchema = new Schema(parent);
+                model.names.push(...parent.names);
+                Object.assign(model.fields, parent.fields);
+            }
+            model.names = [...new Set(model.names)];
+        }
+        if (legacy.length > 0) {
+            console.warn(`Schema ${model.names[0] || '*'} was serialized with legacy format (${legacy.join(', ')})`, new Error());
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(model.fields);
+        this._model = model;
+        this.description = {};
+        if (model.description) {
+            model.description.description.forEach(desc => this.description[desc.name] = desc.pattern);
+        }
+    }
+    toLiteral() {
+        return this._model;
+    }
+    static fromLiteral(data) {
+        return new Schema(data);
+    }
+    get fields() {
+        return this._model.fields;
+    }
+    get names() {
+        return this._model.names;
+    }
+    // TODO: This should only be an ident used in manifest parsing.
+    get name() {
+        return this.names[0];
+    }
+    static typesEqual(fieldType1, fieldType2) {
+        // TODO: structural check instead of stringification.
+        return Schema._typeString(fieldType1) == Schema._typeString(fieldType2);
+    }
+    static _typeString(type) {
+        if (typeof (type) != 'object') {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof type == 'string');
+            return type;
+        }
+        switch (type.kind) {
+            case 'schema-union':
+                return `(${type.types.join(' or ')})`;
+            case 'schema-tuple':
+                return `(${type.types.join(', ')})`;
+            default:
+                throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
+        }
+    }
+    static union(schema1, schema2) {
+        let names = [...new Set([...schema1.names, ...schema2.names])];
+        let fields = {};
+        for (let [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
+            if (fields[field]) {
+                if (!Schema.typesEqual(fields[field], type)) {
+                    return null;
+                }
+            }
+            else {
+                fields[field] = type;
+            }
+        }
+        return new Schema({
+            names,
+            fields,
+        });
+    }
+    static intersect(schema1, schema2) {
+        let names = [...schema1.names].filter(name => schema2.names.includes(name));
+        let fields = {};
+        for (let [field, type] of Object.entries(schema1.fields)) {
+            let otherType = schema2.fields[field];
+            if (otherType && Schema.typesEqual(type, otherType)) {
+                fields[field] = type;
+            }
+        }
+        return new Schema({
+            names,
+            fields,
+        });
+    }
+    equals(otherSchema) {
+        return this === otherSchema || (this.name == otherSchema.name
+            // TODO: Check equality without calling contains.
+            && this.isMoreSpecificThan(otherSchema)
+            && otherSchema.isMoreSpecificThan(this));
+    }
+    isMoreSpecificThan(otherSchema) {
+        let names = new Set(this.names);
+        for (let name of otherSchema.names) {
+            if (!names.has(name)) {
+                return false;
+            }
+        }
+        let fields = {};
+        for (let [name, type] of Object.entries(this.fields)) {
+            fields[name] = type;
+        }
+        for (let [name, type] of Object.entries(otherSchema.fields)) {
+            if (fields[name] == undefined) {
+                return false;
+            }
+            if (!Schema.typesEqual(fields[name], type)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    get type() {
+        return _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newEntity(this);
+    }
+    entityClass() {
+        let schema = this;
+        let className = this.name;
+        let classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
+        let convertToJsType = fieldType => {
+            switch (fieldType) {
+                case 'Text':
+                    return 'string';
+                case 'URL':
+                    return 'string';
+                case 'Number':
+                    return 'number';
+                case 'Boolean':
+                    return 'boolean';
+                case 'Object':
+                    return 'object';
+                default:
+                    throw new Error(`Unknown field type ${fieldType} in schema ${className}`);
+            }
+        };
+        const fieldTypes = this.fields;
+        let validateFieldAndTypes = (op, name, value) => {
+            let fieldType = fieldTypes[name];
+            if (fieldType === undefined) {
+                throw new Error(`Can't ${op} field ${name}; not in schema ${className}`);
+            }
+            if (value === undefined || value === null) {
+                return;
+            }
+            if (typeof (fieldType) !== 'object') {
+                // Primitive fields.
+                if (typeof (value) !== convertToJsType(fieldType)) {
+                    throw new TypeError(`Type mismatch ${op}ting field ${name} (type ${fieldType}); ` +
+                        `value '${value}' is type ${typeof (value)}`);
+                }
+                return;
+            }
+            switch (fieldType.kind) {
+                case 'schema-union':
+                    // Value must be a primitive that matches one of the union types.
+                    for (let innerType of fieldType.types) {
+                        if (typeof (value) === convertToJsType(innerType)) {
+                            return;
+                        }
+                    }
+                    throw new TypeError(`Type mismatch ${op}ting field ${name} (union [${fieldType.types}]); ` +
+                        `value '${value}' is type ${typeof (value)}`);
+                case 'schema-tuple':
+                    // Value must be an array whose contents match each of the tuple types.
+                    if (!Array.isArray(value)) {
+                        throw new TypeError(`Cannot ${op} tuple ${name} with non-array value '${value}'`);
+                    }
+                    if (value.length != fieldType.types.length) {
+                        throw new TypeError(`Length mismatch ${op}ting tuple ${name} ` +
+                            `[${fieldType.types}] with value '${value}'`);
+                    }
+                    fieldType.types.map((innerType, i) => {
+                        if (value[i] !== undefined && value[i] !== null &&
+                            typeof (value[i]) !== convertToJsType(innerType)) {
+                            throw new TypeError(`Type mismatch ${op}ting field ${name} (tuple [${fieldType.types}]); ` +
+                                `value '${value}' has type ${typeof (value[i])} at index ${i}`);
+                        }
+                    });
+                    break;
+                default:
+                    throw new Error(`Unknown kind ${fieldType.kind} in schema ${className}`);
+            }
+        };
+        let clazz = class extends _entity_js__WEBPACK_IMPORTED_MODULE_2__["Entity"] {
+            constructor(data, userIDComponent) {
+                super(userIDComponent);
+                this.rawData = new Proxy({}, {
+                    get: (target, name) => {
+                        if (classJunk.includes(name) || name.constructor == Symbol) {
+                            return undefined;
+                        }
+                        let value = target[name];
+                        validateFieldAndTypes('get', name, value);
+                        return value;
+                    },
+                    set: (target, name, value) => {
+                        validateFieldAndTypes('set', name, value);
+                        target[name] = value;
+                        return true;
+                    }
+                });
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data, `can't construct entity with null data`);
+                for (let [name, value] of Object.entries(data)) {
+                    this.rawData[name] = value;
+                }
+            }
+            dataClone() {
+                let clone = {};
+                for (let name of Object.keys(schema.fields)) {
+                    if (this.rawData[name] !== undefined) {
+                        clone[name] = this.rawData[name];
+                    }
+                }
+                return clone;
+            }
+            static get key() {
+                return {
+                    tag: 'entity',
+                    schema: schema.toLiteral(),
+                };
+            }
+        };
+        Object.defineProperty(clazz, 'type', { value: this.type });
+        Object.defineProperty(clazz, 'name', { value: this.name });
+        // TODO: add query / getter functions for user properties
+        for (let name of Object.keys(this.fields)) {
+            Object.defineProperty(clazz.prototype, name, {
+                get: function () {
+                    return this.rawData[name];
+                },
+                set: function (v) {
+                    this.rawData[name] = v;
+                }
+            });
+        }
+        return clazz;
+    }
+    toInlineSchemaString(options) {
+        let names = (this.names || ['*']).join(' ');
+        let fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
+        return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
+    }
+    toManifestString() {
+        let results = [];
+        results.push(`schema ${this.names.join(' ')}`);
+        results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
+        if (Object.keys(this.description).length > 0) {
+            results.push(`  description \`${this.description.pattern}\``);
+            for (let name of Object.keys(this.description)) {
+                if (name != 'pattern') {
+                    results.push(`    ${name} \`${this.description[name]}\``);
+                }
+            }
+        }
+        return results.join('\n');
+    }
+}
+
+
+/***/ }),
+
+/***/ "./runtime/ts-build/shape.js":
+/*!***********************************!*\
+  !*** ./runtime/ts-build/shape.js ***!
+  \***********************************/
+/*! exports provided: Shape */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Shape", function() { return Shape; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+// ShapeHandle {name, direction, type}
+// Slot {name, direction, isRequired, isSet}
+function _fromLiteral(member) {
+    if (!!member && typeof member == 'object') {
+        return _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(member);
+    }
+    return member;
+}
+function _toLiteral(member) {
+    if (!!member && member.toLiteral) {
+        return member.toLiteral();
+    }
+    return member;
+}
+const handleFields = ['type', 'name', 'direction'];
+const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
+class Shape {
+    constructor(name, handles, slots) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(name);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handles !== undefined);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slots !== undefined);
+        this.name = name;
+        this.handles = handles;
+        this.slots = slots;
+        this.typeVars = [];
+        for (let handle of handles) {
+            for (let field of handleFields) {
+                if (Shape.isTypeVar(handle[field])) {
+                    this.typeVars.push({ object: handle, field });
+                }
+            }
+        }
+        for (let slot of slots) {
+            for (let field of slotFields) {
+                if (Shape.isTypeVar(slot[field])) {
+                    this.typeVars.push({ object: slot, field });
+                }
+            }
+        }
+    }
+    toPrettyString() {
+        return 'SHAAAAPE';
+    }
+    mergeTypeVariablesByName(variableMap) {
+        this.typeVars.map(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
+    }
+    get canReadSubset() {
+        return this._cloneAndUpdate(typeVar => typeVar.canReadSubset);
+    }
+    get canWriteSuperset() {
+        return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
+    }
+    isMoreSpecificThan(other) {
+        if (this.handles.length !== other.handles.length ||
+            this.slots.length !== other.slots.length) {
+            return false;
+        }
+        // TODO: should probably confirm that handles and slots actually match.
+        for (let i = 0; i < this.typeVars.length; i++) {
+            let thisTypeVar = this.typeVars[i];
+            let otherTypeVar = other.typeVars[i];
+            if (!thisTypeVar.object[thisTypeVar.field].isMoreSpecificThan(otherTypeVar.object[otherTypeVar.field])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    _applyExistenceTypeTest(test) {
+        for (let typeRef of this.typeVars) {
+            if (test(typeRef.object[typeRef.field])) {
+                return true;
+            }
+        }
+        return false;
+    }
+    _handlesToManifestString() {
+        return this.handles
+            .map(handle => {
+            let type = handle.type.resolvedType();
+            return `  ${handle.direction ? handle.direction + ' ' : ''}${type.toString()} ${handle.name ? handle.name : '*'}`;
+        }).join('\n');
+    }
+    _slotsToManifestString() {
+        // TODO deal with isRequired
+        return this.slots
+            .map(slot => `  ${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name ? slot.name + ' ' : ''}`)
+            .join('\n');
+    }
+    // TODO: Include name as a property of the shape and normalize this to just
+    // toString().
+    toString() {
+        return `shape ${this.name}
+${this._handlesToManifestString()}
+${this._slotsToManifestString()}
+`;
+    }
+    static fromLiteral(data) {
+        let handles = data.handles.map(handle => ({ type: _fromLiteral(handle.type), name: _fromLiteral(handle.name), direction: _fromLiteral(handle.direction) }));
+        let slots = data.slots.map(slot => ({ name: _fromLiteral(slot.name), direction: _fromLiteral(slot.direction), isRequired: _fromLiteral(slot.isRequired), isSet: _fromLiteral(slot.isSet) }));
+        return new Shape(data.name, handles, slots);
+    }
+    toLiteral() {
+        let handles = this.handles.map(handle => ({ type: _toLiteral(handle.type), name: _toLiteral(handle.name), direction: _toLiteral(handle.direction) }));
+        let slots = this.slots.map(slot => ({ name: _toLiteral(slot.name), direction: _toLiteral(slot.direction), isRequired: _toLiteral(slot.isRequired), isSet: _toLiteral(slot.isSet) }));
+        return { name: this.name, handles, slots };
+    }
+    clone(variableMap) {
+        let handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
+        let slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        return new Shape(this.name, handles, slots);
+    }
+    cloneWithResolutions(variableMap) {
+        return this._cloneWithResolutions(variableMap);
+    }
+    _cloneWithResolutions(variableMap) {
+        let handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
+        let slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        return new Shape(this.name, handles, slots);
+    }
+    canEnsureResolved() {
+        for (let typeVar of this.typeVars) {
+            if (!typeVar.object[typeVar.field].canEnsureResolved()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    maybeEnsureResolved() {
+        for (let typeVar of this.typeVars) {
+            let variable = typeVar.object[typeVar.field];
+            variable = variable.clone(new Map());
+            if (!variable.maybeEnsureResolved())
+                return false;
+        }
+        for (let typeVar of this.typeVars) {
+            typeVar.object[typeVar.field].maybeEnsureResolved();
+        }
+        return true;
+    }
+    tryMergeTypeVariablesWith(other) {
+        // Type variable enabled slot matching will Just Work when we
+        // unify slots and handles.
+        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
+            return null;
+        }
+        if (other.handles.length !== this.handles.length) {
+            return null;
+        }
+        let handles = new Set(this.handles);
+        let otherHandles = new Set(other.handles);
+        let handleMap = new Map();
+        let sizeCheck = handles.size;
+        while (handles.size > 0) {
+            let handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
+            for (let handleMatch of handleMatches) {
+                // no match!
+                if (handleMatch.match.length == 0) {
+                    return null;
+                }
+                if (handleMatch.match.length == 1) {
+                    handleMap.set(handleMatch.handle, handleMatch.match[0]);
+                    otherHandles.delete(handleMatch.match[0]);
+                    handles.delete(handleMatch.handle);
+                }
+            }
+            // no progress!
+            if (handles.size == sizeCheck) {
+                return null;
+            }
+            sizeCheck = handles.size;
+        }
+        let handleList = [];
+        for (let handle of this.handles) {
+            let otherHandle = handleMap.get(handle);
+            let resultType;
+            if (handle.type.hasVariable || otherHandle.type.hasVariable) {
+                resultType = _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"]._tryMergeTypeVariable(handle.type, otherHandle.type);
+                if (!resultType) {
+                    return null;
+                }
+            }
+            else {
+                resultType = handle.type || otherHandle.type;
+            }
+            handleList.push({ name: handle.name || otherHandle.name, direction: handle.direction || otherHandle.direction, type: resultType });
+        }
+        let slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        return new Shape(this.name, handleList, slots);
+    }
+    resolvedType() {
+        return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
+    }
+    equals(other) {
+        if (this.handles.length !== other.handles.length) {
+            return false;
+        }
+        // TODO: this isn't quite right as it doesn't deal with duplicates properly
+        if (!this._equalItems(other.handles, this.handles, this._equalHandle)) {
+            return false;
+        }
+        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
+            return false;
+        }
+        return true;
+    }
+    _equalHandle(handle, otherHandle) {
+        return handle.name == otherHandle.name && handle.direction == otherHandle.direction && handle.type.equals(otherHandle.type);
+    }
+    _equalSlot(slot, otherSlot) {
+        return slot.name == otherSlot.name && slot.direction == otherSlot.direction && slot.isRequired == otherSlot.isRequired && slot.isSet == otherSlot.isSet;
+    }
+    _equalItems(otherItems, items, compareItem) {
+        for (let otherItem of otherItems) {
+            let exists = false;
+            for (let item of items) {
+                if (compareItem(item, otherItem)) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                return false;
+            }
+        }
+        return true;
+    }
+    _cloneAndUpdate(update) {
+        let copy = this.clone(new Map());
+        copy.typeVars.forEach(typeVar => Shape._updateTypeVar(typeVar, update));
+        return copy;
+    }
+    static _updateTypeVar(typeVar, update) {
+        typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
+    }
+    static isTypeVar(reference) {
+        return (reference instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"]) && reference.hasProperty(r => r.isVariable);
+    }
+    static mustMatch(reference) {
+        return !(reference == undefined || Shape.isTypeVar(reference));
+    }
+    static handlesMatch(shapeHandle, particleHandle) {
+        if (Shape.mustMatch(shapeHandle.name) &&
+            shapeHandle.name !== particleHandle.name) {
+            return false;
+        }
+        // TODO: direction subsetting?
+        if (Shape.mustMatch(shapeHandle.direction) &&
+            shapeHandle.direction !== particleHandle.direction) {
+            return false;
+        }
+        if (shapeHandle.type == undefined) {
+            return true;
+        }
+        if (shapeHandle.type.isVariableReference) {
+            return false;
+        }
+        let [left, right] = _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].unwrapPair(shapeHandle.type, particleHandle.type);
+        if (left.isVariable) {
+            return [{ var: left, value: right, direction: shapeHandle.direction }];
+        }
+        else {
+            return left.equals(right);
+        }
+    }
+    static slotsMatch(shapeSlot, particleSlot) {
+        if (Shape.mustMatch(shapeSlot.name) &&
+            shapeSlot.name !== particleSlot.name) {
+            return false;
+        }
+        if (Shape.mustMatch(shapeSlot.direction) &&
+            shapeSlot.direction !== particleSlot.direction) {
+            return false;
+        }
+        if (Shape.mustMatch(shapeSlot.isRequired) &&
+            shapeSlot.isRequired !== particleSlot.isRequired) {
+            return false;
+        }
+        if (Shape.mustMatch(shapeSlot.isSet) &&
+            shapeSlot.isSet !== particleSlot.isSet) {
+            return false;
+        }
+        return true;
+    }
+    particleMatches(particleSpec) {
+        let shape = this.cloneWithResolutions(new Map());
+        return shape.restrictType(particleSpec) !== false;
+    }
+    restrictType(particleSpec) {
+        return this._restrictThis(particleSpec);
+    }
+    _restrictThis(particleSpec) {
+        let handleMatches = this.handles.map(handle => particleSpec.connections.map(connection => ({ match: connection, result: Shape.handlesMatch(handle, connection) }))
+            .filter(a => a.result !== false));
+        let particleSlots = [];
+        particleSpec.slots.forEach(consumedSlot => {
+            particleSlots.push({ name: consumedSlot.name, direction: 'consume', isRequired: consumedSlot.isRequired, isSet: consumedSlot.isSet });
+            consumedSlot.providedSlots.forEach(providedSlot => {
+                particleSlots.push({ name: providedSlot.name, direction: 'provide', isRequired: false, isSet: providedSlot.isSet });
+            });
+        });
+        let slotMatches = this.slots.map(slot => particleSlots.filter(particleSlot => Shape.slotsMatch(slot, particleSlot)));
+        slotMatches = slotMatches.map(matchList => matchList.map(slot => ({ match: slot, result: true })));
+        let exclusions = [];
+        // TODO: this probably doesn't deal with multiple match options.
+        function choose(list, exclusions) {
+            if (list.length == 0) {
+                return [];
+            }
+            let thisLevel = list.pop();
+            for (let connection of thisLevel) {
+                if (exclusions.includes(connection.match)) {
+                    continue;
+                }
+                let newExclusions = exclusions.slice();
+                newExclusions.push(connection.match);
+                let constraints = choose(list, newExclusions);
+                if (constraints !== false) {
+                    return connection.result.length ? constraints.concat(connection.result) : constraints;
+                }
+            }
+            return false;
+        }
+        let handleOptions = choose(handleMatches, []);
+        let slotOptions = choose(slotMatches, []);
+        if (handleOptions === false || slotOptions === false) {
+            return false;
+        }
+        for (let constraint of handleOptions) {
+            if (!constraint.var.variable.resolution) {
+                constraint.var.variable.resolution = constraint.value;
+            }
+            else if (constraint.var.variable.resolution.isVariable) {
+                // TODO(shans): revisit how this should be done,
+                // consider reusing tryMergeTypeVariablesWith(other).
+                if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"].processTypeList(constraint.var, [{
+                        type: constraint.value, direction: constraint.direction
+                    }]))
+                    return false;
+            }
+            else {
+                if (!constraint.var.variable.resolution.equals(constraint.value))
+                    return false;
+            }
+        }
+        return this;
+    }
+}
+
+
+
+
+/***/ }),
+
 /***/ "./runtime/ts-build/storage/crdt-collection-model.js":
 /*!***********************************************************!*\
   !*** ./runtime/ts-build/storage/crdt-collection-model.js ***!
@@ -4888,8 +4809,8 @@ class CrdtCollectionModel {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Type", function() { return Type; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _shape_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shape.js */ "./runtime/shape.js");
-/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../schema.js */ "./runtime/schema.js");
+/* harmony import */ var _shape_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./shape.js */ "./runtime/ts-build/shape.js");
+/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./schema.js */ "./runtime/ts-build/schema.js");
 /* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../type-variable.js */ "./runtime/type-variable.js");
 /* harmony import */ var _tuple_fields_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../tuple-fields.js */ "./runtime/tuple-fields.js");
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
@@ -4988,7 +4909,7 @@ class Type {
         }
         if (this.isInterface) {
             const shape = this.interfaceShape.clone(new Map());
-            shape._typeVars.map(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
+            shape.mergeTypeVariablesByName(variableMap);
             // TODO: only build a new type when a variable is modified
             return Type.newInterface(shape);
         }
@@ -5301,7 +5222,7 @@ class Type {
             if (this.entitySchema.name) {
                 return this.entitySchema.name.replace(/([^A-Z])([A-Z])/g, '$1 $2').replace(/([A-Z][^A-Z])/g, ' $1').replace(/[\s]+/g, ' ').trim();
             }
-            return JSON.stringify(this.entitySchema._model);
+            return JSON.stringify(this.entitySchema.toLiteral());
         }
         if (this.isInterface) {
             return this.interfaceShape.toPrettyString();
@@ -5392,7 +5313,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariable", function() { return TypeVariable; });
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./schema.js */ "./runtime/schema.js");
+/* harmony import */ var _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/schema.js */ "./runtime/ts-build/schema.js");
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -5446,7 +5367,7 @@ class TypeVariable {
       return true;
     }
 
-    let mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
+    let mergedSchema = _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
     if (!mergedSchema) {
       return false;
     }
@@ -5472,7 +5393,7 @@ class TypeVariable {
       return true;
     }
 
-    let mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
+    let mergedSchema = _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
     if (!mergedSchema) {
       return false;
     }
