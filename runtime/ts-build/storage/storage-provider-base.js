@@ -20,12 +20,11 @@ var EventKind;
 (function (EventKind) {
     EventKind[EventKind["change"] = 0] = "change";
 })(EventKind || (EventKind = {}));
-;
 export class StorageProviderBase {
     constructor(type, name, id, key) {
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
-        let trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::constructor', args: { type: type.key, name: name } });
+        const trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::constructor', args: { type: type.key, name } });
         this._type = type;
         this.listeners = new Map();
         this.name = name;
@@ -51,26 +50,26 @@ export class StorageProviderBase {
     // TODO: add 'once' which returns a promise.
     on(kind, callback, target) {
         assert(target !== undefined, 'must provide a target to register a storage event handler');
-        let listeners = this.listeners.get(kind) || new Map();
+        const listeners = this.listeners.get(kind) || new Map();
         listeners.set(callback, { target });
         this.listeners.set(kind, listeners);
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
     _fire(kind, details) {
         return __awaiter(this, void 0, void 0, function* () {
-            let listenerMap = this.listeners.get(kind);
+            const listenerMap = this.listeners.get(kind);
             if (!listenerMap || listenerMap.size == 0) {
                 return;
             }
-            let trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::_fire', args: { kind, type: this.type.tag,
+            const trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::_fire', args: { kind, type: this.type.tag,
                     name: this.name, listeners: listenerMap.size } });
-            let callbacks = [];
-            for (let [callback] of listenerMap.entries()) {
+            const callbacks = [];
+            for (const [callback] of listenerMap.entries()) {
                 callbacks.push(callback);
             }
             // Yield so that event firing is not re-entrant with mutation.
             yield trace.wait(0);
-            for (let callback of callbacks) {
+            for (const callback of callbacks) {
                 callback(details);
             }
             trace.end();
@@ -89,8 +88,8 @@ export class StorageProviderBase {
         return 0;
     }
     toString(handleTags) {
-        let results = [];
-        let handleStr = [];
+        const results = [];
+        const handleStr = [];
         handleStr.push(`store`);
         if (this.name) {
             handleStr.push(`${this.name}`);

@@ -38,7 +38,6 @@ export var Random;
         return random.next();
     }
     Random.next = next;
-    ;
     // TODO: remove test code and allow for injectable implementations.
     function seedForTests() {
         random = new SeededRNG();

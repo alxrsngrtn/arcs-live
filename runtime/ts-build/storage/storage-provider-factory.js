@@ -22,7 +22,7 @@ export class StorageProviderFactory {
         this._storageInstances = { 'in-memory': new InMemoryStorage(arcId), 'firebase': new FirebaseStorage(arcId) };
     }
     _storageForKey(key) {
-        let protocol = key.split(':')[0];
+        const protocol = key.split(':')[0];
         return this._storageInstances[protocol];
     }
     share(id, type, key) {

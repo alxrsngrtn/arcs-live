@@ -1,5 +1,9 @@
-commit 897ef6e56fd898ee6bab9480cf941ef9f36bc788
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Aug 13 16:27:45 2018 -0700
+commit 6abbe5fd50abdc88727a50c66f357107b16ba61e
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Aug 13 21:22:23 2018 -0700
 
-    Provide an in-memory BigCollection implementation for testing. (#1761)
+    Introduce tslint 5.11.0, apply automated fixes (#1766)
+    
+    * Introduce tslint version 5.11.0
+    * Add a default tslint.json based on github.com/google/ts-style/blob/master/tslint.json
+    * Automated Fixes by tslint

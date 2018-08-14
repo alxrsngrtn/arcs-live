@@ -20,7 +20,7 @@ import { StorageProviderBase } from './storage-provider-base';
 import { KeyBase } from './key-base';
 import { CrdtCollectionModel } from './crdt-collection-model';
 export function resetInMemoryStorageForTesting() {
-    for (let key in __storageCache) {
+    for (const key in __storageCache) {
         __storageCache[key]._memoryMap = {};
     }
 }
@@ -48,7 +48,7 @@ class InMemoryKey extends KeyBase {
         return `${this.protocol}`;
     }
 }
-let __storageCache = {};
+const __storageCache = {};
 export class InMemoryStorage {
     constructor(arcId) {
         assert(arcId !== undefined, 'Arcs with storage must have ids');
@@ -62,7 +62,7 @@ export class InMemoryStorage {
     }
     construct(id, type, keyFragment) {
         return __awaiter(this, void 0, void 0, function* () {
-            let key = new InMemoryKey(keyFragment);
+            const key = new InMemoryKey(keyFragment);
             if (key.arcId == undefined) {
                 key.arcId = this._arcId;
             }
@@ -70,7 +70,7 @@ export class InMemoryStorage {
                 key.location = 'in-memory-' + this.localIDBase++;
             }
             // TODO(shanestephens): should pass in factory, not 'this' here.
-            let provider = InMemoryStorageProvider.newProvider(type, this, undefined, id, key.toString());
+            const provider = InMemoryStorageProvider.newProvider(type, this, undefined, id, key.toString());
             if (this._memoryMap[key.toString()] !== undefined) {
                 return null;
             }
@@ -80,7 +80,7 @@ export class InMemoryStorage {
     }
     connect(id, type, keyString) {
         return __awaiter(this, void 0, void 0, function* () {
-            let key = new InMemoryKey(keyString);
+            const key = new InMemoryKey(keyString);
             if (key.arcId !== this._arcId.toString()) {
                 if (__storageCache[key.arcId] == undefined) {
                     return null;
@@ -96,7 +96,7 @@ export class InMemoryStorage {
     }
     share(id, type, keyString) {
         return __awaiter(this, void 0, void 0, function* () {
-            let key = new InMemoryKey(keyString);
+            const key = new InMemoryKey(keyString);
             assert(key.arcId == this._arcId.toString());
             if (this._memoryMap[keyString] == undefined) {
                 return this.construct(id, type, keyString);
@@ -109,7 +109,7 @@ export class InMemoryStorage {
             if (this._typeMap.has(type)) {
                 return this._typeMap.get(type);
             }
-            let storage = yield this.construct(type.toString(), type.collectionOf(), 'in-memory');
+            const storage = yield this.construct(type.toString(), type.collectionOf(), 'in-memory');
             this._typeMap.set(type, storage);
             return storage;
         });
@@ -144,7 +144,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
         assert(this.version !== null);
     }
     clone() {
-        let handle = new InMemoryCollection(this.type, this._storageEngine, this.name, this.id, null);
+        const handle = new InMemoryCollection(this.type, this._storageEngine, this.name, this.id, null);
         handle.cloneFrom(this);
         return handle;
     }
@@ -167,17 +167,17 @@ class InMemoryCollection extends InMemoryStorageProvider {
     toList() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.type.primitiveType().isReference) {
-                let items = this.toLiteral().model;
-                let referredType = this.type.primitiveType().referenceReferredType;
-                let refSet = new Set();
+                const items = this.toLiteral().model;
+                const referredType = this.type.primitiveType().referenceReferredType;
+                const refSet = new Set();
                 items.forEach(item => refSet.add(item.value.storageKey));
                 assert(refSet.size == 1);
-                let ref = refSet.values().next().value;
+                const ref = refSet.values().next().value;
                 if (this._backingStore == null) {
                     this._backingStore = (yield this._storageEngine.share(referredType.toString(), referredType, ref));
                 }
-                let retrieveItem = (item) => __awaiter(this, void 0, void 0, function* () {
-                    let ref = item.value;
+                const retrieveItem = (item) => __awaiter(this, void 0, void 0, function* () {
+                    const ref = item.value;
                     return this._backingStore.get(ref.id);
                 });
                 return yield Promise.all(items.map(retrieveItem));
@@ -188,15 +188,15 @@ class InMemoryCollection extends InMemoryStorageProvider {
     get(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.type.primitiveType().isReference) {
-                let ref = this._model.getValue(id);
+                const ref = this._model.getValue(id);
                 if (ref == null) {
                     return null;
                 }
-                let referredType = this.type.primitiveType().referenceReferredType;
+                const referredType = this.type.primitiveType().referenceReferredType;
                 if (this._backingStore == null) {
                     this._backingStore = (yield this._storageEngine.share(referredType.toString(), referredType.collectionOf(), ref.storageKey));
                 }
-                let result = yield this._backingStore.get(ref.id);
+                const result = yield this._backingStore.get(ref.id);
                 return result;
             }
             return this._model.getValue(id);
@@ -208,9 +208,9 @@ class InMemoryCollection extends InMemoryStorageProvider {
     store(value, keys, originatorId = null) {
         return __awaiter(this, void 0, void 0, function* () {
             assert(keys != null && keys.length > 0, 'keys required');
-            let trace = Tracing.start({ cat: 'handle', name: 'InMemoryCollection::store', args: { name: this.name } });
+            const trace = Tracing.start({ cat: 'handle', name: 'InMemoryCollection::store', args: { name: this.name } });
             if (this.type.primitiveType().isReference) {
-                let referredType = this.type.primitiveType().referenceReferredType;
+                const referredType = this.type.primitiveType().referenceReferredType;
                 if (this._backingStore == null) {
                     this._backingStore =
                         yield this._storageEngine.baseStorageFor(referredType);
@@ -218,7 +218,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
                 this._backingStore.store(value, [this.storageKey]);
                 value = { id: value.id, storageKey: this._backingStore.storageKey };
             }
-            let effective = this._model.add(value.id, value, keys);
+            const effective = this._model.add(value.id, value, keys);
             this.version++;
             yield trace.wait(this._fire('change', { add: [{ value, keys, effective }], version: this.version, originatorId }));
             trace.end({ args: { value } });
@@ -226,13 +226,13 @@ class InMemoryCollection extends InMemoryStorageProvider {
     }
     remove(id, keys = [], originatorId = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            let trace = Tracing.start({ cat: 'handle', name: 'InMemoryCollection::remove', args: { name: this.name } });
+            const trace = Tracing.start({ cat: 'handle', name: 'InMemoryCollection::remove', args: { name: this.name } });
             if (keys.length == 0) {
                 keys = this._model.getKeys(id);
             }
-            let value = this._model.getValue(id);
+            const value = this._model.getValue(id);
             if (value !== null) {
-                let effective = this._model.remove(id, keys);
+                const effective = this._model.remove(id, keys);
                 this.version++;
                 yield trace.wait(this._fire('change', { remove: [{ value, keys, effective }], version: this.version, originatorId }));
             }
@@ -251,20 +251,20 @@ class InMemoryVariable extends InMemoryStorageProvider {
         this._backingStore = null;
     }
     clone() {
-        let variable = new InMemoryVariable(this.type, this._storageEngine, this.name, this.id, null);
+        const variable = new InMemoryVariable(this.type, this._storageEngine, this.name, this.id, null);
         variable.cloneFrom(this);
         return variable;
     }
     cloneFrom(handle) {
         return __awaiter(this, void 0, void 0, function* () {
-            let literal = yield handle.toLiteral();
+            const literal = yield handle.toLiteral();
             yield this.fromLiteral(literal);
         });
     }
     // Returns {version, model: [{id, value}]}
     toLiteral() {
         return __awaiter(this, void 0, void 0, function* () {
-            let value = this._stored;
+            const value = this._stored;
             let model = [];
             if (value != null) {
                 model = [{
@@ -279,7 +279,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
         });
     }
     fromLiteral({ version, model }) {
-        let value = model.length == 0 ? null : model[0].value;
+        const value = model.length == 0 ? null : model[0].value;
         assert(value !== undefined);
         this._stored = value;
         this.version = version;
@@ -290,13 +290,13 @@ class InMemoryVariable extends InMemoryStorageProvider {
     get() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.type.isReference) {
-                let value = this._stored;
-                let referredType = this.type.referenceReferredType;
+                const value = this._stored;
+                const referredType = this.type.referenceReferredType;
                 // TODO: string version of ReferredTyped as ID?
                 if (this._backingStore == null) {
                     this._backingStore = (yield this._storageEngine.share(referredType.toString(), referredType.collectionOf(), value.storageKey));
                 }
-                let result = yield this._backingStore.get(value.id);
+                const result = yield this._backingStore.get(value.id);
                 return result;
             }
             return this._stored;
@@ -312,7 +312,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
                 if (this._stored && this._stored.id == value.id && barrier == null) {
                     return;
                 }
-                let referredType = this.type.referenceReferredType;
+                const referredType = this.type.referenceReferredType;
                 if (this._backingStore == null) {
                     this._backingStore =
                         yield this._storageEngine.baseStorageFor(referredType);
@@ -348,7 +348,7 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
     }
     get(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            let data = this.items.get(id);
+            const data = this.items.get(id);
             return (data !== undefined) ? data.value : null;
         });
     }
@@ -359,7 +359,7 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
             if (!this.items.has(value.id)) {
                 this.items.set(value.id, { index: null, value: null, keys: {} });
             }
-            let data = this.items.get(value.id);
+            const data = this.items.get(value.id);
             data.index = this.version;
             data.value = value;
             keys.forEach(k => data.keys[k] = this.version);
@@ -379,7 +379,7 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
             copy.sort((a, b) => a.index - b.index);
             return {
                 version: this.version,
-                next: function () {
+                next() {
                     return __awaiter(this, void 0, void 0, function* () {
                         if (copy.length === 0) {
                             return { done: true };
@@ -387,7 +387,7 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
                         return { value: copy.splice(0, pageSize).map(v => v.value), done: false };
                     });
                 },
-                close: function () {
+                close() {
                     return __awaiter(this, void 0, void 0, function* () {
                         copy = [];
                     });
