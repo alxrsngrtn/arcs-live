@@ -25566,9 +25566,6 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 class KeyBase {
-    childKeyForHandle(id) {
-        throw new Error('NotImplemented');
-    }
 }
 //# sourceMappingURL=key-base.js.map
 

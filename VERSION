@@ -1,5 +1,5 @@
-commit 30e1298c5f41aae4bee0d87f85011282a2628fd8
+commit 9b59c680bac9a508720b0c02ec18d264a8c373a5
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Aug 15 13:34:23 2018 -0700
+Date:   Wed Aug 15 16:27:49 2018 -0700
 
-    tslint: fix 'variable name clashes with keyword/type' errors (#1771)
+    Convert KeyBase to abstract class, add return type for childKeyForHandle (#1775)
