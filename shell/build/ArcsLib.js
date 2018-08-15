@@ -24212,8 +24212,8 @@ class FirebaseStorage {
             return this.baseStores.get(type);
         });
     }
-    parseStringAsKey(string) {
-        return new FirebaseKey(string);
+    parseStringAsKey(s) {
+        return new FirebaseKey(s);
     }
     _join(id, type, key, shouldExist) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -25262,8 +25262,8 @@ class InMemoryStorage {
             return storage;
         });
     }
-    parseStringAsKey(string) {
-        return new InMemoryKey(string);
+    parseStringAsKey(s) {
+        return new InMemoryKey(s);
     }
     shutdown() {
         return Promise.resolve();
@@ -25760,8 +25760,8 @@ class StorageProviderFactory {
             return this._storageForKey(key).connect(id, type, key);
         });
     }
-    parseStringAsKey(string) {
-        return this._storageForKey(string).parseStringAsKey(string);
+    parseStringAsKey(s) {
+        return this._storageForKey(s).parseStringAsKey(s);
     }
     newKey(id, associatedKeyFragment) {
     }

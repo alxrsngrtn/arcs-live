@@ -113,8 +113,8 @@ export class InMemoryStorage {
             return storage;
         });
     }
-    parseStringAsKey(string) {
-        return new InMemoryKey(string);
+    parseStringAsKey(s) {
+        return new InMemoryKey(s);
     }
     shutdown() {
         return Promise.resolve();

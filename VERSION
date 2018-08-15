@@ -1,8 +1,5 @@
-commit f38680537824af84cba70c72f8cff9fd92479d15
+commit 30e1298c5f41aae4bee0d87f85011282a2628fd8
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Aug 15 13:30:50 2018 -0700
+Date:   Wed Aug 15 13:34:23 2018 -0700
 
-    Eliminate usage of forbidden types (#1772)
-    
-    - replace Boolean -> boolean
-    - replace String -> string
+    tslint: fix 'variable name clashes with keyword/type' errors (#1771)
