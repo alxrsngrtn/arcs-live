@@ -33,15 +33,15 @@ export class Shape {
         this.handles = handles;
         this.slots = slots;
         this.typeVars = [];
-        for (let handle of handles) {
-            for (let field of handleFields) {
+        for (const handle of handles) {
+            for (const field of handleFields) {
                 if (Shape.isTypeVar(handle[field])) {
                     this.typeVars.push({ object: handle, field });
                 }
             }
         }
-        for (let slot of slots) {
-            for (let field of slotFields) {
+        for (const slot of slots) {
+            for (const field of slotFields) {
                 if (Shape.isTypeVar(slot[field])) {
                     this.typeVars.push({ object: slot, field });
                 }
@@ -67,8 +67,8 @@ export class Shape {
         }
         // TODO: should probably confirm that handles and slots actually match.
         for (let i = 0; i < this.typeVars.length; i++) {
-            let thisTypeVar = this.typeVars[i];
-            let otherTypeVar = other.typeVars[i];
+            const thisTypeVar = this.typeVars[i];
+            const otherTypeVar = other.typeVars[i];
             if (!thisTypeVar.object[thisTypeVar.field].isMoreSpecificThan(otherTypeVar.object[otherTypeVar.field])) {
                 return false;
             }
@@ -76,7 +76,7 @@ export class Shape {
         return true;
     }
     _applyExistenceTypeTest(test) {
-        for (let typeRef of this.typeVars) {
+        for (const typeRef of this.typeVars) {
             if (test(typeRef.object[typeRef.field])) {
                 return true;
             }
@@ -86,7 +86,7 @@ export class Shape {
     _handlesToManifestString() {
         return this.handles
             .map(handle => {
-            let type = handle.type.resolvedType();
+            const type = handle.type.resolvedType();
             return `  ${handle.direction ? handle.direction + ' ' : ''}${type.toString()} ${handle.name ? handle.name : '*'}`;
         }).join('\n');
     }
@@ -105,30 +105,30 @@ ${this._slotsToManifestString()}
 `;
     }
     static fromLiteral(data) {
-        let handles = data.handles.map(handle => ({ type: _fromLiteral(handle.type), name: _fromLiteral(handle.name), direction: _fromLiteral(handle.direction) }));
-        let slots = data.slots.map(slot => ({ name: _fromLiteral(slot.name), direction: _fromLiteral(slot.direction), isRequired: _fromLiteral(slot.isRequired), isSet: _fromLiteral(slot.isSet) }));
+        const handles = data.handles.map(handle => ({ type: _fromLiteral(handle.type), name: _fromLiteral(handle.name), direction: _fromLiteral(handle.direction) }));
+        const slots = data.slots.map(slot => ({ name: _fromLiteral(slot.name), direction: _fromLiteral(slot.direction), isRequired: _fromLiteral(slot.isRequired), isSet: _fromLiteral(slot.isSet) }));
         return new Shape(data.name, handles, slots);
     }
     toLiteral() {
-        let handles = this.handles.map(handle => ({ type: _toLiteral(handle.type), name: _toLiteral(handle.name), direction: _toLiteral(handle.direction) }));
-        let slots = this.slots.map(slot => ({ name: _toLiteral(slot.name), direction: _toLiteral(slot.direction), isRequired: _toLiteral(slot.isRequired), isSet: _toLiteral(slot.isSet) }));
+        const handles = this.handles.map(handle => ({ type: _toLiteral(handle.type), name: _toLiteral(handle.name), direction: _toLiteral(handle.direction) }));
+        const slots = this.slots.map(slot => ({ name: _toLiteral(slot.name), direction: _toLiteral(slot.direction), isRequired: _toLiteral(slot.isRequired), isSet: _toLiteral(slot.isSet) }));
         return { name: this.name, handles, slots };
     }
     clone(variableMap) {
-        let handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
-        let slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
         return new Shape(this.name, handles, slots);
     }
     cloneWithResolutions(variableMap) {
         return this._cloneWithResolutions(variableMap);
     }
     _cloneWithResolutions(variableMap) {
-        let handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
-        let slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
         return new Shape(this.name, handles, slots);
     }
     canEnsureResolved() {
-        for (let typeVar of this.typeVars) {
+        for (const typeVar of this.typeVars) {
             if (!typeVar.object[typeVar.field].canEnsureResolved()) {
                 return false;
             }
@@ -136,13 +136,13 @@ ${this._slotsToManifestString()}
         return true;
     }
     maybeEnsureResolved() {
-        for (let typeVar of this.typeVars) {
+        for (const typeVar of this.typeVars) {
             let variable = typeVar.object[typeVar.field];
             variable = variable.clone(new Map());
             if (!variable.maybeEnsureResolved())
                 return false;
         }
-        for (let typeVar of this.typeVars) {
+        for (const typeVar of this.typeVars) {
             typeVar.object[typeVar.field].maybeEnsureResolved();
         }
         return true;
@@ -156,13 +156,13 @@ ${this._slotsToManifestString()}
         if (other.handles.length !== this.handles.length) {
             return null;
         }
-        let handles = new Set(this.handles);
-        let otherHandles = new Set(other.handles);
-        let handleMap = new Map();
+        const handles = new Set(this.handles);
+        const otherHandles = new Set(other.handles);
+        const handleMap = new Map();
         let sizeCheck = handles.size;
         while (handles.size > 0) {
-            let handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
-            for (let handleMatch of handleMatches) {
+            const handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
+            for (const handleMatch of handleMatches) {
                 // no match!
                 if (handleMatch.match.length == 0) {
                     return null;
@@ -179,9 +179,9 @@ ${this._slotsToManifestString()}
             }
             sizeCheck = handles.size;
         }
-        let handleList = [];
-        for (let handle of this.handles) {
-            let otherHandle = handleMap.get(handle);
+        const handleList = [];
+        for (const handle of this.handles) {
+            const otherHandle = handleMap.get(handle);
             let resultType;
             if (handle.type.hasVariable || otherHandle.type.hasVariable) {
                 resultType = TypeChecker._tryMergeTypeVariable(handle.type, otherHandle.type);
@@ -194,7 +194,7 @@ ${this._slotsToManifestString()}
             }
             handleList.push({ name: handle.name || otherHandle.name, direction: handle.direction || otherHandle.direction, type: resultType });
         }
-        let slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
         return new Shape(this.name, handleList, slots);
     }
     resolvedType() {
@@ -220,9 +220,9 @@ ${this._slotsToManifestString()}
         return slot.name == otherSlot.name && slot.direction == otherSlot.direction && slot.isRequired == otherSlot.isRequired && slot.isSet == otherSlot.isSet;
     }
     _equalItems(otherItems, items, compareItem) {
-        for (let otherItem of otherItems) {
+        for (const otherItem of otherItems) {
             let exists = false;
-            for (let item of items) {
+            for (const item of items) {
                 if (compareItem(item, otherItem)) {
                     exists = true;
                     break;
@@ -235,7 +235,7 @@ ${this._slotsToManifestString()}
         return true;
     }
     _cloneAndUpdate(update) {
-        let copy = this.clone(new Map());
+        const copy = this.clone(new Map());
         copy.typeVars.forEach(typeVar => Shape._updateTypeVar(typeVar, update));
         return copy;
     }
@@ -264,7 +264,7 @@ ${this._slotsToManifestString()}
         if (shapeHandle.type.isVariableReference) {
             return false;
         }
-        let [left, right] = Type.unwrapPair(shapeHandle.type, particleHandle.type);
+        const [left, right] = Type.unwrapPair(shapeHandle.type, particleHandle.type);
         if (left.isVariable) {
             return [{ var: left, value: right, direction: shapeHandle.direction }];
         }
@@ -292,16 +292,16 @@ ${this._slotsToManifestString()}
         return true;
     }
     particleMatches(particleSpec) {
-        let shape = this.cloneWithResolutions(new Map());
+        const shape = this.cloneWithResolutions(new Map());
         return shape.restrictType(particleSpec) !== false;
     }
     restrictType(particleSpec) {
         return this._restrictThis(particleSpec);
     }
     _restrictThis(particleSpec) {
-        let handleMatches = this.handles.map(handle => particleSpec.connections.map(connection => ({ match: connection, result: Shape.handlesMatch(handle, connection) }))
+        const handleMatches = this.handles.map(handle => particleSpec.connections.map(connection => ({ match: connection, result: Shape.handlesMatch(handle, connection) }))
             .filter(a => a.result !== false));
-        let particleSlots = [];
+        const particleSlots = [];
         particleSpec.slots.forEach(consumedSlot => {
             particleSlots.push({ name: consumedSlot.name, direction: 'consume', isRequired: consumedSlot.isRequired, isSet: consumedSlot.isSet });
             consumedSlot.providedSlots.forEach(providedSlot => {
@@ -310,32 +310,32 @@ ${this._slotsToManifestString()}
         });
         let slotMatches = this.slots.map(slot => particleSlots.filter(particleSlot => Shape.slotsMatch(slot, particleSlot)));
         slotMatches = slotMatches.map(matchList => matchList.map(slot => ({ match: slot, result: true })));
-        let exclusions = [];
+        const exclusions = [];
         // TODO: this probably doesn't deal with multiple match options.
         function choose(list, exclusions) {
             if (list.length == 0) {
                 return [];
             }
-            let thisLevel = list.pop();
-            for (let connection of thisLevel) {
+            const thisLevel = list.pop();
+            for (const connection of thisLevel) {
                 if (exclusions.includes(connection.match)) {
                     continue;
                 }
-                let newExclusions = exclusions.slice();
+                const newExclusions = exclusions.slice();
                 newExclusions.push(connection.match);
-                let constraints = choose(list, newExclusions);
+                const constraints = choose(list, newExclusions);
                 if (constraints !== false) {
                     return connection.result.length ? constraints.concat(connection.result) : constraints;
                 }
             }
             return false;
         }
-        let handleOptions = choose(handleMatches, []);
-        let slotOptions = choose(slotMatches, []);
+        const handleOptions = choose(handleMatches, []);
+        const slotOptions = choose(slotMatches, []);
         if (handleOptions === false || slotOptions === false) {
             return false;
         }
-        for (let constraint of handleOptions) {
+        for (const constraint of handleOptions) {
             if (!constraint.var.variable.resolution) {
                 constraint.var.variable.resolution = constraint.value;
             }
@@ -357,3 +357,4 @@ ${this._slotsToManifestString()}
 }
 import { Type } from './type.js';
 import { TypeChecker } from '../recipe/type-checker.js';
+//# sourceMappingURL=shape.js.map

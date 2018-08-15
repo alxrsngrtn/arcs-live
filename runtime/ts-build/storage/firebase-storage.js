@@ -216,15 +216,6 @@ class FirebaseStorageProvider extends StorageProviderBase {
             return result;
         });
     }
-    get _hasLocalChanges() {
-        assert(false, 'subclass should implement _hasLocalChanges');
-        return undefined;
-    }
-    _persistChangesImpl() {
-        return __awaiter(this, void 0, void 0, function* () {
-            assert(false, 'subclass should implement _persistChangesImpl');
-        });
-    }
     _persistChanges() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._hasLocalChanges) {
@@ -1032,4 +1023,13 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
             return cursor;
         });
     }
+    _persistChangesImpl() {
+        return __awaiter(this, void 0, void 0, function* () {
+            throw new Error('FireBaseBigCollection does not implement _persistChangesImpl');
+        });
+    }
+    get _hasLocalChanges() {
+        return false;
+    }
 }
+//# sourceMappingURL=firebase-storage.js.map

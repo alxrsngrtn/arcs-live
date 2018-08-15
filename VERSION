@@ -1,8 +1,15 @@
-commit 0049f6b9f995baf7b042bda8dfa22ba8816ce838
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Aug 14 15:47:06 2018 +1000
+commit a1f580707f6d084483f2fceb4515ad4892e76edb
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Aug 15 04:23:35 2018 -0700
 
-    Start converting type system dependent classes to typescript (#1760)
+    Tighten typescript usage, part 2 (#1768)
     
-    Use '.js' extension to import '.ts' files, so that the browser can find the result.
-    (see https://github.com/Microsoft/TypeScript/issues/16577#issuecomment-343610106)
+    * Automated lint cleanups, let/const fixes, etc.
+    * Introduce alwaysStrict compiler option, remove redundant 'use strict' from code
+    * Add more strict compiler options, fix issues for noImplicitReturns
+    - Use abstract class syntax for FirebaseStorageProvider
+    - Replace assert(false ...) with throw Error
+    - Use Promise<void> for a function to denote that the return is not evaluated
+    * Replace remaining assert(false...) usages with throw Error
+    * Remove unused assert imports
+    * Switch array-type to array instead of simple-array

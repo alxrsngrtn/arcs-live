@@ -1,0 +1,1 @@
+{"version":3,"file":"key-base.js","sourceRoot":"","sources":["../../ts/storage/key-base.ts"],"names":[],"mappings":"AAAA,IAAI;AACJ,sDAAsD;AACtD,kEAAkE;AAClE,uCAAuC;AACvC,6DAA6D;AAC7D,oDAAoD;AACpD,uCAAuC;AAEvC,MAAM,OAAO,OAAO;IAClB,iBAAiB,CAAC,EAAE;QAClB,MAAM,IAAI,KAAK,CAAC,gBAAgB,CAAC,CAAC;IACpC,CAAC;CACF"}

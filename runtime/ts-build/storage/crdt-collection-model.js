@@ -98,3 +98,4 @@ export class CrdtCollectionModel {
         return this.items.size;
     }
 }
+//# sourceMappingURL=crdt-collection-model.js.map

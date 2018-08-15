@@ -5,7 +5,6 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-'use strict';
 import { assert } from '../../platform/assert-web.js';
 function addType(name, arg = undefined) {
     const lowerName = name[0].toLowerCase() + name.substring(1);
@@ -195,8 +194,7 @@ export class Type {
         if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canWriteSuperset);
         }
-        assert(false, `canWriteSuperset not implemented for ${this}`);
-        return undefined;
+        throw new Error(`canWriteSuperset not implemented for ${this}`);
     }
     get canReadSubset() {
         if (this.isVariable) {
@@ -208,8 +206,7 @@ export class Type {
         if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canReadSubset);
         }
-        assert(false, `canReadSubset not implemented for ${this}`);
-        return undefined;
+        throw new Error(`canReadSubset not implemented for ${this}`);
     }
     isMoreSpecificThan(type) {
         if (this.tag !== type.tag) {
@@ -225,7 +222,7 @@ export class Type {
             // TODO: formFactor checking, etc.
             return true;
         }
-        assert(false, `contains not implemented for ${this}`);
+        throw new Error(`contains not implemented for ${this}`);
     }
     static _canMergeCanReadSubset(type1, type2) {
         if (type1.canReadSubset && type2.canReadSubset) {
@@ -235,7 +232,7 @@ export class Type {
             if (type1.canReadSubset.isEntity) {
                 return Schema.intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
             }
-            assert(false, `_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
+            throw new Error(`_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
         }
         return true;
     }
@@ -366,7 +363,7 @@ export class Type {
         if (this.isSlot) {
             return 'Slot';
         }
-        assert(false, `Add support to serializing type: ${JSON.stringify(this)}`);
+        throw new Error(`Add support to serializing type: ${JSON.stringify(this)}`);
     }
     getEntitySchema() {
         if (this.isCollection) {
@@ -425,3 +422,4 @@ import { Schema } from './schema.js';
 import { TypeVariable } from '../type-variable.js';
 import { TupleFields } from '../tuple-fields.js';
 import { TypeChecker } from '../recipe/type-checker.js';
+//# sourceMappingURL=type.js.map

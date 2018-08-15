@@ -11199,7 +11199,7 @@ class DescriptionFormatter {
     } else if (token.consumeSlotName && token.provideSlotName) {
       return this._slotTokenToString(token);
     }
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, 'no handle or slot name');
+    throw new Error('no handle or slot name');
   }
 
   async _handleTokenToString(token) {
@@ -13295,7 +13295,7 @@ ${e.message}
           return new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__["TagEndPoint"](info.tags);
         }
         default:
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `endpoint ${info.targetType} not supported`);
+          throw new Error(`endpoint ${info.targetType} not supported`);
       }
     };
 
@@ -13434,7 +13434,7 @@ ${e.message}
           } else if (entry.item.kind == 'particle') {
             targetParticle = entry.particle;
           } else {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `did not expect ${entry.item.kind}`);
+            throw new Error(`did not expect ${entry.item.kind}`);
           }
         }
 
@@ -15927,7 +15927,7 @@ class RecipeIndex {
       case '?':
         return false;
       default:
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_17__["assert"])(false, `Unexpected fate ${slotHandleConn.handle.fate}`);
+        throw new Error(`Unexpected fate ${slotHandleConn.handle.fate}`);
     }
   }
 
@@ -16589,8 +16589,7 @@ class Handle {
         if (options) {
           options.details.push(`invalid fate ${this.fate}`);
         }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `Unexpected fate: ${this.fate}`);
-        resolved = false;
+        throw new Error(`Unexpected fate: ${this.fate}`);
       }
     }
     return resolved;
@@ -18406,14 +18405,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeChecker", function() { return TypeChecker; });
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ts-build/type.js */ "./runtime/ts-build/type.js");
 /* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../type-variable.js */ "./runtime/type-variable.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 
 
@@ -18530,7 +18527,7 @@ class TypeChecker {
         return null;
       }
 
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(false, 'tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
+      throw new Error('tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
     }
 
     return base;
@@ -19900,7 +19897,7 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         content.templateName = `${hostedSlot.consumeConn.particle.name}::${hostedSlot.consumeConn.name}::${content.templateName}`;
       } else {
         // TODO(mmandlis): add support for hosted particle rendering set slot.
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, 'TODO: Implement this!');
+        throw new Error('TODO: Implement this!');
       }
     }
     return content;
@@ -20242,7 +20239,7 @@ class CollectionProxy extends StorageProxyBase {
         }
       }
     } else {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `StorageProxy received invalid update event: ${JSON.stringify(update)}`);
+      throw new Error(`StorageProxy received invalid update event: ${JSON.stringify(update)}`);
     }
     if (added.length || removed.length) {
       let result = {};
@@ -22350,15 +22347,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/recipe-util.js */ "./runtime/recipe/recipe-util.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _map_slots_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./map-slots.js */ "./runtime/strategies/map-slots.js");
+/* harmony import */ var _map_slots_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./map-slots.js */ "./runtime/strategies/map-slots.js");
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 
 
@@ -22400,7 +22395,7 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
               mappable = [];
               break;
             default:
-              Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(false, `unexpected fate ${handle.fate}`);
+              throw new Error(`unexpected fate ${handle.fate}`);
           }
         } else if (!handle.storageKey) {
           // Handle specified by the ID, but not yet mapped to storage.
@@ -22417,7 +22412,7 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
             case '?':
               break;
             default:
-              Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(false, `unexpected fate ${handle.fate}`);
+              throw new Error(`unexpected fate ${handle.fate}`);
           }
           mappable = storeById ? [storeById] : [];
         }
@@ -22444,7 +22439,7 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
           return;
         }
 
-        let {local, remote} = _map_slots_js__WEBPACK_IMPORTED_MODULE_5__["MapSlots"].findAllSlotCandidates(slotConnection, arc);
+        let {local, remote} = _map_slots_js__WEBPACK_IMPORTED_MODULE_4__["MapSlots"].findAllSlotCandidates(slotConnection, arc);
         let allSlots = [...local, ...remote];
 
         // MapSlots handles a multi-slot case.
@@ -22454,7 +22449,7 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
 
         let selectedSlot = allSlots[0];
         return (recipe, slotConnection) => {
-          _map_slots_js__WEBPACK_IMPORTED_MODULE_5__["MapSlots"].connectSlotConnection(slotConnection, selectedSlot);
+          _map_slots_js__WEBPACK_IMPORTED_MODULE_4__["MapSlots"].connectSlotConnection(slotConnection, selectedSlot);
           return 1;
         };
       }
@@ -23281,7 +23276,7 @@ var Random;
     }
     Random.seedForTests = seedForTests;
 })(Random || (Random = {}));
-
+//# sourceMappingURL=random.js.map
 
 /***/ }),
 
@@ -23312,13 +23307,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class Schema {
     constructor(model) {
-        let legacy = [];
+        const legacy = [];
         // TODO: remove this (remnants of normative/optional)
         if (model.sections) {
             legacy.push('sections');
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!model.fields);
             model.fields = {};
-            for (let section of model.sections) {
+            for (const section of model.sections) {
                 Object.assign(model.fields, section.fields);
             }
             delete model.sections;
@@ -23330,8 +23325,8 @@ class Schema {
         }
         if (model.parents) {
             legacy.push('parents');
-            for (let parent of model.parents) {
-                let parentSchema = new Schema(parent);
+            for (const parent of model.parents) {
+                const parentSchema = new Schema(parent);
                 model.names.push(...parent.names);
                 Object.assign(model.fields, parent.fields);
             }
@@ -23382,9 +23377,9 @@ class Schema {
         }
     }
     static union(schema1, schema2) {
-        let names = [...new Set([...schema1.names, ...schema2.names])];
-        let fields = {};
-        for (let [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
+        const names = [...new Set([...schema1.names, ...schema2.names])];
+        const fields = {};
+        for (const [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
             if (fields[field]) {
                 if (!Schema.typesEqual(fields[field], type)) {
                     return null;
@@ -23400,10 +23395,10 @@ class Schema {
         });
     }
     static intersect(schema1, schema2) {
-        let names = [...schema1.names].filter(name => schema2.names.includes(name));
-        let fields = {};
-        for (let [field, type] of Object.entries(schema1.fields)) {
-            let otherType = schema2.fields[field];
+        const names = [...schema1.names].filter(name => schema2.names.includes(name));
+        const fields = {};
+        for (const [field, type] of Object.entries(schema1.fields)) {
+            const otherType = schema2.fields[field];
             if (otherType && Schema.typesEqual(type, otherType)) {
                 fields[field] = type;
             }
@@ -23420,17 +23415,17 @@ class Schema {
             && otherSchema.isMoreSpecificThan(this));
     }
     isMoreSpecificThan(otherSchema) {
-        let names = new Set(this.names);
-        for (let name of otherSchema.names) {
+        const names = new Set(this.names);
+        for (const name of otherSchema.names) {
             if (!names.has(name)) {
                 return false;
             }
         }
-        let fields = {};
-        for (let [name, type] of Object.entries(this.fields)) {
+        const fields = {};
+        for (const [name, type] of Object.entries(this.fields)) {
             fields[name] = type;
         }
-        for (let [name, type] of Object.entries(otherSchema.fields)) {
+        for (const [name, type] of Object.entries(otherSchema.fields)) {
             if (fields[name] == undefined) {
                 return false;
             }
@@ -23444,10 +23439,10 @@ class Schema {
         return _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newEntity(this);
     }
     entityClass() {
-        let schema = this;
-        let className = this.name;
-        let classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
-        let convertToJsType = fieldType => {
+        const schema = this;
+        const className = this.name;
+        const classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
+        const convertToJsType = fieldType => {
             switch (fieldType) {
                 case 'Text':
                     return 'string';
@@ -23464,8 +23459,8 @@ class Schema {
             }
         };
         const fieldTypes = this.fields;
-        let validateFieldAndTypes = (op, name, value) => {
-            let fieldType = fieldTypes[name];
+        const validateFieldAndTypes = (op, name, value) => {
+            const fieldType = fieldTypes[name];
             if (fieldType === undefined) {
                 throw new Error(`Can't ${op} field ${name}; not in schema ${className}`);
             }
@@ -23483,7 +23478,7 @@ class Schema {
             switch (fieldType.kind) {
                 case 'schema-union':
                     // Value must be a primitive that matches one of the union types.
-                    for (let innerType of fieldType.types) {
+                    for (const innerType of fieldType.types) {
                         if (typeof (value) === convertToJsType(innerType)) {
                             return;
                         }
@@ -23511,7 +23506,7 @@ class Schema {
                     throw new Error(`Unknown kind ${fieldType.kind} in schema ${className}`);
             }
         };
-        let clazz = class extends _entity_js__WEBPACK_IMPORTED_MODULE_2__["Entity"] {
+        const clazz = class extends _entity_js__WEBPACK_IMPORTED_MODULE_2__["Entity"] {
             constructor(data, userIDComponent) {
                 super(userIDComponent);
                 this.rawData = new Proxy({}, {
@@ -23519,7 +23514,7 @@ class Schema {
                         if (classJunk.includes(name) || name.constructor == Symbol) {
                             return undefined;
                         }
-                        let value = target[name];
+                        const value = target[name];
                         validateFieldAndTypes('get', name, value);
                         return value;
                     },
@@ -23530,13 +23525,13 @@ class Schema {
                     }
                 });
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data, `can't construct entity with null data`);
-                for (let [name, value] of Object.entries(data)) {
+                for (const [name, value] of Object.entries(data)) {
                     this.rawData[name] = value;
                 }
             }
             dataClone() {
-                let clone = {};
-                for (let name of Object.keys(schema.fields)) {
+                const clone = {};
+                for (const name of Object.keys(schema.fields)) {
                     if (this.rawData[name] !== undefined) {
                         clone[name] = this.rawData[name];
                     }
@@ -23553,12 +23548,12 @@ class Schema {
         Object.defineProperty(clazz, 'type', { value: this.type });
         Object.defineProperty(clazz, 'name', { value: this.name });
         // TODO: add query / getter functions for user properties
-        for (let name of Object.keys(this.fields)) {
+        for (const name of Object.keys(this.fields)) {
             Object.defineProperty(clazz.prototype, name, {
-                get: function () {
+                get() {
                     return this.rawData[name];
                 },
-                set: function (v) {
+                set(v) {
                     this.rawData[name] = v;
                 }
             });
@@ -23566,17 +23561,17 @@ class Schema {
         return clazz;
     }
     toInlineSchemaString(options) {
-        let names = (this.names || ['*']).join(' ');
-        let fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
+        const names = (this.names || ['*']).join(' ');
+        const fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
         return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
     }
     toManifestString() {
-        let results = [];
+        const results = [];
         results.push(`schema ${this.names.join(' ')}`);
         results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
         if (Object.keys(this.description).length > 0) {
             results.push(`  description \`${this.description.pattern}\``);
-            for (let name of Object.keys(this.description)) {
+            for (const name of Object.keys(this.description)) {
                 if (name != 'pattern') {
                     results.push(`    ${name} \`${this.description[name]}\``);
                 }
@@ -23585,7 +23580,7 @@ class Schema {
         return results.join('\n');
     }
 }
-
+//# sourceMappingURL=schema.js.map
 
 /***/ }),
 
@@ -23637,15 +23632,15 @@ class Shape {
         this.handles = handles;
         this.slots = slots;
         this.typeVars = [];
-        for (let handle of handles) {
-            for (let field of handleFields) {
+        for (const handle of handles) {
+            for (const field of handleFields) {
                 if (Shape.isTypeVar(handle[field])) {
                     this.typeVars.push({ object: handle, field });
                 }
             }
         }
-        for (let slot of slots) {
-            for (let field of slotFields) {
+        for (const slot of slots) {
+            for (const field of slotFields) {
                 if (Shape.isTypeVar(slot[field])) {
                     this.typeVars.push({ object: slot, field });
                 }
@@ -23671,8 +23666,8 @@ class Shape {
         }
         // TODO: should probably confirm that handles and slots actually match.
         for (let i = 0; i < this.typeVars.length; i++) {
-            let thisTypeVar = this.typeVars[i];
-            let otherTypeVar = other.typeVars[i];
+            const thisTypeVar = this.typeVars[i];
+            const otherTypeVar = other.typeVars[i];
             if (!thisTypeVar.object[thisTypeVar.field].isMoreSpecificThan(otherTypeVar.object[otherTypeVar.field])) {
                 return false;
             }
@@ -23680,7 +23675,7 @@ class Shape {
         return true;
     }
     _applyExistenceTypeTest(test) {
-        for (let typeRef of this.typeVars) {
+        for (const typeRef of this.typeVars) {
             if (test(typeRef.object[typeRef.field])) {
                 return true;
             }
@@ -23690,7 +23685,7 @@ class Shape {
     _handlesToManifestString() {
         return this.handles
             .map(handle => {
-            let type = handle.type.resolvedType();
+            const type = handle.type.resolvedType();
             return `  ${handle.direction ? handle.direction + ' ' : ''}${type.toString()} ${handle.name ? handle.name : '*'}`;
         }).join('\n');
     }
@@ -23709,30 +23704,30 @@ ${this._slotsToManifestString()}
 `;
     }
     static fromLiteral(data) {
-        let handles = data.handles.map(handle => ({ type: _fromLiteral(handle.type), name: _fromLiteral(handle.name), direction: _fromLiteral(handle.direction) }));
-        let slots = data.slots.map(slot => ({ name: _fromLiteral(slot.name), direction: _fromLiteral(slot.direction), isRequired: _fromLiteral(slot.isRequired), isSet: _fromLiteral(slot.isSet) }));
+        const handles = data.handles.map(handle => ({ type: _fromLiteral(handle.type), name: _fromLiteral(handle.name), direction: _fromLiteral(handle.direction) }));
+        const slots = data.slots.map(slot => ({ name: _fromLiteral(slot.name), direction: _fromLiteral(slot.direction), isRequired: _fromLiteral(slot.isRequired), isSet: _fromLiteral(slot.isSet) }));
         return new Shape(data.name, handles, slots);
     }
     toLiteral() {
-        let handles = this.handles.map(handle => ({ type: _toLiteral(handle.type), name: _toLiteral(handle.name), direction: _toLiteral(handle.direction) }));
-        let slots = this.slots.map(slot => ({ name: _toLiteral(slot.name), direction: _toLiteral(slot.direction), isRequired: _toLiteral(slot.isRequired), isSet: _toLiteral(slot.isSet) }));
+        const handles = this.handles.map(handle => ({ type: _toLiteral(handle.type), name: _toLiteral(handle.name), direction: _toLiteral(handle.direction) }));
+        const slots = this.slots.map(slot => ({ name: _toLiteral(slot.name), direction: _toLiteral(slot.direction), isRequired: _toLiteral(slot.isRequired), isSet: _toLiteral(slot.isSet) }));
         return { name: this.name, handles, slots };
     }
     clone(variableMap) {
-        let handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
-        let slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
         return new Shape(this.name, handles, slots);
     }
     cloneWithResolutions(variableMap) {
         return this._cloneWithResolutions(variableMap);
     }
     _cloneWithResolutions(variableMap) {
-        let handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
-        let slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
         return new Shape(this.name, handles, slots);
     }
     canEnsureResolved() {
-        for (let typeVar of this.typeVars) {
+        for (const typeVar of this.typeVars) {
             if (!typeVar.object[typeVar.field].canEnsureResolved()) {
                 return false;
             }
@@ -23740,13 +23735,13 @@ ${this._slotsToManifestString()}
         return true;
     }
     maybeEnsureResolved() {
-        for (let typeVar of this.typeVars) {
+        for (const typeVar of this.typeVars) {
             let variable = typeVar.object[typeVar.field];
             variable = variable.clone(new Map());
             if (!variable.maybeEnsureResolved())
                 return false;
         }
-        for (let typeVar of this.typeVars) {
+        for (const typeVar of this.typeVars) {
             typeVar.object[typeVar.field].maybeEnsureResolved();
         }
         return true;
@@ -23760,13 +23755,13 @@ ${this._slotsToManifestString()}
         if (other.handles.length !== this.handles.length) {
             return null;
         }
-        let handles = new Set(this.handles);
-        let otherHandles = new Set(other.handles);
-        let handleMap = new Map();
+        const handles = new Set(this.handles);
+        const otherHandles = new Set(other.handles);
+        const handleMap = new Map();
         let sizeCheck = handles.size;
         while (handles.size > 0) {
-            let handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
-            for (let handleMatch of handleMatches) {
+            const handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
+            for (const handleMatch of handleMatches) {
                 // no match!
                 if (handleMatch.match.length == 0) {
                     return null;
@@ -23783,9 +23778,9 @@ ${this._slotsToManifestString()}
             }
             sizeCheck = handles.size;
         }
-        let handleList = [];
-        for (let handle of this.handles) {
-            let otherHandle = handleMap.get(handle);
+        const handleList = [];
+        for (const handle of this.handles) {
+            const otherHandle = handleMap.get(handle);
             let resultType;
             if (handle.type.hasVariable || otherHandle.type.hasVariable) {
                 resultType = _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"]._tryMergeTypeVariable(handle.type, otherHandle.type);
@@ -23798,7 +23793,7 @@ ${this._slotsToManifestString()}
             }
             handleList.push({ name: handle.name || otherHandle.name, direction: handle.direction || otherHandle.direction, type: resultType });
         }
-        let slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
         return new Shape(this.name, handleList, slots);
     }
     resolvedType() {
@@ -23824,9 +23819,9 @@ ${this._slotsToManifestString()}
         return slot.name == otherSlot.name && slot.direction == otherSlot.direction && slot.isRequired == otherSlot.isRequired && slot.isSet == otherSlot.isSet;
     }
     _equalItems(otherItems, items, compareItem) {
-        for (let otherItem of otherItems) {
+        for (const otherItem of otherItems) {
             let exists = false;
-            for (let item of items) {
+            for (const item of items) {
                 if (compareItem(item, otherItem)) {
                     exists = true;
                     break;
@@ -23839,7 +23834,7 @@ ${this._slotsToManifestString()}
         return true;
     }
     _cloneAndUpdate(update) {
-        let copy = this.clone(new Map());
+        const copy = this.clone(new Map());
         copy.typeVars.forEach(typeVar => Shape._updateTypeVar(typeVar, update));
         return copy;
     }
@@ -23868,7 +23863,7 @@ ${this._slotsToManifestString()}
         if (shapeHandle.type.isVariableReference) {
             return false;
         }
-        let [left, right] = _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].unwrapPair(shapeHandle.type, particleHandle.type);
+        const [left, right] = _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].unwrapPair(shapeHandle.type, particleHandle.type);
         if (left.isVariable) {
             return [{ var: left, value: right, direction: shapeHandle.direction }];
         }
@@ -23896,16 +23891,16 @@ ${this._slotsToManifestString()}
         return true;
     }
     particleMatches(particleSpec) {
-        let shape = this.cloneWithResolutions(new Map());
+        const shape = this.cloneWithResolutions(new Map());
         return shape.restrictType(particleSpec) !== false;
     }
     restrictType(particleSpec) {
         return this._restrictThis(particleSpec);
     }
     _restrictThis(particleSpec) {
-        let handleMatches = this.handles.map(handle => particleSpec.connections.map(connection => ({ match: connection, result: Shape.handlesMatch(handle, connection) }))
+        const handleMatches = this.handles.map(handle => particleSpec.connections.map(connection => ({ match: connection, result: Shape.handlesMatch(handle, connection) }))
             .filter(a => a.result !== false));
-        let particleSlots = [];
+        const particleSlots = [];
         particleSpec.slots.forEach(consumedSlot => {
             particleSlots.push({ name: consumedSlot.name, direction: 'consume', isRequired: consumedSlot.isRequired, isSet: consumedSlot.isSet });
             consumedSlot.providedSlots.forEach(providedSlot => {
@@ -23914,32 +23909,32 @@ ${this._slotsToManifestString()}
         });
         let slotMatches = this.slots.map(slot => particleSlots.filter(particleSlot => Shape.slotsMatch(slot, particleSlot)));
         slotMatches = slotMatches.map(matchList => matchList.map(slot => ({ match: slot, result: true })));
-        let exclusions = [];
+        const exclusions = [];
         // TODO: this probably doesn't deal with multiple match options.
         function choose(list, exclusions) {
             if (list.length == 0) {
                 return [];
             }
-            let thisLevel = list.pop();
-            for (let connection of thisLevel) {
+            const thisLevel = list.pop();
+            for (const connection of thisLevel) {
                 if (exclusions.includes(connection.match)) {
                     continue;
                 }
-                let newExclusions = exclusions.slice();
+                const newExclusions = exclusions.slice();
                 newExclusions.push(connection.match);
-                let constraints = choose(list, newExclusions);
+                const constraints = choose(list, newExclusions);
                 if (constraints !== false) {
                     return connection.result.length ? constraints.concat(connection.result) : constraints;
                 }
             }
             return false;
         }
-        let handleOptions = choose(handleMatches, []);
-        let slotOptions = choose(slotMatches, []);
+        const handleOptions = choose(handleMatches, []);
+        const slotOptions = choose(slotMatches, []);
         if (handleOptions === false || slotOptions === false) {
             return false;
         }
-        for (let constraint of handleOptions) {
+        for (const constraint of handleOptions) {
             if (!constraint.var.variable.resolution) {
                 constraint.var.variable.resolution = constraint.value;
             }
@@ -23961,7 +23956,7 @@ ${this._slotsToManifestString()}
 }
 
 
-
+//# sourceMappingURL=shape.js.map
 
 /***/ }),
 
@@ -24076,7 +24071,7 @@ class CrdtCollectionModel {
         return this.items.size;
     }
 }
-
+//# sourceMappingURL=crdt-collection-model.js.map
 
 /***/ }),
 
@@ -24314,15 +24309,6 @@ class FirebaseStorageProvider extends _storage_provider_base__WEBPACK_IMPORTED_M
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(result.snapshot.val() !== 0);
             }
             return result;
-        });
-    }
-    get _hasLocalChanges() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(false, 'subclass should implement _hasLocalChanges');
-        return undefined;
-    }
-    _persistChangesImpl() {
-        return __awaiter(this, void 0, void 0, function* () {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(false, 'subclass should implement _persistChangesImpl');
         });
     }
     _persistChanges() {
@@ -25132,8 +25118,16 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
             return cursor;
         });
     }
+    _persistChangesImpl() {
+        return __awaiter(this, void 0, void 0, function* () {
+            throw new Error('FireBaseBigCollection does not implement _persistChangesImpl');
+        });
+    }
+    get _hasLocalChanges() {
+        return false;
+    }
 }
-
+//# sourceMappingURL=firebase-storage.js.map
 
 /***/ }),
 
@@ -25160,7 +25154,6 @@ __webpack_require__.r(__webpack_exports__);
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -25551,7 +25544,7 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
         });
     }
 }
-
+//# sourceMappingURL=in-memory-storage.js.map
 
 /***/ }),
 
@@ -25572,13 +25565,12 @@ __webpack_require__.r(__webpack_exports__);
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 class KeyBase {
     childKeyForHandle(id) {
         throw new Error('NotImplemented');
     }
 }
-
+//# sourceMappingURL=key-base.js.map
 
 /***/ }),
 
@@ -25711,7 +25703,7 @@ class StorageProviderBase {
         return this.id;
     }
 }
-
+//# sourceMappingURL=storage-provider-base.js.map
 
 /***/ }),
 
@@ -25734,7 +25726,6 @@ __webpack_require__.r(__webpack_exports__);
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -25781,7 +25772,7 @@ class StorageProviderFactory {
         });
     }
 }
-
+//# sourceMappingURL=storage-provider-factory.js.map
 
 /***/ }),
 
@@ -25808,7 +25799,6 @@ __webpack_require__.r(__webpack_exports__);
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 function addType(name, arg = undefined) {
     const lowerName = name[0].toLowerCase() + name.substring(1);
@@ -25998,8 +25988,7 @@ class Type {
         if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canWriteSuperset);
         }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `canWriteSuperset not implemented for ${this}`);
-        return undefined;
+        throw new Error(`canWriteSuperset not implemented for ${this}`);
     }
     get canReadSubset() {
         if (this.isVariable) {
@@ -26011,8 +26000,7 @@ class Type {
         if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canReadSubset);
         }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `canReadSubset not implemented for ${this}`);
-        return undefined;
+        throw new Error(`canReadSubset not implemented for ${this}`);
     }
     isMoreSpecificThan(type) {
         if (this.tag !== type.tag) {
@@ -26028,7 +26016,7 @@ class Type {
             // TODO: formFactor checking, etc.
             return true;
         }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `contains not implemented for ${this}`);
+        throw new Error(`contains not implemented for ${this}`);
     }
     static _canMergeCanReadSubset(type1, type2) {
         if (type1.canReadSubset && type2.canReadSubset) {
@@ -26038,7 +26026,7 @@ class Type {
             if (type1.canReadSubset.isEntity) {
                 return _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
             }
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
+            throw new Error(`_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
         }
         return true;
     }
@@ -26169,7 +26157,7 @@ class Type {
         if (this.isSlot) {
             return 'Slot';
         }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `Add support to serializing type: ${JSON.stringify(this)}`);
+        throw new Error(`Add support to serializing type: ${JSON.stringify(this)}`);
     }
     getEntitySchema() {
         if (this.isCollection) {
@@ -26228,7 +26216,7 @@ addType('Reference', 'referredType');
 
 
 
-
+//# sourceMappingURL=type.js.map
 
 /***/ }),
 

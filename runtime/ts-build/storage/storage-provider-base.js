@@ -114,3 +114,4 @@ export class StorageProviderBase {
         return this.id;
     }
 }
+//# sourceMappingURL=storage-provider-base.js.map

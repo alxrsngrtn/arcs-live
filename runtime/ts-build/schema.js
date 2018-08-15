@@ -12,13 +12,13 @@ import { Type } from './type.js';
 import { Entity } from '../entity.js';
 export class Schema {
     constructor(model) {
-        let legacy = [];
+        const legacy = [];
         // TODO: remove this (remnants of normative/optional)
         if (model.sections) {
             legacy.push('sections');
             assert(!model.fields);
             model.fields = {};
-            for (let section of model.sections) {
+            for (const section of model.sections) {
                 Object.assign(model.fields, section.fields);
             }
             delete model.sections;
@@ -30,8 +30,8 @@ export class Schema {
         }
         if (model.parents) {
             legacy.push('parents');
-            for (let parent of model.parents) {
-                let parentSchema = new Schema(parent);
+            for (const parent of model.parents) {
+                const parentSchema = new Schema(parent);
                 model.names.push(...parent.names);
                 Object.assign(model.fields, parent.fields);
             }
@@ -82,9 +82,9 @@ export class Schema {
         }
     }
     static union(schema1, schema2) {
-        let names = [...new Set([...schema1.names, ...schema2.names])];
-        let fields = {};
-        for (let [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
+        const names = [...new Set([...schema1.names, ...schema2.names])];
+        const fields = {};
+        for (const [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
             if (fields[field]) {
                 if (!Schema.typesEqual(fields[field], type)) {
                     return null;
@@ -100,10 +100,10 @@ export class Schema {
         });
     }
     static intersect(schema1, schema2) {
-        let names = [...schema1.names].filter(name => schema2.names.includes(name));
-        let fields = {};
-        for (let [field, type] of Object.entries(schema1.fields)) {
-            let otherType = schema2.fields[field];
+        const names = [...schema1.names].filter(name => schema2.names.includes(name));
+        const fields = {};
+        for (const [field, type] of Object.entries(schema1.fields)) {
+            const otherType = schema2.fields[field];
             if (otherType && Schema.typesEqual(type, otherType)) {
                 fields[field] = type;
             }
@@ -120,17 +120,17 @@ export class Schema {
             && otherSchema.isMoreSpecificThan(this));
     }
     isMoreSpecificThan(otherSchema) {
-        let names = new Set(this.names);
-        for (let name of otherSchema.names) {
+        const names = new Set(this.names);
+        for (const name of otherSchema.names) {
             if (!names.has(name)) {
                 return false;
             }
         }
-        let fields = {};
-        for (let [name, type] of Object.entries(this.fields)) {
+        const fields = {};
+        for (const [name, type] of Object.entries(this.fields)) {
             fields[name] = type;
         }
-        for (let [name, type] of Object.entries(otherSchema.fields)) {
+        for (const [name, type] of Object.entries(otherSchema.fields)) {
             if (fields[name] == undefined) {
                 return false;
             }
@@ -144,10 +144,10 @@ export class Schema {
         return Type.newEntity(this);
     }
     entityClass() {
-        let schema = this;
-        let className = this.name;
-        let classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
-        let convertToJsType = fieldType => {
+        const schema = this;
+        const className = this.name;
+        const classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
+        const convertToJsType = fieldType => {
             switch (fieldType) {
                 case 'Text':
                     return 'string';
@@ -164,8 +164,8 @@ export class Schema {
             }
         };
         const fieldTypes = this.fields;
-        let validateFieldAndTypes = (op, name, value) => {
-            let fieldType = fieldTypes[name];
+        const validateFieldAndTypes = (op, name, value) => {
+            const fieldType = fieldTypes[name];
             if (fieldType === undefined) {
                 throw new Error(`Can't ${op} field ${name}; not in schema ${className}`);
             }
@@ -183,7 +183,7 @@ export class Schema {
             switch (fieldType.kind) {
                 case 'schema-union':
                     // Value must be a primitive that matches one of the union types.
-                    for (let innerType of fieldType.types) {
+                    for (const innerType of fieldType.types) {
                         if (typeof (value) === convertToJsType(innerType)) {
                             return;
                         }
@@ -211,7 +211,7 @@ export class Schema {
                     throw new Error(`Unknown kind ${fieldType.kind} in schema ${className}`);
             }
         };
-        let clazz = class extends Entity {
+        const clazz = class extends Entity {
             constructor(data, userIDComponent) {
                 super(userIDComponent);
                 this.rawData = new Proxy({}, {
@@ -219,7 +219,7 @@ export class Schema {
                         if (classJunk.includes(name) || name.constructor == Symbol) {
                             return undefined;
                         }
-                        let value = target[name];
+                        const value = target[name];
                         validateFieldAndTypes('get', name, value);
                         return value;
                     },
@@ -230,13 +230,13 @@ export class Schema {
                     }
                 });
                 assert(data, `can't construct entity with null data`);
-                for (let [name, value] of Object.entries(data)) {
+                for (const [name, value] of Object.entries(data)) {
                     this.rawData[name] = value;
                 }
             }
             dataClone() {
-                let clone = {};
-                for (let name of Object.keys(schema.fields)) {
+                const clone = {};
+                for (const name of Object.keys(schema.fields)) {
                     if (this.rawData[name] !== undefined) {
                         clone[name] = this.rawData[name];
                     }
@@ -253,12 +253,12 @@ export class Schema {
         Object.defineProperty(clazz, 'type', { value: this.type });
         Object.defineProperty(clazz, 'name', { value: this.name });
         // TODO: add query / getter functions for user properties
-        for (let name of Object.keys(this.fields)) {
+        for (const name of Object.keys(this.fields)) {
             Object.defineProperty(clazz.prototype, name, {
-                get: function () {
+                get() {
                     return this.rawData[name];
                 },
-                set: function (v) {
+                set(v) {
                     this.rawData[name] = v;
                 }
             });
@@ -266,17 +266,17 @@ export class Schema {
         return clazz;
     }
     toInlineSchemaString(options) {
-        let names = (this.names || ['*']).join(' ');
-        let fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
+        const names = (this.names || ['*']).join(' ');
+        const fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
         return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
     }
     toManifestString() {
-        let results = [];
+        const results = [];
         results.push(`schema ${this.names.join(' ')}`);
         results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
         if (Object.keys(this.description).length > 0) {
             results.push(`  description \`${this.description.pattern}\``);
-            for (let name of Object.keys(this.description)) {
+            for (const name of Object.keys(this.description)) {
                 if (name != 'pattern') {
                     results.push(`    ${name} \`${this.description[name]}\``);
                 }
@@ -285,3 +285,4 @@ export class Schema {
         return results.join('\n');
     }
 }
+//# sourceMappingURL=schema.js.map
