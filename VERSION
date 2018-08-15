@@ -1,15 +1,5 @@
-commit a1f580707f6d084483f2fceb4515ad4892e76edb
+commit f823788607c13f223779e6877d83a59cf36908b2
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Aug 15 04:23:35 2018 -0700
+Date:   Wed Aug 15 04:24:26 2018 -0700
 
-    Tighten typescript usage, part 2 (#1768)
-    
-    * Automated lint cleanups, let/const fixes, etc.
-    * Introduce alwaysStrict compiler option, remove redundant 'use strict' from code
-    * Add more strict compiler options, fix issues for noImplicitReturns
-    - Use abstract class syntax for FirebaseStorageProvider
-    - Replace assert(false ...) with throw Error
-    - Use Promise<void> for a function to denote that the return is not evaluated
-    * Replace remaining assert(false...) usages with throw Error
-    * Remove unused assert imports
-    * Switch array-type to array instead of simple-array
+    Add .idea to .gitignore (#1770)
