@@ -1,5 +1,8 @@
-commit f823788607c13f223779e6877d83a59cf36908b2
+commit f38680537824af84cba70c72f8cff9fd92479d15
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Aug 15 04:24:26 2018 -0700
+Date:   Wed Aug 15 13:30:50 2018 -0700
 
-    Add .idea to .gitignore (#1770)
+    Eliminate usage of forbidden types (#1772)
+    
+    - replace Boolean -> boolean
+    - replace String -> string
