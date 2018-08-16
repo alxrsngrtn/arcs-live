@@ -1,5 +1,5 @@
-commit 8b27e487b33ce54344ad90c861e3dea584525b36
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Aug 15 17:25:04 2018 -0700
+commit 672af9942c989f0a18262c27c9f6f2e0da86322d
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu Aug 16 11:17:07 2018 +1000
 
-    Update tools: cross-env 5.1.3->5.2.0, npm-run-all 4.1.2->4.1.3 (#1776)
+    Ensure that cloning a firebase handle correctly persists changes. (#1778)

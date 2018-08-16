@@ -159,7 +159,7 @@ export class FirebaseStorage {
                     return null;
                 }
             }
-            return FirebaseStorageProvider.newProvider(type, this, id, reference, key);
+            return FirebaseStorageProvider.newProvider(type, this, id, reference, key, shouldExist);
         });
     }
     static encodeKey(key) {
@@ -182,7 +182,7 @@ class FirebaseStorageProvider extends StorageProviderBase {
         // to firebase. Null when not persisting.
         this.persisting = null;
     }
-    static newProvider(type, storageEngine, id, reference, key) {
+    static newProvider(type, storageEngine, id, reference, key, shouldExist) {
         if (type.isCollection) {
             // FIXME: implement a mechanism for specifying BigCollections in manifests
             if (id.startsWith('~big~')) {
@@ -192,7 +192,7 @@ class FirebaseStorageProvider extends StorageProviderBase {
                 return new FirebaseCollection(type, storageEngine, id, reference, key);
             }
         }
-        return new FirebaseVariable(type, storageEngine, id, reference, key);
+        return new FirebaseVariable(type, storageEngine, id, reference, key, shouldExist);
     }
     _transaction(transactionFunction) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -258,8 +258,9 @@ class FirebaseStorageProvider extends StorageProviderBase {
 // modiciations), but the result will always be
 // monotonically increasing.
 class FirebaseVariable extends FirebaseStorageProvider {
-    constructor(type, storageEngine, id, reference, firebaseKey) {
+    constructor(type, storageEngine, id, reference, firebaseKey, shouldExist) {
         super(type, storageEngine, id, reference, firebaseKey);
+        this.wasConnect = shouldExist;
         // Current value stored in this variable. Reflects either a
         // value that was stored in firebase, or a value that was
         // written locally.
@@ -383,7 +384,10 @@ class FirebaseVariable extends FirebaseStorageProvider {
     cloneFrom(handle) {
         return __awaiter(this, void 0, void 0, function* () {
             const literal = yield handle.toLiteral();
-            yield this.fromLiteral(literal);
+            this.fromLiteral(literal);
+            this.localModified = true;
+            this._fire('change', { data: this.value, version: this.version, originatorId: null, barrier: null });
+            yield this._persistChanges();
         });
     }
     // Returns {version, model: [{id, value}]}
