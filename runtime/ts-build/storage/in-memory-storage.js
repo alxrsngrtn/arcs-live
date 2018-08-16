@@ -15,9 +15,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { assert } from '../../../platform/assert-web.js';
 import { Tracing } from '../../../tracelib/trace.js';
-import { StorageProviderBase } from './storage-provider-base';
-import { KeyBase } from './key-base';
-import { CrdtCollectionModel } from './crdt-collection-model';
+import { StorageProviderBase } from './storage-provider-base.js';
+import { KeyBase } from './key-base.js';
+import { CrdtCollectionModel } from './crdt-collection-model.js';
 export function resetInMemoryStorageForTesting() {
     for (const key in __storageCache) {
         __storageCache[key]._memoryMap = {};
@@ -51,19 +51,19 @@ const __storageCache = {};
 export class InMemoryStorage {
     constructor(arcId) {
         assert(arcId !== undefined, 'Arcs with storage must have ids');
-        this._arcId = arcId;
+        this.arcId = arcId;
         this._memoryMap = {};
         this._typeMap = new Map();
         this.localIDBase = 0;
         // TODO(shans): re-add this assert once we have a runtime object to put it on.
         // assert(__storageCache[this._arc.id] == undefined, `${this._arc.id} already exists in local storage cache`);
-        __storageCache[this._arcId] = this;
+        __storageCache[this.arcId.toString()] = this;
     }
     construct(id, type, keyFragment) {
         return __awaiter(this, void 0, void 0, function* () {
             const key = new InMemoryKey(keyFragment);
             if (key.arcId == undefined) {
-                key.arcId = this._arcId;
+                key.arcId = this.arcId.toString();
             }
             if (key.location == undefined) {
                 key.location = 'in-memory-' + this.localIDBase++;
@@ -80,7 +80,7 @@ export class InMemoryStorage {
     connect(id, type, keyString) {
         return __awaiter(this, void 0, void 0, function* () {
             const key = new InMemoryKey(keyString);
-            if (key.arcId !== this._arcId.toString()) {
+            if (key.arcId !== this.arcId.toString()) {
                 if (__storageCache[key.arcId] == undefined) {
                     return null;
                 }
@@ -96,7 +96,7 @@ export class InMemoryStorage {
     share(id, type, keyString) {
         return __awaiter(this, void 0, void 0, function* () {
             const key = new InMemoryKey(keyString);
-            assert(key.arcId == this._arcId.toString());
+            assert(key.arcId == this.arcId.toString());
             if (this._memoryMap[keyString] == undefined) {
                 return this.construct(id, type, keyString);
             }

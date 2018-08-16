@@ -7,7 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-'use strict';
 import { Random } from './random.js';
 export class Id {
     constructor(currentSession) {
@@ -17,13 +16,13 @@ export class Id {
         this.currentSession = currentSession;
     }
     static newSessionId() {
-        let session = Math.floor(Random.next() * Math.pow(2, 50)) + '';
+        const session = Math.floor(Random.next() * Math.pow(2, 50)) + '';
         return new Id(session);
     }
     fromString(str) {
-        let components = str.split(':');
-        let id = new Id(this.currentSession);
-        if (components[0][0] == '!') {
+        const components = str.split(':');
+        const id = new Id(this.currentSession);
+        if (components[0][0] === '!') {
             id.session = components[0].slice(1);
             id.components = components.slice(1);
         }
@@ -40,7 +39,7 @@ export class Id {
         return this.components.join(':');
     }
     createId(component = '') {
-        let id = new Id(this.currentSession);
+        const id = new Id(this.currentSession);
         id.components = this.components.slice();
         id.components.push(component + this.nextIdComponent++);
         return id;

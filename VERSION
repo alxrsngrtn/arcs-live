@@ -1,5 +1,10 @@
-commit 17075642be67b845700d1d1f39b786a93cd1f9b8
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Aug 16 14:52:13 2018 -0700
+commit 107b1d9d01c97d15e4cebcdd9ecb0d71c4182a94
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Aug 16 16:10:58 2018 -0700
 
-    (auto-)clear search bar only after ui suggestion is applied (#1782)
+    Fix some Id type usages (#1780)
+    
+    - Fixes type signature in storage-provider-factory and other classes where string
+      was being used instead
+    - Explicit usage of toString when setting key.arcId in InMemoryStorage
+    - Uses id.toString as the cache key in InMemoryStorage

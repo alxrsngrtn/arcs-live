@@ -16,10 +16,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { StorageProviderBase } from './storage-provider-base';
 import { firebase } from '../../../platform/firebase-web.js';
 import { assert } from '../../../platform/assert-web.js';
-import { KeyBase } from './key-base';
+import { KeyBase } from './key-base.js';
 import { atob } from '../../../platform/atob-web.js';
 import { btoa } from '../../../platform/btoa-web.js';
-import { CrdtCollectionModel } from './crdt-collection-model';
+import { CrdtCollectionModel } from './crdt-collection-model.js';
 export function resetStorageForTesting(key) {
     return __awaiter(this, void 0, void 0, function* () {
         key = new FirebaseKey(key);

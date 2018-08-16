@@ -17,7 +17,7 @@ import { InMemoryStorage } from './in-memory-storage';
 import { FirebaseStorage } from './firebase-storage';
 export class StorageProviderFactory {
     constructor(arcId) {
-        this._arcId = arcId;
+        this.arcId = arcId;
         this._storageInstances = { 'in-memory': new InMemoryStorage(arcId), 'firebase': new FirebaseStorage(arcId) };
     }
     _storageForKey(key) {

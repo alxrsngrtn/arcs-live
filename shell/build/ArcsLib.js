@@ -23147,7 +23147,6 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 
-
 class Id {
     constructor(currentSession) {
         this.nextIdComponent = 0;
@@ -23156,13 +23155,13 @@ class Id {
         this.currentSession = currentSession;
     }
     static newSessionId() {
-        let session = Math.floor(_random_js__WEBPACK_IMPORTED_MODULE_0__["Random"].next() * Math.pow(2, 50)) + '';
+        const session = Math.floor(_random_js__WEBPACK_IMPORTED_MODULE_0__["Random"].next() * Math.pow(2, 50)) + '';
         return new Id(session);
     }
     fromString(str) {
-        let components = str.split(':');
-        let id = new Id(this.currentSession);
-        if (components[0][0] == '!') {
+        const components = str.split(':');
+        const id = new Id(this.currentSession);
+        if (components[0][0] === '!') {
             id.session = components[0].slice(1);
             id.components = components.slice(1);
         }
@@ -23179,7 +23178,7 @@ class Id {
         return this.components.join(':');
     }
     createId(component = '') {
-        let id = new Id(this.currentSession);
+        const id = new Id(this.currentSession);
         id.components = this.components.slice();
         id.components.push(component + this.nextIdComponent++);
         return id;
@@ -24069,10 +24068,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _storage_provider_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./storage-provider-base */ "./runtime/ts-build/storage/storage-provider-base.js");
 /* harmony import */ var _platform_firebase_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../platform/firebase-web.js */ "./platform/firebase-web.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _key_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./key-base */ "./runtime/ts-build/storage/key-base.js");
+/* harmony import */ var _key_base_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./key-base.js */ "./runtime/ts-build/storage/key-base.js");
 /* harmony import */ var _platform_atob_web_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../platform/atob-web.js */ "./platform/atob-web.js");
 /* harmony import */ var _platform_btoa_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../platform/btoa-web.js */ "./platform/btoa-web.js");
-/* harmony import */ var _crdt_collection_model__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./crdt-collection-model */ "./runtime/ts-build/storage/crdt-collection-model.js");
+/* harmony import */ var _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./crdt-collection-model.js */ "./runtime/ts-build/storage/crdt-collection-model.js");
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -24113,7 +24112,7 @@ function resetStorageForTesting(key) {
         app.delete();
     });
 }
-class FirebaseKey extends _key_base__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
+class FirebaseKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
     constructor(key) {
         super();
         let parts = key.split('://');
@@ -24560,7 +24559,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         // Local model of entries stored in this collection. Updated
         // by local modifications and when we receive remote updates
         // from firebase.
-        this.model = new _crdt_collection_model__WEBPACK_IMPORTED_MODULE_6__["CrdtCollectionModel"]();
+        this.model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_6__["CrdtCollectionModel"]();
         // Monotonic version. Updated each time we receive an update
         // from firebase, or when a local modification is applied.
         this.version = null;
@@ -24889,7 +24888,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
     }
     fromLiteral({ version, model }) {
         this.version = version;
-        this.model = new _crdt_collection_model__WEBPACK_IMPORTED_MODULE_6__["CrdtCollectionModel"](model);
+        this.model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_6__["CrdtCollectionModel"](model);
     }
 }
 var CursorState;
@@ -25128,9 +25127,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InMemoryStorage", function() { return InMemoryStorage; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _storage_provider_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./storage-provider-base */ "./runtime/ts-build/storage/storage-provider-base.js");
-/* harmony import */ var _key_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./key-base */ "./runtime/ts-build/storage/key-base.js");
-/* harmony import */ var _crdt_collection_model__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./crdt-collection-model */ "./runtime/ts-build/storage/crdt-collection-model.js");
+/* harmony import */ var _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./storage-provider-base.js */ "./runtime/ts-build/storage/storage-provider-base.js");
+/* harmony import */ var _key_base_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./key-base.js */ "./runtime/ts-build/storage/key-base.js");
+/* harmony import */ var _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./crdt-collection-model.js */ "./runtime/ts-build/storage/crdt-collection-model.js");
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -25156,7 +25155,7 @@ function resetInMemoryStorageForTesting() {
         __storageCache[key]._memoryMap = {};
     }
 }
-class InMemoryKey extends _key_base__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
+class InMemoryKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
     constructor(key) {
         super();
         let parts = key.split('://');
@@ -25184,19 +25183,19 @@ const __storageCache = {};
 class InMemoryStorage {
     constructor(arcId) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arcId !== undefined, 'Arcs with storage must have ids');
-        this._arcId = arcId;
+        this.arcId = arcId;
         this._memoryMap = {};
         this._typeMap = new Map();
         this.localIDBase = 0;
         // TODO(shans): re-add this assert once we have a runtime object to put it on.
         // assert(__storageCache[this._arc.id] == undefined, `${this._arc.id} already exists in local storage cache`);
-        __storageCache[this._arcId] = this;
+        __storageCache[this.arcId.toString()] = this;
     }
     construct(id, type, keyFragment) {
         return __awaiter(this, void 0, void 0, function* () {
             const key = new InMemoryKey(keyFragment);
             if (key.arcId == undefined) {
-                key.arcId = this._arcId;
+                key.arcId = this.arcId.toString();
             }
             if (key.location == undefined) {
                 key.location = 'in-memory-' + this.localIDBase++;
@@ -25213,7 +25212,7 @@ class InMemoryStorage {
     connect(id, type, keyString) {
         return __awaiter(this, void 0, void 0, function* () {
             const key = new InMemoryKey(keyString);
-            if (key.arcId !== this._arcId.toString()) {
+            if (key.arcId !== this.arcId.toString()) {
                 if (__storageCache[key.arcId] == undefined) {
                     return null;
                 }
@@ -25229,7 +25228,7 @@ class InMemoryStorage {
     share(id, type, keyString) {
         return __awaiter(this, void 0, void 0, function* () {
             const key = new InMemoryKey(keyString);
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(key.arcId == this._arcId.toString());
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(key.arcId == this.arcId.toString());
             if (this._memoryMap[keyString] == undefined) {
                 return this.construct(id, type, keyString);
             }
@@ -25253,7 +25252,7 @@ class InMemoryStorage {
         return Promise.resolve();
     }
 }
-class InMemoryStorageProvider extends _storage_provider_base__WEBPACK_IMPORTED_MODULE_2__["StorageProviderBase"] {
+class InMemoryStorageProvider extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["StorageProviderBase"] {
     static newProvider(type, storageEngine, name, id, key) {
         if (type.isCollection) {
             // FIXME: implement a mechanism for specifying BigCollections in manifests
@@ -25270,7 +25269,7 @@ class InMemoryStorageProvider extends _storage_provider_base__WEBPACK_IMPORTED_M
 class InMemoryCollection extends InMemoryStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, name, id, key);
-        this._model = new _crdt_collection_model__WEBPACK_IMPORTED_MODULE_4__["CrdtCollectionModel"]();
+        this._model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__["CrdtCollectionModel"]();
         this._storageEngine = storageEngine;
         this._backingStore = null;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.version !== null);
@@ -25294,7 +25293,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
     }
     fromLiteral({ version, model }) {
         this.version = version;
-        this._model = new _crdt_collection_model__WEBPACK_IMPORTED_MODULE_4__["CrdtCollectionModel"](model);
+        this._model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__["CrdtCollectionModel"](model);
     }
     toList() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -25372,7 +25371,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
         });
     }
     clearItemsForTesting() {
-        this._model = new _crdt_collection_model__WEBPACK_IMPORTED_MODULE_4__["CrdtCollectionModel"]();
+        this._model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__["CrdtCollectionModel"]();
     }
 }
 class InMemoryVariable extends InMemoryStorageProvider {
@@ -25719,7 +25718,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 class StorageProviderFactory {
     constructor(arcId) {
-        this._arcId = arcId;
+        this.arcId = arcId;
         this._storageInstances = { 'in-memory': new _in_memory_storage__WEBPACK_IMPORTED_MODULE_0__["InMemoryStorage"](arcId), 'firebase': new _firebase_storage__WEBPACK_IMPORTED_MODULE_1__["FirebaseStorage"](arcId) };
     }
     _storageForKey(key) {
