@@ -1,5 +1,5 @@
-commit 41c0bbfe7d6724f8a8183575a9062d63e7403525
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Aug 15 23:08:12 2018 -0700
+commit 17075642be67b845700d1d1f39b786a93cd1f9b8
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Aug 16 14:52:13 2018 -0700
 
-    Convert id.js to typescript (#1779)
+    (auto-)clear search bar only after ui suggestion is applied (#1782)
