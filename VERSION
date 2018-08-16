@@ -1,10 +1,15 @@
-commit 107b1d9d01c97d15e4cebcdd9ecb0d71c4182a94
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Aug 16 16:10:58 2018 -0700
+commit 08034f64735ec4cf2f8bb49647eb9d46dd93d526
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Thu Aug 16 16:51:38 2018 -0700
 
-    Fix some Id type usages (#1780)
+    Allow node modules to be loaded using non-filesystem paths from non-node-modules (#1781)
     
-    - Fixes type signature in storage-provider-factory and other classes where string
-      was being used instead
-    - Explicit usage of toString when setting key.arcId in InMemoryStorage
-    - Uses id.toString as the cache key in InMemoryStorage
+    Currently the module loader allows an import like
+    
+    import {Foo} from 'Bar'
+    
+    If 'Bar' lives in the node_modules directory and the file that is referencing
+    it is also located in the node_modules directory, otherwise an error is thrown.
+    
+    This change allows node_modules to be loaded without filesystem paths from
+    any module.
