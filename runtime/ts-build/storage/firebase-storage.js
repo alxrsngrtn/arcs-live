@@ -130,7 +130,7 @@ export class FirebaseStorage {
             }
             if (this.apps[key.projectId] == undefined) {
                 for (const app of firebase.apps) {
-                    if (app.options.databaseURL == key.databaseURL) {
+                    if (app.options.databaseURL == key.databaseUrl) {
                         this.apps[key.projectId] = app;
                         break;
                     }
@@ -467,8 +467,8 @@ function setDiff(from, to) {
 // When we persist our changes to firebase we align it with the remote
 // version.
 class FirebaseCollection extends FirebaseStorageProvider {
-    constructor(type, arcId, id, reference, firebaseKey) {
-        super(type, arcId, id, reference, firebaseKey);
+    constructor(type, storageEngine, id, reference, firebaseKey) {
+        super(type, storageEngine, id, reference, firebaseKey);
         // Lists mapped by id containing membership keys that have been
         // added or removed by local modifications. Entries in this
         // structure are still pending persistance remotely. Empty
@@ -955,8 +955,8 @@ class Cursor {
 //      }
 //    }
 class FirebaseBigCollection extends FirebaseStorageProvider {
-    constructor(type, arcId, id, reference, firebaseKey) {
-        super(type, arcId, id, reference, firebaseKey);
+    constructor(type, storageEngine, id, reference, firebaseKey) {
+        super(type, storageEngine, id, reference, firebaseKey);
     }
     get(id) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -1140,7 +1140,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./fake-pec-factory.js */ "./runtime/fake-pec-factory.js");
 /* harmony import */ var _ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ts-build/storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
 /* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./id.js */ "./runtime/id.js");
+/* harmony import */ var _ts_build_id_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./ts-build/id.js */ "./runtime/ts-build/id.js");
 /* harmony import */ var _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./debug/arc-debug-handler.js */ "./runtime/debug/arc-debug-handler.js");
 /* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./recipe-index.js */ "./runtime/recipe-index.js");
 /**
@@ -1177,7 +1177,7 @@ class Arc {
     this._pecFactory = pecFactory || _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__["FakePecFactory"].bind(null);
 
     // for now, every Arc gets its own session
-    this.sessionId = _id_js__WEBPACK_IMPORTED_MODULE_11__["Id"].newSessionId();
+    this.sessionId = _ts_build_id_js__WEBPACK_IMPORTED_MODULE_11__["Id"].newSessionId();
     this.id = this.sessionId.fromString(id);
     this._speculative = !!speculative; // undefined => false
     this._nextLocalID = 0;
@@ -12308,100 +12308,6 @@ class HostedSlotContext extends _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["S
 
 /***/ }),
 
-/***/ "./runtime/id.js":
-/*!***********************!*\
-  !*** ./runtime/id.js ***!
-  \***********************/
-/*! exports provided: Id */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
-/* harmony import */ var _ts_build_random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/random.js */ "./runtime/ts-build/random.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-class Id {
-  constructor(currentSession) {
-    this._session = currentSession;
-    this._currentSession = currentSession;
-    this._nextIdComponent = 0;
-    this._components = [];
-  }
-  static newSessionId() {
-    let session = Math.floor(_ts_build_random_js__WEBPACK_IMPORTED_MODULE_0__["Random"].next() * Math.pow(2, 50)) + '';
-    return new Id(session);
-  }
-
-  fromString(string) {
-    let components = string.split(':');
-
-    let id = new Id(this._currentSession);
-
-    if (components[0][0] == '!') {
-      id._session = components[0].slice(1);
-      id._components = components.slice(1);
-    } else {
-      id._components = components;
-    }
-
-    return id;
-  }
-
-  toString() {
-    return `!${this._session}:${this._components.join(':')}`;
-  }
-
-  // Only use this for testing!
-  toStringWithoutSessionForTesting() {
-    return this._components.join(':');
-  }
-
-  createId(component) {
-    if (component == undefined) {
-      component = '';
-    }
-    let id = new Id(this._currentSession);
-    id._components = this._components.slice();
-    id._components.push(component + this._nextIdComponent++);
-    return id;
-  }
-
-  equal(id) {
-    if (id._session !== this._session) {
-      return false;
-    }
-    return this.equalWithoutSession(id);
-  }
-
-  // Only use this for testing!
-  equalWithoutSessionForTesting(id) {
-    if (id._components.length !== this._components.length) {
-      return false;
-    }
-    for (let i = 0; i < id._components.length; i++) {
-      if (id._components[i] !== this._components[i]) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-}
-
-
-/***/ }),
-
 /***/ "./runtime/loader.js":
 /*!***************************!*\
   !*** ./runtime/loader.js ***!
@@ -23220,6 +23126,80 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 
+/***/ "./runtime/ts-build/id.js":
+/*!********************************!*\
+  !*** ./runtime/ts-build/id.js ***!
+  \********************************/
+/*! exports provided: Id */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
+/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./random.js */ "./runtime/ts-build/random.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+class Id {
+    constructor(currentSession) {
+        this.nextIdComponent = 0;
+        this.components = [];
+        this.session = currentSession;
+        this.currentSession = currentSession;
+    }
+    static newSessionId() {
+        let session = Math.floor(_random_js__WEBPACK_IMPORTED_MODULE_0__["Random"].next() * Math.pow(2, 50)) + '';
+        return new Id(session);
+    }
+    fromString(str) {
+        let components = str.split(':');
+        let id = new Id(this.currentSession);
+        if (components[0][0] == '!') {
+            id.session = components[0].slice(1);
+            id.components = components.slice(1);
+        }
+        else {
+            id.components = components;
+        }
+        return id;
+    }
+    toString() {
+        return `!${this.session}:${this.components.join(':')}`;
+    }
+    // Only use this for testing!
+    toStringWithoutSessionForTesting() {
+        return this.components.join(':');
+    }
+    createId(component = '') {
+        let id = new Id(this.currentSession);
+        id.components = this.components.slice();
+        id.components.push(component + this.nextIdComponent++);
+        return id;
+    }
+    equal(id) {
+        if (id.session !== this.session || id.components.length !== this.components.length) {
+            return false;
+        }
+        for (let i = 0; i < id.components.length; i++) {
+            if (id.components[i] !== this.components[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+//# sourceMappingURL=id.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/random.js":
 /*!************************************!*\
   !*** ./runtime/ts-build/random.js ***!
@@ -24225,7 +24205,7 @@ class FirebaseStorage {
             }
             if (this.apps[key.projectId] == undefined) {
                 for (const app of _platform_firebase_web_js__WEBPACK_IMPORTED_MODULE_1__["firebase"].apps) {
-                    if (app.options.databaseURL == key.databaseURL) {
+                    if (app.options.databaseURL == key.databaseUrl) {
                         this.apps[key.projectId] = app;
                         break;
                     }
@@ -24562,8 +24542,8 @@ function setDiff(from, to) {
 // When we persist our changes to firebase we align it with the remote
 // version.
 class FirebaseCollection extends FirebaseStorageProvider {
-    constructor(type, arcId, id, reference, firebaseKey) {
-        super(type, arcId, id, reference, firebaseKey);
+    constructor(type, storageEngine, id, reference, firebaseKey) {
+        super(type, storageEngine, id, reference, firebaseKey);
         // Lists mapped by id containing membership keys that have been
         // added or removed by local modifications. Entries in this
         // structure are still pending persistance remotely. Empty
@@ -25050,8 +25030,8 @@ class Cursor {
 //      }
 //    }
 class FirebaseBigCollection extends FirebaseStorageProvider {
-    constructor(type, arcId, id, reference, firebaseKey) {
-        super(type, arcId, id, reference, firebaseKey);
+    constructor(type, storageEngine, id, reference, firebaseKey) {
+        super(type, storageEngine, id, reference, firebaseKey);
     }
     get(id) {
         return __awaiter(this, void 0, void 0, function* () {

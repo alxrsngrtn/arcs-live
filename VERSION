@@ -1,5 +1,5 @@
-commit 672af9942c989f0a18262c27c9f6f2e0da86322d
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu Aug 16 11:17:07 2018 +1000
+commit 41c0bbfe7d6724f8a8183575a9062d63e7403525
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Aug 15 23:08:12 2018 -0700
 
-    Ensure that cloning a firebase handle correctly persists changes. (#1778)
+    Convert id.js to typescript (#1779)
