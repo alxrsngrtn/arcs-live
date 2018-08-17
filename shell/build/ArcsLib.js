@@ -24168,9 +24168,12 @@ class FirebaseStorage {
     }
     // Unit tests should call this in an 'after' block.
     shutdown() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return Promise.all(Object.keys(this.apps).map(k => this.apps[k].delete())).then(a => { return; });
-        });
+        for (const entry of Object.values(this.apps)) {
+            if (entry.owned) {
+                entry.app.delete();
+                entry.owned = false;
+            }
+        }
     }
     share(id, type, key) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -24205,18 +24208,19 @@ class FirebaseStorage {
             if (this.apps[key.projectId] == undefined) {
                 for (const app of _platform_firebase_web_js__WEBPACK_IMPORTED_MODULE_1__["firebase"].apps) {
                     if (app.options.databaseURL === key.databaseUrl) {
-                        this.apps[key.projectId] = app;
+                        this.apps[key.projectId] = { app, owned: false };
                         break;
                     }
                 }
             }
             if (this.apps[key.projectId] == undefined) {
-                this.apps[key.projectId] = _platform_firebase_web_js__WEBPACK_IMPORTED_MODULE_1__["firebase"].initializeApp({
+                const app = _platform_firebase_web_js__WEBPACK_IMPORTED_MODULE_1__["firebase"].initializeApp({
                     apiKey: key.apiKey,
                     databaseURL: key.databaseUrl
                 }, `app${_nextAppNameSuffix++}`);
+                this.apps[key.projectId] = { app, owned: true };
             }
-            const reference = _platform_firebase_web_js__WEBPACK_IMPORTED_MODULE_1__["firebase"].database(this.apps[key.projectId]).ref(key.location);
+            const reference = _platform_firebase_web_js__WEBPACK_IMPORTED_MODULE_1__["firebase"].database(this.apps[key.projectId].app).ref(key.location);
             let currentSnapshot;
             yield reference.once('value', snapshot => currentSnapshot = snapshot);
             if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
@@ -25249,7 +25253,7 @@ class InMemoryStorage {
         return new InMemoryKey(s);
     }
     shutdown() {
-        return Promise.resolve();
+        // No-op
     }
 }
 class InMemoryStorageProvider extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["StorageProviderBase"] {
@@ -25747,9 +25751,7 @@ class StorageProviderFactory {
     }
     // For testing
     shutdown() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield Promise.all(Object.keys(this._storageInstances).map(k => this._storageInstances[k].shutdown()));
-        });
+        Object.values(this._storageInstances).map(s => s.shutdown());
     }
 }
 //# sourceMappingURL=storage-provider-factory.js.map

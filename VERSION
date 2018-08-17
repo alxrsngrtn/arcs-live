@@ -1,8 +1,5 @@
-commit 6c22f3f0daf933ea79ae611dec6aba96b57f7ef7
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Aug 16 20:19:24 2018 -0700
+commit c11cce02da13e865dfc9d31e76335091f660f176
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Aug 16 21:52:29 2018 -0700
 
-    Triple Equals cleanups (#1784)
-    
-    - Allow comparing with undefined
-    - Adjust remaining usages to ===
+    Fix shutdown of firebase apps in manual tests (#1785)

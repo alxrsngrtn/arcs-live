@@ -117,7 +117,7 @@ export class InMemoryStorage {
         return new InMemoryKey(s);
     }
     shutdown() {
-        return Promise.resolve();
+        // No-op
     }
 }
 class InMemoryStorageProvider extends StorageProviderBase {

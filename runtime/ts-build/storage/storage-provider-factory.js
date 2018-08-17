@@ -46,9 +46,7 @@ export class StorageProviderFactory {
     }
     // For testing
     shutdown() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield Promise.all(Object.keys(this._storageInstances).map(k => this._storageInstances[k].shutdown()));
-        });
+        Object.values(this._storageInstances).map(s => s.shutdown());
     }
 }
 //# sourceMappingURL=storage-provider-factory.js.map
