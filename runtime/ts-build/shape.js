@@ -11,7 +11,7 @@ import { assert } from '../../platform/assert-web.js';
 // ShapeHandle {name, direction, type}
 // Slot {name, direction, isRequired, isSet}
 function _fromLiteral(member) {
-    if (!!member && typeof member == 'object') {
+    if (!!member && typeof member === 'object') {
         return Type.fromLiteral(member);
     }
     return member;
@@ -164,17 +164,17 @@ ${this._slotsToManifestString()}
             const handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
             for (const handleMatch of handleMatches) {
                 // no match!
-                if (handleMatch.match.length == 0) {
+                if (handleMatch.match.length === 0) {
                     return null;
                 }
-                if (handleMatch.match.length == 1) {
+                if (handleMatch.match.length === 1) {
                     handleMap.set(handleMatch.handle, handleMatch.match[0]);
                     otherHandles.delete(handleMatch.match[0]);
                     handles.delete(handleMatch.handle);
                 }
             }
             // no progress!
-            if (handles.size == sizeCheck) {
+            if (handles.size === sizeCheck) {
                 return null;
             }
             sizeCheck = handles.size;
@@ -214,10 +214,10 @@ ${this._slotsToManifestString()}
         return true;
     }
     _equalHandle(handle, otherHandle) {
-        return handle.name == otherHandle.name && handle.direction == otherHandle.direction && handle.type.equals(otherHandle.type);
+        return handle.name === otherHandle.name && handle.direction === otherHandle.direction && handle.type.equals(otherHandle.type);
     }
     _equalSlot(slot, otherSlot) {
-        return slot.name == otherSlot.name && slot.direction == otherSlot.direction && slot.isRequired == otherSlot.isRequired && slot.isSet == otherSlot.isSet;
+        return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
     }
     _equalItems(otherItems, items, compareItem) {
         for (const otherItem of otherItems) {
@@ -313,7 +313,7 @@ ${this._slotsToManifestString()}
         const exclusions = [];
         // TODO: this probably doesn't deal with multiple match options.
         function choose(list, exclusions) {
-            if (list.length == 0) {
+            if (list.length === 0) {
                 return [];
             }
             const thisLevel = list.pop();

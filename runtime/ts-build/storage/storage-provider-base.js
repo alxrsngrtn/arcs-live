@@ -58,7 +58,7 @@ export class StorageProviderBase {
     _fire(kind, details) {
         return __awaiter(this, void 0, void 0, function* () {
             const listenerMap = this.listeners.get(kind);
-            if (!listenerMap || listenerMap.size == 0) {
+            if (!listenerMap || listenerMap.size === 0) {
                 return;
             }
             const trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::_fire', args: { kind, type: this.type.tag,
@@ -77,13 +77,13 @@ export class StorageProviderBase {
     }
     _compareTo(other) {
         let cmp;
-        if ((cmp = util.compareStrings(this.name, other.name)) != 0)
+        if ((cmp = util.compareStrings(this.name, other.name)) !== 0)
             return cmp;
-        if ((cmp = util.compareNumbers(this.version, other.version)) != 0)
+        if ((cmp = util.compareNumbers(this.version, other.version)) !== 0)
             return cmp;
-        if ((cmp = util.compareStrings(this.source, other.source)) != 0)
+        if ((cmp = util.compareStrings(this.source, other.source)) !== 0)
             return cmp;
-        if ((cmp = util.compareStrings(this.id, other.id)) != 0)
+        if ((cmp = util.compareStrings(this.id, other.id)) !== 0)
             return cmp;
         return 0;
     }

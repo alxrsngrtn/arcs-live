@@ -23339,11 +23339,11 @@ class Schema {
     }
     static typesEqual(fieldType1, fieldType2) {
         // TODO: structural check instead of stringification.
-        return Schema._typeString(fieldType1) == Schema._typeString(fieldType2);
+        return Schema._typeString(fieldType1) === Schema._typeString(fieldType2);
     }
     static _typeString(type) {
-        if (typeof (type) != 'object') {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof type == 'string');
+        if (typeof (type) !== 'object') {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof type === 'string');
             return type;
         }
         switch (type.kind) {
@@ -23388,7 +23388,7 @@ class Schema {
         });
     }
     equals(otherSchema) {
-        return this === otherSchema || (this.name == otherSchema.name
+        return this === otherSchema || (this.name === otherSchema.name
             // TODO: Check equality without calling contains.
             && this.isMoreSpecificThan(otherSchema)
             && otherSchema.isMoreSpecificThan(this));
@@ -23469,7 +23469,7 @@ class Schema {
                     if (!Array.isArray(value)) {
                         throw new TypeError(`Cannot ${op} tuple ${name} with non-array value '${value}'`);
                     }
-                    if (value.length != fieldType.types.length) {
+                    if (value.length !== fieldType.types.length) {
                         throw new TypeError(`Length mismatch ${op}ting tuple ${name} ` +
                             `[${fieldType.types}] with value '${value}'`);
                     }
@@ -23490,7 +23490,7 @@ class Schema {
                 super(userIDComponent);
                 this.rawData = new Proxy({}, {
                     get: (target, name) => {
-                        if (classJunk.includes(name) || name.constructor == Symbol) {
+                        if (classJunk.includes(name) || name.constructor === Symbol) {
                             return undefined;
                         }
                         const value = target[name];
@@ -23551,7 +23551,7 @@ class Schema {
         if (Object.keys(this.description).length > 0) {
             results.push(`  description \`${this.description.pattern}\``);
             for (const name of Object.keys(this.description)) {
-                if (name != 'pattern') {
+                if (name !== 'pattern') {
                     results.push(`    ${name} \`${this.description[name]}\``);
                 }
             }
@@ -23589,7 +23589,7 @@ __webpack_require__.r(__webpack_exports__);
 // ShapeHandle {name, direction, type}
 // Slot {name, direction, isRequired, isSet}
 function _fromLiteral(member) {
-    if (!!member && typeof member == 'object') {
+    if (!!member && typeof member === 'object') {
         return _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(member);
     }
     return member;
@@ -23742,17 +23742,17 @@ ${this._slotsToManifestString()}
             const handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
             for (const handleMatch of handleMatches) {
                 // no match!
-                if (handleMatch.match.length == 0) {
+                if (handleMatch.match.length === 0) {
                     return null;
                 }
-                if (handleMatch.match.length == 1) {
+                if (handleMatch.match.length === 1) {
                     handleMap.set(handleMatch.handle, handleMatch.match[0]);
                     otherHandles.delete(handleMatch.match[0]);
                     handles.delete(handleMatch.handle);
                 }
             }
             // no progress!
-            if (handles.size == sizeCheck) {
+            if (handles.size === sizeCheck) {
                 return null;
             }
             sizeCheck = handles.size;
@@ -23792,10 +23792,10 @@ ${this._slotsToManifestString()}
         return true;
     }
     _equalHandle(handle, otherHandle) {
-        return handle.name == otherHandle.name && handle.direction == otherHandle.direction && handle.type.equals(otherHandle.type);
+        return handle.name === otherHandle.name && handle.direction === otherHandle.direction && handle.type.equals(otherHandle.type);
     }
     _equalSlot(slot, otherSlot) {
-        return slot.name == otherSlot.name && slot.direction == otherSlot.direction && slot.isRequired == otherSlot.isRequired && slot.isSet == otherSlot.isSet;
+        return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
     }
     _equalItems(otherItems, items, compareItem) {
         for (const otherItem of otherItems) {
@@ -23891,7 +23891,7 @@ ${this._slotsToManifestString()}
         const exclusions = [];
         // TODO: this probably doesn't deal with multiple match options.
         function choose(list, exclusions) {
-            if (list.length == 0) {
+            if (list.length === 0) {
                 return [];
             }
             const thisLevel = list.pop();
@@ -23999,7 +23999,7 @@ class CrdtCollectionModel {
                 }
                 item.keys.add(key);
             }
-            if (JSON.stringify(item.value) != JSON.stringify(value)) {
+            if (JSON.stringify(item.value) !== JSON.stringify(value)) {
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(newKeys, 'cannot add without new keys');
                 item.value = value;
                 effective = true;
@@ -24018,7 +24018,7 @@ class CrdtCollectionModel {
         for (const key of keys) {
             item.keys.delete(key);
         }
-        const effective = item.keys.size == 0;
+        const effective = item.keys.size === 0;
         if (effective) {
             this.items.delete(id);
         }
@@ -24117,7 +24117,7 @@ class FirebaseKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
         super();
         let parts = key.split('://');
         this.protocol = parts[0];
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(this.protocol == 'firebase');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(this.protocol === 'firebase');
         if (parts[1]) {
             parts = parts[1].split('/');
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(parts[0].endsWith('.firebaseio.com'));
@@ -24196,7 +24196,7 @@ class FirebaseStorage {
     }
     _join(id, type, key, shouldExist) {
         return __awaiter(this, void 0, void 0, function* () {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(typeof id == 'string');
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(typeof id === 'string');
             key = new FirebaseKey(key);
             // TODO: is it ever going to be possible to autoconstruct new firebase datastores?
             if (key.databaseUrl == undefined || key.apiKey == undefined) {
@@ -24204,7 +24204,7 @@ class FirebaseStorage {
             }
             if (this.apps[key.projectId] == undefined) {
                 for (const app of _platform_firebase_web_js__WEBPACK_IMPORTED_MODULE_1__["firebase"].apps) {
-                    if (app.options.databaseURL == key.databaseUrl) {
+                    if (app.options.databaseURL === key.databaseUrl) {
                         this.apps[key.projectId] = app;
                         break;
                     }
@@ -24222,7 +24222,7 @@ class FirebaseStorage {
             if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
                 return null;
             }
-            if (shouldExist == false || (shouldExist == 'unknown' && currentSnapshot.exists() == false)) {
+            if (shouldExist === false || (shouldExist === 'unknown' && currentSnapshot.exists() === false)) {
                 const result = yield reference.transaction(data => {
                     if (data != null) {
                         return undefined;
@@ -24390,7 +24390,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
             const data = result.snapshot.val();
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(data !== 0);
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(data.version >= this.version);
-            if (this.version != version) {
+            if (this.version !== version) {
                 // A new local modification happened while we were writing the previous one.
                 return this._persistChangesImpl();
             }
@@ -24435,7 +24435,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
                 this.resolveInitialized();
             }
             else {
-                if (JSON.stringify(this.value) == JSON.stringify(value)) {
+                if (JSON.stringify(this.value) === JSON.stringify(value)) {
                     return;
                 }
                 this.version++;
@@ -24484,7 +24484,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         });
     }
     fromLiteral({ version, model }) {
-        const value = model.length == 0 ? null : model[0].value;
+        const value = model.length === 0 ? null : model[0].value;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(value !== undefined);
         this.value = value;
         this.version = version;
@@ -24659,7 +24659,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         this.version = Math.max(this.version + 1, newRemoteState.version);
         this.remoteState = newRemoteState;
         this.resolveInitialized();
-        if (add.length == 0 && remove.length == 0) {
+        if (add.length === 0 && remove.length === 0) {
             // The update had no effect.
             return;
         }
@@ -24700,7 +24700,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             if (value === null) {
                 return;
             }
-            if (keys.length == 0) {
+            if (keys.length === 0) {
                 keys = this.model.getKeys(id);
             }
             // TODO: These keys might already have been removed (concurrently).
@@ -24815,7 +24815,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
                     const localChange = this.localChanges.get(id);
                     localChange.add = localChange.add.filter(key => !add.has(key));
                     localChange.remove = localChange.remove.filter(key => !remove.has(key));
-                    if (localChange.add.length == 0 && localChange.remove.length == 0) {
+                    if (localChange.add.length === 0 && localChange.remove.length === 0) {
                         this.localChanges.delete(id);
                     }
                     // Record details about keys added, so that we can suppress them
@@ -24847,7 +24847,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
                 const referredType = this.type.primitiveType().referenceReferredType;
                 const refSet = new Set();
                 items.forEach(item => refSet.add(item.storageKey));
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(refSet.size == 1);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(refSet.size === 1);
                 const ref = refSet.values().next().value;
                 if (this.backingStore == null) {
                     const backingStore = yield this.storageEngine.share(referredType.toString(), referredType.collectionOf(), ref);
@@ -25160,11 +25160,11 @@ class InMemoryKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
         super();
         let parts = key.split('://');
         this.protocol = parts[0];
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.protocol == 'in-memory');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.protocol === 'in-memory');
         parts = parts[1] ? parts.slice(1).join('://').split('^^') : [];
         this.arcId = parts[0];
         this.location = parts[1];
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.toString() == key);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.toString() === key);
     }
     childKeyForHandle(id) {
         return new InMemoryKey('in-memory://');
@@ -25228,7 +25228,7 @@ class InMemoryStorage {
     share(id, type, keyString) {
         return __awaiter(this, void 0, void 0, function* () {
             const key = new InMemoryKey(keyString);
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(key.arcId == this.arcId.toString());
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(key.arcId === this.arcId.toString());
             if (this._memoryMap[keyString] == undefined) {
                 return this.construct(id, type, keyString);
             }
@@ -25302,7 +25302,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
                 const referredType = this.type.primitiveType().referenceReferredType;
                 const refSet = new Set();
                 items.forEach(item => refSet.add(item.value.storageKey));
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(refSet.size == 1);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(refSet.size === 1);
                 const ref = refSet.values().next().value;
                 if (this._backingStore == null) {
                     this._backingStore = (yield this._storageEngine.share(referredType.toString(), referredType, ref));
@@ -25358,7 +25358,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
     remove(id, keys = [], originatorId = null) {
         return __awaiter(this, void 0, void 0, function* () {
             const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__["Tracing"].start({ cat: 'handle', name: 'InMemoryCollection::remove', args: { name: this.name } });
-            if (keys.length == 0) {
+            if (keys.length === 0) {
                 keys = this._model.getKeys(id);
             }
             const value = this._model.getValue(id);
@@ -25410,7 +25410,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
         });
     }
     fromLiteral({ version, model }) {
-        const value = model.length == 0 ? null : model[0].value;
+        const value = model.length === 0 ? null : model[0].value;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(value !== undefined);
         this._stored = value;
         this.version = version;
@@ -25440,7 +25440,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
                 // If there's a barrier set, then the originating storage-proxy is expecting
                 // a result so we cannot suppress the event here.
                 // TODO(shans): Make sure this is tested.
-                if (this._stored && this._stored.id == value.id && barrier == null) {
+                if (this._stored && this._stored.id === value.id && barrier == null) {
                     return;
                 }
                 const referredType = this.type.referenceReferredType;
@@ -25454,7 +25454,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
             else {
                 // If there's a barrier set, then the originating storage-proxy is expecting
                 // a result so we cannot suppress the event here.
-                if (JSON.stringify(this._stored) == JSON.stringify(value) &&
+                if (JSON.stringify(this._stored) === JSON.stringify(value) &&
                     barrier == null) {
                     return;
                 }
@@ -25627,7 +25627,7 @@ class StorageProviderBase {
     _fire(kind, details) {
         return __awaiter(this, void 0, void 0, function* () {
             const listenerMap = this.listeners.get(kind);
-            if (!listenerMap || listenerMap.size == 0) {
+            if (!listenerMap || listenerMap.size === 0) {
                 return;
             }
             const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__["Tracing"].start({ cat: 'handle', name: 'StorageProviderBase::_fire', args: { kind, type: this.type.tag,
@@ -25646,13 +25646,13 @@ class StorageProviderBase {
     }
     _compareTo(other) {
         let cmp;
-        if ((cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.name, other.name)) != 0)
+        if ((cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.name, other.name)) !== 0)
             return cmp;
-        if ((cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareNumbers"](this.version, other.version)) != 0)
+        if ((cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareNumbers"](this.version, other.version)) !== 0)
             return cmp;
-        if ((cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.source, other.source)) != 0)
+        if ((cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.source, other.source)) !== 0)
             return cmp;
-        if ((cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.id, other.id)) != 0)
+        if ((cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.id, other.id)) !== 0)
             return cmp;
         return 0;
     }
@@ -25793,23 +25793,23 @@ function addType(name, arg = undefined) {
     });
     Object.defineProperty(Type.prototype, `is${name}`, {
         get() {
-            return this.tag == name;
+            return this.tag === name;
         }
     });
 }
 class Type {
     constructor(tag, data) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof tag == 'string');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof tag === 'string');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data);
-        if (tag == 'Entity') {
+        if (tag === 'Entity') {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data instanceof _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"]);
         }
-        if (tag == 'Collection') {
+        if (tag === 'Collection') {
             if (!(data instanceof Type) && data.tag && data.data) {
                 data = new Type(data.tag, data.data);
             }
         }
-        if (tag == 'Variable') {
+        if (tag === 'Variable') {
             if (!(data instanceof _type_variable_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariable"])) {
                 data = new _type_variable_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariable"](data.name, data.constraint);
             }
@@ -26105,7 +26105,7 @@ class Type {
         }
     }
     static fromLiteral(literal) {
-        if (literal.tag == 'SetView') {
+        if (literal.tag === 'SetView') {
             // TODO: SetView is deprecated, remove when possible.
             literal.tag = 'Collection';
         }

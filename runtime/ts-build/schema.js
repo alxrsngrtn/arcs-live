@@ -65,11 +65,11 @@ export class Schema {
     }
     static typesEqual(fieldType1, fieldType2) {
         // TODO: structural check instead of stringification.
-        return Schema._typeString(fieldType1) == Schema._typeString(fieldType2);
+        return Schema._typeString(fieldType1) === Schema._typeString(fieldType2);
     }
     static _typeString(type) {
-        if (typeof (type) != 'object') {
-            assert(typeof type == 'string');
+        if (typeof (type) !== 'object') {
+            assert(typeof type === 'string');
             return type;
         }
         switch (type.kind) {
@@ -114,7 +114,7 @@ export class Schema {
         });
     }
     equals(otherSchema) {
-        return this === otherSchema || (this.name == otherSchema.name
+        return this === otherSchema || (this.name === otherSchema.name
             // TODO: Check equality without calling contains.
             && this.isMoreSpecificThan(otherSchema)
             && otherSchema.isMoreSpecificThan(this));
@@ -195,7 +195,7 @@ export class Schema {
                     if (!Array.isArray(value)) {
                         throw new TypeError(`Cannot ${op} tuple ${name} with non-array value '${value}'`);
                     }
-                    if (value.length != fieldType.types.length) {
+                    if (value.length !== fieldType.types.length) {
                         throw new TypeError(`Length mismatch ${op}ting tuple ${name} ` +
                             `[${fieldType.types}] with value '${value}'`);
                     }
@@ -216,7 +216,7 @@ export class Schema {
                 super(userIDComponent);
                 this.rawData = new Proxy({}, {
                     get: (target, name) => {
-                        if (classJunk.includes(name) || name.constructor == Symbol) {
+                        if (classJunk.includes(name) || name.constructor === Symbol) {
                             return undefined;
                         }
                         const value = target[name];
@@ -277,7 +277,7 @@ export class Schema {
         if (Object.keys(this.description).length > 0) {
             results.push(`  description \`${this.description.pattern}\``);
             for (const name of Object.keys(this.description)) {
-                if (name != 'pattern') {
+                if (name !== 'pattern') {
                     results.push(`    ${name} \`${this.description[name]}\``);
                 }
             }

@@ -4081,11 +4081,11 @@ class Schema {
     }
     static typesEqual(fieldType1, fieldType2) {
         // TODO: structural check instead of stringification.
-        return Schema._typeString(fieldType1) == Schema._typeString(fieldType2);
+        return Schema._typeString(fieldType1) === Schema._typeString(fieldType2);
     }
     static _typeString(type) {
-        if (typeof (type) != 'object') {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof type == 'string');
+        if (typeof (type) !== 'object') {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof type === 'string');
             return type;
         }
         switch (type.kind) {
@@ -4130,7 +4130,7 @@ class Schema {
         });
     }
     equals(otherSchema) {
-        return this === otherSchema || (this.name == otherSchema.name
+        return this === otherSchema || (this.name === otherSchema.name
             // TODO: Check equality without calling contains.
             && this.isMoreSpecificThan(otherSchema)
             && otherSchema.isMoreSpecificThan(this));
@@ -4211,7 +4211,7 @@ class Schema {
                     if (!Array.isArray(value)) {
                         throw new TypeError(`Cannot ${op} tuple ${name} with non-array value '${value}'`);
                     }
-                    if (value.length != fieldType.types.length) {
+                    if (value.length !== fieldType.types.length) {
                         throw new TypeError(`Length mismatch ${op}ting tuple ${name} ` +
                             `[${fieldType.types}] with value '${value}'`);
                     }
@@ -4232,7 +4232,7 @@ class Schema {
                 super(userIDComponent);
                 this.rawData = new Proxy({}, {
                     get: (target, name) => {
-                        if (classJunk.includes(name) || name.constructor == Symbol) {
+                        if (classJunk.includes(name) || name.constructor === Symbol) {
                             return undefined;
                         }
                         const value = target[name];
@@ -4293,7 +4293,7 @@ class Schema {
         if (Object.keys(this.description).length > 0) {
             results.push(`  description \`${this.description.pattern}\``);
             for (const name of Object.keys(this.description)) {
-                if (name != 'pattern') {
+                if (name !== 'pattern') {
                     results.push(`    ${name} \`${this.description[name]}\``);
                 }
             }
@@ -4331,7 +4331,7 @@ __webpack_require__.r(__webpack_exports__);
 // ShapeHandle {name, direction, type}
 // Slot {name, direction, isRequired, isSet}
 function _fromLiteral(member) {
-    if (!!member && typeof member == 'object') {
+    if (!!member && typeof member === 'object') {
         return _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(member);
     }
     return member;
@@ -4484,17 +4484,17 @@ ${this._slotsToManifestString()}
             const handleMatches = [...handles.values()].map(handle => ({ handle, match: [...otherHandles.values()].filter(otherHandle => this._equalHandle(handle, otherHandle)) }));
             for (const handleMatch of handleMatches) {
                 // no match!
-                if (handleMatch.match.length == 0) {
+                if (handleMatch.match.length === 0) {
                     return null;
                 }
-                if (handleMatch.match.length == 1) {
+                if (handleMatch.match.length === 1) {
                     handleMap.set(handleMatch.handle, handleMatch.match[0]);
                     otherHandles.delete(handleMatch.match[0]);
                     handles.delete(handleMatch.handle);
                 }
             }
             // no progress!
-            if (handles.size == sizeCheck) {
+            if (handles.size === sizeCheck) {
                 return null;
             }
             sizeCheck = handles.size;
@@ -4534,10 +4534,10 @@ ${this._slotsToManifestString()}
         return true;
     }
     _equalHandle(handle, otherHandle) {
-        return handle.name == otherHandle.name && handle.direction == otherHandle.direction && handle.type.equals(otherHandle.type);
+        return handle.name === otherHandle.name && handle.direction === otherHandle.direction && handle.type.equals(otherHandle.type);
     }
     _equalSlot(slot, otherSlot) {
-        return slot.name == otherSlot.name && slot.direction == otherSlot.direction && slot.isRequired == otherSlot.isRequired && slot.isSet == otherSlot.isSet;
+        return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
     }
     _equalItems(otherItems, items, compareItem) {
         for (const otherItem of otherItems) {
@@ -4633,7 +4633,7 @@ ${this._slotsToManifestString()}
         const exclusions = [];
         // TODO: this probably doesn't deal with multiple match options.
         function choose(list, exclusions) {
-            if (list.length == 0) {
+            if (list.length === 0) {
                 return [];
             }
             const thisLevel = list.pop();
@@ -4741,7 +4741,7 @@ class CrdtCollectionModel {
                 }
                 item.keys.add(key);
             }
-            if (JSON.stringify(item.value) != JSON.stringify(value)) {
+            if (JSON.stringify(item.value) !== JSON.stringify(value)) {
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(newKeys, 'cannot add without new keys');
                 item.value = value;
                 effective = true;
@@ -4760,7 +4760,7 @@ class CrdtCollectionModel {
         for (const key of keys) {
             item.keys.delete(key);
         }
-        const effective = item.keys.size == 0;
+        const effective = item.keys.size === 0;
         if (effective) {
             this.items.delete(id);
         }
@@ -4833,23 +4833,23 @@ function addType(name, arg = undefined) {
     });
     Object.defineProperty(Type.prototype, `is${name}`, {
         get() {
-            return this.tag == name;
+            return this.tag === name;
         }
     });
 }
 class Type {
     constructor(tag, data) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof tag == 'string');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof tag === 'string');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data);
-        if (tag == 'Entity') {
+        if (tag === 'Entity') {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data instanceof _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"]);
         }
-        if (tag == 'Collection') {
+        if (tag === 'Collection') {
             if (!(data instanceof Type) && data.tag && data.data) {
                 data = new Type(data.tag, data.data);
             }
         }
-        if (tag == 'Variable') {
+        if (tag === 'Variable') {
             if (!(data instanceof _type_variable_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariable"])) {
                 data = new _type_variable_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariable"](data.name, data.constraint);
             }
@@ -5145,7 +5145,7 @@ class Type {
         }
     }
     static fromLiteral(literal) {
-        if (literal.tag == 'SetView') {
+        if (literal.tag === 'SetView') {
             // TODO: SetView is deprecated, remove when possible.
             literal.tag = 'Collection';
         }

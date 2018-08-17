@@ -1,15 +1,8 @@
-commit 08034f64735ec4cf2f8bb49647eb9d46dd93d526
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Thu Aug 16 16:51:38 2018 -0700
+commit 6c22f3f0daf933ea79ae611dec6aba96b57f7ef7
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Aug 16 20:19:24 2018 -0700
 
-    Allow node modules to be loaded using non-filesystem paths from non-node-modules (#1781)
+    Triple Equals cleanups (#1784)
     
-    Currently the module loader allows an import like
-    
-    import {Foo} from 'Bar'
-    
-    If 'Bar' lives in the node_modules directory and the file that is referencing
-    it is also located in the node_modules directory, otherwise an error is thrown.
-    
-    This change allows node_modules to be loaded without filesystem paths from
-    any module.
+    - Allow comparing with undefined
+    - Adjust remaining usages to ===

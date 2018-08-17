@@ -28,11 +28,11 @@ class InMemoryKey extends KeyBase {
         super();
         let parts = key.split('://');
         this.protocol = parts[0];
-        assert(this.protocol == 'in-memory');
+        assert(this.protocol === 'in-memory');
         parts = parts[1] ? parts.slice(1).join('://').split('^^') : [];
         this.arcId = parts[0];
         this.location = parts[1];
-        assert(this.toString() == key);
+        assert(this.toString() === key);
     }
     childKeyForHandle(id) {
         return new InMemoryKey('in-memory://');
@@ -96,7 +96,7 @@ export class InMemoryStorage {
     share(id, type, keyString) {
         return __awaiter(this, void 0, void 0, function* () {
             const key = new InMemoryKey(keyString);
-            assert(key.arcId == this.arcId.toString());
+            assert(key.arcId === this.arcId.toString());
             if (this._memoryMap[keyString] == undefined) {
                 return this.construct(id, type, keyString);
             }
@@ -170,7 +170,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
                 const referredType = this.type.primitiveType().referenceReferredType;
                 const refSet = new Set();
                 items.forEach(item => refSet.add(item.value.storageKey));
-                assert(refSet.size == 1);
+                assert(refSet.size === 1);
                 const ref = refSet.values().next().value;
                 if (this._backingStore == null) {
                     this._backingStore = (yield this._storageEngine.share(referredType.toString(), referredType, ref));
@@ -226,7 +226,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
     remove(id, keys = [], originatorId = null) {
         return __awaiter(this, void 0, void 0, function* () {
             const trace = Tracing.start({ cat: 'handle', name: 'InMemoryCollection::remove', args: { name: this.name } });
-            if (keys.length == 0) {
+            if (keys.length === 0) {
                 keys = this._model.getKeys(id);
             }
             const value = this._model.getValue(id);
@@ -278,7 +278,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
         });
     }
     fromLiteral({ version, model }) {
-        const value = model.length == 0 ? null : model[0].value;
+        const value = model.length === 0 ? null : model[0].value;
         assert(value !== undefined);
         this._stored = value;
         this.version = version;
@@ -308,7 +308,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
                 // If there's a barrier set, then the originating storage-proxy is expecting
                 // a result so we cannot suppress the event here.
                 // TODO(shans): Make sure this is tested.
-                if (this._stored && this._stored.id == value.id && barrier == null) {
+                if (this._stored && this._stored.id === value.id && barrier == null) {
                     return;
                 }
                 const referredType = this.type.referenceReferredType;
@@ -322,7 +322,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
             else {
                 // If there's a barrier set, then the originating storage-proxy is expecting
                 // a result so we cannot suppress the event here.
-                if (JSON.stringify(this._stored) == JSON.stringify(value) &&
+                if (JSON.stringify(this._stored) === JSON.stringify(value) &&
                     barrier == null) {
                     return;
                 }

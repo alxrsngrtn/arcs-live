@@ -43,7 +43,7 @@ class FirebaseKey extends KeyBase {
         super();
         let parts = key.split('://');
         this.protocol = parts[0];
-        assert(this.protocol == 'firebase');
+        assert(this.protocol === 'firebase');
         if (parts[1]) {
             parts = parts[1].split('/');
             assert(parts[0].endsWith('.firebaseio.com'));
@@ -122,7 +122,7 @@ export class FirebaseStorage {
     }
     _join(id, type, key, shouldExist) {
         return __awaiter(this, void 0, void 0, function* () {
-            assert(typeof id == 'string');
+            assert(typeof id === 'string');
             key = new FirebaseKey(key);
             // TODO: is it ever going to be possible to autoconstruct new firebase datastores?
             if (key.databaseUrl == undefined || key.apiKey == undefined) {
@@ -130,7 +130,7 @@ export class FirebaseStorage {
             }
             if (this.apps[key.projectId] == undefined) {
                 for (const app of firebase.apps) {
-                    if (app.options.databaseURL == key.databaseUrl) {
+                    if (app.options.databaseURL === key.databaseUrl) {
                         this.apps[key.projectId] = app;
                         break;
                     }
@@ -148,7 +148,7 @@ export class FirebaseStorage {
             if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
                 return null;
             }
-            if (shouldExist == false || (shouldExist == 'unknown' && currentSnapshot.exists() == false)) {
+            if (shouldExist === false || (shouldExist === 'unknown' && currentSnapshot.exists() === false)) {
                 const result = yield reference.transaction(data => {
                     if (data != null) {
                         return undefined;
@@ -316,7 +316,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
             const data = result.snapshot.val();
             assert(data !== 0);
             assert(data.version >= this.version);
-            if (this.version != version) {
+            if (this.version !== version) {
                 // A new local modification happened while we were writing the previous one.
                 return this._persistChangesImpl();
             }
@@ -361,7 +361,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
                 this.resolveInitialized();
             }
             else {
-                if (JSON.stringify(this.value) == JSON.stringify(value)) {
+                if (JSON.stringify(this.value) === JSON.stringify(value)) {
                     return;
                 }
                 this.version++;
@@ -410,7 +410,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         });
     }
     fromLiteral({ version, model }) {
-        const value = model.length == 0 ? null : model[0].value;
+        const value = model.length === 0 ? null : model[0].value;
         assert(value !== undefined);
         this.value = value;
         this.version = version;
@@ -585,7 +585,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         this.version = Math.max(this.version + 1, newRemoteState.version);
         this.remoteState = newRemoteState;
         this.resolveInitialized();
-        if (add.length == 0 && remove.length == 0) {
+        if (add.length === 0 && remove.length === 0) {
             // The update had no effect.
             return;
         }
@@ -626,7 +626,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             if (value === null) {
                 return;
             }
-            if (keys.length == 0) {
+            if (keys.length === 0) {
                 keys = this.model.getKeys(id);
             }
             // TODO: These keys might already have been removed (concurrently).
@@ -741,7 +741,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
                     const localChange = this.localChanges.get(id);
                     localChange.add = localChange.add.filter(key => !add.has(key));
                     localChange.remove = localChange.remove.filter(key => !remove.has(key));
-                    if (localChange.add.length == 0 && localChange.remove.length == 0) {
+                    if (localChange.add.length === 0 && localChange.remove.length === 0) {
                         this.localChanges.delete(id);
                     }
                     // Record details about keys added, so that we can suppress them
@@ -773,7 +773,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
                 const referredType = this.type.primitiveType().referenceReferredType;
                 const refSet = new Set();
                 items.forEach(item => refSet.add(item.storageKey));
-                assert(refSet.size == 1);
+                assert(refSet.size === 1);
                 const ref = refSet.values().next().value;
                 if (this.backingStore == null) {
                     const backingStore = yield this.storageEngine.share(referredType.toString(), referredType.collectionOf(), ref);

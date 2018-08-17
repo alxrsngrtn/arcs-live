@@ -19,23 +19,23 @@ function addType(name, arg = undefined) {
     });
     Object.defineProperty(Type.prototype, `is${name}`, {
         get() {
-            return this.tag == name;
+            return this.tag === name;
         }
     });
 }
 export class Type {
     constructor(tag, data) {
-        assert(typeof tag == 'string');
+        assert(typeof tag === 'string');
         assert(data);
-        if (tag == 'Entity') {
+        if (tag === 'Entity') {
             assert(data instanceof Schema);
         }
-        if (tag == 'Collection') {
+        if (tag === 'Collection') {
             if (!(data instanceof Type) && data.tag && data.data) {
                 data = new Type(data.tag, data.data);
             }
         }
-        if (tag == 'Variable') {
+        if (tag === 'Variable') {
             if (!(data instanceof TypeVariable)) {
                 data = new TypeVariable(data.name, data.constraint);
             }
@@ -331,7 +331,7 @@ export class Type {
         }
     }
     static fromLiteral(literal) {
-        if (literal.tag == 'SetView') {
+        if (literal.tag === 'SetView') {
             // TODO: SetView is deprecated, remove when possible.
             literal.tag = 'Collection';
         }
