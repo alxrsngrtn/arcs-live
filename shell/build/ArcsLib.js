@@ -23241,20 +23241,17 @@ class SeededRNG extends RNG {
         return this.seed;
     }
 }
-var Random;
-(function (Random) {
-    // Singleton Pattern
-    let random = new MathRandomRNG();
-    function next() {
+// Singleton Pattern
+let random = new MathRandomRNG();
+class Random {
+    static next() {
         return random.next();
     }
-    Random.next = next;
     // TODO: remove test code and allow for injectable implementations.
-    function seedForTests() {
+    static seedForTests() {
         random = new SeededRNG();
     }
-    Random.seedForTests = seedForTests;
-})(Random || (Random = {}));
+}
 //# sourceMappingURL=random.js.map
 
 /***/ }),
@@ -23958,14 +23955,6 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-// Bulding block for CRDT collections. Tracks the membership (keys) of
-// values identified by unique IDs. A value is considered to be part
-// of the collection if the set of keys added by calls to
-// `add(id, ..., keys)` minus the set of keys removed by calls to
-// `remove(id, keys)` is non-empty.
-//
-// Note: This implementation does not guard against the case of the
-// same membership key being added more than once. Don't do that.
 class CrdtCollectionModel {
     constructor(model = undefined) {
         // id => {value, Set[keys]}
@@ -24333,7 +24322,7 @@ class FirebaseStorageProvider extends _storage_provider_base__WEBPACK_IMPORTED_M
 // (by incrementing) may not match the final state that is
 // written to firebase (if there are concurrent changes in
 // firebase, or if we have queued up multiple local
-// modiciations), but the result will always be
+// modifications), but the result will always be
 // monotonically increasing.
 class FirebaseVariable extends FirebaseStorageProvider {
     constructor(type, storageEngine, id, reference, firebaseKey, shouldExist) {
@@ -25155,7 +25144,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 function resetInMemoryStorageForTesting() {
-    for (const key in __storageCache) {
+    for (const key of Object.keys(__storageCache)) {
         __storageCache[key]._memoryMap = {};
     }
 }
@@ -25183,6 +25172,7 @@ class InMemoryKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
         return `${this.protocol}`;
     }
 }
+// tslint:disable-next-line: variable-name
 const __storageCache = {};
 class InMemoryStorage {
     constructor(arcId) {
@@ -25470,7 +25460,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
     }
     clear(originatorId = null, barrier = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.set(null, originatorId, barrier);
+            yield this.set(null, originatorId, barrier);
         });
     }
 }
@@ -25650,13 +25640,17 @@ class StorageProviderBase {
     }
     _compareTo(other) {
         let cmp;
-        if ((cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.name, other.name)) !== 0)
+        cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.name, other.name);
+        if (cmp !== 0)
             return cmp;
-        if ((cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareNumbers"](this.version, other.version)) !== 0)
+        cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareNumbers"](this.version, other.version);
+        if (cmp !== 0)
             return cmp;
-        if ((cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.source, other.source)) !== 0)
+        cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.source, other.source);
+        if (cmp !== 0)
             return cmp;
-        if ((cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.id, other.id)) !== 0)
+        cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.id, other.id);
+        if (cmp !== 0)
             return cmp;
         return 0;
     }

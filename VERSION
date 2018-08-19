@@ -1,5 +1,15 @@
-commit c11cce02da13e865dfc9d31e76335091f660f176
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Aug 16 21:52:29 2018 -0700
+commit 6bdd843f1b26b06990837523235ef9f5eafa0677
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Sun Aug 19 12:34:38 2018 -0700
 
-    Fix shutdown of firebase apps in manual tests (#1785)
+    Clean up remaining typescript lint issues and enable tslint (#1787)
+    
+    - Change Random from a namespace to static class
+    - Add readonly for parameters where possible
+    - Disable some difficult 'any' usages
+    - Add Handle/Slot interfaces in shape.js
+    - Add Model to crdt-collection and expand the items typing
+    - Use Object.keys in in-memory-storage
+    - ... and various other type fixes
+    
+    Addresses #1765

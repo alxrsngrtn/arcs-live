@@ -4700,14 +4700,6 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-// Bulding block for CRDT collections. Tracks the membership (keys) of
-// values identified by unique IDs. A value is considered to be part
-// of the collection if the set of keys added by calls to
-// `add(id, ..., keys)` minus the set of keys removed by calls to
-// `remove(id, keys)` is non-empty.
-//
-// Note: This implementation does not guard against the case of the
-// same membership key being added more than once. Don't do that.
 class CrdtCollectionModel {
     constructor(model = undefined) {
         // id => {value, Set[keys]}

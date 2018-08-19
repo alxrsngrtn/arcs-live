@@ -77,13 +77,17 @@ export class StorageProviderBase {
     }
     _compareTo(other) {
         let cmp;
-        if ((cmp = util.compareStrings(this.name, other.name)) !== 0)
+        cmp = util.compareStrings(this.name, other.name);
+        if (cmp !== 0)
             return cmp;
-        if ((cmp = util.compareNumbers(this.version, other.version)) !== 0)
+        cmp = util.compareNumbers(this.version, other.version);
+        if (cmp !== 0)
             return cmp;
-        if ((cmp = util.compareStrings(this.source, other.source)) !== 0)
+        cmp = util.compareStrings(this.source, other.source);
+        if (cmp !== 0)
             return cmp;
-        if ((cmp = util.compareStrings(this.id, other.id)) !== 0)
+        cmp = util.compareStrings(this.id, other.id);
+        if (cmp !== 0)
             return cmp;
         return 0;
     }

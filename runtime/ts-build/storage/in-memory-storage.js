@@ -19,7 +19,7 @@ import { StorageProviderBase } from './storage-provider-base.js';
 import { KeyBase } from './key-base.js';
 import { CrdtCollectionModel } from './crdt-collection-model.js';
 export function resetInMemoryStorageForTesting() {
-    for (const key in __storageCache) {
+    for (const key of Object.keys(__storageCache)) {
         __storageCache[key]._memoryMap = {};
     }
 }
@@ -47,6 +47,7 @@ class InMemoryKey extends KeyBase {
         return `${this.protocol}`;
     }
 }
+// tslint:disable-next-line: variable-name
 const __storageCache = {};
 export class InMemoryStorage {
     constructor(arcId) {
@@ -334,7 +335,7 @@ class InMemoryVariable extends InMemoryStorageProvider {
     }
     clear(originatorId = null, barrier = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.set(null, originatorId, barrier);
+            yield this.set(null, originatorId, barrier);
         });
     }
 }

@@ -259,7 +259,7 @@ class FirebaseStorageProvider extends StorageProviderBase {
 // (by incrementing) may not match the final state that is
 // written to firebase (if there are concurrent changes in
 // firebase, or if we have queued up multiple local
-// modiciations), but the result will always be
+// modifications), but the result will always be
 // monotonically increasing.
 class FirebaseVariable extends FirebaseStorageProvider {
     constructor(type, storageEngine, id, reference, firebaseKey, shouldExist) {

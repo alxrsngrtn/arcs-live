@@ -30,18 +30,15 @@ class SeededRNG extends RNG {
         return this.seed;
     }
 }
-export var Random;
-(function (Random) {
-    // Singleton Pattern
-    let random = new MathRandomRNG();
-    function next() {
+// Singleton Pattern
+let random = new MathRandomRNG();
+export class Random {
+    static next() {
         return random.next();
     }
-    Random.next = next;
     // TODO: remove test code and allow for injectable implementations.
-    function seedForTests() {
+    static seedForTests() {
         random = new SeededRNG();
     }
-    Random.seedForTests = seedForTests;
-})(Random || (Random = {}));
+}
 //# sourceMappingURL=random.js.map
