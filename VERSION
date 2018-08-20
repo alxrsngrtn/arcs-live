@@ -1,15 +1,13 @@
-commit 6bdd843f1b26b06990837523235ef9f5eafa0677
+commit 9640e3a80a4e40302efcd719519728710958ff0f
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Sun Aug 19 12:34:38 2018 -0700
+Date:   Mon Aug 20 16:50:47 2018 -0700
 
-    Clean up remaining typescript lint issues and enable tslint (#1787)
+    Prepare for testing in TypeScript (#1792)
     
-    - Change Random from a namespace to static class
-    - Add readonly for parameters where possible
-    - Disable some difficult 'any' usages
-    - Add Handle/Slot interfaces in shape.js
-    - Add Model to crdt-collection and expand the items typing
-    - Use Object.keys in in-memory-storage
-    - ... and various other type fixes
+    * Prepare for testing in TypeScript
+    
+    - Update Mocha to 5.2.0
+    - Introduce @types/chai and @types/mocha
+    - Introduce ts-node
     
     Addresses #1765
