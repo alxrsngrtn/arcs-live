@@ -1,21 +1,12 @@
-commit a7035a0512d83919726449407ebd023523e4ee72
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Aug 21 16:46:52 2018 -0700
+commit 75e8c852790bfbe71c2a1c3885ba518f1ecb23b6
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Aug 21 16:47:34 2018 -0700
 
-    Mi-Toast Pipe Implementation (#1794)
+    Prepare for enabling Typescript strictNullChecks (#1793)
     
-    * construct mi-toast communication pipe, plumb it into app-shell
+    - Add missing type information
+    - Avoid undefined databaseUrl and throw errors instead of assert
+    - Add 'null' to class members where currently used
+    - Add TODO in firebase-storage to fix null version usage.
     
-    * Create TVMaze artifacts in main
-    
-    * fixup TVMaze artifacts, add  to canonical set
-    
-    * mi-toast-pipe plumbing
-    
-    * implement round-trip suggestion processing
-    
-    * temporarily disable 'current plans' check
-    
-    * enable FindShow (one) [vs QueryShow (many)]
-    
-    * address lint problems
+    Addresses #1765

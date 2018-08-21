@@ -24110,9 +24110,13 @@ class FirebaseKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(this.protocol === 'firebase');
         if (parts[1]) {
             parts = parts[1].split('/');
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(parts[0].endsWith('.firebaseio.com'));
             this.databaseUrl = parts[0];
-            this.projectId = this.databaseUrl.split('.')[0];
+            if (this.databaseUrl && this.databaseUrl.endsWith('.firebaseio.com')) {
+                this.projectId = this.databaseUrl.split('.')[0];
+            }
+            else {
+                throw new Error("FirebaseKey must end with .firebaseio.com");
+            }
             this.apiKey = parts[1];
             this.location = parts.slice(2).join('/');
         }
@@ -24336,6 +24340,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         // Monotonic version, initialized via response from firebase,
         // or a call to `set` (as 0). Updated on changes from firebase
         // or during local modifications.
+        // TODO Replace this nullness with a uninitialized boolean.
         this.version = null;
         // Whether `this.value` is affected by a local modification.
         // When this is true we are still in the process of writing
@@ -24464,13 +24469,11 @@ class FirebaseVariable extends FirebaseStorageProvider {
             yield this.initialized;
             // fixme: think about if there are local mutations...
             const value = this.value;
-            let model = [];
-            if (value != null) {
-                model = [{
+            const model = (value == null) ? [] :
+                [{
                         id: value.id,
                         value,
                     }];
-            }
             return {
                 version: this.version,
                 model,
@@ -24488,17 +24491,17 @@ function setDiff(from, to) {
     const add = [];
     const remove = [];
     const items = new Set([...from, ...to]);
-    from = new Set(from);
-    to = new Set(to);
+    const fromSet = new Set(from);
+    const toSet = new Set(to);
     for (const item of items) {
-        if (from.has(item)) {
-            if (to.has(item)) {
+        if (fromSet.has(item)) {
+            if (toSet.has(item)) {
                 continue;
             }
             remove.push(item);
             continue;
         }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(to.has(item));
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(toSet.has(item));
         add.push(item);
     }
     return { remove, add };
@@ -25582,7 +25585,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 var EventKind;
 (function (EventKind) {
-    EventKind[EventKind["change"] = 0] = "change";
+    EventKind["Change"] = "change";
 })(EventKind || (EventKind = {}));
 class StorageProviderBase {
     constructor(type, name, id, key) {
@@ -25612,15 +25615,17 @@ class StorageProviderBase {
         return this._type;
     }
     // TODO: add 'once' which returns a promise.
-    on(kind, callback, target) {
+    on(kindStr, callback, target) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(target !== undefined, 'must provide a target to register a storage event handler');
+        const kind = EventKind[kindStr];
         const listeners = this.listeners.get(kind) || new Map();
         listeners.set(callback, { target });
         this.listeners.set(kind, listeners);
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
-    _fire(kind, details) {
+    _fire(kindStr, details) {
         return __awaiter(this, void 0, void 0, function* () {
+            const kind = EventKind[kindStr];
             const listenerMap = this.listeners.get(kind);
             if (!listenerMap || listenerMap.size === 0) {
                 return;
@@ -25777,7 +25782,7 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-function addType(name, arg = undefined) {
+function addType(name, arg) {
     const lowerName = name[0].toLowerCase() + name.substring(1);
     const upperArg = arg ? arg[0].toUpperCase() + arg.substring(1) : '';
     Object.defineProperty(Type.prototype, `${lowerName}${upperArg}`, {

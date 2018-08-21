@@ -6,7 +6,7 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
-function addType(name, arg = undefined) {
+function addType(name, arg) {
     const lowerName = name[0].toLowerCase() + name.substring(1);
     const upperArg = arg ? arg[0].toUpperCase() + arg.substring(1) : '';
     Object.defineProperty(Type.prototype, `${lowerName}${upperArg}`, {

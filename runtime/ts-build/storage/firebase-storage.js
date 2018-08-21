@@ -46,9 +46,13 @@ class FirebaseKey extends KeyBase {
         assert(this.protocol === 'firebase');
         if (parts[1]) {
             parts = parts[1].split('/');
-            assert(parts[0].endsWith('.firebaseio.com'));
             this.databaseUrl = parts[0];
-            this.projectId = this.databaseUrl.split('.')[0];
+            if (this.databaseUrl && this.databaseUrl.endsWith('.firebaseio.com')) {
+                this.projectId = this.databaseUrl.split('.')[0];
+            }
+            else {
+                throw new Error("FirebaseKey must end with .firebaseio.com");
+            }
             this.apiKey = parts[1];
             this.location = parts.slice(2).join('/');
         }
@@ -272,6 +276,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         // Monotonic version, initialized via response from firebase,
         // or a call to `set` (as 0). Updated on changes from firebase
         // or during local modifications.
+        // TODO Replace this nullness with a uninitialized boolean.
         this.version = null;
         // Whether `this.value` is affected by a local modification.
         // When this is true we are still in the process of writing
@@ -400,13 +405,11 @@ class FirebaseVariable extends FirebaseStorageProvider {
             yield this.initialized;
             // fixme: think about if there are local mutations...
             const value = this.value;
-            let model = [];
-            if (value != null) {
-                model = [{
+            const model = (value == null) ? [] :
+                [{
                         id: value.id,
                         value,
                     }];
-            }
             return {
                 version: this.version,
                 model,
@@ -424,17 +427,17 @@ function setDiff(from, to) {
     const add = [];
     const remove = [];
     const items = new Set([...from, ...to]);
-    from = new Set(from);
-    to = new Set(to);
+    const fromSet = new Set(from);
+    const toSet = new Set(to);
     for (const item of items) {
-        if (from.has(item)) {
-            if (to.has(item)) {
+        if (fromSet.has(item)) {
+            if (toSet.has(item)) {
                 continue;
             }
             remove.push(item);
             continue;
         }
-        assert(to.has(item));
+        assert(toSet.has(item));
         add.push(item);
     }
     return { remove, add };

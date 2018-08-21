@@ -18,7 +18,7 @@ import { Tracing } from '../../../tracelib/trace.js';
 import * as util from '../../recipe/util.js';
 var EventKind;
 (function (EventKind) {
-    EventKind[EventKind["change"] = 0] = "change";
+    EventKind["Change"] = "change";
 })(EventKind || (EventKind = {}));
 export class StorageProviderBase {
     constructor(type, name, id, key) {
@@ -48,15 +48,17 @@ export class StorageProviderBase {
         return this._type;
     }
     // TODO: add 'once' which returns a promise.
-    on(kind, callback, target) {
+    on(kindStr, callback, target) {
         assert(target !== undefined, 'must provide a target to register a storage event handler');
+        const kind = EventKind[kindStr];
         const listeners = this.listeners.get(kind) || new Map();
         listeners.set(callback, { target });
         this.listeners.set(kind, listeners);
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
-    _fire(kind, details) {
+    _fire(kindStr, details) {
         return __awaiter(this, void 0, void 0, function* () {
+            const kind = EventKind[kindStr];
             const listenerMap = this.listeners.get(kind);
             if (!listenerMap || listenerMap.size === 0) {
                 return;
