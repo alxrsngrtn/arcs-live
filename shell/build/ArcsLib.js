@@ -15100,8 +15100,9 @@ class Planificator {
   _onPlanInstantiated(plan) {
     let planString = plan.toString();
     // Check that plan is in this._current.plans
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._current.plans.some(currentPlan => currentPlan.plan.toString() == planString),
-           `The instantiated plan (${plan.toString()}) doesn't appear in the current plans.`);
+    // TODO(sjmiles): disable for mi-toast demo
+    //assert(this._current.plans.some(currentPlan => currentPlan.plan.toString() == planString),
+    //       `The instantiated plan (${plan.toString()}) doesn't appear in the current plans.`);
 
     // Move current to past, and clear current;
     this._past = {plan, plans: this._current.plans, generations: this._current.generations};

@@ -1,13 +1,21 @@
-commit 9640e3a80a4e40302efcd719519728710958ff0f
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Aug 20 16:50:47 2018 -0700
+commit a7035a0512d83919726449407ebd023523e4ee72
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Aug 21 16:46:52 2018 -0700
 
-    Prepare for testing in TypeScript (#1792)
+    Mi-Toast Pipe Implementation (#1794)
     
-    * Prepare for testing in TypeScript
+    * construct mi-toast communication pipe, plumb it into app-shell
     
-    - Update Mocha to 5.2.0
-    - Introduce @types/chai and @types/mocha
-    - Introduce ts-node
+    * Create TVMaze artifacts in main
     
-    Addresses #1765
+    * fixup TVMaze artifacts, add  to canonical set
+    
+    * mi-toast-pipe plumbing
+    
+    * implement round-trip suggestion processing
+    
+    * temporarily disable 'current plans' check
+    
+    * enable FindShow (one) [vs QueryShow (many)]
+    
+    * address lint problems
