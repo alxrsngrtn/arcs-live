@@ -1,9 +1,5 @@
-commit 2b9a1b361479243662dcc154ea6d0b6fd97b8a9d
+commit 1e58cc301dde2ddcc28d9f30d13ea4da381e0e43
 Author: shans <shane.stephens@gmail.com>
-Date:   Wed Aug 22 12:13:00 2018 +1000
+Date:   Wed Aug 22 13:57:25 2018 +1000
 
-    Ensure that firebase stores instantiated by cloning report themselves as (#1796)
-    
-    initialized.
-    
-    Fixes #1783
+    Check local version rather than stored version when asserting version monotonicity. (#1797)

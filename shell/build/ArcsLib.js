@@ -24388,7 +24388,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(result.committed, 'uncommited transaction (offline?) not supported yet');
             const data = result.snapshot.val();
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(data !== 0);
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(data.version >= this.version);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(data.version >= version);
             if (this.version !== version) {
                 // A new local modification happened while we were writing the previous one.
                 return this._persistChangesImpl();
