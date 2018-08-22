@@ -1,5 +1,5 @@
-commit 71338c35a1a5c9920f04f0b186c622a022d1b792
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Aug 22 16:54:48 2018 -0700
+commit 5bd12132152c18e9f99bfb2d6edc6d345cc1e15e
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu Aug 23 09:55:19 2018 +1000
 
-    Make handle-test.js more hermetic (#1801)
+    Use storage shim to extract tags from manifest, as inflated store won't be correct key. (#1802)
