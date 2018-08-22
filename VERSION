@@ -1,12 +1,9 @@
-commit 75e8c852790bfbe71c2a1c3885ba518f1ecb23b6
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Aug 21 16:47:34 2018 -0700
+commit 2b9a1b361479243662dcc154ea6d0b6fd97b8a9d
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Aug 22 12:13:00 2018 +1000
 
-    Prepare for enabling Typescript strictNullChecks (#1793)
+    Ensure that firebase stores instantiated by cloning report themselves as (#1796)
     
-    - Add missing type information
-    - Avoid undefined databaseUrl and throw errors instead of assert
-    - Add 'null' to class members where currently used
-    - Add TODO in firebase-storage to fix null version usage.
+    initialized.
     
-    Addresses #1765
+    Fixes #1783
