@@ -1465,7 +1465,7 @@ ${this.activeRecipe.toString()}`;
    let particleIndex = 0;
    let handleIndex = 0;
    let slotIndex = 0;
-    
+
    this._recipes.forEach(recipe => {
      let arcRecipe = {particles: [], handles: [], slots: [], innerArcs: new Map(), pattern: recipe.pattern};
      recipe.particles.forEach(p => {
@@ -1609,12 +1609,14 @@ ${this.activeRecipe.toString()}`;
               .toString();
     }
 
-    if (storageKey == undefined) {
+    // TODO(sjmiles): use `in-memory` for nosync stores
+    const hasNosyncTag = tags => tags && ((Array.isArray(tags) && tags.includes('nosync')) || tags === 'nosync');
+    if (storageKey == undefined || hasNosyncTag(tags)) {
       storageKey = 'in-memory';
     }
 
     let store = await this._storageProviderFactory.construct(id, type, storageKey);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'stopre with id ${id} already exists');
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'store with id ${id} already exists');
     store.name = name;
 
     this._registerStore(store, tags);
@@ -11544,6 +11546,30 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
     super.setDescriptionPattern('_template_', pattern.template);
     super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
+  }
+  /** @method clearHandle(handleName)
+   * Remove entities from named handle.
+   */
+  async clearHandle(handleName) {
+    const handle = this.handles.get(handleName);
+    if (handle.clear) {
+      handle.clear();
+    } else {
+      const data = this._props[handleName];
+      if (data) {
+        return Promise.all(data.map(entity => handle.remove(entity)));
+      }
+    }
+  }
+  /** @method appendRawDataToHandle(handleName, rawDataArray)
+   * Create an entity from each rawData, and append to named handle.
+   */
+  appendRawDataToHandle(handleName, rawDataArray) {
+    const handle = this.handles.get(handleName);
+    const entityClass = handle.entityClass;
+    rawDataArray.forEach(raw => {
+      handle.store(new entityClass(raw));
+    });
   }
   /** @method updateVariable(handleName, record)
    * Modify value of named handle.
@@ -26902,7 +26928,7 @@ const set = function(notes, map, scope, controller) {
 const _set = function(node, property, value, controller) {
   // TODO(sjmiles): the property conditionals here could be precompiled
   let modifier = property.slice(-1);
-  if (property === 'style%' || property === 'style') {
+  if (property === 'style%' || property === 'style' || property === 'xen:style') {
     if (typeof value === 'string') {
       node.style.cssText = value;
     } else {

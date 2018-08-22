@@ -1,5 +1,16 @@
-commit 1e58cc301dde2ddcc28d9f30d13ea4da381e0e43
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed Aug 22 13:57:25 2018 +1000
+commit 6be42a8cd0992af128b3ed5b898872a74a1a4668
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Aug 22 16:05:00 2018 -0700
 
-    Check local version rather than stored version when asserting version monotonicity. (#1797)
+    Modernize Demo Storage (#1800)
+    
+    * add two more handle-utility methods
+    * some manual-testing infrastructure
+    * default to in-memory storage for stores tagged with `nosync`
+    * plumb context into shell-stores, add experimental context-store (User0) to shell-stores
+    * deserialization timing hack
+    * add dom-particle-base to docs page
+    * support "xen:style" alternative to "style%"
+    * better formatting in store-explorer
+    * clear list before appending, use new base-class utilities
+    * better xen syntax, write subid into attribute instead of property
