@@ -3185,8 +3185,7 @@ class TypeChecker {
     }
 
     for (let item of concreteTypes) {
-      let success = TypeChecker._tryMergeConstraints(baseType, item);
-      if (!success) {
+      if (!TypeChecker._tryMergeConstraints(baseType, item)) {
         return null;
       }
     }
@@ -3195,13 +3194,11 @@ class TypeChecker {
       if (candidate.isVariable == false) {
         return candidate;
       }
-      if (candidate.canReadSubset == null ||
-          candidate.canWriteSuperset == null) {
+      if (candidate.canReadSubset == null || candidate.canWriteSuperset == null) {
         return candidate;
       }
       if (candidate.canReadSubset.isMoreSpecificThan(candidate.canWriteSuperset)) {
-        if (candidate.canWriteSuperset.isMoreSpecificThan(
-                candidate.canReadSubset)) {
+        if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset)) {
           candidate.variable.resolution = candidate.canReadSubset;
         }
         return candidate;
@@ -3212,12 +3209,12 @@ class TypeChecker {
     let candidate = baseType.resolvedType();
 
     if (candidate.isCollection) {
-      candidate = candidate.primitiveType();
-      let resolution = getResolution(candidate);
-      if (resolution == null) {
-        return null;
-      }
-      return resolution.collectionOf();
+      let resolution = getResolution(candidate.collectionType);
+      return (resolution !== null) ? resolution.collectionOf() : null;
+    }
+    if (candidate.isBigCollection) {
+      let resolution = getResolution(candidate.bigCollectionType);
+      return (resolution !== null) ? resolution.bigCollectionOf() : null;
     }
 
     return getResolution(candidate);
@@ -3240,6 +3237,7 @@ class TypeChecker {
         // base variable, onto not.
         primitiveBase.variable.resolution = primitiveOnto;
       }
+      return base;
     } else if (primitiveOnto.isVariable) {
       // onto variable, base not.
       primitiveOnto.variable.resolution = primitiveBase;
@@ -3250,23 +3248,18 @@ class TypeChecker {
         return null;
       }
       return _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newInterface(result);
-    } else {
-      if ((primitiveBase.isCollection && primitiveBase.hasVariable)
-          || (primitiveOnto.isCollection && primitiveOnto.hasVariable)) {
-        // Cannot merge [~a] with a type that is not a variable and not a collection.
-        return null;
-      }
-
-      throw new Error('tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
+    } else if ((primitiveBase.isSomeSortOfCollection() && primitiveBase.hasVariable)
+               || (primitiveOnto.isSomeSortOfCollection() && primitiveOnto.hasVariable)) {
+      // Cannot merge [~a] with a type that is not a variable and not a collection.
+      return null;
     }
-
-    return base;
+    throw new Error('tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
   }
 
   static _tryMergeConstraints(handleType, {type, direction}) {
     let [primitiveHandleType, primitiveConnectionType] = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(handleType.resolvedType(), type.resolvedType());
     if (primitiveHandleType.isVariable) {
-      while (primitiveConnectionType.isCollection) {
+      while (primitiveConnectionType.isSomeSortOfCollection()) {
         if (primitiveHandleType.variable.resolution != null
             || primitiveHandleType.variable.canReadSubset != null
             || primitiveHandleType.variable.canWriteSuperset != null) {
@@ -3276,41 +3269,40 @@ class TypeChecker {
         // If this is an undifferentiated variable then we need to create structure to match against. That's
         // allowed because this variable could represent anything, and it needs to represent this structure
         // in order for type resolution to succeed.
-        primitiveHandleType.variable.resolution = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newCollection(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]('a')));
+        let newVar = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]('a'));
+        primitiveHandleType.variable.resolution = 
+            primitiveConnectionType.isCollection ? _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newCollection(newVar) : _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newBigCollection(newVar);
         let unwrap = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
-        primitiveHandleType = unwrap[0];
-        primitiveConnectionType = unwrap[1];
+        [primitiveHandleType, primitiveConnectionType] = unwrap;
       }
 
       if (direction == 'out' || direction == 'inout' || direction == '`provide') {
         // the canReadSubset of the handle represents the maximal type that can be read from the
         // handle, so we need to intersect out any type that is more specific than the maximal type
         // that could be written.
-        if (!primitiveHandleType.variable.maybeMergeCanReadSubset(
-                primitiveConnectionType.canWriteSuperset)) {
+        if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset)) {
           return false;
         }
       }
       if (direction == 'in' || direction == 'inout' || direction == '`consume') {
         // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
         // so we need to union it with the type that wants to be read here.
-        if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(
-                primitiveConnectionType.canReadSubset)) {
+        if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset)) {
           return false;
         }
       }
     } else {
-      if (primitiveConnectionType.tag !== primitiveHandleType.tag) return false;
+      if (primitiveConnectionType.tag !== primitiveHandleType.tag) {
+        return false;
+      }
 
       if (direction == 'out' || direction == 'inout') {
-        if (!TypeChecker._writeConstraintsApply(
-                primitiveHandleType, primitiveConnectionType)) {
+        if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
           return false;
         }
       }
       if (direction == 'in' || direction == 'inout') {
-        if (!TypeChecker._readConstraintsApply(
-                primitiveHandleType, primitiveConnectionType)) {
+        if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
           return false;
         }
       }
@@ -3360,15 +3352,11 @@ class TypeChecker {
     let [leftType, rightType] = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(resolvedLeft, resolvedRight);
 
     // a variable is compatible with a set only if it is unconstrained.
-    if (leftType.isVariable && rightType.isCollection) {
-      return !(
-          leftType.variable.canReadSubset ||
-          leftType.variable.canWriteSuperset);
+    if (leftType.isVariable && rightType.isSomeSortOfCollection()) {
+      return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
     }
-    if (rightType.isVariable && leftType.isCollection) {
-      return !(
-          rightType.variable.canReadSubset ||
-          rightType.variable.canWriteSuperset);
+    if (rightType.isVariable && leftType.isSomeSortOfCollection()) {
+      return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
     }
 
     if (leftType.isVariable || rightType.isVariable) {
@@ -4860,7 +4848,7 @@ class Type {
         if (tag === 'Entity') {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data instanceof _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"]);
         }
-        if (tag === 'Collection') {
+        if (tag === 'Collection' || tag === 'BigCollection') {
             if (!(data instanceof Type) && data.tag && data.data) {
                 data = new Type(data.tag, data.data);
             }
@@ -4881,6 +4869,9 @@ class Type {
     }
     static newCollection(collection) {
         return new Type('Collection', collection);
+    }
+    static newBigCollection(bigCollection) {
+        return new Type('BigCollection', bigCollection);
     }
     static newRelation(relation) {
         return new Type('Relation', relation);
@@ -4913,12 +4904,14 @@ class Type {
             return variable;
         }
         if (this.isCollection) {
-            const primitiveType = this.primitiveType();
+            const primitiveType = this.collectionType;
             const result = primitiveType.mergeTypeVariablesByName(variableMap);
-            if (result === primitiveType) {
-                return this;
-            }
-            return result.collectionOf();
+            return (result === primitiveType) ? this : result.collectionOf();
+        }
+        if (this.isBigCollection) {
+            const primitiveType = this.bigCollectionType;
+            const result = primitiveType.mergeTypeVariablesByName(variableMap);
+            return (result === primitiveType) ? this : result.bigCollectionOf();
         }
         if (this.isInterface) {
             const shape = this.interfaceShape.clone(new Map());
@@ -4932,7 +4925,10 @@ class Type {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type1 instanceof Type);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type2 instanceof Type);
         if (type1.isCollection && type2.isCollection) {
-            return Type.unwrapPair(type1.primitiveType(), type2.primitiveType());
+            return Type.unwrapPair(type1.collectionType, type2.collectionType);
+        }
+        if (type1.isBigCollection && type2.isBigCollection) {
+            return Type.unwrapPair(type1.bigCollectionType, type2.bigCollectionType);
         }
         return [type1, type2];
     }
@@ -4943,7 +4939,10 @@ class Type {
     }
     _applyExistenceTypeTest(test) {
         if (this.isCollection) {
-            return this.primitiveType()._applyExistenceTypeTest(test);
+            return this.collectionType._applyExistenceTypeTest(test);
+        }
+        if (this.isBigCollection) {
+            return this.bigCollectionType._applyExistenceTypeTest(test);
         }
         if (this.isInterface) {
             return this.interfaceShape._applyExistenceTypeTest(test);
@@ -4963,14 +4962,35 @@ class Type {
     primitiveType() {
         return this.collectionType;
     }
+    elementTypeIfCollection() {
+        if (this.isCollection) {
+            return this.collectionType;
+        }
+        if (this.isBigCollection) {
+            return this.bigCollectionType;
+        }
+        return null;
+    }
+    // TODO: naming is hard
+    isSomeSortOfCollection() {
+        return this.isCollection || this.isBigCollection;
+    }
     collectionOf() {
         return Type.newCollection(this);
     }
+    bigCollectionOf() {
+        return Type.newBigCollection(this);
+    }
     resolvedType() {
         if (this.isCollection) {
-            const primitiveType = this.primitiveType();
+            const primitiveType = this.collectionType;
             const resolvedPrimitiveType = primitiveType.resolvedType();
-            return primitiveType !== resolvedPrimitiveType ? resolvedPrimitiveType.collectionOf() : this;
+            return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.collectionOf() : this;
+        }
+        if (this.isBigCollection) {
+            const primitiveType = this.bigCollectionType;
+            const resolvedPrimitiveType = primitiveType.resolvedType();
+            return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.bigCollectionOf() : this;
         }
         if (this.isVariable) {
             const resolution = this.variable.resolution;
@@ -4998,7 +5018,10 @@ class Type {
             return this.variable.canEnsureResolved();
         }
         if (this.isCollection) {
-            return this.primitiveType().canEnsureResolved();
+            return this.collectionType.canEnsureResolved();
+        }
+        if (this.isBigCollection) {
+            return this.bigCollectionType.canEnsureResolved();
         }
         return true;
     }
@@ -5010,7 +5033,10 @@ class Type {
             return this.variable.maybeEnsureResolved();
         }
         if (this.isCollection) {
-            return this.primitiveType().maybeEnsureResolved();
+            return this.collectionType.maybeEnsureResolved();
+        }
+        if (this.isBigCollection) {
+            return this.bigCollectionType.maybeEnsureResolved();
         }
         return true;
     }
@@ -5175,11 +5201,17 @@ class Type {
         if (this.isCollection) {
             return this.collectionType.hasProperty(property);
         }
+        if (this.isBigCollection) {
+            return this.bigCollectionType.hasProperty(property);
+        }
         return false;
     }
     toString(options = undefined) {
         if (this.isCollection) {
-            return `[${this.primitiveType().toString(options)}]`;
+            return `[${this.collectionType.toString(options)}]`;
+        }
+        if (this.isBigCollection) {
+            return `[${this.bigCollectionType.toString(options)}]`;
         }
         if (this.isEntity) {
             return this.entitySchema.toInlineSchemaString(options);
@@ -5197,7 +5229,10 @@ class Type {
     }
     getEntitySchema() {
         if (this.isCollection) {
-            return this.primitiveType().getEntitySchema();
+            return this.collectionType.getEntitySchema();
+        }
+        if (this.isBigCollection) {
+            return this.bigCollectionType.getEntitySchema();
         }
         if (this.isEntity) {
             return this.entitySchema;
@@ -5212,7 +5247,7 @@ class Type {
         // Try extract the description from schema spec.
         const entitySchema = this.getEntitySchema();
         if (entitySchema) {
-            if (this.isCollection && entitySchema.description.plural) {
+            if (this.isSomeSortOfCollection() && entitySchema.description.plural) {
                 return entitySchema.description.plural;
             }
             if (this.isEntity && entitySchema.description.pattern) {
@@ -5223,7 +5258,11 @@ class Type {
             return JSON.stringify(this.data);
         }
         if (this.isCollection) {
-            return `${this.primitiveType().toPrettyString()} List`;
+            // TODO: s/List/Collection/
+            return `${this.collectionType.toPrettyString()} List`;
+        }
+        if (this.isBigCollection) {
+            return `${this.bigCollectionType.toPrettyString()} BigCollection`;
         }
         if (this.isVariable) {
             return this.variable.isResolved() ? this.resolvedType().toPrettyString() : `[~${this.variable.name}]`;
@@ -5243,6 +5282,7 @@ class Type {
 addType('Entity', 'schema');
 addType('Variable');
 addType('Collection', 'type');
+addType('BigCollection', 'type');
 addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Slot');
@@ -5434,10 +5474,9 @@ class TypeVariable {
   set resolution(value) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(value instanceof _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"]);
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._resolution);
-    let resolvedValue = value.resolvedType();
-    if (resolvedValue.isCollection && resolvedValue.collectionType.isVariable) {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(resolvedValue.collectionType.variable != this,
-        'variable cannot resolve to collection of itself');
+    let elementType = value.resolvedType().elementTypeIfCollection();
+    if (elementType !== null && elementType.isVariable) {
+      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(elementType.variable != this, 'variable cannot resolve to collection of itself');
     }
 
     let probe = value;

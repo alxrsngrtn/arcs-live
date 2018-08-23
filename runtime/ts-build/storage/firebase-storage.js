@@ -192,13 +192,10 @@ class FirebaseStorageProvider extends StorageProviderBase {
     }
     static newProvider(type, storageEngine, id, reference, key, shouldExist) {
         if (type.isCollection) {
-            // FIXME: implement a mechanism for specifying BigCollections in manifests
-            if (id.startsWith('~big~')) {
-                return new FirebaseBigCollection(type, storageEngine, id, reference, key);
-            }
-            else {
-                return new FirebaseCollection(type, storageEngine, id, reference, key);
-            }
+            return new FirebaseCollection(type, storageEngine, id, reference, key);
+        }
+        if (type.isBigCollection) {
+            return new FirebaseBigCollection(type, storageEngine, id, reference, key);
         }
         return new FirebaseVariable(type, storageEngine, id, reference, key, shouldExist);
     }
@@ -300,7 +297,9 @@ class FirebaseVariable extends FirebaseStorageProvider {
         this.value = data.value;
         this.version = data.version;
         this.resolveInitialized();
-        this._fire('change', { data: data.value, version: this.version });
+        // Firebase doesn't maintain a distinction between null and undefined, but we explicitly
+        // require empty variables to store 'null'.
+        this._fire('change', { data: data.value || null, version: this.version });
     }
     get _hasLocalChanges() {
         return this.localModified;

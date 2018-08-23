@@ -30,7 +30,7 @@ export class Type {
         if (tag === 'Entity') {
             assert(data instanceof Schema);
         }
-        if (tag === 'Collection') {
+        if (tag === 'Collection' || tag === 'BigCollection') {
             if (!(data instanceof Type) && data.tag && data.data) {
                 data = new Type(data.tag, data.data);
             }
@@ -51,6 +51,9 @@ export class Type {
     }
     static newCollection(collection) {
         return new Type('Collection', collection);
+    }
+    static newBigCollection(bigCollection) {
+        return new Type('BigCollection', bigCollection);
     }
     static newRelation(relation) {
         return new Type('Relation', relation);
@@ -83,12 +86,14 @@ export class Type {
             return variable;
         }
         if (this.isCollection) {
-            const primitiveType = this.primitiveType();
+            const primitiveType = this.collectionType;
             const result = primitiveType.mergeTypeVariablesByName(variableMap);
-            if (result === primitiveType) {
-                return this;
-            }
-            return result.collectionOf();
+            return (result === primitiveType) ? this : result.collectionOf();
+        }
+        if (this.isBigCollection) {
+            const primitiveType = this.bigCollectionType;
+            const result = primitiveType.mergeTypeVariablesByName(variableMap);
+            return (result === primitiveType) ? this : result.bigCollectionOf();
         }
         if (this.isInterface) {
             const shape = this.interfaceShape.clone(new Map());
@@ -102,7 +107,10 @@ export class Type {
         assert(type1 instanceof Type);
         assert(type2 instanceof Type);
         if (type1.isCollection && type2.isCollection) {
-            return Type.unwrapPair(type1.primitiveType(), type2.primitiveType());
+            return Type.unwrapPair(type1.collectionType, type2.collectionType);
+        }
+        if (type1.isBigCollection && type2.isBigCollection) {
+            return Type.unwrapPair(type1.bigCollectionType, type2.bigCollectionType);
         }
         return [type1, type2];
     }
@@ -113,7 +121,10 @@ export class Type {
     }
     _applyExistenceTypeTest(test) {
         if (this.isCollection) {
-            return this.primitiveType()._applyExistenceTypeTest(test);
+            return this.collectionType._applyExistenceTypeTest(test);
+        }
+        if (this.isBigCollection) {
+            return this.bigCollectionType._applyExistenceTypeTest(test);
         }
         if (this.isInterface) {
             return this.interfaceShape._applyExistenceTypeTest(test);
@@ -133,14 +144,35 @@ export class Type {
     primitiveType() {
         return this.collectionType;
     }
+    elementTypeIfCollection() {
+        if (this.isCollection) {
+            return this.collectionType;
+        }
+        if (this.isBigCollection) {
+            return this.bigCollectionType;
+        }
+        return null;
+    }
+    // TODO: naming is hard
+    isSomeSortOfCollection() {
+        return this.isCollection || this.isBigCollection;
+    }
     collectionOf() {
         return Type.newCollection(this);
     }
+    bigCollectionOf() {
+        return Type.newBigCollection(this);
+    }
     resolvedType() {
         if (this.isCollection) {
-            const primitiveType = this.primitiveType();
+            const primitiveType = this.collectionType;
             const resolvedPrimitiveType = primitiveType.resolvedType();
-            return primitiveType !== resolvedPrimitiveType ? resolvedPrimitiveType.collectionOf() : this;
+            return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.collectionOf() : this;
+        }
+        if (this.isBigCollection) {
+            const primitiveType = this.bigCollectionType;
+            const resolvedPrimitiveType = primitiveType.resolvedType();
+            return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.bigCollectionOf() : this;
         }
         if (this.isVariable) {
             const resolution = this.variable.resolution;
@@ -168,7 +200,10 @@ export class Type {
             return this.variable.canEnsureResolved();
         }
         if (this.isCollection) {
-            return this.primitiveType().canEnsureResolved();
+            return this.collectionType.canEnsureResolved();
+        }
+        if (this.isBigCollection) {
+            return this.bigCollectionType.canEnsureResolved();
         }
         return true;
     }
@@ -180,7 +215,10 @@ export class Type {
             return this.variable.maybeEnsureResolved();
         }
         if (this.isCollection) {
-            return this.primitiveType().maybeEnsureResolved();
+            return this.collectionType.maybeEnsureResolved();
+        }
+        if (this.isBigCollection) {
+            return this.bigCollectionType.maybeEnsureResolved();
         }
         return true;
     }
@@ -345,11 +383,17 @@ export class Type {
         if (this.isCollection) {
             return this.collectionType.hasProperty(property);
         }
+        if (this.isBigCollection) {
+            return this.bigCollectionType.hasProperty(property);
+        }
         return false;
     }
     toString(options = undefined) {
         if (this.isCollection) {
-            return `[${this.primitiveType().toString(options)}]`;
+            return `[${this.collectionType.toString(options)}]`;
+        }
+        if (this.isBigCollection) {
+            return `[${this.bigCollectionType.toString(options)}]`;
         }
         if (this.isEntity) {
             return this.entitySchema.toInlineSchemaString(options);
@@ -367,7 +411,10 @@ export class Type {
     }
     getEntitySchema() {
         if (this.isCollection) {
-            return this.primitiveType().getEntitySchema();
+            return this.collectionType.getEntitySchema();
+        }
+        if (this.isBigCollection) {
+            return this.bigCollectionType.getEntitySchema();
         }
         if (this.isEntity) {
             return this.entitySchema;
@@ -382,7 +429,7 @@ export class Type {
         // Try extract the description from schema spec.
         const entitySchema = this.getEntitySchema();
         if (entitySchema) {
-            if (this.isCollection && entitySchema.description.plural) {
+            if (this.isSomeSortOfCollection() && entitySchema.description.plural) {
                 return entitySchema.description.plural;
             }
             if (this.isEntity && entitySchema.description.pattern) {
@@ -393,7 +440,11 @@ export class Type {
             return JSON.stringify(this.data);
         }
         if (this.isCollection) {
-            return `${this.primitiveType().toPrettyString()} List`;
+            // TODO: s/List/Collection/
+            return `${this.collectionType.toPrettyString()} List`;
+        }
+        if (this.isBigCollection) {
+            return `${this.bigCollectionType.toPrettyString()} BigCollection`;
         }
         if (this.isVariable) {
             return this.variable.isResolved() ? this.resolvedType().toPrettyString() : `[~${this.variable.name}]`;
@@ -413,6 +464,7 @@ export class Type {
 addType('Entity', 'schema');
 addType('Variable');
 addType('Collection', 'type');
+addType('BigCollection', 'type');
 addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Slot');
