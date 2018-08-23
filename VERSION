@@ -1,5 +1,9 @@
-commit 5bd12132152c18e9f99bfb2d6edc6d345cc1e15e
+commit f599283094ea30aea56c5262c7c79311b4776fc2
 Author: shans <shane.stephens@gmail.com>
-Date:   Thu Aug 23 09:55:19 2018 +1000
+Date:   Thu Aug 23 15:13:42 2018 +1000
 
-    Use storage shim to extract tags from manifest, as inflated store won't be correct key. (#1802)
+    Ensure barrier is communicated back to runtime when setting variable. (#1804)
+    
+    This allows barriers to be communicated back to the proxy and thus
+    removed, which in turn allows communication via variable between
+    multiple simultaneous views of an arc.
