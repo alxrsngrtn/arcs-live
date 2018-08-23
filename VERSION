@@ -1,5 +1,5 @@
-commit dba7a908a7456f2699a199dfeb36639eac16a689
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu Aug 23 15:57:33 2018 +1000
+commit 8dc2419ad5ad3f99751d33e35b6568ef8b69724f
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Aug 23 15:52:48 2018 -0700
 
-    Replace undefined from firebase with null. (#1806)
+    Minor clean up of storage-proxy.js; ignore ts-build in sigh watch (#1805)

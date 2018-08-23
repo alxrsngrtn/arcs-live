@@ -20068,10 +20068,9 @@ class StorageProxyBase {
     }
   }
 
-  // `model` contains 'version' and one of 'data' or 'list'.
-  _onSynchronize(model) {
-    if (this._version !== undefined && model.version <= this._version) {
-      console.warn(`StorageProxy '${this._id}' received stale model version ${model.version}; ` +
+  _onSynchronize({version, model}) {
+    if (this._version !== undefined && version <= this._version) {
+      console.warn(`StorageProxy '${this._id}' received stale model version ${version}; ` +
                    `current is ${this._version}`);
       return;
     }
@@ -20079,19 +20078,18 @@ class StorageProxyBase {
     // We may have queued updates that were received after a desync; discard any that are stale
     // with respect to the received model.
     this._synchronized = SyncState.full;
-    while (this._updates.length > 0 && this._updates[0].version <= model.version) {
+    while (this._updates.length > 0 && this._updates[0].version <= version) {
       this._updates.shift();
     }
 
     // Replace the stored data with the new one and notify handles that are configured for it.
-    this._synchronizeModel(model);
+    this._synchronizeModel(version, model);
 
     let syncModel = this._getModelForSync();
     this._notify('sync', syncModel, options => options.keepSynced && options.notifySync);
     this._processUpdates();
   }
 
-  // `update` contains 'version' and one of 'data', 'add' or 'remove'.
   _onUpdate(update) {
     // Immediately notify any handles that are not configured with keepSynced but do want updates.
     if (this._observers.find(({handle}) => !handle.options.keepSynced && handle.options.notifyUpdate)) {
@@ -20187,13 +20185,16 @@ class CollectionProxy extends StorageProxyBase {
     super(...args);
     this._model = new _ts_build_storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_1__["CrdtCollectionModel"]();
   }
+
   _getModelForSync() {
     return this._model.toList();
   }
-  _synchronizeModel({version, model}) {
+
+  _synchronizeModel(version, model) {
     this._version = version;
     this._model = new _ts_build_storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_1__["CrdtCollectionModel"](model);
   }
+
   _processUpdate(update, apply=true) {
     if (this._synchronized == SyncState.full) {
       // If we're synchronized, then any updates we sent have
@@ -20230,6 +20231,7 @@ class CollectionProxy extends StorageProxyBase {
     }
     return null;
   }
+
   // Read ops: if we're synchronized we can just return the local copy of the data.
   // Otherwise, send a request to the backing store.
   toList(particleId) {
@@ -20242,12 +20244,10 @@ class CollectionProxy extends StorageProxyBase {
         this._port.HandleToList({callback: r => resolve(r), handle: this, particleId}));
     }
   }
+
   store(value, keys, particleId) {
     let id = value.id;
-    let data = {
-      value,
-      keys,
-    };
+    let data = {value, keys};
     this._port.HandleStore({data, handle: this, particleId});
 
     if (this._synchronized != SyncState.full) {
@@ -20256,41 +20256,31 @@ class CollectionProxy extends StorageProxyBase {
     if (!this._model.add(id, value, keys)) {
       return;
     }
-    let update = {
-      originatorId: particleId,
-      add: [value],
-    };
+    let update = {originatorId: particleId, add: [value]};
     this._notify('update', update, options => options.notifyUpdate);
   }
 
   remove(id, keys, particleId) {
     if (this._synchronized != SyncState.full) {
-      let data = {
-        id,
-        keys: [],
-      };
+      let data = {id, keys: []};
       this._port.HandleRemove({data, handle: this, particleId});
       return;
     }
 
     let value = this._model.getValue(id);
-    if (!value) return;
+    if (!value) {
+      return;
+    }
     if (keys.length == 0) {
       keys = this._model.getKeys(id);
     }
-    let data = {
-      id,
-      keys,
-    };
+    let data = {id, keys};
     this._port.HandleRemove({data, handle: this, particleId});
 
     if (!this._model.remove(id, keys)) {
       return;
     }
-    let update = {
-      originatorId: particleId,
-      remove: [value],
-    };
+    let update = {originatorId: particleId, remove: [value]};
     this._notify('update', update, options => options.notifyUpdate);
   }
 }
@@ -20306,17 +20296,22 @@ class VariableProxy extends StorageProxyBase {
     this._model = null;
     this._barrier = null;
   }
+
   _getModelForSync() {
     return this._model;
   }
-  _synchronizeModel({version, model}) {
+
+  _synchronizeModel(version, model) {
     this._version = version;
     this._model = model.length == 0 ? null : model[0].value;
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._model !== undefined);
   }
+
   _processUpdate(update, apply=true) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])('data' in update);
-    if (!apply) return update;
+    if (!apply) {
+      return update;
+    }
     // If we have set a barrier, suppress updates until after
     // we have seen the barrier return via an update.
     if (this._barrier != null) {
@@ -20328,6 +20323,7 @@ class VariableProxy extends StorageProxyBase {
     this._model = update.data;
     return update;
   }
+
   // Read ops: if we're synchronized we can just return the local copy of the data.
   // Otherwise, send a request to the backing store.
   // TODO: in synchronized mode, these should integrate with SynchronizeProxy rather than
@@ -20340,6 +20336,7 @@ class VariableProxy extends StorageProxyBase {
         this._port.HandleGet({callback: resolve, handle: this, particleId}));
     }
   }
+
   set(entity, particleId) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(entity !== undefined);
     if (JSON.stringify(this._model) == JSON.stringify(entity)) {
@@ -20350,10 +20347,7 @@ class VariableProxy extends StorageProxyBase {
     this._model = JSON.parse(JSON.stringify(entity));
     this._barrier = barrier;
     this._port.HandleSet({data: entity, handle: this, particleId, barrier});
-    let update = {
-      originatorId: particleId,
-      data: entity,
-    };
+    let update = {originatorId: particleId, data: entity};
     this._notify('update', update, options => options.notifyUpdate);
   }
 
@@ -20365,10 +20359,7 @@ class VariableProxy extends StorageProxyBase {
     this._model = null;
     this._barrier = barrier;
     this._port.HandleClear({handle: this, particleId, barrier});
-    let update = {
-      originatorId: particleId,
-      data: null,
-    };
+    let update = {originatorId: particleId, data: null};
     this._notify('update', update, options => options.notifyUpdate);
   }
 }
@@ -20410,12 +20401,9 @@ class StorageProxyScheduler {
     if (!this.busy) {
       return Promise.resolve();
     }
-    if (this._idle) {
-      return this._idle;
+    if (!this._idle) {
+      this._idle = new Promise(resolve => this._idleResolver = resolve);
     }
-    this._idle = new Promise(resolver => {
-      this._idleResolver = resolver;
-    });
     return this._idle;
   }
 
