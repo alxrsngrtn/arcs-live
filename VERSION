@@ -1,5 +1,9 @@
-commit 73418f623d3e9a606d2cf954e56de9ef72f07c25
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Aug 23 17:35:47 2018 -0700
+commit 0e45b66628d0ab0a0c06baa062687f37b4a7588b
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Aug 28 09:05:26 2018 +1000
 
-    add Paul, Raul, and Ray to default users (#1809)
+    Repair firebase imports (#1813)
+    
+    * repair firebase imports
+    
+    * Wrangle with tslint

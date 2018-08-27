@@ -473,11 +473,12 @@ const vm = {};
 /*!********************************!*\
   !*** ./runtime/api-channel.js ***!
   \********************************/
-/*! exports provided: PECOuterPort, PECInnerPort */
+/*! exports provided: APIPort, PECOuterPort, PECInnerPort */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "APIPort", function() { return APIPort; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PECOuterPort", function() { return PECOuterPort; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PECInnerPort", function() { return PECInnerPort; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
@@ -593,18 +594,6 @@ class APIPort {
       unconvert: a => this._mapper.thingForIdentifier(a)
     };
 
-    this.Dictionary = function(primitive) {
-      return {
-        convert: a => {
-          let r = {};
-          for (let key in a) {
-            r[key] = primitive.convert(a[key]);
-          }
-          return r;
-        }
-      };
-    };
-
     this.Map = function(keyprimitive, valueprimitive) {
       return {
         convert: a => {
@@ -636,6 +625,12 @@ class APIPort {
         unconvert: a => clazz.fromLiteral(a)
       };
     };
+  
+    this._testingHook();
+  }
+
+  // Overridden by unit tests.
+  _testingHook() {
   }
 
   close() {
@@ -755,7 +750,7 @@ class PECOuterPort extends APIPort {
     this.registerHandler('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('HandleStore', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleRemove', {handle: this.Mapped, data: this.Direct});
-    this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct});
+    this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('Idle', {version: this.Direct, relevance: this.Map(this.Mapped, this.Direct)});
 
     this.registerHandler('ConstructInnerArc', {callback: this.Direct, particle: this.Mapped});
@@ -793,7 +788,7 @@ class PECInnerPort extends APIPort {
     this.registerHandler('UIEvent', {particle: this.Mapped, slotName: this.Direct, event: this.Direct});
     this.registerHandler('SimpleCallback', {callback: this.LocalMapped, data: this.Direct});
     this.registerHandler('AwaitIdle', {version: this.Direct});
-    this.registerHandler('StartRender', {particle: this.Mapped, slotName: this.Direct, contentTypes: this.Direct});
+    this.registerHandler('StartRender', {particle: this.Mapped, slotName: this.Direct, contentTypes: this.List(this.Direct)});
     this.registerHandler('StopRender', {particle: this.Mapped, slotName: this.Direct});
 
     this.registerCall('Render', {particle: this.Mapped, slotName: this.Direct, content: this.Direct});

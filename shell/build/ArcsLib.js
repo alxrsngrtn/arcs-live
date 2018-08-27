@@ -24538,11 +24538,12 @@ let _affordances = {};
 /*!********************************!*\
   !*** ./runtime/api-channel.js ***!
   \********************************/
-/*! exports provided: PECOuterPort, PECInnerPort */
+/*! exports provided: APIPort, PECOuterPort, PECInnerPort */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "APIPort", function() { return APIPort; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PECOuterPort", function() { return PECOuterPort; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PECInnerPort", function() { return PECInnerPort; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
@@ -24658,18 +24659,6 @@ class APIPort {
       unconvert: a => this._mapper.thingForIdentifier(a)
     };
 
-    this.Dictionary = function(primitive) {
-      return {
-        convert: a => {
-          let r = {};
-          for (let key in a) {
-            r[key] = primitive.convert(a[key]);
-          }
-          return r;
-        }
-      };
-    };
-
     this.Map = function(keyprimitive, valueprimitive) {
       return {
         convert: a => {
@@ -24701,6 +24690,12 @@ class APIPort {
         unconvert: a => clazz.fromLiteral(a)
       };
     };
+  
+    this._testingHook();
+  }
+
+  // Overridden by unit tests.
+  _testingHook() {
   }
 
   close() {
@@ -24820,7 +24815,7 @@ class PECOuterPort extends APIPort {
     this.registerHandler('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('HandleStore', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleRemove', {handle: this.Mapped, data: this.Direct});
-    this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct});
+    this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('Idle', {version: this.Direct, relevance: this.Map(this.Mapped, this.Direct)});
 
     this.registerHandler('ConstructInnerArc', {callback: this.Direct, particle: this.Mapped});
@@ -24858,7 +24853,7 @@ class PECInnerPort extends APIPort {
     this.registerHandler('UIEvent', {particle: this.Mapped, slotName: this.Direct, event: this.Direct});
     this.registerHandler('SimpleCallback', {callback: this.LocalMapped, data: this.Direct});
     this.registerHandler('AwaitIdle', {version: this.Direct});
-    this.registerHandler('StartRender', {particle: this.Mapped, slotName: this.Direct, contentTypes: this.Direct});
+    this.registerHandler('StartRender', {particle: this.Mapped, slotName: this.Direct, contentTypes: this.List(this.Direct)});
     this.registerHandler('StopRender', {particle: this.Mapped, slotName: this.Direct});
 
     this.registerCall('Render', {particle: this.Mapped, slotName: this.Direct, content: this.Direct});
@@ -47963,6 +47958,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/* tslint:disable:no-any */
+const firebaseInitializeApp = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.initializeApp;
+const firebaseDatabase = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.database;
+const firebaseApps = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.apps;
+/* tslint:enable:no-any */
 
 
 
@@ -47970,15 +47970,15 @@ __webpack_require__.r(__webpack_exports__);
 
 async function resetStorageForTesting(key) {
     key = new FirebaseKey(key);
-    const app = firebase_app__WEBPACK_IMPORTED_MODULE_1__["initializeApp"]({
+    const app = firebaseInitializeApp({
         apiKey: key.apiKey,
         databaseURL: key.databaseUrl
     });
-    let reference = firebase_app__WEBPACK_IMPORTED_MODULE_1__["database"](app).ref(key.location);
+    let reference = firebaseDatabase(app).ref(key.location);
     await new Promise(resolve => {
         reference.remove(resolve);
     });
-    reference = firebase_app__WEBPACK_IMPORTED_MODULE_1__["database"](app).ref('backingStores');
+    reference = firebaseDatabase(app).ref('backingStores');
     await new Promise(resolve => {
         reference.remove(resolve);
     });
@@ -48073,7 +48073,7 @@ class FirebaseStorage {
             throw new Error('Can\'t complete partial firebase keys');
         }
         if (this.apps[key.projectId] == undefined) {
-            for (const app of firebase_app__WEBPACK_IMPORTED_MODULE_1__["apps"]) {
+            for (const app of firebaseApps) {
                 if (app.options['databaseURL'] === key.databaseUrl) {
                     this.apps[key.projectId] = { app, owned: false };
                     break;
@@ -48081,13 +48081,13 @@ class FirebaseStorage {
             }
         }
         if (this.apps[key.projectId] == undefined) {
-            const app = firebase_app__WEBPACK_IMPORTED_MODULE_1__["initializeApp"]({
+            const app = firebaseInitializeApp({
                 apiKey: key.apiKey,
                 databaseURL: key.databaseUrl
             }, `app${_nextAppNameSuffix++}`);
             this.apps[key.projectId] = { app, owned: true };
         }
-        const reference = firebase_app__WEBPACK_IMPORTED_MODULE_1__["database"](this.apps[key.projectId].app).ref(key.location);
+        const reference = firebaseDatabase(this.apps[key.projectId].app).ref(key.location);
         let currentSnapshot;
         await reference.once('value', snapshot => currentSnapshot = snapshot);
         if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
