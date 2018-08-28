@@ -47959,9 +47959,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* tslint:disable:no-any */
-const firebaseInitializeApp = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.initializeApp;
-const firebaseDatabase = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.database;
-const firebaseApps = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.apps;
+const firebaseInitializeApp = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.default.initializeApp;
+const firebaseDatabase = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.default.database;
+const firebaseApps = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.default.apps;
 /* tslint:enable:no-any */
 
 
@@ -50932,7 +50932,7 @@ const Arcs = {
 // export default Arcs;
 
 window.Arcs = window.Arcs ? Object.assign(window.Arcs, Arcs) : Arcs;
-window.firebase = firebase_app__WEBPACK_IMPORTED_MODULE_9__;
+window.firebase = firebase_app__WEBPACK_IMPORTED_MODULE_9___default.a;
 
 
 

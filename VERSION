@@ -1,9 +1,5 @@
-commit 0e45b66628d0ab0a0c06baa062687f37b4a7588b
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Aug 28 09:05:26 2018 +1000
+commit 3c795b76eb21784f212c2f100f02bb89a1f7fa43
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Aug 27 21:41:10 2018 -0700
 
-    Repair firebase imports (#1813)
-    
-    * repair firebase imports
-    
-    * Wrangle with tslint
+    Switch to synthetic default imports (#1820)
