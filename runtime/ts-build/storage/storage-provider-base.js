@@ -14,6 +14,7 @@ var EventKind;
 })(EventKind || (EventKind = {}));
 export class StorageProviderBase {
     constructor(type, name, id, key) {
+        this.referenceMode = false;
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
         const trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::constructor', args: { type: type.key, name } });
@@ -26,6 +27,9 @@ export class StorageProviderBase {
         this._storageKey = key;
         this.nextLocalID = 0;
         trace.end();
+    }
+    enableReferenceMode() {
+        this.referenceMode = true;
     }
     get storageKey() {
         return this._storageKey;
@@ -108,6 +112,9 @@ export class StorageProviderBase {
     }
     get apiChannelMappingId() {
         return this.id;
+    }
+    modelForSynchronization() {
+        return this.toLiteral();
     }
 }
 //# sourceMappingURL=storage-provider-base.js.map

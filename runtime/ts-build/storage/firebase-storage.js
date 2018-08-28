@@ -10,11 +10,6 @@ import { StorageProviderBase } from './storage-provider-base';
 import firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/storage';
-/* tslint:disable:no-any */
-const firebaseInitializeApp = firebase.default.initializeApp;
-const firebaseDatabase = firebase.default.database;
-const firebaseApps = firebase.default.apps;
-/* tslint:enable:no-any */
 import { assert } from '../../../platform/assert-web.js';
 import { KeyBase } from './key-base.js';
 import { atob } from '../../../platform/atob-web.js';
@@ -22,15 +17,15 @@ import { btoa } from '../../../platform/btoa-web.js';
 import { CrdtCollectionModel } from './crdt-collection-model.js';
 export async function resetStorageForTesting(key) {
     key = new FirebaseKey(key);
-    const app = firebaseInitializeApp({
+    const app = firebase.initializeApp({
         apiKey: key.apiKey,
         databaseURL: key.databaseUrl
     });
-    let reference = firebaseDatabase(app).ref(key.location);
+    let reference = firebase.database(app).ref(key.location);
     await new Promise(resolve => {
         reference.remove(resolve);
     });
-    reference = firebaseDatabase(app).ref('backingStores');
+    reference = firebase.database(app).ref('backingStores');
     await new Promise(resolve => {
         reference.remove(resolve);
     });
@@ -105,11 +100,14 @@ export class FirebaseStorage {
         }
         return this.sharedStores[id];
     }
-    async baseStorageFor(type, key) {
+    baseStorageKey(type, key) {
         key = new FirebaseKey(key);
         key.location = `backingStores/${type.toString()}`;
+        return key.toString();
+    }
+    async baseStorageFor(type, key) {
         if (!this.baseStores.has(type)) {
-            const store = await this._join(type.toString(), type.collectionOf(), key.toString(), 'unknown');
+            const store = await this._join(type.toString(), type.collectionOf(), key, 'unknown');
             this.baseStores.set(type, store);
         }
         return this.baseStores.get(type);
@@ -125,7 +123,7 @@ export class FirebaseStorage {
             throw new Error('Can\'t complete partial firebase keys');
         }
         if (this.apps[key.projectId] == undefined) {
-            for (const app of firebaseApps) {
+            for (const app of firebase.apps) {
                 if (app.options['databaseURL'] === key.databaseUrl) {
                     this.apps[key.projectId] = { app, owned: false };
                     break;
@@ -133,13 +131,13 @@ export class FirebaseStorage {
             }
         }
         if (this.apps[key.projectId] == undefined) {
-            const app = firebaseInitializeApp({
+            const app = firebase.initializeApp({
                 apiKey: key.apiKey,
                 databaseURL: key.databaseUrl
             }, `app${_nextAppNameSuffix++}`);
             this.apps[key.projectId] = { app, owned: true };
         }
-        const reference = firebaseDatabase(this.apps[key.projectId].app).ref(key.location);
+        const reference = firebase.database(this.apps[key.projectId].app).ref(key.location);
         let currentSnapshot;
         await reference.once('value', snapshot => currentSnapshot = snapshot);
         if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
@@ -320,8 +318,8 @@ class FirebaseVariable extends FirebaseStorageProvider {
     }
     async get() {
         await this.initialized;
-        if (this.type.isReference) {
-            const referredType = this.type.referenceReferredType;
+        if (this.referenceMode) {
+            const referredType = this.type;
             if (this.backingStore == null) {
                 const backingStore = await this.storageEngine.share(referredType.toString(), referredType.collectionOf(), this.value.storageKey);
                 this.backingStore = backingStore;
@@ -335,9 +333,9 @@ class FirebaseVariable extends FirebaseStorageProvider {
         // the await required for fetching baseStorage can cause initialization/localModified
         // flag reordering if done inline below. So we resolve backingStore if necessary
         // first, before looking at anything else. 
-        if (this.type.isReference && this.backingStore == null) {
-            referredType = this.type.referenceReferredType;
-            this.backingStore = await this.storageEngine.baseStorageFor(referredType, this.storageKey);
+        if (this.referenceMode && this.backingStore == null) {
+            referredType = this.type;
+            this.backingStore = await this.storageEngine.baseStorageFor(referredType, this.storageEngine.baseStorageKey(referredType, this.storageKey));
         }
         if (this.version == null) {
             assert(!this.localModified);
@@ -353,7 +351,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
             }
             this.version++;
         }
-        if (this.type.isReference) {
+        if (this.referenceMode) {
             await this.backingStore.store(value, [this.storageKey]);
             value = { id: value.id, storageKey: this.backingStore.storageKey };
         }
@@ -573,12 +571,12 @@ class FirebaseCollection extends FirebaseStorageProvider {
     }
     async get(id) {
         await this.initialized;
-        if (this.type.primitiveType().isReference) {
+        if (this.referenceMode) {
             const ref = this.model.getValue(id);
             if (ref == null) {
                 return null;
             }
-            const referredType = this.type.primitiveType().referenceReferredType;
+            const referredType = this.type.primitiveType();
             if (this.backingStore == null) {
                 const backingStore = await this.storageEngine.share(referredType.toString(), referredType.collectionOf(), ref.storageKey);
                 this.backingStore = backingStore;
@@ -619,10 +617,10 @@ class FirebaseCollection extends FirebaseStorageProvider {
         assert(keys != null && keys.length > 0, 'keys required');
         await this.initialized;
         // 1. Apply the change to the local model.
-        if (this.type.primitiveType().isReference) {
-            const referredType = this.type.primitiveType().referenceReferredType;
+        if (this.referenceMode) {
+            const referredType = this.type.primitiveType();
             if (this.backingStore == null) {
-                this.backingStore = await this.storageEngine.baseStorageFor(referredType, this.storageKey);
+                this.backingStore = await this.storageEngine.baseStorageFor(referredType, this.storageEngine.baseStorageKey(referredType, this.storageKey));
             }
             await this.backingStore.store(value, [this.storageKey]);
             value = { id: value.id, storageKey: this.backingStore.storageKey };
@@ -731,9 +729,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
     }
     async toList() {
         await this.initialized;
-        if (this.type.primitiveType().isReference) {
+        if (this.referenceMode) {
             const items = this.model.toList();
-            const referredType = this.type.primitiveType().referenceReferredType;
+            const referredType = this.type.primitiveType();
             const refSet = new Set();
             items.forEach(item => refSet.add(item.storageKey));
             assert(refSet.size === 1);
@@ -974,6 +972,12 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     }
     get _hasLocalChanges() {
         return false;
+    }
+    // TODO: cloneFrom, toLiteral, fromLiteral ?
+    // A cloned instance will probably need to reference the same Firebase URL but collect all
+    // modifications locally for speculative execution.
+    toLiteral() {
+        assert(false, "no toLiteral implementation on bigCollection");
     }
 }
 //# sourceMappingURL=firebase-storage.js.map

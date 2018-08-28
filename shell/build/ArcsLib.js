@@ -25095,10 +25095,71 @@ class Arc {
     return this._speculative;
   }
 
+  async _serializeHandle(handle, context, id) {
+    let type = handle.type;
+    if (type.isCollection) {
+      type = type.primitiveType();
+    }
+    if (type.isInterface) {
+      context.interfaces += type.interfaceShape.toString() + '\n';
+    }
+    let key = this._storageProviderFactory.parseStringAsKey(handle.storageKey);
+    let tags = this._storeTags.get(handle) || [];
+    let handleTags = [...tags].map(a => `#${a}`).join(' ');
+
+    switch (key.protocol) {
+      case 'firebase':
+        context.handles += `store ${id} of ${handle.type.toString()} '${handle.id}' @${handle.version} ${handleTags} at '${handle.storageKey}'\n`;
+        break;
+      case 'in-memory': {
+        // TODO(sjmiles): emit empty data for stores marked `nosync`: shell will supply data
+        const nosync = handleTags.includes('nosync');
+        let serializedData = [];
+        if (!nosync) {
+          serializedData = (await handle.toLiteral()).model.map(({id, value}) => {
+            if (value == null) {
+              return null;
+            }
+            if (value.rawData) {
+              let result = {};
+              for (let field in value.rawData) {
+                result[field] = value.rawData[field];
+              }
+              result.$id = id;
+              return result;
+            } else {
+              return value;
+            }
+          });
+        }
+        if (handle.referenceMode && serializedData.length > 0) {
+          const storageKey = serializedData[0].storageKey;
+          if (!context.dataResources.has(storageKey)) {
+            const storeId = `${id}_Data`;
+            context.dataResources.set(storageKey, storeId);
+            // TODO: can't just reach into the store for the backing Store like this, should be an 
+            // accessor that loads-on-demand in the storage objects.
+            await this._serializeHandle(handle._backingStore, context, storeId);
+          }
+          const storeId = context.dataResources.get(storageKey);
+          serializedData.forEach(a => {a.storageKey = storeId;});
+        }
+  
+        context.resources += `resource ${id}Resource\n`;
+        let indent = '  ';
+        context.resources += indent + 'start\n';
+
+        let data = JSON.stringify(serializedData);
+        context.resources += data.split('\n').map(line => indent + line).join('\n');
+        context.resources += '\n';
+        context.handles += `store ${id} of ${handle.type.toString()} '${handle.id}' @${handle.version} ${handleTags} in ${id}Resource\n`;
+        break;
+      }
+    }
+  }
+
   async _serializeHandles() {
-    let handles = '';
-    let resources = '';
-    let interfaces = '';
+    let context = {handles: '', resources: '', interfaces: '', dataResources: new Map()};
 
     let id = 0;
     let importSet = new Set();
@@ -25111,59 +25172,18 @@ class Arc {
       }
     }
     for (let url of importSet.values()) {
-      resources += `import '${url}'\n`;
+      context.resources += `import '${url}'\n`;
     }
 
     for (let handle of this._stores) {
       if (!handleSet.has(handle.id)) {
         continue;
       }
-      let type = handle.type;
-      if (type.isCollection) {
-        type = type.primitiveType();
-      }
-      if (type.isInterface) {
-        interfaces += type.interfaceShape.toString() + '\n';
-      }
-      let key = this._storageProviderFactory.parseStringAsKey(handle.storageKey);
-      let handleTags = [...this._storeTags.get(handle)].map(a => `#${a}`).join(' ');
-      switch (key.protocol) {
-        case 'firebase':
-          handles += `store Store${id++} of ${handle.type.toString()} '${handle.id}' @${handle.version} ${handleTags} at '${handle.storageKey}'\n`;
-          break;
-        case 'in-memory': {
-          resources += `resource Store${id}Resource\n`;
-          let indent = '  ';
-          resources += indent + 'start\n';
-          // TODO(sjmiles): emit empty data for stores marked `nosync`: shell will supply data
-          const nosync = handleTags.includes('nosync');
-          let serializedData = nosync ?
-              [] :
-              (await handle.toLiteral()).model.map(({id, value}) => {
-                if (value == null) {
-                  return null;
-                }
-                if (value.rawData) {
-                  let result = {};
-                  for (let field in value.rawData) {
-                    result[field] = value.rawData[field];
-                  }
-                  result.$id = id;
-                  return result;
-                } else {
-                  return value;
-                }
-              });
-          let data = JSON.stringify(serializedData);
-          resources += data.split('\n').map(line => indent + line).join('\n');
-          resources += '\n';
-          handles += `store Store${id} of ${handle.type.toString()} '${handle.id}' @${handle.version} ${handleTags} in Store${id++}Resource\n`;
-          break;
-        }
-      }
+
+      await this._serializeHandle(handle, context, `Store${id++}`);
     }
 
-    return resources + interfaces + handles;
+    return context.resources + context.interfaces + context.handles;
   }
 
   _serializeParticles() {
@@ -35960,7 +35980,7 @@ class Collection extends Handle {
       throw new Error('Handle not writeable');
     }
     let serialization = this._serialize(entity);
-    let keys = [this._proxy.generateID('key')];
+    let keys = [this._proxy.generateID() + 'key'];
     return this._proxy.store(serialization, keys, this._particleId);
   }
 
@@ -37273,6 +37293,10 @@ ${e.message}
           targetHandle = recipe.newHandle();
           targetHandle.fate = 'copy';
           let store = await manifest.createStore(connection.type, null, id, []);
+          // TODO(shans): Work out a better way to turn off reference mode for these stores.
+          // Maybe a different function call in the storageEngine? Alternatively another
+          // param to the connect/construct functions?
+          store.referenceMode = false;
           store.set(hostedParticleLiteral);
           targetHandle.mapToStorage(store);
         }
@@ -37438,7 +37462,20 @@ ${e.message}
 
     let version = item.version || 0;
     let store = await Manifest._createStore(manifest, type, name, id, tags, item);
-    
+
+    // While the referenceMode hack exists, we need to look at the entities being stored to
+    // determine whether this store should be in referenceMode or not.
+    // TODO(shans): Eventually the actual type will need to be part of the determination too.
+    // TODO(shans): Need to take into account the possibility of multiple storage key mappings
+    // at some point.
+    if (entities.length > 0 && (entities[0].rawData && entities[0].rawData.storageKey)) {
+      let storageKey = entities[0].rawData.storageKey;
+      storageKey = manifest.findStoreByName(storageKey).storageKey;
+      entities = entities.map(({id, rawData}) => ({id, storageKey}));
+    } else if (entities.length > 0) {
+      store.referenceMode = false;
+    }
+
     // For this store to be able to be treated as a CRDT, each item needs a key.
     // Using id as key seems safe, nothing else should do this.
     store.fromLiteral({
@@ -38130,7 +38167,7 @@ class ParticleExecutionHost {
     };
 
     this._apiPort.onSynchronizeProxy = async ({handle, callback}) => {
-      let data = await handle.toLiteral();
+      let data = await handle.modelForSynchronization();
       this._apiPort.SimpleCallback({callback, data});
     };
 
@@ -38722,7 +38759,7 @@ class Particle {
   setDescriptionPattern(connectionName, pattern) {
     let descriptions = this.handles.get('descriptions');
     if (descriptions) {
-      descriptions.store(new descriptions.entityClass({key: connectionName, value: pattern}, connectionName));
+      descriptions.store(new descriptions.entityClass({key: connectionName, value: pattern}, this.spec.name + '-' + connectionName));
       return true;
     }
     return false;
@@ -39005,8 +39042,8 @@ class Planificator {
   _onPlanInstantiated(plan) {
     let planString = plan.toString();
     // Check that plan is in this._current.plans
-    // TODO(sjmiles): disable for mi-toast demo
-    //assert(this._current.plans.some(currentPlan => currentPlan.plan.toString() == planString),
+    // TODO(mmandlis): re-enable this when the planner asynchrony doesn't cause it to be false.
+    // assert(this._current.plans.some(currentPlan => currentPlan.plan.toString() == planString),
     //       `The instantiated plan (${plan.toString()}) doesn't appear in the current plans.`);
 
     // Move current to past, and clear current;
@@ -43833,9 +43870,10 @@ class StorageProxyBase {
     this._id = id;
     this._type = type;
     this._port = port;
-    this._pec = pec;
     this._scheduler = scheduler;
     this.name = name;
+    this._baseForNewID = pec.generateID();
+    this._localIDComponent = 0;
 
     this._version = undefined;
     this._listenerAttached = false;
@@ -43976,12 +44014,12 @@ class StorageProxyBase {
     }
   }
 
-  generateID(component) {
-    return this._pec.generateID(component);
+  generateID() {
+    return `${this._baseForNewID}:${this._localIDComponent++}`;
   }
 
   generateIDComponents() {
-    return this._pec.generateIDComponents();
+    return {base: this._baseForNewID, component: () => this._localIDComponent++};
   }
 }
 
@@ -44035,8 +44073,9 @@ class CollectionProxy extends StorageProxyBase {
       }
     } else if ('remove' in update) {
       for (let {value, keys, effective} of update.remove) {
+        const localValue = this._model.getValue(value.id);
         if (apply && this._model.remove(value.id, keys) || !apply && effective) {
-          removed.push(value);
+          removed.push(localValue);
         }
       }
     } else {
@@ -47958,11 +47997,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/* tslint:disable:no-any */
-const firebaseInitializeApp = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.default.initializeApp;
-const firebaseDatabase = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.default.database;
-const firebaseApps = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.default.apps;
-/* tslint:enable:no-any */
 
 
 
@@ -47970,15 +48004,15 @@ const firebaseApps = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.default
 
 async function resetStorageForTesting(key) {
     key = new FirebaseKey(key);
-    const app = firebaseInitializeApp({
+    const app = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.initializeApp({
         apiKey: key.apiKey,
         databaseURL: key.databaseUrl
     });
-    let reference = firebaseDatabase(app).ref(key.location);
+    let reference = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.database(app).ref(key.location);
     await new Promise(resolve => {
         reference.remove(resolve);
     });
-    reference = firebaseDatabase(app).ref('backingStores');
+    reference = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.database(app).ref('backingStores');
     await new Promise(resolve => {
         reference.remove(resolve);
     });
@@ -48053,11 +48087,14 @@ class FirebaseStorage {
         }
         return this.sharedStores[id];
     }
-    async baseStorageFor(type, key) {
+    baseStorageKey(type, key) {
         key = new FirebaseKey(key);
         key.location = `backingStores/${type.toString()}`;
+        return key.toString();
+    }
+    async baseStorageFor(type, key) {
         if (!this.baseStores.has(type)) {
-            const store = await this._join(type.toString(), type.collectionOf(), key.toString(), 'unknown');
+            const store = await this._join(type.toString(), type.collectionOf(), key, 'unknown');
             this.baseStores.set(type, store);
         }
         return this.baseStores.get(type);
@@ -48073,7 +48110,7 @@ class FirebaseStorage {
             throw new Error('Can\'t complete partial firebase keys');
         }
         if (this.apps[key.projectId] == undefined) {
-            for (const app of firebaseApps) {
+            for (const app of firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.apps) {
                 if (app.options['databaseURL'] === key.databaseUrl) {
                     this.apps[key.projectId] = { app, owned: false };
                     break;
@@ -48081,13 +48118,13 @@ class FirebaseStorage {
             }
         }
         if (this.apps[key.projectId] == undefined) {
-            const app = firebaseInitializeApp({
+            const app = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.initializeApp({
                 apiKey: key.apiKey,
                 databaseURL: key.databaseUrl
             }, `app${_nextAppNameSuffix++}`);
             this.apps[key.projectId] = { app, owned: true };
         }
-        const reference = firebaseDatabase(this.apps[key.projectId].app).ref(key.location);
+        const reference = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.database(this.apps[key.projectId].app).ref(key.location);
         let currentSnapshot;
         await reference.once('value', snapshot => currentSnapshot = snapshot);
         if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
@@ -48268,8 +48305,8 @@ class FirebaseVariable extends FirebaseStorageProvider {
     }
     async get() {
         await this.initialized;
-        if (this.type.isReference) {
-            const referredType = this.type.referenceReferredType;
+        if (this.referenceMode) {
+            const referredType = this.type;
             if (this.backingStore == null) {
                 const backingStore = await this.storageEngine.share(referredType.toString(), referredType.collectionOf(), this.value.storageKey);
                 this.backingStore = backingStore;
@@ -48283,9 +48320,9 @@ class FirebaseVariable extends FirebaseStorageProvider {
         // the await required for fetching baseStorage can cause initialization/localModified
         // flag reordering if done inline below. So we resolve backingStore if necessary
         // first, before looking at anything else. 
-        if (this.type.isReference && this.backingStore == null) {
-            referredType = this.type.referenceReferredType;
-            this.backingStore = await this.storageEngine.baseStorageFor(referredType, this.storageKey);
+        if (this.referenceMode && this.backingStore == null) {
+            referredType = this.type;
+            this.backingStore = await this.storageEngine.baseStorageFor(referredType, this.storageEngine.baseStorageKey(referredType, this.storageKey));
         }
         if (this.version == null) {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!this.localModified);
@@ -48301,7 +48338,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
             }
             this.version++;
         }
-        if (this.type.isReference) {
+        if (this.referenceMode) {
             await this.backingStore.store(value, [this.storageKey]);
             value = { id: value.id, storageKey: this.backingStore.storageKey };
         }
@@ -48521,12 +48558,12 @@ class FirebaseCollection extends FirebaseStorageProvider {
     }
     async get(id) {
         await this.initialized;
-        if (this.type.primitiveType().isReference) {
+        if (this.referenceMode) {
             const ref = this.model.getValue(id);
             if (ref == null) {
                 return null;
             }
-            const referredType = this.type.primitiveType().referenceReferredType;
+            const referredType = this.type.primitiveType();
             if (this.backingStore == null) {
                 const backingStore = await this.storageEngine.share(referredType.toString(), referredType.collectionOf(), ref.storageKey);
                 this.backingStore = backingStore;
@@ -48567,10 +48604,10 @@ class FirebaseCollection extends FirebaseStorageProvider {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(keys != null && keys.length > 0, 'keys required');
         await this.initialized;
         // 1. Apply the change to the local model.
-        if (this.type.primitiveType().isReference) {
-            const referredType = this.type.primitiveType().referenceReferredType;
+        if (this.referenceMode) {
+            const referredType = this.type.primitiveType();
             if (this.backingStore == null) {
-                this.backingStore = await this.storageEngine.baseStorageFor(referredType, this.storageKey);
+                this.backingStore = await this.storageEngine.baseStorageFor(referredType, this.storageEngine.baseStorageKey(referredType, this.storageKey));
             }
             await this.backingStore.store(value, [this.storageKey]);
             value = { id: value.id, storageKey: this.backingStore.storageKey };
@@ -48679,9 +48716,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
     }
     async toList() {
         await this.initialized;
-        if (this.type.primitiveType().isReference) {
+        if (this.referenceMode) {
             const items = this.model.toList();
-            const referredType = this.type.primitiveType().referenceReferredType;
+            const referredType = this.type.primitiveType();
             const refSet = new Set();
             items.forEach(item => refSet.add(item.storageKey));
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(refSet.size === 1);
@@ -48923,6 +48960,12 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     get _hasLocalChanges() {
         return false;
     }
+    // TODO: cloneFrom, toLiteral, fromLiteral ?
+    // A cloned instance will probably need to reference the same Firebase URL but collect all
+    // modifications locally for speculative execution.
+    toLiteral() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(false, "no toLiteral implementation on bigCollection");
+    }
 }
 //# sourceMappingURL=firebase-storage.js.map
 
@@ -48966,7 +49009,7 @@ class InMemoryKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
         super();
         let parts = key.split('://');
         this.protocol = parts[0];
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.protocol === 'in-memory');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.protocol === 'in-memory', `can't construct in-memory key for protocol ${this.protocol} (input key ${key})`);
         parts = parts[1] ? parts.slice(1).join('://').split('^^') : [];
         this.arcId = parts[0];
         this.location = parts[1];
@@ -48992,13 +49035,19 @@ class InMemoryStorage {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arcId !== undefined, 'Arcs with storage must have ids');
         this.arcId = arcId;
         this._memoryMap = {};
-        this._typeMap = new Map();
+        this._typeMap = {};
         this.localIDBase = 0;
+        this.typePromiseMap = {};
         // TODO(shans): re-add this assert once we have a runtime object to put it on.
         // assert(__storageCache[this._arc.id] == undefined, `${this._arc.id} already exists in local storage cache`);
         __storageCache[this.arcId.toString()] = this;
     }
     async construct(id, type, keyFragment) {
+        const provider = await this._construct(id, type, keyFragment);
+        provider.enableReferenceMode();
+        return provider;
+    }
+    async _construct(id, type, keyFragment) {
         const key = new InMemoryKey(keyFragment);
         if (key.arcId == undefined) {
             key.arcId = this.arcId.toString();
@@ -49029,19 +49078,31 @@ class InMemoryStorage {
         return this._memoryMap[keyString];
     }
     async share(id, type, keyString) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(keyString, "Must provide valid keyString to connect to underlying data");
         const key = new InMemoryKey(keyString);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(key.arcId === this.arcId.toString());
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(key.arcId === this.arcId.toString(), `key's arcId ${key.arcId} doesn't match this storageProvider's arcId ${this.arcId.toString()}`);
         if (this._memoryMap[keyString] == undefined) {
-            return this.construct(id, type, keyString);
+            return this._construct(id, type, keyString);
         }
         return this._memoryMap[keyString];
     }
-    async baseStorageFor(type) {
-        if (this._typeMap.has(type)) {
-            return this._typeMap.get(type);
+    baseStorageKey(type) {
+        const key = new InMemoryKey('in-memory');
+        key.arcId = this.arcId.toString();
+        key.location = 'in-memory-' + type.toString();
+        return key.toString();
+    }
+    async baseStorageFor(type, key) {
+        if (this._typeMap[key]) {
+            return this._typeMap[key];
         }
-        const storage = await this.construct(type.toString(), type.collectionOf(), 'in-memory');
-        this._typeMap.set(type, storage);
+        if (this.typePromiseMap[key]) {
+            return this.typePromiseMap[key];
+        }
+        const storagePromise = this._construct(type.toString(), type.collectionOf(), key);
+        this.typePromiseMap[key] = storagePromise;
+        const storage = await storagePromise;
+        this._typeMap[key] = storage;
         return storage;
     }
     parseStringAsKey(s) {
@@ -49076,7 +49137,23 @@ class InMemoryCollection extends InMemoryStorageProvider {
         return handle;
     }
     async cloneFrom(handle) {
-        this.fromLiteral(await handle.toLiteral());
+        this.referenceMode = handle.referenceMode;
+        const literal = await handle.toLiteral();
+        if (this.referenceMode && literal.model.length > 0) {
+            if (this._backingStore == null) {
+                this._backingStore = await this._storageEngine.baseStorageFor(this.type, this._storageEngine.baseStorageKey(this.type));
+                literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this._backingStore.storageKey } }));
+                const underlying = await handle._backingStore.getMultiple(literal.model.map(({ id }) => id));
+                await this._backingStore.storeMultiple(underlying, [this.storageKey]);
+            }
+        }
+        this.fromLiteral(literal);
+    }
+    async modelForSynchronization() {
+        return {
+            version: this.version,
+            model: await this._toList()
+        };
     }
     // Returns {version, model: [{id, value, keys: []}]}
     toLiteral() {
@@ -49089,32 +49166,47 @@ class InMemoryCollection extends InMemoryStorageProvider {
         this.version = version;
         this._model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__["CrdtCollectionModel"](model);
     }
-    async toList() {
-        if (this.type.primitiveType().isReference) {
+    async _toList() {
+        if (this.referenceMode) {
             const items = this.toLiteral().model;
-            const referredType = this.type.primitiveType().referenceReferredType;
+            if (items.length === 0) {
+                return [];
+            }
+            const referredType = this.type.primitiveType();
             const refSet = new Set();
             items.forEach(item => refSet.add(item.value.storageKey));
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(refSet.size === 1);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
             const ref = refSet.values().next().value;
             if (this._backingStore == null) {
                 this._backingStore = await this._storageEngine.share(referredType.toString(), referredType, ref);
             }
             const retrieveItem = async (item) => {
                 const ref = item.value;
-                return this._backingStore.get(ref.id);
+                return { id: ref.id, value: await this._backingStore.get(ref.id), keys: item.keys };
             };
             return await Promise.all(items.map(retrieveItem));
         }
-        return this.toLiteral().model.map(item => item.value);
+        return this.toLiteral().model;
+    }
+    async toList() {
+        return (await this._toList()).map(item => item.value);
+    }
+    async getMultiple(ids) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.referenceMode, "getMultiple not implemented for referenceMode stores");
+        return ids.map(id => this._model.getValue(id));
+    }
+    async storeMultiple(values, keys, originatorId = null) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.referenceMode, "storeMultiple not implemented for referenceMode stores");
+        values.map(value => this._model.add(value.id, value, keys));
+        this.version++;
     }
     async get(id) {
-        if (this.type.primitiveType().isReference) {
+        if (this.referenceMode) {
             const ref = this._model.getValue(id);
             if (ref == null) {
                 return null;
             }
-            const referredType = this.type.primitiveType().referenceReferredType;
+            const referredType = this.type.primitiveType();
             if (this._backingStore == null) {
                 this._backingStore = await this._storageEngine.share(referredType.toString(), referredType.collectionOf(), ref.storageKey);
             }
@@ -49129,18 +49221,24 @@ class InMemoryCollection extends InMemoryStorageProvider {
     async store(value, keys, originatorId = null) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(keys != null && keys.length > 0, 'keys required');
         const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__["Tracing"].start({ cat: 'handle', name: 'InMemoryCollection::store', args: { name: this.name } });
-        if (this.type.primitiveType().isReference) {
-            const referredType = this.type.primitiveType().referenceReferredType;
+        const changeEvent = { value, keys, effective: undefined };
+        if (this.referenceMode) {
+            const referredType = this.type.primitiveType();
+            const storageKey = this._backingStore ? this._backingStore.storageKey : this._storageEngine.baseStorageKey(referredType);
+            // It's important to store locally first, as the upstream consumers
+            // are set up to assume all writes are processed (at least locally) synchronously.
+            changeEvent.effective = this._model.add(value.id, { id: value.id, storageKey }, keys);
             if (this._backingStore == null) {
-                this._backingStore =
-                    await this._storageEngine.baseStorageFor(referredType);
+                this._backingStore = await this._storageEngine.baseStorageFor(referredType, storageKey);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._backingStore !== this, "A store can't be its own backing store");
             }
-            this._backingStore.store(value, [this.storageKey]);
-            value = { id: value.id, storageKey: this._backingStore.storageKey };
+            await this._backingStore.store(value, keys);
         }
-        const effective = this._model.add(value.id, value, keys);
+        else {
+            changeEvent.effective = this._model.add(value.id, value, keys);
+        }
         this.version++;
-        await trace.wait(this._fire('change', { add: [{ value, keys, effective }], version: this.version, originatorId }));
+        await trace.wait(this._fire('change', { add: [changeEvent], version: this.version, originatorId }));
         trace.end({ args: { value } });
     }
     async remove(id, keys = [], originatorId = null) {
@@ -49163,6 +49261,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
 class InMemoryVariable extends InMemoryStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, name, id, key);
+        this.localKeyId = 0;
         this._storageEngine = storageEngine;
         this._stored = null;
         this._backingStore = null;
@@ -49173,8 +49272,31 @@ class InMemoryVariable extends InMemoryStorageProvider {
         return variable;
     }
     async cloneFrom(handle) {
+        this.referenceMode = handle.referenceMode;
         const literal = await handle.toLiteral();
+        if (this.referenceMode && literal.model.length > 0) {
+            if (this._backingStore == null) {
+                this._backingStore = await this._storageEngine.baseStorageFor(this.type, this._storageEngine.baseStorageKey(this.type));
+                literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this._backingStore.storageKey } }));
+                const underlying = await handle._backingStore.getMultiple(literal.model.map(({ id }) => id));
+                await this._backingStore.storeMultiple(underlying, [this.storageKey]);
+            }
+        }
         await this.fromLiteral(literal);
+    }
+    async modelForSynchronization() {
+        if (this.referenceMode && this._stored !== null) {
+            const value = this._stored;
+            if (this._backingStore == null) {
+                this._backingStore = await this._storageEngine.share(this.type.toString(), this.type.collectionOf(), value.storageKey);
+            }
+            const result = await this._backingStore.get(value.id);
+            return {
+                version: this.version,
+                model: [{ id: value.id, value: result }]
+            };
+        }
+        return super.modelForSynchronization();
     }
     // Returns {version, model: [{id, value}]}
     async toLiteral() {
@@ -49193,6 +49315,9 @@ class InMemoryVariable extends InMemoryStorageProvider {
     }
     fromLiteral({ version, model }) {
         const value = model.length === 0 ? null : model[0].value;
+        if (this.referenceMode && value && value.rawData) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `shouldn't have rawData ${JSON.stringify(value.rawData)} here`);
+        }
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(value !== undefined);
         this._stored = value;
         this.version = version;
@@ -49201,9 +49326,9 @@ class InMemoryVariable extends InMemoryStorageProvider {
         return { stored: this._stored !== null };
     }
     async get() {
-        if (this.type.isReference) {
+        if (this.referenceMode && this._stored) {
             const value = this._stored;
-            const referredType = this.type.referenceReferredType;
+            const referredType = this.type;
             // TODO: string version of ReferredTyped as ID?
             if (this._backingStore == null) {
                 this._backingStore = await this._storageEngine.share(referredType.toString(), referredType.collectionOf(), value.storageKey);
@@ -49215,20 +49340,25 @@ class InMemoryVariable extends InMemoryStorageProvider {
     }
     async set(value, originatorId = null, barrier = null) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(value !== undefined);
-        if (this.type.isReference) {
-            // If there's a barrier set, then the originating storage-proxy is expecting
-            // a result so we cannot suppress the event here.
-            // TODO(shans): Make sure this is tested.
-            if (this._stored && this._stored.id === value.id && barrier == null) {
-                return;
-            }
-            const referredType = this.type.referenceReferredType;
+        if (this.referenceMode && value) {
+            // Even if this value is identical to the previously written one,
+            // we can't suppress an event here because we don't actually have
+            // the previous value for comparison (that's down in the backing store).
+            // TODO(shans): should we fetch and compare in the case of the ids matching?
+            const referredType = this.type;
+            const storageKey = this._backingStore ? this._backingStore.storageKey : this._storageEngine.baseStorageKey(referredType);
+            // It's important to store locally first, as the upstream consumers
+            // are set up to assume all writes are processed (at least locally) synchronously.
+            this._stored = { id: value.id, storageKey };
             if (this._backingStore == null) {
                 this._backingStore =
-                    await this._storageEngine.baseStorageFor(referredType);
+                    await this._storageEngine.baseStorageFor(referredType, storageKey);
             }
-            this._backingStore.store(value, [this.storageKey]);
-            this._stored = { id: value.id, storageKey: this._backingStore.storageKey };
+            // TODO(shans): mutating the storageKey here to provide unique keys is
+            // a hack that can be removed once entity mutation is distinct from collection
+            // updates. Once entity mutation exists, it shouldn't ever be possible to write
+            // different values with the same id. 
+            await this._backingStore.store(value, [this.storageKey + this.localKeyId++]);
         }
         else {
             // If there's a barrier set, then the originating storage-proxy is expecting
@@ -49240,7 +49370,12 @@ class InMemoryVariable extends InMemoryStorageProvider {
             this._stored = value;
         }
         this.version++;
-        await this._fire('change', { data: this._stored, version: this.version, originatorId, barrier });
+        if (this.referenceMode) {
+            await this._fire('change', { data: value, version: this.version, originatorId, barrier });
+        }
+        else {
+            await this._fire('change', { data: this._stored, version: this.version, originatorId, barrier });
+        }
     }
     async clear(originatorId = null, barrier = null) {
         await this.set(null, originatorId, barrier);
@@ -49289,6 +49424,9 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
                 copy = [];
             }
         };
+    }
+    toLiteral() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, "no toLiteral implementation for BigCollection");
     }
 }
 //# sourceMappingURL=in-memory-storage.js.map
@@ -49347,6 +49485,7 @@ var EventKind;
 })(EventKind || (EventKind = {}));
 class StorageProviderBase {
     constructor(type, name, id, key) {
+        this.referenceMode = false;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(id, 'id must be provided when constructing StorageProviders');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!type.hasUnresolvedVariable, 'Storage types must be concrete');
         const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__["Tracing"].start({ cat: 'handle', name: 'StorageProviderBase::constructor', args: { type: type.key, name } });
@@ -49359,6 +49498,9 @@ class StorageProviderBase {
         this._storageKey = key;
         this.nextLocalID = 0;
         trace.end();
+    }
+    enableReferenceMode() {
+        this.referenceMode = true;
     }
     get storageKey() {
         return this._storageKey;
@@ -49442,6 +49584,9 @@ class StorageProviderBase {
     get apiChannelMappingId() {
         return this.id;
     }
+    modelForSynchronization() {
+        return this.toLiteral();
+    }
 }
 //# sourceMappingURL=storage-provider-base.js.map
 
@@ -49457,8 +49602,8 @@ class StorageProviderBase {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProviderFactory", function() { return StorageProviderFactory; });
-/* harmony import */ var _in_memory_storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./in-memory-storage */ "./runtime/ts-build/storage/in-memory-storage.js");
-/* harmony import */ var _firebase_storage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./firebase-storage */ "./runtime/ts-build/storage/firebase-storage.js");
+/* harmony import */ var _in_memory_storage_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./in-memory-storage.js */ "./runtime/ts-build/storage/in-memory-storage.js");
+/* harmony import */ var _firebase_storage_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./firebase-storage.js */ "./runtime/ts-build/storage/firebase-storage.js");
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -49471,7 +49616,7 @@ __webpack_require__.r(__webpack_exports__);
 class StorageProviderFactory {
     constructor(arcId) {
         this.arcId = arcId;
-        this._storageInstances = { 'in-memory': new _in_memory_storage__WEBPACK_IMPORTED_MODULE_0__["InMemoryStorage"](arcId), 'firebase': new _firebase_storage__WEBPACK_IMPORTED_MODULE_1__["FirebaseStorage"](arcId) };
+        this._storageInstances = { 'in-memory': new _in_memory_storage_js__WEBPACK_IMPORTED_MODULE_0__["InMemoryStorage"](arcId), 'firebase': new _firebase_storage_js__WEBPACK_IMPORTED_MODULE_1__["FirebaseStorage"](arcId) };
     }
     _storageForKey(key) {
         const protocol = key.split(':')[0];
@@ -49481,10 +49626,14 @@ class StorageProviderFactory {
         return this._storageForKey(key).share(id, type, key);
     }
     async construct(id, type, keyFragment) {
-        return this._storageForKey(keyFragment).construct(id, type, keyFragment);
+        const storage = await this._storageForKey(keyFragment).construct(id, type, keyFragment);
+        // TODO(shans): don't use reference mode once adapters are implemented
+        return storage;
     }
     async connect(id, type, key) {
-        return this._storageForKey(key).connect(id, type, key);
+        const storage = await this._storageForKey(key).connect(id, type, key);
+        // TODO(shans): don't use reference mode once adapters are implemented
+        return storage;
     }
     parseStringAsKey(s) {
         return this._storageForKey(s).parseStringAsKey(s);

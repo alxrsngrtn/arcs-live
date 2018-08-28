@@ -5,8 +5,8 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { InMemoryStorage } from './in-memory-storage';
-import { FirebaseStorage } from './firebase-storage';
+import { InMemoryStorage } from './in-memory-storage.js';
+import { FirebaseStorage } from './firebase-storage.js';
 export class StorageProviderFactory {
     constructor(arcId) {
         this.arcId = arcId;
@@ -20,10 +20,14 @@ export class StorageProviderFactory {
         return this._storageForKey(key).share(id, type, key);
     }
     async construct(id, type, keyFragment) {
-        return this._storageForKey(keyFragment).construct(id, type, keyFragment);
+        const storage = await this._storageForKey(keyFragment).construct(id, type, keyFragment);
+        // TODO(shans): don't use reference mode once adapters are implemented
+        return storage;
     }
     async connect(id, type, key) {
-        return this._storageForKey(key).connect(id, type, key);
+        const storage = await this._storageForKey(key).connect(id, type, key);
+        // TODO(shans): don't use reference mode once adapters are implemented
+        return storage;
     }
     parseStringAsKey(s) {
         return this._storageForKey(s).parseStringAsKey(s);

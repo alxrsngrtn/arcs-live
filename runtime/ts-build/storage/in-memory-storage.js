@@ -20,7 +20,7 @@ class InMemoryKey extends KeyBase {
         super();
         let parts = key.split('://');
         this.protocol = parts[0];
-        assert(this.protocol === 'in-memory');
+        assert(this.protocol === 'in-memory', `can't construct in-memory key for protocol ${this.protocol} (input key ${key})`);
         parts = parts[1] ? parts.slice(1).join('://').split('^^') : [];
         this.arcId = parts[0];
         this.location = parts[1];
@@ -46,13 +46,19 @@ export class InMemoryStorage {
         assert(arcId !== undefined, 'Arcs with storage must have ids');
         this.arcId = arcId;
         this._memoryMap = {};
-        this._typeMap = new Map();
+        this._typeMap = {};
         this.localIDBase = 0;
+        this.typePromiseMap = {};
         // TODO(shans): re-add this assert once we have a runtime object to put it on.
         // assert(__storageCache[this._arc.id] == undefined, `${this._arc.id} already exists in local storage cache`);
         __storageCache[this.arcId.toString()] = this;
     }
     async construct(id, type, keyFragment) {
+        const provider = await this._construct(id, type, keyFragment);
+        provider.enableReferenceMode();
+        return provider;
+    }
+    async _construct(id, type, keyFragment) {
         const key = new InMemoryKey(keyFragment);
         if (key.arcId == undefined) {
             key.arcId = this.arcId.toString();
@@ -83,19 +89,31 @@ export class InMemoryStorage {
         return this._memoryMap[keyString];
     }
     async share(id, type, keyString) {
+        assert(keyString, "Must provide valid keyString to connect to underlying data");
         const key = new InMemoryKey(keyString);
-        assert(key.arcId === this.arcId.toString());
+        assert(key.arcId === this.arcId.toString(), `key's arcId ${key.arcId} doesn't match this storageProvider's arcId ${this.arcId.toString()}`);
         if (this._memoryMap[keyString] == undefined) {
-            return this.construct(id, type, keyString);
+            return this._construct(id, type, keyString);
         }
         return this._memoryMap[keyString];
     }
-    async baseStorageFor(type) {
-        if (this._typeMap.has(type)) {
-            return this._typeMap.get(type);
+    baseStorageKey(type) {
+        const key = new InMemoryKey('in-memory');
+        key.arcId = this.arcId.toString();
+        key.location = 'in-memory-' + type.toString();
+        return key.toString();
+    }
+    async baseStorageFor(type, key) {
+        if (this._typeMap[key]) {
+            return this._typeMap[key];
         }
-        const storage = await this.construct(type.toString(), type.collectionOf(), 'in-memory');
-        this._typeMap.set(type, storage);
+        if (this.typePromiseMap[key]) {
+            return this.typePromiseMap[key];
+        }
+        const storagePromise = this._construct(type.toString(), type.collectionOf(), key);
+        this.typePromiseMap[key] = storagePromise;
+        const storage = await storagePromise;
+        this._typeMap[key] = storage;
         return storage;
     }
     parseStringAsKey(s) {
@@ -130,7 +148,23 @@ class InMemoryCollection extends InMemoryStorageProvider {
         return handle;
     }
     async cloneFrom(handle) {
-        this.fromLiteral(await handle.toLiteral());
+        this.referenceMode = handle.referenceMode;
+        const literal = await handle.toLiteral();
+        if (this.referenceMode && literal.model.length > 0) {
+            if (this._backingStore == null) {
+                this._backingStore = await this._storageEngine.baseStorageFor(this.type, this._storageEngine.baseStorageKey(this.type));
+                literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this._backingStore.storageKey } }));
+                const underlying = await handle._backingStore.getMultiple(literal.model.map(({ id }) => id));
+                await this._backingStore.storeMultiple(underlying, [this.storageKey]);
+            }
+        }
+        this.fromLiteral(literal);
+    }
+    async modelForSynchronization() {
+        return {
+            version: this.version,
+            model: await this._toList()
+        };
     }
     // Returns {version, model: [{id, value, keys: []}]}
     toLiteral() {
@@ -143,32 +177,47 @@ class InMemoryCollection extends InMemoryStorageProvider {
         this.version = version;
         this._model = new CrdtCollectionModel(model);
     }
-    async toList() {
-        if (this.type.primitiveType().isReference) {
+    async _toList() {
+        if (this.referenceMode) {
             const items = this.toLiteral().model;
-            const referredType = this.type.primitiveType().referenceReferredType;
+            if (items.length === 0) {
+                return [];
+            }
+            const referredType = this.type.primitiveType();
             const refSet = new Set();
             items.forEach(item => refSet.add(item.value.storageKey));
-            assert(refSet.size === 1);
+            assert(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
             const ref = refSet.values().next().value;
             if (this._backingStore == null) {
                 this._backingStore = await this._storageEngine.share(referredType.toString(), referredType, ref);
             }
             const retrieveItem = async (item) => {
                 const ref = item.value;
-                return this._backingStore.get(ref.id);
+                return { id: ref.id, value: await this._backingStore.get(ref.id), keys: item.keys };
             };
             return await Promise.all(items.map(retrieveItem));
         }
-        return this.toLiteral().model.map(item => item.value);
+        return this.toLiteral().model;
+    }
+    async toList() {
+        return (await this._toList()).map(item => item.value);
+    }
+    async getMultiple(ids) {
+        assert(!this.referenceMode, "getMultiple not implemented for referenceMode stores");
+        return ids.map(id => this._model.getValue(id));
+    }
+    async storeMultiple(values, keys, originatorId = null) {
+        assert(!this.referenceMode, "storeMultiple not implemented for referenceMode stores");
+        values.map(value => this._model.add(value.id, value, keys));
+        this.version++;
     }
     async get(id) {
-        if (this.type.primitiveType().isReference) {
+        if (this.referenceMode) {
             const ref = this._model.getValue(id);
             if (ref == null) {
                 return null;
             }
-            const referredType = this.type.primitiveType().referenceReferredType;
+            const referredType = this.type.primitiveType();
             if (this._backingStore == null) {
                 this._backingStore = await this._storageEngine.share(referredType.toString(), referredType.collectionOf(), ref.storageKey);
             }
@@ -183,18 +232,24 @@ class InMemoryCollection extends InMemoryStorageProvider {
     async store(value, keys, originatorId = null) {
         assert(keys != null && keys.length > 0, 'keys required');
         const trace = Tracing.start({ cat: 'handle', name: 'InMemoryCollection::store', args: { name: this.name } });
-        if (this.type.primitiveType().isReference) {
-            const referredType = this.type.primitiveType().referenceReferredType;
+        const changeEvent = { value, keys, effective: undefined };
+        if (this.referenceMode) {
+            const referredType = this.type.primitiveType();
+            const storageKey = this._backingStore ? this._backingStore.storageKey : this._storageEngine.baseStorageKey(referredType);
+            // It's important to store locally first, as the upstream consumers
+            // are set up to assume all writes are processed (at least locally) synchronously.
+            changeEvent.effective = this._model.add(value.id, { id: value.id, storageKey }, keys);
             if (this._backingStore == null) {
-                this._backingStore =
-                    await this._storageEngine.baseStorageFor(referredType);
+                this._backingStore = await this._storageEngine.baseStorageFor(referredType, storageKey);
+                assert(this._backingStore !== this, "A store can't be its own backing store");
             }
-            this._backingStore.store(value, [this.storageKey]);
-            value = { id: value.id, storageKey: this._backingStore.storageKey };
+            await this._backingStore.store(value, keys);
         }
-        const effective = this._model.add(value.id, value, keys);
+        else {
+            changeEvent.effective = this._model.add(value.id, value, keys);
+        }
         this.version++;
-        await trace.wait(this._fire('change', { add: [{ value, keys, effective }], version: this.version, originatorId }));
+        await trace.wait(this._fire('change', { add: [changeEvent], version: this.version, originatorId }));
         trace.end({ args: { value } });
     }
     async remove(id, keys = [], originatorId = null) {
@@ -217,6 +272,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
 class InMemoryVariable extends InMemoryStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, name, id, key);
+        this.localKeyId = 0;
         this._storageEngine = storageEngine;
         this._stored = null;
         this._backingStore = null;
@@ -227,8 +283,31 @@ class InMemoryVariable extends InMemoryStorageProvider {
         return variable;
     }
     async cloneFrom(handle) {
+        this.referenceMode = handle.referenceMode;
         const literal = await handle.toLiteral();
+        if (this.referenceMode && literal.model.length > 0) {
+            if (this._backingStore == null) {
+                this._backingStore = await this._storageEngine.baseStorageFor(this.type, this._storageEngine.baseStorageKey(this.type));
+                literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this._backingStore.storageKey } }));
+                const underlying = await handle._backingStore.getMultiple(literal.model.map(({ id }) => id));
+                await this._backingStore.storeMultiple(underlying, [this.storageKey]);
+            }
+        }
         await this.fromLiteral(literal);
+    }
+    async modelForSynchronization() {
+        if (this.referenceMode && this._stored !== null) {
+            const value = this._stored;
+            if (this._backingStore == null) {
+                this._backingStore = await this._storageEngine.share(this.type.toString(), this.type.collectionOf(), value.storageKey);
+            }
+            const result = await this._backingStore.get(value.id);
+            return {
+                version: this.version,
+                model: [{ id: value.id, value: result }]
+            };
+        }
+        return super.modelForSynchronization();
     }
     // Returns {version, model: [{id, value}]}
     async toLiteral() {
@@ -247,6 +326,9 @@ class InMemoryVariable extends InMemoryStorageProvider {
     }
     fromLiteral({ version, model }) {
         const value = model.length === 0 ? null : model[0].value;
+        if (this.referenceMode && value && value.rawData) {
+            assert(false, `shouldn't have rawData ${JSON.stringify(value.rawData)} here`);
+        }
         assert(value !== undefined);
         this._stored = value;
         this.version = version;
@@ -255,9 +337,9 @@ class InMemoryVariable extends InMemoryStorageProvider {
         return { stored: this._stored !== null };
     }
     async get() {
-        if (this.type.isReference) {
+        if (this.referenceMode && this._stored) {
             const value = this._stored;
-            const referredType = this.type.referenceReferredType;
+            const referredType = this.type;
             // TODO: string version of ReferredTyped as ID?
             if (this._backingStore == null) {
                 this._backingStore = await this._storageEngine.share(referredType.toString(), referredType.collectionOf(), value.storageKey);
@@ -269,20 +351,25 @@ class InMemoryVariable extends InMemoryStorageProvider {
     }
     async set(value, originatorId = null, barrier = null) {
         assert(value !== undefined);
-        if (this.type.isReference) {
-            // If there's a barrier set, then the originating storage-proxy is expecting
-            // a result so we cannot suppress the event here.
-            // TODO(shans): Make sure this is tested.
-            if (this._stored && this._stored.id === value.id && barrier == null) {
-                return;
-            }
-            const referredType = this.type.referenceReferredType;
+        if (this.referenceMode && value) {
+            // Even if this value is identical to the previously written one,
+            // we can't suppress an event here because we don't actually have
+            // the previous value for comparison (that's down in the backing store).
+            // TODO(shans): should we fetch and compare in the case of the ids matching?
+            const referredType = this.type;
+            const storageKey = this._backingStore ? this._backingStore.storageKey : this._storageEngine.baseStorageKey(referredType);
+            // It's important to store locally first, as the upstream consumers
+            // are set up to assume all writes are processed (at least locally) synchronously.
+            this._stored = { id: value.id, storageKey };
             if (this._backingStore == null) {
                 this._backingStore =
-                    await this._storageEngine.baseStorageFor(referredType);
+                    await this._storageEngine.baseStorageFor(referredType, storageKey);
             }
-            this._backingStore.store(value, [this.storageKey]);
-            this._stored = { id: value.id, storageKey: this._backingStore.storageKey };
+            // TODO(shans): mutating the storageKey here to provide unique keys is
+            // a hack that can be removed once entity mutation is distinct from collection
+            // updates. Once entity mutation exists, it shouldn't ever be possible to write
+            // different values with the same id. 
+            await this._backingStore.store(value, [this.storageKey + this.localKeyId++]);
         }
         else {
             // If there's a barrier set, then the originating storage-proxy is expecting
@@ -294,7 +381,12 @@ class InMemoryVariable extends InMemoryStorageProvider {
             this._stored = value;
         }
         this.version++;
-        await this._fire('change', { data: this._stored, version: this.version, originatorId, barrier });
+        if (this.referenceMode) {
+            await this._fire('change', { data: value, version: this.version, originatorId, barrier });
+        }
+        else {
+            await this._fire('change', { data: this._stored, version: this.version, originatorId, barrier });
+        }
     }
     async clear(originatorId = null, barrier = null) {
         await this.set(null, originatorId, barrier);
@@ -343,6 +435,9 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
                 copy = [];
             }
         };
+    }
+    toLiteral() {
+        assert(false, "no toLiteral implementation for BigCollection");
     }
 }
 //# sourceMappingURL=in-memory-storage.js.map

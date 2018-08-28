@@ -1928,7 +1928,7 @@ class Collection extends Handle {
       throw new Error('Handle not writeable');
     }
     let serialization = this._serialize(entity);
-    let keys = [this._proxy.generateID('key')];
+    let keys = [this._proxy.generateID() + 'key'];
     return this._proxy.store(serialization, keys, this._particleId);
   }
 
@@ -3108,7 +3108,7 @@ class Particle {
   setDescriptionPattern(connectionName, pattern) {
     let descriptions = this.handles.get('descriptions');
     if (descriptions) {
-      descriptions.store(new descriptions.entityClass({key: connectionName, value: pattern}, connectionName));
+      descriptions.store(new descriptions.entityClass({key: connectionName, value: pattern}, this.spec.name + '-' + connectionName));
       return true;
     }
     return false;
@@ -3478,9 +3478,10 @@ class StorageProxyBase {
     this._id = id;
     this._type = type;
     this._port = port;
-    this._pec = pec;
     this._scheduler = scheduler;
     this.name = name;
+    this._baseForNewID = pec.generateID();
+    this._localIDComponent = 0;
 
     this._version = undefined;
     this._listenerAttached = false;
@@ -3621,12 +3622,12 @@ class StorageProxyBase {
     }
   }
 
-  generateID(component) {
-    return this._pec.generateID(component);
+  generateID() {
+    return `${this._baseForNewID}:${this._localIDComponent++}`;
   }
 
   generateIDComponents() {
-    return this._pec.generateIDComponents();
+    return {base: this._baseForNewID, component: () => this._localIDComponent++};
   }
 }
 
@@ -3680,8 +3681,9 @@ class CollectionProxy extends StorageProxyBase {
       }
     } else if ('remove' in update) {
       for (let {value, keys, effective} of update.remove) {
+        const localValue = this._model.getValue(value.id);
         if (apply && this._model.remove(value.id, keys) || !apply && effective) {
-          removed.push(value);
+          removed.push(localValue);
         }
       }
     } else {

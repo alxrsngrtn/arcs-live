@@ -1,5 +1,7 @@
-commit 3c795b76eb21784f212c2f100f02bb89a1f7fa43
+commit b1d279b68c96526731c786f2a1a654355edb82d3
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Aug 27 21:41:10 2018 -0700
+Date:   Tue Aug 28 05:38:48 2018 -0700
 
-    Switch to synthetic default imports (#1820)
+    Revert to direct firebase calls (#1822)
+    
+    Tested on node v9.4.0/v9.11.2/v10.9.0 manual/regular
