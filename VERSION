@@ -1,7 +1,5 @@
-commit b1d279b68c96526731c786f2a1a654355edb82d3
+commit be07a156aad2be15917174561ddfbff1dce45e4f
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Aug 28 05:38:48 2018 -0700
+Date:   Tue Aug 28 13:16:24 2018 -0700
 
-    Revert to direct firebase calls (#1822)
-    
-    Tested on node v9.4.0/v9.11.2/v10.9.0 manual/regular
+    Fix indents on random.ts (#1824)
