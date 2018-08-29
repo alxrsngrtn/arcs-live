@@ -1,11 +1,15 @@
-commit 73585f465993ed3227a4bd368c55d3c9f93b2914
+commit 33b6c5d3e44f790c2a1eb8b31a434d9283f6fd3b
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Aug 29 12:17:30 2018 -0700
+Date:   Wed Aug 29 13:37:01 2018 -0700
 
-    CSP Provisioning (Alternate Take) (#1817)
+    Minor Shell Changes (#1818)
     
-    * portable CSP injection
+    * use only in-Arc Person's for location fetching (avoid 'find ... near Claire')
     
-    * fix comment
+    * move couchdb-test to /workbench
     
-    * allow more stream types from sjmiles.github.io
+    * `oncearc` workbench app creates a specific type of arc (no shell)
+    
+    * forcing person-in-Arc breaks demo test, undo for now
+    
+    * give 'Claire' a location, so she works in Restaurant tests
