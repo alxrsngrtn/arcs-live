@@ -1,5 +1,11 @@
-commit be07a156aad2be15917174561ddfbff1dce45e4f
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Aug 28 13:16:24 2018 -0700
+commit 73585f465993ed3227a4bd368c55d3c9f93b2914
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Aug 29 12:17:30 2018 -0700
 
-    Fix indents on random.ts (#1824)
+    CSP Provisioning (Alternate Take) (#1817)
+    
+    * portable CSP injection
+    
+    * fix comment
+    
+    * allow more stream types from sjmiles.github.io
