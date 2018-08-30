@@ -1,5 +1,13 @@
-commit 68b09f20fe62c37192fd3356670bc28a66d0a486
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Aug 30 11:28:18 2018 -0700
+commit 610412d8efab1da2a6fa7f2c022d62b246c37f73
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Aug 30 13:15:29 2018 -0700
 
-    Add projectId to initializeApp calls for future Firestore support (#1831)
+    introduce background-arcs directly into shell (to simulate cloud arcs) (#1829)
+    
+    * introduce background-arcs directly into shell (to simulate cloud arcs)
+    
+    * hide background arcs
+    
+    * already trimmed
+    
+    * simplify
