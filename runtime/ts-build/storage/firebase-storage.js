@@ -19,6 +19,7 @@ export async function resetStorageForTesting(key) {
     key = new FirebaseKey(key);
     const app = firebase.initializeApp({
         apiKey: key.apiKey,
+        projectId: key.projectId,
         databaseURL: key.databaseUrl
     });
     let reference = firebase.database(app).ref(key.location);
@@ -133,6 +134,7 @@ export class FirebaseStorage {
         if (this.apps[key.projectId] == undefined) {
             const app = firebase.initializeApp({
                 apiKey: key.apiKey,
+                projectId: key.projectId,
                 databaseURL: key.databaseUrl
             }, `app${_nextAppNameSuffix++}`);
             this.apps[key.projectId] = { app, owned: true };

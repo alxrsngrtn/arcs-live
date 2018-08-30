@@ -1,9 +1,5 @@
-commit a3fc96cfa98e27ca9fc67c1fcdac77b29930c882
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Aug 30 13:42:56 2018 +1000
+commit 68b09f20fe62c37192fd3356670bc28a66d0a486
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Aug 30 11:28:18 2018 -0700
 
-    First tiny runtime PR to shake out process (#1830)
-    
-    * First tiny runtime PR to shake out process
-    
-    * fix typos
+    Add projectId to initializeApp calls for future Firestore support (#1831)

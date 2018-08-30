@@ -48046,6 +48046,7 @@ async function resetStorageForTesting(key) {
     key = new FirebaseKey(key);
     const app = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.initializeApp({
         apiKey: key.apiKey,
+        projectId: key.projectId,
         databaseURL: key.databaseUrl
     });
     let reference = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.database(app).ref(key.location);
@@ -48160,6 +48161,7 @@ class FirebaseStorage {
         if (this.apps[key.projectId] == undefined) {
             const app = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.initializeApp({
                 apiKey: key.apiKey,
+                projectId: key.projectId,
                 databaseURL: key.databaseUrl
             }, `app${_nextAppNameSuffix++}`);
             this.apps[key.projectId] = { app, owned: true };
