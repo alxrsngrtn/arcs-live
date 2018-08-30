@@ -47177,6 +47177,46 @@ class Random {
 
 /***/ }),
 
+/***/ "./runtime/ts-build/runtime.js":
+/*!*************************************!*\
+  !*** ./runtime/ts-build/runtime.js ***!
+  \*************************************/
+/*! exports provided: Runtime */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Runtime", function() { return Runtime; });
+/* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../description.js */ "./runtime/description.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+// To start with, this class will simply hide the runtime classes that are
+// currently imported by ArcsLib.js. Once that refactoring is done, we can
+// think about what the api should actually look like. 
+class Runtime {
+    constructor() {
+        this.arcs = [];
+        // user information. One persona per runtime for now.
+    }
+    // Stuff the shell needs
+    static getArcDescription(arc) {
+        // Verify that it's one of my arcs, and make this non-static, once I have
+        // Runtime objects in the calling code.
+        return new _description_js__WEBPACK_IMPORTED_MODULE_0__["Description"](arc).getArcDescription();
+    }
+}
+//# sourceMappingURL=runtime.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/schema.js":
 /*!************************************!*\
   !*** ./runtime/ts-build/schema.js ***!
@@ -51023,8 +51063,8 @@ const createTemplate = innerHTML => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _runtime_arc_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/arc.js */ "./runtime/arc.js");
-/* harmony import */ var _runtime_description_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../runtime/description.js */ "./runtime/description.js");
+/* harmony import */ var _runtime_ts_build_runtime_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/ts-build/runtime.js */ "./runtime/ts-build/runtime.js");
+/* harmony import */ var _runtime_arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../runtime/arc.js */ "./runtime/arc.js");
 /* harmony import */ var _runtime_manifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../runtime/manifest.js */ "./runtime/manifest.js");
 /* harmony import */ var _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../runtime/planificator.js */ "./runtime/planificator.js");
 /* harmony import */ var _runtime_planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../runtime/planner.js */ "./runtime/planner.js");
@@ -51048,6 +51088,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+// The following will be pulled into Runtime.
+
+
+
+
 
 
 
@@ -51065,8 +51110,8 @@ __webpack_require__.r(__webpack_exports__);
 
 const Arcs = {
   version: '0.3',
-  Arc: _runtime_arc_js__WEBPACK_IMPORTED_MODULE_0__["Arc"],
-  Description: _runtime_description_js__WEBPACK_IMPORTED_MODULE_1__["Description"],
+  Arc: _runtime_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"],
+  Runtime: _runtime_ts_build_runtime_js__WEBPACK_IMPORTED_MODULE_0__["Runtime"],
   Manifest: _runtime_manifest_js__WEBPACK_IMPORTED_MODULE_2__["Manifest"],
   Planificator: _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_3__["Planificator"],
   Planner: _runtime_planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"],

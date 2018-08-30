@@ -1,15 +1,9 @@
-commit 33b6c5d3e44f790c2a1eb8b31a434d9283f6fd3b
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Aug 29 13:37:01 2018 -0700
+commit a3fc96cfa98e27ca9fc67c1fcdac77b29930c882
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Thu Aug 30 13:42:56 2018 +1000
 
-    Minor Shell Changes (#1818)
+    First tiny runtime PR to shake out process (#1830)
     
-    * use only in-Arc Person's for location fetching (avoid 'find ... near Claire')
+    * First tiny runtime PR to shake out process
     
-    * move couchdb-test to /workbench
-    
-    * `oncearc` workbench app creates a specific type of arc (no shell)
-    
-    * forcing person-in-Arc breaks demo test, undo for now
-    
-    * give 'Claire' a location, so she works in Restaurant tests
+    * fix typos
