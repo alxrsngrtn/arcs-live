@@ -1,13 +1,5 @@
-commit 610412d8efab1da2a6fa7f2c022d62b246c37f73
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Aug 30 13:15:29 2018 -0700
+commit fab2039e3b8d463d1be04e2fe21c17dfa6ee06fa
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Aug 30 16:33:02 2018 -0700
 
-    introduce background-arcs directly into shell (to simulate cloud arcs) (#1829)
-    
-    * introduce background-arcs directly into shell (to simulate cloud arcs)
-    
-    * hide background arcs
-    
-    * already trimmed
-    
-    * simplify
+    reenable demo-flow-test (#1833)
