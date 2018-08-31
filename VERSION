@@ -1,5 +1,5 @@
-commit fab2039e3b8d463d1be04e2fe21c17dfa6ee06fa
+commit 89b03243acba3fd98c20a9547ad88df3b18ea60d
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Aug 30 16:33:02 2018 -0700
+Date:   Fri Aug 31 10:03:57 2018 -0700
 
-    reenable demo-flow-test (#1833)
+    update Friends particle to use boxQuery (#1834)
