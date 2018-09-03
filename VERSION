@@ -1,5 +1,9 @@
-commit 89b03243acba3fd98c20a9547ad88df3b18ea60d
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Aug 31 10:03:57 2018 -0700
+commit d275814bab51a540208120283ca7f4248c69739e
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Mon Sep 3 14:25:58 2018 +1000
 
-    update Friends particle to use boxQuery (#1834)
+    Adds a tiny test for the tiny runtime class (#1840)
+    
+    * Adds a tiny test for the tiny runtime class
+    
+    * Fix copyright date
