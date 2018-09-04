@@ -20,14 +20,12 @@ export class StorageProviderFactory {
         return this._storageForKey(key).share(id, type, key);
     }
     async construct(id, type, keyFragment) {
-        const storage = await this._storageForKey(keyFragment).construct(id, type, keyFragment);
         // TODO(shans): don't use reference mode once adapters are implemented
-        return storage;
+        return await this._storageForKey(keyFragment).construct(id, type, keyFragment);
     }
     async connect(id, type, key) {
-        const storage = await this._storageForKey(key).connect(id, type, key);
         // TODO(shans): don't use reference mode once adapters are implemented
-        return storage;
+        return await this._storageForKey(key).connect(id, type, key);
     }
     parseStringAsKey(s) {
         return this._storageForKey(s).parseStringAsKey(s);

@@ -7,7 +7,7 @@
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../../platform/assert-web.js';
 import { Tracing } from '../../../tracelib/trace.js';
-import { StorageProviderBase } from './storage-provider-base.js';
+import { StorageBase, StorageProviderBase } from './storage-provider-base.js';
 import { KeyBase } from './key-base.js';
 import { CrdtCollectionModel } from './crdt-collection-model.js';
 export function resetInMemoryStorageForTesting() {
@@ -41,10 +41,9 @@ class InMemoryKey extends KeyBase {
 }
 // tslint:disable-next-line: variable-name
 const __storageCache = {};
-export class InMemoryStorage {
+export class InMemoryStorage extends StorageBase {
     constructor(arcId) {
-        assert(arcId !== undefined, 'Arcs with storage must have ids');
-        this.arcId = arcId;
+        super(arcId);
         this._memoryMap = {};
         this._typeMap = {};
         this.localIDBase = 0;
@@ -74,28 +73,28 @@ export class InMemoryStorage {
         this._memoryMap[key.toString()] = provider;
         return provider;
     }
-    async connect(id, type, keyString) {
-        const key = new InMemoryKey(keyString);
-        if (key.arcId !== this.arcId.toString()) {
-            if (__storageCache[key.arcId] == undefined) {
+    async connect(id, type, key) {
+        const imKey = new InMemoryKey(key);
+        if (imKey.arcId !== this.arcId.toString()) {
+            if (__storageCache[imKey.arcId] == undefined) {
                 return null;
             }
-            return __storageCache[key.arcId].connect(id, type, keyString);
+            return __storageCache[imKey.arcId].connect(id, type, key);
         }
-        if (this._memoryMap[keyString] == undefined) {
+        if (this._memoryMap[key] == undefined) {
             return null;
         }
         // TODO assert types match?
-        return this._memoryMap[keyString];
+        return this._memoryMap[key];
     }
-    async share(id, type, keyString) {
-        assert(keyString, "Must provide valid keyString to connect to underlying data");
-        const key = new InMemoryKey(keyString);
-        assert(key.arcId === this.arcId.toString(), `key's arcId ${key.arcId} doesn't match this storageProvider's arcId ${this.arcId.toString()}`);
-        if (this._memoryMap[keyString] == undefined) {
-            return this._construct(id, type, keyString);
+    async share(id, type, key) {
+        assert(key, "Must provide valid key to connect to underlying data");
+        const imKey = new InMemoryKey(key);
+        assert(imKey.arcId === this.arcId.toString(), `key's arcId ${imKey.arcId} doesn't match this storageProvider's arcId ${this.arcId.toString()}`);
+        if (this._memoryMap[key] == undefined) {
+            return this._construct(id, type, key);
         }
-        return this._memoryMap[keyString];
+        return this._memoryMap[key];
     }
     baseStorageKey(type) {
         const key = new InMemoryKey('in-memory');
@@ -118,9 +117,6 @@ export class InMemoryStorage {
     }
     parseStringAsKey(s) {
         return new InMemoryKey(s);
-    }
-    shutdown() {
-        // No-op
     }
 }
 class InMemoryStorageProvider extends StorageProviderBase {

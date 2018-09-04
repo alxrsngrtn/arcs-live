@@ -1,9 +1,5 @@
-commit d275814bab51a540208120283ca7f4248c69739e
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Mon Sep 3 14:25:58 2018 +1000
+commit 60bf18b57159d039205d90293b6c1dc5c656fd82
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Sep 3 22:19:07 2018 -0700
 
-    Adds a tiny test for the tiny runtime class (#1840)
-    
-    * Adds a tiny test for the tiny runtime class
-    
-    * Fix copyright date
+    Add abstract StorageBase class (non-functional change). (#1841)

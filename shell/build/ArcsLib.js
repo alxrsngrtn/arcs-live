@@ -47188,6 +47188,7 @@ class Random {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Runtime", function() { return Runtime; });
 /* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../description.js */ "./runtime/description.js");
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../manifest.js */ "./runtime/manifest.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -47198,19 +47199,32 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 
+
 // To start with, this class will simply hide the runtime classes that are
 // currently imported by ArcsLib.js. Once that refactoring is done, we can
-// think about what the api should actually look like. 
+// think about what the api should actually look like.
 class Runtime {
     constructor() {
         this.arcs = [];
         // user information. One persona per runtime for now.
     }
     // Stuff the shell needs
+    // Given an arc, returns it's description as a string.
     static getArcDescription(arc) {
         // Verify that it's one of my arcs, and make this non-static, once I have
         // Runtime objects in the calling code.
         return new _description_js__WEBPACK_IMPORTED_MODULE_0__["Description"](arc).getArcDescription();
+    }
+    // Parse a textual manifest and return a Manifest object. See the Manifest
+    // class for the options accepted.
+    static parseManifest(content, options) {
+        return _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(content, options);
+    }
+    // Load and parse a manifest from a resource (not striclty a file) and return
+    // a Manifest object. The loader determines the semantics of the fileName. See
+    // the Manifest class for details.
+    static loadManifest(fileName, loader, options) {
+        return _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].load(fileName, loader, options);
     }
 }
 //# sourceMappingURL=runtime.js.map
@@ -48100,9 +48114,9 @@ class FirebaseKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_5__["KeyBase"] {
     }
 }
 let _nextAppNameSuffix = 0;
-class FirebaseStorage {
+class FirebaseStorage extends _storage_provider_base__WEBPACK_IMPORTED_MODULE_0__["StorageBase"] {
     constructor(arcId) {
-        this.arcId = arcId;
+        super(arcId);
         this.apps = {};
         this.sharedStores = {};
         this.baseStores = new Map();
@@ -48129,9 +48143,9 @@ class FirebaseStorage {
         return this.sharedStores[id];
     }
     baseStorageKey(type, key) {
-        key = new FirebaseKey(key);
-        key.location = `backingStores/${type.toString()}`;
-        return key.toString();
+        const fbKey = new FirebaseKey(key);
+        fbKey.location = `backingStores/${type.toString()}`;
+        return fbKey.toString();
     }
     async baseStorageFor(type, key) {
         if (!this.baseStores.has(type)) {
@@ -48145,28 +48159,28 @@ class FirebaseStorage {
     }
     async _join(id, type, key, shouldExist) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(typeof id === 'string');
-        key = new FirebaseKey(key);
+        const fbKey = new FirebaseKey(key);
         // TODO: is it ever going to be possible to autoconstruct new firebase datastores?
-        if (key.databaseUrl == undefined || key.apiKey == undefined) {
+        if (fbKey.databaseUrl == undefined || fbKey.apiKey == undefined) {
             throw new Error('Can\'t complete partial firebase keys');
         }
-        if (this.apps[key.projectId] == undefined) {
+        if (this.apps[fbKey.projectId] == undefined) {
             for (const app of firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.apps) {
-                if (app.options['databaseURL'] === key.databaseUrl) {
-                    this.apps[key.projectId] = { app, owned: false };
+                if (app.options['databaseURL'] === fbKey.databaseUrl) {
+                    this.apps[fbKey.projectId] = { app, owned: false };
                     break;
                 }
             }
         }
-        if (this.apps[key.projectId] == undefined) {
+        if (this.apps[fbKey.projectId] == undefined) {
             const app = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.initializeApp({
-                apiKey: key.apiKey,
-                projectId: key.projectId,
-                databaseURL: key.databaseUrl
+                apiKey: fbKey.apiKey,
+                projectId: fbKey.projectId,
+                databaseURL: fbKey.databaseUrl
             }, `app${_nextAppNameSuffix++}`);
-            this.apps[key.projectId] = { app, owned: true };
+            this.apps[fbKey.projectId] = { app, owned: true };
         }
-        const reference = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.database(this.apps[key.projectId].app).ref(key.location);
+        const reference = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.database(this.apps[fbKey.projectId].app).ref(fbKey.location);
         let currentSnapshot;
         await reference.once('value', snapshot => currentSnapshot = snapshot);
         if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
@@ -49072,10 +49086,9 @@ class InMemoryKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
 }
 // tslint:disable-next-line: variable-name
 const __storageCache = {};
-class InMemoryStorage {
+class InMemoryStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["StorageBase"] {
     constructor(arcId) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arcId !== undefined, 'Arcs with storage must have ids');
-        this.arcId = arcId;
+        super(arcId);
         this._memoryMap = {};
         this._typeMap = {};
         this.localIDBase = 0;
@@ -49105,28 +49118,28 @@ class InMemoryStorage {
         this._memoryMap[key.toString()] = provider;
         return provider;
     }
-    async connect(id, type, keyString) {
-        const key = new InMemoryKey(keyString);
-        if (key.arcId !== this.arcId.toString()) {
-            if (__storageCache[key.arcId] == undefined) {
+    async connect(id, type, key) {
+        const imKey = new InMemoryKey(key);
+        if (imKey.arcId !== this.arcId.toString()) {
+            if (__storageCache[imKey.arcId] == undefined) {
                 return null;
             }
-            return __storageCache[key.arcId].connect(id, type, keyString);
+            return __storageCache[imKey.arcId].connect(id, type, key);
         }
-        if (this._memoryMap[keyString] == undefined) {
+        if (this._memoryMap[key] == undefined) {
             return null;
         }
         // TODO assert types match?
-        return this._memoryMap[keyString];
+        return this._memoryMap[key];
     }
-    async share(id, type, keyString) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(keyString, "Must provide valid keyString to connect to underlying data");
-        const key = new InMemoryKey(keyString);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(key.arcId === this.arcId.toString(), `key's arcId ${key.arcId} doesn't match this storageProvider's arcId ${this.arcId.toString()}`);
-        if (this._memoryMap[keyString] == undefined) {
-            return this._construct(id, type, keyString);
+    async share(id, type, key) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(key, "Must provide valid key to connect to underlying data");
+        const imKey = new InMemoryKey(key);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(imKey.arcId === this.arcId.toString(), `key's arcId ${imKey.arcId} doesn't match this storageProvider's arcId ${this.arcId.toString()}`);
+        if (this._memoryMap[key] == undefined) {
+            return this._construct(id, type, key);
         }
-        return this._memoryMap[keyString];
+        return this._memoryMap[key];
     }
     baseStorageKey(type) {
         const key = new InMemoryKey('in-memory');
@@ -49149,9 +49162,6 @@ class InMemoryStorage {
     }
     parseStringAsKey(s) {
         return new InMemoryKey(s);
-    }
-    shutdown() {
-        // No-op
     }
 }
 class InMemoryStorageProvider extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["StorageProviderBase"] {
@@ -49502,11 +49512,12 @@ class KeyBase {
 /*!***********************************************************!*\
   !*** ./runtime/ts-build/storage/storage-provider-base.js ***!
   \***********************************************************/
-/*! exports provided: StorageProviderBase */
+/*! exports provided: StorageBase, StorageProviderBase */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageBase", function() { return StorageBase; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProviderBase", function() { return StorageProviderBase; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../tracelib/trace.js */ "./tracelib/trace.js");
@@ -49525,6 +49536,14 @@ var EventKind;
 (function (EventKind) {
     EventKind["Change"] = "change";
 })(EventKind || (EventKind = {}));
+class StorageBase {
+    constructor(arcId) {
+        this.arcId = arcId;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arcId !== undefined, 'Arcs with storage must have ids');
+    }
+    // Provides graceful shutdown for tests.
+    shutdown() { }
+}
 class StorageProviderBase {
     constructor(type, name, id, key) {
         this.referenceMode = false;
@@ -49668,14 +49687,12 @@ class StorageProviderFactory {
         return this._storageForKey(key).share(id, type, key);
     }
     async construct(id, type, keyFragment) {
-        const storage = await this._storageForKey(keyFragment).construct(id, type, keyFragment);
         // TODO(shans): don't use reference mode once adapters are implemented
-        return storage;
+        return await this._storageForKey(keyFragment).construct(id, type, keyFragment);
     }
     async connect(id, type, key) {
-        const storage = await this._storageForKey(key).connect(id, type, key);
         // TODO(shans): don't use reference mode once adapters are implemented
-        return storage;
+        return await this._storageForKey(key).connect(id, type, key);
     }
     parseStringAsKey(s) {
         return this._storageForKey(s).parseStringAsKey(s);
@@ -51067,17 +51084,16 @@ const createTemplate = innerHTML => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _runtime_ts_build_runtime_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/ts-build/runtime.js */ "./runtime/ts-build/runtime.js");
 /* harmony import */ var _runtime_arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../runtime/arc.js */ "./runtime/arc.js");
-/* harmony import */ var _runtime_manifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../runtime/manifest.js */ "./runtime/manifest.js");
-/* harmony import */ var _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../runtime/planificator.js */ "./runtime/planificator.js");
-/* harmony import */ var _runtime_planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../runtime/planner.js */ "./runtime/planner.js");
-/* harmony import */ var _runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../runtime/slot-composer.js */ "./runtime/slot-composer.js");
-/* harmony import */ var _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../runtime/ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./browser-loader.js */ "./shell/source/browser-loader.js");
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var firebase_database__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! firebase/database */ "./node_modules/firebase/database/dist/index.esm.js");
-/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! firebase/storage */ "./node_modules/firebase/storage/dist/index.esm.js");
+/* harmony import */ var _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../runtime/planificator.js */ "./runtime/planificator.js");
+/* harmony import */ var _runtime_planner_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../runtime/planner.js */ "./runtime/planner.js");
+/* harmony import */ var _runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../runtime/slot-composer.js */ "./runtime/slot-composer.js");
+/* harmony import */ var _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../runtime/ts-build/type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./browser-loader.js */ "./shell/source/browser-loader.js");
+/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var firebase_database__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! firebase/database */ "./node_modules/firebase/database/dist/index.esm.js");
+/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! firebase/storage */ "./node_modules/firebase/storage/dist/index.esm.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -51092,7 +51108,7 @@ __webpack_require__.r(__webpack_exports__);
 
 // The following will be pulled into Runtime.
 
-
+//import {Manifest} from '../../runtime/manifest.js';
 
 
 
@@ -51114,13 +51130,13 @@ const Arcs = {
   version: '0.3',
   Arc: _runtime_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"],
   Runtime: _runtime_ts_build_runtime_js__WEBPACK_IMPORTED_MODULE_0__["Runtime"],
-  Manifest: _runtime_manifest_js__WEBPACK_IMPORTED_MODULE_2__["Manifest"],
-  Planificator: _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_3__["Planificator"],
-  Planner: _runtime_planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"],
-  SlotComposer: _runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_5__["SlotComposer"],
-  Type: _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_6__["Type"],
-  BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_7__["BrowserLoader"],
-  Tracing: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_8__["Tracing"],
+//  Manifest,
+  Planificator: _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_2__["Planificator"],
+  Planner: _runtime_planner_js__WEBPACK_IMPORTED_MODULE_3__["Planner"],
+  SlotComposer: _runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_4__["SlotComposer"],
+  Type: _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_5__["Type"],
+  BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_6__["BrowserLoader"],
+  Tracing: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_7__["Tracing"],
 };
 
 // TODO(sjmiles): can't export because WebPack won't make a built version with a module export
@@ -51128,7 +51144,7 @@ const Arcs = {
 // export default Arcs;
 
 window.Arcs = window.Arcs ? Object.assign(window.Arcs, Arcs) : Arcs;
-window.firebase = firebase_app__WEBPACK_IMPORTED_MODULE_9___default.a;
+window.firebase = firebase_app__WEBPACK_IMPORTED_MODULE_8___default.a;
 
 
 

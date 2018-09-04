@@ -12,6 +12,14 @@ var EventKind;
 (function (EventKind) {
     EventKind["Change"] = "change";
 })(EventKind || (EventKind = {}));
+export class StorageBase {
+    constructor(arcId) {
+        this.arcId = arcId;
+        assert(arcId !== undefined, 'Arcs with storage must have ids');
+    }
+    // Provides graceful shutdown for tests.
+    shutdown() { }
+}
 export class StorageProviderBase {
     constructor(type, name, id, key) {
         this.referenceMode = false;
