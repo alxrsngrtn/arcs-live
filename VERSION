@@ -1,5 +1,5 @@
-commit 60bf18b57159d039205d90293b6c1dc5c656fd82
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Sep 3 22:19:07 2018 -0700
+commit 1b3b1ac9029726994df9d8274ceecb9553580e6d
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Tue Sep 4 15:35:02 2018 +1000
 
-    Add abstract StorageBase class (non-functional change). (#1841)
+    Remove unused Planner import from ArcsLib. (#1844)

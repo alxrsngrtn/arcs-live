@@ -51108,7 +51108,6 @@ __webpack_require__.r(__webpack_exports__);
 
 // The following will be pulled into Runtime.
 
-//import {Manifest} from '../../runtime/manifest.js';
 
 
 
@@ -51130,9 +51129,7 @@ const Arcs = {
   version: '0.3',
   Arc: _runtime_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"],
   Runtime: _runtime_ts_build_runtime_js__WEBPACK_IMPORTED_MODULE_0__["Runtime"],
-//  Manifest,
   Planificator: _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_2__["Planificator"],
-  Planner: _runtime_planner_js__WEBPACK_IMPORTED_MODULE_3__["Planner"],
   SlotComposer: _runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_4__["SlotComposer"],
   Type: _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_5__["Type"],
   BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_6__["BrowserLoader"],
