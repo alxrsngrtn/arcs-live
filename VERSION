@@ -1,5 +1,5 @@
-commit 1b3b1ac9029726994df9d8274ceecb9553580e6d
+commit 08272cc1e644245fedb83054f3d0ff8430c2a35b
 Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Tue Sep 4 15:35:02 2018 +1000
+Date:   Tue Sep 4 15:57:00 2018 +1000
 
-    Remove unused Planner import from ArcsLib. (#1844)
+    Remove the actual Planner import, not just the Planner, from ArcsLib (#1845)
