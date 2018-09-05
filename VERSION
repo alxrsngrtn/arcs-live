@@ -1,5 +1,5 @@
-commit ca6b9eebe16f1dd903e1abbf4fd7d1fab5a301e9
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Sep 4 17:42:52 2018 -0700
+commit c3c5d9547e72ae94292a72c3559dea35bfcb3b4a
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Sep 4 18:58:26 2018 -0700
 
-    increase selenium tests timeout (#1850)
+    Manifest.parse -> Runtime.parseManifest (#1849)
