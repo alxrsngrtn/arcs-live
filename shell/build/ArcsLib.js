@@ -37796,8 +37796,8 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 
     if (content.template) {
       let template = content.template;
-      // Append subid={{subid}} attribute to all provided slots, to make it usable for the transformation particle.
-      template = template.replace(new RegExp('slotid="[a-z]+"', 'gi'), '$& subid="{{subId}}"');
+      // Append subid$={{subid}} attribute to all provided slots, to make it usable for the transformation particle.
+      template = template.replace(new RegExp('slotid="[a-z]+"', 'gi'), '$& subid$="{{subId}}"');
 
       // Replace hosted particle connection in template with the corresponding particle connection names.
       // TODO: make this generic!
@@ -43382,6 +43382,7 @@ class SlotContext {
         return true;
       }
       return Object.keys(this.container).length == Object.keys(container).length &&
+             Object.keys(this.container).every(key => Object.keys(container).find(newKey => newKey == key)) &&
              Object.values(this.container).every(
                 currentContainer => Object.values(container).find(newContainer => newContainer == currentContainer));
     }
@@ -43612,7 +43613,12 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
 
   _observe(container) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(container, 'Cannot observe without a container');
-    this._observer && this._observer.observe(container, {childList: true, subtree: true});
+    this._observer && this._observer.observe(container, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['subid']
+    });
   }
 
   _stampTemplate(rendering, template) {

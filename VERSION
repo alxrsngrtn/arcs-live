@@ -1,5 +1,5 @@
-commit 08272cc1e644245fedb83054f3d0ff8430c2a35b
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Tue Sep 4 15:57:00 2018 +1000
+commit ca6b9eebe16f1dd903e1abbf4fd7d1fab5a301e9
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Sep 4 17:42:52 2018 -0700
 
-    Remove the actual Planner import, not just the Planner, from ArcsLib (#1845)
+    increase selenium tests timeout (#1850)

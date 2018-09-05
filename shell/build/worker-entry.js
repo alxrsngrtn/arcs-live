@@ -2352,8 +2352,8 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 
     if (content.template) {
       let template = content.template;
-      // Append subid={{subid}} attribute to all provided slots, to make it usable for the transformation particle.
-      template = template.replace(new RegExp('slotid="[a-z]+"', 'gi'), '$& subid="{{subId}}"');
+      // Append subid$={{subid}} attribute to all provided slots, to make it usable for the transformation particle.
+      template = template.replace(new RegExp('slotid="[a-z]+"', 'gi'), '$& subid$="{{subId}}"');
 
       // Replace hosted particle connection in template with the corresponding particle connection names.
       // TODO: make this generic!
