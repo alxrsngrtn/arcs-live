@@ -9,6 +9,7 @@
 import {StorageBase, StorageProviderBase} from './storage-provider-base.js';
 import {InMemoryStorage} from './in-memory-storage.js';
 import {FirebaseStorage} from './firebase-storage.js';
+import {SyntheticStorage} from './synthetic-storage.js';
 import {Id} from '../id.js';
 import {Type} from '../type.js';
 import {KeyBase} from './key-base.js';
@@ -17,16 +18,16 @@ export class StorageProviderFactory {
   _storageInstances: {[index: string]: StorageBase};
 
   constructor(private readonly arcId: Id) {
-    this._storageInstances = {'in-memory': new InMemoryStorage(arcId), 'firebase': new FirebaseStorage(arcId)};
+    // TODO: Pass this factory into storage objects instead of linking them directly together.
+    // This needs changes to the StorageBase API to facilitate the FirebaseStorage.open functionality.
+    const firebase = new FirebaseStorage(arcId);
+    const synthetic = new SyntheticStorage(arcId, firebase);
+    this._storageInstances = {'in-memory': new InMemoryStorage(arcId), firebase, synthetic};
   }
 
   _storageForKey(key) {
     const protocol = key.split(':')[0];
     return this._storageInstances[protocol];
-  }
-
-  async share(id: string, type: Type, key: string) : Promise<StorageProviderBase> {
-    return this._storageForKey(key).share(id, type, key);
   }
 
   async construct(id: string, type: Type, keyFragment: string) : Promise<StorageProviderBase> {

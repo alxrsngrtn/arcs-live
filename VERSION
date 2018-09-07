@@ -1,5 +1,12 @@
-commit c3c5d9547e72ae94292a72c3559dea35bfcb3b4a
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Sep 4 18:58:26 2018 -0700
+commit 71ee8187bbc067847807130b3576b2aff7b19611
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Sep 7 09:45:57 2018 -0700
 
-    Manifest.parse -> Runtime.parseManifest (#1849)
+    Re-verify coalescable handle types after each of the handles were coalesced (#1859)
+    
+    * Re-verify coalescable handle types after each of the handles were coalesced
+    to avoid wrongly coalescing differently typed #selected handles
+    
+    * rename, refactor, test
+    
+    * address comment

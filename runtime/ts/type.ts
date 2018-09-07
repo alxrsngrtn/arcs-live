@@ -103,6 +103,11 @@ export class Type {
     return new Type('Reference', reference);
   }
 
+  // Provided only to get a Type object for SyntheticStorage; do not use otherwise.
+  static newSynthesized() {
+    return new Type('Synthesized', 1);
+  }
+
   mergeTypeVariablesByName(variableMap: Map<string, Type>) {
     if (this.isVariable) {
       const name = this.variable.name;
@@ -151,6 +156,9 @@ export class Type {
     }
     if (type1.isBigCollection && type2.isBigCollection) {
       return Type.unwrapPair(type1.bigCollectionType, type2.bigCollectionType);
+    }
+    if (type1.isReference && type2.isReference) {
+      return Type.unwrapPair(type1.referenceReferredType, type2.referenceReferredType);
     }
     return [type1, type2];
   }
@@ -287,6 +295,9 @@ export class Type {
     if (this.isInterface) {
       return Type.newInterface(this.interfaceShape.canWriteSuperset);
     }
+    if (this.isReference) {
+      return this.referenceReferredType.canWriteSuperset;
+    }
     throw new Error(`canWriteSuperset not implemented for ${this}`);
   }
 
@@ -299,6 +310,9 @@ export class Type {
     }
     if (this.isInterface) {
       return Type.newInterface(this.interfaceShape.canReadSubset);
+    }
+    if (this.isReference) {
+      return this.referenceReferredType.canReadSubset;
     }
     throw new Error(`canReadSubset not implemented for ${this}`);
   }
@@ -431,6 +445,8 @@ export class Type {
         return TupleFields.fromLiteral;
       case 'Variable':
         return TypeVariable.fromLiteral;
+      case 'Reference':
+        return Type.fromLiteral;
       default:
         return a => a;
     }
@@ -476,6 +492,9 @@ export class Type {
     }
     if (this.isSlot) {
       return 'Slot';
+    }
+    if (this.isReference) {
+      return 'Reference<' + this.referenceReferredType.toString() + '>';
     }
     throw new Error(`Add support to serializing type: ${JSON.stringify(this)}`);
   }
@@ -543,6 +562,9 @@ addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Slot');
 addType('Reference', 'referredType');
+
+// Special case for SyntheticStorage, not a real Type in the usual sense.
+addType('Synthesized');
 
 import {Shape} from './shape.js';
 import {Schema} from './schema.js';

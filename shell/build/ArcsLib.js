@@ -25139,7 +25139,8 @@ class Arc {
             context.dataResources.set(storageKey, storeId);
             // TODO: can't just reach into the store for the backing Store like this, should be an 
             // accessor that loads-on-demand in the storage objects.
-            await this._serializeHandle(handle._backingStore, context, storeId);
+            await handle.ensureBackingStore();
+            await this._serializeHandle(handle.backingStore, context, storeId);
           }
           const storeId = context.dataResources.get(storageKey);
           serializedData.forEach(a => {a.storageKey = storeId;});
@@ -25371,9 +25372,7 @@ ${this.activeRecipe.toString()}`;
       if (['copy', 'create'].includes(recipeHandle.fate)) {
         let type = recipeHandle.type;
         if (recipeHandle.fate == 'create') {
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(
-              type.maybeEnsureResolved(),
-              `Can't assign resolved type to ${type}`);
+          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);
         }
 
         type = type.resolvedType();
@@ -25386,7 +25385,9 @@ ${this.activeRecipe.toString()}`;
           let particleName = recipeHandle.id.match(/:particle-literal:([a-zA-Z]+)$/)[1];
           let particle = this.context.findParticleByName(particleName);
           Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipeHandle.type.interfaceShape.particleMatches(particle));
-          newStore.set(particle.clone().toLiteral());
+          const particleClone = particle.clone().toLiteral();
+          particleClone.id = recipeHandle.id;
+          await newStore.set(particleClone);
         } else if (recipeHandle.fate === 'copy') {
           let copiedStore = this.findStoreById(recipeHandle.id);
           Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(copiedStore.version !== null);
@@ -25400,16 +25401,28 @@ ${this.activeRecipe.toString()}`;
         recipeHandle.id = newStore.id;
         recipeHandle.fate = 'use';
         recipeHandle.storageKey = newStore.storageKey;
+        continue;
         // TODO: move the call to ParticleExecutionHost's DefineHandle to here
       }
+
+      // TODO(shans/sjmiles): This shouldn't be possible, but at the moment the
+      // shell pre-populates all arcs with a set of handles so if a recipe explicitly
+      // asks for one of these there's a conflict. Ideally these will end up as a 
+      // part of the context and will be populated on-demand like everything else.
+      if (this._storesById.has(recipeHandle.id)) {
+        continue;
+      } 
 
       let storageKey = recipeHandle.storageKey;
       if (!storageKey) {
         storageKey = this.keyForId(recipeHandle.id);
       }
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
-      let store = await this._storageProviderFactory.connect(recipeHandle.id, recipeHandle.type, storageKey);
+      let type = recipeHandle.type.resolvedType();
+      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.isResolved());
+      let store = await this._storageProviderFactory.connect(recipeHandle.id, type, storageKey);
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `store '${recipeHandle.id}' was not found`);
+      this._registerStore(store, recipeHandle.tags);
     }
 
     particles.forEach(recipeParticle => this._instantiateParticle(recipeParticle));
@@ -26047,11 +26060,20 @@ const parser = /*
               type,
             };
           },
-        peg$c98 = "~",
-        peg$c99 = peg$literalExpectation("~", false),
-        peg$c100 = "with",
-        peg$c101 = peg$literalExpectation("with", false),
-        peg$c102 = function(name, constraint) {
+        peg$c98 = "Reference<",
+        peg$c99 = peg$literalExpectation("Reference<", false),
+        peg$c100 = function(type) {
+            return {
+              kind: 'reference-type',
+              location: location(),
+              type,
+            };
+          },
+        peg$c101 = "~",
+        peg$c102 = peg$literalExpectation("~", false),
+        peg$c103 = "with",
+        peg$c104 = peg$literalExpectation("with", false),
+        peg$c105 = function(name, constraint) {
             return {
               kind: 'variable-type',
               location: location(),
@@ -26059,13 +26081,13 @@ const parser = /*
               constraint: optional(constraint, constraint => constraint[3], null),
             };
           },
-        peg$c103 = "Slot",
-        peg$c104 = peg$literalExpectation("Slot", false),
-        peg$c105 = "{",
-        peg$c106 = peg$literalExpectation("{", false),
-        peg$c107 = "}",
-        peg$c108 = peg$literalExpectation("}", false),
-        peg$c109 = function(fields) {
+        peg$c106 = "Slot",
+        peg$c107 = peg$literalExpectation("Slot", false),
+        peg$c108 = "{",
+        peg$c109 = peg$literalExpectation("{", false),
+        peg$c110 = "}",
+        peg$c111 = peg$literalExpectation("}", false),
+        peg$c112 = function(fields) {
           fields = optional(fields, fields => {
             let data = fields[2];
             return [data[0], data[1].map(tail => tail[2])];
@@ -26077,7 +26099,7 @@ const parser = /*
             fields
           };
         },
-        peg$c110 = function(name, value) {
+        peg$c113 = function(name, value) {
           return {
             kind: 'slot-field',
             location: location(),
@@ -26085,34 +26107,34 @@ const parser = /*
             value
           }
         },
-        peg$c111 = function(name) {
+        peg$c114 = function(name) {
             return {
-              kind: 'reference-type',
+              kind: 'type-name',
               location: location(),
               name,
             };
           },
-        peg$c112 = function(head, tail) {
+        peg$c115 = function(head, tail) {
             return [head, ...tail.map(a => a[2])];
           },
-        peg$c113 = "affordance",
-        peg$c114 = peg$literalExpectation("affordance", false),
-        peg$c115 = "dom-touch",
-        peg$c116 = peg$literalExpectation("dom-touch", false),
-        peg$c117 = "dom",
-        peg$c118 = peg$literalExpectation("dom", false),
-        peg$c119 = "vr",
-        peg$c120 = peg$literalExpectation("vr", false),
-        peg$c121 = "voice",
-        peg$c122 = peg$literalExpectation("voice", false),
-        peg$c123 = function(affordance) {
+        peg$c116 = "affordance",
+        peg$c117 = peg$literalExpectation("affordance", false),
+        peg$c118 = "dom-touch",
+        peg$c119 = peg$literalExpectation("dom-touch", false),
+        peg$c120 = "dom",
+        peg$c121 = peg$literalExpectation("dom", false),
+        peg$c122 = "vr",
+        peg$c123 = peg$literalExpectation("vr", false),
+        peg$c124 = "voice",
+        peg$c125 = peg$literalExpectation("voice", false),
+        peg$c126 = function(affordance) {
             return {
               kind: 'particle-affordance',
               location: location(),
               affordance,
             };
           },
-        peg$c124 = function(isRequired, isSet, name, tags, items) {
+        peg$c127 = function(isRequired, isSet, name, tags, items) {
             let formFactor = null;
             let providedSlots = [];
             items = optional(items, extractIndented, []);
@@ -26138,24 +26160,24 @@ const parser = /*
               providedSlots
             };
           },
-        peg$c125 = "formFactor",
-        peg$c126 = peg$literalExpectation("formFactor", false),
-        peg$c127 = "fullscreen",
-        peg$c128 = peg$literalExpectation("fullscreen", false),
-        peg$c129 = "big",
-        peg$c130 = peg$literalExpectation("big", false),
-        peg$c131 = "medium",
-        peg$c132 = peg$literalExpectation("medium", false),
-        peg$c133 = "small",
-        peg$c134 = peg$literalExpectation("small", false),
-        peg$c135 = function(formFactor) {
+        peg$c128 = "formFactor",
+        peg$c129 = peg$literalExpectation("formFactor", false),
+        peg$c130 = "fullscreen",
+        peg$c131 = peg$literalExpectation("fullscreen", false),
+        peg$c132 = "big",
+        peg$c133 = peg$literalExpectation("big", false),
+        peg$c134 = "medium",
+        peg$c135 = peg$literalExpectation("medium", false),
+        peg$c136 = "small",
+        peg$c137 = peg$literalExpectation("small", false),
+        peg$c138 = function(formFactor) {
             return {
               kind: 'form-factor',
               location: location(),
               formFactor
             };
           },
-        peg$c136 = function(isRequired, isSet, name, tags, items) {
+        peg$c139 = function(isRequired, isSet, name, tags, items) {
             let formFactor = null;
             let handles = [];
             items = items ? extractIndented(items) : [];
@@ -26179,16 +26201,16 @@ const parser = /*
               handles
             };
           },
-        peg$c137 = "handle",
-        peg$c138 = peg$literalExpectation("handle", false),
-        peg$c139 = function(handle) {
+        peg$c140 = "handle",
+        peg$c141 = peg$literalExpectation("handle", false),
+        peg$c142 = function(handle) {
             return {
               kind: 'particle-provided-slot-handle',
               location: location(),
               handle,
             };
           },
-        peg$c140 = function(pattern, handleDescriptions) {
+        peg$c143 = function(pattern, handleDescriptions) {
             return {
               kind: 'description',
               location: location(),
@@ -26204,7 +26226,7 @@ const parser = /*
               ],
             };
           },
-        peg$c141 = function(name, pattern) {
+        peg$c144 = function(name, pattern) {
             return {
               kind: 'handle-description',
               location: location(),
@@ -26212,9 +26234,9 @@ const parser = /*
               pattern,
             };
           },
-        peg$c142 = "recipe",
-        peg$c143 = peg$literalExpectation("recipe", false),
-        peg$c144 = function(name, verbs, items) {
+        peg$c145 = "recipe",
+        peg$c146 = peg$literalExpectation("recipe", false),
+        peg$c147 = function(name, verbs, items) {
             verbs = optional(verbs, parsedOutput => parsedOutput[1], []);
             return {
               kind: 'recipe',
@@ -26224,12 +26246,12 @@ const parser = /*
               items: optional(items, extractIndented, []),
             };
           },
-        peg$c145 = "as",
-        peg$c146 = peg$literalExpectation("as", false),
-        peg$c147 = function(name) {
+        peg$c148 = "as",
+        peg$c149 = peg$literalExpectation("as", false),
+        peg$c150 = function(name) {
             return name;
           },
-        peg$c148 = function(ref, name, connections) {
+        peg$c151 = function(ref, name, connections) {
             let handleConnections = [];
             let slotConnections = [];
             if (connections) {
@@ -26250,7 +26272,7 @@ const parser = /*
               slotConnections: slotConnections,
             };
           },
-        peg$c149 = function(param, dir, target) {
+        peg$c152 = function(param, dir, target) {
             return {
               kind: 'handle-connection',
               location: location(),
@@ -26259,7 +26281,7 @@ const parser = /*
               target: optional(target, target => target[1], null),
             };
           },
-        peg$c150 = function(param, tags) {
+        peg$c153 = function(param, tags) {
             param = optional(param, param => param, null);
             let name = null;
             let particle = null;
@@ -26278,7 +26300,7 @@ const parser = /*
               tags: optional(tags, tags => tags, []),
             }
           },
-        peg$c151 = function(ref, name, providedSlots) {
+        peg$c154 = function(ref, name, providedSlots) {
             return {
               kind: 'slot-connection',
               location: location(),
@@ -26288,7 +26310,7 @@ const parser = /*
               providedSlots: optional(providedSlots, extractIndented, [])
             };
           },
-        peg$c152 = function(param, tags) {
+        peg$c155 = function(param, tags) {
             return {
               kind: 'slot-connection-ref',
               location: location(),
@@ -26296,7 +26318,7 @@ const parser = /*
               tags,
             };
           },
-        peg$c153 = function(param, name) {
+        peg$c156 = function(param, name) {
             return {
               kind: 'provided-slot',
               location: location(),
@@ -26304,7 +26326,7 @@ const parser = /*
               name: optional(name, name=>name[1], null)
             };
           },
-        peg$c154 = function(from, direction, to) {
+        peg$c157 = function(from, direction, to) {
             return {
               kind: 'connection',
               location: location(),
@@ -26313,11 +26335,11 @@ const parser = /*
               to,
             };
           },
-        peg$c155 = "search",
-        peg$c156 = peg$literalExpectation("search", false),
-        peg$c157 = "tokens",
-        peg$c158 = peg$literalExpectation("tokens", false),
-        peg$c159 = function(phrase, tokens) {
+        peg$c158 = "search",
+        peg$c159 = peg$literalExpectation("search", false),
+        peg$c160 = "tokens",
+        peg$c161 = peg$literalExpectation("tokens", false),
+        peg$c162 = function(phrase, tokens) {
             return {
               kind: 'search',
               location: location(),
@@ -26325,13 +26347,13 @@ const parser = /*
               tokens: optional(tokens, tokens => tokens[1][2].map(t => t[1]), null)
             };
           },
-        peg$c160 = "<-",
-        peg$c161 = peg$literalExpectation("<-", false),
-        peg$c162 = "->",
-        peg$c163 = peg$literalExpectation("->", false),
-        peg$c164 = "=",
-        peg$c165 = peg$literalExpectation("=", false),
-        peg$c166 = function(verbs, components) {
+        peg$c163 = "<-",
+        peg$c164 = peg$literalExpectation("<-", false),
+        peg$c165 = "->",
+        peg$c166 = peg$literalExpectation("->", false),
+        peg$c167 = "=",
+        peg$c168 = peg$literalExpectation("=", false),
+        peg$c169 = function(verbs, components) {
             let {param, tags} = optional(components, components => components, {param: null, tags: []});
             return {
               kind: 'connection-target',
@@ -26342,7 +26364,7 @@ const parser = /*
               tags
             }
           },
-        peg$c167 = function(tags) {
+        peg$c170 = function(tags) {
             return {
               kind: 'connection-target',
               location: location(),
@@ -26350,7 +26372,7 @@ const parser = /*
               tags
             }
           },
-        peg$c168 = function(name, components) {
+        peg$c171 = function(name, components) {
             let {param, tags} = optional(components, components => components, {param: null, tags: []});
             return {
               kind: 'connection-target',
@@ -26361,7 +26383,7 @@ const parser = /*
               tags
             }
           },
-        peg$c169 = function(particle, components) {
+        peg$c172 = function(particle, components) {
             let {param, tags} = optional(components, components => components, {param: null, tags: []});
             return {
               kind: 'connection-target',
@@ -26372,25 +26394,25 @@ const parser = /*
               tags
             }
           },
-        peg$c170 = ".",
-        peg$c171 = peg$literalExpectation(".", false),
-        peg$c172 = function(param, tags) {
+        peg$c173 = ".",
+        peg$c174 = peg$literalExpectation(".", false),
+        peg$c175 = function(param, tags) {
             return {
               param: optional(param, param => param, null),
               tags: optional(tags, tags => tags[1], []),
             }
           },
-        peg$c173 = "use",
-        peg$c174 = peg$literalExpectation("use", false),
-        peg$c175 = "map",
-        peg$c176 = peg$literalExpectation("map", false),
-        peg$c177 = "create",
-        peg$c178 = peg$literalExpectation("create", false),
-        peg$c179 = "copy",
-        peg$c180 = peg$literalExpectation("copy", false),
-        peg$c181 = "`slot",
-        peg$c182 = peg$literalExpectation("`slot", false),
-        peg$c183 = function(type, ref, name) {
+        peg$c176 = "use",
+        peg$c177 = peg$literalExpectation("use", false),
+        peg$c178 = "map",
+        peg$c179 = peg$literalExpectation("map", false),
+        peg$c180 = "create",
+        peg$c181 = peg$literalExpectation("create", false),
+        peg$c182 = "copy",
+        peg$c183 = peg$literalExpectation("copy", false),
+        peg$c184 = "`slot",
+        peg$c185 = peg$literalExpectation("`slot", false),
+        peg$c186 = function(type, ref, name) {
             return {
               kind: 'handle',
               location: location(),
@@ -26399,36 +26421,36 @@ const parser = /*
               fate: type
             }
           },
-        peg$c184 = "#",
-        peg$c185 = peg$literalExpectation("#", false),
-        peg$c186 = /^[a-zA-Z]/,
-        peg$c187 = peg$classExpectation([["a", "z"], ["A", "Z"]], false, false),
-        peg$c188 = /^[a-zA-Z0-9_]/,
-        peg$c189 = peg$classExpectation([["a", "z"], ["A", "Z"], ["0", "9"], "_"], false, false),
-        peg$c190 = function() {return text().substring(1);},
-        peg$c191 = function(head, tail) { return [head, ...(tail && tail[1] || [])]; },
-        peg$c192 = "&",
-        peg$c193 = peg$literalExpectation("&", false),
-        peg$c194 = function(tags) { return tags; },
-        peg$c195 = function(name, tags) {
+        peg$c187 = "#",
+        peg$c188 = peg$literalExpectation("#", false),
+        peg$c189 = /^[a-zA-Z]/,
+        peg$c190 = peg$classExpectation([["a", "z"], ["A", "Z"]], false, false),
+        peg$c191 = /^[a-zA-Z0-9_]/,
+        peg$c192 = peg$classExpectation([["a", "z"], ["A", "Z"], ["0", "9"], "_"], false, false),
+        peg$c193 = function() {return text().substring(1);},
+        peg$c194 = function(head, tail) { return [head, ...(tail && tail[1] || [])]; },
+        peg$c195 = "&",
+        peg$c196 = peg$literalExpectation("&", false),
+        peg$c197 = function(tags) { return tags; },
+        peg$c198 = function(name, tags) {
              return {
                name: name,
                tags: tags
              }
            },
-        peg$c196 = function(name) {
+        peg$c199 = function(name) {
              return {
                name: name,
                tags: []
              };
            },
-        peg$c197 = function(tags) {
+        peg$c200 = function(tags) {
               return {
                 name: tags[0],
                 tags: tags
               }
            },
-        peg$c198 = function(name) {
+        peg$c201 = function(name) {
             return {
               kind: 'particle-ref',
               location: location(),
@@ -26436,14 +26458,14 @@ const parser = /*
               verbs: [],
             };
           },
-        peg$c199 = function(verb) {
+        peg$c202 = function(verb) {
             return {
               kind: 'particle-ref',
               location: location(),
               verbs: [verb],
             };
           },
-        peg$c200 = function(id, tags) {
+        peg$c203 = function(id, tags) {
             return {
               kind: 'handle-ref',
               location: location(),
@@ -26451,7 +26473,7 @@ const parser = /*
               tags: tags || [],
             };
           },
-        peg$c201 = function(name, tags) {
+        peg$c204 = function(name, tags) {
             return {
               kind: 'handle-ref',
               location: location(),
@@ -26459,16 +26481,16 @@ const parser = /*
               tags: tags || [],
             };
           },
-        peg$c202 = function(tags) {
+        peg$c205 = function(tags) {
             return {
               kind: 'handle-ref',
               location: location(),
               tags,
             };
           },
-        peg$c203 = "slot",
-        peg$c204 = peg$literalExpectation("slot", false),
-        peg$c205 = function(ref, name) {
+        peg$c206 = "slot",
+        peg$c207 = peg$literalExpectation("slot", false),
+        peg$c208 = function(ref, name) {
             return {
               kind: 'slot',
               location: location(),
@@ -26476,7 +26498,7 @@ const parser = /*
               name: optional(name, name => name[1], '')
             }
           },
-        peg$c206 = function(names, fields) {
+        peg$c209 = function(names, fields) {
             return {
               kind: 'schema-inline',
               location: location(),
@@ -26484,7 +26506,7 @@ const parser = /*
               fields: optional(fields, fields => [fields[0], ...fields[1].map(tail => tail[2])], []),
             }
           },
-        peg$c207 = function(type, name) {
+        peg$c210 = function(type, name) {
             return {
               kind: 'schema-inline-field',
               location: location(),
@@ -26492,17 +26514,17 @@ const parser = /*
               type: optional(type, type => type[0], null),
             };
           },
-        peg$c208 = "schema",
-        peg$c209 = peg$literalExpectation("schema", false),
-        peg$c210 = function(names, parents) {
+        peg$c211 = "schema",
+        peg$c212 = peg$literalExpectation("schema", false),
+        peg$c213 = function(names, parents) {
             return {
               names: names.map(name => name[1]).filter(name => name != '*'),
               parents: optional(parents, parents => parents, []),
             };
           },
-        peg$c211 = "alias",
-        peg$c212 = peg$literalExpectation("alias", false),
-        peg$c213 = function(spec, alias, items) {
+        peg$c214 = "alias",
+        peg$c215 = peg$literalExpectation("alias", false),
+        peg$c216 = function(spec, alias, items) {
             return Object.assign(spec, {
               kind: 'schema',
               location: location(),
@@ -26510,27 +26532,27 @@ const parser = /*
               alias,
             });
           },
-        peg$c214 = function(spec, items) {
+        peg$c217 = function(spec, items) {
             return Object.assign(spec, {
               kind: 'schema',
               location: location(),
               items: optional(items, extractIndented, []),
             });
           },
-        peg$c215 = "extends",
-        peg$c216 = peg$literalExpectation("extends", false),
-        peg$c217 = function(first, rest) {
+        peg$c218 = "extends",
+        peg$c219 = peg$literalExpectation("extends", false),
+        peg$c220 = function(first, rest) {
           var list = [first];
           for (let item of rest) {
             list.push(item[3]);
           }
           return list;
         },
-        peg$c218 = "normative",
-        peg$c219 = peg$literalExpectation("normative", false),
-        peg$c220 = "optional",
-        peg$c221 = peg$literalExpectation("optional", false),
-        peg$c222 = function(sectionType, fields) {
+        peg$c221 = "normative",
+        peg$c222 = peg$literalExpectation("normative", false),
+        peg$c223 = "optional",
+        peg$c224 = peg$literalExpectation("optional", false),
+        peg$c225 = function(sectionType, fields) {
             return {
               kind: 'schema-section',
               location: location(),
@@ -26538,7 +26560,7 @@ const parser = /*
               fields: extractIndented(fields),
             };
           },
-        peg$c223 = function(type, name) {
+        peg$c226 = function(type, name) {
             return {
               kind: 'schema-field',
               location: location(),
@@ -26546,42 +26568,42 @@ const parser = /*
               name,
             };
           },
-        peg$c224 = "Text",
-        peg$c225 = peg$literalExpectation("Text", false),
-        peg$c226 = "URL",
-        peg$c227 = peg$literalExpectation("URL", false),
-        peg$c228 = "Number",
-        peg$c229 = peg$literalExpectation("Number", false),
-        peg$c230 = "Boolean",
-        peg$c231 = peg$literalExpectation("Boolean", false),
-        peg$c232 = "Bytes",
-        peg$c233 = peg$literalExpectation("Bytes", false),
-        peg$c234 = "Object",
-        peg$c235 = peg$literalExpectation("Object", false),
-        peg$c236 = "or",
-        peg$c237 = peg$literalExpectation("or", false),
-        peg$c238 = function(first, rest) {
+        peg$c227 = "Text",
+        peg$c228 = peg$literalExpectation("Text", false),
+        peg$c229 = "URL",
+        peg$c230 = peg$literalExpectation("URL", false),
+        peg$c231 = "Number",
+        peg$c232 = peg$literalExpectation("Number", false),
+        peg$c233 = "Boolean",
+        peg$c234 = peg$literalExpectation("Boolean", false),
+        peg$c235 = "Bytes",
+        peg$c236 = peg$literalExpectation("Bytes", false),
+        peg$c237 = "Object",
+        peg$c238 = peg$literalExpectation("Object", false),
+        peg$c239 = "or",
+        peg$c240 = peg$literalExpectation("or", false),
+        peg$c241 = function(first, rest) {
             let types = [first];
             for (let type of rest) {
               types.push(type[3]);
             }
             return {kind: 'schema-union', location: location(), types};
           },
-        peg$c239 = function(first, rest) {
+        peg$c242 = function(first, rest) {
             let types = [first];
             for (let type of rest) {
               types.push(type[3]);
             }
             return {kind: 'schema-tuple', location: location(), types};
           },
-        peg$c240 = /^[0-9]/,
-        peg$c241 = peg$classExpectation([["0", "9"]], false, false),
-        peg$c242 = function(version) {
+        peg$c243 = /^[0-9]/,
+        peg$c244 = peg$classExpectation([["0", "9"]], false, false),
+        peg$c245 = function(version) {
             return Number(version.join(''));
           },
-        peg$c243 = " ",
-        peg$c244 = peg$literalExpectation(" ", false),
-        peg$c245 = function(i) {
+        peg$c246 = " ",
+        peg$c247 = peg$literalExpectation(" ", false),
+        peg$c248 = function(i) {
           i = i.join('');
           if (i.length > indent.length) {
             indents.push(indent);
@@ -26589,7 +26611,7 @@ const parser = /*
             return true;
           }
         },
-        peg$c246 = function(i) {
+        peg$c249 = function(i) {
           i = i.join('');
           if (i.length == indent.length) {
             return true;
@@ -26598,7 +26620,7 @@ const parser = /*
             return false;
           }
         },
-        peg$c247 = function(i) {
+        peg$c250 = function(i) {
           i = i.join('');
           if (i.length >= indent.length) {
             return true;
@@ -26607,32 +26629,32 @@ const parser = /*
             return false;
           }
         },
-        peg$c248 = "`",
-        peg$c249 = peg$literalExpectation("`", false),
-        peg$c250 = /^[^`]/,
-        peg$c251 = peg$classExpectation(["`"], true, false),
-        peg$c252 = function(pattern) { return pattern.join(''); },
-        peg$c253 = "'",
-        peg$c254 = peg$literalExpectation("'", false),
-        peg$c255 = /^[^']/,
-        peg$c256 = peg$classExpectation(["'"], true, false),
-        peg$c257 = function(id) {return id.join('')},
-        peg$c258 = /^[A-Z]/,
-        peg$c259 = peg$classExpectation([["A", "Z"]], false, false),
-        peg$c260 = /^[a-z0-9_]/i,
-        peg$c261 = peg$classExpectation([["a", "z"], ["0", "9"], "_"], false, true),
-        peg$c262 = function(ident) {return text()},
-        peg$c263 = /^[a-z]/,
-        peg$c264 = peg$classExpectation([["a", "z"]], false, false),
-        peg$c265 = /^[ ]/,
-        peg$c266 = peg$classExpectation([" "], false, false),
-        peg$c267 = peg$anyExpectation(),
-        peg$c268 = "//",
-        peg$c269 = peg$literalExpectation("//", false),
-        peg$c270 = "\r",
-        peg$c271 = peg$literalExpectation("\r", false),
-        peg$c272 = "\n",
-        peg$c273 = peg$literalExpectation("\n", false),
+        peg$c251 = "`",
+        peg$c252 = peg$literalExpectation("`", false),
+        peg$c253 = /^[^`]/,
+        peg$c254 = peg$classExpectation(["`"], true, false),
+        peg$c255 = function(pattern) { return pattern.join(''); },
+        peg$c256 = "'",
+        peg$c257 = peg$literalExpectation("'", false),
+        peg$c258 = /^[^']/,
+        peg$c259 = peg$classExpectation(["'"], true, false),
+        peg$c260 = function(id) {return id.join('')},
+        peg$c261 = /^[A-Z]/,
+        peg$c262 = peg$classExpectation([["A", "Z"]], false, false),
+        peg$c263 = /^[a-z0-9_]/i,
+        peg$c264 = peg$classExpectation([["a", "z"], ["0", "9"], "_"], false, true),
+        peg$c265 = function(ident) {return text()},
+        peg$c266 = /^[a-z]/,
+        peg$c267 = peg$classExpectation([["a", "z"]], false, false),
+        peg$c268 = /^[ ]/,
+        peg$c269 = peg$classExpectation([" "], false, false),
+        peg$c270 = peg$anyExpectation(),
+        peg$c271 = "//",
+        peg$c272 = peg$literalExpectation("//", false),
+        peg$c273 = "\r",
+        peg$c274 = peg$literalExpectation("\r", false),
+        peg$c275 = "\n",
+        peg$c276 = peg$literalExpectation("\n", false),
 
         peg$currPos          = 0,
         peg$savedPos         = 0,
@@ -27183,7 +27205,7 @@ const parser = /*
                   if (s7 === peg$FAILED) {
                     s7 = peg$parseCollectionType();
                     if (s7 === peg$FAILED) {
-                      s7 = peg$parseReferenceType();
+                      s7 = peg$parseTypeName();
                     }
                   }
                   if (s7 !== peg$FAILED) {
@@ -28935,11 +28957,14 @@ const parser = /*
         if (s0 === peg$FAILED) {
           s0 = peg$parseBigCollectionType();
           if (s0 === peg$FAILED) {
-            s0 = peg$parseSlotType();
+            s0 = peg$parseReferenceType();
             if (s0 === peg$FAILED) {
-              s0 = peg$parseSchemaInline();
+              s0 = peg$parseSlotType();
               if (s0 === peg$FAILED) {
-                s0 = peg$parseReferenceType();
+                s0 = peg$parseSchemaInline();
+                if (s0 === peg$FAILED) {
+                  s0 = peg$parseTypeName();
+                }
               }
             }
           }
@@ -29031,16 +29056,57 @@ const parser = /*
       return s0;
     }
 
+    function peg$parseReferenceType() {
+      var s0, s1, s2, s3;
+
+      s0 = peg$currPos;
+      if (input.substr(peg$currPos, 10) === peg$c98) {
+        s1 = peg$c98;
+        peg$currPos += 10;
+      } else {
+        s1 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c99); }
+      }
+      if (s1 !== peg$FAILED) {
+        s2 = peg$parseParticleArgumentType();
+        if (s2 !== peg$FAILED) {
+          if (input.charCodeAt(peg$currPos) === 62) {
+            s3 = peg$c35;
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c36); }
+          }
+          if (s3 !== peg$FAILED) {
+            peg$savedPos = s0;
+            s1 = peg$c100(s2);
+            s0 = s1;
+          } else {
+            peg$currPos = s0;
+            s0 = peg$FAILED;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+
+      return s0;
+    }
+
     function peg$parseVariableType() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 126) {
-        s1 = peg$c98;
+        s1 = peg$c101;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c99); }
+        if (peg$silentFails === 0) { peg$fail(peg$c102); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parselowerIdent();
@@ -29048,12 +29114,12 @@ const parser = /*
           s3 = peg$currPos;
           s4 = peg$parsewhiteSpace();
           if (s4 !== peg$FAILED) {
-            if (input.substr(peg$currPos, 4) === peg$c100) {
-              s5 = peg$c100;
+            if (input.substr(peg$currPos, 4) === peg$c103) {
+              s5 = peg$c103;
               peg$currPos += 4;
             } else {
               s5 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c101); }
+              if (peg$silentFails === 0) { peg$fail(peg$c104); }
             }
             if (s5 !== peg$FAILED) {
               s6 = peg$parsewhiteSpace();
@@ -29083,7 +29149,7 @@ const parser = /*
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c102(s2, s3);
+            s1 = peg$c105(s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -29105,23 +29171,23 @@ const parser = /*
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c103) {
-        s1 = peg$c103;
+      if (input.substr(peg$currPos, 4) === peg$c106) {
+        s1 = peg$c106;
         peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c104); }
+        if (peg$silentFails === 0) { peg$fail(peg$c107); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
         s3 = peg$parsewhiteSpace();
         if (s3 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 123) {
-            s4 = peg$c105;
+            s4 = peg$c108;
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c106); }
+            if (peg$silentFails === 0) { peg$fail(peg$c109); }
           }
           if (s4 !== peg$FAILED) {
             s5 = peg$currPos;
@@ -29201,11 +29267,11 @@ const parser = /*
             }
             if (s5 !== peg$FAILED) {
               if (input.charCodeAt(peg$currPos) === 125) {
-                s6 = peg$c107;
+                s6 = peg$c110;
                 peg$currPos++;
               } else {
                 s6 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c108); }
+                if (peg$silentFails === 0) { peg$fail(peg$c111); }
               }
               if (s6 !== peg$FAILED) {
                 s3 = [s3, s4, s5, s6];
@@ -29231,7 +29297,7 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c109(s2);
+          s1 = peg$c112(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -29272,7 +29338,7 @@ const parser = /*
               s5 = peg$parselowerIdent();
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c110(s1, s5);
+                s1 = peg$c113(s1, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -29298,14 +29364,14 @@ const parser = /*
       return s0;
     }
 
-    function peg$parseReferenceType() {
+    function peg$parseTypeName() {
       var s0, s1;
 
       s0 = peg$currPos;
       s1 = peg$parseupperIdent();
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c111(s1);
+        s1 = peg$c114(s1);
       }
       s0 = s1;
 
@@ -29378,7 +29444,7 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c112(s1, s2);
+          s1 = peg$c115(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -29396,46 +29462,46 @@ const parser = /*
       var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 10) === peg$c113) {
-        s1 = peg$c113;
+      if (input.substr(peg$currPos, 10) === peg$c116) {
+        s1 = peg$c116;
         peg$currPos += 10;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c114); }
+        if (peg$silentFails === 0) { peg$fail(peg$c117); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 9) === peg$c115) {
-            s3 = peg$c115;
+          if (input.substr(peg$currPos, 9) === peg$c118) {
+            s3 = peg$c118;
             peg$currPos += 9;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c116); }
+            if (peg$silentFails === 0) { peg$fail(peg$c119); }
           }
           if (s3 === peg$FAILED) {
-            if (input.substr(peg$currPos, 3) === peg$c117) {
-              s3 = peg$c117;
+            if (input.substr(peg$currPos, 3) === peg$c120) {
+              s3 = peg$c120;
               peg$currPos += 3;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c118); }
+              if (peg$silentFails === 0) { peg$fail(peg$c121); }
             }
             if (s3 === peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c119) {
-                s3 = peg$c119;
+              if (input.substr(peg$currPos, 2) === peg$c122) {
+                s3 = peg$c122;
                 peg$currPos += 2;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c120); }
+                if (peg$silentFails === 0) { peg$fail(peg$c123); }
               }
               if (s3 === peg$FAILED) {
-                if (input.substr(peg$currPos, 5) === peg$c121) {
-                  s3 = peg$c121;
+                if (input.substr(peg$currPos, 5) === peg$c124) {
+                  s3 = peg$c124;
                   peg$currPos += 5;
                 } else {
                   s3 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c122); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c125); }
                 }
               }
             }
@@ -29444,7 +29510,7 @@ const parser = /*
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c123(s3);
+              s1 = peg$c126(s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -29606,7 +29672,7 @@ const parser = /*
                     }
                     if (s8 !== peg$FAILED) {
                       peg$savedPos = s0;
-                      s1 = peg$c124(s1, s4, s5, s6, s8);
+                      s1 = peg$c127(s1, s4, s5, s6, s8);
                       s0 = s1;
                     } else {
                       peg$currPos = s0;
@@ -29659,46 +29725,46 @@ const parser = /*
       var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 10) === peg$c125) {
-        s1 = peg$c125;
+      if (input.substr(peg$currPos, 10) === peg$c128) {
+        s1 = peg$c128;
         peg$currPos += 10;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c126); }
+        if (peg$silentFails === 0) { peg$fail(peg$c129); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
         if (s2 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 10) === peg$c127) {
-            s3 = peg$c127;
+          if (input.substr(peg$currPos, 10) === peg$c130) {
+            s3 = peg$c130;
             peg$currPos += 10;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c128); }
+            if (peg$silentFails === 0) { peg$fail(peg$c131); }
           }
           if (s3 === peg$FAILED) {
-            if (input.substr(peg$currPos, 3) === peg$c129) {
-              s3 = peg$c129;
+            if (input.substr(peg$currPos, 3) === peg$c132) {
+              s3 = peg$c132;
               peg$currPos += 3;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c130); }
+              if (peg$silentFails === 0) { peg$fail(peg$c133); }
             }
             if (s3 === peg$FAILED) {
-              if (input.substr(peg$currPos, 6) === peg$c131) {
-                s3 = peg$c131;
+              if (input.substr(peg$currPos, 6) === peg$c134) {
+                s3 = peg$c134;
                 peg$currPos += 6;
               } else {
                 s3 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c132); }
+                if (peg$silentFails === 0) { peg$fail(peg$c135); }
               }
               if (s3 === peg$FAILED) {
-                if (input.substr(peg$currPos, 5) === peg$c133) {
-                  s3 = peg$c133;
+                if (input.substr(peg$currPos, 5) === peg$c136) {
+                  s3 = peg$c136;
                   peg$currPos += 5;
                 } else {
                   s3 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c134); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c137); }
                 }
               }
             }
@@ -29707,7 +29773,7 @@ const parser = /*
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c135(s3);
+              s1 = peg$c138(s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -29869,7 +29935,7 @@ const parser = /*
                     }
                     if (s8 !== peg$FAILED) {
                       peg$savedPos = s0;
-                      s1 = peg$c136(s1, s4, s5, s6, s8);
+                      s1 = peg$c139(s1, s4, s5, s6, s8);
                       s0 = s1;
                     } else {
                       peg$currPos = s0;
@@ -29922,12 +29988,12 @@ const parser = /*
       var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c137) {
-        s1 = peg$c137;
+      if (input.substr(peg$currPos, 6) === peg$c140) {
+        s1 = peg$c140;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c138); }
+        if (peg$silentFails === 0) { peg$fail(peg$c141); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
@@ -29937,7 +30003,7 @@ const parser = /*
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c139(s3);
+              s1 = peg$c142(s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -30034,7 +30100,7 @@ const parser = /*
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c140(s3, s5);
+                s1 = peg$c143(s3, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -30073,7 +30139,7 @@ const parser = /*
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c141(s1, s3);
+              s1 = peg$c144(s1, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -30099,12 +30165,12 @@ const parser = /*
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c142) {
-        s1 = peg$c142;
+      if (input.substr(peg$currPos, 6) === peg$c145) {
+        s1 = peg$c145;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c143); }
+        if (peg$silentFails === 0) { peg$fail(peg$c146); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -30200,7 +30266,7 @@ const parser = /*
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c144(s2, s3, s5);
+                s1 = peg$c147(s2, s3, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -30253,12 +30319,12 @@ const parser = /*
       var s0, s1, s2, s3;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c145) {
-        s1 = peg$c145;
+      if (input.substr(peg$currPos, 2) === peg$c148) {
+        s1 = peg$c148;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c146); }
+        if (peg$silentFails === 0) { peg$fail(peg$c149); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
@@ -30266,7 +30332,7 @@ const parser = /*
           s3 = peg$parselowerIdent();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c147(s3);
+            s1 = peg$c150(s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -30288,12 +30354,12 @@ const parser = /*
       var s0, s1, s2, s3;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c145) {
-        s1 = peg$c145;
+      if (input.substr(peg$currPos, 2) === peg$c148) {
+        s1 = peg$c148;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c146); }
+        if (peg$silentFails === 0) { peg$fail(peg$c149); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
@@ -30301,7 +30367,7 @@ const parser = /*
           s3 = peg$parseupperIdent();
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c147(s3);
+            s1 = peg$c150(s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -30399,7 +30465,7 @@ const parser = /*
             }
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c148(s1, s2, s4);
+              s1 = peg$c151(s1, s2, s4);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -30473,7 +30539,7 @@ const parser = /*
               s5 = peg$parseeolWhiteSpace();
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c149(s1, s3, s4);
+                s1 = peg$c152(s1, s3, s4);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -30522,7 +30588,7 @@ const parser = /*
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c150(s1, s3);
+            s1 = peg$c153(s1, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -30630,7 +30696,7 @@ const parser = /*
                 }
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c151(s3, s4, s6);
+                  s1 = peg$c154(s3, s4, s6);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -30672,7 +30738,7 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c152(s1, s2);
+          s1 = peg$c155(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -30724,7 +30790,7 @@ const parser = /*
               s5 = peg$parseeolWhiteSpace();
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c153(s3, s4);
+                s1 = peg$c156(s3, s4);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -30767,7 +30833,7 @@ const parser = /*
                 s6 = peg$parseeolWhiteSpace();
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c154(s1, s3, s5);
+                  s1 = peg$c157(s1, s3, s5);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -30801,12 +30867,12 @@ const parser = /*
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c155) {
-        s1 = peg$c155;
+      if (input.substr(peg$currPos, 6) === peg$c158) {
+        s1 = peg$c158;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c156); }
+        if (peg$silentFails === 0) { peg$fail(peg$c159); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
@@ -30821,12 +30887,12 @@ const parser = /*
                 s7 = peg$currPos;
                 s8 = peg$parseSameIndent();
                 if (s8 !== peg$FAILED) {
-                  if (input.substr(peg$currPos, 6) === peg$c157) {
-                    s9 = peg$c157;
+                  if (input.substr(peg$currPos, 6) === peg$c160) {
+                    s9 = peg$c160;
                     peg$currPos += 6;
                   } else {
                     s9 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c158); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c161); }
                   }
                   if (s9 !== peg$FAILED) {
                     s10 = [];
@@ -30904,7 +30970,7 @@ const parser = /*
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c159(s3, s5);
+                s1 = peg$c162(s3, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -30933,28 +30999,28 @@ const parser = /*
     function peg$parseDirection() {
       var s0;
 
-      if (input.substr(peg$currPos, 2) === peg$c160) {
-        s0 = peg$c160;
+      if (input.substr(peg$currPos, 2) === peg$c163) {
+        s0 = peg$c163;
         peg$currPos += 2;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c161); }
+        if (peg$silentFails === 0) { peg$fail(peg$c164); }
       }
       if (s0 === peg$FAILED) {
-        if (input.substr(peg$currPos, 2) === peg$c162) {
-          s0 = peg$c162;
+        if (input.substr(peg$currPos, 2) === peg$c165) {
+          s0 = peg$c165;
           peg$currPos += 2;
         } else {
           s0 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c163); }
+          if (peg$silentFails === 0) { peg$fail(peg$c166); }
         }
         if (s0 === peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 61) {
-            s0 = peg$c164;
+            s0 = peg$c167;
             peg$currPos++;
           } else {
             s0 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c165); }
+            if (peg$silentFails === 0) { peg$fail(peg$c168); }
           }
           if (s0 === peg$FAILED) {
             if (input.substr(peg$currPos, 7) === peg$c53) {
@@ -31009,7 +31075,7 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c166(s1, s2);
+          s1 = peg$c169(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -31030,7 +31096,7 @@ const parser = /*
       s1 = peg$parseTagList();
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c167(s1);
+        s1 = peg$c170(s1);
       }
       s0 = s1;
 
@@ -31049,7 +31115,7 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c168(s1, s2);
+          s1 = peg$c171(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -31075,7 +31141,7 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c169(s1, s2);
+          s1 = peg$c172(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -31094,11 +31160,11 @@ const parser = /*
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 46) {
-        s1 = peg$c170;
+        s1 = peg$c173;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c171); }
+        if (peg$silentFails === 0) { peg$fail(peg$c174); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parselowerIdent();
@@ -31129,7 +31195,7 @@ const parser = /*
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c172(s2, s3);
+            s1 = peg$c175(s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -31159,44 +31225,44 @@ const parser = /*
         if (peg$silentFails === 0) { peg$fail(peg$c77); }
       }
       if (s1 === peg$FAILED) {
-        if (input.substr(peg$currPos, 3) === peg$c173) {
-          s1 = peg$c173;
+        if (input.substr(peg$currPos, 3) === peg$c176) {
+          s1 = peg$c176;
           peg$currPos += 3;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c174); }
+          if (peg$silentFails === 0) { peg$fail(peg$c177); }
         }
         if (s1 === peg$FAILED) {
-          if (input.substr(peg$currPos, 3) === peg$c175) {
-            s1 = peg$c175;
+          if (input.substr(peg$currPos, 3) === peg$c178) {
+            s1 = peg$c178;
             peg$currPos += 3;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c176); }
+            if (peg$silentFails === 0) { peg$fail(peg$c179); }
           }
           if (s1 === peg$FAILED) {
-            if (input.substr(peg$currPos, 6) === peg$c177) {
-              s1 = peg$c177;
+            if (input.substr(peg$currPos, 6) === peg$c180) {
+              s1 = peg$c180;
               peg$currPos += 6;
             } else {
               s1 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c178); }
+              if (peg$silentFails === 0) { peg$fail(peg$c181); }
             }
             if (s1 === peg$FAILED) {
-              if (input.substr(peg$currPos, 4) === peg$c179) {
-                s1 = peg$c179;
+              if (input.substr(peg$currPos, 4) === peg$c182) {
+                s1 = peg$c182;
                 peg$currPos += 4;
               } else {
                 s1 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c180); }
+                if (peg$silentFails === 0) { peg$fail(peg$c183); }
               }
               if (s1 === peg$FAILED) {
-                if (input.substr(peg$currPos, 5) === peg$c181) {
-                  s1 = peg$c181;
+                if (input.substr(peg$currPos, 5) === peg$c184) {
+                  s1 = peg$c184;
                   peg$currPos += 5;
                 } else {
                   s1 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c182); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c185); }
                 }
               }
             }
@@ -31245,7 +31311,7 @@ const parser = /*
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c183(s1, s2, s3);
+              s1 = peg$c186(s1, s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -31272,42 +31338,42 @@ const parser = /*
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 35) {
-        s1 = peg$c184;
+        s1 = peg$c187;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c185); }
+        if (peg$silentFails === 0) { peg$fail(peg$c188); }
       }
       if (s1 !== peg$FAILED) {
-        if (peg$c186.test(input.charAt(peg$currPos))) {
+        if (peg$c189.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c187); }
+          if (peg$silentFails === 0) { peg$fail(peg$c190); }
         }
         if (s2 !== peg$FAILED) {
           s3 = [];
-          if (peg$c188.test(input.charAt(peg$currPos))) {
+          if (peg$c191.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c189); }
+            if (peg$silentFails === 0) { peg$fail(peg$c192); }
           }
           while (s4 !== peg$FAILED) {
             s3.push(s4);
-            if (peg$c188.test(input.charAt(peg$currPos))) {
+            if (peg$c191.test(input.charAt(peg$currPos))) {
               s4 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c189); }
+              if (peg$silentFails === 0) { peg$fail(peg$c192); }
             }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c190();
+            s1 = peg$c193();
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -31351,7 +31417,7 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c191(s1, s2);
+          s1 = peg$c194(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -31370,42 +31436,42 @@ const parser = /*
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 38) {
-        s1 = peg$c192;
+        s1 = peg$c195;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c193); }
+        if (peg$silentFails === 0) { peg$fail(peg$c196); }
       }
       if (s1 !== peg$FAILED) {
-        if (peg$c186.test(input.charAt(peg$currPos))) {
+        if (peg$c189.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c187); }
+          if (peg$silentFails === 0) { peg$fail(peg$c190); }
         }
         if (s2 !== peg$FAILED) {
           s3 = [];
-          if (peg$c188.test(input.charAt(peg$currPos))) {
+          if (peg$c191.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c189); }
+            if (peg$silentFails === 0) { peg$fail(peg$c192); }
           }
           while (s4 !== peg$FAILED) {
             s3.push(s4);
-            if (peg$c188.test(input.charAt(peg$currPos))) {
+            if (peg$c191.test(input.charAt(peg$currPos))) {
               s4 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c189); }
+              if (peg$silentFails === 0) { peg$fail(peg$c192); }
             }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c190();
+            s1 = peg$c193();
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -31449,7 +31515,7 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c191(s1, s2);
+          s1 = peg$c194(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -31472,7 +31538,7 @@ const parser = /*
         s2 = peg$parseTagList();
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c194(s2);
+          s1 = peg$c197(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -31499,7 +31565,7 @@ const parser = /*
             s4 = peg$parseTagList();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c195(s2, s4);
+              s1 = peg$c198(s2, s4);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -31524,7 +31590,7 @@ const parser = /*
           s2 = peg$parselowerIdent();
           if (s2 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c196(s2);
+            s1 = peg$c199(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -31541,7 +31607,7 @@ const parser = /*
             s2 = peg$parseTagList();
             if (s2 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c197(s2);
+              s1 = peg$c200(s2);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -31564,7 +31630,7 @@ const parser = /*
       s1 = peg$parseupperIdent();
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c198(s1);
+        s1 = peg$c201(s1);
       }
       s0 = s1;
       if (s0 === peg$FAILED) {
@@ -31572,7 +31638,7 @@ const parser = /*
         s1 = peg$parseVerb();
         if (s1 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c199(s1);
+          s1 = peg$c202(s1);
         }
         s0 = s1;
         if (s0 === peg$FAILED) {
@@ -31580,7 +31646,7 @@ const parser = /*
           s1 = peg$parseVerb();
           if (s1 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c199(s1);
+            s1 = peg$c202(s1);
           }
           s0 = s1;
         }
@@ -31601,7 +31667,7 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c200(s1, s2);
+          s1 = peg$c203(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -31621,7 +31687,7 @@ const parser = /*
           }
           if (s2 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c201(s1, s2);
+            s1 = peg$c204(s1, s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -31636,7 +31702,7 @@ const parser = /*
           s1 = peg$parseTagList();
           if (s1 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c202(s1);
+            s1 = peg$c205(s1);
           }
           s0 = s1;
         }
@@ -31649,12 +31715,12 @@ const parser = /*
       var s0, s1, s2, s3, s4, s5;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c203) {
-        s1 = peg$c203;
+      if (input.substr(peg$currPos, 4) === peg$c206) {
+        s1 = peg$c206;
         peg$currPos += 4;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c204); }
+        if (peg$silentFails === 0) { peg$fail(peg$c207); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
@@ -31698,7 +31764,7 @@ const parser = /*
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c205(s2, s3);
+              s1 = peg$c208(s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -31782,11 +31848,11 @@ const parser = /*
       }
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 123) {
-          s2 = peg$c105;
+          s2 = peg$c108;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c106); }
+          if (peg$silentFails === 0) { peg$fail(peg$c109); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$currPos;
@@ -31866,15 +31932,15 @@ const parser = /*
           }
           if (s3 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 125) {
-              s4 = peg$c107;
+              s4 = peg$c110;
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c108); }
+              if (peg$silentFails === 0) { peg$fail(peg$c111); }
             }
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c206(s1, s3);
+              s1 = peg$c209(s1, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -31922,7 +31988,7 @@ const parser = /*
         s2 = peg$parselowerIdent();
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c207(s1, s2);
+          s1 = peg$c210(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -31940,12 +32006,12 @@ const parser = /*
       var s0, s1, s2, s3, s4, s5;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 6) === peg$c208) {
-        s1 = peg$c208;
+      if (input.substr(peg$currPos, 6) === peg$c211) {
+        s1 = peg$c211;
         peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c209); }
+        if (peg$silentFails === 0) { peg$fail(peg$c212); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
@@ -32011,7 +32077,7 @@ const parser = /*
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c210(s2, s3);
+            s1 = peg$c213(s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -32033,12 +32099,12 @@ const parser = /*
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c211) {
-        s1 = peg$c211;
+      if (input.substr(peg$currPos, 5) === peg$c214) {
+        s1 = peg$c214;
         peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c212); }
+        if (peg$silentFails === 0) { peg$fail(peg$c215); }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsewhiteSpace();
@@ -32104,7 +32170,7 @@ const parser = /*
                   }
                   if (s7 !== peg$FAILED) {
                     peg$savedPos = s0;
-                    s1 = peg$c213(s3, s5, s7);
+                    s1 = peg$c216(s3, s5, s7);
                     s0 = s1;
                   } else {
                     peg$currPos = s0;
@@ -32199,7 +32265,7 @@ const parser = /*
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c214(s1, s3);
+            s1 = peg$c217(s1, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -32223,12 +32289,12 @@ const parser = /*
       s0 = peg$currPos;
       s1 = peg$parsewhiteSpace();
       if (s1 !== peg$FAILED) {
-        if (input.substr(peg$currPos, 7) === peg$c215) {
-          s2 = peg$c215;
+        if (input.substr(peg$currPos, 7) === peg$c218) {
+          s2 = peg$c218;
           peg$currPos += 7;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c216); }
+          if (peg$silentFails === 0) { peg$fail(peg$c219); }
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parsewhiteSpace();
@@ -32313,7 +32379,7 @@ const parser = /*
               }
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c217(s4, s5);
+                s1 = peg$c220(s4, s5);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -32357,20 +32423,20 @@ const parser = /*
       var s0, s1, s2, s3, s4, s5, s6, s7, s8;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 9) === peg$c218) {
-        s1 = peg$c218;
+      if (input.substr(peg$currPos, 9) === peg$c221) {
+        s1 = peg$c221;
         peg$currPos += 9;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c219); }
+        if (peg$silentFails === 0) { peg$fail(peg$c222); }
       }
       if (s1 === peg$FAILED) {
-        if (input.substr(peg$currPos, 8) === peg$c220) {
-          s1 = peg$c220;
+        if (input.substr(peg$currPos, 8) === peg$c223) {
+          s1 = peg$c223;
           peg$currPos += 8;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c221); }
+          if (peg$silentFails === 0) { peg$fail(peg$c224); }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -32430,7 +32496,7 @@ const parser = /*
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c222(s1, s3);
+            s1 = peg$c225(s1, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -32461,7 +32527,7 @@ const parser = /*
             s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
               peg$savedPos = s0;
-              s1 = peg$c223(s1, s3);
+              s1 = peg$c226(s1, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -32500,52 +32566,52 @@ const parser = /*
     function peg$parseSchemaPrimitiveType() {
       var s0;
 
-      if (input.substr(peg$currPos, 4) === peg$c224) {
-        s0 = peg$c224;
+      if (input.substr(peg$currPos, 4) === peg$c227) {
+        s0 = peg$c227;
         peg$currPos += 4;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c225); }
+        if (peg$silentFails === 0) { peg$fail(peg$c228); }
       }
       if (s0 === peg$FAILED) {
-        if (input.substr(peg$currPos, 3) === peg$c226) {
-          s0 = peg$c226;
+        if (input.substr(peg$currPos, 3) === peg$c229) {
+          s0 = peg$c229;
           peg$currPos += 3;
         } else {
           s0 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c227); }
+          if (peg$silentFails === 0) { peg$fail(peg$c230); }
         }
         if (s0 === peg$FAILED) {
-          if (input.substr(peg$currPos, 6) === peg$c228) {
-            s0 = peg$c228;
+          if (input.substr(peg$currPos, 6) === peg$c231) {
+            s0 = peg$c231;
             peg$currPos += 6;
           } else {
             s0 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c229); }
+            if (peg$silentFails === 0) { peg$fail(peg$c232); }
           }
           if (s0 === peg$FAILED) {
-            if (input.substr(peg$currPos, 7) === peg$c230) {
-              s0 = peg$c230;
+            if (input.substr(peg$currPos, 7) === peg$c233) {
+              s0 = peg$c233;
               peg$currPos += 7;
             } else {
               s0 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c231); }
+              if (peg$silentFails === 0) { peg$fail(peg$c234); }
             }
             if (s0 === peg$FAILED) {
-              if (input.substr(peg$currPos, 5) === peg$c232) {
-                s0 = peg$c232;
+              if (input.substr(peg$currPos, 5) === peg$c235) {
+                s0 = peg$c235;
                 peg$currPos += 5;
               } else {
                 s0 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c233); }
+                if (peg$silentFails === 0) { peg$fail(peg$c236); }
               }
               if (s0 === peg$FAILED) {
-                if (input.substr(peg$currPos, 6) === peg$c234) {
-                  s0 = peg$c234;
+                if (input.substr(peg$currPos, 6) === peg$c237) {
+                  s0 = peg$c237;
                   peg$currPos += 6;
                 } else {
                   s0 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c235); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c238); }
                 }
               }
             }
@@ -32579,12 +32645,12 @@ const parser = /*
             s5 = peg$currPos;
             s6 = peg$parsewhiteSpace();
             if (s6 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c236) {
-                s7 = peg$c236;
+              if (input.substr(peg$currPos, 2) === peg$c239) {
+                s7 = peg$c239;
                 peg$currPos += 2;
               } else {
                 s7 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c237); }
+                if (peg$silentFails === 0) { peg$fail(peg$c240); }
               }
               if (s7 !== peg$FAILED) {
                 s8 = peg$parsewhiteSpace();
@@ -32615,12 +32681,12 @@ const parser = /*
                 s5 = peg$currPos;
                 s6 = peg$parsewhiteSpace();
                 if (s6 !== peg$FAILED) {
-                  if (input.substr(peg$currPos, 2) === peg$c236) {
-                    s7 = peg$c236;
+                  if (input.substr(peg$currPos, 2) === peg$c239) {
+                    s7 = peg$c239;
                     peg$currPos += 2;
                   } else {
                     s7 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c237); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c240); }
                   }
                   if (s7 !== peg$FAILED) {
                     s8 = peg$parsewhiteSpace();
@@ -32664,7 +32730,7 @@ const parser = /*
                 }
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c238(s3, s4);
+                  s1 = peg$c241(s3, s4);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -32810,7 +32876,7 @@ const parser = /*
                 }
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c239(s3, s4);
+                  s1 = peg$c242(s3, s4);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -32853,22 +32919,22 @@ const parser = /*
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c240.test(input.charAt(peg$currPos))) {
+        if (peg$c243.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c241); }
+          if (peg$silentFails === 0) { peg$fail(peg$c244); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c240.test(input.charAt(peg$currPos))) {
+            if (peg$c243.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c241); }
+              if (peg$silentFails === 0) { peg$fail(peg$c244); }
             }
           }
         } else {
@@ -32876,7 +32942,7 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c242(s2);
+          s1 = peg$c245(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -32898,21 +32964,21 @@ const parser = /*
       s1 = peg$currPos;
       s2 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s3 = peg$c243;
+        s3 = peg$c246;
         peg$currPos++;
       } else {
         s3 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c244); }
+        if (peg$silentFails === 0) { peg$fail(peg$c247); }
       }
       if (s3 !== peg$FAILED) {
         while (s3 !== peg$FAILED) {
           s2.push(s3);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s3 = peg$c243;
+            s3 = peg$c246;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c244); }
+            if (peg$silentFails === 0) { peg$fail(peg$c247); }
           }
         }
       } else {
@@ -32920,7 +32986,7 @@ const parser = /*
       }
       if (s2 !== peg$FAILED) {
         peg$savedPos = peg$currPos;
-        s3 = peg$c245(s2);
+        s3 = peg$c248(s2);
         if (s3) {
           s3 = void 0;
         } else {
@@ -32957,25 +33023,25 @@ const parser = /*
       s2 = peg$currPos;
       s3 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s4 = peg$c243;
+        s4 = peg$c246;
         peg$currPos++;
       } else {
         s4 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c244); }
+        if (peg$silentFails === 0) { peg$fail(peg$c247); }
       }
       while (s4 !== peg$FAILED) {
         s3.push(s4);
         if (input.charCodeAt(peg$currPos) === 32) {
-          s4 = peg$c243;
+          s4 = peg$c246;
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c244); }
+          if (peg$silentFails === 0) { peg$fail(peg$c247); }
         }
       }
       if (s3 !== peg$FAILED) {
         peg$savedPos = peg$currPos;
-        s4 = peg$c246(s3);
+        s4 = peg$c249(s3);
         if (s4) {
           s4 = void 0;
         } else {
@@ -33002,20 +33068,20 @@ const parser = /*
       if (s1 !== peg$FAILED) {
         s2 = [];
         if (input.charCodeAt(peg$currPos) === 32) {
-          s3 = peg$c243;
+          s3 = peg$c246;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c244); }
+          if (peg$silentFails === 0) { peg$fail(peg$c247); }
         }
         while (s3 !== peg$FAILED) {
           s2.push(s3);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s3 = peg$c243;
+            s3 = peg$c246;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c244); }
+            if (peg$silentFails === 0) { peg$fail(peg$c247); }
           }
         }
         if (s2 !== peg$FAILED) {
@@ -33042,25 +33108,25 @@ const parser = /*
       s2 = peg$currPos;
       s3 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s4 = peg$c243;
+        s4 = peg$c246;
         peg$currPos++;
       } else {
         s4 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c244); }
+        if (peg$silentFails === 0) { peg$fail(peg$c247); }
       }
       while (s4 !== peg$FAILED) {
         s3.push(s4);
         if (input.charCodeAt(peg$currPos) === 32) {
-          s4 = peg$c243;
+          s4 = peg$c246;
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c244); }
+          if (peg$silentFails === 0) { peg$fail(peg$c247); }
         }
       }
       if (s3 !== peg$FAILED) {
         peg$savedPos = peg$currPos;
-        s4 = peg$c247(s3);
+        s4 = peg$c250(s3);
         if (s4) {
           s4 = void 0;
         } else {
@@ -33087,20 +33153,20 @@ const parser = /*
       if (s1 !== peg$FAILED) {
         s2 = [];
         if (input.charCodeAt(peg$currPos) === 32) {
-          s3 = peg$c243;
+          s3 = peg$c246;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c244); }
+          if (peg$silentFails === 0) { peg$fail(peg$c247); }
         }
         while (s3 !== peg$FAILED) {
           s2.push(s3);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s3 = peg$c243;
+            s3 = peg$c246;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c244); }
+            if (peg$silentFails === 0) { peg$fail(peg$c247); }
           }
         }
         if (s2 !== peg$FAILED) {
@@ -33124,30 +33190,30 @@ const parser = /*
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 96) {
-        s1 = peg$c248;
+        s1 = peg$c251;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c249); }
+        if (peg$silentFails === 0) { peg$fail(peg$c252); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c250.test(input.charAt(peg$currPos))) {
+        if (peg$c253.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c251); }
+          if (peg$silentFails === 0) { peg$fail(peg$c254); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c250.test(input.charAt(peg$currPos))) {
+            if (peg$c253.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c251); }
+              if (peg$silentFails === 0) { peg$fail(peg$c254); }
             }
           }
         } else {
@@ -33155,15 +33221,15 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 96) {
-            s3 = peg$c248;
+            s3 = peg$c251;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c249); }
+            if (peg$silentFails === 0) { peg$fail(peg$c252); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c252(s2);
+            s1 = peg$c255(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -33186,30 +33252,30 @@ const parser = /*
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 39) {
-        s1 = peg$c253;
+        s1 = peg$c256;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c254); }
+        if (peg$silentFails === 0) { peg$fail(peg$c257); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c255.test(input.charAt(peg$currPos))) {
+        if (peg$c258.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c256); }
+          if (peg$silentFails === 0) { peg$fail(peg$c259); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c255.test(input.charAt(peg$currPos))) {
+            if (peg$c258.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c256); }
+              if (peg$silentFails === 0) { peg$fail(peg$c259); }
             }
           }
         } else {
@@ -33217,15 +33283,15 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 39) {
-            s3 = peg$c253;
+            s3 = peg$c256;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c254); }
+            if (peg$silentFails === 0) { peg$fail(peg$c257); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c257(s2);
+            s1 = peg$c260(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -33248,30 +33314,30 @@ const parser = /*
 
       s0 = peg$currPos;
       s1 = peg$currPos;
-      if (peg$c258.test(input.charAt(peg$currPos))) {
+      if (peg$c261.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c259); }
+        if (peg$silentFails === 0) { peg$fail(peg$c262); }
       }
       if (s2 !== peg$FAILED) {
         s3 = [];
-        if (peg$c260.test(input.charAt(peg$currPos))) {
+        if (peg$c263.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c261); }
+          if (peg$silentFails === 0) { peg$fail(peg$c264); }
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c260.test(input.charAt(peg$currPos))) {
+          if (peg$c263.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c261); }
+            if (peg$silentFails === 0) { peg$fail(peg$c264); }
           }
         }
         if (s3 !== peg$FAILED) {
@@ -33287,7 +33353,7 @@ const parser = /*
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c262(s1);
+        s1 = peg$c265(s1);
       }
       s0 = s1;
 
@@ -33299,30 +33365,30 @@ const parser = /*
 
       s0 = peg$currPos;
       s1 = peg$currPos;
-      if (peg$c263.test(input.charAt(peg$currPos))) {
+      if (peg$c266.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c264); }
+        if (peg$silentFails === 0) { peg$fail(peg$c267); }
       }
       if (s2 !== peg$FAILED) {
         s3 = [];
-        if (peg$c260.test(input.charAt(peg$currPos))) {
+        if (peg$c263.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c261); }
+          if (peg$silentFails === 0) { peg$fail(peg$c264); }
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c260.test(input.charAt(peg$currPos))) {
+          if (peg$c263.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c261); }
+            if (peg$silentFails === 0) { peg$fail(peg$c264); }
           }
         }
         if (s3 !== peg$FAILED) {
@@ -33338,7 +33404,7 @@ const parser = /*
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c262(s1);
+        s1 = peg$c265(s1);
       }
       s0 = s1;
 
@@ -33350,21 +33416,21 @@ const parser = /*
 
       s0 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s1 = peg$c243;
+        s1 = peg$c246;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c244); }
+        if (peg$silentFails === 0) { peg$fail(peg$c247); }
       }
       if (s1 !== peg$FAILED) {
         while (s1 !== peg$FAILED) {
           s0.push(s1);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s1 = peg$c243;
+            s1 = peg$c246;
             peg$currPos++;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c244); }
+            if (peg$silentFails === 0) { peg$fail(peg$c247); }
           }
         }
       } else {
@@ -33379,21 +33445,21 @@ const parser = /*
 
       s0 = peg$currPos;
       s1 = [];
-      if (peg$c265.test(input.charAt(peg$currPos))) {
+      if (peg$c268.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c266); }
+        if (peg$silentFails === 0) { peg$fail(peg$c269); }
       }
       while (s2 !== peg$FAILED) {
         s1.push(s2);
-        if (peg$c265.test(input.charAt(peg$currPos))) {
+        if (peg$c268.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c266); }
+          if (peg$silentFails === 0) { peg$fail(peg$c269); }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -33404,7 +33470,7 @@ const parser = /*
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c267); }
+          if (peg$silentFails === 0) { peg$fail(peg$c270); }
         }
         peg$silentFails--;
         if (s3 === peg$FAILED) {
@@ -33427,30 +33493,30 @@ const parser = /*
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
         s1 = [];
-        if (peg$c265.test(input.charAt(peg$currPos))) {
+        if (peg$c268.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c266); }
+          if (peg$silentFails === 0) { peg$fail(peg$c269); }
         }
         while (s2 !== peg$FAILED) {
           s1.push(s2);
-          if (peg$c265.test(input.charAt(peg$currPos))) {
+          if (peg$c268.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c266); }
+            if (peg$silentFails === 0) { peg$fail(peg$c269); }
           }
         }
         if (s1 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 2) === peg$c268) {
-            s2 = peg$c268;
+          if (input.substr(peg$currPos, 2) === peg$c271) {
+            s2 = peg$c271;
             peg$currPos += 2;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c269); }
+            if (peg$silentFails === 0) { peg$fail(peg$c272); }
           }
           if (s2 !== peg$FAILED) {
             s3 = [];
@@ -33495,21 +33561,21 @@ const parser = /*
         if (s0 === peg$FAILED) {
           s0 = peg$currPos;
           s1 = [];
-          if (peg$c265.test(input.charAt(peg$currPos))) {
+          if (peg$c268.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c266); }
+            if (peg$silentFails === 0) { peg$fail(peg$c269); }
           }
           while (s2 !== peg$FAILED) {
             s1.push(s2);
-            if (peg$c265.test(input.charAt(peg$currPos))) {
+            if (peg$c268.test(input.charAt(peg$currPos))) {
               s2 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s2 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c266); }
+              if (peg$silentFails === 0) { peg$fail(peg$c269); }
             }
           }
           if (s1 !== peg$FAILED) {
@@ -33545,30 +33611,30 @@ const parser = /*
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 13) {
-        s1 = peg$c270;
+        s1 = peg$c273;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c271); }
+        if (peg$silentFails === 0) { peg$fail(peg$c274); }
       }
       if (s1 === peg$FAILED) {
         s1 = null;
       }
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 10) {
-          s2 = peg$c272;
+          s2 = peg$c275;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c273); }
+          if (peg$silentFails === 0) { peg$fail(peg$c276); }
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 13) {
-            s3 = peg$c270;
+            s3 = peg$c273;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c271); }
+            if (peg$silentFails === 0) { peg$fail(peg$c274); }
           }
           if (s3 === peg$FAILED) {
             s3 = null;
@@ -36198,7 +36264,7 @@ class HostedSlotConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__[
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotContext", function() { return HostedSlotContext; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-context.js */ "./runtime/slot-context.js");
+/* harmony import */ var _ts_build_slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/slot-context.js */ "./runtime/ts-build/slot-context.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -36212,12 +36278,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class HostedSlotContext extends _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["SlotContext"] {
+class HostedSlotContext extends _ts_build_slot_context_js__WEBPACK_IMPORTED_MODULE_1__["SlotContext"] {
   // This is a context of a hosted slot, can only contain a hosted slot.
   constructor(id, providedSpec, hostedSlotConsumer) {
     super(id, providedSpec.name, providedSpec.tags, /* container= */ null, providedSpec, hostedSlotConsumer);
     if (this.sourceSlotConsumer.storeId) {
-      this._handles = [{id: this.sourceSlotConsumer.storeId}];
+      this.handles = [{id: this.sourceSlotConsumer.storeId}];
     }
   }
   get container() {
@@ -36830,7 +36896,7 @@ ${e.message}
           let aliases = [];
           let names = [];
           for (let name of node.names) {
-            let resolved = manifest.resolveReference(name);
+            let resolved = manifest.resolveTypeName(name);
             if (resolved && resolved.schema && resolved.schema.isAlias) {
               aliases.push(resolved.schema);
             } else {
@@ -36891,12 +36957,12 @@ ${e.message}
           node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newSlot(slotInfo);
           return;
         }
-        case 'reference-type': {
-          let resolved = manifest.resolveReference(node.name);
+        case 'type-name': {
+          let resolved = manifest.resolveTypeName(node.name);
           if (!resolved) {
             throw new ManifestError(
                 node.location,
-                `Could not resolve type reference '${node.name}'`);
+                `Could not resolve type reference to type name '${node.name}'`);
           }
           if (resolved.schema) {
             node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newEntity(resolved.schema);
@@ -36912,6 +36978,9 @@ ${e.message}
           return;
         case 'big-collection-type':
           node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newBigCollection(node.type.model);
+          return;
+        case 'reference-type':
+          node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newReference(node.type.model);
           return;
         default:
           return;
@@ -37020,7 +37089,7 @@ ${e.message}
     let particleSpec = new _particle_spec_js__WEBPACK_IMPORTED_MODULE_5__["ParticleSpec"](particleItem);
     manifest._particles[particleItem.name] = particleSpec;
   }
-  // TODO: Move this to a generic pass over the AST and merge with resolveReference.
+  // TODO: Move this to a generic pass over the AST and merge with resolveTypeName.
   static _processShape(manifest, shapeItem) {
     if (shapeItem.interface) {
       let warning = new ManifestError(shapeItem.location, `Shape uses deprecated argument body`);
@@ -37290,6 +37359,7 @@ ${e.message}
           const hostedParticleLiteral = hostedParticle.clone().toLiteral();
           let particleSpecHash = await Object(_platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__["digest"])(JSON.stringify(hostedParticleLiteral));
           let id = `${manifest.generateID()}:${particleSpecHash}:${hostedParticle.name}`;
+          hostedParticleLiteral.id = id;
           targetHandle = recipe.newHandle();
           targetHandle.fate = 'copy';
           let store = await manifest.createStore(connection.type, null, id, []);
@@ -37297,7 +37367,7 @@ ${e.message}
           // Maybe a different function call in the storageEngine? Alternatively another
           // param to the connect/construct functions?
           store.referenceMode = false;
-          store.set(hostedParticleLiteral);
+          await store.set(hostedParticleLiteral);
           targetHandle.mapToStorage(store);
         }
 
@@ -37373,7 +37443,7 @@ ${e.message}
       recipe.description = items.description.description;
     }
   }
-  resolveReference(name) {
+  resolveTypeName(name) {
     let schema = this.findSchemaByName(name);
     if (schema) {
       return {schema};
@@ -40101,7 +40171,7 @@ class HandleConnection {
       let connectionSpec = this.spec;
       if (!connectionSpec.isCompatibleType(this.rawType)) {
         if (options && options.errors) {
-          options.errors.set(this, `Type '${this.rawType} for handle connection '${this.getQualifiedName()}' doesn't match particle spec's type '${connectionSpec.type}'`);
+          options.errors.set(this, `Type '${this.rawType.toString()} for handle connection '${this.getQualifiedName()}' doesn't match particle spec's type '${connectionSpec.type.toString()}'`);
         }
         return false;
       }
@@ -40353,6 +40423,7 @@ class Handle {
   set storageKey(key) { this._storageKey = key; }
   get pattern() { return this._pattern; }
   set pattern(pattern) { this._pattern = pattern; }
+  get mappedType() { return this._mappedType; }
 
   static effectiveType(handleType, connections) {
     let variableMap = new Map();
@@ -42968,7 +43039,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotComposer", function() { return SlotComposer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _affordance_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./affordance.js */ "./runtime/affordance.js");
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./slot-context.js */ "./runtime/slot-context.js");
+/* harmony import */ var _ts_build_slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/slot-context.js */ "./runtime/ts-build/slot-context.js");
 /* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./hosted-slot-consumer.js */ "./runtime/hosted-slot-consumer.js");
 /**
  * @license
@@ -43018,7 +43089,7 @@ class SlotComposer {
     }
 
     Object.keys(containerByName).forEach(slotName => {
-      this._contexts.push(_slot_context_js__WEBPACK_IMPORTED_MODULE_2__["SlotContext"].createContextForContainer(
+      this._contexts.push(_ts_build_slot_context_js__WEBPACK_IMPORTED_MODULE_2__["SlotContext"].createContextForContainer(
         `rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
     });
   }
@@ -43137,7 +43208,7 @@ class SlotComposer {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotConsumer", function() { return SlotConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-context.js */ "./runtime/slot-context.js");
+/* harmony import */ var _ts_build_slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/slot-context.js */ "./runtime/ts-build/slot-context.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -43216,7 +43287,7 @@ class SlotConsumer {
 
   createProvidedContexts() {
     return this.consumeConn.slotSpec.providedSlots.map(
-      spec => new _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["SlotContext"](this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
+      spec => new _ts_build_slot_context_js__WEBPACK_IMPORTED_MODULE_1__["SlotContext"](this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
   }
 
   updateProvidedContexts() {
@@ -43300,120 +43371,6 @@ class SlotConsumer {
   formatHostedContent(hostedSlot, content) {}
   static clear(container) {}
 }
-
-
-/***/ }),
-
-/***/ "./runtime/slot-context.js":
-/*!*********************************!*\
-  !*** ./runtime/slot-context.js ***!
-  \*********************************/
-/*! exports provided: SlotContext */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotContext", function() { return SlotContext; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./particle-spec.js */ "./runtime/particle-spec.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-// Holds container (eg div element) and its additional info.
-// Must be initialized either with a container (for root slots provided by the shell) or
-// tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
-class SlotContext {
-  constructor(id, name, tags, container, spec, sourceSlotConsumer) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(container) != Boolean(spec), `Exactly one of either container or slotSpec may be set`);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(spec) == Boolean(spec), `Spec and source slot can only be set together`);
-
-    // Readonly identifiers
-    this._id = id;
-    this._name = name;
-    this._tags = tags || [];
-
-    this._container = container; // eg div element.
-
-    // The context's accompanying ProvidedSlotSpec (see particle-spec.js).
-    // Initialized to a default spec, if the container is one of the shell provided top root-contexts.
-    this._spec = spec || new _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ProvidedSlotSpec"](name);
-    // The slot consumer providing this container (eg div)
-    this._sourceSlotConsumer = sourceSlotConsumer; // SlotConsumer
-    if (this.sourceSlotConsumer) {
-      this.sourceSlotConsumer._providedSlotContexts.push(this);
-    }
-    // The list of handles this context is restricted to.
-    this._handles = this.spec && this.sourceSlotConsumer
-      ? this.spec.handles.map(handle => this.sourceSlotConsumer.consumeConn.particle.connections[handle].handle).filter(a => a !== undefined)
-      : [];
-
-    // The slots consumers rendered into this context.
-    this._slotConsumers = []; // SlotConsumer[]
-  }
-  get id() { return this._id; }
-  get name() { return this._name; }
-  get tags() { return this._tags; }
-  get spec() { return this._spec; }
-  get container() { return this._container; }
-  get sourceSlotConsumer() { return this._sourceSlotConsumer; }
-  get handles() { return this._handles; }
-  get slotConsumers() { return this._slotConsumers; }
-
-  static createContextForContainer(id, name, container, tags) {
-    return new SlotContext(id, name, tags, container);
-  }
-
-  isSameContainer(container) {
-    if (this.spec.isSet) {
-      if (Boolean(this.container) != Boolean(container)) {
-        return false;
-      }
-      if (!this.container) {
-        return true;
-      }
-      return Object.keys(this.container).length == Object.keys(container).length &&
-             Object.keys(this.container).every(key => Object.keys(container).find(newKey => newKey == key)) &&
-             Object.values(this.container).every(
-                currentContainer => Object.values(container).find(newContainer => newContainer == currentContainer));
-    }
-    return this.container == container;
-  }
-
-  set container(container) {
-    if (this.isSameContainer(container)) {
-      return;
-    }
-    let originalContainer = this.container;
-    this._container = container;
-
-    this.slotConsumers.forEach(slotConsumer => slotConsumer.onContainerUpdate(this.container, originalContainer));
-  }
-
-  addSlotConsumer(slotConsumer) {
-    this._slotConsumers.push(slotConsumer);
-    slotConsumer.slotContext = this;
-
-    if (this.container) {
-      slotConsumer.onContainerUpdate(this.container, null);
-    }
-  }
-
-  clearSlotConsumers() {
-    this._slotConsumers.forEach(slotConsumer => slotConsumer.slotContext = null);
-    this._slotConsumers = [];
-  }
-}
-
 
 
 /***/ }),
@@ -43939,15 +43896,17 @@ class StorageProxyBase {
       return;
     }
 
+    // Replace the stored data with the new one and notify handles that are configured for it.
+    if (!this._synchronizeModel(version, model)) {
+      return;
+    }
+
     // We may have queued updates that were received after a desync; discard any that are stale
     // with respect to the received model.
     this._synchronized = SyncState.full;
     while (this._updates.length > 0 && this._updates[0].version <= version) {
       this._updates.shift();
     }
-
-    // Replace the stored data with the new one and notify handles that are configured for it.
-    this._synchronizeModel(version, model);
 
     let syncModel = this._getModelForSync();
     this._notify('sync', syncModel, options => options.keepSynced && options.notifySync);
@@ -43987,8 +43946,26 @@ class StorageProxyBase {
   }
 
   _processUpdates() {
+
+    let updateIsNext = update => {
+      if (update.version == this._version + 1) {
+        return true;
+      }
+      // Holy Layering Violation Batman
+      // 
+      // If we are a variable waiting for a barriered set response
+      // then that set response *is* the next thing we're waiting for,
+      // regardless of version numbers.
+      //
+      // TODO(shans): refactor this code so we don't need to layer-violate. 
+      if (this._barrier && update.barrier == this._barrier) {
+        return true;
+      }
+      return false;
+    };
+
     // Consume all queued updates whose versions are monotonically increasing from our stored one.
-    while (this._updates.length > 0 && this._updates[0].version === this._version + 1) {
+    while (this._updates.length > 0 && updateIsNext(this._updates[0])) {
       let update = this._updates.shift();
 
       // Fold the update into our stored model.
@@ -44057,6 +44034,7 @@ class CollectionProxy extends StorageProxyBase {
   _synchronizeModel(version, model) {
     this._version = version;
     this._model = new _ts_build_storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_1__["CrdtCollectionModel"](model);
+    return true;
   }
 
   _processUpdate(update, apply=true) {
@@ -44167,9 +44145,15 @@ class VariableProxy extends StorageProxyBase {
   }
 
   _synchronizeModel(version, model) {
+    // If there's an active barrier then we shouldn't apply the model here, because
+    // there is a more recent write from the particle side that is still in flight.
+    if (this._barrier != null) {
+      return false;
+    }
     this._version = version;
     this._model = model.length == 0 ? null : model[0].value;
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._model !== undefined);
+    return true;
   }
 
   _processUpdate(update, apply=true) {
@@ -44182,6 +44166,19 @@ class VariableProxy extends StorageProxyBase {
     if (this._barrier != null) {
       if (update.barrier == this._barrier) {
         this._barrier = null;
+
+        // HOLY LAYERING VIOLATION BATMAN
+        //
+        // We just cleared a barrier which means we are now synchronized. If we weren't
+        // synchronized already, then we need to tell the handles.
+        //
+        // TODO(shans): refactor this code so we don't need to layer-violate. 
+        if (this._synchronized !== SyncState.full) {
+          this._synchronized = SyncState.full;
+          let syncModel = this._getModelForSync();
+          this._notify('sync', syncModel, options => options.keepSynced && options.notifySync);
+
+        }
       }
       return null;
     }
@@ -44207,7 +44204,17 @@ class VariableProxy extends StorageProxyBase {
     if (JSON.stringify(this._model) == JSON.stringify(entity)) {
       return;
     }
-    let barrier = this.generateID('barrier');
+    let barrier;
+
+    // If we're setting to this handle but we aren't listening to firebase, 
+    // then there's no point creating a barrier. In fact, if the response 
+    // to the set comes back before a listener is registered then this proxy will
+    // end up locked waiting for a barrier that will never arrive.
+    if (this._listenerAttached) {
+      barrier = this.generateID('barrier');
+    } else {
+      barrier = null;
+    }
     // TODO: is this already a clone?
     this._model = JSON.parse(JSON.stringify(entity));
     this._barrier = barrier;
@@ -44551,7 +44558,8 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
   get arc() { return this._arc; }
 
   getResults(inputParams) {
-    return inputParams.terminal.filter(result => !result.result.isResolved());
+    // Coalescing for terminal recipes that are either unresolved recipes or have no UI.
+    return inputParams.terminal.filter(result => !result.result.isResolved() || result.result.slots.length == 0);
   }
 
   async generate(inputParams) {
@@ -44595,7 +44603,7 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
             let mergedSlot = cloneMap.get(providedSlot);
             slotConnection.connectToSlot(mergedSlot);
 
-            this._connectOtherHandles(otherToHandle, cloneMap);
+            this._connectOtherHandles(otherToHandle, cloneMap, false);
 
             // Clear verbs and recipe name after coalescing two recipes.
             recipe.verbs.splice(0);
@@ -44658,7 +44666,7 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
               recipe.removeHandle(disconnectedHandle);
             }
 
-            this._connectOtherHandles(otherToHandle, cloneMap);
+            this._connectOtherHandles(otherToHandle, cloneMap, false);
 
             // Clear verbs and recipe name after coalescing two recipes.
             recipe.verbs.splice(0);
@@ -44718,7 +44726,7 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
             cloneMap.get(otherHandle).mergeInto(handle);
 
             // Connect all other connectable handles.
-            this._connectOtherHandles(otherToHandle, cloneMap);
+            this._connectOtherHandles(otherToHandle, cloneMap, true);
 
             // Clear verbs and recipe name after coalescing two recipes.
             recipe.verbs.splice(0);
@@ -44733,9 +44741,38 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
         return results;
       }
 
-      _connectOtherHandles(otherToHandle, cloneMap) {
-        otherToHandle.forEach((otherHandle, handle) => cloneMap.get(otherHandle).mergeInto(handle));
+      _connectOtherHandles(otherToHandle, cloneMap, verifyTypes) {
+        otherToHandle.forEach((otherHandle, handle) => {
+          let otherHandleClone = cloneMap.get(otherHandle);
+
+          // For coalescing that was triggered by handle coalescing (vs slot or slot connection)
+          // once the main handle (one that triggered coalescing) was coalesced, types may have changed.
+          // Need to verify all the type information for the "other" coalescable handles is still valid.
+
+          // TODO(mmandlis): This is relying on only ever considering a single "other" handles to coalesce,
+          // so the handle either is still a valid match or not.
+          // In order to do it right for multiple handles, we need to try ALL handles,
+          // then fallback to all valid N-1 combinations, then N-2 etc.
+          if (verifyTypes) {
+            if (!this._reverifyHandleTypes(handle, otherHandleClone)) {
+              return;
+            }
+          }
+
+          otherHandleClone.mergeInto(handle);
+        });
       }
+
+      // Returns true, if both handles have types that can be coalesced.
+      _reverifyHandleTypes(handle, otherHandle) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_6__["assert"])(handle.recipe == otherHandle.recipe);
+        let cloneMap = new Map();
+        let recipeClone = handle.recipe.clone(cloneMap);
+        recipeClone.normalize();
+        return _recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__["Handle"].effectiveType(cloneMap.get(handle).type,
+            [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
+      }
+
     }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"].Independent), this);
   }
 }
@@ -47917,6 +47954,98 @@ ${this._slotsToManifestString()}
 
 /***/ }),
 
+/***/ "./runtime/ts-build/slot-context.js":
+/*!******************************************!*\
+  !*** ./runtime/ts-build/slot-context.js ***!
+  \******************************************/
+/*! exports provided: SlotContext */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotContext", function() { return SlotContext; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../particle-spec.js */ "./runtime/particle-spec.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+// Holds container (eg div element) and its additional info.
+// Must be initialized either with a container (for root slots provided by the shell) or
+// tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
+class SlotContext {
+    constructor(id, name, tags, container, spec, sourceSlotConsumer = null) {
+        this.tags = [];
+        // The slots consumers rendered into this context.
+        this.slotConsumers = [];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(container) !== Boolean(spec), `Exactly one of either container or slotSpec may be set`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(spec) === Boolean(spec), `Spec and source slot can only be set together`);
+        this.id = id;
+        this.name = name;
+        this.tags = tags || [];
+        this._container = container;
+        // The context's accompanying ProvidedSlotSpec (see particle-spec.js).
+        // Initialized to a default spec, if the container is one of the shell provided top root-contexts.
+        this.spec = spec || new _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ProvidedSlotSpec"](name);
+        // The slot consumer providing this container (eg div)
+        this.sourceSlotConsumer = sourceSlotConsumer;
+        if (this.sourceSlotConsumer) {
+            this.sourceSlotConsumer._providedSlotContexts.push(this);
+        }
+        // The list of handles this context is restricted to.
+        this.handles = this.spec && this.sourceSlotConsumer
+            ? this.spec.handles.map(handle => this.sourceSlotConsumer.consumeConn.particle.connections[handle].handle).filter(a => a !== undefined)
+            : [];
+    }
+    get container() { return this._container; }
+    static createContextForContainer(id, name, container, tags) {
+        return new SlotContext(id, name, tags, container, null);
+    }
+    isSameContainer(container) {
+        if (this.spec.isSet) {
+            if (Boolean(this.container) !== Boolean(container)) {
+                return false;
+            }
+            if (!this.container) {
+                return true;
+            }
+            return Object.keys(this.container).length === Object.keys(container).length &&
+                Object.keys(this.container).every(key => Object.keys(container).some(newKey => newKey === key)) &&
+                Object.values(this.container).every(currentContainer => Object.values(container).some(newContainer => newContainer === currentContainer));
+        }
+        return this.container === container;
+    }
+    set container(container) {
+        if (this.isSameContainer(container)) {
+            return;
+        }
+        const originalContainer = this.container;
+        this._container = container;
+        this.slotConsumers.forEach(slotConsumer => slotConsumer.onContainerUpdate(this.container, originalContainer));
+    }
+    addSlotConsumer(slotConsumer) {
+        this.slotConsumers.push(slotConsumer);
+        slotConsumer.slotContext = this;
+        if (this.container) {
+            slotConsumer.onContainerUpdate(this.container, null);
+        }
+    }
+    clearSlotConsumers() {
+        this.slotConsumers.forEach(slotConsumer => slotConsumer.slotContext = null);
+        this.slotConsumers = [];
+    }
+}
+//# sourceMappingURL=slot-context.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/storage/crdt-collection-model.js":
 /*!***********************************************************!*\
   !*** ./runtime/ts-build/storage/crdt-collection-model.js ***!
@@ -47953,7 +48082,9 @@ class CrdtCollectionModel {
     // Returns whether the change is effective (`id` is new to the collection,
     // or `value` is different to the value previously stored).
     add(id, value, keys) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(keys.length > 0, 'add requires keys');
+        // Ensure that keys is actually an array, not a single string.
+        // TODO(shans): remove this when all callers are implemented in typeScript.
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(keys.length > 0 && typeof keys === 'object', 'add requires a list of keys');
         let item = this.items.get(id);
         let effective = false;
         if (!item) {
@@ -48045,7 +48176,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_atob_web_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../platform/atob-web.js */ "./platform/atob-web.js");
 /* harmony import */ var _platform_btoa_web_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../platform/btoa-web.js */ "./platform/btoa-web.js");
 /* harmony import */ var _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./crdt-collection-model.js */ "./runtime/ts-build/storage/crdt-collection-model.js");
-// @
+// @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -48084,7 +48215,7 @@ class FirebaseKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_5__["KeyBase"] {
         super();
         let parts = key.split('://');
         this.protocol = parts[0];
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(this.protocol === 'firebase');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(this.protocol === 'firebase', `can't construct firebase key for protocol ${this.protocol} (input key ${key})`);
         if (parts[1]) {
             parts = parts[1].split('/');
             this.databaseUrl = parts[0];
@@ -48124,11 +48255,15 @@ class FirebaseStorage extends _storage_provider_base__WEBPACK_IMPORTED_MODULE_0_
     constructor(arcId) {
         super(arcId);
         this.apps = {};
-        this.sharedStores = {};
         this.baseStores = new Map();
+        this.baseStorePromises = new Map();
     }
     async construct(id, type, keyFragment) {
-        return this._join(id, type, keyFragment, false);
+        let referenceMode = !type.isReference;
+        if (type.isSomeSortOfCollection() && type.elementTypeIfCollection().isReference) {
+            referenceMode = false;
+        }
+        return this._join(id, type, keyFragment, false, referenceMode);
     }
     async connect(id, type, key) {
         return this._join(id, type, key, true);
@@ -48142,30 +48277,32 @@ class FirebaseStorage extends _storage_provider_base__WEBPACK_IMPORTED_MODULE_0_
             }
         }
     }
-    async share(id, type, key) {
-        if (!this.sharedStores[id]) {
-            this.sharedStores[id] = await this._join(id, type, key, true);
-        }
-        return this.sharedStores[id];
-    }
-    baseStorageKey(type, key) {
-        const fbKey = new FirebaseKey(key);
+    baseStorageKey(type, keyString) {
+        const fbKey = new FirebaseKey(keyString);
         fbKey.location = `backingStores/${type.toString()}`;
         return fbKey.toString();
     }
     async baseStorageFor(type, key) {
-        if (!this.baseStores.has(type)) {
-            const store = await this._join(type.toString(), type.collectionOf(), key, 'unknown');
-            this.baseStores.set(type, store);
+        if (this.baseStores.has(type)) {
+            return this.baseStores.get(type);
         }
-        return this.baseStores.get(type);
+        if (this.baseStorePromises.has(type)) {
+            return this.baseStorePromises.get(type);
+        }
+        const storagePromise = this._join(type.toString(), type.collectionOf(), key, 'unknown');
+        this.baseStorePromises.set(type, storagePromise);
+        const storage = await storagePromise;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(storage, 'baseStorageFor should not fail');
+        this.baseStores.set(type, storage);
+        return storage;
     }
     parseStringAsKey(s) {
         return new FirebaseKey(s);
     }
-    async _join(id, type, key, shouldExist) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(typeof id === 'string');
-        const fbKey = new FirebaseKey(key);
+    // Exposed for SyntheticStorage to share this.apps.
+    // TODO: refactor storage so synthesized views can just use the standard API
+    attach(keyString) {
+        const fbKey = new FirebaseKey(keyString);
         // TODO: is it ever going to be possible to autoconstruct new firebase datastores?
         if (fbKey.databaseUrl == undefined || fbKey.apiKey == undefined) {
             throw new Error('Can\'t complete partial firebase keys');
@@ -48187,23 +48324,40 @@ class FirebaseStorage extends _storage_provider_base__WEBPACK_IMPORTED_MODULE_0_
             this.apps[fbKey.projectId] = { app, owned: true };
         }
         const reference = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.database(this.apps[fbKey.projectId].app).ref(fbKey.location);
+        return { fbKey, reference };
+    }
+    // referenceMode is only referred to if shouldExist is false, or if shouldExist is 'unknown'
+    // but this _join creates the storage location. 
+    async _join(id, type, keyString, shouldExist, referenceMode = false) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!type.isVariable);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!type.isCollection || !type.primitiveType().isVariable);
+        const { fbKey, reference } = this.attach(keyString);
+        let enableReferenceMode = false;
         let currentSnapshot;
         await reference.once('value', snapshot => currentSnapshot = snapshot);
         if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
             return null;
+        }
+        if (currentSnapshot.exists() && currentSnapshot.val().referenceMode) {
+            enableReferenceMode = true;
         }
         if (shouldExist === false || (shouldExist === 'unknown' && currentSnapshot.exists() === false)) {
             const result = await reference.transaction(data => {
                 if (data != null) {
                     return undefined;
                 }
-                return { version: 0 };
+                return { version: 0, referenceMode };
             }, undefined, false);
             if (!result.committed) {
                 return null;
             }
+            enableReferenceMode = referenceMode;
         }
-        return FirebaseStorageProvider.newProvider(type, this, id, reference, key, shouldExist);
+        const provider = FirebaseStorageProvider.newProvider(type, this, id, reference, fbKey, shouldExist);
+        if (enableReferenceMode) {
+            provider.enableReferenceMode();
+        }
+        return provider;
     }
     static encodeKey(key) {
         key = Object(_platform_btoa_web_js__WEBPACK_IMPORTED_MODULE_7__["btoa"])(key);
@@ -48221,9 +48375,25 @@ class FirebaseStorageProvider extends _storage_provider_base__WEBPACK_IMPORTED_M
         this.firebaseKey = key;
         this.reference = reference;
         this.backingStore = null;
+        this.pendingBackingStore = null;
         // Resolved when local modifications complete being persisted
         // to firebase. Null when not persisting.
         this.persisting = null;
+    }
+    // A consequence of awaiting this function is that this.backingStore
+    // is guaranteed to exist once the await completes. This is because
+    // if backingStore doesn't yet exist, the assignment in the then()
+    // is guaranteed to execute before anything awaiting this function.
+    async ensureBackingStore() {
+        if (this.backingStore) {
+            return this.backingStore;
+        }
+        if (!this.pendingBackingStore) {
+            const key = this.storageEngine.baseStorageKey(this.backingType(), this.storageKey);
+            this.pendingBackingStore = this.storageEngine.baseStorageFor(this.type, key);
+            this.pendingBackingStore.then(backingStore => this.backingStore = backingStore);
+        }
+        return this.pendingBackingStore;
     }
     static newProvider(type, storageEngine, id, reference, key, shouldExist) {
         if (type.isCollection) {
@@ -48254,15 +48424,16 @@ class FirebaseStorageProvider extends _storage_provider_base__WEBPACK_IMPORTED_M
         }
         return result;
     }
-    async _persistChanges() {
+    async _persistChanges(arg = '') {
         if (!this._hasLocalChanges) {
             return;
         }
         if (this.persisting) {
-            return this.persisting;
+            await this.persisting;
+            return;
         }
         // Ensure we only have one persist process running at a time.
-        this.persisting = this._persistChangesImpl();
+        this.persisting = this._persistChangesImpl(arg);
         await this.persisting;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!this._hasLocalChanges);
         this.persisting = null;
@@ -48296,6 +48467,8 @@ class FirebaseStorageProvider extends _storage_provider_base__WEBPACK_IMPORTED_M
 class FirebaseVariable extends FirebaseStorageProvider {
     constructor(type, storageEngine, id, reference, firebaseKey, shouldExist) {
         super(type, storageEngine, id, reference, firebaseKey);
+        this.localKeyId = 0;
+        this.pendingWrites = [];
         this.wasConnect = shouldExist;
         // Current value stored in this variable. Reflects either a
         // value that was stored in firebase, or a value that was
@@ -48319,35 +48492,68 @@ class FirebaseVariable extends FirebaseStorageProvider {
         });
         this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
     }
+    backingType() {
+        return this.type;
+    }
     remoteStateChanged(dataSnapshot) {
         if (this.localModified) {
             return;
         }
         const data = dataSnapshot.val();
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(this.version == null || data.version > this.version);
-        this.value = data.value;
+        // NOTE that remoteStateChanged will be invoked immediately by the
+        // this.reference.on(...) call in the constructor; this means that it's possible for this
+        // function to receive data with storageKeys before referenceMode has been switched on (as 
+        // that happens after the constructor has completed). This doesn't matter as data can't
+        // be accessed until the constructor's returned (nothing has a handle on the object before
+        // that). 
+        this.value = data.value || null;
         this.version = data.version;
         this.resolveInitialized();
         // Firebase doesn't maintain a distinction between null and undefined, but we explicitly
         // require empty variables to store 'null'.
-        this._fire('change', { data: data.value || null, version: this.version });
+        if (this.referenceMode && this.value) {
+            const version = this.version;
+            this.ensureBackingStore().then(async (store) => {
+                const data = await store.get(this.value.id);
+                this._fire('change', { data, version });
+            });
+        }
+        else {
+            this._fire('change', { data: data.value || null, version: this.version });
+        }
     }
     get _hasLocalChanges() {
         return this.localModified;
     }
-    async _persistChangesImpl() {
+    async _persistChangesImpl(arg) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(this.localModified);
         // Guard the specific version that we're writing. If we receive another
         // local mutation, these versions will be different when the transaction
         // completes indicating that we need to continue the process of sending
         // local modifications.
         const version = this.version;
+        // the await required for fetching baseStorage can cause initialization/localModified
+        // flag reordering if done before persisting a change.
         const value = this.value;
+        // We have to write the underlying storage before the local value, or it won't be present
+        // when another connected storage object gets the update of the local value.
+        if (this.referenceMode && this.pendingWrites.length > 0) {
+            await this.ensureBackingStore();
+            // TODO(shans): mutating the storageKey here to provide unique keys is a hack
+            // that can be removed once entity mutation is distinct from collection updates.
+            // Once entity mutation exists, it shouldn't ever be possible to write
+            // different values with the same id.
+            const pendingWrites = this.pendingWrites.slice();
+            this.pendingWrites = [];
+            await Promise.all(pendingWrites.map(pendingItem => this.backingStore.store(pendingItem.value, [this.storageKey + this.localKeyId++])));
+        }
         const result = await this._transaction(data => {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(this.version >= version);
             return {
                 version: Math.max(data.version + 1, version),
                 value,
+                referenceMode: this.referenceMode
             };
         });
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(result.committed, 'uncommited transaction (offline?) not supported yet');
@@ -48356,36 +48562,27 @@ class FirebaseVariable extends FirebaseStorageProvider {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(data.version >= version);
         if (this.version !== version) {
             // A new local modification happened while we were writing the previous one.
-            return this._persistChangesImpl();
+            return this._persistChangesImpl(arg);
         }
         this.localModified = false;
         this.version = data.version;
-        this.value = data.value;
+        // Firebase will return 'undefined' when data is set to null, but should
+        this.value = data.value || null;
     }
     get versionForTesting() {
         return this.version;
     }
     async get() {
         await this.initialized;
-        if (this.referenceMode) {
+        if (this.referenceMode && this.value) {
             const referredType = this.type;
-            if (this.backingStore == null) {
-                const backingStore = await this.storageEngine.share(referredType.toString(), referredType.collectionOf(), this.value.storageKey);
-                this.backingStore = backingStore;
-            }
+            await this.ensureBackingStore();
             return await this.backingStore.get(this.value.id);
         }
         return this.value;
     }
     async set(value, originatorId = null, barrier = null) {
-        let referredType;
-        // the await required for fetching baseStorage can cause initialization/localModified
-        // flag reordering if done inline below. So we resolve backingStore if necessary
-        // first, before looking at anything else. 
-        if (this.referenceMode && this.backingStore == null) {
-            referredType = this.type;
-            this.backingStore = await this.storageEngine.baseStorageFor(referredType, this.storageEngine.baseStorageKey(referredType, this.storageKey));
-        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(value !== undefined);
         if (this.version == null) {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!this.localModified);
             // If the first modification happens before init, this becomes
@@ -48394,31 +48591,67 @@ class FirebaseVariable extends FirebaseStorageProvider {
             this.version = 0;
             this.resolveInitialized();
         }
-        else {
+        else if (!this.referenceMode) {
+            // If in reference mode, we can't actually determine if this value is identical to the previous
+            // one.
             if (JSON.stringify(this.value) === JSON.stringify(value)) {
                 return;
             }
-            this.version++;
         }
-        if (this.referenceMode) {
-            await this.backingStore.store(value, [this.storageKey]);
-            value = { id: value.id, storageKey: this.backingStore.storageKey };
+        this.version++;
+        const version = this.version;
+        let storageKey;
+        if (this.referenceMode && value) {
+            storageKey = this.storageEngine.baseStorageKey(this.type, this.storageKey);
+            this.value = { id: value.id, storageKey };
+            this.pendingWrites.push({ value, storageKey });
+        }
+        else {
+            this.value = value;
         }
         this.localModified = true;
-        this.value = value;
-        this._fire('change', { data: this.value, version: this.version, originatorId, barrier });
-        await this._persistChanges();
+        await this._persistChanges(barrier);
+        this._fire('change', { data: value, version, originatorId, barrier });
     }
     async clear(originatorId = null, barrier = null) {
         return this.set(null, originatorId, barrier);
     }
     async cloneFrom(handle) {
+        this.referenceMode = handle.referenceMode;
         const literal = await handle.toLiteral();
+        const data = literal.model[0].value;
+        if (this.referenceMode && literal.model.length > 0) {
+            await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
+            literal.model = literal.model.map(({ id, value }) => ({ id, value: { id, storageKey: this.backingStore.storageKey } }));
+            const underlying = await handle.backingStore.getMultiple(literal.model.map(({ id }) => id));
+            await this.backingStore.storeMultiple(underlying, [this.storageKey]);
+        }
         this.fromLiteral(literal);
         this.localModified = true;
         this.resolveInitialized();
-        this._fire('change', { data: this.value, version: this.version, originatorId: null, barrier: null });
+        // TODO: do we need to fire an event here?
+        if (this.referenceMode) {
+            this._fire('change', { data, version: this.version, originatorId: null, barrier: null });
+        }
+        else {
+            this._fire('change', { data: this.value, version: this.version, originatorId: null, barrier: null });
+        }
         await this._persistChanges();
+    }
+    async modelForSynchronization() {
+        if (this.value && !this.referenceMode) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(this.value.storageKey == undefined, `values in non-referenceMode stores shouldn't have storageKeys. This store is ${this.storageKey}`);
+        }
+        if (this.referenceMode && this.value !== null) {
+            const value = this.value;
+            await this.ensureBackingStore();
+            const result = await this.backingStore.get(value.id);
+            return {
+                version: this.version,
+                model: [{ id: value.id, value: result }]
+            };
+        }
+        return super.modelForSynchronization();
     }
     // Returns {version, model: [{id, value}]}
     async toLiteral() {
@@ -48431,6 +48664,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
     fromLiteral({ version, model }) {
         const value = model.length === 0 ? null : model[0].value;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(value !== undefined);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(this.referenceMode || !value.storageKey);
         this.value = value;
         this.version = version;
     }
@@ -48488,6 +48722,8 @@ function setDiff(from, to) {
 class FirebaseCollection extends FirebaseStorageProvider {
     constructor(type, storageEngine, id, reference, firebaseKey) {
         super(type, storageEngine, id, reference, firebaseKey);
+        this.pendingWrites = [];
+        this.localId = 0;
         // Lists mapped by id containing membership keys that have been
         // added or removed by local modifications. Entries in this
         // structure are still pending persistance remotely. Empty
@@ -48515,6 +48751,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
         // copy of state from firebase.
         this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
         this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
+    }
+    backingType() {
+        return this.type.primitiveType();
     }
     remoteStateChanged(dataSnapshot) {
         const newRemoteState = dataSnapshot.val();
@@ -48608,12 +48847,20 @@ class FirebaseCollection extends FirebaseStorageProvider {
             // The update had no effect.
             return;
         }
-        this._fire('change', {
-            originatorId: null,
-            version: this.version,
-            add,
-            remove,
-        });
+        if (this.referenceMode) {
+            const ids = add.map(({ value }) => value.id).concat(remove.map(({ value }) => value.id));
+            this.ensureBackingStore().then(async (backingStore) => {
+                const values = await backingStore.getMultiple(ids);
+                const valueMap = {};
+                values.forEach(value => valueMap[value.id] = value);
+                const addPrimitives = add.map(({ value, keys, effective }) => ({ value: valueMap[value.id], keys, effective }));
+                const removePrimitives = remove.map(({ value, keys, effective }) => ({ value: valueMap[value.id], keys, effective }));
+                this._fire('change', { originatorId: null, version: this.version, add: addPrimitives, remove: removePrimitives });
+            });
+        }
+        else {
+            this._fire('change', { originatorId: null, version: this.version, add, remove });
+        }
     }
     get versionForTesting() {
         return this.version;
@@ -48625,11 +48872,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             if (ref == null) {
                 return null;
             }
-            const referredType = this.type.primitiveType();
-            if (this.backingStore == null) {
-                const backingStore = await this.storageEngine.share(referredType.toString(), referredType.collectionOf(), ref.storageKey);
-                this.backingStore = backingStore;
-            }
+            await this.ensureBackingStore();
             const result = await this.backingStore.get(ref.id);
             return result;
         }
@@ -48665,18 +48908,20 @@ class FirebaseCollection extends FirebaseStorageProvider {
     async store(value, keys, originatorId = null) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(keys != null && keys.length > 0, 'keys required');
         await this.initialized;
+        const id = value.id;
+        let effective;
         // 1. Apply the change to the local model.
         if (this.referenceMode) {
             const referredType = this.type.primitiveType();
-            if (this.backingStore == null) {
-                this.backingStore = await this.storageEngine.baseStorageFor(referredType, this.storageEngine.baseStorageKey(referredType, this.storageKey));
-            }
-            await this.backingStore.store(value, [this.storageKey]);
-            value = { id: value.id, storageKey: this.backingStore.storageKey };
+            const storageKey = this.storageEngine.baseStorageKey(referredType, this.storageKey);
+            effective = this.model.add(id, { id, storageKey }, keys);
+            this.version++;
+            this.pendingWrites.push({ value, storageKey });
         }
-        const id = value.id;
-        const effective = this.model.add(value.id, value, keys);
-        this.version++;
+        else {
+            effective = this.model.add(id, value, keys);
+            this.version++;
+        }
         // 2. Notify listeners.
         this._fire('change', { add: [{ value, keys, effective }], version: this.version, originatorId });
         // 3. Add this modification to the set of local changes that need to be persisted.
@@ -48694,6 +48939,17 @@ class FirebaseCollection extends FirebaseStorageProvider {
         return this.localChanges.size > 0;
     }
     async _persistChangesImpl() {
+        if (this.pendingWrites.length > 0) {
+            await this.ensureBackingStore();
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(this.backingStore);
+            const pendingWrites = this.pendingWrites.slice();
+            this.pendingWrites = [];
+            // TODO(shans): mutating the storageKey here to provide unique keys is a hack
+            // that can be removed once entity mutation is distinct from collection updates.
+            // Once entity mutation exists, it shouldn't ever be possible to write
+            // different values with the same id.
+            await Promise.all(pendingWrites.map(pendingItem => this.backingStore.store(pendingItem.value, [this.storageKey + this.localId++])));
+        }
         while (this.localChanges.size > 0) {
             // Record the changes that are persisted by the transaction.
             let changesPersisted;
@@ -48738,6 +48994,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
                         delete data.items[encId];
                     }
                 }
+                data.referenceMode = this.referenceMode;
                 return data;
             });
             // We're assuming that firebase won't deliver updates between the
@@ -48776,28 +49033,64 @@ class FirebaseCollection extends FirebaseStorageProvider {
             }
         }
     }
-    async toList() {
+    async _toList() {
         await this.initialized;
         if (this.referenceMode) {
-            const items = this.model.toList();
+            const items = (await this.toLiteral()).model;
+            if (items.length === 0) {
+                return [];
+            }
             const referredType = this.type.primitiveType();
             const refSet = new Set();
-            items.forEach(item => refSet.add(item.storageKey));
+            items.forEach(item => refSet.add(item.value.storageKey));
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(refSet.size === 1);
             const ref = refSet.values().next().value;
-            if (this.backingStore == null) {
-                const backingStore = await this.storageEngine.share(referredType.toString(), referredType.collectionOf(), ref);
-                this.backingStore = backingStore;
-            }
+            await this.ensureBackingStore();
             const retrieveItem = async (item) => {
-                return this.backingStore.get(item.id);
+                const ref = item.value;
+                return { id: ref.id, value: await this.backingStore.get(ref.id), keys: item.keys };
             };
             return await Promise.all(items.map(retrieveItem));
         }
-        return this.model.toList();
+        return (await this.toLiteral()).model;
+    }
+    async modelForSynchronization() {
+        return {
+            version: this.version,
+            model: await this._toList()
+        };
+    }
+    async toList() {
+        return (await this._toList()).map(item => item.value);
+    }
+    async getMultiple(ids) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!this.referenceMode, "getMultiple not implemented for referenceMode stores");
+        await this.initialized;
+        return ids.map(id => this.model.getValue(id));
+    }
+    async storeMultiple(values, keys, originatorId = null) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!this.referenceMode, "storeMultiple not implemented for referenceMode stores");
+        values.map(value => {
+            this.model.add(value.id, value, keys);
+            const localChanges = this.localChanges.get(value.id);
+            for (const key of keys) {
+                localChanges.add.push(key);
+            }
+        });
+        await this._persistChanges();
     }
     async cloneFrom(handle) {
-        this.fromLiteral(await handle.toLiteral());
+        this.referenceMode = handle.referenceMode;
+        const literal = await handle.toLiteral();
+        if (this.referenceMode && literal.model.length > 0) {
+            await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
+            if (this.backingStore !== handle.backingStore) {
+                literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this.backingStore.storageKey } }));
+                const underlying = await handle.backingStore.getMultiple(literal.model.map(({ id }) => id));
+                await this.backingStore.storeMultiple(underlying, [this.storageKey]);
+            }
+        }
+        this.fromLiteral(literal);
         // Don't notify about the contents that have just been cloned.
         // However, do record local changes for persistence.
         for (const item of this.model.toLiteral()) {
@@ -48955,6 +49248,9 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     constructor(type, storageEngine, id, reference, firebaseKey) {
         super(type, storageEngine, id, reference, firebaseKey);
     }
+    backingType() {
+        return this.type.primitiveType();
+    }
     async get(id) {
         let value;
         const encId = FirebaseStorage.encodeKey(id);
@@ -49105,6 +49401,12 @@ class InMemoryStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE
     }
     async construct(id, type, keyFragment) {
         const provider = await this._construct(id, type, keyFragment);
+        if (type.isReference) {
+            return provider;
+        }
+        if (type.isSomeSortOfCollection() && type.elementTypeIfCollection().isReference) {
+            return provider;
+        }
         provider.enableReferenceMode();
         return provider;
     }
@@ -49138,15 +49440,6 @@ class InMemoryStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE
         // TODO assert types match?
         return this._memoryMap[key];
     }
-    async share(id, type, key) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(key, "Must provide valid key to connect to underlying data");
-        const imKey = new InMemoryKey(key);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(imKey.arcId === this.arcId.toString(), `key's arcId ${imKey.arcId} doesn't match this storageProvider's arcId ${this.arcId.toString()}`);
-        if (this._memoryMap[key] == undefined) {
-            return this._construct(id, type, key);
-        }
-        return this._memoryMap[key];
-    }
     baseStorageKey(type) {
         const key = new InMemoryKey('in-memory');
         key.arcId = this.arcId.toString();
@@ -49163,6 +49456,7 @@ class InMemoryStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE
         const storagePromise = this._construct(type.toString(), type.collectionOf(), key);
         this.typePromiseMap[key] = storagePromise;
         const storage = await storagePromise;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(storage, `could not construct baseStorage for key ${key}`);
         this._typeMap[key] = storage;
         return storage;
     }
@@ -49171,6 +49465,11 @@ class InMemoryStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE
     }
 }
 class InMemoryStorageProvider extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["StorageProviderBase"] {
+    constructor() {
+        super(...arguments);
+        this.backingStore = null;
+        this.pendingBackingStore = null;
+    }
     static newProvider(type, storageEngine, name, id, key) {
         if (type.isCollection) {
             return new InMemoryCollection(type, storageEngine, name, id, key);
@@ -49180,17 +49479,34 @@ class InMemoryStorageProvider extends _storage_provider_base_js__WEBPACK_IMPORTE
         }
         return new InMemoryVariable(type, storageEngine, name, id, key);
     }
+    // A consequence of awaiting this function is that this.backingStore
+    // is guaranteed to exist once the await completes. This is because
+    // if backingStore doesn't yet exist, the assignment in the then()
+    // is guaranteed to execute before anything awaiting this function.
+    async ensureBackingStore() {
+        if (this.backingStore) {
+            return this.backingStore;
+        }
+        if (!this.pendingBackingStore) {
+            const key = this.storageEngine.baseStorageKey(this.backingType());
+            this.pendingBackingStore = this.storageEngine.baseStorageFor(this.type, key);
+            this.pendingBackingStore.then(backingStore => this.backingStore = backingStore);
+        }
+        return this.pendingBackingStore;
+    }
 }
 class InMemoryCollection extends InMemoryStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, name, id, key);
         this._model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__["CrdtCollectionModel"]();
-        this._storageEngine = storageEngine;
-        this._backingStore = null;
+        this.storageEngine = storageEngine;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.version !== null);
     }
+    backingType() {
+        return this.type.primitiveType();
+    }
     clone() {
-        const handle = new InMemoryCollection(this.type, this._storageEngine, this.name, this.id, null);
+        const handle = new InMemoryCollection(this.type, this.storageEngine, this.name, this.id, null);
         handle.cloneFrom(this);
         return handle;
     }
@@ -49198,12 +49514,10 @@ class InMemoryCollection extends InMemoryStorageProvider {
         this.referenceMode = handle.referenceMode;
         const literal = await handle.toLiteral();
         if (this.referenceMode && literal.model.length > 0) {
-            if (this._backingStore == null) {
-                this._backingStore = await this._storageEngine.baseStorageFor(this.type, this._storageEngine.baseStorageKey(this.type));
-                literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this._backingStore.storageKey } }));
-                const underlying = await handle._backingStore.getMultiple(literal.model.map(({ id }) => id));
-                await this._backingStore.storeMultiple(underlying, [this.storageKey]);
-            }
+            await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
+            literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this.backingStore.storageKey } }));
+            const underlying = await handle.backingStore.getMultiple(literal.model.map(({ id }) => id));
+            await this.backingStore.storeMultiple(underlying, [this.storageKey]);
         }
         this.fromLiteral(literal);
     }
@@ -49230,17 +49544,14 @@ class InMemoryCollection extends InMemoryStorageProvider {
             if (items.length === 0) {
                 return [];
             }
-            const referredType = this.type.primitiveType();
             const refSet = new Set();
             items.forEach(item => refSet.add(item.value.storageKey));
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
             const ref = refSet.values().next().value;
-            if (this._backingStore == null) {
-                this._backingStore = await this._storageEngine.share(referredType.toString(), referredType, ref);
-            }
+            await this.ensureBackingStore();
             const retrieveItem = async (item) => {
                 const ref = item.value;
-                return { id: ref.id, value: await this._backingStore.get(ref.id), keys: item.keys };
+                return { id: ref.id, value: await this.backingStore.get(ref.id), keys: item.keys };
             };
             return await Promise.all(items.map(retrieveItem));
         }
@@ -49264,11 +49575,8 @@ class InMemoryCollection extends InMemoryStorageProvider {
             if (ref == null) {
                 return null;
             }
-            const referredType = this.type.primitiveType();
-            if (this._backingStore == null) {
-                this._backingStore = await this._storageEngine.share(referredType.toString(), referredType.collectionOf(), ref.storageKey);
-            }
-            const result = await this._backingStore.get(ref.id);
+            await this.ensureBackingStore();
+            const result = await this.backingStore.get(ref.id);
             return result;
         }
         return this._model.getValue(id);
@@ -49282,15 +49590,12 @@ class InMemoryCollection extends InMemoryStorageProvider {
         const changeEvent = { value, keys, effective: undefined };
         if (this.referenceMode) {
             const referredType = this.type.primitiveType();
-            const storageKey = this._backingStore ? this._backingStore.storageKey : this._storageEngine.baseStorageKey(referredType);
+            const storageKey = this.backingStore ? this.backingStore.storageKey : this.storageEngine.baseStorageKey(referredType);
             // It's important to store locally first, as the upstream consumers
             // are set up to assume all writes are processed (at least locally) synchronously.
             changeEvent.effective = this._model.add(value.id, { id: value.id, storageKey }, keys);
-            if (this._backingStore == null) {
-                this._backingStore = await this._storageEngine.baseStorageFor(referredType, storageKey);
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._backingStore !== this, "A store can't be its own backing store");
-            }
-            await this._backingStore.store(value, keys);
+            await this.ensureBackingStore();
+            await this.backingStore.store(value, keys);
         }
         else {
             changeEvent.effective = this._model.add(value.id, value, keys);
@@ -49320,12 +49625,15 @@ class InMemoryVariable extends InMemoryStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, name, id, key);
         this.localKeyId = 0;
-        this._storageEngine = storageEngine;
+        this.storageEngine = storageEngine;
         this._stored = null;
-        this._backingStore = null;
+        this.backingStore = null;
+    }
+    backingType() {
+        return this.type;
     }
     clone() {
-        const variable = new InMemoryVariable(this.type, this._storageEngine, this.name, this.id, null);
+        const variable = new InMemoryVariable(this.type, this.storageEngine, this.name, this.id, null);
         variable.cloneFrom(this);
         return variable;
     }
@@ -49333,22 +49641,18 @@ class InMemoryVariable extends InMemoryStorageProvider {
         this.referenceMode = handle.referenceMode;
         const literal = await handle.toLiteral();
         if (this.referenceMode && literal.model.length > 0) {
-            if (this._backingStore == null) {
-                this._backingStore = await this._storageEngine.baseStorageFor(this.type, this._storageEngine.baseStorageKey(this.type));
-                literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this._backingStore.storageKey } }));
-                const underlying = await handle._backingStore.getMultiple(literal.model.map(({ id }) => id));
-                await this._backingStore.storeMultiple(underlying, [this.storageKey]);
-            }
+            await Promise.all([this.ensureBackingStore(), handle.ensureBackingStore()]);
+            literal.model = literal.model.map(({ id, value }) => ({ id, value: { id: value.id, storageKey: this.backingStore.storageKey } }));
+            const underlying = await handle.backingStore.getMultiple(literal.model.map(({ id }) => id));
+            await this.backingStore.storeMultiple(underlying, [this.storageKey]);
         }
         await this.fromLiteral(literal);
     }
     async modelForSynchronization() {
         if (this.referenceMode && this._stored !== null) {
             const value = this._stored;
-            if (this._backingStore == null) {
-                this._backingStore = await this._storageEngine.share(this.type.toString(), this.type.collectionOf(), value.storageKey);
-            }
-            const result = await this._backingStore.get(value.id);
+            await this.ensureBackingStore();
+            const result = await this.backingStore.get(value.id);
             return {
                 version: this.version,
                 model: [{ id: value.id, value: result }]
@@ -49386,12 +49690,8 @@ class InMemoryVariable extends InMemoryStorageProvider {
     async get() {
         if (this.referenceMode && this._stored) {
             const value = this._stored;
-            const referredType = this.type;
-            // TODO: string version of ReferredTyped as ID?
-            if (this._backingStore == null) {
-                this._backingStore = await this._storageEngine.share(referredType.toString(), referredType.collectionOf(), value.storageKey);
-            }
-            const result = await this._backingStore.get(value.id);
+            await this.ensureBackingStore();
+            const result = await this.backingStore.get(value.id);
             return result;
         }
         return this._stored;
@@ -49404,19 +49704,16 @@ class InMemoryVariable extends InMemoryStorageProvider {
             // the previous value for comparison (that's down in the backing store).
             // TODO(shans): should we fetch and compare in the case of the ids matching?
             const referredType = this.type;
-            const storageKey = this._backingStore ? this._backingStore.storageKey : this._storageEngine.baseStorageKey(referredType);
+            const storageKey = this.backingStore ? this.backingStore.storageKey : this.storageEngine.baseStorageKey(referredType);
             // It's important to store locally first, as the upstream consumers
             // are set up to assume all writes are processed (at least locally) synchronously.
             this._stored = { id: value.id, storageKey };
-            if (this._backingStore == null) {
-                this._backingStore =
-                    await this._storageEngine.baseStorageFor(referredType, storageKey);
-            }
+            await this.ensureBackingStore();
             // TODO(shans): mutating the storageKey here to provide unique keys is
             // a hack that can be removed once entity mutation is distinct from collection
             // updates. Once entity mutation exists, it shouldn't ever be possible to write
             // different values with the same id. 
-            await this._backingStore.store(value, [this.storageKey + this.localKeyId++]);
+            await this.backingStore.store(value, [this.storageKey + this.localKeyId++]);
         }
         else {
             // If there's a barrier set, then the originating storage-proxy is expecting
@@ -49445,6 +49742,9 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
         super(type, name, id, key);
         this.version = 0;
         this.items = new Map();
+    }
+    backingType() {
+        return this.type.primitiveType();
     }
     async get(id) {
         const data = this.items.get(id);
@@ -49671,6 +49971,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProviderFactory", function() { return StorageProviderFactory; });
 /* harmony import */ var _in_memory_storage_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./in-memory-storage.js */ "./runtime/ts-build/storage/in-memory-storage.js");
 /* harmony import */ var _firebase_storage_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./firebase-storage.js */ "./runtime/ts-build/storage/firebase-storage.js");
+/* harmony import */ var _synthetic_storage_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./synthetic-storage.js */ "./runtime/ts-build/storage/synthetic-storage.js");
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -49680,17 +49981,19 @@ __webpack_require__.r(__webpack_exports__);
 // http://polymer.github.io/PATENTS.txt
 
 
+
 class StorageProviderFactory {
     constructor(arcId) {
         this.arcId = arcId;
-        this._storageInstances = { 'in-memory': new _in_memory_storage_js__WEBPACK_IMPORTED_MODULE_0__["InMemoryStorage"](arcId), 'firebase': new _firebase_storage_js__WEBPACK_IMPORTED_MODULE_1__["FirebaseStorage"](arcId) };
+        // TODO: Pass this factory into storage objects instead of linking them directly together.
+        // This needs changes to the StorageBase API to facilitate the FirebaseStorage.open functionality.
+        const firebase = new _firebase_storage_js__WEBPACK_IMPORTED_MODULE_1__["FirebaseStorage"](arcId);
+        const synthetic = new _synthetic_storage_js__WEBPACK_IMPORTED_MODULE_2__["SyntheticStorage"](arcId, firebase);
+        this._storageInstances = { 'in-memory': new _in_memory_storage_js__WEBPACK_IMPORTED_MODULE_0__["InMemoryStorage"](arcId), firebase, synthetic };
     }
     _storageForKey(key) {
         const protocol = key.split(':')[0];
         return this._storageInstances[protocol];
-    }
-    async share(id, type, key) {
-        return this._storageForKey(key).share(id, type, key);
     }
     async construct(id, type, keyFragment) {
         // TODO(shans): don't use reference mode once adapters are implemented
@@ -49711,6 +50014,131 @@ class StorageProviderFactory {
     }
 }
 //# sourceMappingURL=storage-provider-factory.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/storage/synthetic-storage.js":
+/*!*******************************************************!*\
+  !*** ./runtime/ts-build/storage/synthetic-storage.js ***!
+  \*******************************************************/
+/*! exports provided: SyntheticStorage */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SyntheticStorage", function() { return SyntheticStorage; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./storage-provider-base.js */ "./runtime/ts-build/storage/storage-provider-base.js");
+/* harmony import */ var _key_base_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./key-base.js */ "./runtime/ts-build/storage/key-base.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../manifest.js */ "./runtime/manifest.js");
+// @
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+var Scope;
+(function (Scope) {
+    Scope[Scope["arc"] = 1] = "arc"; // target must be a storage key referring to a serialized manifest
+})(Scope || (Scope = {}));
+var Category;
+(function (Category) {
+    Category[Category["handles"] = 1] = "handles";
+})(Category || (Category = {}));
+// Format is 'synthetic://<scope>/<category>/<target>'
+class SyntheticKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_2__["KeyBase"] {
+    constructor(key) {
+        super();
+        const match = key.match(/^synthetic:\/\/([^/]*)\/([^/]*)\/(.*)$/);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(match && match.length === 4, `invalid synthetic key: ${key}`);
+        this.scope = Scope[match[1]];
+        this.category = Category[match[2]];
+        this.target = match[3];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.scope, `invalid scope '${match[1]}' for synthetic key: ${key}`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.category, `invalid category '${match[2]}' for synthetic key: ${key}`);
+    }
+    get protocol() {
+        return 'synthetic';
+    }
+    childKeyForHandle(id) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, 'childKeyForHandle not supported for synthetic keys');
+        return null;
+    }
+    toString() {
+        return `${this.protocol}://${Scope[this.scope]}/${Category[this.category]}/${this.target}`;
+    }
+}
+// TODO: unhack this
+function isFirebaseKey(key) {
+    return key && key.startsWith('firebase:');
+}
+class SyntheticStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_1__["StorageBase"] {
+    constructor(arcId, firebaseStorage) {
+        super(arcId);
+        this.firebaseStorage = firebaseStorage;
+    }
+    async construct(id, type, keyFragment) {
+        throw new Error('cannot construct synthetic storage providers; use connect');
+    }
+    async connect(id, type, key) {
+        // TODO: add handle type to the type system
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type === null, 'synthetic storage does not accept a type parameter');
+        const synthKey = new SyntheticKey(key);
+        if (isFirebaseKey(synthKey.target)) {
+            const { reference } = this.firebaseStorage.attach(synthKey.target);
+            return new SyntheticCollection(_type_js__WEBPACK_IMPORTED_MODULE_3__["Type"].newSynthesized(), id, key, reference);
+        }
+        else {
+            throw new Error('synthetic storage target must be a firebase storage key (for now)');
+        }
+    }
+    parseStringAsKey(s) {
+        return new SyntheticKey(s);
+    }
+}
+class SyntheticCollection extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_1__["StorageProviderBase"] {
+    constructor(type, id, key, reference) {
+        super(type, undefined, id, key);
+        this.reference = reference;
+        this.model = [];
+        this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
+        this.reference.on('value', snapshot => this.remoteStateChanged(snapshot));
+    }
+    async remoteStateChanged(snapshot) {
+        // TODO: remove the import-removal hack when import statements no longer appear in serialised
+        // manifests, or deal with them correctly if they end up staying
+        const manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_4__["Manifest"].parse(snapshot.val().replace(/\bimport .*\n/g, ''));
+        this.model = [];
+        for (const handle of manifest.activeRecipe.handles) {
+            if (isFirebaseKey(handle._storageKey)) {
+                this.model.push({
+                    storageKey: handle.storageKey,
+                    type: handle.mappedType,
+                    tags: handle.tags
+                });
+            }
+        }
+        if (this.resolveInitialized) {
+            this.resolveInitialized();
+            this.resolveInitialized = null;
+        }
+    }
+    async toList() {
+        await this.initialized;
+        return this.model;
+    }
+    async toLiteral() {
+        return this.toList();
+    }
+}
+//# sourceMappingURL=synthetic-storage.js.map
 
 /***/ }),
 
@@ -49799,6 +50227,10 @@ class Type {
     static newReference(reference) {
         return new Type('Reference', reference);
     }
+    // Provided only to get a Type object for SyntheticStorage; do not use otherwise.
+    static newSynthesized() {
+        return new Type('Synthesized', 1);
+    }
     mergeTypeVariablesByName(variableMap) {
         if (this.isVariable) {
             const name = this.variable.name;
@@ -49843,6 +50275,9 @@ class Type {
         }
         if (type1.isBigCollection && type2.isBigCollection) {
             return Type.unwrapPair(type1.bigCollectionType, type2.bigCollectionType);
+        }
+        if (type1.isReference && type2.isReference) {
+            return Type.unwrapPair(type1.referenceReferredType, type2.referenceReferredType);
         }
         return [type1, type2];
     }
@@ -49964,6 +50399,9 @@ class Type {
         if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canWriteSuperset);
         }
+        if (this.isReference) {
+            return this.referenceReferredType.canWriteSuperset;
+        }
         throw new Error(`canWriteSuperset not implemented for ${this}`);
     }
     get canReadSubset() {
@@ -49975,6 +50413,9 @@ class Type {
         }
         if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canReadSubset);
+        }
+        if (this.isReference) {
+            return this.referenceReferredType.canReadSubset;
         }
         throw new Error(`canReadSubset not implemented for ${this}`);
     }
@@ -50096,6 +50537,8 @@ class Type {
                 return _tuple_fields_js__WEBPACK_IMPORTED_MODULE_4__["TupleFields"].fromLiteral;
             case 'Variable':
                 return _type_variable_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariable"].fromLiteral;
+            case 'Reference':
+                return Type.fromLiteral;
             default:
                 return a => a;
         }
@@ -50138,6 +50581,9 @@ class Type {
         }
         if (this.isSlot) {
             return 'Slot';
+        }
+        if (this.isReference) {
+            return 'Reference<' + this.referenceReferredType.toString() + '>';
         }
         throw new Error(`Add support to serializing type: ${JSON.stringify(this)}`);
     }
@@ -50201,6 +50647,8 @@ addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Slot');
 addType('Reference', 'referredType');
+// Special case for SyntheticStorage, not a real Type in the usual sense.
+addType('Synthesized');
 
 
 

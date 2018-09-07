@@ -7,17 +7,19 @@
 // http://polymer.github.io/PATENTS.txt
 import { InMemoryStorage } from './in-memory-storage.js';
 import { FirebaseStorage } from './firebase-storage.js';
+import { SyntheticStorage } from './synthetic-storage.js';
 export class StorageProviderFactory {
     constructor(arcId) {
         this.arcId = arcId;
-        this._storageInstances = { 'in-memory': new InMemoryStorage(arcId), 'firebase': new FirebaseStorage(arcId) };
+        // TODO: Pass this factory into storage objects instead of linking them directly together.
+        // This needs changes to the StorageBase API to facilitate the FirebaseStorage.open functionality.
+        const firebase = new FirebaseStorage(arcId);
+        const synthetic = new SyntheticStorage(arcId, firebase);
+        this._storageInstances = { 'in-memory': new InMemoryStorage(arcId), firebase, synthetic };
     }
     _storageForKey(key) {
         const protocol = key.split(':')[0];
         return this._storageInstances[protocol];
-    }
-    async share(id, type, key) {
-        return this._storageForKey(key).share(id, type, key);
     }
     async construct(id, type, keyFragment) {
         // TODO(shans): don't use reference mode once adapters are implemented

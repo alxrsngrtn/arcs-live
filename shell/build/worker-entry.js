@@ -3541,15 +3541,17 @@ class StorageProxyBase {
       return;
     }
 
+    // Replace the stored data with the new one and notify handles that are configured for it.
+    if (!this._synchronizeModel(version, model)) {
+      return;
+    }
+
     // We may have queued updates that were received after a desync; discard any that are stale
     // with respect to the received model.
     this._synchronized = SyncState.full;
     while (this._updates.length > 0 && this._updates[0].version <= version) {
       this._updates.shift();
     }
-
-    // Replace the stored data with the new one and notify handles that are configured for it.
-    this._synchronizeModel(version, model);
 
     let syncModel = this._getModelForSync();
     this._notify('sync', syncModel, options => options.keepSynced && options.notifySync);
@@ -3589,8 +3591,26 @@ class StorageProxyBase {
   }
 
   _processUpdates() {
+
+    let updateIsNext = update => {
+      if (update.version == this._version + 1) {
+        return true;
+      }
+      // Holy Layering Violation Batman
+      // 
+      // If we are a variable waiting for a barriered set response
+      // then that set response *is* the next thing we're waiting for,
+      // regardless of version numbers.
+      //
+      // TODO(shans): refactor this code so we don't need to layer-violate. 
+      if (this._barrier && update.barrier == this._barrier) {
+        return true;
+      }
+      return false;
+    };
+
     // Consume all queued updates whose versions are monotonically increasing from our stored one.
-    while (this._updates.length > 0 && this._updates[0].version === this._version + 1) {
+    while (this._updates.length > 0 && updateIsNext(this._updates[0])) {
       let update = this._updates.shift();
 
       // Fold the update into our stored model.
@@ -3659,6 +3679,7 @@ class CollectionProxy extends StorageProxyBase {
   _synchronizeModel(version, model) {
     this._version = version;
     this._model = new _ts_build_storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_1__["CrdtCollectionModel"](model);
+    return true;
   }
 
   _processUpdate(update, apply=true) {
@@ -3769,9 +3790,15 @@ class VariableProxy extends StorageProxyBase {
   }
 
   _synchronizeModel(version, model) {
+    // If there's an active barrier then we shouldn't apply the model here, because
+    // there is a more recent write from the particle side that is still in flight.
+    if (this._barrier != null) {
+      return false;
+    }
     this._version = version;
     this._model = model.length == 0 ? null : model[0].value;
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._model !== undefined);
+    return true;
   }
 
   _processUpdate(update, apply=true) {
@@ -3784,6 +3811,19 @@ class VariableProxy extends StorageProxyBase {
     if (this._barrier != null) {
       if (update.barrier == this._barrier) {
         this._barrier = null;
+
+        // HOLY LAYERING VIOLATION BATMAN
+        //
+        // We just cleared a barrier which means we are now synchronized. If we weren't
+        // synchronized already, then we need to tell the handles.
+        //
+        // TODO(shans): refactor this code so we don't need to layer-violate. 
+        if (this._synchronized !== SyncState.full) {
+          this._synchronized = SyncState.full;
+          let syncModel = this._getModelForSync();
+          this._notify('sync', syncModel, options => options.keepSynced && options.notifySync);
+
+        }
       }
       return null;
     }
@@ -3809,7 +3849,17 @@ class VariableProxy extends StorageProxyBase {
     if (JSON.stringify(this._model) == JSON.stringify(entity)) {
       return;
     }
-    let barrier = this.generateID('barrier');
+    let barrier;
+
+    // If we're setting to this handle but we aren't listening to firebase, 
+    // then there's no point creating a barrier. In fact, if the response 
+    // to the set comes back before a listener is registered then this proxy will
+    // end up locked waiting for a barrier that will never arrive.
+    if (this._listenerAttached) {
+      barrier = this.generateID('barrier');
+    } else {
+      barrier = null;
+    }
     // TODO: is this already a clone?
     this._model = JSON.parse(JSON.stringify(entity));
     this._barrier = barrier;
@@ -4714,7 +4764,9 @@ class CrdtCollectionModel {
     // Returns whether the change is effective (`id` is new to the collection,
     // or `value` is different to the value previously stored).
     add(id, value, keys) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(keys.length > 0, 'add requires keys');
+        // Ensure that keys is actually an array, not a single string.
+        // TODO(shans): remove this when all callers are implemented in typeScript.
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(keys.length > 0 && typeof keys === 'object', 'add requires a list of keys');
         let item = this.items.get(id);
         let effective = false;
         if (!item) {
@@ -4870,6 +4922,10 @@ class Type {
     static newReference(reference) {
         return new Type('Reference', reference);
     }
+    // Provided only to get a Type object for SyntheticStorage; do not use otherwise.
+    static newSynthesized() {
+        return new Type('Synthesized', 1);
+    }
     mergeTypeVariablesByName(variableMap) {
         if (this.isVariable) {
             const name = this.variable.name;
@@ -4914,6 +4970,9 @@ class Type {
         }
         if (type1.isBigCollection && type2.isBigCollection) {
             return Type.unwrapPair(type1.bigCollectionType, type2.bigCollectionType);
+        }
+        if (type1.isReference && type2.isReference) {
+            return Type.unwrapPair(type1.referenceReferredType, type2.referenceReferredType);
         }
         return [type1, type2];
     }
@@ -5035,6 +5094,9 @@ class Type {
         if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canWriteSuperset);
         }
+        if (this.isReference) {
+            return this.referenceReferredType.canWriteSuperset;
+        }
         throw new Error(`canWriteSuperset not implemented for ${this}`);
     }
     get canReadSubset() {
@@ -5046,6 +5108,9 @@ class Type {
         }
         if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canReadSubset);
+        }
+        if (this.isReference) {
+            return this.referenceReferredType.canReadSubset;
         }
         throw new Error(`canReadSubset not implemented for ${this}`);
     }
@@ -5167,6 +5232,8 @@ class Type {
                 return _tuple_fields_js__WEBPACK_IMPORTED_MODULE_4__["TupleFields"].fromLiteral;
             case 'Variable':
                 return _type_variable_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariable"].fromLiteral;
+            case 'Reference':
+                return Type.fromLiteral;
             default:
                 return a => a;
         }
@@ -5209,6 +5276,9 @@ class Type {
         }
         if (this.isSlot) {
             return 'Slot';
+        }
+        if (this.isReference) {
+            return 'Reference<' + this.referenceReferredType.toString() + '>';
         }
         throw new Error(`Add support to serializing type: ${JSON.stringify(this)}`);
     }
@@ -5272,6 +5342,8 @@ addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Slot');
 addType('Reference', 'referredType');
+// Special case for SyntheticStorage, not a real Type in the usual sense.
+addType('Synthesized');
 
 
 
