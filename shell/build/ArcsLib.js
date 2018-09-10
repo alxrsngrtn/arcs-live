@@ -24486,7 +24486,7 @@ const vm = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Affordance", function() { return Affordance; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-dom-consumer.js */ "./runtime/slot-dom-consumer.js");
+/* harmony import */ var _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/slot-dom-consumer.js */ "./runtime/ts-build/slot-dom-consumer.js");
 /* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./suggest-dom-consumer.js */ "./runtime/suggest-dom-consumer.js");
 /* harmony import */ var _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./testing/mock-slot-dom-consumer.js */ "./runtime/testing/mock-slot-dom-consumer.js");
 /* harmony import */ var _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./testing/mock-suggest-dom-consumer.js */ "./runtime/testing/mock-suggest-dom-consumer.js");
@@ -24525,9 +24525,9 @@ class Affordance {
 
 let _affordances = {};
 [
-  {name: 'dom', slotConsumerClass: _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"], suggestionConsumerClass: _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestDomConsumer"], descriptionFormatter: _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__["DescriptionDomFormatter"]},
-  {name: 'dom-touch', slotConsumerClass: _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"], suggestionConsumerClass: _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestDomConsumer"], descriptionFormatter: _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__["DescriptionDomFormatter"]},
-  {name: 'vr', slotConsumerClass: _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"], suggestionConsumerClass: _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestDomConsumer"], descriptionFormatter: _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__["DescriptionDomFormatter"]},
+  {name: 'dom', slotConsumerClass: _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"], suggestionConsumerClass: _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestDomConsumer"], descriptionFormatter: _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__["DescriptionDomFormatter"]},
+  {name: 'dom-touch', slotConsumerClass: _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"], suggestionConsumerClass: _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestDomConsumer"], descriptionFormatter: _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__["DescriptionDomFormatter"]},
+  {name: 'vr', slotConsumerClass: _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"], suggestionConsumerClass: _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestDomConsumer"], descriptionFormatter: _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__["DescriptionDomFormatter"]},
   {name: 'mock', slotConsumerClass: _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__["MockSlotDomConsumer"], suggestionConsumerClass: _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__["MockSuggestDomConsumer"]}
 ].forEach(options => _affordances[options.name] = new Affordance(options));
 
@@ -25518,8 +25518,9 @@ ${this.activeRecipe.toString()}`;
   // TODO: now that this is only used to implement findStoresByType we can probably replace
   // the check there with a type system equality check or similar.
   static _typeToKey(type) {
-    if (type.isCollection) {
-      let key = this._typeToKey(type.primitiveType());
+    let elementType = type.elementTypeIfCollection();
+    if (elementType) {
+      let key = this._typeToKey(elementType);
       if (key) {
         return `list:${key}`;
       }
@@ -25545,7 +25546,11 @@ ${this.activeRecipe.toString()}`;
       } else {
         if (type.isVariable && !type.isResolved() && handle.type.isEntity) {
           return true;
-        } else if (type.isCollection && type.primitiveType().isVariable && !type.primitiveType().isResolved() && handle.type.isCollection) {
+        }
+        // elementType will only be non-null if type is either Collection or BigCollection; the tag
+        // comparison ensures that handle.type is the same sort of collection.
+        let elementType = type.elementTypeIfCollection();
+        if (elementType && elementType.isVariable && !elementType.isResolved() && type.tag === handle.type.tag) {
           return true;
         }
       }
@@ -35107,13 +35112,20 @@ class DescriptionFormatter {
     // Fetch the particle description by name from the value token - if it wasn't passed, this is a recipe description.
     if (!particleDescription._particle) {
       let particleName = handleNames.shift();
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particleName[0] === particleName[0].toUpperCase(), `Expected particle name, got '${particleName}' instead.`);
+      if (particleName[0] !== particleName[0].toUpperCase()) {
+        console.warn(`Invalid particle name '${particleName}' - must start with a capital letter.`);
+        return [];
+      }
       let particleDescriptions = this._particleDescriptions.filter(desc => {
         return desc._particle.name == particleName
             // The particle description is from the current recipe.
             && particleDescription._recipe.particles.find(p => p == desc._particle);
       });
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particleDescriptions.length > 0, `Cannot find particles with name ${particleName}.`);
+
+      if (particleDescriptions.length == 0) {
+        console.warn(`Cannot find particles with name ${particleName}.`);
+        return [];
+      }
       // Note: when an arc's active recipes contains several recipes, the last recipe's description
       // is used as the arc's description. If this last recipe's description has a description pattern
       // that references a particle that is also used in one of the previous recipes,
@@ -35140,7 +35152,15 @@ class DescriptionFormatter {
     }
 
     // slot connection
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleNames.length == 2, 'slot connections tokens must have 2 names');
+    if (handleNames.length != 2) {
+      if (handleNames.length == 1) {
+        console.warn(`Unknown handle connection name '${handleNames[0]}'`);
+      } else {
+        console.warn(`Slot connections tokens must have exactly 2 names, found ${handleNames.length} in '${handleNames.join('.')}'`);
+      }
+      return [];
+    }
+
     let providedSlotConn = particle.consumedSlotConnections[handleNames[0]].providedSlots[handleNames[1]];
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(providedSlotConn, `Could not find handle ${handleNames.join('.')}`);
     return [{
@@ -35987,11 +36007,7 @@ class Handle {
  */
 class Collection extends Handle {
   constructor(proxy, name, particleId, canRead, canWrite) {
-    // TODO: this should talk to an API inside the PEC.
     super(proxy, name, particleId, canRead, canWrite);
-  }
-  query() {
-    // TODO: things
   }
 
   // Called by StorageProxy.
@@ -36147,148 +36163,11 @@ class Variable extends Handle {
   }
 }
 
-function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = true) {
-  return (isSet || (isSet == undefined && proxy.type.isCollection))
-      ? new Collection(proxy, name, particleId, canRead, canWrite)
-      : new Variable(proxy, name, particleId, canRead, canWrite);
-}
-
-
-/***/ }),
-
-/***/ "./runtime/hosted-slot-consumer.js":
-/*!*****************************************!*\
-  !*** ./runtime/hosted-slot-consumer.js ***!
-  \*****************************************/
-/*! exports provided: HostedSlotConsumer */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotConsumer", function() { return HostedSlotConsumer; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-consumer.js */ "./runtime/slot-consumer.js");
-/* harmony import */ var _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./hosted-slot-context.js */ "./runtime/hosted-slot-context.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class HostedSlotConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotConsumer"] {
-  constructor(transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId, arc) {
-    super();
-    this._transformationSlotConsumer = transformationSlotConsumer;
-    this._hostedParticleName = hostedParticleName;
-    this._hostedSlotName = hostedSlotName, 
-    this._hostedSlotId = hostedSlotId;
-    // TODO: should this be a list?
-    this._storeId = storeId;
-    this._arc = arc;
+function handleFor(proxy, name, particleId, canRead = true, canWrite = true) {
+  if (proxy.type.isCollection) {
+    return new Collection(proxy, name, particleId, canRead, canWrite);
   }
-
-  get transformationSlotConsumer() { return this._transformationSlotConsumer; }
-  get hostedParticleName() { return this._hostedParticleName; }
-  get hostedSlotName() { return this._hostedSlotName; }
-  get hostedSlotId() { return this._hostedSlotId; }
-  get storeId() { return this._storeId; }
-  get arc() { return this._arc; }
-
-  get consumeConn() { return this._consumeConn; }
-  set consumeConn(consumeConn) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedSlotId == consumeConn.targetSlot.id,
-      `Expected target slot ${this.hostedSlotId}, but got ${consumeConn.targetSlot.id}`);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedParticleName == consumeConn.particle.name,
-      `Expected particle ${this.hostedParticleName} for slot ${this.hostedSlotId}, but got ${consumeConn.particle.name}`);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedSlotName == consumeConn.name,
-      `Expected slot ${this.hostedSlotName} for slot ${this.hostedSlotId}, but got ${consumeConn.name}`);
-    this._consumeConn = consumeConn;
-
-    if (this.transformationSlotConsumer.slotContext.container) {
-      this.startRender();
-    }
-  }
-
-  setContent(content) {
-    this.renderCallback && this.renderCallback(
-        this.transformationSlotConsumer.consumeConn.particle,
-        this.transformationSlotConsumer.consumeConn.name,
-        this.hostedSlotId,
-        this.transformationSlotConsumer.formatHostedContent(this, content));
-  }
-
-  constructRenderRequest() {
-    return this.transformationSlotConsumer.constructRenderRequest(this);
-  }
-
-  getInnerContainer(name) {
-    let innerContainer = this.transformationSlotConsumer.getInnerContainer(name);
-    if (innerContainer && this.storeId) {
-      let subId = this.arc.findStoreById(this.storeId)._stored.id;
-      return innerContainer[subId];
-    }
-    return innerContainer;
-  }
-
-  createProvidedContexts() {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.consumeConn, `Cannot create provided context without consume connection for hosted slot ${this.hostedSlotId}`);
-    return this.consumeConn.slotSpec.providedSlots.map(providedSpec => {
-      return new _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_2__["HostedSlotContext"](this.arc.generateID(), providedSpec, this);
-    });
-  }
-
-  updateProvidedContexts() {
-    // The hosted context provided by hosted slots is updated as part of the transformation.
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/hosted-slot-context.js":
-/*!****************************************!*\
-  !*** ./runtime/hosted-slot-context.js ***!
-  \****************************************/
-/*! exports provided: HostedSlotContext */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotContext", function() { return HostedSlotContext; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _ts_build_slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/slot-context.js */ "./runtime/ts-build/slot-context.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-class HostedSlotContext extends _ts_build_slot_context_js__WEBPACK_IMPORTED_MODULE_1__["SlotContext"] {
-  // This is a context of a hosted slot, can only contain a hosted slot.
-  constructor(id, providedSpec, hostedSlotConsumer) {
-    super(id, providedSpec.name, providedSpec.tags, /* container= */ null, providedSpec, hostedSlotConsumer);
-    if (this.sourceSlotConsumer.storeId) {
-      this.handles = [{id: this.sourceSlotConsumer.storeId}];
-    }
-  }
-  get container() {
-    return this.sourceSlotConsumer.getInnerContainer(this.name) || null;
-  }
+  return new Variable(proxy, name, particleId, canRead, canWrite);
 }
 
 
@@ -36711,8 +36590,7 @@ class Manifest {
     function typePredicate(store) {
       let resolvedType = type.resolvedType();
       if (!resolvedType.isResolved()) {
-        // TODO: update for BigCollection handling
-        return type.isCollection == store.type.isCollection;
+        return type.isCollection == store.type.isCollection && type.isBigCollection == store.type.isBigCollection;
       }
 
       if (subtype) {
@@ -37538,7 +37416,7 @@ ${e.message}
     // TODO(shans): Eventually the actual type will need to be part of the determination too.
     // TODO(shans): Need to take into account the possibility of multiple storage key mappings
     // at some point.
-    if (entities.length > 0 && (entities[0].rawData && entities[0].rawData.storageKey)) {
+    if (entities.length > 0 && entities[0].rawData && entities[0].rawData.storageKey) {
       let storageKey = entities[0].rawData.storageKey;
       storageKey = manifest.findStoreByName(storageKey).storageKey;
       entities = entities.map(({id, rawData}) => ({id, storageKey}));
@@ -38065,8 +37943,8 @@ class ParticleExecutionContext {
       createHandle: function(type, name, hostParticle) {
         return new Promise((resolve, reject) =>
           pec._apiPort.ArcCreateHandle({arc: arcId, type, name, callback: proxy => {
-            let handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, proxy.type.isCollection, name, particleId);
-            handle.entityClass = (proxy.type.isCollection ? proxy.type.primitiveType() : proxy.type).entitySchema.entityClass();
+            let handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, particleId);
+            handle.entityClass = (proxy.type.elementTypeIfCollection() || proxy.type).entitySchema.entityClass();
             resolve(handle);
             if (hostParticle) {
               proxy.register(hostParticle, handle);
@@ -38129,8 +38007,8 @@ class ParticleExecutionContext {
     let registerList = [];
     proxies.forEach((proxy, name) => {
       let connSpec = spec.connectionMap.get(name);
-      let handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, proxy.type.isCollection, name, id, connSpec.isInput, connSpec.isOutput);
-      let type = proxy.type.isCollection ? proxy.type.primitiveType() : proxy.type;
+      let handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, id, connSpec.isInput, connSpec.isOutput);
+      let type = proxy.type.elementTypeIfCollection() || proxy.type;
       if (type.isEntity) {
         handle.entityClass = type.entitySchema.entityClass();
       }
@@ -43040,7 +42918,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _affordance_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./affordance.js */ "./runtime/affordance.js");
 /* harmony import */ var _ts_build_slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/slot-context.js */ "./runtime/ts-build/slot-context.js");
-/* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./hosted-slot-consumer.js */ "./runtime/hosted-slot-consumer.js");
+/* harmony import */ var _ts_build_hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ts-build/hosted-slot-consumer.js */ "./runtime/ts-build/hosted-slot-consumer.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -43123,7 +43001,7 @@ class SlotComposer {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(transformationSlotConsumer,
            `Unexpected transformation slot particle ${transformationParticle.name}:${transformationSlotName}, hosted particle ${hostedParticleName}, slot name ${hostedSlotName}`);
 
-    let hostedSlotConsumer = new _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__["HostedSlotConsumer"](transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId, this.arc);
+    let hostedSlotConsumer = new _ts_build_hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__["HostedSlotConsumer"](transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId, this.arc);
     hostedSlotConsumer.renderCallback = this.arc.pec.innerArcRender.bind(this.arc.pec);
     this._addSlotConsumer(hostedSlotConsumer);
 
@@ -43191,516 +43069,6 @@ class SlotComposer {
       context.clearSlotConsumers();
       context.container && this._affordance.slotConsumerClass.clear(context.container);
     });
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/slot-consumer.js":
-/*!**********************************!*\
-  !*** ./runtime/slot-consumer.js ***!
-  \**********************************/
-/*! exports provided: SlotConsumer */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotConsumer", function() { return SlotConsumer; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _ts_build_slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/slot-context.js */ "./runtime/ts-build/slot-context.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class SlotConsumer {
-  constructor(consumeConn, containerKind) {
-    this._consumeConn = consumeConn;
-    this._slotContext = null; // SlotContext
-    this._providedSlotContexts = []; // SlotContext[]
-
-    this.startRenderCallback = null;
-    this.stopRenderCallback = null;
-
-    this._containerKind = containerKind;
-
-    // Contains `container` and other affordance specific rendering information
-    // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
-    this._renderingBySubId = new Map();
-    this._eventHandler = null;
-    this._innerContainerBySlotName = {};
-  }
-  get consumeConn() { return this._consumeConn; }
-  get slotContext() { return this._slotContext; }
-  set slotContext(slotContext) { this._slotContext = slotContext; }
-  getRendering(subId) { return this._renderingBySubId.get(subId); } 
-  get renderings() { return [...this._renderingBySubId.entries()]; }
-
-  onContainerUpdate(newContainer, originalContainer) {
-    if (Boolean(newContainer) !== Boolean(originalContainer)) {
-      if (newContainer) {
-        this.startRender();
-      } else {
-        this.stopRender();
-      }
-    }
-
-    if (newContainer != originalContainer) {
-      let contextContainerBySubId = new Map();
-      if (this.consumeConn && this.consumeConn.slotSpec.isSet) {
-        Object.keys(this.slotContext.container || {}).forEach(subId => contextContainerBySubId.set(subId, this.slotContext.container[subId]));
-      } else {
-        contextContainerBySubId.set(undefined, this.slotContext.container);
-      }
-
-      for (let [subId, container] of contextContainerBySubId) {
-        if (!this._renderingBySubId.has(subId)) {
-          this._renderingBySubId.set(subId, {});
-        }
-        let rendering = this.getRendering(subId);
-        if (!rendering.container || !this.isSameContainer(rendering.container, container)) {
-          if (rendering.container) {
-            // The rendering already had a container, but it's changed. The original container needs to be cleared.
-            this.clearContainer(rendering);
-          }
-          rendering.container = this.createNewContainer(container, subId);
-        }
-      }
-      for (let [subId, rendering] of this.renderings) {
-        if (!contextContainerBySubId.has(subId)) {
-          this.deleteContainer(rendering.container);
-          this._renderingBySubId.delete(subId);
-        }
-      }
-    }
-  }
-
-  createProvidedContexts() {
-    return this.consumeConn.slotSpec.providedSlots.map(
-      spec => new _ts_build_slot_context_js__WEBPACK_IMPORTED_MODULE_1__["SlotContext"](this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
-  }
-
-  updateProvidedContexts() {
-    this._providedSlotContexts.forEach(providedContext => {
-      providedContext.container = this.getInnerContainer(providedContext.name);
-    });
-  }
-
-  startRender() {
-    if (this.consumeConn && this.startRenderCallback) {
-      this.startRenderCallback({
-        particle: this.consumeConn.particle,
-        slotName: this.consumeConn.name,
-        contentTypes: this.constructRenderRequest()
-      });
-    }
-  }
-
-  stopRender() {
-    if (this.consumeConn && this.stopRenderCallback) {
-      this.stopRenderCallback({particle: this.consumeConn.particle, slotName: this.consumeConn.name});
-    }
-  }
-
-  async setContent(content, handler, arc) {
-    if (content && Object.keys(content).length > 0) {
-      if (arc) {
-        content.descriptions = await this.populateHandleDescriptions(arc);
-      }
-    }
-    this._eventHandler = handler;
-    for (let [subId, rendering] of this.renderings) {
-      this.setContainerContent(rendering, this.formatContent(content, subId), subId);
-    }
-  }
-
-  async populateHandleDescriptions(arc) {
-    let descriptions = {};
-    await Promise.all(Object.values(this.consumeConn.particle.connections).map(async handleConn => {
-      if (handleConn.handle) {
-        descriptions[`${handleConn.name}.description`] = (await arc.description.getHandleDescription(handleConn.handle)).toString();
-      }
-    }));
-    return descriptions;
-  }
-
-  getInnerContainer(providedSlotName) {
-    return this._innerContainerBySlotName[providedSlotName];
-  }
-
-  _initInnerSlotContainer(slotId, subId, container) {
-    if (subId) {
-      if (!this._innerContainerBySlotName[slotId]) {
-        this._innerContainerBySlotName[slotId] = {};
-      }
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._innerContainerBySlotName[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
-      this._innerContainerBySlotName[slotId][subId] = container;
-    } else {
-      this._innerContainerBySlotName[slotId] = container;
-    }
-  }
-  _clearInnerSlotContainers(subIds) {
-    subIds.forEach(subId => {
-      if (subId) {
-        Object.values(this._innerContainerBySlotName).forEach(inner => delete inner[subId]);
-      } else {
-        this._innerContainerBySlotName = {};
-      }
-    });
-  }
-
-  isSameContainer(container, contextContainer) { return container == contextContainer; }
-
-  // abstract
-  constructRenderRequest() {}
-  dispose() {}
-  createNewContainer(contextContainer, subId) {}
-  deleteContainer(container, subId) {}
-  setContainerContent(rendering, content, subId) {}
-  formatContent(content, subId) {}
-  formatHostedContent(hostedSlot, content) {}
-  static clear(container) {}
-}
-
-
-/***/ }),
-
-/***/ "./runtime/slot-dom-consumer.js":
-/*!**************************************!*\
-  !*** ./runtime/slot-dom-consumer.js ***!
-  \**************************************/
-/*! exports provided: SlotDomConsumer */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotDomConsumer", function() { return SlotDomConsumer; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-consumer.js */ "./runtime/slot-consumer.js");
-/* harmony import */ var _shell_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shell/components/xen/xen-template.js */ "./shell/components/xen/xen-template.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-const templateByName = new Map();
-
-class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotConsumer"] {
-  constructor(consumeConn, containerKind) {
-    super(consumeConn, containerKind);
-
-    this._observer = this._initMutationObserver();
-  }
-
-  constructRenderRequest(hostedSlotConsumer) { 
-    let request = ['model'];
-    let prefixes = [this.templatePrefix];
-    if (hostedSlotConsumer) {
-      prefixes.push(hostedSlotConsumer.consumeConn.particle.name);
-      prefixes.push(hostedSlotConsumer.consumeConn.name);
-    }
-    if (!SlotDomConsumer.hasTemplate(prefixes.join('::'))) {
-      request.push('template');
-    }
-    return request;
-  }
-
-  static hasTemplate(templatePrefix) {
-    return [...templateByName.keys()].find(key => key.startsWith(templatePrefix));
-  }
-
-  isSameContainer(container, contextContainer) {
-    return container.parentNode == contextContainer;
-  }
-
-  createNewContainer(contextContainer, subId) {
-    let newContainer = document.createElement(this._containerKind || 'div');
-    if (this.consumeConn) {
-      newContainer.setAttribute('particle-host', this.consumeConn.getQualifiedName());
-    }
-    contextContainer.appendChild(newContainer);
-    return newContainer;
-  }
-
-  deleteContainer(container) {
-    if (container.parentNode) {
-      container.parentNode.removeChild(container);
-    }
-  }
-
-  formatContent(content, subId) {
-    let newContent = {};
-
-    // Format model.
-    if (Object.keys(content).indexOf('model') >= 0) {
-      if (content.model) {
-        // Merge descriptions into model.
-        newContent.model = Object.assign({}, content.model, content.descriptions);
-
-        // Replace items list by an single item corresponding to the given subId.
-        if (subId && content.model.items) {
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.consumeConn.slotSpec.isSet);
-          let item = content.model.items.find(item => item.subId == subId);
-          if (item) {
-            newContent.model = Object.assign({}, newContent.model, item);
-            delete newContent.model.items;
-          } else {
-            newContent.model = undefined;
-          }
-        }
-      } else {
-        newContent.model = undefined;
-      }
-    }
-
-    // Format template name and template.
-    if (content.templateName) {
-      newContent.templateName = typeof content.templateName === 'string' ? content.templateName : content.templateName[subId];
-      if (content.template) {
-        newContent.template = typeof content.template === 'string' ? content.template : content.template[newContent.templateName];
-      }
-    }
-
-    return newContent;
-  }
-
-  setContainerContent(rendering, content, subId) {
-    if (!rendering.container) {
-      return;
-    }
-
-    if (Object.keys(content).length == 0) {
-      this.clearContainer(rendering);
-      return;
-    }
-
-    this._setTemplate(rendering, this.templatePrefix, content.templateName, content.template);
-    rendering.model = content.model;
-
-    this._onUpdate(rendering);
-  }
-
-  clearContainer(rendering) {
-    if (rendering.liveDom) {
-      rendering.liveDom.root.textContent = '';
-    }
-    rendering.liveDom = null;
-  }
-
-  dispose() {
-    this._observer && this._observer.disconnect();
-
-    this.container && this.deleteContainer(this.container);
-    this.renderings.forEach(([subId, {container}]) => this.deleteContainer(container));
-  }
-
-  static clear(container) {
-    container.textContent = '';
-  }
-
-  static dispose() {
-    // empty template cache
-    templateByName.clear();
-  }
-
-  static findRootContainers(topContainer) {
-    let containerBySlotId = {};
-    Array.from(topContainer.querySelectorAll('[slotid]')).forEach(container => {
-      //assert(this.isDirectInnerSlot(container), 'Unexpected inner slot');
-      let slotId = container.getAttribute('slotid');
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!containerBySlotId[slotId], `Duplicate root slot ${slotId}`);
-      containerBySlotId[slotId] = container;
-    });
-    return containerBySlotId;
-  }
-
-  createTemplateElement(template) {
-    return Object.assign(document.createElement('template'), {innerHTML: template});
-  }
-
-  get templatePrefix() {
-    return this.consumeConn.getQualifiedName();
-  }
-
-  _setTemplate(rendering, templatePrefix, templateName, template) {
-    if (templateName) {
-      rendering.templateName = [templatePrefix, templateName].filter(s => s).join('::');
-      if (template) {
-        if (templateByName.has(rendering.templateName)) {
-          // TODO: check whether the new template is different from the one that was previously used.
-          // Template is being replaced.
-          this.clearContainer(rendering);
-        }
-        templateByName.set(rendering.templateName, this.createTemplateElement(template));
-      }
-    }
-  }
-
-  _onUpdate(rendering) {
-    this._observe(rendering.container);
-
-    if (rendering.templateName) {
-      let template = templateByName.get(rendering.templateName);
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(template, `No template for ${rendering.templateName}`);
-      this._stampTemplate(rendering, template);
-    }
-
-    this._updateModel(rendering);
-  }
-
-  _observe(container) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(container, 'Cannot observe without a container');
-    this._observer && this._observer.observe(container, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['subid']
-    });
-  }
-
-  _stampTemplate(rendering, template) {
-    if (!rendering.liveDom) {
-      // TODO(sjmiles): hack to allow subtree elements (e.g. x-list) to marshal events
-      rendering.container._eventMapper = this._eventMapper.bind(this, this._eventHandler);
-      rendering.liveDom = _shell_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["default"]
-          .stamp(template)
-          .events(rendering.container._eventMapper)
-          .appendTo(rendering.container);
-    }
-  }
-
-  _updateModel(rendering) {
-    let liveDom = rendering.liveDom;
-    if (liveDom) {
-      liveDom.set(rendering.model);
-    }
-  }
-
-  initInnerContainers(container) {
-    Array.from(container.querySelectorAll('[slotid]')).filter(innerContainer => {
-      if (!this.isDirectInnerSlot(container, innerContainer)) {
-        // Skip inner slots of an inner slot of the given slot.
-        return false;
-      }
-      const slotId = this.getNodeValue(innerContainer, 'slotid');
-      const providedSlotSpec = this.consumeConn.slotSpec.getProvidedSlotSpec(slotId);
-      if (!providedSlotSpec) { // Skip non-declared slots
-        console.warn(`Slot ${this.consumeConn.slotSpec.name} has unexpected inner slot ${slotId}`);
-        return;
-      }
-      const subId = this.getNodeValue(innerContainer, 'subid');
-      this._validateSubId(providedSlotSpec, subId);
-      this._initInnerSlotContainer(slotId, subId, innerContainer);
-    });
-  }
-
-  // get a value from node that could be an attribute, if not a property
-  getNodeValue(node, name) {
-    // TODO(sjmiles): remember that attribute names from HTML are lower-case
-    return node[name] || node.getAttribute(name);
-  }  
-
-  _validateSubId(providedSlotSpec, subId) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.subId || !subId || this.subId == subId, `Unexpected sub-id ${subId}, expecting ${this.subId}`);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(this.subId || subId) === providedSlotSpec.isSet,
-        `Sub-id ${subId} for provided slot ${providedSlotSpec.name} doesn't match set spec: ${providedSlotSpec.isSet}`);
-  }
-
-  isDirectInnerSlot(container, innerContainer) {
-    if (innerContainer === container) {
-      return true;
-    }
-    let parentNode = innerContainer.parentNode;
-    while (parentNode) {
-      if (parentNode == container) {
-        return true;
-      }
-      if (parentNode.getAttribute('slotid')) {
-        // this is an inner slot of an inner slot.
-        return false;
-      }
-      parentNode = parentNode.parentNode;
-    }
-    // innerContainer won't be a child node of container if the method is triggered
-    // by mutation observer record and innerContainer was removed.
-    return false;
-  }
-
-  _initMutationObserver() {
-    if (this.consumeConn) {
-      return new MutationObserver(async (records) => {
-        this._observer.disconnect();
-
-        let updateContainersBySubId = new Map();
-        for (let [subId, {container}] of this.renderings) {
-          if (records.some(r => this.isDirectInnerSlot(container, r.target))) {
-            updateContainersBySubId.set(subId, container);
-          }
-        }
-        let containers = [...updateContainersBySubId.values()];
-        if (containers.length > 0) {
-          this._clearInnerSlotContainers([...updateContainersBySubId.keys()]);
-          containers.forEach(container => this.initInnerContainers(container));
-          this.updateProvidedContexts();
-
-          // Reactivate the observer.
-          containers.forEach(container => this._observe(container));
-        }
-      });
-    }
-  }
-
-  _eventMapper(eventHandler, node, eventName, handlerName) {
-    node.addEventListener(eventName, event => {
-      // TODO(sjmiles): we have an extremely minimalist approach to events here, this is useful IMO for
-      // finding the smallest set of features that we are going to need.
-      // First problem: click event firing multiple times as it bubbles up the tree, minimalist solution
-      // is to enforce a 'first listener' rule by executing `stopPropagation`.
-      event.stopPropagation();
-      // propagate keyboard information
-      const {altKey, ctrlKey, metaKey, shiftKey, code, key, repeat} = event;
-      eventHandler({
-        handler: handlerName,
-        data: {
-          // TODO(sjmiles): this is a data-key (as in key-value pair), may be confusing vs `keys`
-          key: node.key,
-          value: node.value,
-          keys: {altKey, ctrlKey, metaKey, shiftKey, code, key, repeat}
-        }
-      });
-    });
-  }
-
-  formatHostedContent(hostedSlot, content) {
-    if (content.templateName) {
-      if (typeof content.templateName == 'string') {
-        content.templateName = `${hostedSlot.consumeConn.particle.name}::${hostedSlot.consumeConn.name}::${content.templateName}`;
-      } else {
-        // TODO(mmandlis): add support for hosted particle rendering set slot.
-        throw new Error('TODO: Implement this!');
-      }
-    }
-    return content;
   }
 }
 
@@ -46676,7 +46044,7 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestDomConsumer", function() { return SuggestDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-dom-consumer.js */ "./runtime/slot-dom-consumer.js");
+/* harmony import */ var _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/slot-dom-consumer.js */ "./runtime/ts-build/slot-dom-consumer.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -46691,7 +46059,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class SuggestDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"] {
+class SuggestDomConsumer extends _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"] {
   constructor(containerKind, suggestion, suggestionContent, eventHandler) {
     super(/* consumeConn= */null, containerKind);
     this._suggestion = suggestion;
@@ -46720,7 +46088,7 @@ class SuggestDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_
   }
 
   static render(container, plan, content) {
-    let consumer = new _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"]();
+    let consumer = new _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"]();
     let suggestionContainer = Object.assign(document.createElement('suggestion-element'), {plan});
     container.appendChild(suggestionContainer, container.firstElementChild);
     let rendering = {container: suggestionContainer, model: content.model};
@@ -46897,7 +46265,7 @@ const Symbols = {identifier: Symbol('id')};
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MockSlotDomConsumer", function() { return MockSlotDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../slot-dom-consumer.js */ "./runtime/slot-dom-consumer.js");
+/* harmony import */ var _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/slot-dom-consumer.js */ "./runtime/ts-build/slot-dom-consumer.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -46912,7 +46280,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class MockSlotDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"] {
+class MockSlotDomConsumer extends _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"] {
   constructor(consumeConn) {
     super(consumeConn);
     this._content = {};
@@ -47087,6 +46455,127 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
   }
 }
 
+
+/***/ }),
+
+/***/ "./runtime/ts-build/hosted-slot-consumer.js":
+/*!**************************************************!*\
+  !*** ./runtime/ts-build/hosted-slot-consumer.js ***!
+  \**************************************************/
+/*! exports provided: HostedSlotConsumer */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotConsumer", function() { return HostedSlotConsumer; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-consumer.js */ "./runtime/ts-build/slot-consumer.js");
+/* harmony import */ var _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./hosted-slot-context.js */ "./runtime/ts-build/hosted-slot-context.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class HostedSlotConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotConsumer"] {
+    constructor(transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId, arc) {
+        super(null, null);
+        this.transformationSlotConsumer = transformationSlotConsumer;
+        this.hostedParticleName = hostedParticleName;
+        this.hostedSlotName = hostedSlotName,
+            this.hostedSlotId = hostedSlotId;
+        // TODO: should this be a list?
+        this.storeId = storeId;
+        this._arc = arc;
+    }
+    get arc() { return this._arc; }
+    get consumeConn() { return this._consumeConn; }
+    set consumeConn(consumeConn) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedSlotId === consumeConn.targetSlot.id, `Expected target slot ${this.hostedSlotId}, but got ${consumeConn.targetSlot.id}`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedParticleName === consumeConn.particle.name, `Expected particle ${this.hostedParticleName} for slot ${this.hostedSlotId}, but got ${consumeConn.particle.name}`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedSlotName === consumeConn.name, `Expected slot ${this.hostedSlotName} for slot ${this.hostedSlotId}, but got ${consumeConn.name}`);
+        this._consumeConn = consumeConn;
+        if (this.transformationSlotConsumer.slotContext.container) {
+            this.startRender();
+        }
+    }
+    async setContent(content, handler, arc) {
+        if (this.renderCallback) {
+            this.renderCallback(this.transformationSlotConsumer.consumeConn.particle, this.transformationSlotConsumer.consumeConn.name, this.hostedSlotId, this.transformationSlotConsumer.formatHostedContent(this, content));
+        }
+        return null;
+    }
+    constructRenderRequest() {
+        return this.transformationSlotConsumer.constructRenderRequest(this);
+    }
+    getInnerContainer(name) {
+        const innerContainer = this.transformationSlotConsumer.getInnerContainer(name);
+        if (innerContainer && this.storeId) {
+            const subId = this.arc.findStoreById(this.storeId)._stored.id;
+            return innerContainer[subId];
+        }
+        return innerContainer;
+    }
+    createProvidedContexts() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.consumeConn, `Cannot create provided context without consume connection for hosted slot ${this.hostedSlotId}`);
+        return this.consumeConn.slotSpec.providedSlots.map(providedSpec => {
+            return new _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_2__["HostedSlotContext"](this.arc.generateID(), providedSpec, this);
+        });
+    }
+    updateProvidedContexts() {
+        // The hosted context provided by hosted slots is updated as part of the transformation.
+    }
+}
+//# sourceMappingURL=hosted-slot-consumer.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/hosted-slot-context.js":
+/*!*************************************************!*\
+  !*** ./runtime/ts-build/hosted-slot-context.js ***!
+  \*************************************************/
+/*! exports provided: HostedSlotContext */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotContext", function() { return HostedSlotContext; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-context.js */ "./runtime/ts-build/slot-context.js");
+/* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./hosted-slot-consumer.js */ "./runtime/ts-build/hosted-slot-consumer.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class HostedSlotContext extends _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["SlotContext"] {
+    // This is a context of a hosted slot, can only contain a hosted slot.
+    constructor(id, providedSpec, hostedSlotConsumer) {
+        super(id, providedSpec.name, providedSpec.tags, /* container= */ null, providedSpec, hostedSlotConsumer);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.sourceSlotConsumer instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__["HostedSlotConsumer"]);
+        const hostedSourceSlotConsumer = this.sourceSlotConsumer;
+        if (hostedSourceSlotConsumer.storeId) {
+            this.handles = [{ id: hostedSourceSlotConsumer.storeId }];
+        }
+    }
+    get container() {
+        return this.sourceSlotConsumer.getInnerContainer(this.name) || null;
+    }
+}
+//# sourceMappingURL=hosted-slot-context.js.map
 
 /***/ }),
 
@@ -47954,6 +47443,165 @@ ${this._slotsToManifestString()}
 
 /***/ }),
 
+/***/ "./runtime/ts-build/slot-consumer.js":
+/*!*******************************************!*\
+  !*** ./runtime/ts-build/slot-consumer.js ***!
+  \*******************************************/
+/*! exports provided: SlotConsumer */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotConsumer", function() { return SlotConsumer; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-context.js */ "./runtime/ts-build/slot-context.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class SlotConsumer {
+    constructor(consumeConn, containerKind) {
+        this.providedSlotContexts = [];
+        // Contains `container` and other affordance specific rendering information
+        // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
+        this._renderingBySubId = new Map();
+        this._innerContainerBySlotName = {};
+        this._consumeConn = consumeConn;
+        this.containerKind = containerKind;
+    }
+    get consumeConn() { return this._consumeConn; }
+    getRendering(subId) { return this._renderingBySubId.get(subId); }
+    get renderings() { return [...this._renderingBySubId.entries()]; }
+    onContainerUpdate(newContainer, originalContainer) {
+        if (Boolean(newContainer) !== Boolean(originalContainer)) {
+            if (newContainer) {
+                this.startRender();
+            }
+            else {
+                this.stopRender();
+            }
+        }
+        if (newContainer !== originalContainer) {
+            const contextContainerBySubId = new Map();
+            if (this.consumeConn && this.consumeConn.slotSpec.isSet) {
+                Object.keys(this.slotContext.container || {}).forEach(subId => contextContainerBySubId.set(subId, this.slotContext.container[subId]));
+            }
+            else {
+                contextContainerBySubId.set(undefined, this.slotContext.container);
+            }
+            for (const [subId, container] of contextContainerBySubId) {
+                if (!this._renderingBySubId.has(subId)) {
+                    this._renderingBySubId.set(subId, {});
+                }
+                const rendering = this.getRendering(subId);
+                if (!rendering.container || !this.isSameContainer(rendering.container, container)) {
+                    if (rendering.container) {
+                        // The rendering already had a container, but it's changed. The original container needs to be cleared.
+                        this.clearContainer(rendering);
+                    }
+                    rendering.container = this.createNewContainer(container, subId);
+                }
+            }
+            for (const [subId, rendering] of this.renderings) {
+                if (!contextContainerBySubId.has(subId)) {
+                    this.deleteContainer(rendering.container);
+                    this._renderingBySubId.delete(subId);
+                }
+            }
+        }
+    }
+    createProvidedContexts() {
+        return this.consumeConn.slotSpec.providedSlots.map(spec => new _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["SlotContext"](this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
+    }
+    updateProvidedContexts() {
+        this.providedSlotContexts.forEach(providedContext => {
+            providedContext.container = this.getInnerContainer(providedContext.name);
+        });
+    }
+    startRender() {
+        if (this.consumeConn && this.startRenderCallback) {
+            this.startRenderCallback({
+                particle: this.consumeConn.particle,
+                slotName: this.consumeConn.name,
+                contentTypes: this.constructRenderRequest()
+            });
+        }
+    }
+    stopRender() {
+        if (this.consumeConn && this.stopRenderCallback) {
+            this.stopRenderCallback({ particle: this.consumeConn.particle, slotName: this.consumeConn.name });
+        }
+    }
+    async setContent(content, handler, arc) {
+        if (content && Object.keys(content).length > 0) {
+            if (arc) {
+                content.descriptions = await this.populateHandleDescriptions(arc);
+            }
+        }
+        this.eventHandler = handler;
+        for (const [subId, rendering] of this.renderings) {
+            this.setContainerContent(rendering, this.formatContent(content, subId), subId);
+        }
+    }
+    async populateHandleDescriptions(arc) {
+        const descriptions = {};
+        await Promise.all(Object.values(this.consumeConn.particle.connections).map(async (handleConn) => {
+            // TODO(mmandlis): convert back to .handle and .name after all recipe files converted to typescript.
+            if (handleConn['handle']) {
+                descriptions[`${handleConn['name']}.description`] = (await arc.description.getHandleDescription(handleConn['handle'])).toString();
+            }
+        }));
+        return descriptions;
+    }
+    getInnerContainer(providedSlotName) {
+        return this._innerContainerBySlotName[providedSlotName];
+    }
+    _initInnerSlotContainer(slotId, subId, container) {
+        if (subId) {
+            if (!this._innerContainerBySlotName[slotId]) {
+                this._innerContainerBySlotName[slotId] = {};
+            }
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._innerContainerBySlotName[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
+            this._innerContainerBySlotName[slotId][subId] = container;
+        }
+        else {
+            this._innerContainerBySlotName[slotId] = container;
+        }
+    }
+    _clearInnerSlotContainers(subIds) {
+        subIds.forEach(subId => {
+            if (subId) {
+                Object.values(this._innerContainerBySlotName).forEach(inner => delete inner[subId]);
+            }
+            else {
+                this._innerContainerBySlotName = {};
+            }
+        });
+    }
+    isSameContainer(container, contextContainer) { return container === contextContainer; }
+    // abstract
+    constructRenderRequest(hostedSlotConsumer = null) { return []; }
+    dispose() { }
+    createNewContainer(contextContainer, subId) { return null; }
+    deleteContainer(container) { }
+    clearContainer(rendering) { }
+    setContainerContent(rendering, content, subId) { }
+    formatContent(content, subId) { }
+    formatHostedContent(hostedSlot, content) { return null; }
+    static clear(container) { }
+}
+//# sourceMappingURL=slot-consumer.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/slot-context.js":
 /*!******************************************!*\
   !*** ./runtime/ts-build/slot-context.js ***!
@@ -47997,7 +47645,7 @@ class SlotContext {
         // The slot consumer providing this container (eg div)
         this.sourceSlotConsumer = sourceSlotConsumer;
         if (this.sourceSlotConsumer) {
-            this.sourceSlotConsumer._providedSlotContexts.push(this);
+            this.sourceSlotConsumer.providedSlotContexts.push(this);
         }
         // The list of handles this context is restricted to.
         this.handles = this.spec && this.sourceSlotConsumer
@@ -48043,6 +47691,301 @@ class SlotContext {
     }
 }
 //# sourceMappingURL=slot-context.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/slot-dom-consumer.js":
+/*!***********************************************!*\
+  !*** ./runtime/ts-build/slot-dom-consumer.js ***!
+  \***********************************************/
+/*! exports provided: SlotDomConsumer */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotDomConsumer", function() { return SlotDomConsumer; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-consumer.js */ "./runtime/ts-build/slot-consumer.js");
+/* harmony import */ var _shell_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shell/components/xen/xen-template.js */ "./shell/components/xen/xen-template.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+const templateByName = new Map();
+class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotConsumer"] {
+    constructor(consumeConn, containerKind) {
+        super(consumeConn, containerKind);
+        this._observer = this._initMutationObserver();
+    }
+    constructRenderRequest(hostedSlotConsumer) {
+        const request = ['model'];
+        const prefixes = [this.templatePrefix];
+        if (hostedSlotConsumer) {
+            prefixes.push(hostedSlotConsumer.consumeConn.particle.name);
+            prefixes.push(hostedSlotConsumer.consumeConn.name);
+        }
+        if (!SlotDomConsumer.hasTemplate(prefixes.join('::'))) {
+            request.push('template');
+        }
+        return request;
+    }
+    static hasTemplate(templatePrefix) {
+        return [...templateByName.keys()].find(key => key.startsWith(templatePrefix));
+    }
+    isSameContainer(container, contextContainer) {
+        return container.parentNode === contextContainer;
+    }
+    createNewContainer(contextContainer, subId) {
+        const newContainer = document.createElement(this.containerKind || 'div');
+        if (this.consumeConn) {
+            newContainer.setAttribute('particle-host', this.consumeConn.getQualifiedName());
+        }
+        contextContainer.appendChild(newContainer);
+        return newContainer;
+    }
+    deleteContainer(container) {
+        if (container.parentNode) {
+            container.parentNode.removeChild(container);
+        }
+    }
+    formatContent(content, subId) {
+        const newContent = {};
+        // Format model.
+        if (Object.keys(content).indexOf('model') >= 0) {
+            if (content.model) {
+                // Merge descriptions into model.
+                newContent.model = Object.assign({}, content.model, content.descriptions);
+                // Replace items list by an single item corresponding to the given subId.
+                if (subId && content.model.items) {
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.consumeConn.slotSpec.isSet);
+                    const item = content.model.items.find(item => item.subId === subId);
+                    if (item) {
+                        newContent.model = Object.assign({}, newContent.model, item);
+                        delete newContent.model['items'];
+                    }
+                    else {
+                        newContent.model = undefined;
+                    }
+                }
+            }
+            else {
+                newContent.model = undefined;
+            }
+        }
+        // Format template name and template.
+        if (content.templateName) {
+            newContent.templateName = typeof content.templateName === 'string' ? content.templateName : content.templateName[subId];
+            if (content.template) {
+                newContent.template = typeof content.template === 'string' ? content.template : content.template[newContent.templateName];
+            }
+        }
+        return newContent;
+    }
+    setContainerContent(rendering, content, subId) {
+        if (!rendering.container) {
+            return;
+        }
+        if (Object.keys(content).length === 0) {
+            this.clearContainer(rendering);
+            return;
+        }
+        this._setTemplate(rendering, this.templatePrefix, content.templateName, content.template);
+        rendering.model = content.model;
+        this._onUpdate(rendering);
+    }
+    clearContainer(rendering) {
+        if (rendering.liveDom) {
+            rendering.liveDom.root.textContent = '';
+        }
+        rendering.liveDom = null;
+    }
+    dispose() {
+        if (this._observer) {
+            this._observer.disconnect();
+        }
+        this.renderings.forEach(([subId, { container }]) => this.deleteContainer(container));
+    }
+    static clear(container) {
+        container.textContent = '';
+    }
+    static dispose() {
+        // empty template cache
+        templateByName.clear();
+    }
+    static findRootContainers(topContainer) {
+        const containerBySlotId = {};
+        Array.from(topContainer.querySelectorAll('[slotid]')).forEach(container => {
+            //assert(this.isDirectInnerSlot(container), 'Unexpected inner slot');
+            const slotId = container.getAttribute('slotid');
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!containerBySlotId[slotId], `Duplicate root slot ${slotId}`);
+            containerBySlotId[slotId] = container;
+        });
+        return containerBySlotId;
+    }
+    createTemplateElement(template) {
+        return Object.assign(document.createElement('template'), { innerHTML: template });
+    }
+    get templatePrefix() {
+        return this.consumeConn.getQualifiedName();
+    }
+    _setTemplate(rendering, templatePrefix, templateName, template) {
+        if (templateName) {
+            rendering.templateName = [templatePrefix, templateName].filter(s => s).join('::');
+            if (template) {
+                if (templateByName.has(rendering.templateName)) {
+                    // TODO: check whether the new template is different from the one that was previously used.
+                    // Template is being replaced.
+                    this.clearContainer(rendering);
+                }
+                templateByName.set(rendering.templateName, this.createTemplateElement(template));
+            }
+        }
+    }
+    _onUpdate(rendering) {
+        this._observe(rendering.container);
+        if (rendering.templateName) {
+            const template = templateByName.get(rendering.templateName);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(template, `No template for ${rendering.templateName}`);
+            this._stampTemplate(rendering, template);
+        }
+        this._updateModel(rendering);
+    }
+    _observe(container) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(container, 'Cannot observe without a container');
+        if (this._observer) {
+            this._observer.observe(container, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['subid']
+            });
+        }
+    }
+    _stampTemplate(rendering, template) {
+        if (!rendering.liveDom) {
+            // TODO(sjmiles): hack to allow subtree elements (e.g. x-list) to marshal events
+            rendering.container._eventMapper = this._eventMapper.bind(this, this.eventHandler);
+            rendering.liveDom = _shell_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["default"]
+                .stamp(template)
+                .events(rendering.container._eventMapper)
+                .appendTo(rendering.container);
+        }
+    }
+    _updateModel(rendering) {
+        if (rendering.liveDom) {
+            rendering.liveDom.set(rendering.model);
+        }
+    }
+    initInnerContainers(container) {
+        Array.from(container.querySelectorAll('[slotid]')).forEach(innerContainer => {
+            if (!this.isDirectInnerSlot(container, innerContainer)) {
+                // Skip inner slots of an inner slot of the given slot.
+                return;
+            }
+            const slotId = this.getNodeValue(innerContainer, 'slotid');
+            const providedSlotSpec = this.consumeConn.slotSpec.getProvidedSlotSpec(slotId);
+            if (!providedSlotSpec) { // Skip non-declared slots
+                console.warn(`Slot ${this.consumeConn.slotSpec.name} has unexpected inner slot ${slotId}`);
+                return;
+            }
+            const subId = this.getNodeValue(innerContainer, 'subid');
+            this._validateSubId(providedSlotSpec, subId);
+            this._initInnerSlotContainer(slotId, subId, innerContainer);
+        });
+    }
+    // get a value from node that could be an attribute, if not a property
+    getNodeValue(node, name) {
+        // TODO(sjmiles): remember that attribute names from HTML are lower-case
+        return node[name] || node.getAttribute(name);
+    }
+    _validateSubId(providedSlotSpec, subId) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.subId || !subId || this.subId === subId, `Unexpected sub-id ${subId}, expecting ${this.subId}`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(this.subId || subId) === providedSlotSpec.isSet, `Sub-id ${subId} for provided slot ${providedSlotSpec.name} doesn't match set spec: ${providedSlotSpec.isSet}`);
+    }
+    isDirectInnerSlot(container, innerContainer) {
+        if (innerContainer === container) {
+            return true;
+        }
+        let parentNode = innerContainer.parentNode;
+        while (parentNode) {
+            if (parentNode === container) {
+                return true;
+            }
+            if (parentNode.getAttribute('slotid')) {
+                // this is an inner slot of an inner slot.
+                return false;
+            }
+            parentNode = parentNode.parentNode;
+        }
+        // innerContainer won't be a child node of container if the method is triggered
+        // by mutation observer record and innerContainer was removed.
+        return false;
+    }
+    _initMutationObserver() {
+        if (this.consumeConn) {
+            return new MutationObserver(async (records) => {
+                this._observer.disconnect();
+                const updateContainersBySubId = new Map();
+                for (const [subId, { container }] of this.renderings) {
+                    if (records.some(r => this.isDirectInnerSlot(container, r.target))) {
+                        updateContainersBySubId.set(subId, container);
+                    }
+                }
+                const containers = [...updateContainersBySubId.values()];
+                if (containers.length > 0) {
+                    this._clearInnerSlotContainers([...updateContainersBySubId.keys()]);
+                    containers.forEach(container => this.initInnerContainers(container));
+                    this.updateProvidedContexts();
+                    // Reactivate the observer.
+                    containers.forEach(container => this._observe(container));
+                }
+            });
+        }
+        return null;
+    }
+    _eventMapper(eventHandler, node, eventName, handlerName) {
+        node.addEventListener(eventName, event => {
+            // TODO(sjmiles): we have an extremely minimalist approach to events here, this is useful IMO for
+            // finding the smallest set of features that we are going to need.
+            // First problem: click event firing multiple times as it bubbles up the tree, minimalist solution
+            // is to enforce a 'first listener' rule by executing `stopPropagation`.
+            event.stopPropagation();
+            // propagate keyboard information
+            const { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat } = event;
+            eventHandler({
+                handler: handlerName,
+                data: {
+                    // TODO(sjmiles): this is a data-key (as in key-value pair), may be confusing vs `keys`
+                    key: node.key,
+                    value: node.value,
+                    keys: { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat }
+                }
+            });
+        });
+    }
+    formatHostedContent(hostedSlot, content) {
+        if (content.templateName) {
+            if (typeof content.templateName === 'string') {
+                content.templateName = `${hostedSlot.consumeConn.particle.name}::${hostedSlot.consumeConn.name}::${content.templateName}`;
+            }
+            else {
+                // TODO(mmandlis): add support for hosted particle rendering set slot.
+                throw new Error('TODO: Implement this!');
+            }
+        }
+        return content;
+    }
+}
+//# sourceMappingURL=slot-dom-consumer.js.map
 
 /***/ }),
 
@@ -50532,6 +50475,7 @@ class Type {
             case 'Entity':
                 return _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].fromLiteral;
             case 'Collection':
+            case 'BigCollection':
                 return Type.fromLiteral;
             case 'Tuple':
                 return _tuple_fields_js__WEBPACK_IMPORTED_MODULE_4__["TupleFields"].fromLiteral;
@@ -50618,7 +50562,6 @@ class Type {
             return JSON.stringify(this.data);
         }
         if (this.isCollection) {
-            // TODO: s/List/Collection/
             return `${this.collectionType.toPrettyString()} List`;
         }
         if (this.isBigCollection) {

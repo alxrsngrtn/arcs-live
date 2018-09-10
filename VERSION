@@ -1,12 +1,5 @@
-commit 71ee8187bbc067847807130b3576b2aff7b19611
+commit 3c56807b6343179c0aa691d226e99cb7a61ff361
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Sep 7 09:45:57 2018 -0700
+Date:   Mon Sep 10 11:43:22 2018 -0700
 
-    Re-verify coalescable handle types after each of the handles were coalesced (#1859)
-    
-    * Re-verify coalescable handle types after each of the handles were coalesced
-    to avoid wrongly coalescing differently typed #selected handles
-    
-    * rename, refactor, test
-    
-    * address comment
+    Replace asserts with warnings in description (#1851)

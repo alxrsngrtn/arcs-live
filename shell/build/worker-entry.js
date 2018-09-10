@@ -1869,11 +1869,7 @@ class Handle {
  */
 class Collection extends Handle {
   constructor(proxy, name, particleId, canRead, canWrite) {
-    // TODO: this should talk to an API inside the PEC.
     super(proxy, name, particleId, canRead, canWrite);
-  }
-  query() {
-    // TODO: things
   }
 
   // Called by StorageProxy.
@@ -2029,10 +2025,11 @@ class Variable extends Handle {
   }
 }
 
-function handleFor(proxy, isSet, name, particleId, canRead = true, canWrite = true) {
-  return (isSet || (isSet == undefined && proxy.type.isCollection))
-      ? new Collection(proxy, name, particleId, canRead, canWrite)
-      : new Variable(proxy, name, particleId, canRead, canWrite);
+function handleFor(proxy, name, particleId, canRead = true, canWrite = true) {
+  if (proxy.type.isCollection) {
+    return new Collection(proxy, name, particleId, canRead, canWrite);
+  }
+  return new Variable(proxy, name, particleId, canRead, canWrite);
 }
 
 
@@ -2551,8 +2548,8 @@ class ParticleExecutionContext {
       createHandle: function(type, name, hostParticle) {
         return new Promise((resolve, reject) =>
           pec._apiPort.ArcCreateHandle({arc: arcId, type, name, callback: proxy => {
-            let handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, proxy.type.isCollection, name, particleId);
-            handle.entityClass = (proxy.type.isCollection ? proxy.type.primitiveType() : proxy.type).entitySchema.entityClass();
+            let handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, particleId);
+            handle.entityClass = (proxy.type.elementTypeIfCollection() || proxy.type).entitySchema.entityClass();
             resolve(handle);
             if (hostParticle) {
               proxy.register(hostParticle, handle);
@@ -2615,8 +2612,8 @@ class ParticleExecutionContext {
     let registerList = [];
     proxies.forEach((proxy, name) => {
       let connSpec = spec.connectionMap.get(name);
-      let handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, proxy.type.isCollection, name, id, connSpec.isInput, connSpec.isOutput);
-      let type = proxy.type.isCollection ? proxy.type.primitiveType() : proxy.type;
+      let handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, id, connSpec.isInput, connSpec.isOutput);
+      let type = proxy.type.elementTypeIfCollection() || proxy.type;
       if (type.isEntity) {
         handle.entityClass = type.entitySchema.entityClass();
       }
@@ -5227,6 +5224,7 @@ class Type {
             case 'Entity':
                 return _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].fromLiteral;
             case 'Collection':
+            case 'BigCollection':
                 return Type.fromLiteral;
             case 'Tuple':
                 return _tuple_fields_js__WEBPACK_IMPORTED_MODULE_4__["TupleFields"].fromLiteral;
@@ -5313,7 +5311,6 @@ class Type {
             return JSON.stringify(this.data);
         }
         if (this.isCollection) {
-            // TODO: s/List/Collection/
             return `${this.collectionType.toPrettyString()} List`;
         }
         if (this.isBigCollection) {

@@ -29,7 +29,7 @@ export class SlotContext {
         // The slot consumer providing this container (eg div)
         this.sourceSlotConsumer = sourceSlotConsumer;
         if (this.sourceSlotConsumer) {
-            this.sourceSlotConsumer._providedSlotContexts.push(this);
+            this.sourceSlotConsumer.providedSlotContexts.push(this);
         }
         // The list of handles this context is restricted to.
         this.handles = this.spec && this.sourceSlotConsumer
