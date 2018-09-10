@@ -24814,7 +24814,7 @@ class PECOuterPort extends APIPort {
     this.registerHandler('HandleToList', {handle: this.Mapped, callback: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('HandleStore', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
-    this.registerHandler('HandleRemove', {handle: this.Mapped, data: this.Direct});
+    this.registerHandler('HandleRemove', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('Idle', {version: this.Direct, relevance: this.Map(this.Mapped, this.Direct)});
 
@@ -24863,7 +24863,7 @@ class PECInnerPort extends APIPort {
     this.registerCall('HandleToList', {handle: this.Mapped, callback: this.LocalMapped, particleId: this.Direct});
     this.registerCall('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
     this.registerCall('HandleStore', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
-    this.registerCall('HandleRemove', {handle: this.Mapped, data: this.Direct});
+    this.registerCall('HandleRemove', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
     this.registerCall('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerCall('Idle', {version: this.Direct, relevance: this.Map(this.Mapped, this.Direct)});
 
@@ -34295,7 +34295,7 @@ class OuterPortAttachment {
       {operation: 'toList', handle, particleId});
   }
 
-  onHandleSet({handle, data, particleId}) {
+  onHandleSet({handle, data, particleId, barrier}) {
     this._logHandleCall({operation: 'set', handle, data, particleId});
   }
 
@@ -34303,7 +34303,7 @@ class OuterPortAttachment {
     this._logHandleCall({operation: 'store', handle, data, particleId});
   }
 
-  onHandleClear({handle, particleId}) {
+  onHandleClear({handle, particleId, barrier}) {
     this._logHandleCall({operation: 'clear', handle, particleId});
   }
 
