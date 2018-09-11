@@ -1,5 +1,13 @@
-commit 048f829b4a242da03bb426be9c6232cfe9aa2104
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Sep 11 17:46:47 2018 +1000
+commit 65fb1e48fc858975e0f01dd4b1bb940f82ff50b3
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Sep 11 00:49:30 2018 -0700
 
-    Add references to the particle API, with dereferencing. (#1868)
+    Updated outdated npm packages (2018/week 37) (#1871)
+    
+    - Update eslint-config-google and disable the new indent rules.
+    - Update Polymer from 3.0.0 -> 3.0.5 [ChangeLog](https://github.com/Polymer/polymer/blob/master/CHANGELOG.md).
+    - Update PolymerElements from pre.18 to pre.25.
+    - Update webcomponents 3.0.0 -> 2.1.1
+    - Update vaadin-grid 5.0.0-pre5 -> 5.1.1
+    - Update vaadin-split-layout 4.0.0-pre.3 -> 4.1.0
+    - Update morgan from 1.9.0 -> 1.9.1
