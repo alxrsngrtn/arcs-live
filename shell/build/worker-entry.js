@@ -659,6 +659,7 @@ class APIPort {
       }
     }
     let handlerName = 'on' + e.data.messageType;
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this[handlerName], `no handler named ${handlerName}`);
     let result = this[handlerName](args);
     if (this._debugAttachment && this._debugAttachment[handlerName]) {
       this._debugAttachment[handlerName](args);
@@ -753,6 +754,9 @@ class PECOuterPort extends APIPort {
     this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('Idle', {version: this.Direct, relevance: this.Map(this.Mapped, this.Direct)});
 
+    this.registerHandler('GetBackingStore', {callback: this.Direct, storageKey: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"])});
+    this.registerInitializer('GetBackingStoreCallback', {callback: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct, id: this.Direct});
+
     this.registerHandler('ConstructInnerArc', {callback: this.Direct, particle: this.Mapped});
     this.registerCall('ConstructArcCallback', {callback: this.Direct, arc: this.LocalMapped});
 
@@ -801,6 +805,9 @@ class PECInnerPort extends APIPort {
     this.registerCall('HandleRemove', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
     this.registerCall('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerCall('Idle', {version: this.Direct, relevance: this.Map(this.Mapped, this.Direct)});
+
+    this.registerCall('GetBackingStore', {callback: this.LocalMapped, storageKey: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"])});
+    this.registerInitializerHandler('GetBackingStoreCallback', {callback: this.LocalMapped, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct, id: this.Direct});
 
     this.registerCall('ConstructInnerArc', {callback: this.LocalMapped, particle: this.Mapped});
     this.registerHandler('ConstructArcCallback', {callback: this.LocalMapped, arc: this.Direct});
@@ -1753,7 +1760,7 @@ const local_fetch = fetch;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleFor", function() { return handleFor; });
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./entity.js */ "./runtime/entity.js");
+/* harmony import */ var _ts_build_reference_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/reference.js */ "./runtime/ts-build/reference.js");
 /* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./symbols.js */ "./runtime/symbols.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./particle-spec.js */ "./runtime/particle-spec.js");
@@ -1897,6 +1904,19 @@ class Collection extends Handle {
     }
   }
 
+  /** @method async get(id)
+   * Returns the Entity specified by id contained by the handle, or null if this id is not
+   * contained by the handle.
+   * throws: Error if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
+   * in the particle's manifest.
+   */
+  async get(id) {
+    if (!this.canRead) {
+      throw new Error('Handle not readable');
+    }
+    return this._restore([await this._proxy.get(id, this._particleId)])[0];
+  }
+
   /** @method async toList()
    * Returns a list of the Entities contained by the handle.
    * throws: Error if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
@@ -1992,7 +2012,13 @@ class Variable extends Handle {
     if (this.type.isEntity) {
       return restore(model, this.entityClass);
     }
-    return this.type.isInterface ? _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__["ParticleSpec"].fromLiteral(model) : model;
+    if (this.type.isInterface) {
+      return _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__["ParticleSpec"].fromLiteral(model);
+    }
+    if (this.type.isReference) {
+      return new _ts_build_reference_js__WEBPACK_IMPORTED_MODULE_0__["Reference"](model, this.type, this._proxy.pec);
+    }
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(false, `Don't know how to deliver handle data of type ${this.type}`);
   }
 
   /** @method set(entity)
@@ -2424,6 +2450,7 @@ class ParticleExecutionContext {
     this._loader = loader;
     this._pendingLoads = [];
     this._scheduler = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxyScheduler"]();
+    this._keyedProxies = {};
 
     /*
      * This code ensures that the relevant types are known
@@ -2437,6 +2464,11 @@ class ParticleExecutionContext {
      */
     this._apiPort.onDefineHandle = ({type, identifier, name}) => {
       return new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](identifier, type, this._apiPort, this, this._scheduler, name);
+    };
+
+    this._apiPort.onGetBackingStoreCallback = ({type, id, name, callback}) => {
+      let proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
+      return [proxy, () => callback(proxy)];
     };
 
     this._apiPort.onCreateHandleCallback = ({type, id, name, callback}) => {
@@ -2549,7 +2581,7 @@ class ParticleExecutionContext {
         return new Promise((resolve, reject) =>
           pec._apiPort.ArcCreateHandle({arc: arcId, type, name, callback: proxy => {
             let handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, particleId);
-            handle.entityClass = (proxy.type.elementTypeIfCollection() || proxy.type).entitySchema.entityClass();
+            handle.entityClass = (proxy.type.getContainedType() || proxy.type).entitySchema.entityClass();
             resolve(handle);
             if (hostParticle) {
               proxy.register(hostParticle, handle);
@@ -2587,6 +2619,18 @@ class ParticleExecutionContext {
     };
   }
 
+  getStorageProxy(storageKey, type) {
+    if (!this._keyedProxies[storageKey]) {      
+      this._keyedProxies[storageKey] = new Promise((resolve, reject) => {
+        this._apiPort.GetBackingStore({storageKey, type, callback: proxy => {
+          this._keyedProxies[storageKey] = proxy;
+          resolve(proxy);
+        }});
+      });
+      return this._keyedProxies[storageKey];
+    }
+  }
+
   defaultCapabilitySet() {
     return {
       constructInnerArc: particle => {
@@ -2613,7 +2657,7 @@ class ParticleExecutionContext {
     proxies.forEach((proxy, name) => {
       let connSpec = spec.connectionMap.get(name);
       let handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, id, connSpec.isInput, connSpec.isOutput);
-      let type = proxy.type.elementTypeIfCollection() || proxy.type;
+      let type = proxy.type.getContainedType() || proxy.type;
       if (type.isEntity) {
         handle.entityClass = type.entitySchema.entityClass();
       }
@@ -3240,8 +3284,8 @@ class TypeChecker {
         return null;
       }
       return _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newInterface(result);
-    } else if ((primitiveBase.isSomeSortOfCollection() && primitiveBase.hasVariable)
-               || (primitiveOnto.isSomeSortOfCollection() && primitiveOnto.hasVariable)) {
+    } else if ((primitiveBase.isTypeContainer() && primitiveBase.hasVariable)
+               || (primitiveOnto.isTypeContainer() && primitiveOnto.hasVariable)) {
       // Cannot merge [~a] with a type that is not a variable and not a collection.
       return null;
     }
@@ -3251,7 +3295,7 @@ class TypeChecker {
   static _tryMergeConstraints(handleType, {type, direction}) {
     let [primitiveHandleType, primitiveConnectionType] = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(handleType.resolvedType(), type.resolvedType());
     if (primitiveHandleType.isVariable) {
-      while (primitiveConnectionType.isSomeSortOfCollection()) {
+      while (primitiveConnectionType.isTypeContainer()) {
         if (primitiveHandleType.variable.resolution != null
             || primitiveHandleType.variable.canReadSubset != null
             || primitiveHandleType.variable.canWriteSuperset != null) {
@@ -3263,7 +3307,7 @@ class TypeChecker {
         // in order for type resolution to succeed.
         let newVar = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]('a'));
         primitiveHandleType.variable.resolution = 
-            primitiveConnectionType.isCollection ? _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newCollection(newVar) : _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newBigCollection(newVar);
+            primitiveConnectionType.isCollection ? _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newCollection(newVar) : (primitiveConnectionType.isBigCollection ? _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newBigCollection(newVar) : _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newReference(newVar));
         let unwrap = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
         [primitiveHandleType, primitiveConnectionType] = unwrap;
       }
@@ -3344,10 +3388,10 @@ class TypeChecker {
     let [leftType, rightType] = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(resolvedLeft, resolvedRight);
 
     // a variable is compatible with a set only if it is unconstrained.
-    if (leftType.isVariable && rightType.isSomeSortOfCollection()) {
+    if (leftType.isVariable && rightType.isTypeContainer()) {
       return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
     }
-    if (rightType.isVariable && leftType.isSomeSortOfCollection()) {
+    if (rightType.isVariable && leftType.isTypeContainer()) {
       return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
     }
 
@@ -3486,6 +3530,8 @@ class StorageProxyBase {
     this._synchronized = SyncState.none;
     this._observers = [];
     this._updates = [];
+
+    this.pec = pec;
   }
 
   raiseSystemException(exception, methodName, particleId) {
@@ -3727,6 +3773,15 @@ class CollectionProxy extends StorageProxyBase {
       //       sending a parallel request
       return new Promise((resolve, reject) =>
         this._port.HandleToList({callback: r => resolve(r), handle: this, particleId}));
+    }
+  }
+
+  get(id, particleId) {
+    if (this._synchronized == SyncState.full) {
+      return Promise.resolve(this._model.getValue(id));
+    } else {
+      return new Promise((resolve, reject) =>
+        this._port.HandleToList({callback: r => resolve(r.find(entity => entity.id === id)), handle: this, particleId}));
     }
   }
 
@@ -4042,6 +4097,53 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
   }
 }
 
+
+/***/ }),
+
+/***/ "./runtime/ts-build/reference.js":
+/*!***************************************!*\
+  !*** ./runtime/ts-build/reference.js ***!
+  \***************************************/
+/*! exports provided: Reference */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Reference", function() { return Reference; });
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../handle.js */ "./runtime/handle.js");
+/** @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class Reference {
+    constructor(data, type, context) {
+        this.entity = null;
+        this.storageProxy = null;
+        this.handle = null;
+        this.id = data.id;
+        this.storageKey = data.storageKey;
+        this.context = context;
+        this.type = type;
+    }
+    async dereference() {
+        if (this.entity) {
+            return this.entity;
+        }
+        if (this.storageProxy == null) {
+            this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referenceReferredType);
+            this.handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(this.storageProxy);
+            this.handle.entityClass = this.type.referenceReferredType.entitySchema.entityClass();
+        }
+        this.entity = await this.handle.get(this.id);
+        return this.entity;
+    }
+}
+//# sourceMappingURL=reference.js.map
 
 /***/ }),
 
@@ -5003,18 +5105,21 @@ class Type {
     primitiveType() {
         return this.collectionType;
     }
-    elementTypeIfCollection() {
+    getContainedType() {
         if (this.isCollection) {
             return this.collectionType;
         }
         if (this.isBigCollection) {
             return this.bigCollectionType;
         }
+        if (this.isReference) {
+            return this.referenceReferredType;
+        }
         return null;
     }
     // TODO: naming is hard
-    isSomeSortOfCollection() {
-        return this.isCollection || this.isBigCollection;
+    isTypeContainer() {
+        return this.isCollection || this.isBigCollection || this.isReference;
     }
     collectionOf() {
         return Type.newCollection(this);
@@ -5032,6 +5137,11 @@ class Type {
             const primitiveType = this.bigCollectionType;
             const resolvedPrimitiveType = primitiveType.resolvedType();
             return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.bigCollectionOf() : this;
+        }
+        if (this.isReference) {
+            const primitiveType = this.referenceReferredType;
+            const resolvedPrimitiveType = primitiveType.resolvedType();
+            return (primitiveType !== resolvedPrimitiveType) ? Type.newReference(resolvedPrimitiveType) : this;
         }
         if (this.isVariable) {
             const resolution = this.variable.resolution;
@@ -5064,6 +5174,9 @@ class Type {
         if (this.isBigCollection) {
             return this.bigCollectionType.canEnsureResolved();
         }
+        if (this.isReference) {
+            return this.referenceReferredType.canEnsureResolved();
+        }
         return true;
     }
     maybeEnsureResolved() {
@@ -5079,6 +5192,9 @@ class Type {
         if (this.isBigCollection) {
             return this.bigCollectionType.maybeEnsureResolved();
         }
+        if (this.isReference) {
+            return this.referenceReferredType.maybeEnsureResolved();
+        }
         return true;
     }
     get canWriteSuperset() {
@@ -5090,9 +5206,6 @@ class Type {
         }
         if (this.isInterface) {
             return Type.newInterface(this.interfaceShape.canWriteSuperset);
-        }
-        if (this.isReference) {
-            return this.referenceReferredType.canWriteSuperset;
         }
         throw new Error(`canWriteSuperset not implemented for ${this}`);
     }
@@ -5300,7 +5413,7 @@ class Type {
         // Try extract the description from schema spec.
         const entitySchema = this.getEntitySchema();
         if (entitySchema) {
-            if (this.isSomeSortOfCollection() && entitySchema.description.plural) {
+            if (this.isTypeContainer() && entitySchema.description.plural) {
                 return entitySchema.description.plural;
             }
             if (this.isEntity && entitySchema.description.pattern) {
@@ -5528,7 +5641,7 @@ class TypeVariable {
   set resolution(value) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(value instanceof _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"]);
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._resolution);
-    let elementType = value.resolvedType().elementTypeIfCollection();
+    let elementType = value.resolvedType().getContainedType();
     if (elementType !== null && elementType.isVariable) {
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(elementType.variable != this, 'variable cannot resolve to collection of itself');
     }

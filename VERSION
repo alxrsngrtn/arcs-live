@@ -1,7 +1,5 @@
-commit e7b908a5667566cecc53a1f581d8af5154f7752f
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Sep 10 16:19:56 2018 -0700
+commit 048f829b4a242da03bb426be9c6232cfe9aa2104
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Sep 11 17:46:47 2018 +1000
 
-    Add missing particleId arg to HandleRemove in API channel. (#1867)
-    
-    Also put the barrier arg in Set/Clear in OuterPortAttachment; it isn't used but having it there documents that it wasn't just forgotten.
+    Add references to the particle API, with dereferencing. (#1868)

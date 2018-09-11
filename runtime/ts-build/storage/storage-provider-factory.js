@@ -29,6 +29,9 @@ export class StorageProviderFactory {
         // TODO(shans): don't use reference mode once adapters are implemented
         return await this._storageForKey(key).connect(id, type, key);
     }
+    async baseStorageFor(type, keyString) {
+        return await this._storageForKey(keyString).baseStorageFor(type, keyString);
+    }
     parseStringAsKey(s) {
         return this._storageForKey(s).parseStringAsKey(s);
     }

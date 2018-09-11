@@ -26,6 +26,7 @@ export abstract class StorageBase {
   
   abstract construct(id: string, type: Type, keyFragment: string) : Promise<StorageProviderBase>;
   abstract connect(id: string, type: Type, key: string) : Promise<StorageProviderBase>;
+  abstract baseStorageFor(type: Type, key: string) : Promise<StorageProviderBase>;
   abstract parseStringAsKey(s: string) : KeyBase;
 
   // Provides graceful shutdown for tests.
@@ -34,10 +35,10 @@ export abstract class StorageBase {
 
 export abstract class StorageProviderBase {
   private listeners: Map<EventKind, Map<Callback, {target: {}}>>;
-  private readonly _storageKey: string;
   private nextLocalID: number;
   private readonly _type: Type;
 
+  protected readonly _storageKey: string;
   protected referenceMode = false;
   protected version: number|null;
   

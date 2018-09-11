@@ -82,7 +82,7 @@ export class FirebaseStorage extends StorageBase {
     }
     async construct(id, type, keyFragment) {
         let referenceMode = !type.isReference;
-        if (type.isSomeSortOfCollection() && type.elementTypeIfCollection().isReference) {
+        if (type.isTypeContainer() && type.getContainedType().isReference) {
             referenceMode = false;
         }
         return this._join(id, type, keyFragment, false, referenceMode);
