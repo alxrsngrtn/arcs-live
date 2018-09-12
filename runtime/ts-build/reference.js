@@ -6,6 +6,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { assert } from '../../platform/assert-web.js';
+import { Type } from './type.js';
 import { handleFor } from '../handle.js';
 export class Reference {
     constructor(data, type, context) {
@@ -17,17 +19,61 @@ export class Reference {
         this.context = context;
         this.type = type;
     }
-    async dereference() {
-        if (this.entity) {
-            return this.entity;
-        }
+    async ensureStorageProxy() {
         if (this.storageProxy == null) {
             this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referenceReferredType);
             this.handle = handleFor(this.storageProxy);
             this.handle.entityClass = this.type.referenceReferredType.entitySchema.entityClass();
+            if (this.storageKey) {
+                assert(this.storageKey === this.storageProxy.storageKey);
+            }
+            else {
+                this.storageKey = this.storageProxy.storageKey;
+            }
         }
+    }
+    async dereference() {
+        if (this.entity) {
+            return this.entity;
+        }
+        await this.ensureStorageProxy();
         this.entity = await this.handle.get(this.id);
         return this.entity;
     }
+    dataClone() {
+        return { storageKey: this.storageKey, id: this.id };
+    }
+}
+var ReferenceMode;
+(function (ReferenceMode) {
+    ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
+    ReferenceMode[ReferenceMode["Stored"] = 1] = "Stored";
+})(ReferenceMode || (ReferenceMode = {}));
+export function newClientReference(context) {
+    return class extends Reference {
+        constructor(entity) {
+            super({ id: entity.id, storageKey: null }, Type.newReference(entity.constructor.type), context);
+            this.mode = ReferenceMode.Unstored;
+            this.entity = entity;
+            this.stored = new Promise(async (resolve, reject) => {
+                await this.storeReference(entity);
+                resolve();
+            });
+        }
+        async storeReference(entity) {
+            await this.ensureStorageProxy();
+            await this.handle.store(entity);
+            this.mode = ReferenceMode.Stored;
+        }
+        async dereference() {
+            if (this.mode === ReferenceMode.Unstored) {
+                return null;
+            }
+            return super.dereference();
+        }
+        isIdentified() {
+            return this.entity.isIdentified();
+        }
+    };
 }
 //# sourceMappingURL=reference.js.map

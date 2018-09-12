@@ -32,6 +32,9 @@ export class StorageProviderFactory {
     async baseStorageFor(type, keyString) {
         return await this._storageForKey(keyString).baseStorageFor(type, keyString);
     }
+    baseStorageKey(type, keyString) {
+        return this._storageForKey(keyString).baseStorageKey(type, keyString);
+    }
     parseStringAsKey(s) {
         return this._storageForKey(s).parseStringAsKey(s);
     }

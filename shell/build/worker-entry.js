@@ -755,7 +755,7 @@ class PECOuterPort extends APIPort {
     this.registerHandler('Idle', {version: this.Direct, relevance: this.Map(this.Mapped, this.Direct)});
 
     this.registerHandler('GetBackingStore', {callback: this.Direct, storageKey: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"])});
-    this.registerInitializer('GetBackingStoreCallback', {callback: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct, id: this.Direct});
+    this.registerInitializer('GetBackingStoreCallback', {callback: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct, id: this.Direct, storageKey: this.Direct});
 
     this.registerHandler('ConstructInnerArc', {callback: this.Direct, particle: this.Mapped});
     this.registerCall('ConstructArcCallback', {callback: this.Direct, arc: this.LocalMapped});
@@ -807,7 +807,7 @@ class PECInnerPort extends APIPort {
     this.registerCall('Idle', {version: this.Direct, relevance: this.Map(this.Mapped, this.Direct)});
 
     this.registerCall('GetBackingStore', {callback: this.LocalMapped, storageKey: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"])});
-    this.registerInitializerHandler('GetBackingStoreCallback', {callback: this.LocalMapped, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct, id: this.Direct});
+    this.registerInitializerHandler('GetBackingStoreCallback', {callback: this.LocalMapped, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct, id: this.Direct, storageKey: this.Direct});
 
     this.registerCall('ConstructInnerArc', {callback: this.LocalMapped, particle: this.Mapped});
     this.registerHandler('ConstructArcCallback', {callback: this.LocalMapped, arc: this.Direct});
@@ -2078,8 +2078,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./particle.js */ "./runtime/particle.js");
 /* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./dom-particle.js */ "./runtime/dom-particle.js");
 /* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./multiplexer-dom-particle.js */ "./runtime/multiplexer-dom-particle.js");
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./transformation-dom-particle.js */ "./runtime/transformation-dom-particle.js");
-/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./converters/jsonldToManifest.js */ "./runtime/converters/jsonldToManifest.js");
+/* harmony import */ var _ts_build_reference_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ts-build/reference.js */ "./runtime/ts-build/reference.js");
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./transformation-dom-particle.js */ "./runtime/transformation-dom-particle.js");
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./converters/jsonldToManifest.js */ "./runtime/converters/jsonldToManifest.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2089,6 +2090,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -2145,9 +2147,9 @@ class Loader {
   _loadURL(url) {
     if (/\/\/schema.org\//.test(url)) {
       if (url.endsWith('/Thing')) {
-        return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_8__["JsonldToManifest"].convert(data, {'@id': 'schema:Thing'}));
+        return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data, {'@id': 'schema:Thing'}));
       }
-      return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url + '.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_8__["JsonldToManifest"].convert(data));
+      return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url + '.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data));
     }
     return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url).then(res => res.text());
   }
@@ -2176,8 +2178,13 @@ class Loader {
     return this.unwrapParticle(result[0]);
   }
 
+  setParticleExecutionContext(pec) {
+    this._pec = pec;
+  }
+
   unwrapParticle(particleWrapper) {
-    return particleWrapper({Particle: _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"], DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"], TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__["TransformationDomParticle"], MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"], html});
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(this._pec);
+    return particleWrapper({Particle: _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"], DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"], TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__["TransformationDomParticle"], MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"], Reference: Object(_ts_build_reference_js__WEBPACK_IMPORTED_MODULE_7__["newClientReference"])(this._pec), html});
   }
 
 }
@@ -2448,6 +2455,7 @@ class ParticleExecutionContext {
     this._idBase = idBase;
     this._nextLocalID = 0;
     this._loader = loader;
+    loader.setParticleExecutionContext(this);
     this._pendingLoads = [];
     this._scheduler = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxyScheduler"]();
     this._keyedProxies = {};
@@ -2466,10 +2474,12 @@ class ParticleExecutionContext {
       return new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](identifier, type, this._apiPort, this, this._scheduler, name);
     };
 
-    this._apiPort.onGetBackingStoreCallback = ({type, id, name, callback}) => {
+    this._apiPort.onGetBackingStoreCallback = ({type, id, name, callback, storageKey}) => {
       let proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
-      return [proxy, () => callback(proxy)];
+      proxy.storageKey = storageKey;
+      return [proxy, () => callback(proxy, storageKey)];
     };
+
 
     this._apiPort.onCreateHandleCallback = ({type, id, name, callback}) => {
       let proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
@@ -2622,7 +2632,7 @@ class ParticleExecutionContext {
   getStorageProxy(storageKey, type) {
     if (!this._keyedProxies[storageKey]) {      
       this._keyedProxies[storageKey] = new Promise((resolve, reject) => {
-        this._apiPort.GetBackingStore({storageKey, type, callback: proxy => {
+        this._apiPort.GetBackingStore({storageKey, type, callback: (proxy, storageKey) => {
           this._keyedProxies[storageKey] = proxy;
           resolve(proxy);
         }});
@@ -4104,13 +4114,16 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 /*!***************************************!*\
   !*** ./runtime/ts-build/reference.js ***!
   \***************************************/
-/*! exports provided: Reference */
+/*! exports provided: Reference, newClientReference */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Reference", function() { return Reference; });
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../handle.js */ "./runtime/handle.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "newClientReference", function() { return newClientReference; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../handle.js */ "./runtime/handle.js");
 /** @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -4119,6 +4132,8 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+
 
 class Reference {
     constructor(data, type, context) {
@@ -4130,18 +4145,62 @@ class Reference {
         this.context = context;
         this.type = type;
     }
+    async ensureStorageProxy() {
+        if (this.storageProxy == null) {
+            this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referenceReferredType);
+            this.handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_2__["handleFor"])(this.storageProxy);
+            this.handle.entityClass = this.type.referenceReferredType.entitySchema.entityClass();
+            if (this.storageKey) {
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.storageKey === this.storageProxy.storageKey);
+            }
+            else {
+                this.storageKey = this.storageProxy.storageKey;
+            }
+        }
+    }
     async dereference() {
         if (this.entity) {
             return this.entity;
         }
-        if (this.storageProxy == null) {
-            this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referenceReferredType);
-            this.handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(this.storageProxy);
-            this.handle.entityClass = this.type.referenceReferredType.entitySchema.entityClass();
-        }
+        await this.ensureStorageProxy();
         this.entity = await this.handle.get(this.id);
         return this.entity;
     }
+    dataClone() {
+        return { storageKey: this.storageKey, id: this.id };
+    }
+}
+var ReferenceMode;
+(function (ReferenceMode) {
+    ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
+    ReferenceMode[ReferenceMode["Stored"] = 1] = "Stored";
+})(ReferenceMode || (ReferenceMode = {}));
+function newClientReference(context) {
+    return class extends Reference {
+        constructor(entity) {
+            super({ id: entity.id, storageKey: null }, _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newReference(entity.constructor.type), context);
+            this.mode = ReferenceMode.Unstored;
+            this.entity = entity;
+            this.stored = new Promise(async (resolve, reject) => {
+                await this.storeReference(entity);
+                resolve();
+            });
+        }
+        async storeReference(entity) {
+            await this.ensureStorageProxy();
+            await this.handle.store(entity);
+            this.mode = ReferenceMode.Stored;
+        }
+        async dereference() {
+            if (this.mode === ReferenceMode.Unstored) {
+                return null;
+            }
+            return super.dereference();
+        }
+        isIdentified() {
+            return this.entity.isIdentified();
+        }
+    };
 }
 //# sourceMappingURL=reference.js.map
 

@@ -1,5 +1,5 @@
-commit de0a02973b3e98c3ecd6b53cc31db04e5b3b83c8
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Sep 11 12:20:44 2018 -0700
+commit 43c1808ae15ad6905553c516d46465163f7ad5ff
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Sep 12 13:58:15 2018 +1000
 
-    Fix firebase imports for FBGraph (#1873)
+    Updates strategies.md (#1877)
