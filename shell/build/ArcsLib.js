@@ -25321,7 +25321,7 @@ ${this.activeRecipe.toString()}`;
    let slotIndex = 0;
 
    this._recipes.forEach(recipe => {
-     let arcRecipe = {particles: [], handles: [], slots: [], innerArcs: new Map(), pattern: recipe.pattern};
+     let arcRecipe = {particles: [], handles: [], slots: [], innerArcs: new Map(), patterns: recipe.patterns};
      recipe.particles.forEach(p => {
        arcRecipe.particles.push(particles[particleIndex++]);
        if (recipe.innerArcs.has(p)) {
@@ -25377,7 +25377,7 @@ ${this.activeRecipe.toString()}`;
       currentArc = innerArcs.get(innerArc.particle);
     }
     let {handles, particles, slots} = recipe.mergeInto(currentArc.activeRecipe);
-    currentArc.recipes.push({particles, handles, slots, innerArcs: new Map(), pattern: recipe.pattern});
+    currentArc.recipes.push({particles, handles, slots, innerArcs: new Map(), patterns: recipe.patterns});
     slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
 
     for (let recipeHandle of handles) {
@@ -25991,7 +25991,7 @@ const parser = /*
                   kind: 'description?',
                   location: 'FIXME',
                 };
-                item.description.forEach(d => { description[d.name] = d.pattern; });
+                item.description.forEach(d => description[d.name] = d.pattern || d.patterns[0]);
               } else if (item.affordance) {
                 affordance.push(item.affordance)
               } else {
@@ -26228,6 +26228,13 @@ const parser = /*
             };
           },
         peg$c143 = function(pattern, handleDescriptions) {
+            handleDescriptions = optional(handleDescriptions, extractIndented, []);
+            let patterns = [];
+            if (pattern) {
+              patterns.push(pattern);
+              handleDescriptions.filter(desc => desc.name == '_pattern_').forEach(pattern => patterns.push(pattern));
+              handleDescriptions = handleDescriptions.filter(desc => desc.name != '_pattern_');
+            }
             return {
               kind: 'description',
               location: location(),
@@ -26237,9 +26244,9 @@ const parser = /*
                   kind: 'default-description?',
                   location: location(),
                   name: 'pattern',
-                  pattern: pattern,
+                  patterns: patterns,
                 },
-                ...optional(handleDescriptions, extractIndented, []),
+                ...handleDescriptions,
               ],
             };
           },
@@ -34822,8 +34829,8 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
     let result = {template: '', model: {}};
     let count = descs.length;
     descs.forEach((desc, i) => {
-      if (!desc.template || !desc.model) {
-        return;
+      if (typeof desc === 'string') {
+        desc = Object.assign({}, {template: desc, model: {}});
       }
 
       result.template += desc.template;
@@ -34999,10 +35006,15 @@ class DescriptionFormatter {
   async getDescription(recipe) {
     await this._updateDescriptionHandles(this._description);
 
-    if (recipe.pattern) {
-      let recipeDesc = await this.patternToSuggestion(recipe.pattern, {_recipe: recipe});
-      if (recipeDesc) {
-        return this._capitalizeAndPunctuate(recipeDesc);
+    if (recipe.patterns.length > 0) {
+      let recipePatterns = [];
+      for (let pattern of recipe.patterns) {
+        recipePatterns.push(await this.patternToSuggestion(pattern, {_recipe: recipe}));
+      }
+      recipePatterns = recipePatterns.filter(pattern => Boolean(pattern));
+      if (recipePatterns.length > 0) {
+        // TODO(mmandlis): Sort the descriptions.
+        return this._capitalizeAndPunctuate(this._joinDescriptions(recipePatterns));
       }
     }
 
@@ -36268,7 +36280,7 @@ class Cursor {
    * Terminates the streamed read. This must be called if a cursor is no longer needed but has not
    * yet completed streaming (i.e. next() hasn't returned {done: true}).
    */
-  async close() {
+  close() {
     this._parent._proxy.cursorClose(this._cursorId);
   }
 }
@@ -36940,6 +36952,7 @@ ${e.message}
         // TODO(dstockwell): set up a scope and merge type variables here, so that
         //     errors relating to failed merges can reference the manifest source.
         visitChildren();
+
         switch (node.kind) {
         case 'schema-inline': {
           let schemas = [];
@@ -36966,16 +36979,12 @@ ${e.message}
                 // Validate that the specified or inferred type matches the schema.
                 let externalType = schema.fields[name];
                 if (externalType && !_ts_build_schema_js__WEBPACK_IMPORTED_MODULE_6__["Schema"].typesEqual(externalType, type)) {
-                  throw new ManifestError(
-                      node.location,
-                      `Type of '${name}' does not match schema (${type} vs ${externalType})`);
+                  throw new ManifestError(node.location, `Type of '${name}' does not match schema (${type} vs ${externalType})`);
                 }
               }
             }
             if (!type) {
-              throw new ManifestError(
-                  node.location,
-                  `Could not infer type of '${name}' field`);
+              throw new ManifestError(node.location, `Could not infer type of '${name}' field`);
             }
             fields[name] = type;
           }
@@ -36986,9 +36995,7 @@ ${e.message}
           for (let alias of aliases) {
             schema = _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_6__["Schema"].union(alias, schema);
             if (!schema) {
-              throw new ManifestError(
-                  node.location,
-                  `Could not merge schema aliases`);
+              throw new ManifestError(node.location, `Could not merge schema aliases`);
             }
           }
           node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newEntity(schema);
@@ -41413,7 +41420,7 @@ class Recipe {
     // TODO: Change to array, if needed for search strings of merged recipes.
     this._search = null;
 
-    this._pattern = null;
+    this._patterns = [];
   }
 
   newConnectionConstraint(from, to, direction) {
@@ -41593,12 +41600,12 @@ class Recipe {
       }
     }
   }
-  get pattern() { return this._pattern; }
-  set pattern(pattern) { this._pattern = pattern; }
+  get patterns() { return this._patterns; }
+  set patterns(patterns) { this._patterns = patterns; }
   set description(description) {
     let pattern = description.find(desc => desc.name == 'pattern');
     if (pattern) {
-      this._pattern = pattern.pattern;
+      pattern.patterns.forEach(pattern => this._patterns.push(pattern));
     }
     description.forEach(desc => {
       if (desc.name != 'pattern') {
@@ -41721,6 +41728,9 @@ class Recipe {
     this._slots = slots;
     this._connectionConstraints.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
 
+    this._verbs.sort();
+    this._patterns.sort();
+
     Object.freeze(this._particles);
     Object.freeze(this._handles);
     Object.freeze(this._slots);
@@ -41779,15 +41789,8 @@ class Recipe {
     if (this.search) {
       this.search._copyInto(recipe);
     }
-    if (this.pattern) {
-      if (recipe.pattern) {
-        // TODO(mmandlis): Support multiple patterns in a recipe.
-        // TODO(mmandlis): Join all patterns of the copied recipe's particles into a recipe pattern.
-        recipe.pattern += ` and ${this.pattern}`;
-      } else {
-        recipe.pattern = this.pattern;
-      }
-    }
+
+    recipe.patterns = recipe.patterns.concat(this.patterns);
   }
 
   updateToClone(dict) {
@@ -41880,8 +41883,11 @@ class Recipe {
     for (let particle of this.particles) {
       result.push(particle.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
     }
-    if (this.pattern || this.handles.find(h => h.pattern)) {
-      result.push(`  description \`${this.pattern}\``);
+    if (this.patterns.length > 0 || this.handles.find(h => h.pattern)) {
+      result.push(`  description \`${this.patterns[0]}\``);
+      for (let i = 1; i < this.patterns.length; ++i) {
+        result.push(`    _pattern_ \`${this.patterns[i]}\``);
+      }
       this.handles.forEach(h => {
         if (h.pattern) {
           result.push(`    ${h.localName} \`${h.pattern}\``);
@@ -43937,7 +43943,7 @@ class BigCollectionProxy extends StorageProxyBase {
       this._port.StreamCursorNext({handle: this, callback: resolve, cursorId}));
   }
 
-  async cursorClose(cursorId) {
+  cursorClose(cursorId) {
     this._port.StreamCursorClose({handle: this, cursorId});
   }
 }
@@ -47180,7 +47186,7 @@ class Schema {
         this._model = model;
         this.description = {};
         if (model.description) {
-            model.description.description.forEach(desc => this.description[desc.name] = desc.pattern);
+            model.description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
         }
     }
     toLiteral() {
@@ -47213,6 +47219,11 @@ class Schema {
                 return `(${type.types.join(' or ')})`;
             case 'schema-tuple':
                 return `(${type.types.join(', ')})`;
+            case 'schema-reference':
+                return `Reference<${Schema._typeString(type.schema)}>`;
+            case 'type-name':
+            case 'schema-inline':
+                return type.model.entitySchema.toInlineSchemaString();
             default:
                 throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
         }
@@ -48551,6 +48562,13 @@ class FirebaseKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_5__["KeyBase"] {
         return `${this.protocol}://`;
     }
 }
+// Firebase's 'once' API does not return a Promise; wrap it so we can await the invocation of the
+// callback that returns the snapshot.
+function getSnapshot(reference) {
+    return new Promise(resolve => {
+        reference.once('value', snapshot => resolve(snapshot));
+    });
+}
 let _nextAppNameSuffix = 0;
 class FirebaseStorage extends _storage_provider_base__WEBPACK_IMPORTED_MODULE_0__["StorageBase"] {
     constructor(arcId) {
@@ -48636,15 +48654,11 @@ class FirebaseStorage extends _storage_provider_base__WEBPACK_IMPORTED_MODULE_0_
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!type.isVariable);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!type.isCollection || !type.primitiveType().isVariable);
         const { fbKey, reference } = this.attach(keyString);
-        let enableReferenceMode = false;
-        let currentSnapshot;
-        await reference.once('value', snapshot => currentSnapshot = snapshot);
+        const currentSnapshot = await getSnapshot(reference);
         if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
             return null;
         }
-        if (currentSnapshot.exists() && currentSnapshot.val().referenceMode) {
-            enableReferenceMode = true;
-        }
+        let enableReferenceMode = currentSnapshot.exists() && currentSnapshot.val().referenceMode;
         if (shouldExist === false || (shouldExist === 'unknown' && currentSnapshot.exists() === false)) {
             const result = await reference.transaction(data => {
                 if (data != null) {
@@ -48791,9 +48805,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         // Resolved when data is first available. The earlier of
         // * the initial value is supplied via firebase `reference.on`
         // * a value is written to the variable by a call to `set`.
-        this.initialized = new Promise(resolve => {
-            this.resolveInitialized = resolve;
-        });
+        this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
         this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
     }
     backingType() {
@@ -49450,22 +49462,18 @@ class FirebaseCursor {
     async _init() {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(this.state === CursorState.new);
         // Retrieve the current last item to establish our streaming version.
-        await this.orderByIndex.limitToLast(1).once('value', snapshot => snapshot.forEach(entry => {
-            this.end = entry.val().index;
-            // don't cancel
-            return false;
-        }));
+        const lastEntry = await getSnapshot(this.orderByIndex.limitToLast(1));
+        lastEntry.forEach(entry => this.end = entry.val().index);
         // Read one past the page size each time to establish the starting index for the next page.
         this.baseQuery = this.orderByIndex.endAt(this.end).limitToFirst(this.pageSize + 1);
         // Attach a listener for removed items and capture any that occur ahead of our streaming
         // frame. These will be returned after the cursor reaches the item at this.end.
-        this.removedFn = snapshot => {
+        this.removedFn = this.orderByIndex.on('child_removed', snapshot => {
             if (snapshot.val().index <= this.end &&
                 (this.nextStart === null || snapshot.val().index >= this.nextStart)) {
                 this.removed.push(snapshot.val().value);
             }
-        };
-        await this.orderByIndex.on('child_removed', this.removedFn);
+        });
         this.state = CursorState.init;
     }
     // Returns the BigCollection version at which this cursor is reading.
@@ -49491,16 +49499,17 @@ class FirebaseCursor {
         const value = [];
         if (this.state === CursorState.stream) {
             this.nextStart = null;
-            await query.once('value', snapshot => snapshot.forEach(entry => {
+            const queryResults = await getSnapshot(query);
+            queryResults.forEach(entry => {
                 if (value.length < this.pageSize) {
                     value.push(entry.val().value);
                 }
                 else {
                     this.nextStart = entry.val().index;
                 }
-            }));
+            });
             if (this.nextStart === null) {
-                await this._detach();
+                this._detach();
                 this.state = CursorState.removed;
             }
         }
@@ -49517,13 +49526,13 @@ class FirebaseCursor {
     }
     // Terminates the streamed read. This must be called if a cursor is no longer needed but has not
     // yet completed streaming (i.e. next() hasn't returned {done: true}).
-    async close() {
-        await this._detach();
+    close() {
+        this._detach();
         this.state = CursorState.done;
     }
-    async _detach() {
+    _detach() {
         if (this.removedFn) {
-            await this.orderByIndex.off('child_removed', this.removedFn);
+            this.orderByIndex.off('child_removed', this.removedFn);
             this.removedFn = null;
         }
     }
@@ -49558,12 +49567,9 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     }
     // TODO: rename this to avoid clashing with Variable and allow particles some way to specify the id
     async get(id) {
-        let value;
         const encId = FirebaseStorage.encodeKey(id);
-        await this.reference.child('items/' + encId).once('value', snapshot => {
-            value = (snapshot.val() !== null) ? snapshot.val().value : null;
-        });
-        return value;
+        const snapshot = await getSnapshot(this.reference.child('items/' + encId));
+        return (snapshot.val() !== null) ? snapshot.val().value : null;
     }
     // originatorId is included to maintain parity with Collection.store but is not used.
     async store(value, keys, originatorId) {
@@ -49585,7 +49591,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
             return version;
         }, undefined, false);
         const encId = FirebaseStorage.encodeKey(value.id);
-        return this.reference.child('items/' + encId).transaction(data => {
+        await this.reference.child('items/' + encId).transaction(data => {
             if (data === null) {
                 data = { value, keys: {} };
             }
@@ -49612,7 +49618,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
             return (data || 0) + 1;
         }, undefined, false);
         const encId = FirebaseStorage.encodeKey(id);
-        return this.reference.child('items/' + encId).remove();
+        await this.reference.child('items/' + encId).remove();
     }
     // Returns a FirebaseCursor id for paginated reads of the current version of this BigCollection.
     // The id should be passed to cursorNext() to retrive the contained entities. The cursor itself
@@ -49639,11 +49645,11 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
         return data;
     }
     // Calls close() on and discards the cursor identified by cursorId.
-    async cursorClose(cursorId) {
+    cursorClose(cursorId) {
         const cursor = this.cursors.get(cursorId);
         if (cursor) {
             this.cursors.delete(cursorId);
-            await cursor.close();
+            cursor.close();
         }
     }
     // Returns the version at which the cursor identified by cursorId is reading.
@@ -50090,7 +50096,7 @@ class InMemoryCursor {
         }
         return { value: this.data.splice(0, this.pageSize), done: false };
     }
-    async close() {
+    close() {
         this.data = [];
     }
 }
@@ -50118,7 +50124,6 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
         data.index = this.version;
         data.value = value;
         keys.forEach(k => data.keys[k] = this.version);
-        return data;
     }
     async remove(id, keys, originatorId) {
         this.version++;
@@ -50142,11 +50147,11 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
         }
         return data;
     }
-    async cursorClose(cursorId) {
+    cursorClose(cursorId) {
         const cursor = this.cursors.get(cursorId);
         if (cursor) {
             this.cursors.delete(cursorId);
-            await cursor.close();
+            cursor.close();
         }
     }
     cursorVersion(cursorId) {

@@ -72,6 +72,13 @@ class FirebaseKey extends KeyBase {
         return `${this.protocol}://`;
     }
 }
+// Firebase's 'once' API does not return a Promise; wrap it so we can await the invocation of the
+// callback that returns the snapshot.
+function getSnapshot(reference) {
+    return new Promise(resolve => {
+        reference.once('value', snapshot => resolve(snapshot));
+    });
+}
 let _nextAppNameSuffix = 0;
 export class FirebaseStorage extends StorageBase {
     constructor(arcId) {
@@ -157,15 +164,11 @@ export class FirebaseStorage extends StorageBase {
         assert(!type.isVariable);
         assert(!type.isCollection || !type.primitiveType().isVariable);
         const { fbKey, reference } = this.attach(keyString);
-        let enableReferenceMode = false;
-        let currentSnapshot;
-        await reference.once('value', snapshot => currentSnapshot = snapshot);
+        const currentSnapshot = await getSnapshot(reference);
         if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
             return null;
         }
-        if (currentSnapshot.exists() && currentSnapshot.val().referenceMode) {
-            enableReferenceMode = true;
-        }
+        let enableReferenceMode = currentSnapshot.exists() && currentSnapshot.val().referenceMode;
         if (shouldExist === false || (shouldExist === 'unknown' && currentSnapshot.exists() === false)) {
             const result = await reference.transaction(data => {
                 if (data != null) {
@@ -312,9 +315,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         // Resolved when data is first available. The earlier of
         // * the initial value is supplied via firebase `reference.on`
         // * a value is written to the variable by a call to `set`.
-        this.initialized = new Promise(resolve => {
-            this.resolveInitialized = resolve;
-        });
+        this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
         this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
     }
     backingType() {
@@ -971,22 +972,18 @@ class FirebaseCursor {
     async _init() {
         assert(this.state === CursorState.new);
         // Retrieve the current last item to establish our streaming version.
-        await this.orderByIndex.limitToLast(1).once('value', snapshot => snapshot.forEach(entry => {
-            this.end = entry.val().index;
-            // don't cancel
-            return false;
-        }));
+        const lastEntry = await getSnapshot(this.orderByIndex.limitToLast(1));
+        lastEntry.forEach(entry => this.end = entry.val().index);
         // Read one past the page size each time to establish the starting index for the next page.
         this.baseQuery = this.orderByIndex.endAt(this.end).limitToFirst(this.pageSize + 1);
         // Attach a listener for removed items and capture any that occur ahead of our streaming
         // frame. These will be returned after the cursor reaches the item at this.end.
-        this.removedFn = snapshot => {
+        this.removedFn = this.orderByIndex.on('child_removed', snapshot => {
             if (snapshot.val().index <= this.end &&
                 (this.nextStart === null || snapshot.val().index >= this.nextStart)) {
                 this.removed.push(snapshot.val().value);
             }
-        };
-        await this.orderByIndex.on('child_removed', this.removedFn);
+        });
         this.state = CursorState.init;
     }
     // Returns the BigCollection version at which this cursor is reading.
@@ -1012,16 +1009,17 @@ class FirebaseCursor {
         const value = [];
         if (this.state === CursorState.stream) {
             this.nextStart = null;
-            await query.once('value', snapshot => snapshot.forEach(entry => {
+            const queryResults = await getSnapshot(query);
+            queryResults.forEach(entry => {
                 if (value.length < this.pageSize) {
                     value.push(entry.val().value);
                 }
                 else {
                     this.nextStart = entry.val().index;
                 }
-            }));
+            });
             if (this.nextStart === null) {
-                await this._detach();
+                this._detach();
                 this.state = CursorState.removed;
             }
         }
@@ -1038,13 +1036,13 @@ class FirebaseCursor {
     }
     // Terminates the streamed read. This must be called if a cursor is no longer needed but has not
     // yet completed streaming (i.e. next() hasn't returned {done: true}).
-    async close() {
-        await this._detach();
+    close() {
+        this._detach();
         this.state = CursorState.done;
     }
-    async _detach() {
+    _detach() {
         if (this.removedFn) {
-            await this.orderByIndex.off('child_removed', this.removedFn);
+            this.orderByIndex.off('child_removed', this.removedFn);
             this.removedFn = null;
         }
     }
@@ -1079,12 +1077,9 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     }
     // TODO: rename this to avoid clashing with Variable and allow particles some way to specify the id
     async get(id) {
-        let value;
         const encId = FirebaseStorage.encodeKey(id);
-        await this.reference.child('items/' + encId).once('value', snapshot => {
-            value = (snapshot.val() !== null) ? snapshot.val().value : null;
-        });
-        return value;
+        const snapshot = await getSnapshot(this.reference.child('items/' + encId));
+        return (snapshot.val() !== null) ? snapshot.val().value : null;
     }
     // originatorId is included to maintain parity with Collection.store but is not used.
     async store(value, keys, originatorId) {
@@ -1106,7 +1101,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
             return version;
         }, undefined, false);
         const encId = FirebaseStorage.encodeKey(value.id);
-        return this.reference.child('items/' + encId).transaction(data => {
+        await this.reference.child('items/' + encId).transaction(data => {
             if (data === null) {
                 data = { value, keys: {} };
             }
@@ -1133,7 +1128,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
             return (data || 0) + 1;
         }, undefined, false);
         const encId = FirebaseStorage.encodeKey(id);
-        return this.reference.child('items/' + encId).remove();
+        await this.reference.child('items/' + encId).remove();
     }
     // Returns a FirebaseCursor id for paginated reads of the current version of this BigCollection.
     // The id should be passed to cursorNext() to retrive the contained entities. The cursor itself
@@ -1160,11 +1155,11 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
         return data;
     }
     // Calls close() on and discards the cursor identified by cursorId.
-    async cursorClose(cursorId) {
+    cursorClose(cursorId) {
         const cursor = this.cursors.get(cursorId);
         if (cursor) {
             this.cursors.delete(cursorId);
-            await cursor.close();
+            cursor.close();
         }
     }
     // Returns the version at which the cursor identified by cursorId is reading.

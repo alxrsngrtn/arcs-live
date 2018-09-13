@@ -2076,7 +2076,7 @@ class Cursor {
    * Terminates the streamed read. This must be called if a cursor is no longer needed but has not
    * yet completed streaming (i.e. next() hasn't returned {done: true}).
    */
-  async close() {
+  close() {
     this._parent._proxy.cursorClose(this._cursorId);
   }
 }
@@ -4135,7 +4135,7 @@ class BigCollectionProxy extends StorageProxyBase {
       this._port.StreamCursorNext({handle: this, callback: resolve, cursorId}));
   }
 
-  async cursorClose(cursorId) {
+  cursorClose(cursorId) {
     this._port.StreamCursorClose({handle: this, cursorId});
   }
 }
@@ -4386,7 +4386,7 @@ class Schema {
         this._model = model;
         this.description = {};
         if (model.description) {
-            model.description.description.forEach(desc => this.description[desc.name] = desc.pattern);
+            model.description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
         }
     }
     toLiteral() {
@@ -4419,6 +4419,11 @@ class Schema {
                 return `(${type.types.join(' or ')})`;
             case 'schema-tuple':
                 return `(${type.types.join(', ')})`;
+            case 'schema-reference':
+                return `Reference<${Schema._typeString(type.schema)}>`;
+            case 'type-name':
+            case 'schema-inline':
+                return type.model.entitySchema.toInlineSchemaString();
             default:
                 throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
         }
