@@ -1,5 +1,11 @@
-commit 43c1808ae15ad6905553c516d46465163f7ad5ff
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Sep 12 13:58:15 2018 +1000
+commit 7d676190112cab3ae8cd10a261cbea626b7ae8fa
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Sep 12 18:30:11 2018 -0700
 
-    Updates strategies.md (#1877)
+    First step in plumbing BigCollections through to the PEC. (#1881)
+    
+    Initiating a streamed read creates a Cursor object on the host side that
+    is mirrored inside the PEC, but the API calls for reading the stream are
+    mediated via the BigCollection/Handle pair and the Cursor itself is
+    tracked by the BigCollection instance. This is to avoid using the API
+    channel "Thing" tracking, which never releases objects once mapped.

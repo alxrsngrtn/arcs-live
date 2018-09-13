@@ -749,9 +749,13 @@ class PECOuterPort extends APIPort {
     this.registerHandler('HandleGet', {handle: this.Mapped, callback: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleToList', {handle: this.Mapped, callback: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
+    this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('HandleStore', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleRemove', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
-    this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
+    this.registerHandler('HandleStream', {handle: this.Mapped, callback: this.Direct, pageSize: this.Direct});
+    this.registerHandler('StreamCursorNext', {handle: this.Mapped, callback: this.Direct, cursorId: this.Direct});
+    this.registerHandler('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
+
     this.registerHandler('Idle', {version: this.Direct, relevance: this.Map(this.Mapped, this.Direct)});
 
     this.registerHandler('GetBackingStore', {callback: this.Direct, storageKey: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"])});
@@ -762,10 +766,8 @@ class PECOuterPort extends APIPort {
 
     this.registerHandler('ArcCreateHandle', {callback: this.Direct, arc: this.LocalMapped, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct});
     this.registerInitializer('CreateHandleCallback', {callback: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct, id: this.Direct});
-
     this.registerHandler('ArcMapHandle', {callback: this.Direct, arc: this.LocalMapped, handle: this.Mapped});
     this.registerInitializer('MapHandleCallback', {callback: this.Direct, id: this.Direct});
-
     this.registerHandler('ArcCreateSlot',
       {callback: this.Direct, arc: this.LocalMapped, transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedParticleName: this.Direct, hostedSlotName: this.Direct, handleId: this.Direct});
     this.registerInitializer('CreateSlotCallback', {callback: this.Direct, hostedSlotId: this.Direct});
@@ -801,9 +803,13 @@ class PECInnerPort extends APIPort {
     this.registerCall('HandleGet', {handle: this.Mapped, callback: this.LocalMapped, particleId: this.Direct});
     this.registerCall('HandleToList', {handle: this.Mapped, callback: this.LocalMapped, particleId: this.Direct});
     this.registerCall('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
+    this.registerCall('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerCall('HandleStore', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
     this.registerCall('HandleRemove', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
-    this.registerCall('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
+    this.registerCall('HandleStream', {handle: this.Mapped, callback: this.LocalMapped, pageSize: this.Direct});
+    this.registerCall('StreamCursorNext', {handle: this.Mapped, callback: this.LocalMapped, cursorId: this.Direct});
+    this.registerCall('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
+
     this.registerCall('Idle', {version: this.Direct, relevance: this.Map(this.Mapped, this.Direct)});
 
     this.registerCall('GetBackingStore', {callback: this.LocalMapped, storageKey: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"])});
@@ -824,7 +830,6 @@ class PECInnerPort extends APIPort {
     this.registerCall('ArcLoadRecipe', {arc: this.Direct, recipe: this.Direct, callback: this.LocalMapped});
 
     this.registerCall('RaiseSystemException', {exception: this.Direct, methodName: this.Direct, particleId: this.Direct});
-
   }
 }
 
@@ -1192,6 +1197,8 @@ class OuterPortAttachment {
   onHandleRemove({handle, data, particleId}) {
     this._logHandleCall({operation: 'remove', handle, data, particleId});
   }
+
+  // TODO: add BigCollection stream APIs?
 
   _logHandleCall(args) {
     this._sendDataflowMessage(this._describeHandleCall(args), args.data);
@@ -1875,10 +1882,6 @@ class Handle {
  * which handles are connected.
  */
 class Collection extends Handle {
-  constructor(proxy, name, particleId, canRead, canWrite) {
-    super(proxy, name, particleId, canRead, canWrite);
-  }
-
   // Called by StorageProxy.
   _notify(kind, particle, details) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(this.canRead, '_notify should not be called for non-readable handles');
@@ -1923,7 +1926,6 @@ class Collection extends Handle {
      in the particle's manifest.
    */
   async toList() {
-    // TODO: remove this and use query instead
     if (!this.canRead) {
       throw new Error('Handle not readable');
     }
@@ -1970,10 +1972,6 @@ class Collection extends Handle {
  * the current recipe identifies which handles are connected.
  */
 class Variable extends Handle {
-  constructor(proxy, name, particleId, canRead, canWrite) {
-    super(proxy, name, particleId, canRead, canWrite);
-  }
-
   // Called by StorageProxy.
   _notify(kind, particle, details) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(this.canRead, '_notify should not be called for non-readable handles');
@@ -2047,13 +2045,100 @@ class Variable extends Handle {
     if (!this.canWrite) {
       throw new Error('Handle not writeable');
     }
-    await this._proxy.clear(this._particleId);
+    return this._proxy.clear(this._particleId);
+  }
+}
+
+/** @class Cursor
+ * Provides paginated read access to a BigCollection. Conforms to the javascript iterator protocol
+ * but is not marked as iterable because next() is async, which is currently not supported by
+ * implicit iteration in Javascript.
+ */
+class Cursor {
+  constructor(parent, cursorId) {
+    this._parent = parent;
+    this._cursorId = cursorId;
+  }
+
+  /** @method next()
+   * Returns {value: [items], done: false} while there are items still available, or {done: true}
+   * when the cursor has completed reading the collection.
+   */
+  async next() {
+    let data = await this._parent._proxy.cursorNext(this._cursorId);
+    if (!data.done) {
+      data.value = data.value.map(a => restore(a, this._parent.entityClass));
+    }
+    return data;
+  }
+
+  /** @method close()
+   * Terminates the streamed read. This must be called if a cursor is no longer needed but has not
+   * yet completed streaming (i.e. next() hasn't returned {done: true}).
+   */
+  async close() {
+    this._parent._proxy.cursorClose(this._cursorId);
+  }
+}
+
+/** @class BigCollection
+ * A handle on a large set of Entity data. Similar to Collection, except the complete set of
+ * entities is not available directly; use stream() to read the full set.
+ */
+class BigCollection extends Handle {
+  configure(options) {
+    throw new Error('BigCollections do not support sync/update configuration');
+  }
+
+  /** @method store(entity)
+   * Stores a new entity into the Handle.
+   * throws: Error if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+   * in the particle's manifest.
+   */
+  async store(entity) {
+    if (!this.canWrite) {
+      throw new Error('Handle not writeable');
+    }
+    let serialization = this._serialize(entity);
+    let keys = [this._proxy.generateID() + 'key'];
+    return this._proxy.store(serialization, keys, this._particleId);
+  }
+
+  /** @method remove(entity)
+   * Removes an entity from the Handle.
+   * throws: Error if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+   * in the particle's manifest.
+   */
+  async remove(entity) {
+    if (!this.canWrite) {
+      throw new Error('Handle not writeable');
+    }
+    let serialization = this._serialize(entity);
+    return this._proxy.remove(serialization.id, [], this._particleId);
+  }
+
+  /** @method stream(pageSize)
+   * Returns a Cursor instance that iterates over the full set of entities, reading `pageSize`
+   * entities at a time. The cursor views a snapshot of the collection, locked to the version
+   * at which the cursor is created.
+   * throws: Error if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
+   * in the particle's manifest.
+   */
+  async stream(pageSize) {
+    if (!this.canRead) {
+      throw new Error('Handle not readable');
+    }
+    let cursorId = await this._proxy.stream(pageSize);
+    return new Cursor(this, cursorId);
   }
 }
 
 function handleFor(proxy, name, particleId, canRead = true, canWrite = true) {
   if (proxy.type.isCollection) {
     return new Collection(proxy, name, particleId, canRead, canWrite);
+  }
+  if (proxy.type.isBigCollection) {
+    return new BigCollection(proxy, name, particleId, canRead, canWrite);
   }
   return new Variable(proxy, name, particleId, canRead, canWrite);
 }
@@ -3518,9 +3603,13 @@ const SyncState = {none: 0, pending: 1, full: 2};
  */
 class StorageProxy {
   constructor(id, type, port, pec, scheduler, name) {
-    return type.isCollection
-        ? new CollectionProxy(id, type, port, pec, scheduler, name)
-        : new VariableProxy(id, type, port, pec, scheduler, name);
+    if (type.isCollection) {
+      return new CollectionProxy(id, type, port, pec, scheduler, name);
+    }
+    if (type.isBigCollection) {
+      return new BigCollectionProxy(id, type, port, pec, scheduler, name);
+    }
+    return new VariableProxy(id, type, port, pec, scheduler, name);
   }
 }
 
@@ -3781,8 +3870,8 @@ class CollectionProxy extends StorageProxyBase {
     } else {
       // TODO: in synchronized mode, this should integrate with SynchronizeProxy rather than
       //       sending a parallel request
-      return new Promise((resolve, reject) =>
-        this._port.HandleToList({callback: r => resolve(r), handle: this, particleId}));
+      return new Promise(resolve =>
+        this._port.HandleToList({callback: resolve, handle: this, particleId}));
     }
   }
 
@@ -3901,7 +3990,7 @@ class VariableProxy extends StorageProxyBase {
     if (this._synchronized == SyncState.full) {
       return Promise.resolve(this._model);
     } else {
-      return new Promise((resolve, reject) =>
+      return new Promise(resolve =>
         this._port.HandleGet({callback: resolve, handle: this, particleId}));
     }
   }
@@ -4016,6 +4105,38 @@ class StorageProxyScheduler {
     }
 
     this._updateIdle();
+  }
+}
+
+// BigCollections are never synchronized. No local state is held and all operations are passed
+// directly through to the backing store.
+class BigCollectionProxy extends StorageProxyBase {
+  // BigCollections don't hold a local model so the sync/update mechanism isn't meaningful.
+  register(particle, handle) {
+  }
+
+  // TODO: surface get()
+
+  async store(value, keys, particleId) {
+    this._port.HandleStore({handle: this, data: {value, keys}, particleId});
+  }
+
+  async remove(id, particleId) {
+    this._port.HandleRemove({handle: this, data: {id, keys: []}, particleId});
+  }
+
+  async stream(pageSize) {
+    return new Promise(resolve =>
+      this._port.HandleStream({handle: this, callback: resolve, pageSize}));
+  }
+
+  async cursorNext(cursorId) {
+    return new Promise(resolve =>
+      this._port.StreamCursorNext({handle: this, callback: resolve, cursorId}));
+  }
+
+  async cursorClose(cursorId) {
+    this._port.StreamCursorClose({handle: this, cursorId});
   }
 }
 

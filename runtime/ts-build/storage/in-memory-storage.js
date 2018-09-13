@@ -390,11 +390,30 @@ class InMemoryVariable extends InMemoryStorageProvider {
     }
 }
 // In-memory version of the BigCollection API; primarily for testing.
+class InMemoryCursor {
+    constructor(version, data, pageSize) {
+        this.version = version;
+        this.pageSize = pageSize;
+        const copy = [...data];
+        copy.sort((a, b) => a.index - b.index);
+        this.data = copy.map(v => v.value);
+    }
+    async next() {
+        if (this.data.length === 0) {
+            return { done: true };
+        }
+        return { value: this.data.splice(0, this.pageSize), done: false };
+    }
+    async close() {
+        this.data = [];
+    }
+}
 class InMemoryBigCollection extends InMemoryStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, name, id, key);
-        this.version = 0;
         this.items = new Map();
+        this.cursors = new Map();
+        this.cursorIndex = 0;
     }
     backingType() {
         return this.type.primitiveType();
@@ -403,7 +422,7 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
         const data = this.items.get(id);
         return (data !== undefined) ? data.value : null;
     }
-    async store(value, keys) {
+    async store(value, keys, originatorId) {
         assert(keys != null && keys.length > 0, 'keys required');
         this.version++;
         if (!this.items.has(value.id)) {
@@ -415,26 +434,38 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
         keys.forEach(k => data.keys[k] = this.version);
         return data;
     }
-    async remove(id) {
+    async remove(id, keys, originatorId) {
         this.version++;
         this.items.delete(id);
     }
     async stream(pageSize) {
         assert(!isNaN(pageSize) && pageSize > 0);
-        let copy = [...this.items.values()];
-        copy.sort((a, b) => a.index - b.index);
-        return {
-            version: this.version,
-            async next() {
-                if (copy.length === 0) {
-                    return { done: true };
-                }
-                return { value: copy.splice(0, pageSize).map(v => v.value), done: false };
-            },
-            async close() {
-                copy = [];
-            }
-        };
+        this.cursorIndex++;
+        const cursor = new InMemoryCursor(this.version, this.items.values(), pageSize);
+        this.cursors.set(this.cursorIndex, cursor);
+        return this.cursorIndex;
+    }
+    async cursorNext(cursorId) {
+        const cursor = this.cursors.get(cursorId);
+        if (!cursor) {
+            return { done: true };
+        }
+        const data = await cursor.next();
+        if (data.done) {
+            this.cursors.delete(cursorId);
+        }
+        return data;
+    }
+    async cursorClose(cursorId) {
+        const cursor = this.cursors.get(cursorId);
+        if (cursor) {
+            this.cursors.delete(cursorId);
+            await cursor.close();
+        }
+    }
+    cursorVersion(cursorId) {
+        const cursor = this.cursors.get(cursorId);
+        return cursor ? cursor.version : null;
     }
     toLiteral() {
         assert(false, "no toLiteral implementation for BigCollection");
