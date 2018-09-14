@@ -1,5 +1,5 @@
-commit 5d45f6f2f1ec2a945aa9b2f3ffbd33644126df47
+commit e537d6412a53b0777b269f5a504b430108810f8a
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Sep 13 19:35:43 2018 -0700
+Date:   Thu Sep 13 21:53:59 2018 -0700
 
-    handleFor sets up entityClass as appropriate (#1886)
+    Trivial rename of private function to reduce future confusion (#1887)
