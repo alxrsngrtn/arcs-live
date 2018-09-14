@@ -2134,13 +2134,20 @@ class BigCollection extends Handle {
 }
 
 function handleFor(proxy, name, particleId, canRead = true, canWrite = true) {
+  let handle;
   if (proxy.type.isCollection) {
-    return new Collection(proxy, name, particleId, canRead, canWrite);
+    handle = new Collection(proxy, name, particleId, canRead, canWrite);
+  } else if (proxy.type.isBigCollection) {
+    handle = new BigCollection(proxy, name, particleId, canRead, canWrite);
+  } else {
+    handle = new Variable(proxy, name, particleId, canRead, canWrite);
   }
-  if (proxy.type.isBigCollection) {
-    return new BigCollection(proxy, name, particleId, canRead, canWrite);
+
+  let type = proxy.type.getContainedType() || proxy.type;
+  if (type.isEntity) {
+    handle.entityClass = type.entitySchema.entityClass();
   }
-  return new Variable(proxy, name, particleId, canRead, canWrite);
+  return handle;
 }
 
 
@@ -2676,7 +2683,6 @@ class ParticleExecutionContext {
         return new Promise((resolve, reject) =>
           pec._apiPort.ArcCreateHandle({arc: arcId, type, name, callback: proxy => {
             let handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, particleId);
-            handle.entityClass = (proxy.type.getContainedType() || proxy.type).entitySchema.entityClass();
             resolve(handle);
             if (hostParticle) {
               proxy.register(hostParticle, handle);
@@ -2752,10 +2758,6 @@ class ParticleExecutionContext {
     proxies.forEach((proxy, name) => {
       let connSpec = spec.connectionMap.get(name);
       let handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, id, connSpec.isInput, connSpec.isOutput);
-      let type = proxy.type.getContainedType() || proxy.type;
-      if (type.isEntity) {
-        handle.entityClass = type.entitySchema.entityClass();
-      }
       handleMap.set(name, handle);
 
       // Defer registration of handles with proxies until after particles have a chance to
@@ -4270,7 +4272,6 @@ class Reference {
         if (this.storageProxy == null) {
             this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referenceReferredType);
             this.handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_2__["handleFor"])(this.storageProxy);
-            this.handle.entityClass = this.type.referenceReferredType.entitySchema.entityClass();
             if (this.storageKey) {
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.storageKey === this.storageProxy.storageKey);
             }

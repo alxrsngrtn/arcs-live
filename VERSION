@@ -1,7 +1,5 @@
-commit 6ebb360781b2af7aa93dc3b688e974ced0eba023
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Thu Sep 13 15:21:50 2018 -0700
+commit 5d45f6f2f1ec2a945aa9b2f3ffbd33644126df47
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Sep 13 19:35:43 2018 -0700
 
-    Suggestions must be piped to AndroidWebView as JSON string (#1884)
-    
-    Commited even though build is failing on the restaurant booking demo, this should have no effect.
+    handleFor sets up entityClass as appropriate (#1886)
