@@ -1,5 +1,5 @@
-commit e537d6412a53b0777b269f5a504b430108810f8a
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Sep 13 21:53:59 2018 -0700
+commit 89f3ba9877d2f2454a3d34f0c0beaa16c4c0f190
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Sep 17 12:45:59 2018 -0700
 
-    Trivial rename of private function to reduce future confusion (#1887)
+    planner keep relevances list up to date (restored) (#1891)
