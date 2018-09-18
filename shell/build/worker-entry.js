@@ -1973,18 +1973,30 @@ class Collection extends Handle {
  */
 class Variable extends Handle {
   // Called by StorageProxy.
-  _notify(kind, particle, details) {
+  async _notify(kind, particle, details) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(this.canRead, '_notify should not be called for non-readable handles');
     switch (kind) {
       case 'sync':
-        particle.onHandleSync(this, this._restore(details));
+        try {
+          await particle.onHandleSync(this, this._restore(details));
+        } catch (e) {
+          this.raiseSystemException(e, `${particle.name}::onHandleSync`);
+        }
         return;
       case 'update': {
-        particle.onHandleUpdate(this, {data: this._restore(details.data)});
+        try {
+          await particle.onHandleUpdate(this, {data: this._restore(details.data)});
+        } catch (e) {
+          this.raiseSystemException(e, `${particle.name}::onHandleUpdate`);
+        }
         return;
       }
       case 'desync':
-        particle.onHandleDesync(this);
+        try {
+          await particle.onHandleDesync(this);
+        } catch (e) {
+          this.raiseSystemException(e, `${particle.name}::onHandleDesync`);
+        }
         return;
     }
   }
@@ -2145,7 +2157,7 @@ function handleFor(proxy, name, particleId, canRead = true, canWrite = true) {
 
   let type = proxy.type.getContainedType() || proxy.type;
   if (type.isEntity) {
-    handle.entityClass = type.entitySchema.entityClass();
+    handle.entityClass = type.entitySchema.entityClass(proxy.pec);
   }
   return handle;
 }
@@ -2728,8 +2740,8 @@ class ParticleExecutionContext {
           resolve(proxy);
         }});
       });
-      return this._keyedProxies[storageKey];
     }
+    return this._keyedProxies[storageKey];
   }
 
   defaultCapabilitySet() {
@@ -4281,6 +4293,7 @@ class Reference {
         }
     }
     async dereference() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.context, "Must have context to dereference");
         if (this.entity) {
             return this.entity;
         }
@@ -4300,6 +4313,7 @@ var ReferenceMode;
 function newClientReference(context) {
     return class extends Reference {
         constructor(entity) {
+            // TODO(shans): start carrying storageKey information around on Entity objects
             super({ id: entity.id, storageKey: null }, _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newReference(entity.constructor.type), context);
             this.mode = ReferenceMode.Unstored;
             this.entity = entity;
@@ -4340,7 +4354,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Schema", function() { return Schema; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../entity.js */ "./runtime/entity.js");
+/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../entity.js */ "./runtime/entity.js");
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./reference.js */ "./runtime/ts-build/reference.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4350,6 +4366,8 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+
 
 
 
@@ -4391,10 +4409,34 @@ class Schema {
         }
     }
     toLiteral() {
-        return this._model;
+        const fields = {};
+        for (const key of Object.keys(this._model.fields)) {
+            const field = this._model.fields[key];
+            if (field.kind === 'schema-reference') {
+                const schema = field.schema;
+                fields[key] = { kind: 'schema-reference', schema: { kind: schema.kind, model: schema.model.toLiteral() } };
+            }
+            else {
+                fields[key] = field;
+            }
+        }
+        return { names: this._model.names, fields, description: this.description };
     }
     static fromLiteral(data) {
-        return new Schema(data);
+        const fields = {};
+        for (const key of Object.keys(data.fields)) {
+            const field = data.fields[key];
+            if (field.kind === 'schema-reference') {
+                const schema = field.schema;
+                fields[key] = { kind: 'schema-reference', schema: { kind: schema.kind, model: _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(schema.model) } };
+            }
+            else {
+                fields[key] = field;
+            }
+        }
+        const result = new Schema({ names: data.names, fields });
+        result.description = data.description;
+        return result;
     }
     get fields() {
         return this._model.fields;
@@ -4491,7 +4533,7 @@ class Schema {
     get type() {
         return _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newEntity(this);
     }
-    entityClass() {
+    entityClass(context = null) {
         const schema = this;
         const className = this.name;
         const classJunk = ['toJSON', 'prototype', 'toString', 'inspect'];
@@ -4555,11 +4597,19 @@ class Schema {
                         }
                     });
                     break;
+                case 'schema-reference':
+                    if (!(value instanceof _reference_js__WEBPACK_IMPORTED_MODULE_4__["Reference"])) {
+                        throw new TypeError(`Cannot ${op} reference ${name} with non-reference '${value}'`);
+                    }
+                    if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"].compareTypes({ type: value.type }, { type: _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newReference(fieldType.schema.model) })) {
+                        throw new TypeError(`Cannot ${op} reference ${name} with value '${value}' of mismatched type`);
+                    }
+                    break;
                 default:
                     throw new Error(`Unknown kind ${fieldType.kind} in schema ${className}`);
             }
         };
-        const clazz = class extends _entity_js__WEBPACK_IMPORTED_MODULE_2__["Entity"] {
+        const clazz = class extends _entity_js__WEBPACK_IMPORTED_MODULE_3__["Entity"] {
             constructor(data, userIDComponent) {
                 super(userIDComponent);
                 this.rawData = new Proxy({}, {
@@ -4579,14 +4629,39 @@ class Schema {
                 });
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data, `can't construct entity with null data`);
                 for (const [name, value] of Object.entries(data)) {
-                    this.rawData[name] = value;
+                    if (fieldTypes[name] && fieldTypes[name].kind === 'schema-reference' && value) {
+                        let type;
+                        if (value instanceof _reference_js__WEBPACK_IMPORTED_MODULE_4__["Reference"]) {
+                            // Setting value as Reference (Particle side). This will enforce that the type provided for
+                            // the handle matches the type of the reference.
+                            type = value.type;
+                        }
+                        else if (value.id && value.storageKey) {
+                            // Setting value from raw data (Channel side).
+                            // TODO(shans): This can't enforce type safety here as there isn't any type data available.
+                            // Maybe this is OK because there's type checking on the other side of the channel?
+                            type = fieldTypes[name].schema.model;
+                        }
+                        else {
+                            throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
+                        }
+                        this.rawData[name] = new _reference_js__WEBPACK_IMPORTED_MODULE_4__["Reference"](value, _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newReference(type), context);
+                    }
+                    else {
+                        this.rawData[name] = value;
+                    }
                 }
             }
             dataClone() {
                 const clone = {};
                 for (const name of Object.keys(schema.fields)) {
                     if (this.rawData[name] !== undefined) {
-                        clone[name] = this.rawData[name];
+                        if (fieldTypes[name] && fieldTypes[name].kind === 'schema-reference') {
+                            clone[name] = this.rawData[name].dataClone();
+                        }
+                        else {
+                            clone[name] = this.rawData[name];
+                        }
                     }
                 }
                 return clone;
@@ -5486,16 +5561,13 @@ class Type {
             else {
                 const newTypeVariable = _type_variable_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariable"].fromLiteral(this.variable.toLiteralIgnoringResolutions());
                 if (this.variable.resolution) {
-                    newTypeVariable.resolution =
-                        this.variable.resolution._cloneWithResolutions(variableMap);
+                    newTypeVariable.resolution = this.variable.resolution._cloneWithResolutions(variableMap);
                 }
                 if (this.variable._canReadSubset) {
-                    newTypeVariable.canReadSubset =
-                        this.variable.canReadSubset._cloneWithResolutions(variableMap);
+                    newTypeVariable.canReadSubset = this.variable.canReadSubset._cloneWithResolutions(variableMap);
                 }
                 if (this.variable._canWriteSuperset) {
-                    newTypeVariable.canWriteSuperset =
-                        this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
+                    newTypeVariable.canWriteSuperset = this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
                 }
                 variableMap.set(this.variable, newTypeVariable);
                 return new Type('Variable', newTypeVariable);

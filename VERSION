@@ -1,5 +1,5 @@
-commit 89f3ba9877d2f2454a3d34f0c0beaa16c4c0f190
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Sep 17 12:45:59 2018 -0700
+commit d6e84ef751a5ffa625dc6312d0a6dd201affba47
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Sep 18 13:37:33 2018 +1000
 
-    planner keep relevances list up to date (restored) (#1891)
+    Ensure references in schemas are plumbed through to particles & can be used. (#1888)
