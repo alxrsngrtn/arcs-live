@@ -76,7 +76,7 @@ export class Schema {
             }
         }
         const result = new Schema({ names: data.names, fields });
-        result.description = data.description;
+        result.description = data.description || {};
         return result;
     }
     get fields() {

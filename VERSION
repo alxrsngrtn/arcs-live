@@ -1,5 +1,5 @@
-commit d6e84ef751a5ffa625dc6312d0a6dd201affba47
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Sep 18 13:37:33 2018 +1000
+commit 4c517b4b441515b750efefe86e9f12369c974441
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Sep 18 15:21:08 2018 -0700
 
-    Ensure references in schemas are plumbed through to particles & can be used. (#1888)
+    Disable failing test to unblock deploys (#1903)

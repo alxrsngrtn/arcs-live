@@ -25121,7 +25121,7 @@ class Arc {
 
     switch (key.protocol) {
       case 'firebase':
-        context.handles += `store ${id} of ${handle.type.toString()} '${handle.id}' @${handle.version} ${handleTags} at '${handle.storageKey}'\n`;
+        context.handles += `store ${id} of ${handle.type.toString()} '${handle.id}' @${handle.version === null ? 0 : handle.version} ${handleTags} at '${handle.storageKey}'\n`;
         break;
       case 'in-memory': {
         // TODO(sjmiles): emit empty data for stores marked `nosync`: shell will supply data
@@ -25165,7 +25165,7 @@ class Arc {
         let data = JSON.stringify(serializedData);
         context.resources += data.split('\n').map(line => indent + line).join('\n');
         context.resources += '\n';
-        context.handles += `store ${id} of ${handle.type.toString()} '${handle.id}' @${handle.version} ${handleTags} in ${id}Resource\n`;
+        context.handles += `store ${id} of ${handle.type.toString()} '${handle.id}' @${handle.version === null ? 0 : handle.version} ${handleTags} in ${id}Resource\n`;
         break;
       }
     }
@@ -47236,7 +47236,7 @@ class Schema {
             }
         }
         const result = new Schema({ names: data.names, fields });
-        result.description = data.description;
+        result.description = data.description || {};
         return result;
     }
     get fields() {
