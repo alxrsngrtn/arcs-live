@@ -1,5 +1,5 @@
-commit b2ac1d9a05e724fd3c493294e0338ceab40e7705
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Sep 18 22:59:36 2018 -0700
+commit aa2ca9a5de2837d196be1f8c2e2dfb5593c57825
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Sep 19 16:22:27 2018 +1000
 
-    use dynamic particle description in recipe description (#1906)
+    Adds proper descriptions to Artist demo (#1907)
