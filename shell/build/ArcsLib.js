@@ -35311,7 +35311,7 @@ class DescriptionFormatter {
 
     if (handleNames.length == 0) {
       // Use the full particle description
-      return this._initTokens(particle.spec.pattern || '', particleDescription);
+      return this._initTokens(particleDescription.pattern || particle.spec.pattern || '', particleDescription);
     }
 
     let handleConn = particle.connections[handleNames[0]];

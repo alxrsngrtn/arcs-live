@@ -1,5 +1,5 @@
-commit 35d4b93cd48d827445d53174f01478e02e8ce7d9
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Sep 19 13:32:28 2018 +1000
+commit b2ac1d9a05e724fd3c493294e0338ceab40e7705
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Sep 18 22:59:36 2018 -0700
 
-    More paint and knowledge graph integration for music demo (#1905)
+    use dynamic particle description in recipe description (#1906)
