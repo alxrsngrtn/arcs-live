@@ -24815,8 +24815,8 @@ class PECOuterPort extends APIPort {
     this.registerHandler('HandleToList', {handle: this.Mapped, callback: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
-    this.registerHandler('HandleStore', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
-    this.registerHandler('HandleRemove', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
+    this.registerHandler('HandleStore', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
+    this.registerHandler('HandleRemove', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleStream', {handle: this.Mapped, callback: this.Direct, pageSize: this.Direct});
     this.registerHandler('StreamCursorNext', {handle: this.Mapped, callback: this.Direct, cursorId: this.Direct});
     this.registerHandler('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
@@ -24869,8 +24869,8 @@ class PECInnerPort extends APIPort {
     this.registerCall('HandleToList', {handle: this.Mapped, callback: this.LocalMapped, particleId: this.Direct});
     this.registerCall('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
     this.registerCall('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
-    this.registerCall('HandleStore', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
-    this.registerCall('HandleRemove', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
+    this.registerCall('HandleStore', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
+    this.registerCall('HandleRemove', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
     this.registerCall('HandleStream', {handle: this.Mapped, callback: this.LocalMapped, pageSize: this.Direct});
     this.registerCall('StreamCursorNext', {handle: this.Mapped, callback: this.LocalMapped, cursorId: this.Direct});
     this.registerCall('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
@@ -26594,47 +26594,54 @@ const parser = /*
           },
         peg$c227 = function(schema) {
             return {
+              kind: 'schema-collection',
+              location: location(),
+              schema
+            }
+          },
+        peg$c228 = function(schema) {
+            return {
               kind: 'schema-reference',
               location: location(),
               schema
             };
           },
-        peg$c228 = "Text",
-        peg$c229 = peg$literalExpectation("Text", false),
-        peg$c230 = "URL",
-        peg$c231 = peg$literalExpectation("URL", false),
-        peg$c232 = "Number",
-        peg$c233 = peg$literalExpectation("Number", false),
-        peg$c234 = "Boolean",
-        peg$c235 = peg$literalExpectation("Boolean", false),
-        peg$c236 = "Bytes",
-        peg$c237 = peg$literalExpectation("Bytes", false),
-        peg$c238 = "Object",
-        peg$c239 = peg$literalExpectation("Object", false),
-        peg$c240 = "or",
-        peg$c241 = peg$literalExpectation("or", false),
-        peg$c242 = function(first, rest) {
+        peg$c229 = "Text",
+        peg$c230 = peg$literalExpectation("Text", false),
+        peg$c231 = "URL",
+        peg$c232 = peg$literalExpectation("URL", false),
+        peg$c233 = "Number",
+        peg$c234 = peg$literalExpectation("Number", false),
+        peg$c235 = "Boolean",
+        peg$c236 = peg$literalExpectation("Boolean", false),
+        peg$c237 = "Bytes",
+        peg$c238 = peg$literalExpectation("Bytes", false),
+        peg$c239 = "Object",
+        peg$c240 = peg$literalExpectation("Object", false),
+        peg$c241 = "or",
+        peg$c242 = peg$literalExpectation("or", false),
+        peg$c243 = function(first, rest) {
             let types = [first];
             for (let type of rest) {
               types.push(type[3]);
             }
             return {kind: 'schema-union', location: location(), types};
           },
-        peg$c243 = function(first, rest) {
+        peg$c244 = function(first, rest) {
             let types = [first];
             for (let type of rest) {
               types.push(type[3]);
             }
             return {kind: 'schema-tuple', location: location(), types};
           },
-        peg$c244 = /^[0-9]/,
-        peg$c245 = peg$classExpectation([["0", "9"]], false, false),
-        peg$c246 = function(version) {
+        peg$c245 = /^[0-9]/,
+        peg$c246 = peg$classExpectation([["0", "9"]], false, false),
+        peg$c247 = function(version) {
             return Number(version.join(''));
           },
-        peg$c247 = " ",
-        peg$c248 = peg$literalExpectation(" ", false),
-        peg$c249 = function(i) {
+        peg$c248 = " ",
+        peg$c249 = peg$literalExpectation(" ", false),
+        peg$c250 = function(i) {
           i = i.join('');
           if (i.length > indent.length) {
             indents.push(indent);
@@ -26642,7 +26649,7 @@ const parser = /*
             return true;
           }
         },
-        peg$c250 = function(i) {
+        peg$c251 = function(i) {
           i = i.join('');
           if (i.length == indent.length) {
             return true;
@@ -26651,7 +26658,7 @@ const parser = /*
             return false;
           }
         },
-        peg$c251 = function(i) {
+        peg$c252 = function(i) {
           i = i.join('');
           if (i.length >= indent.length) {
             return true;
@@ -26660,32 +26667,32 @@ const parser = /*
             return false;
           }
         },
-        peg$c252 = "`",
-        peg$c253 = peg$literalExpectation("`", false),
-        peg$c254 = /^[^`]/,
-        peg$c255 = peg$classExpectation(["`"], true, false),
-        peg$c256 = function(pattern) { return pattern.join(''); },
-        peg$c257 = "'",
-        peg$c258 = peg$literalExpectation("'", false),
-        peg$c259 = /^[^']/,
-        peg$c260 = peg$classExpectation(["'"], true, false),
-        peg$c261 = function(id) {return id.join('')},
-        peg$c262 = /^[A-Z]/,
-        peg$c263 = peg$classExpectation([["A", "Z"]], false, false),
-        peg$c264 = /^[a-z0-9_]/i,
-        peg$c265 = peg$classExpectation([["a", "z"], ["0", "9"], "_"], false, true),
-        peg$c266 = function(ident) {return text()},
-        peg$c267 = /^[a-z]/,
-        peg$c268 = peg$classExpectation([["a", "z"]], false, false),
-        peg$c269 = /^[ ]/,
-        peg$c270 = peg$classExpectation([" "], false, false),
-        peg$c271 = peg$anyExpectation(),
-        peg$c272 = "//",
-        peg$c273 = peg$literalExpectation("//", false),
-        peg$c274 = "\r",
-        peg$c275 = peg$literalExpectation("\r", false),
-        peg$c276 = "\n",
-        peg$c277 = peg$literalExpectation("\n", false),
+        peg$c253 = "`",
+        peg$c254 = peg$literalExpectation("`", false),
+        peg$c255 = /^[^`]/,
+        peg$c256 = peg$classExpectation(["`"], true, false),
+        peg$c257 = function(pattern) { return pattern.join(''); },
+        peg$c258 = "'",
+        peg$c259 = peg$literalExpectation("'", false),
+        peg$c260 = /^[^']/,
+        peg$c261 = peg$classExpectation(["'"], true, false),
+        peg$c262 = function(id) {return id.join('')},
+        peg$c263 = /^[A-Z]/,
+        peg$c264 = peg$classExpectation([["A", "Z"]], false, false),
+        peg$c265 = /^[a-z0-9_]/i,
+        peg$c266 = peg$classExpectation([["a", "z"], ["0", "9"], "_"], false, true),
+        peg$c267 = function(ident) {return text()},
+        peg$c268 = /^[a-z]/,
+        peg$c269 = peg$classExpectation([["a", "z"]], false, false),
+        peg$c270 = /^[ ]/,
+        peg$c271 = peg$classExpectation([" "], false, false),
+        peg$c272 = peg$anyExpectation(),
+        peg$c273 = "//",
+        peg$c274 = peg$literalExpectation("//", false),
+        peg$c275 = "\r",
+        peg$c276 = peg$literalExpectation("\r", false),
+        peg$c277 = "\n",
+        peg$c278 = peg$literalExpectation("\n", false),
 
         peg$currPos          = 0,
         peg$savedPos         = 0,
@@ -32585,11 +32592,14 @@ const parser = /*
 
       s0 = peg$parseSchemaReferenceType();
       if (s0 === peg$FAILED) {
-        s0 = peg$parseSchemaPrimitiveType();
+        s0 = peg$parseSchemaCollectionType();
         if (s0 === peg$FAILED) {
-          s0 = peg$parseSchemaUnionType();
+          s0 = peg$parseSchemaPrimitiveType();
           if (s0 === peg$FAILED) {
-            s0 = peg$parseSchemaTupleType();
+            s0 = peg$parseSchemaUnionType();
+            if (s0 === peg$FAILED) {
+              s0 = peg$parseSchemaTupleType();
+            }
           }
         }
       }
@@ -32597,8 +32607,71 @@ const parser = /*
       return s0;
     }
 
+    function peg$parseSchemaCollectionType() {
+      var s0, s1, s2, s3, s4, s5;
+
+      s0 = peg$currPos;
+      if (input.charCodeAt(peg$currPos) === 91) {
+        s1 = peg$c90;
+        peg$currPos++;
+      } else {
+        s1 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c91); }
+      }
+      if (s1 !== peg$FAILED) {
+        s2 = [];
+        s3 = peg$parsewhiteSpace();
+        while (s3 !== peg$FAILED) {
+          s2.push(s3);
+          s3 = peg$parsewhiteSpace();
+        }
+        if (s2 !== peg$FAILED) {
+          s3 = peg$parseSchemaType();
+          if (s3 !== peg$FAILED) {
+            s4 = [];
+            s5 = peg$parsewhiteSpace();
+            while (s5 !== peg$FAILED) {
+              s4.push(s5);
+              s5 = peg$parsewhiteSpace();
+            }
+            if (s4 !== peg$FAILED) {
+              if (input.charCodeAt(peg$currPos) === 93) {
+                s5 = peg$c92;
+                peg$currPos++;
+              } else {
+                s5 = peg$FAILED;
+                if (peg$silentFails === 0) { peg$fail(peg$c93); }
+              }
+              if (s5 !== peg$FAILED) {
+                peg$savedPos = s0;
+                s1 = peg$c227(s3);
+                s0 = s1;
+              } else {
+                peg$currPos = s0;
+                s0 = peg$FAILED;
+              }
+            } else {
+              peg$currPos = s0;
+              s0 = peg$FAILED;
+            }
+          } else {
+            peg$currPos = s0;
+            s0 = peg$FAILED;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+
+      return s0;
+    }
+
     function peg$parseSchemaReferenceType() {
-      var s0, s1, s2, s3;
+      var s0, s1, s2, s3, s4, s5;
 
       s0 = peg$currPos;
       if (input.substr(peg$currPos, 10) === peg$c98) {
@@ -32609,22 +32682,44 @@ const parser = /*
         if (peg$silentFails === 0) { peg$fail(peg$c99); }
       }
       if (s1 !== peg$FAILED) {
-        s2 = peg$parseSchemaInline();
-        if (s2 === peg$FAILED) {
-          s2 = peg$parseTypeName();
+        s2 = [];
+        s3 = peg$parsewhiteSpace();
+        while (s3 !== peg$FAILED) {
+          s2.push(s3);
+          s3 = peg$parsewhiteSpace();
         }
         if (s2 !== peg$FAILED) {
-          if (input.charCodeAt(peg$currPos) === 62) {
-            s3 = peg$c35;
-            peg$currPos++;
-          } else {
-            s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c36); }
+          s3 = peg$parseSchemaInline();
+          if (s3 === peg$FAILED) {
+            s3 = peg$parseTypeName();
           }
           if (s3 !== peg$FAILED) {
-            peg$savedPos = s0;
-            s1 = peg$c227(s2);
-            s0 = s1;
+            s4 = [];
+            s5 = peg$parsewhiteSpace();
+            while (s5 !== peg$FAILED) {
+              s4.push(s5);
+              s5 = peg$parsewhiteSpace();
+            }
+            if (s4 !== peg$FAILED) {
+              if (input.charCodeAt(peg$currPos) === 62) {
+                s5 = peg$c35;
+                peg$currPos++;
+              } else {
+                s5 = peg$FAILED;
+                if (peg$silentFails === 0) { peg$fail(peg$c36); }
+              }
+              if (s5 !== peg$FAILED) {
+                peg$savedPos = s0;
+                s1 = peg$c228(s3);
+                s0 = s1;
+              } else {
+                peg$currPos = s0;
+                s0 = peg$FAILED;
+              }
+            } else {
+              peg$currPos = s0;
+              s0 = peg$FAILED;
+            }
           } else {
             peg$currPos = s0;
             s0 = peg$FAILED;
@@ -32644,52 +32739,52 @@ const parser = /*
     function peg$parseSchemaPrimitiveType() {
       var s0;
 
-      if (input.substr(peg$currPos, 4) === peg$c228) {
-        s0 = peg$c228;
+      if (input.substr(peg$currPos, 4) === peg$c229) {
+        s0 = peg$c229;
         peg$currPos += 4;
       } else {
         s0 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c229); }
+        if (peg$silentFails === 0) { peg$fail(peg$c230); }
       }
       if (s0 === peg$FAILED) {
-        if (input.substr(peg$currPos, 3) === peg$c230) {
-          s0 = peg$c230;
+        if (input.substr(peg$currPos, 3) === peg$c231) {
+          s0 = peg$c231;
           peg$currPos += 3;
         } else {
           s0 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c231); }
+          if (peg$silentFails === 0) { peg$fail(peg$c232); }
         }
         if (s0 === peg$FAILED) {
-          if (input.substr(peg$currPos, 6) === peg$c232) {
-            s0 = peg$c232;
+          if (input.substr(peg$currPos, 6) === peg$c233) {
+            s0 = peg$c233;
             peg$currPos += 6;
           } else {
             s0 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c233); }
+            if (peg$silentFails === 0) { peg$fail(peg$c234); }
           }
           if (s0 === peg$FAILED) {
-            if (input.substr(peg$currPos, 7) === peg$c234) {
-              s0 = peg$c234;
+            if (input.substr(peg$currPos, 7) === peg$c235) {
+              s0 = peg$c235;
               peg$currPos += 7;
             } else {
               s0 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c235); }
+              if (peg$silentFails === 0) { peg$fail(peg$c236); }
             }
             if (s0 === peg$FAILED) {
-              if (input.substr(peg$currPos, 5) === peg$c236) {
-                s0 = peg$c236;
+              if (input.substr(peg$currPos, 5) === peg$c237) {
+                s0 = peg$c237;
                 peg$currPos += 5;
               } else {
                 s0 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c237); }
+                if (peg$silentFails === 0) { peg$fail(peg$c238); }
               }
               if (s0 === peg$FAILED) {
-                if (input.substr(peg$currPos, 6) === peg$c238) {
-                  s0 = peg$c238;
+                if (input.substr(peg$currPos, 6) === peg$c239) {
+                  s0 = peg$c239;
                   peg$currPos += 6;
                 } else {
                   s0 = peg$FAILED;
-                  if (peg$silentFails === 0) { peg$fail(peg$c239); }
+                  if (peg$silentFails === 0) { peg$fail(peg$c240); }
                 }
               }
             }
@@ -32723,12 +32818,12 @@ const parser = /*
             s5 = peg$currPos;
             s6 = peg$parsewhiteSpace();
             if (s6 !== peg$FAILED) {
-              if (input.substr(peg$currPos, 2) === peg$c240) {
-                s7 = peg$c240;
+              if (input.substr(peg$currPos, 2) === peg$c241) {
+                s7 = peg$c241;
                 peg$currPos += 2;
               } else {
                 s7 = peg$FAILED;
-                if (peg$silentFails === 0) { peg$fail(peg$c241); }
+                if (peg$silentFails === 0) { peg$fail(peg$c242); }
               }
               if (s7 !== peg$FAILED) {
                 s8 = peg$parsewhiteSpace();
@@ -32759,12 +32854,12 @@ const parser = /*
                 s5 = peg$currPos;
                 s6 = peg$parsewhiteSpace();
                 if (s6 !== peg$FAILED) {
-                  if (input.substr(peg$currPos, 2) === peg$c240) {
-                    s7 = peg$c240;
+                  if (input.substr(peg$currPos, 2) === peg$c241) {
+                    s7 = peg$c241;
                     peg$currPos += 2;
                   } else {
                     s7 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c241); }
+                    if (peg$silentFails === 0) { peg$fail(peg$c242); }
                   }
                   if (s7 !== peg$FAILED) {
                     s8 = peg$parsewhiteSpace();
@@ -32808,7 +32903,7 @@ const parser = /*
                 }
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c242(s3, s4);
+                  s1 = peg$c243(s3, s4);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -32954,7 +33049,7 @@ const parser = /*
                 }
                 if (s6 !== peg$FAILED) {
                   peg$savedPos = s0;
-                  s1 = peg$c243(s3, s4);
+                  s1 = peg$c244(s3, s4);
                   s0 = s1;
                 } else {
                   peg$currPos = s0;
@@ -32997,22 +33092,22 @@ const parser = /*
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c244.test(input.charAt(peg$currPos))) {
+        if (peg$c245.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c245); }
+          if (peg$silentFails === 0) { peg$fail(peg$c246); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c244.test(input.charAt(peg$currPos))) {
+            if (peg$c245.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c245); }
+              if (peg$silentFails === 0) { peg$fail(peg$c246); }
             }
           }
         } else {
@@ -33020,7 +33115,7 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
-          s1 = peg$c246(s2);
+          s1 = peg$c247(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -33042,21 +33137,21 @@ const parser = /*
       s1 = peg$currPos;
       s2 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s3 = peg$c247;
+        s3 = peg$c248;
         peg$currPos++;
       } else {
         s3 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c248); }
+        if (peg$silentFails === 0) { peg$fail(peg$c249); }
       }
       if (s3 !== peg$FAILED) {
         while (s3 !== peg$FAILED) {
           s2.push(s3);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s3 = peg$c247;
+            s3 = peg$c248;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c248); }
+            if (peg$silentFails === 0) { peg$fail(peg$c249); }
           }
         }
       } else {
@@ -33064,7 +33159,7 @@ const parser = /*
       }
       if (s2 !== peg$FAILED) {
         peg$savedPos = peg$currPos;
-        s3 = peg$c249(s2);
+        s3 = peg$c250(s2);
         if (s3) {
           s3 = void 0;
         } else {
@@ -33101,105 +33196,20 @@ const parser = /*
       s2 = peg$currPos;
       s3 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s4 = peg$c247;
+        s4 = peg$c248;
         peg$currPos++;
       } else {
         s4 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c248); }
+        if (peg$silentFails === 0) { peg$fail(peg$c249); }
       }
       while (s4 !== peg$FAILED) {
         s3.push(s4);
         if (input.charCodeAt(peg$currPos) === 32) {
-          s4 = peg$c247;
+          s4 = peg$c248;
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c248); }
-        }
-      }
-      if (s3 !== peg$FAILED) {
-        peg$savedPos = peg$currPos;
-        s4 = peg$c250(s3);
-        if (s4) {
-          s4 = void 0;
-        } else {
-          s4 = peg$FAILED;
-        }
-        if (s4 !== peg$FAILED) {
-          s3 = [s3, s4];
-          s2 = s3;
-        } else {
-          peg$currPos = s2;
-          s2 = peg$FAILED;
-        }
-      } else {
-        peg$currPos = s2;
-        s2 = peg$FAILED;
-      }
-      peg$silentFails--;
-      if (s2 !== peg$FAILED) {
-        peg$currPos = s1;
-        s1 = void 0;
-      } else {
-        s1 = peg$FAILED;
-      }
-      if (s1 !== peg$FAILED) {
-        s2 = [];
-        if (input.charCodeAt(peg$currPos) === 32) {
-          s3 = peg$c247;
-          peg$currPos++;
-        } else {
-          s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c248); }
-        }
-        while (s3 !== peg$FAILED) {
-          s2.push(s3);
-          if (input.charCodeAt(peg$currPos) === 32) {
-            s3 = peg$c247;
-            peg$currPos++;
-          } else {
-            s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c248); }
-          }
-        }
-        if (s2 !== peg$FAILED) {
-          s1 = [s1, s2];
-          s0 = s1;
-        } else {
-          peg$currPos = s0;
-          s0 = peg$FAILED;
-        }
-      } else {
-        peg$currPos = s0;
-        s0 = peg$FAILED;
-      }
-
-      return s0;
-    }
-
-    function peg$parseSameOrMoreIndent() {
-      var s0, s1, s2, s3, s4;
-
-      s0 = peg$currPos;
-      s1 = peg$currPos;
-      peg$silentFails++;
-      s2 = peg$currPos;
-      s3 = [];
-      if (input.charCodeAt(peg$currPos) === 32) {
-        s4 = peg$c247;
-        peg$currPos++;
-      } else {
-        s4 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c248); }
-      }
-      while (s4 !== peg$FAILED) {
-        s3.push(s4);
-        if (input.charCodeAt(peg$currPos) === 32) {
-          s4 = peg$c247;
-          peg$currPos++;
-        } else {
-          s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c248); }
+          if (peg$silentFails === 0) { peg$fail(peg$c249); }
         }
       }
       if (s3 !== peg$FAILED) {
@@ -33231,20 +33241,105 @@ const parser = /*
       if (s1 !== peg$FAILED) {
         s2 = [];
         if (input.charCodeAt(peg$currPos) === 32) {
-          s3 = peg$c247;
+          s3 = peg$c248;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c248); }
+          if (peg$silentFails === 0) { peg$fail(peg$c249); }
         }
         while (s3 !== peg$FAILED) {
           s2.push(s3);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s3 = peg$c247;
+            s3 = peg$c248;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c248); }
+            if (peg$silentFails === 0) { peg$fail(peg$c249); }
+          }
+        }
+        if (s2 !== peg$FAILED) {
+          s1 = [s1, s2];
+          s0 = s1;
+        } else {
+          peg$currPos = s0;
+          s0 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+
+      return s0;
+    }
+
+    function peg$parseSameOrMoreIndent() {
+      var s0, s1, s2, s3, s4;
+
+      s0 = peg$currPos;
+      s1 = peg$currPos;
+      peg$silentFails++;
+      s2 = peg$currPos;
+      s3 = [];
+      if (input.charCodeAt(peg$currPos) === 32) {
+        s4 = peg$c248;
+        peg$currPos++;
+      } else {
+        s4 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c249); }
+      }
+      while (s4 !== peg$FAILED) {
+        s3.push(s4);
+        if (input.charCodeAt(peg$currPos) === 32) {
+          s4 = peg$c248;
+          peg$currPos++;
+        } else {
+          s4 = peg$FAILED;
+          if (peg$silentFails === 0) { peg$fail(peg$c249); }
+        }
+      }
+      if (s3 !== peg$FAILED) {
+        peg$savedPos = peg$currPos;
+        s4 = peg$c252(s3);
+        if (s4) {
+          s4 = void 0;
+        } else {
+          s4 = peg$FAILED;
+        }
+        if (s4 !== peg$FAILED) {
+          s3 = [s3, s4];
+          s2 = s3;
+        } else {
+          peg$currPos = s2;
+          s2 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s2;
+        s2 = peg$FAILED;
+      }
+      peg$silentFails--;
+      if (s2 !== peg$FAILED) {
+        peg$currPos = s1;
+        s1 = void 0;
+      } else {
+        s1 = peg$FAILED;
+      }
+      if (s1 !== peg$FAILED) {
+        s2 = [];
+        if (input.charCodeAt(peg$currPos) === 32) {
+          s3 = peg$c248;
+          peg$currPos++;
+        } else {
+          s3 = peg$FAILED;
+          if (peg$silentFails === 0) { peg$fail(peg$c249); }
+        }
+        while (s3 !== peg$FAILED) {
+          s2.push(s3);
+          if (input.charCodeAt(peg$currPos) === 32) {
+            s3 = peg$c248;
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c249); }
           }
         }
         if (s2 !== peg$FAILED) {
@@ -33268,30 +33363,30 @@ const parser = /*
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 96) {
-        s1 = peg$c252;
+        s1 = peg$c253;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c253); }
+        if (peg$silentFails === 0) { peg$fail(peg$c254); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c254.test(input.charAt(peg$currPos))) {
+        if (peg$c255.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c255); }
+          if (peg$silentFails === 0) { peg$fail(peg$c256); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c254.test(input.charAt(peg$currPos))) {
+            if (peg$c255.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c255); }
+              if (peg$silentFails === 0) { peg$fail(peg$c256); }
             }
           }
         } else {
@@ -33299,15 +33394,15 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 96) {
-            s3 = peg$c252;
+            s3 = peg$c253;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c253); }
+            if (peg$silentFails === 0) { peg$fail(peg$c254); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c256(s2);
+            s1 = peg$c257(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -33330,30 +33425,30 @@ const parser = /*
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 39) {
-        s1 = peg$c257;
+        s1 = peg$c258;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c258); }
+        if (peg$silentFails === 0) { peg$fail(peg$c259); }
       }
       if (s1 !== peg$FAILED) {
         s2 = [];
-        if (peg$c259.test(input.charAt(peg$currPos))) {
+        if (peg$c260.test(input.charAt(peg$currPos))) {
           s3 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c260); }
+          if (peg$silentFails === 0) { peg$fail(peg$c261); }
         }
         if (s3 !== peg$FAILED) {
           while (s3 !== peg$FAILED) {
             s2.push(s3);
-            if (peg$c259.test(input.charAt(peg$currPos))) {
+            if (peg$c260.test(input.charAt(peg$currPos))) {
               s3 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s3 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c260); }
+              if (peg$silentFails === 0) { peg$fail(peg$c261); }
             }
           }
         } else {
@@ -33361,15 +33456,15 @@ const parser = /*
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 39) {
-            s3 = peg$c257;
+            s3 = peg$c258;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c258); }
+            if (peg$silentFails === 0) { peg$fail(peg$c259); }
           }
           if (s3 !== peg$FAILED) {
             peg$savedPos = s0;
-            s1 = peg$c261(s2);
+            s1 = peg$c262(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -33392,30 +33487,30 @@ const parser = /*
 
       s0 = peg$currPos;
       s1 = peg$currPos;
-      if (peg$c262.test(input.charAt(peg$currPos))) {
+      if (peg$c263.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c263); }
+        if (peg$silentFails === 0) { peg$fail(peg$c264); }
       }
       if (s2 !== peg$FAILED) {
         s3 = [];
-        if (peg$c264.test(input.charAt(peg$currPos))) {
+        if (peg$c265.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c265); }
+          if (peg$silentFails === 0) { peg$fail(peg$c266); }
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c264.test(input.charAt(peg$currPos))) {
+          if (peg$c265.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c265); }
+            if (peg$silentFails === 0) { peg$fail(peg$c266); }
           }
         }
         if (s3 !== peg$FAILED) {
@@ -33431,7 +33526,7 @@ const parser = /*
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c266(s1);
+        s1 = peg$c267(s1);
       }
       s0 = s1;
 
@@ -33443,30 +33538,30 @@ const parser = /*
 
       s0 = peg$currPos;
       s1 = peg$currPos;
-      if (peg$c267.test(input.charAt(peg$currPos))) {
+      if (peg$c268.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c268); }
+        if (peg$silentFails === 0) { peg$fail(peg$c269); }
       }
       if (s2 !== peg$FAILED) {
         s3 = [];
-        if (peg$c264.test(input.charAt(peg$currPos))) {
+        if (peg$c265.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c265); }
+          if (peg$silentFails === 0) { peg$fail(peg$c266); }
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c264.test(input.charAt(peg$currPos))) {
+          if (peg$c265.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c265); }
+            if (peg$silentFails === 0) { peg$fail(peg$c266); }
           }
         }
         if (s3 !== peg$FAILED) {
@@ -33482,7 +33577,7 @@ const parser = /*
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c266(s1);
+        s1 = peg$c267(s1);
       }
       s0 = s1;
 
@@ -33494,21 +33589,21 @@ const parser = /*
 
       s0 = [];
       if (input.charCodeAt(peg$currPos) === 32) {
-        s1 = peg$c247;
+        s1 = peg$c248;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c248); }
+        if (peg$silentFails === 0) { peg$fail(peg$c249); }
       }
       if (s1 !== peg$FAILED) {
         while (s1 !== peg$FAILED) {
           s0.push(s1);
           if (input.charCodeAt(peg$currPos) === 32) {
-            s1 = peg$c247;
+            s1 = peg$c248;
             peg$currPos++;
           } else {
             s1 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c248); }
+            if (peg$silentFails === 0) { peg$fail(peg$c249); }
           }
         }
       } else {
@@ -33523,21 +33618,21 @@ const parser = /*
 
       s0 = peg$currPos;
       s1 = [];
-      if (peg$c269.test(input.charAt(peg$currPos))) {
+      if (peg$c270.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c270); }
+        if (peg$silentFails === 0) { peg$fail(peg$c271); }
       }
       while (s2 !== peg$FAILED) {
         s1.push(s2);
-        if (peg$c269.test(input.charAt(peg$currPos))) {
+        if (peg$c270.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c270); }
+          if (peg$silentFails === 0) { peg$fail(peg$c271); }
         }
       }
       if (s1 !== peg$FAILED) {
@@ -33548,7 +33643,7 @@ const parser = /*
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c271); }
+          if (peg$silentFails === 0) { peg$fail(peg$c272); }
         }
         peg$silentFails--;
         if (s3 === peg$FAILED) {
@@ -33571,30 +33666,30 @@ const parser = /*
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
         s1 = [];
-        if (peg$c269.test(input.charAt(peg$currPos))) {
+        if (peg$c270.test(input.charAt(peg$currPos))) {
           s2 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c270); }
+          if (peg$silentFails === 0) { peg$fail(peg$c271); }
         }
         while (s2 !== peg$FAILED) {
           s1.push(s2);
-          if (peg$c269.test(input.charAt(peg$currPos))) {
+          if (peg$c270.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c270); }
+            if (peg$silentFails === 0) { peg$fail(peg$c271); }
           }
         }
         if (s1 !== peg$FAILED) {
-          if (input.substr(peg$currPos, 2) === peg$c272) {
-            s2 = peg$c272;
+          if (input.substr(peg$currPos, 2) === peg$c273) {
+            s2 = peg$c273;
             peg$currPos += 2;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c273); }
+            if (peg$silentFails === 0) { peg$fail(peg$c274); }
           }
           if (s2 !== peg$FAILED) {
             s3 = [];
@@ -33639,21 +33734,21 @@ const parser = /*
         if (s0 === peg$FAILED) {
           s0 = peg$currPos;
           s1 = [];
-          if (peg$c269.test(input.charAt(peg$currPos))) {
+          if (peg$c270.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c270); }
+            if (peg$silentFails === 0) { peg$fail(peg$c271); }
           }
           while (s2 !== peg$FAILED) {
             s1.push(s2);
-            if (peg$c269.test(input.charAt(peg$currPos))) {
+            if (peg$c270.test(input.charAt(peg$currPos))) {
               s2 = input.charAt(peg$currPos);
               peg$currPos++;
             } else {
               s2 = peg$FAILED;
-              if (peg$silentFails === 0) { peg$fail(peg$c270); }
+              if (peg$silentFails === 0) { peg$fail(peg$c271); }
             }
           }
           if (s1 !== peg$FAILED) {
@@ -33689,30 +33784,30 @@ const parser = /*
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 13) {
-        s1 = peg$c274;
+        s1 = peg$c275;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c275); }
+        if (peg$silentFails === 0) { peg$fail(peg$c276); }
       }
       if (s1 === peg$FAILED) {
         s1 = null;
       }
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 10) {
-          s2 = peg$c276;
+          s2 = peg$c277;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c277); }
+          if (peg$silentFails === 0) { peg$fail(peg$c278); }
         }
         if (s2 !== peg$FAILED) {
           if (input.charCodeAt(peg$currPos) === 13) {
-            s3 = peg$c274;
+            s3 = peg$c275;
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c275); }
+            if (peg$silentFails === 0) { peg$fail(peg$c276); }
           }
           if (s3 === peg$FAILED) {
             s3 = null;
@@ -36299,7 +36394,9 @@ class Cursor {
 
 /** @class BigCollection
  * A handle on a large set of Entity data. Similar to Collection, except the complete set of
- * entities is not available directly; use stream() to read the full set.
+ * entities is not available directly; use stream() to read the full set. Particles wanting to
+ * operate on BigCollections should do so in the setHandles() call, since BigCollections do not
+ * trigger onHandleSync() or onHandleUpdate().
  */
 class BigCollection extends Handle {
   configure(options) {
@@ -38212,7 +38309,7 @@ class ParticleExecutionContext {
   async _instantiateParticle(id, spec, proxies) {
     let name = spec.name;
     let resolve = null;
-    let p = new Promise((res, rej) => resolve = res);
+    let p = new Promise(res => resolve = res);
     this._pendingLoads.push(p);
     let clazz = await this._loader.loadParticleClass(spec);
     let capabilities = this.defaultCapabilitySet();
@@ -38234,11 +38331,11 @@ class ParticleExecutionContext {
     });
 
     return [particle, async () => {
-      resolve();
-      let idx = this._pendingLoads.indexOf(p);
-      this._pendingLoads.splice(idx, 1);
       await particle.setHandles(handleMap);
       registerList.forEach(({proxy, particle, handle}) => proxy.register(particle, handle));
+      let idx = this._pendingLoads.indexOf(p);
+      this._pendingLoads.splice(idx, 1);
+      resolve();
     }];
   }
 
@@ -38343,8 +38440,16 @@ class ParticleExecutionHost {
 
     this._apiPort.onHandleSet = ({handle, data, particleId, barrier}) => handle.set(data, particleId, barrier);
     this._apiPort.onHandleClear = ({handle, particleId, barrier}) => handle.clear(particleId, barrier);
-    this._apiPort.onHandleStore = ({handle, data: {value, keys}, particleId}) => handle.store(value, keys, particleId);
-    this._apiPort.onHandleRemove = ({handle, data: {id, keys}, particleId}) => handle.remove(id, keys, particleId);
+
+    this._apiPort.onHandleStore = async ({handle, callback, data: {value, keys}, particleId}) => {
+      await handle.store(value, keys, particleId);
+      this._apiPort.SimpleCallback({callback});
+    };
+
+    this._apiPort.onHandleRemove = async ({handle, callback, data: {id, keys}, particleId}) => {
+      await handle.remove(id, keys, particleId);
+      this._apiPort.SimpleCallback({callback});
+    };
 
     this._apiPort.onHandleStream = async ({handle, callback, pageSize}) => {
       this._apiPort.SimpleCallback({callback, data: await handle.stream(pageSize)});
@@ -43710,7 +43815,7 @@ class CollectionProxy extends StorageProxyBase {
   store(value, keys, particleId) {
     let id = value.id;
     let data = {value, keys};
-    this._port.HandleStore({data, handle: this, particleId});
+    this._port.HandleStore({handle: this, callback: () => {}, data, particleId});
 
     if (this._synchronized != SyncState.full) {
       return;
@@ -43725,7 +43830,7 @@ class CollectionProxy extends StorageProxyBase {
   remove(id, keys, particleId) {
     if (this._synchronized != SyncState.full) {
       let data = {id, keys: []};
-      this._port.HandleRemove({data, handle: this, particleId});
+      this._port.HandleRemove({handle: this, callback: () => {}, data, particleId});
       return;
     }
 
@@ -43737,7 +43842,7 @@ class CollectionProxy extends StorageProxyBase {
       keys = this._model.getKeys(id);
     }
     let data = {id, keys};
-    this._port.HandleRemove({data, handle: this, particleId});
+    this._port.HandleRemove({handle: this, callback: () => {}, data, particleId});
 
     if (!this._model.remove(id, keys)) {
       return;
@@ -43941,11 +44046,13 @@ class BigCollectionProxy extends StorageProxyBase {
   // TODO: surface get()
 
   async store(value, keys, particleId) {
-    this._port.HandleStore({handle: this, data: {value, keys}, particleId});
+    return new Promise(resolve =>
+      this._port.HandleStore({handle: this, callback: resolve, data: {value, keys}, particleId}));
   }
 
   async remove(id, particleId) {
-    this._port.HandleRemove({handle: this, data: {id, keys: []}, particleId});
+    return new Promise(resolve =>
+      this._port.HandleRemove({handle: this, callback: resolve, data: {id, keys: []}, particleId}));
   }
 
   async stream(pageSize) {
@@ -47025,6 +47132,7 @@ class Reference {
         this.id = data.id;
         this.storageKey = data.storageKey;
         this.context = context;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.isReference);
         this.type = type;
     }
     async ensureStorageProxy() {
@@ -47211,29 +47319,39 @@ class Schema {
     }
     toLiteral() {
         const fields = {};
-        for (const key of Object.keys(this._model.fields)) {
-            const field = this._model.fields[key];
+        const updateField = field => {
             if (field.kind === 'schema-reference') {
                 const schema = field.schema;
-                fields[key] = { kind: 'schema-reference', schema: { kind: schema.kind, model: schema.model.toLiteral() } };
+                return { kind: 'schema-reference', schema: { kind: schema.kind, model: schema.model.toLiteral() } };
+            }
+            else if (field.kind === 'schema-collection') {
+                return { kind: 'schema-collection', schema: updateField(field.schema) };
             }
             else {
-                fields[key] = field;
+                return field;
             }
+        };
+        for (const key of Object.keys(this._model.fields)) {
+            fields[key] = updateField(this._model.fields[key]);
         }
         return { names: this._model.names, fields, description: this.description };
     }
     static fromLiteral(data) {
         const fields = {};
-        for (const key of Object.keys(data.fields)) {
-            const field = data.fields[key];
+        const updateField = field => {
             if (field.kind === 'schema-reference') {
                 const schema = field.schema;
-                fields[key] = { kind: 'schema-reference', schema: { kind: schema.kind, model: _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(schema.model) } };
+                return { kind: 'schema-reference', schema: { kind: schema.kind, model: _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(schema.model) } };
+            }
+            else if (field.kind === 'schema-collection') {
+                return { kind: 'schema-collection', schema: updateField(field.schema) };
             }
             else {
-                fields[key] = field;
+                return field;
             }
+        };
+        for (const key of Object.keys(data.fields)) {
+            fields[key] = updateField(data.fields[key]);
         }
         const result = new Schema({ names: data.names, fields });
         result.description = data.description || {};
@@ -47268,6 +47386,8 @@ class Schema {
             case 'type-name':
             case 'schema-inline':
                 return type.model.entitySchema.toInlineSchemaString();
+            case 'schema-collection':
+                return `[${Schema._typeString(type.schema)}]`;
             default:
                 throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
         }
@@ -47355,8 +47475,8 @@ class Schema {
             }
         };
         const fieldTypes = this.fields;
-        const validateFieldAndTypes = (op, name, value) => {
-            const fieldType = fieldTypes[name];
+        const validateFieldAndTypes = (op, name, value) => _validateFieldAndTypes(op, name, fieldTypes[name], value);
+        const _validateFieldAndTypes = (op, name, fieldType, value) => {
             if (fieldType === undefined) {
                 throw new Error(`Can't ${op} field ${name}; not in schema ${className}`);
             }
@@ -47406,6 +47526,17 @@ class Schema {
                         throw new TypeError(`Cannot ${op} reference ${name} with value '${value}' of mismatched type`);
                     }
                     break;
+                case 'schema-collection':
+                    // WTF?! value instanceof Set is returning false sometimes here because the Set in
+                    // this environment (a native code constructor) isn't equal to the Set that the value
+                    // has been constructed with (another native code constructor)...
+                    if (value.constructor.name !== 'Set') {
+                        throw new TypeError(`Cannot ${op} collection ${name} with non-Set '${value}'`);
+                    }
+                    for (const element of value) {
+                        _validateFieldAndTypes(op, name, fieldType.schema, element);
+                    }
+                    break;
                 default:
                     throw new Error(`Unknown kind ${fieldType.kind} in schema ${className}`);
             }
@@ -47429,28 +47560,57 @@ class Schema {
                     }
                 });
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data, `can't construct entity with null data`);
+                // TODO: figure out how to do this only on wire-created entities.
+                const sanitizedData = this.sanitizeData(data);
+                for (const [name, value] of Object.entries(sanitizedData)) {
+                    this.rawData[name] = value;
+                }
+            }
+            sanitizeData(data) {
+                const sanitizedData = {};
                 for (const [name, value] of Object.entries(data)) {
-                    if (fieldTypes[name] && fieldTypes[name].kind === 'schema-reference' && value) {
-                        let type;
-                        if (value instanceof _reference_js__WEBPACK_IMPORTED_MODULE_4__["Reference"]) {
-                            // Setting value as Reference (Particle side). This will enforce that the type provided for
-                            // the handle matches the type of the reference.
-                            type = value.type;
-                        }
-                        else if (value.id && value.storageKey) {
-                            // Setting value from raw data (Channel side).
-                            // TODO(shans): This can't enforce type safety here as there isn't any type data available.
-                            // Maybe this is OK because there's type checking on the other side of the channel?
-                            type = fieldTypes[name].schema.model;
-                        }
-                        else {
-                            throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
-                        }
-                        this.rawData[name] = new _reference_js__WEBPACK_IMPORTED_MODULE_4__["Reference"](value, _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newReference(type), context);
+                    sanitizedData[name] = this.sanitizeEntry(fieldTypes[name], value, name);
+                }
+                return sanitizedData;
+            }
+            sanitizeEntry(type, value, name) {
+                if (!type) {
+                    // If there isn't a field type for this, the proxy will pick up
+                    // that fact and report a meaningful error.
+                    return value;
+                }
+                if (type.kind === 'schema-reference' && value) {
+                    if (value instanceof _reference_js__WEBPACK_IMPORTED_MODULE_4__["Reference"]) {
+                        // Setting value as Reference (Particle side). This will enforce that the type provided for
+                        // the handle matches the type of the reference.
+                        return value;
+                    }
+                    else if (value.id && value.storageKey) {
+                        // Setting value from raw data (Channel side).
+                        // TODO(shans): This can't enforce type safety here as there isn't any type data available.
+                        // Maybe this is OK because there's type checking on the other side of the channel?
+                        return new _reference_js__WEBPACK_IMPORTED_MODULE_4__["Reference"](value, _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newReference(type.schema.model), context);
                     }
                     else {
-                        this.rawData[name] = value;
+                        throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
                     }
+                }
+                else if (type.kind === 'schema-collection' && value) {
+                    // WTF?! value instanceof Set is returning false sometimes here because the Set in
+                    // this environment (a native code constructor) isn't equal to the Set that the value
+                    // has been constructed with (another native code constructor)...
+                    if (value.constructor.name === 'Set') {
+                        return value;
+                    }
+                    else if (value.length && value instanceof Object) {
+                        return new Set(value.map(v => this.sanitizeEntry(type.schema, v, name)));
+                    }
+                    else {
+                        throw new TypeError(`Cannot set collection ${name} with non-collection '${value}'`);
+                    }
+                }
+                else {
+                    return value;
                 }
             }
             dataClone() {
@@ -47459,6 +47619,9 @@ class Schema {
                     if (this.rawData[name] !== undefined) {
                         if (fieldTypes[name] && fieldTypes[name].kind === 'schema-reference') {
                             clone[name] = this.rawData[name].dataClone();
+                        }
+                        else if (fieldTypes[name] && fieldTypes[name].kind === 'schema-collection') {
+                            clone[name] = [...this.rawData[name]].map(a => a.dataClone());
                         }
                         else {
                             clone[name] = this.rawData[name];

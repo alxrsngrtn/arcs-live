@@ -750,8 +750,8 @@ class PECOuterPort extends APIPort {
     this.registerHandler('HandleToList', {handle: this.Mapped, callback: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
-    this.registerHandler('HandleStore', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
-    this.registerHandler('HandleRemove', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
+    this.registerHandler('HandleStore', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
+    this.registerHandler('HandleRemove', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleStream', {handle: this.Mapped, callback: this.Direct, pageSize: this.Direct});
     this.registerHandler('StreamCursorNext', {handle: this.Mapped, callback: this.Direct, cursorId: this.Direct});
     this.registerHandler('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
@@ -804,8 +804,8 @@ class PECInnerPort extends APIPort {
     this.registerCall('HandleToList', {handle: this.Mapped, callback: this.LocalMapped, particleId: this.Direct});
     this.registerCall('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
     this.registerCall('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
-    this.registerCall('HandleStore', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
-    this.registerCall('HandleRemove', {handle: this.Mapped, data: this.Direct, particleId: this.Direct});
+    this.registerCall('HandleStore', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
+    this.registerCall('HandleRemove', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
     this.registerCall('HandleStream', {handle: this.Mapped, callback: this.LocalMapped, pageSize: this.Direct});
     this.registerCall('StreamCursorNext', {handle: this.Mapped, callback: this.LocalMapped, cursorId: this.Direct});
     this.registerCall('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
@@ -2095,7 +2095,9 @@ class Cursor {
 
 /** @class BigCollection
  * A handle on a large set of Entity data. Similar to Collection, except the complete set of
- * entities is not available directly; use stream() to read the full set.
+ * entities is not available directly; use stream() to read the full set. Particles wanting to
+ * operate on BigCollections should do so in the setHandles() call, since BigCollections do not
+ * trigger onHandleSync() or onHandleUpdate().
  */
 class BigCollection extends Handle {
   configure(options) {
@@ -2756,7 +2758,7 @@ class ParticleExecutionContext {
   async _instantiateParticle(id, spec, proxies) {
     let name = spec.name;
     let resolve = null;
-    let p = new Promise((res, rej) => resolve = res);
+    let p = new Promise(res => resolve = res);
     this._pendingLoads.push(p);
     let clazz = await this._loader.loadParticleClass(spec);
     let capabilities = this.defaultCapabilitySet();
@@ -2778,11 +2780,11 @@ class ParticleExecutionContext {
     });
 
     return [particle, async () => {
-      resolve();
-      let idx = this._pendingLoads.indexOf(p);
-      this._pendingLoads.splice(idx, 1);
       await particle.setHandles(handleMap);
       registerList.forEach(({proxy, particle, handle}) => proxy.register(particle, handle));
+      let idx = this._pendingLoads.indexOf(p);
+      this._pendingLoads.splice(idx, 1);
+      resolve();
     }];
   }
 
@@ -3901,7 +3903,7 @@ class CollectionProxy extends StorageProxyBase {
   store(value, keys, particleId) {
     let id = value.id;
     let data = {value, keys};
-    this._port.HandleStore({data, handle: this, particleId});
+    this._port.HandleStore({handle: this, callback: () => {}, data, particleId});
 
     if (this._synchronized != SyncState.full) {
       return;
@@ -3916,7 +3918,7 @@ class CollectionProxy extends StorageProxyBase {
   remove(id, keys, particleId) {
     if (this._synchronized != SyncState.full) {
       let data = {id, keys: []};
-      this._port.HandleRemove({data, handle: this, particleId});
+      this._port.HandleRemove({handle: this, callback: () => {}, data, particleId});
       return;
     }
 
@@ -3928,7 +3930,7 @@ class CollectionProxy extends StorageProxyBase {
       keys = this._model.getKeys(id);
     }
     let data = {id, keys};
-    this._port.HandleRemove({data, handle: this, particleId});
+    this._port.HandleRemove({handle: this, callback: () => {}, data, particleId});
 
     if (!this._model.remove(id, keys)) {
       return;
@@ -4132,11 +4134,13 @@ class BigCollectionProxy extends StorageProxyBase {
   // TODO: surface get()
 
   async store(value, keys, particleId) {
-    this._port.HandleStore({handle: this, data: {value, keys}, particleId});
+    return new Promise(resolve =>
+      this._port.HandleStore({handle: this, callback: resolve, data: {value, keys}, particleId}));
   }
 
   async remove(id, particleId) {
-    this._port.HandleRemove({handle: this, data: {id, keys: []}, particleId});
+    return new Promise(resolve =>
+      this._port.HandleRemove({handle: this, callback: resolve, data: {id, keys: []}, particleId}));
   }
 
   async stream(pageSize) {
@@ -4278,6 +4282,7 @@ class Reference {
         this.id = data.id;
         this.storageKey = data.storageKey;
         this.context = context;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.isReference);
         this.type = type;
     }
     async ensureStorageProxy() {
@@ -4410,29 +4415,39 @@ class Schema {
     }
     toLiteral() {
         const fields = {};
-        for (const key of Object.keys(this._model.fields)) {
-            const field = this._model.fields[key];
+        const updateField = field => {
             if (field.kind === 'schema-reference') {
                 const schema = field.schema;
-                fields[key] = { kind: 'schema-reference', schema: { kind: schema.kind, model: schema.model.toLiteral() } };
+                return { kind: 'schema-reference', schema: { kind: schema.kind, model: schema.model.toLiteral() } };
+            }
+            else if (field.kind === 'schema-collection') {
+                return { kind: 'schema-collection', schema: updateField(field.schema) };
             }
             else {
-                fields[key] = field;
+                return field;
             }
+        };
+        for (const key of Object.keys(this._model.fields)) {
+            fields[key] = updateField(this._model.fields[key]);
         }
         return { names: this._model.names, fields, description: this.description };
     }
     static fromLiteral(data) {
         const fields = {};
-        for (const key of Object.keys(data.fields)) {
-            const field = data.fields[key];
+        const updateField = field => {
             if (field.kind === 'schema-reference') {
                 const schema = field.schema;
-                fields[key] = { kind: 'schema-reference', schema: { kind: schema.kind, model: _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(schema.model) } };
+                return { kind: 'schema-reference', schema: { kind: schema.kind, model: _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(schema.model) } };
+            }
+            else if (field.kind === 'schema-collection') {
+                return { kind: 'schema-collection', schema: updateField(field.schema) };
             }
             else {
-                fields[key] = field;
+                return field;
             }
+        };
+        for (const key of Object.keys(data.fields)) {
+            fields[key] = updateField(data.fields[key]);
         }
         const result = new Schema({ names: data.names, fields });
         result.description = data.description || {};
@@ -4467,6 +4482,8 @@ class Schema {
             case 'type-name':
             case 'schema-inline':
                 return type.model.entitySchema.toInlineSchemaString();
+            case 'schema-collection':
+                return `[${Schema._typeString(type.schema)}]`;
             default:
                 throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
         }
@@ -4554,8 +4571,8 @@ class Schema {
             }
         };
         const fieldTypes = this.fields;
-        const validateFieldAndTypes = (op, name, value) => {
-            const fieldType = fieldTypes[name];
+        const validateFieldAndTypes = (op, name, value) => _validateFieldAndTypes(op, name, fieldTypes[name], value);
+        const _validateFieldAndTypes = (op, name, fieldType, value) => {
             if (fieldType === undefined) {
                 throw new Error(`Can't ${op} field ${name}; not in schema ${className}`);
             }
@@ -4605,6 +4622,17 @@ class Schema {
                         throw new TypeError(`Cannot ${op} reference ${name} with value '${value}' of mismatched type`);
                     }
                     break;
+                case 'schema-collection':
+                    // WTF?! value instanceof Set is returning false sometimes here because the Set in
+                    // this environment (a native code constructor) isn't equal to the Set that the value
+                    // has been constructed with (another native code constructor)...
+                    if (value.constructor.name !== 'Set') {
+                        throw new TypeError(`Cannot ${op} collection ${name} with non-Set '${value}'`);
+                    }
+                    for (const element of value) {
+                        _validateFieldAndTypes(op, name, fieldType.schema, element);
+                    }
+                    break;
                 default:
                     throw new Error(`Unknown kind ${fieldType.kind} in schema ${className}`);
             }
@@ -4628,28 +4656,57 @@ class Schema {
                     }
                 });
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data, `can't construct entity with null data`);
+                // TODO: figure out how to do this only on wire-created entities.
+                const sanitizedData = this.sanitizeData(data);
+                for (const [name, value] of Object.entries(sanitizedData)) {
+                    this.rawData[name] = value;
+                }
+            }
+            sanitizeData(data) {
+                const sanitizedData = {};
                 for (const [name, value] of Object.entries(data)) {
-                    if (fieldTypes[name] && fieldTypes[name].kind === 'schema-reference' && value) {
-                        let type;
-                        if (value instanceof _reference_js__WEBPACK_IMPORTED_MODULE_4__["Reference"]) {
-                            // Setting value as Reference (Particle side). This will enforce that the type provided for
-                            // the handle matches the type of the reference.
-                            type = value.type;
-                        }
-                        else if (value.id && value.storageKey) {
-                            // Setting value from raw data (Channel side).
-                            // TODO(shans): This can't enforce type safety here as there isn't any type data available.
-                            // Maybe this is OK because there's type checking on the other side of the channel?
-                            type = fieldTypes[name].schema.model;
-                        }
-                        else {
-                            throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
-                        }
-                        this.rawData[name] = new _reference_js__WEBPACK_IMPORTED_MODULE_4__["Reference"](value, _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newReference(type), context);
+                    sanitizedData[name] = this.sanitizeEntry(fieldTypes[name], value, name);
+                }
+                return sanitizedData;
+            }
+            sanitizeEntry(type, value, name) {
+                if (!type) {
+                    // If there isn't a field type for this, the proxy will pick up
+                    // that fact and report a meaningful error.
+                    return value;
+                }
+                if (type.kind === 'schema-reference' && value) {
+                    if (value instanceof _reference_js__WEBPACK_IMPORTED_MODULE_4__["Reference"]) {
+                        // Setting value as Reference (Particle side). This will enforce that the type provided for
+                        // the handle matches the type of the reference.
+                        return value;
+                    }
+                    else if (value.id && value.storageKey) {
+                        // Setting value from raw data (Channel side).
+                        // TODO(shans): This can't enforce type safety here as there isn't any type data available.
+                        // Maybe this is OK because there's type checking on the other side of the channel?
+                        return new _reference_js__WEBPACK_IMPORTED_MODULE_4__["Reference"](value, _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newReference(type.schema.model), context);
                     }
                     else {
-                        this.rawData[name] = value;
+                        throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
                     }
+                }
+                else if (type.kind === 'schema-collection' && value) {
+                    // WTF?! value instanceof Set is returning false sometimes here because the Set in
+                    // this environment (a native code constructor) isn't equal to the Set that the value
+                    // has been constructed with (another native code constructor)...
+                    if (value.constructor.name === 'Set') {
+                        return value;
+                    }
+                    else if (value.length && value instanceof Object) {
+                        return new Set(value.map(v => this.sanitizeEntry(type.schema, v, name)));
+                    }
+                    else {
+                        throw new TypeError(`Cannot set collection ${name} with non-collection '${value}'`);
+                    }
+                }
+                else {
+                    return value;
                 }
             }
             dataClone() {
@@ -4658,6 +4715,9 @@ class Schema {
                     if (this.rawData[name] !== undefined) {
                         if (fieldTypes[name] && fieldTypes[name].kind === 'schema-reference') {
                             clone[name] = this.rawData[name].dataClone();
+                        }
+                        else if (fieldTypes[name] && fieldTypes[name].kind === 'schema-collection') {
+                            clone[name] = [...this.rawData[name]].map(a => a.dataClone());
                         }
                         else {
                             clone[name] = this.rawData[name];

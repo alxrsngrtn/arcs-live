@@ -1,5 +1,5 @@
-commit 4c517b4b441515b750efefe86e9f12369c974441
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Sep 18 15:21:08 2018 -0700
+commit 5eb91eff813a01a598b5bce8d393f799e8d92307
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Sep 19 11:26:50 2018 +1000
 
-    Disable failing test to unblock deploys (#1903)
+    Allow collections of references to be stored in schemas (#1896)
