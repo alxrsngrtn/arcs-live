@@ -1,5 +1,5 @@
-commit 2b440629034ab5499b7f03cea78e065ed04cfecf
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Sep 19 21:03:12 2018 -0700
+commit 9c038843405cfe8bba6c9077a340376ae1cb6258
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Sep 20 15:08:27 2018 +1000
 
-    Added 'install from scratch' instructions to readme (#1917)
+    Remove duplication in definition of ParticleRef (#1915)

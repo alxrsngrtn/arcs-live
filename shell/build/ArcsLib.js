@@ -34417,15 +34417,6 @@ const parser = /*
           s1 = peg$c202(s1);
         }
         s0 = s1;
-        if (s0 === peg$FAILED) {
-          s0 = peg$currPos;
-          s1 = peg$parseVerb();
-          if (s1 !== peg$FAILED) {
-            peg$savedPos = s0;
-            s1 = peg$c202(s1);
-          }
-          s0 = s1;
-        }
       }
 
       return s0;
