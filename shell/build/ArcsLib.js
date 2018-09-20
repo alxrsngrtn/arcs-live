@@ -41830,12 +41830,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./planner.js */ "./runtime/planner.js");
 /* harmony import */ var _speculator_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./speculator.js */ "./runtime/speculator.js");
 /* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./suggestion-composer.js */ "./runtime/suggestion-composer.js");
+/* harmony import */ var _suggestion_storage_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./suggestion-storage.js */ "./runtime/suggestion-storage.js");
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -41915,6 +41917,18 @@ class ReplanQueue {
   }
 }
 
+const PlanningMode = {
+  // The original mode where suggestions are produced and consumed locally.
+  full: 'full',
+  // Consumes suggestions and suggestion updates from a storage..
+  // TODO: produce suggestions locally, if remotely produced ones not available for too long.
+  consumer: 'consumer',
+  // Monitors arc and context, produces suggestions and writes them into the storage.
+  // TODO: Implement search / contextual support (currently simply all possible suggestions
+  // are produced based on init-population).
+  producer: 'producer'
+};
+
 const defaultOptions = {
   defaultReplanDelayMs: 200,
   maxNoReplanMs: 10000
@@ -41923,7 +41937,9 @@ const defaultOptions = {
 class Planificator {
   constructor(arc, options) {
     this._arc = arc;
-    this._userid = options ? options.userid : null;
+    options = options || defaultOptions;
+    this._userid = options.userid;
+    this._mode = options.mode || PlanningMode.full;
     this._speculator = new _speculator_js__WEBPACK_IMPORTED_MODULE_5__["Speculator"]();
     this._search = null;
 
@@ -41950,24 +41966,44 @@ class Planificator {
     this._isPlanning = false; // whether planning is ongoing
     this._valid = false; // whether replanning was requested (since previous planning was complete).
 
-    this._dataChangesQueue = new ReplanQueue(this, options || defaultOptions);
+    this._dataChangesQueue = new ReplanQueue(this, options);
 
     // Set up all callbacks that trigger re-planning.
     this._init();
+
+    // Suggestion storage, used by planificator consumer & provider modes.
+    this._storage = this._initSuggestionStorage();
   }
 
   _init() {
     // TODO(mmandlis): Planificator subscribes to various change events.
     // Later, it will evaluate and batch events and trigger replanning intelligently.
     // Currently, just trigger replanning for each event.
-    this._arcCallback = this._onPlanInstantiated.bind(this);
-    this._arc.registerInstantiatePlanCallback(this._arcCallback);
-    this._arc.onDataChange(() => this._onDataChange(), this);
+    if (this.isFull) {
+      this._arcCallback = this._onPlanInstantiated.bind(this);
+      this._arc.registerInstantiatePlanCallback(this._arcCallback);
+      this._arc.onDataChange(() => this._onDataChange(), this);
+    }
 
     if (this._arc.pec.slotComposer) {
       let suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_6__["SuggestionComposer"](this._arc.pec.slotComposer);
       this.registerSuggestChangedCallback((suggestions) => suggestionComposer.setSuggestions(suggestions));
     }
+  }
+
+  _initSuggestionStorage() {
+    if (this.isFull) {
+      // suggestion storage isn't used in full mode, everything is stored in memory.
+      return;
+    }
+
+    let suggestionStorage = new _suggestion_storage_js__WEBPACK_IMPORTED_MODULE_7__["SuggestionStorage"](this._arc, this.userid);
+    if (this.isConsumer) {
+      // Listen to suggestion-store updates, and update the `current` suggestions on change.
+      suggestionStorage.registerSuggestionsUpdatedCallback(
+          (current) => this._setCurrent(current, /* append= */false));
+    }
+    return suggestionStorage;
   }
 
   dispose() {
@@ -41981,6 +42017,9 @@ class Planificator {
   }
 
   get userid() { return this._userid; }
+  get isFull() { return this._mode == PlanningMode.full; }
+  get isConsumer() { return this._mode == PlanningMode.consumer; }
+  get isProducer() { return this._mode == PlanningMode.producer; }
 
   get isPlanning() { return this._isPlanning; }
   set isPlanning(isPlanning) {
@@ -42105,6 +42144,13 @@ class Planificator {
   }
 
   _requestPlanning(options) {
+    if (this.isConsumer) {
+      // Consumer-mode plannificator only consumes suggestions that are
+      // produced and stored by producer-mode planificator.
+      // TODO: Run planning locally, if no stored suggestions available.
+      return;
+    }
+
     options = options || {
       contextual: this._shouldRequestContextualPlanning()
     };
@@ -49316,7 +49362,9 @@ class SuggestionComposer {
 
     let sortedSuggestions = suggestions.sort((s1, s2) => s2.rank - s1.rank);
     for (let suggestion of sortedSuggestions) {
-      let suggestionContent =
+      // TODO(mmandlis): This hack is needed for deserialized suggestions to work. Should
+      // instead serialize the description object and generation suggestion content here.
+      let suggestionContent = suggestion.suggestionContent ? suggestion.suggestionContent :
         await suggestion.description.getRecipeSuggestion(this._affordance.descriptionFormatter);
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(suggestionContent, 'No suggestion content available');
 
@@ -49372,6 +49420,121 @@ class SuggestionComposer {
     });
     context.addSlotConsumer(suggestConsumer);
     this._suggestConsumers.push(suggestConsumer);
+  }
+}
+
+
+/***/ }),
+
+/***/ "./runtime/suggestion-storage.js":
+/*!***************************************!*\
+  !*** ./runtime/suggestion-storage.js ***!
+  \***************************************/
+/*! exports provided: SuggestionStorage */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestionStorage", function() { return SuggestionStorage; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./recipe/recipe-resolver.js */ "./runtime/recipe/recipe-resolver.js");
+/* harmony import */ var _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ts-build/schema.js */ "./runtime/ts-build/schema.js");
+/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+class SuggestionStorage {
+  constructor(arc, userid) {
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, `Arc must not be null`);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc._storageKey, `Arc must has a storage key`);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, `User id must not be null`);
+
+    this._arc = arc;
+    let storageKeyTokens = this._arc._storageKey.split('/');
+    this._arcKey = storageKeyTokens.slice(-1)[0];
+    this._storageKey = 
+      `${storageKeyTokens.slice(0, -2).join('/')}/users/${userid}/suggestions/${this._arcKey}`;
+
+    this._recipeResolver = new _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_2__["RecipeResolver"](this._arc);
+    this._suggestionsUpdatedCallbacks = [];
+
+    let suggestionsSchema = new _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_3__["Schema"]({
+      names: ['Suggestions'],
+      fields: {current: 'Object'}
+    });
+    this._storePromise = this._arc._storageProviderFactory._storageForKey(this.storageKey)._join(
+        `${this.userid}-suggestions`,
+        _ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__["Type"].newEntity(suggestionsSchema),
+        this._storageKey,
+        /* shoudExist= */ 'unknown',
+        /* referenceMode= */ false);
+    this._storePromise.then((store) => {
+        this._store = store;
+        this._store.on('change', () => this._onStoreUpdated(), this);
+      },
+      (e) => console.error(`Failed to initialize suggestion store at '${this._storageKey}' with error: ${e}`));
+  }
+
+  get storageKey() { return this._storageKey; }
+  get store() { return this._store; }
+
+  async ensureInitialized() {
+    await this._storePromise;
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._store, `Store couldn't be initialized`);
+  }
+
+  async _onStoreUpdated() {
+    let value = (await this._store.get()) || {};
+    if (!value.current) {
+      return;
+    }
+
+    let plans = [];
+    for (let {descriptionText, recipe, hash, rank, suggestionContent} of value.current.plans) {
+      plans.push({
+        plan: await this._planFromString(recipe),
+        descriptionText,
+        recipe,
+        hash,
+        rank,
+        suggestionContent
+      });
+    }
+    console.log(`Suggestions store was updated, ${plans.length} suggestions fetched.`);
+    this._suggestionsUpdatedCallbacks.forEach(callback => callback({plans}));
+  }
+
+  registerSuggestionsUpdatedCallback(callback) {
+    this._suggestionsUpdatedCallbacks.push(callback);
+  }
+
+  async _planFromString(planString) {
+    let manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(
+        planString, {loader: this._arc.loader, context: this._arc._context, fileName: ''});
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest._recipes.length == 1);
+    let plan = manifest._recipes[0];
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan.normalize(), `can't normalize deserialized suggestion`);
+    if (!plan.isResolved()) {
+      let resolvedPlan = await this._recipeResolver.resolve(plan);
+      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(resolvedPlan, `can't resolve plan: ${plan.toString({showUnresolved: true})}`);
+      if (resolvedPlan) {
+        plan = resolvedPlan;
+      }
+    }
+    return plan;
   }
 }
 

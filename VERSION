@@ -1,7 +1,9 @@
-commit 62b3737bee741b9f8271f659e11e9123f3ee8f03
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu Sep 20 18:20:45 2018 +1000
+commit eea12e11b0798e486135f27f1f2b784d4e36a3ac
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Sep 20 10:09:54 2018 -0700
 
-    Revert "Merge ShapeArgument and ShapeArgument2 to ensure that Particle's cannot have handles named consume or provide (#1919)" (#1923)
+    Implement consumer-mode planificator (#1920)
     
-    This reverts commit 462cbd210cdab6eb1cdb395ba7043cff3a4b0f4b.
+    - introduce different modes of planificator
+    - implement suggestion storage class (only read atm)
+    - fetching serialized suggestions from storage
