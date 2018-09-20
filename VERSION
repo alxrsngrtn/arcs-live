@@ -1,5 +1,5 @@
-commit 9c038843405cfe8bba6c9077a340376ae1cb6258
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Sep 20 15:08:27 2018 +1000
+commit f4f94511c1d31babec7988410ea60807a448d9b9
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Sep 20 15:43:27 2018 +1000
 
-    Remove duplication in definition of ParticleRef (#1915)
+    Ticketmaster integraton + minor cleanups (#1916)
