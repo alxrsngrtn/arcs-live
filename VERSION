@@ -1,41 +1,5 @@
-commit 05a97d1e89d96f45a9f802eba9d127566870a722
+commit ffc91c5d1916bfcb5eca4763453f114f4db30efb
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Sep 20 13:35:32 2018 -0700
+Date:   Thu Sep 20 14:25:35 2018 -0700
 
-    Rebuild sharing on top of Runtime-Storage abstraction (#1912)
-    
-    * did npm install
-    
-    * add modules to ArcsLib
-    
-    * promote lib from app-shell
-    
-    * new sharing implementation
-    
-    * disable old shares
-    
-    * disable old sharing
-    
-    * retry protection
-    
-    * ws
-    
-    * support arbitrary delay for deserializing arc
-    
-    * support hiding named stores
-    
-    * update TVMaze
-    
-    * wip
-    
-    * disable shell-stores
-    
-    * better logging
-    
-    * cleanups
-    
-    * revert TVMaze changes
-    
-    * store geolocation with SYSTEM_user
-    
-    * cleanup utils
+    fix missed rename (#1929)
