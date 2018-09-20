@@ -1,5 +1,9 @@
-commit aa2ca9a5de2837d196be1f8c2e2dfb5593c57825
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Sep 19 16:22:27 2018 +1000
+commit 79c5e6033ccdac8e1abb448e15c7ae9d2366c1b8
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Wed Sep 19 17:47:16 2018 -0700
 
-    Adds proper descriptions to Artist demo (#1907)
+    Initial prototype of Arcs Cloud Deployment Management System (#1904)
+    
+    * Initial prototype of Arcs Cloud Deployment Management System
+    
+    * Fix review nits, add ondisk pouchdb
