@@ -1,9 +1,11 @@
-commit 79c5e6033ccdac8e1abb448e15c7ae9d2366c1b8
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Wed Sep 19 17:47:16 2018 -0700
+commit a78ed584569aa2d3fb30cb8921cdb836c766c9f6
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Sep 19 19:27:36 2018 -0700
 
-    Initial prototype of Arcs Cloud Deployment Management System (#1904)
+    Changed SynthethicStorage events to report add/remove as per other Collections (#1908)
     
-    * Initial prototype of Arcs Cloud Deployment Management System
+    * Changed SynthethicStorage events to report add/remove as per other Collections
     
-    * Fix review nits, add ondisk pouchdb
+    * Fix some lint issues; turn off no-multi-spaces check
+    
+    * Fix filename for mocha under Windows

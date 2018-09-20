@@ -51985,6 +51985,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_atob_web_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../platform/atob-web.js */ "./platform/atob-web.js");
 /* harmony import */ var _platform_btoa_web_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../platform/btoa-web.js */ "./platform/btoa-web.js");
 /* harmony import */ var _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./crdt-collection-model.js */ "./runtime/ts-build/storage/crdt-collection-model.js");
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../util.js */ "./runtime/ts-build/util.js");
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -51994,6 +51995,7 @@ __webpack_require__.r(__webpack_exports__);
 // http://polymer.github.io/PATENTS.txt
 
 // keep in sync with shell/source/ArcsLib.js
+
 
 
 
@@ -52482,25 +52484,6 @@ class FirebaseVariable extends FirebaseStorageProvider {
         this.version = version;
     }
 }
-function setDiff(from, to) {
-    const add = [];
-    const remove = [];
-    const items = new Set([...from, ...to]);
-    const fromSet = new Set(from);
-    const toSet = new Set(to);
-    for (const item of items) {
-        if (fromSet.has(item)) {
-            if (toSet.has(item)) {
-                continue;
-            }
-            remove.push(item);
-            continue;
-        }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(toSet.has(item));
-        add.push(item);
-    }
-    return { remove, add };
-}
 // Models a Collection that is persisted to firebase in scheme similar
 // to the CRDT OR-set. We don't model sets of both observed
 // and removed keys but instead we maintain a list of current keys and
@@ -52594,7 +52577,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
                 if (encId in this.remoteState.items) {
                     // 1. possibly updated remotely.
                     const encOldkeys = Object.keys(this.remoteState.items[encId].keys);
-                    const { add: encAddKeys, remove: encRemoveKeys } = setDiff(encOldkeys, encKeys);
+                    const { add: encAddKeys, remove: encRemoveKeys } = Object(_util_js__WEBPACK_IMPORTED_MODULE_9__["setDiff"])(encOldkeys, encKeys);
                     let addKeys = encAddKeys.map(FirebaseStorage.decodeKey);
                     const removeKeys = encRemoveKeys.map(FirebaseStorage.decodeKey);
                     if (suppression) {
@@ -53910,6 +53893,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _key_base_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./key-base.js */ "./runtime/ts-build/storage/key-base.js");
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../util.js */ "./runtime/ts-build/util.js");
 // @
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -53917,6 +53901,7 @@ __webpack_require__.r(__webpack_exports__);
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -54010,21 +53995,23 @@ class SyntheticCollection extends _storage_provider_base_js__WEBPACK_IMPORTED_MO
         catch (e) {
             console.warn(`Error parsing manifest at ${this._storageKey}:\n${e.message}`);
         }
-        this.model = [];
+        const newModel = [];
         for (const handle of handles || []) {
             if (isFirebaseKey(handle._storageKey)) {
-                this.model.push({
+                newModel.push({
                     storageKey: handle.storageKey,
                     type: handle.mappedType,
                     tags: handle.tags
                 });
             }
         }
+        const diff = Object(_util_js__WEBPACK_IMPORTED_MODULE_5__["setDiffCustom"])(this.model, newModel, JSON.stringify);
+        this.model = newModel;
         if (this.resolveInitialized) {
             this.resolveInitialized();
             this.resolveInitialized = null;
         }
-        this._fire('change', { data: this.model });
+        this._fire('change', diff);
     }
     async toList() {
         await this.initialized;
@@ -54559,6 +54546,79 @@ addType('Synthesized');
 
 
 //# sourceMappingURL=type.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/util.js":
+/*!**********************************!*\
+  !*** ./runtime/ts-build/util.js ***!
+  \**********************************/
+/*! exports provided: setDiff, setDiffCustom */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDiff", function() { return setDiff; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDiffCustom", function() { return setDiffCustom; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+// @license
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+// Returns the set delta between two lists based on direct object comparison.
+function setDiff(from, to) {
+    const result = { add: [], remove: [] };
+    const items = new Set([...from, ...to]);
+    const fromSet = new Set(from);
+    const toSet = new Set(to);
+    for (const item of items) {
+        if (fromSet.has(item)) {
+            if (toSet.has(item)) {
+                continue;
+            }
+            result.remove.push(item);
+            continue;
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(toSet.has(item));
+        result.add.push(item);
+    }
+    return result;
+}
+// Returns the set delta between two lists based on custom object comparison.
+// `keyFn` takes type T and returns the value by which items should be compared.
+function setDiffCustom(from, to, keyFn) {
+    const result = { add: [], remove: [] };
+    const items = new Map();
+    const fromSet = new Map();
+    const toSet = new Map();
+    for (const item of from) {
+        const key = keyFn(item);
+        items.set(key, item);
+        fromSet.set(key, item);
+    }
+    for (const item of to) {
+        const key = keyFn(item);
+        items.set(key, item);
+        toSet.set(key, item);
+    }
+    for (const [key, item] of items) {
+        if (fromSet.has(key)) {
+            if (toSet.has(key)) {
+                continue;
+            }
+            result.remove.push(item);
+            continue;
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(toSet.has(key));
+        result.add.push(item);
+    }
+    return result;
+}
+//# sourceMappingURL=util.js.map
 
 /***/ }),
 

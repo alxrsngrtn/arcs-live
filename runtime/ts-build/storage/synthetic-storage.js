@@ -10,6 +10,7 @@ import { StorageBase, StorageProviderBase } from './storage-provider-base.js';
 import { KeyBase } from './key-base.js';
 import { Type } from '../type.js';
 import { Manifest } from '../../manifest.js';
+import { setDiffCustom } from '../util.js';
 var Scope;
 (function (Scope) {
     Scope[Scope["arc"] = 1] = "arc"; // target must be a storage key referring to a serialized manifest
@@ -98,21 +99,23 @@ class SyntheticCollection extends StorageProviderBase {
         catch (e) {
             console.warn(`Error parsing manifest at ${this._storageKey}:\n${e.message}`);
         }
-        this.model = [];
+        const newModel = [];
         for (const handle of handles || []) {
             if (isFirebaseKey(handle._storageKey)) {
-                this.model.push({
+                newModel.push({
                     storageKey: handle.storageKey,
                     type: handle.mappedType,
                     tags: handle.tags
                 });
             }
         }
+        const diff = setDiffCustom(this.model, newModel, JSON.stringify);
+        this.model = newModel;
         if (this.resolveInitialized) {
             this.resolveInitialized();
             this.resolveInitialized = null;
         }
-        this._fire('change', { data: this.model });
+        this._fire('change', diff);
     }
     async toList() {
         await this.initialized;
