@@ -1,11 +1,5 @@
-commit a78ed584569aa2d3fb30cb8921cdb836c766c9f6
+commit 2b440629034ab5499b7f03cea78e065ed04cfecf
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Sep 19 19:27:36 2018 -0700
+Date:   Wed Sep 19 21:03:12 2018 -0700
 
-    Changed SynthethicStorage events to report add/remove as per other Collections (#1908)
-    
-    * Changed SynthethicStorage events to report add/remove as per other Collections
-    
-    * Fix some lint issues; turn off no-multi-spaces check
-    
-    * Fix filename for mocha under Windows
+    Added 'install from scratch' instructions to readme (#1917)
