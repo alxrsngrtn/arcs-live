@@ -1,5 +1,9 @@
-commit f4f94511c1d31babec7988410ea60807a448d9b9
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Sep 20 15:43:27 2018 +1000
+commit 99a4679f11470eac72023f017f1a30bd870b127c
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Sep 20 16:46:07 2018 +1000
 
-    Ticketmaster integraton + minor cleanups (#1916)
+    Require Whitespace after ParticleArgumentDirection and Type (#1918)
+    
+    * Fix handling of whitespace after ParticleArgumentDirection
+    
+    * Remove two trailing whitespaces in peg
