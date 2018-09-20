@@ -55687,11 +55687,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../runtime/ts-build/type.js */ "./runtime/ts-build/type.js");
 /* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./browser-loader.js */ "./shell/source/browser-loader.js");
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var firebase_database__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! firebase/database */ "./node_modules/firebase/database/dist/index.esm.js");
-/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! firebase/storage */ "./node_modules/firebase/storage/dist/index.esm.js");
-/* harmony import */ var _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../runtime/ts-build/keymgmt/manager.js */ "./runtime/ts-build/keymgmt/manager.js");
+/* harmony import */ var _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../runtime/particle-execution-context.js */ "./runtime/particle-execution-context.js");
+/* harmony import */ var _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../runtime/ts-build/storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var firebase_database__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! firebase/database */ "./node_modules/firebase/database/dist/index.esm.js");
+/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! firebase/storage */ "./node_modules/firebase/storage/dist/index.esm.js");
+/* harmony import */ var _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../runtime/ts-build/keymgmt/manager.js */ "./runtime/ts-build/keymgmt/manager.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -55714,6 +55716,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
 // Keep in sync with runtime/ts/storage/firebase-storage.ts
 
 
@@ -55724,15 +55728,18 @@ __webpack_require__.r(__webpack_exports__);
 //Tracing.enable();
 
 const Arcs = {
-  version: '0.3',
+  version: '0.4',
+  Tracing: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_6__["Tracing"],
   Arc: _runtime_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"],
   Runtime: _runtime_ts_build_runtime_js__WEBPACK_IMPORTED_MODULE_0__["Runtime"],
   Planificator: _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_2__["Planificator"],
   SlotComposer: _runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_3__["SlotComposer"],
   Type: _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__["Type"],
   BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_5__["BrowserLoader"],
-  Tracing: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_6__["Tracing"],
-  KeyManager: _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_10__["KeyManager"]
+  StorageProviderFactory: _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_8__["StorageProviderFactory"],
+  ParticleExecutionContext: _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_7__["ParticleExecutionContext"],
+  KeyManager: _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_12__["KeyManager"],
+  firebase: (firebase_app__WEBPACK_IMPORTED_MODULE_9___default())
 };
 
 // TODO(sjmiles): can't export because WebPack won't make a built version with a module export
@@ -55740,7 +55747,7 @@ const Arcs = {
 // export default Arcs;
 
 window.Arcs = window.Arcs ? Object.assign(window.Arcs, Arcs) : Arcs;
-window.firebase = firebase_app__WEBPACK_IMPORTED_MODULE_7___default.a;
+window.firebase = firebase_app__WEBPACK_IMPORTED_MODULE_9___default.a;
 
 
 

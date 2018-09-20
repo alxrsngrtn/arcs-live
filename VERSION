@@ -1,5 +1,41 @@
-commit 8def52917d07d664a2e65bb1860a853e7b41a2f1
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Sep 20 13:28:34 2018 -0700
+commit 05a97d1e89d96f45a9f802eba9d127566870a722
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Sep 20 13:35:32 2018 -0700
 
-    Rename device client API. (#1926)
+    Rebuild sharing on top of Runtime-Storage abstraction (#1912)
+    
+    * did npm install
+    
+    * add modules to ArcsLib
+    
+    * promote lib from app-shell
+    
+    * new sharing implementation
+    
+    * disable old shares
+    
+    * disable old sharing
+    
+    * retry protection
+    
+    * ws
+    
+    * support arbitrary delay for deserializing arc
+    
+    * support hiding named stores
+    
+    * update TVMaze
+    
+    * wip
+    
+    * disable shell-stores
+    
+    * better logging
+    
+    * cleanups
+    
+    * revert TVMaze changes
+    
+    * store geolocation with SYSTEM_user
+    
+    * cleanup utils
