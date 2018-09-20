@@ -1,9 +1,5 @@
-commit eea12e11b0798e486135f27f1f2b784d4e36a3ac
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Sep 20 10:09:54 2018 -0700
+commit 8def52917d07d664a2e65bb1860a853e7b41a2f1
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Thu Sep 20 13:28:34 2018 -0700
 
-    Implement consumer-mode planificator (#1920)
-    
-    - introduce different modes of planificator
-    - implement suggestion storage class (only read atm)
-    - fetching serialized suggestions from storage
+    Rename device client API. (#1926)
