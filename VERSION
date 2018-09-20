@@ -1,5 +1,5 @@
-commit ffc91c5d1916bfcb5eca4763453f114f4db30efb
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Sep 20 14:25:35 2018 -0700
+commit 962ef4a3642b41a6383055e5ee99615c2449e3cf
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri Sep 21 09:22:32 2018 +1000
 
-    fix missed rename (#1929)
+    Fix issue with firebase collections not fully writing data on second write. (#1924)
