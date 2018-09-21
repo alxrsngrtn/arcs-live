@@ -1,5 +1,9 @@
-commit 0c478a942d08a19885d320df4208c7cec2608eaa
+commit 266960746ab4de71a8fdc15648c66af909f09c97
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Sep 21 11:38:48 2018 -0700
+Date:   Fri Sep 21 13:26:42 2018 -0700
 
-    Implement `store.off`, fix EventKind enum (#1937)
+    Update TVMaze artifacts (#1939)
+    
+    * updated TVMaze artifacts
+    
+    * make sure SelectableTileList goes into root, not content
