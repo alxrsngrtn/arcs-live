@@ -41969,7 +41969,7 @@ class Planificator {
     this._next = {plans: [], generations: []}; // {plans, generations}
     // The current set plans to be presented to the user (full or subset)
     this._current = {plans: [], generations: []}; // {plans, generations}
-    this._suggestFilter = {showAll: false};
+    this._suggestFilter = {showAll: this.isProducer ? true : false};
     // The previous set of suggestions with the plan that was instantiated - copied over from the `current`
     // set, once suggestion is being accepted. Other sets of generated plans aren't stored.
     this._past = {}; // {plan, plans, generations}
@@ -41995,12 +41995,12 @@ class Planificator {
   }
 
   _init() {
-    // TODO(mmandlis): Planificator subscribes to various change events.
-    // Later, it will evaluate and batch events and trigger replanning intelligently.
-    // Currently, just trigger replanning for each event.
+    this._arcCallback = this._onPlanInstantiated.bind(this);
+    this._arc.registerInstantiatePlanCallback(this._arcCallback);
     if (this.isFull) {
-      this._arcCallback = this._onPlanInstantiated.bind(this);
-      this._arc.registerInstantiatePlanCallback(this._arcCallback);
+      // TODO(mmandlis): Planificator subscribes to various change events.
+      // Later, it will evaluate and batch events and trigger replanning intelligently.
+      // Currently, just trigger replanning for each event.
       this._arc.onDataChange(() => this._onDataChange(), this);
       this._onDataChange();
     }
@@ -42050,11 +42050,17 @@ class Planificator {
   }
   get suggestFilter() { return this._suggestFilter; }
   set suggestFilter(suggestFilter) {
+    // TODO: Implement search based decentralized planning.
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isProducer, `Cannot set suggest filter in producer mode`);
+
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!suggestFilter.showAll || !suggestFilter.search);
     this._suggestFilter = suggestFilter;
   }
 
   setSearch(search) {
+    // TODO: Implement search based decentralized planning.
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isProducer, `Cannot set search in producer mode`);
+
     search = search ? search.toLowerCase().trim() : null;
     search = (search !== '') ? search : null;
     let showAll = search === '*';
@@ -42168,6 +42174,7 @@ class Planificator {
       // Consumer-mode plannificator only consumes suggestions that are
       // produced and stored by producer-mode planificator.
       // TODO: Run planning locally, if no stored suggestions available.
+      // TODO: set isPlanning to TRUE. Producer will update timestamp, then set isPlanning to false.
       return;
     }
 
@@ -42191,7 +42198,7 @@ class Planificator {
       await this._runPlanning(options);
 
       this.isPlanning = false;
-      this._setCurrent(Object.assign({}, this._next), options.append || false);
+      await this._setCurrent(Object.assign({}, this._next), options.append || false);
     }
   }
 
@@ -42246,7 +42253,7 @@ class Planificator {
     this._planner = null;
   }
 
-  _setCurrent(current, append) {
+  async _setCurrent(current, append) {
     let hasChange = false;
     let newPlans = [];
     if (append) {
@@ -42268,6 +42275,10 @@ class Planificator {
       let suggestions = this.getCurrentSuggestions();
       if (this._plansDiffer(suggestions, previousSuggestions)) {
         this._suggestChangedCallbacks.forEach(callback => callback(suggestions));
+      }
+
+      if (this.isProducer) {
+        this._storage.storeCurrent(current);
       }
     } else {
       this._current.contextual = current.contextual;
@@ -49517,6 +49528,12 @@ class SuggestionStorage {
   }
 
   async _onStoreUpdated() {
+    if (this._suggestionsUpdatedCallbacks.length == 0) {
+      // Suggestion store was updated, but there are no callback listening
+      // to the updates - do nothing.
+      return;
+    }
+
     let value = (await this._store.get()) || {};
     if (!value.current) {
       return;
@@ -49554,7 +49571,73 @@ class SuggestionStorage {
         plan = resolvedPlan;
       }
     }
+    // TODO: Transformation particle hack.
+    // If recipe has hosted particles, manifest will have stores with particle specs.
+    // These stores need to be re-created in the current arc's context and
+    // handle connections need to be updated accordingly.
     return plan;
+  }
+
+  async storeCurrent(current) {
+    await this.ensureInitialized();
+
+    let plans = [];
+    for (let plan of current.plans) {
+      // TODO: Add all missing slot IDs
+      plans.push({
+        recipe: this._plantoString(plan.plan),
+        hash: plan.hash,
+        rank: plan.rank,
+        descriptionText: plan.descriptionText,
+        suggestionContent: {template: plan.descriptionText, model: {}}
+      });
+    }
+
+    await this._updateStore({current: {plans}});
+  }
+
+  _plantoString(plan) {
+    // No hosted particles.
+    if (!plan.handles.some(h => h.id && h.id.includes('particle-literal'))) {
+      return plan.toString();
+    }
+
+    // TODO: This is a transformation particle hack for plans resolved by
+    // FindHostedParticle strategy. Find a proper way to do this.
+    // Update hosted particle handles and connections.
+    let planClone = plan.clone();
+    let hostedParticleSpecs = [];
+    for (let i = 0; i < planClone.handles.length; ++i) {
+      let handle = planClone.handles[i];
+      if (handle.id && handle.id.includes('particle-literal')) {
+        let hostedParticleName = handle.id.substr(handle.id.lastIndexOf(':') + 1);
+        // Add particle spec to the list.
+        let hostedParticleSpec = this._arc._context.findParticleByName(hostedParticleName);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(hostedParticleSpec, `Cannot find spec for particle '${hostedParticleName}'.`);
+        hostedParticleSpecs.push(hostedParticleSpec.toString());
+
+        // Override handle conenctions with particle name as local name.
+        Object.values(handle.connections).forEach(conn => {
+          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(conn.type.isInterface);
+          conn._handle = {localName: hostedParticleName};
+        });
+
+        // Remove the handle.
+        planClone.handles.splice(i, 1);
+        --i;
+      }
+    }
+    return `${hostedParticleSpecs.join('\n')}\n${planClone.toString()}`;
+  }
+
+  async _updateStore(value) {
+    await this.ensureInitialized();
+    try {
+      await this._store.set(value);
+    } catch (e) {
+      // debugger;
+      console.error(e);
+    }
   }
 }
 

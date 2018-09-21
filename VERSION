@@ -1,9 +1,5 @@
-commit 56ccdefe87621611e41641630248c26de4df8cf9
+commit 441acdc7b0bb01923c619514f9bf9489622804fa
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Sep 20 23:06:44 2018 -0700
+Date:   Fri Sep 21 08:56:02 2018 -0700
 
-    Trigger planning in planificator ctor, and reenable selenium tests (#1934)
-    
-    * Trigger planning in planificator ctor, and reenable selenium tests
-    
-    * comment out testAroundRefresh() in restaurants demo test
+    Implement planificator's producer mode. (#1935)
