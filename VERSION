@@ -1,5 +1,5 @@
-commit 441acdc7b0bb01923c619514f9bf9489622804fa
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Sep 21 08:56:02 2018 -0700
+commit 0c478a942d08a19885d320df4208c7cec2608eaa
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Sep 21 11:38:48 2018 -0700
 
-    Implement planificator's producer mode. (#1935)
+    Implement `store.off`, fix EventKind enum (#1937)

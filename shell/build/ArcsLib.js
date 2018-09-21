@@ -53984,7 +53984,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var EventKind;
 (function (EventKind) {
-    EventKind["Change"] = "change";
+    EventKind["change"] = "Change";
 })(EventKind || (EventKind = {}));
 class StorageBase {
     constructor(arcId) {
@@ -54032,6 +54032,13 @@ class StorageProviderBase {
         const listeners = this.listeners.get(kind) || new Map();
         listeners.set(callback, { target });
         this.listeners.set(kind, listeners);
+    }
+    off(kindStr, callback) {
+        const kind = EventKind[kindStr];
+        const listeners = this.listeners.get(kind);
+        if (listeners) {
+            listeners.delete(callback);
+        }
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
     async _fire(kindStr, details) {
