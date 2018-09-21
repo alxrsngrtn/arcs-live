@@ -1,5 +1,5 @@
-commit 962ef4a3642b41a6383055e5ee99615c2449e3cf
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Sep 21 09:22:32 2018 +1000
+commit c6ffa24fc315d1f9f8d3a2a9aa0cacdb71c4f984
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Sep 21 10:19:41 2018 +1000
 
-    Fix issue with firebase collections not fully writing data on second write. (#1924)
+    Fixes to Artist demo (#1930)
