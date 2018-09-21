@@ -1,5 +1,9 @@
-commit c6ffa24fc315d1f9f8d3a2a9aa0cacdb71c4f984
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Sep 21 10:19:41 2018 +1000
+commit cc7091d9032ebbf5083e4966a3cae4f98f7352a6
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Sep 21 14:43:29 2018 +1000
 
-    Fixes to Artist demo (#1930)
+    Ensure lower case identifiers are not directions (#1931)
+    
+    * Reject identifiers that are reserved words to simplify parsing
+    
+    * Remove extra check for identifier == reservedWord
