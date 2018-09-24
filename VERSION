@@ -1,5 +1,9 @@
-commit 55ae7027d1d120761424a26568a7ec6bbc2335da
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Sep 25 09:32:47 2018 +1000
+commit 7c52bf5544414a43969d315816f7864d6e4c6e69
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Sep 24 16:39:26 2018 -0700
 
-    Insert localStorage entry if it doesn't exist. (#1959)
+    Implement serialization InMemoryBigCollection (#1950)
+    
+    * Implement serialization InMemoryBigCollection.
+    
+    * linty linty lint

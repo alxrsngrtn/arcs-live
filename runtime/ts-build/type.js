@@ -163,7 +163,6 @@ export class Type {
         }
         return null;
     }
-    // TODO: naming is hard
     isTypeContainer() {
         return this.isCollection || this.isBigCollection || this.isReference;
     }
@@ -417,7 +416,7 @@ export class Type {
             return `[${this.collectionType.toString(options)}]`;
         }
         if (this.isBigCollection) {
-            return `[${this.bigCollectionType.toString(options)}]`;
+            return `BigCollection<${this.bigCollectionType.toString(options)}>`;
         }
         if (this.isEntity) {
             return this.entitySchema.toInlineSchemaString(options);

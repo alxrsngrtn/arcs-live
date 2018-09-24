@@ -163,7 +163,7 @@ export class FirebaseStorage extends StorageBase {
     // but this _join creates the storage location. 
     async _join(id, type, keyString, shouldExist, referenceMode = false) {
         assert(!type.isVariable);
-        assert(!type.isCollection || !type.primitiveType().isVariable);
+        assert(!type.isTypeContainer() || !type.getContainedType().isVariable);
         const { fbKey, reference } = this.attach(keyString);
         const currentSnapshot = await getSnapshot(reference);
         if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
@@ -1063,6 +1063,9 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     }
     backingType() {
         return this.type.primitiveType();
+    }
+    enableReferenceMode() {
+        assert(false, 'referenceMode is not supported for BigCollection');
     }
     // TODO: rename this to avoid clashing with Variable and allow particles some way to specify the id
     async get(id) {

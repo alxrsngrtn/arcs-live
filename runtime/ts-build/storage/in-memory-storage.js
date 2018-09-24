@@ -54,7 +54,7 @@ export class InMemoryStorage extends StorageBase {
     }
     async construct(id, type, keyFragment) {
         const provider = await this._construct(id, type, keyFragment);
-        if (type.isReference) {
+        if (type.isReference || type.isBigCollection) {
             return provider;
         }
         if (type.isTypeContainer() && type.getContainedType().isReference) {
@@ -180,10 +180,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
     }
     // Returns {version, model: [{id, value, keys: []}]}
     toLiteral() {
-        return {
-            version: this.version,
-            model: this._model.toLiteral(),
-        };
+        return { version: this.version, model: this._model.toLiteral() };
     }
     fromLiteral({ version, model }) {
         this.version = version;
@@ -316,17 +313,8 @@ class InMemoryVariable extends InMemoryStorageProvider {
     // Returns {version, model: [{id, value}]}
     async toLiteral() {
         const value = this._stored;
-        let model = [];
-        if (value != null) {
-            model = [{
-                    id: value.id,
-                    value,
-                }];
-        }
-        return {
-            version: this.version,
-            model,
-        };
+        const model = (value != null) ? [{ id: value.id, value }] : [];
+        return { version: this.version, model };
     }
     fromLiteral({ version, model }) {
         const value = model.length === 0 ? null : model[0].value;
@@ -415,6 +403,9 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
         this.cursors = new Map();
         this.cursorIndex = 0;
     }
+    enableReferenceMode() {
+        assert(false, 'referenceMode is not supported for BigCollection');
+    }
     backingType() {
         return this.type.primitiveType();
     }
@@ -466,8 +457,27 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
         const cursor = this.cursors.get(cursorId);
         return cursor ? cursor.version : null;
     }
+    // Returns {version, model: [{id, index, value, keys: []}]}
     toLiteral() {
-        assert(false, "no toLiteral implementation for BigCollection");
+        const model = [];
+        for (const [id, { index, value, keys }] of this.items.entries()) {
+            model.push({ id, index, value, keys: Object.keys(keys) });
+        }
+        return { version: this.version, model };
+    }
+    fromLiteral({ version, model }) {
+        this.version = version;
+        this.items.clear();
+        for (const { id, index, value, keys } of model) {
+            const adjustedKeys = {};
+            for (const k of keys) {
+                adjustedKeys[k] = index;
+            }
+            this.items.set(id, { index, value, keys: adjustedKeys });
+        }
+    }
+    clearItemsForTesting() {
+        this.items.clear();
     }
 }
 //# sourceMappingURL=in-memory-storage.js.map

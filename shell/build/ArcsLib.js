@@ -27781,7 +27781,7 @@ class Arc {
     this._description = new _description_js__WEBPACK_IMPORTED_MODULE_6__["Description"](this);
 
     this._instantiatePlanCallbacks = [];
-    this._recipeIndex = recipeIndex || new _recipe_index_js__WEBPACK_IMPORTED_MODULE_13__["RecipeIndex"](this._context, slotComposer && slotComposer.affordance);
+    this._recipeIndex = recipeIndex || new _recipe_index_js__WEBPACK_IMPORTED_MODULE_13__["RecipeIndex"](this._context, loader, slotComposer && slotComposer.affordance);
 
     _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_10__["DevtoolsConnection"].onceConnected.then(
         devtoolsChannel => new _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_12__["ArcDebugHandler"](this, devtoolsChannel));
@@ -27846,10 +27846,7 @@ class Arc {
   }
 
   async _serializeHandle(handle, context, id) {
-    let type = handle.type;
-    if (type.isCollection) {
-      type = type.primitiveType();
-    }
+    let type = handle.type.getContainedType() || handle.type;
     if (type.isInterface) {
       context.interfaces += type.interfaceShape.toString() + '\n';
     }
@@ -27866,20 +27863,25 @@ class Arc {
         const nosync = handleTags.includes('nosync');
         let serializedData = [];
         if (!nosync) {
-          serializedData = (await handle.toLiteral()).model.map(({id, value}) => {
+          // TODO: include keys in serialized [big]collections?
+          serializedData = (await handle.toLiteral()).model.map(({id, value, index}) => {
             if (value == null) {
               return null;
             }
+            
+            let result;
             if (value.rawData) {
-              let result = {};
+              result = {$id: id};
               for (let field in value.rawData) {
                 result[field] = value.rawData[field];
               }
-              result.$id = id;
-              return result;
             } else {
-              return value;
+              result = value;
             }
+            if (index !== undefined) {
+              result.$index = index;
+            }
+            return result;
           });
         }
         if (handle.referenceMode && serializedData.length > 0) {
@@ -27903,7 +27905,7 @@ class Arc {
         let data = JSON.stringify(serializedData);
         context.resources += data.split('\n').map(line => indent + line).join('\n');
         context.resources += '\n';
-        context.handles += `store ${id} of ${handle.type.toString()} '${handle.id}' @${handle.version === null ? 0 : handle.version} ${handleTags} in ${id}Resource\n`;
+        context.handles += `store ${id} of ${handle.type.toString()} '${handle.id}' @${handle.version || 0} ${handleTags} in ${id}Resource\n`;
         break;
       }
     }
@@ -29987,13 +29989,7 @@ const parser = /*
               if (s5 !== peg$FAILED) {
                 s6 = peg$parsewhiteSpace();
                 if (s6 !== peg$FAILED) {
-                  s7 = peg$parseSchemaInline();
-                  if (s7 === peg$FAILED) {
-                    s7 = peg$parseCollectionType();
-                    if (s7 === peg$FAILED) {
-                      s7 = peg$parseTypeName();
-                    }
-                  }
+                  s7 = peg$parseManifestStorageType();
                   if (s7 !== peg$FAILED) {
                     s8 = peg$currPos;
                     s9 = peg$parsewhiteSpace();
@@ -30172,6 +30168,23 @@ const parser = /*
       } else {
         peg$currPos = s0;
         s0 = peg$FAILED;
+      }
+
+      return s0;
+    }
+
+    function peg$parseManifestStorageType() {
+      var s0;
+
+      s0 = peg$parseSchemaInline();
+      if (s0 === peg$FAILED) {
+        s0 = peg$parseCollectionType();
+        if (s0 === peg$FAILED) {
+          s0 = peg$parseBigCollectionType();
+          if (s0 === peg$FAILED) {
+            s0 = peg$parseTypeName();
+          }
+        }
       }
 
       return s0;
@@ -40453,8 +40466,7 @@ ${e.message}
       source = item.source;
       json = manifest.resources[source];
       if (json == undefined) {
-        throw new Error(`Resource '${source}' referenced by store '${
-            id}' is not defined in this manifest`);
+        throw new Error(`Resource '${source}' referenced by store '${id}' is not defined in this manifest`);
       }
     }
     let entities;
@@ -40464,17 +40476,19 @@ ${e.message}
       throw new ManifestError(item.location, `Error parsing JSON from '${source}' (${e.message})'`);
     }
 
-    // Note that BigCollection isn't relevant here (ManifestStorage cannot be of BigCollectionType).
+    // TODO: clean this up
     let unitType;
-    if (!type.isCollection) {
+    if (type.isCollection) {
+      unitType = type.collectionType;
+    } else if (type.isBigCollection) {
+      unitType = type.bigCollectionType;
+    } else {
       if (entities.length == 0) {
         await Manifest._createStore(manifest, type, name, id, tags, item);
         return;
       }
       entities = entities.slice(entities.length - 1);
       unitType = type;
-    } else {
-      unitType = type.collectionType;
     }
 
     if (unitType.isEntity) {
@@ -40517,10 +40531,19 @@ ${e.message}
 
     // For this store to be able to be treated as a CRDT, each item needs a key.
     // Using id as key seems safe, nothing else should do this.
-    store.fromLiteral({
-      version,
-      model: entities.map(value => ({id: value.id, value, keys: new Set([value.id])})),
-    });
+    let model;
+    if (type.isCollection) {
+      model = entities.map(value => ({id: value.id, value, keys: new Set([value.id])}));
+    } else if (type.isBigCollection) {
+      model = entities.map(value => {
+        let index = value.rawData.$index;
+        delete value.rawData.$index;
+        return {id: value.id, index, value, keys: new Set([value.id])};
+      });
+    } else {
+      model = entities.map(value => ({id: value.id, value}));
+    }
+    store.fromLiteral({version, model});
   }
   static async _createStore(manifest, type, name, id, tags, item) {
     let store = await manifest.createStore(type, name, id, tags);
@@ -42618,24 +42641,23 @@ Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.Resoluti
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeIndex", function() { return RecipeIndex; });
-/* harmony import */ var _loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./loader.js */ "./runtime/loader.js");
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./manifest.js */ "./runtime/manifest.js");
-/* harmony import */ var _arc_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./arc.js */ "./runtime/arc.js");
-/* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./slot-composer.js */ "./runtime/slot-composer.js");
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./strategies/convert-constraints-to-connections.js */ "./runtime/strategies/convert-constraints-to-connections.js");
-/* harmony import */ var _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./strategies/match-free-handles-to-connections.js */ "./runtime/strategies/match-free-handles-to-connections.js");
-/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./strategies/resolve-recipe.js */ "./runtime/strategies/resolve-recipe.js");
-/* harmony import */ var _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./strategies/create-handle-group.js */ "./runtime/strategies/create-handle-group.js");
-/* harmony import */ var _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./strategies/add-missing-handles.js */ "./runtime/strategies/add-missing-handles.js");
-/* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./strategies/rulesets.js */ "./runtime/strategies/rulesets.js");
-/* harmony import */ var _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./strategies/map-slots.js */ "./runtime/strategies/map-slots.js");
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./recipe/recipe-util.js */ "./runtime/recipe/recipe-util.js");
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./recipe/handle.js */ "./runtime/recipe/handle.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./arc.js */ "./runtime/arc.js");
+/* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./slot-composer.js */ "./runtime/slot-composer.js");
+/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../strategizer/strategizer.js */ "./strategizer/strategizer.js");
+/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
+/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../tracelib/trace.js */ "./tracelib/trace.js");
+/* harmony import */ var _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./strategies/convert-constraints-to-connections.js */ "./runtime/strategies/convert-constraints-to-connections.js");
+/* harmony import */ var _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./strategies/match-free-handles-to-connections.js */ "./runtime/strategies/match-free-handles-to-connections.js");
+/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./strategies/resolve-recipe.js */ "./runtime/strategies/resolve-recipe.js");
+/* harmony import */ var _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./strategies/create-handle-group.js */ "./runtime/strategies/create-handle-group.js");
+/* harmony import */ var _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./strategies/add-missing-handles.js */ "./runtime/strategies/add-missing-handles.js");
+/* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./strategies/rulesets.js */ "./runtime/strategies/rulesets.js");
+/* harmony import */ var _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./strategies/map-slots.js */ "./runtime/strategies/map-slots.js");
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
+/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./recipe/recipe-util.js */ "./runtime/recipe/recipe-util.js");
+/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./recipe/handle.js */ "./runtime/recipe/handle.js");
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -42664,8 +42686,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-class RelevantContextRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_4__["Strategy"] {
+class RelevantContextRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategy"] {
   constructor(context, affordance) {
     super();
     this._recipes = [];
@@ -42700,34 +42721,35 @@ class RelevantContextRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORT
 }
 
 const IndexStrategies = [
-  _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_7__["ConvertConstraintsToConnections"],
-  _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_11__["AddMissingHandles"],
-  _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_9__["ResolveRecipe"],
-  _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_8__["MatchFreeHandlesToConnections"],
+  _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__["ConvertConstraintsToConnections"],
+  _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__["AddMissingHandles"],
+  _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_8__["ResolveRecipe"],
+  _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__["MatchFreeHandlesToConnections"],
   // This one is not in-line with 'transparent' interfaces, but it operates on
   // recipes without looking at the context and cannot run after AddUseHandles.
   // We will revisit this list when we take a stab at recipe interfaces.
-  _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_10__["CreateHandleGroup"]
+  _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__["CreateHandleGroup"]
 ];
 
 class RecipeIndex {
-  constructor(context, affordance) {
-    let trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_6__["Tracing"].start({cat: 'indexing', name: 'RecipeIndex::constructor', overview: true});
-    let arcStub = new _arc_js__WEBPACK_IMPORTED_MODULE_2__["Arc"]({
+  constructor(context, loader, affordance) {
+    let trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__["Tracing"].start({cat: 'indexing', name: 'RecipeIndex::constructor', overview: true});
+    let arcStub = new _arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"]({
       id: 'index-stub',
-      context: new _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"]({id: 'empty-context'}),
-      slotComposer: affordance ? new _slot_composer_js__WEBPACK_IMPORTED_MODULE_3__["SlotComposer"]({affordance, noRoot: true}) : null,
+      context: new _manifest_js__WEBPACK_IMPORTED_MODULE_0__["Manifest"]({id: 'empty-context'}),
+      loader,
+      slotComposer: affordance ? new _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"]({affordance, noRoot: true}) : null,
       recipeIndex: {},
       // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
       speculative: true
     });
-    let strategizer = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_4__["Strategizer"](
+    let strategizer = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"](
       [
         new RelevantContextRecipes(context, affordance),
         ...IndexStrategies.map(S => new S(arcStub))
       ],
       [],
-      _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_12__["Empty"]
+      _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__["Empty"]
     );
     this.ready = trace.endWith(new Promise(async resolve => {
       let generations = [];
@@ -42737,9 +42759,9 @@ class RecipeIndex {
         generations.push({record, generated: strategizer.generated});
       } while (strategizer.generated.length + strategizer.terminal.length > 0);
 
-      if (_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_14__["DevtoolsConnection"].isConnected) {
-        _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_5__["StrategyExplorerAdapter"].processGenerations(
-            generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_14__["DevtoolsConnection"].get(), {label: 'Index', keep: true});
+      if (_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].isConnected) {
+        _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(
+            generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].get(), {label: 'Index', keep: true});
       }
 
       let population = strategizer.population;
@@ -42761,7 +42783,7 @@ class RecipeIndex {
   }
 
   ensureReady() {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_17__["assert"])(this._isReady, 'await on recipeIndex.ready before accessing');
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(this._isReady, 'await on recipeIndex.ready before accessing');
   }
 
   // Given provided handle and requested fates, finds handles with
@@ -42816,8 +42838,8 @@ class RecipeIndex {
     // active recipe, and ? could end up as anything.
     let fates = [handle.originalFate, handle.fate, otherHandle.originalFate, otherHandle.fate];
     if (!fates.includes('copy') && !fates.includes('map')) {
-      let counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_15__["RecipeUtil"].directionCounts(handle);
-      let otherCounts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_15__["RecipeUtil"].directionCounts(otherHandle);
+      let counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(handle);
+      let otherCounts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(otherHandle);
       // Someone has to read and someone has to write.
       if (otherCounts.in + counts.in === 0 || otherCounts.out + counts.out === 0) {
         return false;
@@ -42830,7 +42852,7 @@ class RecipeIndex {
     }
 
     // If types don't match.
-    if (!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_16__["Handle"].effectiveType(handle._mappedType, [...handle.connections, ...otherHandle.connections])) {
+    if (!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(handle._mappedType, [...handle.connections, ...otherHandle.connections])) {
       return false;
     }
 
@@ -42849,15 +42871,15 @@ class RecipeIndex {
         continue;
       }
       for (let slotConn of recipe.slotConnections) {
-        if (!slotConn.targetSlot && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_13__["MapSlots"].specMatch(slotConn, slot) && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_13__["MapSlots"].tagsOrNameMatch(slotConn, slot)) {
+        if (!slotConn.targetSlot && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].specMatch(slotConn, slot) && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].tagsOrNameMatch(slotConn, slot)) {
           let matchingHandles = [];
-          if (!_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_13__["MapSlots"].handlesMatch(slotConn, slot)) {
+          if (!_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].handlesMatch(slotConn, slot)) {
             // Find potential handle connections to coalesce
             slot.handleConnections.forEach(slotHandleConn => {
               let matchingConns = Object.values(slotConn.particle.connections).filter(particleConn => {
                 return particleConn.direction !== 'host'
                     && (!particleConn.handle || !particleConn.handle.id || particleConn.handle.id == slotHandleConn.handle.id)
-                    && _recipe_handle_js__WEBPACK_IMPORTED_MODULE_16__["Handle"].effectiveType(slotHandleConn.handle._mappedType, [particleConn]);
+                    && _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(slotHandleConn.handle._mappedType, [particleConn]);
               });
               matchingConns.forEach(matchingConn => {
                 if (this._fatesAndDirectionsMatch(slotHandleConn, matchingConn)) {
@@ -42889,7 +42911,7 @@ class RecipeIndex {
       }
       for (let consumeConn of recipe.slotConnections) {
         for (let providedSlot of Object.values(consumeConn.providedSlots)) {
-          if (_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_13__["MapSlots"].slotMatches(slotConn, providedSlot)) {
+          if (_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].slotMatches(slotConn, providedSlot)) {
             providedSlots.push(providedSlot);
           }
         }
@@ -42930,7 +42952,7 @@ class RecipeIndex {
   get coalescableFates() { return ['create', 'use', '?']; }
 
   findCoalescableHandles(recipe, otherRecipe, usedHandles) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_17__["assert"])(recipe != otherRecipe, 'Cannot coalesce handles in the same recipe');
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(recipe != otherRecipe, 'Cannot coalesce handles in the same recipe');
     let otherToHandle = new Map();
     usedHandles = usedHandles || new Set();
     for (let handle of recipe.handles) {
@@ -52462,7 +52484,7 @@ class FirebaseStorage extends _storage_provider_base__WEBPACK_IMPORTED_MODULE_0_
     // but this _join creates the storage location. 
     async _join(id, type, keyString, shouldExist, referenceMode = false) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!type.isVariable);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!type.isCollection || !type.primitiveType().isVariable);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!type.isTypeContainer() || !type.getContainedType().isVariable);
         const { fbKey, reference } = this.attach(keyString);
         const currentSnapshot = await getSnapshot(reference);
         if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
@@ -53363,6 +53385,9 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     backingType() {
         return this.type.primitiveType();
     }
+    enableReferenceMode() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(false, 'referenceMode is not supported for BigCollection');
+    }
     // TODO: rename this to avoid clashing with Variable and allow particles some way to specify the id
     async get(id) {
         const encId = FirebaseStorage.encodeKey(id);
@@ -53544,7 +53569,7 @@ class InMemoryStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE
     }
     async construct(id, type, keyFragment) {
         const provider = await this._construct(id, type, keyFragment);
-        if (type.isReference) {
+        if (type.isReference || type.isBigCollection) {
             return provider;
         }
         if (type.isTypeContainer() && type.getContainedType().isReference) {
@@ -53670,10 +53695,7 @@ class InMemoryCollection extends InMemoryStorageProvider {
     }
     // Returns {version, model: [{id, value, keys: []}]}
     toLiteral() {
-        return {
-            version: this.version,
-            model: this._model.toLiteral(),
-        };
+        return { version: this.version, model: this._model.toLiteral() };
     }
     fromLiteral({ version, model }) {
         this.version = version;
@@ -53806,17 +53828,8 @@ class InMemoryVariable extends InMemoryStorageProvider {
     // Returns {version, model: [{id, value}]}
     async toLiteral() {
         const value = this._stored;
-        let model = [];
-        if (value != null) {
-            model = [{
-                    id: value.id,
-                    value,
-                }];
-        }
-        return {
-            version: this.version,
-            model,
-        };
+        const model = (value != null) ? [{ id: value.id, value }] : [];
+        return { version: this.version, model };
     }
     fromLiteral({ version, model }) {
         const value = model.length === 0 ? null : model[0].value;
@@ -53905,6 +53918,9 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
         this.cursors = new Map();
         this.cursorIndex = 0;
     }
+    enableReferenceMode() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, 'referenceMode is not supported for BigCollection');
+    }
     backingType() {
         return this.type.primitiveType();
     }
@@ -53956,8 +53972,27 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
         const cursor = this.cursors.get(cursorId);
         return cursor ? cursor.version : null;
     }
+    // Returns {version, model: [{id, index, value, keys: []}]}
     toLiteral() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, "no toLiteral implementation for BigCollection");
+        const model = [];
+        for (const [id, { index, value, keys }] of this.items.entries()) {
+            model.push({ id, index, value, keys: Object.keys(keys) });
+        }
+        return { version: this.version, model };
+    }
+    fromLiteral({ version, model }) {
+        this.version = version;
+        this.items.clear();
+        for (const { id, index, value, keys } of model) {
+            const adjustedKeys = {};
+            for (const k of keys) {
+                adjustedKeys[k] = index;
+            }
+            this.items.set(id, { index, value, keys: adjustedKeys });
+        }
+    }
+    clearItemsForTesting() {
+        this.items.clear();
     }
 }
 //# sourceMappingURL=in-memory-storage.js.map
@@ -54531,7 +54566,6 @@ class Type {
         }
         return null;
     }
-    // TODO: naming is hard
     isTypeContainer() {
         return this.isCollection || this.isBigCollection || this.isReference;
     }
@@ -54785,7 +54819,7 @@ class Type {
             return `[${this.collectionType.toString(options)}]`;
         }
         if (this.isBigCollection) {
-            return `[${this.bigCollectionType.toString(options)}]`;
+            return `BigCollection<${this.bigCollectionType.toString(options)}>`;
         }
         if (this.isEntity) {
             return this.entitySchema.toInlineSchemaString(options);
