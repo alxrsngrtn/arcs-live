@@ -1466,7 +1466,8 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     });
   }
   /** @method updateVariable(handleName, record)
-   * Modify value of named handle.
+   * Modify value of named handle. A new entity is created
+   * from `record` (`new <EntityClass>(record)`).
    */
   updateVariable(handleName, record) {
     const handle = this.handles.get(handleName);
@@ -1478,17 +1479,17 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
    * Modify or insert `record` into named handle.
    * Modification is done by removing the old record and reinserting the new one.
    */
-  updateSet(handleName, record) {
-    // Set the record into the right place in the set. If we find it
+  updateSet(handleName, entity) {
+    // Set the entity into the right place in the set. If we find it
     // already present replace it, otherwise, add it.
     // TODO(dstockwell): Replace this with happy entity mutation approach.
     const handle = this.handles.get(handleName);
     const records = this._props[handleName];
-    const target = records.find(r => r.id === record.id);
+    const target = records.find(r => r.id === entity.id);
     if (target) {
       handle.remove(target);
     }
-    handle.store(record);
+    handle.store(entity);
   }
   /** @method boxQuery(box, userid)
    * Returns array of Entities found in BOXED data `box` that are owned by `userid`
@@ -3255,7 +3256,7 @@ class Particle {
   }
 
   setParticleDescription(pattern) {
-    return this.setDescriptionPattern('_pattern_', pattern);
+    return this.setDescriptionPattern('pattern', pattern);
   }
   setDescriptionPattern(connectionName, pattern) {
     let descriptions = this.handles.get('descriptions');

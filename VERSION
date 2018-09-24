@@ -1,9 +1,5 @@
-commit 266960746ab4de71a8fdc15648c66af909f09c97
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Sep 21 13:26:42 2018 -0700
+commit 0238190a203fc6da15b714a7536f18048a6e4919
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Sep 24 11:31:39 2018 -0700
 
-    Update TVMaze artifacts (#1939)
-    
-    * updated TVMaze artifacts
-    
-    * make sure SelectableTileList goes into root, not content
+    temporarily disable selenium tests (#1952)

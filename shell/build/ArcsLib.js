@@ -27915,6 +27915,7 @@ class Arc {
     let id = 0;
     let importSet = new Set();
     let handleSet = new Set();
+    const contextSet = new Set(this.context._stores.map(store => store.id));
     for (let handle of this._activeRecipe.handles) {
       if (handle.fate == 'map') {
         importSet.add(this.context.findManifestUrlForHandleId(handle.id));
@@ -27927,7 +27928,7 @@ class Arc {
     }
 
     for (let handle of this._stores) {
-      if (!handleSet.has(handle.id)) {
+      if (!handleSet.has(handle.id) || contextSet.has(handle.id)) {
         continue;
       }
 
@@ -28116,6 +28117,9 @@ ${this.activeRecipe.toString()}`;
     }
     let {handles, particles, slots} = recipe.mergeInto(currentArc.activeRecipe);
     currentArc.recipes.push({particles, handles, slots, innerArcs: new Map(), patterns: recipe.patterns});
+
+    // TODO(mmandlis): Get rid of populating the missing local slot IDs here,
+    // it should be done at planning stage.
     slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
 
     for (let recipeHandle of handles) {
@@ -28140,7 +28144,8 @@ ${this.activeRecipe.toString()}`;
           await newStore.set(particleClone);
         } else if (recipeHandle.fate === 'copy') {
           let copiedStore = this.findStoreById(recipeHandle.id);
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(copiedStore.version !== null);
+          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(copiedStore, `Cannot find store ${recipeHandle.id}`);
+          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
           await newStore.cloneFrom(copiedStore);
           this._tagStore(newStore, this.findStoreTags(copiedStore));
           let copiedStoreDesc = this.getStoreDescription(copiedStore);
@@ -28975,8 +28980,8 @@ const parser = /*
             let patterns = [];
             if (pattern) {
               patterns.push(pattern);
-              handleDescriptions.filter(desc => desc.name == '_pattern_').forEach(pattern => patterns.push(pattern));
-              handleDescriptions = handleDescriptions.filter(desc => desc.name != '_pattern_');
+              handleDescriptions.filter(desc => desc.name == 'pattern').forEach(pattern => patterns.push(pattern));
+              handleDescriptions = handleDescriptions.filter(desc => desc.name != 'pattern');
             }
             return {
               kind: 'description',
@@ -37974,7 +37979,7 @@ class DescriptionFormatter {
   }
 
   _populateParticleDescription(particle, descriptionByName) {
-    let pattern = descriptionByName['_pattern_'] || particle.spec.pattern;
+    let pattern = descriptionByName['pattern'] || particle.spec.pattern;
     return pattern ? {pattern} : {};
   }
 
@@ -38501,7 +38506,8 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     });
   }
   /** @method updateVariable(handleName, record)
-   * Modify value of named handle.
+   * Modify value of named handle. A new entity is created
+   * from `record` (`new <EntityClass>(record)`).
    */
   updateVariable(handleName, record) {
     const handle = this.handles.get(handleName);
@@ -38513,17 +38519,17 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
    * Modify or insert `record` into named handle.
    * Modification is done by removing the old record and reinserting the new one.
    */
-  updateSet(handleName, record) {
-    // Set the record into the right place in the set. If we find it
+  updateSet(handleName, entity) {
+    // Set the entity into the right place in the set. If we find it
     // already present replace it, otherwise, add it.
     // TODO(dstockwell): Replace this with happy entity mutation approach.
     const handle = this.handles.get(handleName);
     const records = this._props[handleName];
-    const target = records.find(r => r.id === record.id);
+    const target = records.find(r => r.id === entity.id);
     if (target) {
       handle.remove(target);
     }
-    handle.store(record);
+    handle.store(entity);
   }
   /** @method boxQuery(box, userid)
    * Returns array of Entities found in BOXED data `box` that are owned by `userid`
@@ -40202,7 +40208,23 @@ ${e.message}
           let providedSlot = slotConn.providedSlots[ps.param];
           if (providedSlot) {
             if (ps.name) {
-              items.byName.set(ps.name, providedSlot);
+              if (items.byName.has(ps.name)) {
+                // The slot was added to the recipe twice - once as part of the
+                // slots in the manifest, then as part of particle spec.
+                // Unifying both slots, updating name and source slot connection.
+                let theSlot = items.byName.get(ps.name);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(theSlot !== providedSlot);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!theSlot.name && providedSlot);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!theSlot.sourceConnection && providedSlot.sourceConnection);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(theSlot.handleConnections.length == 0);
+                theSlot.name = providedSlot.name;
+                theSlot.sourceConnection = providedSlot.sourceConnection;
+                theSlot.sourceConnection.providedSlots[theSlot.name] = theSlot;
+                theSlot._handleConnections = providedSlot.handleConnections.slice();
+                theSlot.recipe.removeSlot(providedSlot);
+              } else {
+                items.byName.set(ps.name, providedSlot);
+              }
             }
             items.bySlot.set(providedSlot, ps);
           } else {
@@ -41817,7 +41839,7 @@ class Particle {
   }
 
   setParticleDescription(pattern) {
-    return this.setDescriptionPattern('_pattern_', pattern);
+    return this.setDescriptionPattern('pattern', pattern);
   }
   setDescriptionPattern(connectionName, pattern) {
     let descriptions = this.handles.get('descriptions');
@@ -44841,7 +44863,7 @@ class Recipe {
     if (this.patterns.length > 0 || this.handles.find(h => h.pattern)) {
       result.push(`  description \`${this.patterns[0]}\``);
       for (let i = 1; i < this.patterns.length; ++i) {
-        result.push(`    _pattern_ \`${this.patterns[i]}\``);
+        result.push(`    pattern \`${this.patterns[i]}\``);
       }
       this.handles.forEach(h => {
         if (h.pattern) {
@@ -49563,7 +49585,7 @@ class SuggestionStorage {
         planString, {loader: this._arc.loader, context: this._arc._context, fileName: ''});
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest._recipes.length == 1);
     let plan = manifest._recipes[0];
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan.normalize(), `can't normalize deserialized suggestion`);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan.normalize(), `can't normalize deserialized suggestion: ${plan.toString()}`);
     if (!plan.isResolved()) {
       let resolvedPlan = await this._recipeResolver.resolve(plan);
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(resolvedPlan, `can't resolve plan: ${plan.toString({showUnresolved: true})}`);
@@ -49571,10 +49593,12 @@ class SuggestionStorage {
         plan = resolvedPlan;
       }
     }
-    // TODO: Transformation particle hack.
-    // If recipe has hosted particles, manifest will have stores with particle specs.
-    // These stores need to be re-created in the current arc's context and
-    // handle connections need to be updated accordingly.
+    for (let store of manifest.stores) {
+      // If recipe has hosted particles, manifest will have stores with hosted
+      // particle specs. Moving these stores into the current arc's context.
+      // TODO: This is a hack, find a proper way of doing this.
+      this._arc._context._addStore(store);
+    }
     return plan;
   }
 
@@ -49583,9 +49607,8 @@ class SuggestionStorage {
 
     let plans = [];
     for (let plan of current.plans) {
-      // TODO: Add all missing slot IDs
       plans.push({
-        recipe: this._plantoString(plan.plan),
+        recipe: this._planToString(plan.plan),
         hash: plan.hash,
         rank: plan.rank,
         descriptionText: plan.descriptionText,
@@ -49596,9 +49619,11 @@ class SuggestionStorage {
     await this._updateStore({current: {plans}});
   }
 
-  _plantoString(plan) {
-    // No hosted particles.
-    if (!plan.handles.some(h => h.id && h.id.includes('particle-literal'))) {
+  _planToString(plan) {
+    // Special handling is only needed for plans (1) with hosted particles or
+    // (2) local slot (ie missing slot IDs).
+    if (!plan.handles.some(h => h.id && h.id.includes('particle-literal')) &&
+        plan.slots.every(slot => Boolean(slot.id))) {
       return plan.toString();
     }
 
@@ -49606,6 +49631,8 @@ class SuggestionStorage {
     // FindHostedParticle strategy. Find a proper way to do this.
     // Update hosted particle handles and connections.
     let planClone = plan.clone();
+    planClone.slots.forEach(slot => slot.id = slot.id || `slotid-${this._arc.generateID()}`);
+
     let hostedParticleSpecs = [];
     for (let i = 0; i < planClone.handles.length; ++i) {
       let handle = planClone.handles[i];
@@ -49627,6 +49654,7 @@ class SuggestionStorage {
         --i;
       }
     }
+
     return `${hostedParticleSpecs.join('\n')}\n${planClone.toString()}`;
   }
 
@@ -53140,10 +53168,8 @@ class FirebaseCollection extends FirebaseStorageProvider {
         return (await this.toLiteral()).model;
     }
     async modelForSynchronization() {
-        return {
-            version: this.version,
-            model: await this._toList()
-        };
+        const model = await this._toList();
+        return { version: this.version, model };
     }
     async toList() {
         return (await this._toList()).map(item => item.value);
@@ -53603,7 +53629,7 @@ class InMemoryStorageProvider extends _storage_provider_base_js__WEBPACK_IMPORTE
         }
         if (!this.pendingBackingStore) {
             const key = this.storageEngine.baseStorageKey(this.backingType());
-            this.pendingBackingStore = this.storageEngine.baseStorageFor(this.type, key);
+            this.pendingBackingStore = this.storageEngine.baseStorageFor(this.backingType(), key);
             this.pendingBackingStore.then(backingStore => this.backingStore = backingStore);
         }
         return this.pendingBackingStore;
@@ -53636,10 +53662,8 @@ class InMemoryCollection extends InMemoryStorageProvider {
         this.fromLiteral(literal);
     }
     async modelForSynchronization() {
-        return {
-            version: this.version,
-            model: await this._toList()
-        };
+        const model = await this._toList();
+        return { version: this.version, model };
     }
     // Returns {version, model: [{id, value, keys: []}]}
     toLiteral() {
@@ -53663,11 +53687,13 @@ class InMemoryCollection extends InMemoryStorageProvider {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
             const ref = refSet.values().next().value;
             await this.ensureBackingStore();
-            const retrieveItem = async (item) => {
-                const ref = item.value;
-                return { id: ref.id, value: await this.backingStore.get(ref.id), keys: item.keys };
-            };
-            return await Promise.all(items.map(retrieveItem));
+            const ids = items.map(item => item.value.id);
+            const results = await this.backingStore.getMultiple(ids);
+            const output = [];
+            for (let i = 0; i < results.length; i++) {
+                output.push({ id: ids[i], value: results[i], keys: items[i].keys });
+            }
+            return output;
         }
         return this.toLiteral().model;
     }
@@ -55863,7 +55889,6 @@ const Arcs = {
 // export default Arcs;
 
 window.Arcs = window.Arcs ? Object.assign(window.Arcs, Arcs) : Arcs;
-window.firebase = firebase_app__WEBPACK_IMPORTED_MODULE_9___default.a;
 
 
 

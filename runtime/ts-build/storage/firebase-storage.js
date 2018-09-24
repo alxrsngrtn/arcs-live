@@ -869,10 +869,8 @@ class FirebaseCollection extends FirebaseStorageProvider {
         return (await this.toLiteral()).model;
     }
     async modelForSynchronization() {
-        return {
-            version: this.version,
-            model: await this._toList()
-        };
+        const model = await this._toList();
+        return { version: this.version, model };
     }
     async toList() {
         return (await this._toList()).map(item => item.value);
