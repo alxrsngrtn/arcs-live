@@ -1,5 +1,5 @@
-commit 87d18afe1f5d2f3c4b4c04e532a1e9f1e4616fa8
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Sep 24 12:49:30 2018 -0700
+commit f603f1252dad022e55d4c3cee18b565dee2e18bc
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Sep 24 13:53:22 2018 -0700
 
-    fix arcs.js import in firebase-config.js (#1954)
+    change 'use' fate to 'copy' for piped data (#1955)
