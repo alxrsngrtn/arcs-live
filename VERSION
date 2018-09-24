@@ -1,5 +1,19 @@
-commit f603f1252dad022e55d4c3cee18b565dee2e18bc
+commit 064e471138e19026c6583a4c2a5a2c38f3142e28
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Sep 24 13:53:22 2018 -0700
+Date:   Mon Sep 24 14:53:15 2018 -0700
 
-    change 'use' fate to 'copy' for piped data (#1955)
+    Radically simplify Selenium tests (#1956)
+    
+    * try a trivial test to debug Travis problems
+    
+    * simplify selenium test code
+    
+    * simplify selenium test code
+    
+    * disable useless test
+    
+    * remove not disable
+    
+    * remove reference to test-mocha
+    
+    * try waiting for main ui to show up
