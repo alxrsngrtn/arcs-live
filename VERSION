@@ -1,5 +1,9 @@
-commit 0238190a203fc6da15b714a7536f18048a6e4919
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Sep 24 11:31:39 2018 -0700
+commit 1a455db7719d15afab6238aafd1c9378e39b1f25
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Sep 24 11:35:58 2018 -0700
 
-    temporarily disable selenium tests (#1952)
+    Post 5_0_0 selenium fixes (#1944)
+    
+    * better re-entrancy protection
+    
+    * fix selenium tests
