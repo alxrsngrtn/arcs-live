@@ -53183,6 +53183,9 @@ class FirebaseCollection extends FirebaseStorageProvider {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!this.referenceMode, "storeMultiple not implemented for referenceMode stores");
         values.map(value => {
             this.model.add(value.id, value, keys);
+            if (!this.localChanges.has(value.id)) {
+                this.localChanges.set(value.id, { add: [], remove: [] });
+            }
             const localChanges = this.localChanges.get(value.id);
             for (const key of keys) {
                 localChanges.add.push(key);

@@ -1,19 +1,5 @@
-commit 064e471138e19026c6583a4c2a5a2c38f3142e28
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Sep 24 14:53:15 2018 -0700
+commit 55ae7027d1d120761424a26568a7ec6bbc2335da
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Sep 25 09:32:47 2018 +1000
 
-    Radically simplify Selenium tests (#1956)
-    
-    * try a trivial test to debug Travis problems
-    
-    * simplify selenium test code
-    
-    * simplify selenium test code
-    
-    * disable useless test
-    
-    * remove not disable
-    
-    * remove reference to test-mocha
-    
-    * try waiting for main ui to show up
+    Insert localStorage entry if it doesn't exist. (#1959)
