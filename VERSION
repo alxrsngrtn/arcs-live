@@ -1,9 +1,5 @@
-commit 1a455db7719d15afab6238aafd1c9378e39b1f25
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Sep 24 11:35:58 2018 -0700
+commit 87d18afe1f5d2f3c4b4c04e532a1e9f1e4616fa8
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Sep 24 12:49:30 2018 -0700
 
-    Post 5_0_0 selenium fixes (#1944)
-    
-    * better re-entrancy protection
-    
-    * fix selenium tests
+    fix arcs.js import in firebase-config.js (#1954)
