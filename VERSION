@@ -1,5 +1,5 @@
-commit 1e7c05c2ced4577624a7531239d0d15a82f73534
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Sep 25 15:15:50 2018 -0700
+commit 710aeb5a0a4ac7c611c32d8cca5dc9fc249a0741
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Sep 25 15:41:02 2018 -0700
 
-    fix improper use of `set` (#1971)
+    Move the protocol to the base class.  It is accessed directly in arc.js in _serializeHandle (#1970)
