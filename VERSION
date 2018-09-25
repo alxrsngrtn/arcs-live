@@ -1,9 +1,5 @@
-commit 7c52bf5544414a43969d315816f7864d6e4c6e69
+commit 9b5bd0d3a5bcf785697497015312ad6b0b5be6fb
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Sep 24 16:39:26 2018 -0700
+Date:   Mon Sep 24 18:14:07 2018 -0700
 
-    Implement serialization InMemoryBigCollection (#1950)
-    
-    * Implement serialization InMemoryBigCollection.
-    
-    * linty linty lint
+    Add unit test for FirebaseBigCollection serialization. (#1960)
