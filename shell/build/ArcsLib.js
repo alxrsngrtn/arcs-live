@@ -28344,19 +28344,13 @@ ${this.activeRecipe.toString()}`;
     return this._storeDescriptions.get(store) || store.description;
   }
 
-  getStoresState() {
+  getStoresState(options) {
     let versionById = new Map();
     this._storesById.forEach((handle, id) => versionById.set(id, handle.version));
-    return versionById;
-  }
-
-  isSameState(storesState) {
-    for (let [id, version] of storesState ) {
-      if (!this._storesById.has(id) || this._storesById.get(id).version != version) {
-        return false;
-      }
+    if ((options || {}).includeContext) {
+      this._context.allStores.forEach(handle => versionById.set(handle.id, handle.version));
     }
-    return true;
+    return versionById;
   }
 
   keyForId(id) {
@@ -39589,6 +39583,9 @@ class Manifest {
   get stores() {
     return this._stores;
   }
+  get allStores() {
+    return [...this._findAll(manifest => manifest._stores)];
+  }
   get shapes() {
     return this._shapes;
   }
@@ -46328,7 +46325,7 @@ class Speculator {
 
   async speculate(arc, plan, hash) {
     if (this._relevanceByHash.has(hash)) {
-      let arcStoreVersionById = arc.getStoresState();
+      let arcStoreVersionById = arc.getStoresState({includeContext: true});
       let relevance = this._relevanceByHash.get(hash);
       let relevanceStoreVersionById = relevance.arcState;
       if (plan.handles.every(handle => arcStoreVersionById.get(handle.id) == relevanceStoreVersionById.get(handle.id))) {
@@ -46337,7 +46334,7 @@ class Speculator {
     }
 
     let newArc = await arc.cloneForSpeculativeExecution();
-    let relevance = new _relevance_js__WEBPACK_IMPORTED_MODULE_1__["Relevance"](arc.getStoresState());
+    let relevance = new _relevance_js__WEBPACK_IMPORTED_MODULE_1__["Relevance"](arc.getStoresState({includeContext: true}));
     let relevanceByHash = this._relevanceByHash;
     async function awaitCompletion() {
       let messageCount = newArc.pec.messageCount;

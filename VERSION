@@ -1,5 +1,5 @@
-commit 9b5bd0d3a5bcf785697497015312ad6b0b5be6fb
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Sep 24 18:14:07 2018 -0700
+commit d8f901a3e2806482ff0b5546dde6e0fb1aa173a3
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Sep 24 18:48:27 2018 -0700
 
-    Add unit test for FirebaseBigCollection serialization. (#1960)
+    Speculative execution to track context store version changes as well (#1962)
