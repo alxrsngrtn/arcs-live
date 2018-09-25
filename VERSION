@@ -1,12 +1,5 @@
-commit bc3ab437484a7d5d2deef7771946c221ba3f0f8e
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Sep 25 14:16:34 2018 +1000
+commit 0bc81d91a510609a9265e7c98e52652b2e4d769b
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Sep 25 16:35:14 2018 +1000
 
-    Rename shape arguments to show named-ness (#1932)
-    
-    * Rename ShapeArgument2 to ShapeArgumentWithName
-    * Reject identifiers that are reserved words to simplify parsing
-    * Remove extra check for identifier == reservedWord
-    * Ensure lower case identifiers are not directions (#1931)
-    * Reject identifiers that are reserved words to simplify parsing
-    * Typo recipies -> recipes
+    Ensure that the 'originalId' (generated when a handle is copied) is maintained through (de)serialization
