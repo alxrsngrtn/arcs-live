@@ -1,11 +1,5 @@
-commit d185e082f1bbf653d5dc12c8bc3a25f377170e53
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Sep 25 10:19:25 2018 -0700
+commit 1e7c05c2ced4577624a7531239d0d15a82f73534
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Sep 25 15:15:50 2018 -0700
 
-    Fixes for PouchDB Replication (#1967)
-    
-    * Fixes for PouchDB Replication
-    
-    - Increase size of middleware
-    - Temporarily disable index.html to allow for introspection of root DB endpoint
-    - Add typedoc step
+    fix improper use of `set` (#1971)
