@@ -1,5 +1,12 @@
-commit c4da9510d8f2763fcf941814f9be0c814c679b41
+commit bc3ab437484a7d5d2deef7771946c221ba3f0f8e
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Sep 25 14:14:19 2018 +1000
+Date:   Tue Sep 25 14:16:34 2018 +1000
 
-    Test that identifiers are not keywords for both consume and provide (#1933)
+    Rename shape arguments to show named-ness (#1932)
+    
+    * Rename ShapeArgument2 to ShapeArgumentWithName
+    * Reject identifiers that are reserved words to simplify parsing
+    * Remove extra check for identifier == reservedWord
+    * Ensure lower case identifiers are not directions (#1931)
+    * Reject identifiers that are reserved words to simplify parsing
+    * Typo recipies -> recipes

@@ -30635,7 +30635,7 @@ const parser = /*
       var s0, s1, s2;
 
       s0 = peg$currPos;
-      s1 = peg$parseShapeArgument2();
+      s1 = peg$parseShapeArgumentWithName();
       if (s1 !== peg$FAILED) {
         s2 = peg$parseeolWhiteSpace();
         if (s2 !== peg$FAILED) {
@@ -30800,7 +30800,7 @@ const parser = /*
       return s0;
     }
 
-    function peg$parseShapeArgument2() {
+    function peg$parseShapeArgumentWithName() {
       var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
