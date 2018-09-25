@@ -1,5 +1,11 @@
-commit 0c6d21ca3a5b94f0c7c0b350496e42201c34eb06
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Sep 25 17:04:02 2018 +1000
+commit d185e082f1bbf653d5dc12c8bc3a25f377170e53
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Sep 25 10:19:25 2018 -0700
 
-    Allows async processing in the speculative execution (#1966)
+    Fixes for PouchDB Replication (#1967)
+    
+    * Fixes for PouchDB Replication
+    
+    - Increase size of middleware
+    - Temporarily disable index.html to allow for introspection of root DB endpoint
+    - Add typedoc step
