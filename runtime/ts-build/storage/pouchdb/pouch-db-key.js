@@ -32,6 +32,7 @@ export class PouchDbKey extends KeyBase {
         super();
         assert(key.startsWith('pouchdb://'), `can't construct pouchdb key for input key ${key}`);
         const parts = key.replace(/^pouchdb:\/\//, '').split('/');
+        this.protocol = 'pouchdb';
         this.dbLocation = parts[0] || 'memory';
         this.dbName = parts[1] || 'user';
         this.location = parts.slice(2).join('/') || '';

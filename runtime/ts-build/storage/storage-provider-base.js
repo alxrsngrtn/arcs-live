@@ -20,6 +20,9 @@ export class StorageBase {
     // Provides graceful shutdown for tests.
     shutdown() { }
 }
+/**
+ * Docs TBD
+ */
 export class StorageProviderBase {
     constructor(type, name, id, key) {
         this.referenceMode = false;
@@ -67,6 +70,12 @@ export class StorageProviderBase {
         }
     }
     // TODO: rename to _fireAsync so it's clear that callers are not re-entrant.
+    /**
+     * Propagate updates to change listeners.
+     *
+     * @param kindStr the type of event, only 'change' is supported.
+     * @param details details about the change
+     */
     async _fire(kindStr, details) {
         const kind = EventKind[kindStr];
         const listenerMap = this.listeners.get(kind);
@@ -128,6 +137,7 @@ export class StorageProviderBase {
     get apiChannelMappingId() {
         return this.id;
     }
+    /** TODO */
     modelForSynchronization() {
         return this.toLiteral();
     }
