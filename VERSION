@@ -1,5 +1,5 @@
-commit 7a8a15e943c6afc808f31616c65439f7729b6c76
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Sep 25 23:00:08 2018 -0700
+commit 997177229a2537d77a1df52e8cd40c300af8d624
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Sep 26 09:38:17 2018 -0700
 
-    supply TVMazeFindDemo recipe needed for device pipe testing (#1978)
+    update ShowArtist slot restriction to show inline suggestion (#1976)
