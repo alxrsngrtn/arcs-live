@@ -37833,6 +37833,13 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
     };
   }
 
+  _formatBigCollection(handleName, firstValue) {
+    return {
+      template: `collection of items like {{${handleName}FirstName}}`,
+      model: {[`${handleName}FirstName`]: firstValue.rawData.name}
+    };
+  }
+
   _formatSingleton(handleName, value, handleDescription) {
     let formattedValue = super._formatSingleton(handleName, value, handleDescription);
     if (formattedValue) {
@@ -38213,7 +38220,8 @@ class DescriptionFormatter {
         let storeValue = await this._formatStoreValue(token.handleName, token._store);
         if (!description) {
           // For singleton handle, if there is no real description (the type was used), use the plain value for description.
-          if (storeValue && !token._store.type.isCollection && !this.excludeValues) {
+          // TODO: should this look at type.getContainedType() (which includes references), or maybe just type.isEntity?
+          if (storeValue && !this.excludeValues && !token._store.type.isCollection && !token._store.type.isBigCollection) {
             return storeValue;
           }
         }
@@ -38255,7 +38263,8 @@ class DescriptionFormatter {
   }
 
   async _propertyTokenToString(handleName, store, properties) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!store.type.isCollection, `Cannot return property ${properties.join(',')} for collection`);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!store.type.isCollection && !store.type.isBigCollection,
+           `Cannot return property ${properties.join(',')} for Collection or BigCollection`);
     // Use singleton value's property (eg. "09/15" for person's birthday)
     let valueVar = await store.get();
     if (valueVar) {
@@ -38284,6 +38293,13 @@ class DescriptionFormatter {
       if (values && values.length > 0) {
         return this._formatCollection(handleName, values);
       }
+    } else if (store.type.isBigCollection) {
+      let cursorId = await store.stream(1);
+      let {value, done} = await store.cursorNext(cursorId);
+      store.cursorClose(cursorId);
+      if (!done && value[0].rawData.name) {
+        return await this._formatBigCollection(handleName, value[0]);
+      }
     } else {
       let value = await store.get();
       if (value) {
@@ -38301,6 +38317,10 @@ class DescriptionFormatter {
     } else {
       return `${values.length} items`;
     }
+  }
+
+  _formatBigCollection(handleName, firstValue) {
+    return `collection of items like ${firstValue.rawData.name}`;
   }
 
   _formatSingleton(handleName, value, handleDescription) {
@@ -47399,7 +47419,8 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
           // generic recipes would apply - which we currently don't want here.
           if (otherHandle.type.hasVariable) {
             let resolved = otherHandle.type.resolvedType();
-            if (resolved.isCollection) resolved = resolved.collectionType;
+            // TODO: getContainedType returns non-null for references ... is that correct here?
+            resolved = resolved.getContainedType() || resolved;
             if (resolved.isVariable && !resolved.canReadSubset) continue;
           }
 
@@ -54952,7 +54973,7 @@ class Type {
             return `${this.collectionType.toPrettyString()} List`;
         }
         if (this.isBigCollection) {
-            return `${this.bigCollectionType.toPrettyString()} BigCollection`;
+            return `Collection of ${this.bigCollectionType.toPrettyString()}`;
         }
         if (this.isVariable) {
             return this.variable.isResolved() ? this.resolvedType().toPrettyString() : `[~${this.variable.name}]`;

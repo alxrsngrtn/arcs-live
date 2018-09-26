@@ -5783,7 +5783,7 @@ class Type {
             return `${this.collectionType.toPrettyString()} List`;
         }
         if (this.isBigCollection) {
-            return `${this.bigCollectionType.toPrettyString()} BigCollection`;
+            return `Collection of ${this.bigCollectionType.toPrettyString()}`;
         }
         if (this.isVariable) {
             return this.variable.isResolved() ? this.resolvedType().toPrettyString() : `[~${this.variable.name}]`;
