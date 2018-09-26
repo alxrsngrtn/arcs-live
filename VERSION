@@ -1,9 +1,5 @@
-commit 6085899c76d405c8962012cdfd3863c8301d5ea4
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Sep 25 22:23:10 2018 -0700
+commit 7a8a15e943c6afc808f31616c65439f7729b6c76
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Sep 25 23:00:08 2018 -0700
 
-    Update descriptions and recipe coalescing for BigCollections. (#1977)
-    
-    * Update descriptions and recipe coalescing for BigCollections.
-    
-    * Removed accidental debug hack
+    supply TVMazeFindDemo recipe needed for device pipe testing (#1978)
