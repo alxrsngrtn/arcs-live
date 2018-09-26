@@ -1,5 +1,5 @@
-commit 710aeb5a0a4ac7c611c32d8cca5dc9fc249a0741
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Sep 25 15:41:02 2018 -0700
+commit 6bd548697e8f47249681688a12ef8ce5d0813654
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Sep 25 21:01:14 2018 -0700
 
-    Move the protocol to the base class.  It is accessed directly in arc.js in _serializeHandle (#1970)
+    fix 'cannot add without new keys' assert (#1975)
