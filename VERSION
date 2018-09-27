@@ -1,31 +1,9 @@
-commit 0e161116444183a2012717bc1be0c03cc819072d
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Sep 26 12:02:57 2018 -0700
+commit 9e5b6c5b1470ff454103da006749b00d10f1fa7f
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Sep 26 17:02:15 2018 -0700
 
-    PouchDb support for Arcs Storage (#1972)
+    style inline suggestions (#1992)
     
-    * PouchDb support for Arcs Storage
+    * style inline suggestions
     
-    - Introduces pouchdb-adapter-memory at v7.0.0
-    - Add a new manual test as pouch-db-tests.js
-    - exports Model from CrdtCollectionModel, adds more detail on error messages
-    - PouchDbStorage manages mapping from PouchDbKeys to actual database instances and replication.
-    - PouchDbStorageProvider mimics the inmemory and firebase version of the same class.
-    - PouchDbCollection supports reference mode and maintains a CrdtCollectionModel in Pouch.
-    - PouchDbVariable introduces and maintains a new VariableStorage interface based on the _stored variable.
-    - PouchDbBigCollection is unimplemented.
-    - Adds some docs to StorageProviderBase
-    - Adds PouchDbStorage support to StorageProviderFactory
-    - Document shell query parameters to some extent.
-    - Adds a build:typedoc target to help visualize datastructures
-    
-    There are still ~29 TODOs in the code, and more to do.  You can test this manually
-    by adding a storage and torageKeyBase query param. Here's an example of using indexeddb:
-    
-       http://localhost:8080/shell/apps/web/index.html?storage=1&storageKeyBase=pouchdb://local/mydb
-    
-    And here's an example of using a remote server (which you can setup by following the instructions in server/README.md)
-    
-       http://localhost:8080/shell/apps/web/index.html?storage=1&storageKeyBase=pouchdb://local/mydb
-    
-    Addresses #1946
+    * add missing overfow styling

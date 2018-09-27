@@ -76314,7 +76314,7 @@ class SuggestDomConsumer extends _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTE
 
   formatContent(content) {
     return {
-      template: `<suggestion-element key="{{hash}}" on-click="">${content.template}</suggestion-element>`,
+      template: `<suggestion-element inline key="{{hash}}" on-click="">${content.template}</suggestion-element>`,
       templateName: 'suggestion',
       model: Object.assign({hash: this.suggestion.hash}, content.model)
     };
