@@ -6329,10 +6329,20 @@ class BrowserLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loa
     this._urlMap = urlMap;
   }
   _loadURL(url) {
+    const resolved = this._resolve(url);
     // use URL to normalize the path for deduping
-    const cacheKey = new URL(url, document.URL).href;
+    const cacheKey = new URL(resolved, document.URL).href;
+    // console.log(`browser-loader::_loadURL`);
+    // console.log(`    ${url}`);
+    // console.log(`    ${resolved}`);
+    // console.log(`    ${cacheKey}`);
     const resource = dumbCache[cacheKey];
-    return resource || (dumbCache[cacheKey] = super._loadURL(url));
+    return resource || (dumbCache[cacheKey] = super._loadURL(resolved));
+  }
+  loadResource(name) {
+    // subclass impl differentiates paths and URLs,
+    // for browser env we can feed both kinds into _loadURL
+    return this._loadURL(name);
   }
   _resolve(path) {
     //return new URL(path, this._base).href;
@@ -6347,9 +6357,6 @@ class BrowserLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loa
     url = url || path;
     //console.log(`browser-loader: resolve(${path}) = ${url}`);
     return url;
-  }
-  loadResource(name) {
-    return this._loadURL(this._resolve(name));
   }
   requireParticle(fileName) {
     const path = this._resolve(fileName);

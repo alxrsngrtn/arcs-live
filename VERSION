@@ -1,15 +1,9 @@
-commit 0af6c9f43b533313d92e1934e28bec441f9807d7
+commit 72999ce1dcfa4a67dc209c1bf91ac2511fe7b47f
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Sep 27 15:01:13 2018 -0700
+Date:   Thu Sep 27 15:32:05 2018 -0700
 
-    Must list the pipe-arc in the user's arc directory (#1999)
+    Make shell bootstrap from `https://$artifacts/` (#2001)
     
-    * remove vestigial
+    * use `https://$artifacts` as prefix for canonical manifests
     
-    * 'touch' bg-arc so corresponding user knows it exists
-    
-    * remove dead code, plumb userid to data-item
-    
-    * ws changes
-    
-    * put clicked element into `window.$x` for console use
+    * simplifications
