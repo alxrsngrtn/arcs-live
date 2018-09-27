@@ -1,9 +1,5 @@
-commit bc6c81cd4fe767860163fd0a3c78298eef8deb7d
+commit 0c94be8e4bf7e5ecf8f72f9b2481adf1ae3492c1
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Sep 26 17:29:47 2018 -0700
+Date:   Wed Sep 26 23:56:33 2018 -0700
 
-    Fix assignment-instead-of-equality bug in storage tests (#1993)
-    
-    * Fix broken firebase manual test
-    
-    * Fix same error for in-memory, and update pouchdb to use the same check
+    Fix sigh watch to debounce file change events and only rebuild once when new events are queued up (#1997)
