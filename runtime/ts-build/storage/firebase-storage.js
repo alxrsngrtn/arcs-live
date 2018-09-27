@@ -160,7 +160,7 @@ export class FirebaseStorage extends StorageBase {
         return { fbKey, reference };
     }
     // referenceMode is only referred to if shouldExist is false, or if shouldExist is 'unknown'
-    // but this _join creates the storage location. 
+    // but this _join creates the storage location.
     async _join(id, type, keyString, shouldExist, referenceMode = false) {
         assert(!type.isVariable);
         assert(!type.isTypeContainer() || !type.getContainedType().isVariable);
@@ -296,7 +296,9 @@ class FirebaseStorageProvider extends StorageProviderBase {
 class FirebaseVariable extends FirebaseStorageProvider {
     constructor(type, storageEngine, id, reference, firebaseKey, shouldExist) {
         super(type, storageEngine, id, reference, firebaseKey);
-        this.localKeyId = 0;
+        // TODO(sjmiles): localId collisions occur when using device-client-pipe,
+        // so I'll randomize localId a bit
+        this.localKeyId = Date.now();
         this.pendingWrites = [];
         this.wasConnect = shouldExist;
         // Current value stored in this variable. Reflects either a
@@ -330,10 +332,10 @@ class FirebaseVariable extends FirebaseStorageProvider {
         assert(this.version == null || data.version > this.version);
         // NOTE that remoteStateChanged will be invoked immediately by the
         // this.reference.on(...) call in the constructor; this means that it's possible for this
-        // function to receive data with storageKeys before referenceMode has been switched on (as 
+        // function to receive data with storageKeys before referenceMode has been switched on (as
         // that happens after the constructor has completed). This doesn't matter as data can't
         // be accessed until the constructor's returned (nothing has a handle on the object before
-        // that). 
+        // that).
         this.value = data.value || null;
         this.version = data.version;
         this.resolveInitialized();
@@ -758,6 +760,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             // Once entity mutation exists, it shouldn't ever be possible to write
             // different values with the same id.
             await Promise.all(pendingWrites.map(pendingItem => this.backingStore.store(pendingItem.value, [this.storageKey + this.localId++])));
+            //await Promise.all(pendingWrites.map(pendingItem => this.backingStore.store(pendingItem.value, [this.storageKey + Date.now()])));
             // TODO(shans): Returning here prevents us from writing localChanges while there
             // are pendingWrites. This in turn prevents change events for being generated for
             // localChanges that have outstanding pendingWrites.

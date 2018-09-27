@@ -1,5 +1,11 @@
-commit 0c94be8e4bf7e5ecf8f72f9b2481adf1ae3492c1
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Sep 26 23:56:33 2018 -0700
+commit 20c757de14a43a23d164d74ea9ed29612a9627ff
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Sep 27 09:00:50 2018 -0700
 
-    Fix sigh watch to debounce file change events and only rebuild once when new events are queued up (#1997)
+    M1 tv update (#1996)
+    
+    * start evolving TVMaze toward new demo specs
+    
+    * all the changes
+    
+    * Remove lint-offending space

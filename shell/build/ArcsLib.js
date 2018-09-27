@@ -54766,7 +54766,7 @@ class Arc {
             if (value == null) {
               return null;
             }
-            
+
             let result;
             if (value.rawData) {
               result = {$id: id};
@@ -54787,7 +54787,7 @@ class Arc {
           if (!context.dataResources.has(storageKey)) {
             const storeId = `${id}_Data`;
             context.dataResources.set(storageKey, storeId);
-            // TODO: can't just reach into the store for the backing Store like this, should be an 
+            // TODO: can't just reach into the store for the backing Store like this, should be an
             // accessor that loads-on-demand in the storage objects.
             await handle.ensureBackingStore();
             await this._serializeHandle(handle.backingStore, context, storeId);
@@ -54795,7 +54795,7 @@ class Arc {
           const storeId = context.dataResources.get(storageKey);
           serializedData.forEach(a => {a.storageKey = storeId;});
         }
-  
+
         context.resources += `resource ${id}Resource\n`;
         let indent = '  ';
         context.resources += indent + 'start\n';
@@ -55062,11 +55062,11 @@ ${this.activeRecipe.toString()}`;
 
       // TODO(shans/sjmiles): This shouldn't be possible, but at the moment the
       // shell pre-populates all arcs with a set of handles so if a recipe explicitly
-      // asks for one of these there's a conflict. Ideally these will end up as a 
+      // asks for one of these there's a conflict. Ideally these will end up as a
       // part of the context and will be populated on-demand like everything else.
       if (this._storesById.has(recipeHandle.id)) {
         continue;
-      } 
+      }
 
       let storageKey = recipeHandle.storageKey;
       if (!storageKey) {
@@ -55125,7 +55125,7 @@ ${this.activeRecipe.toString()}`;
     }
 
     let store = await this._storageProviderFactory.construct(id, type, storageKey);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'store with id ${id} already exists');
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `failed to create store with id [${id}]`);
     store.name = name;
 
     this._registerStore(store, tags);
@@ -65455,22 +65455,25 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
   /** @method appendRawDataToHandle(handleName, rawDataArray)
    * Create an entity from each rawData, and append to named handle.
    */
-  appendRawDataToHandle(handleName, rawDataArray) {
+  async appendRawDataToHandle(handleName, rawDataArray) {
     const handle = this.handles.get(handleName);
     const entityClass = handle.entityClass;
-    rawDataArray.forEach(raw => {
-      handle.store(new entityClass(raw));
-    });
+    for (const raw of rawDataArray) {
+      await handle.store(new entityClass(raw));
+    }
+    //rawDataArray.forEach(raw => {
+    //  handle.store(new entityClass(raw));
+    //});
   }
-  /** @method updateVariable(handleName, record)
+  /** @method updateVariable(handleName, rawData)
    * Modify value of named handle. A new entity is created
-   * from `record` (`new <EntityClass>(record)`).
+   * from `rawData` (`new <EntityClass>(rawData)`).
    */
-  updateVariable(handleName, record) {
+  updateVariable(handleName, rawData) {
     const handle = this.handles.get(handleName);
-    const newRecord = new (handle.entityClass)(record);
-    handle.set(newRecord);
-    return newRecord;
+    const entity = new (handle.entityClass)(rawData);
+    handle.set(entity);
+    return entity;
   }
   /** @method updateSet(handleName, record)
    * Modify or insert `record` into named handle.
@@ -67673,11 +67676,11 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
       // (perhaps id to index) to make sure we don't map a handle into the inner
       // arc multiple times unnecessarily.
       otherMappedHandles.push(
-          `map '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
+          `use '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
       let hostedOtherConnection = hostedParticle.connections.find(
           conn => conn.isCompatibleType(otherHandle.type));
       if (hostedOtherConnection) {
-        otherConnections.push(`${hostedOtherConnection.name} <- v${index++}`);
+        otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
         // TODO(wkorman): For items with embedded recipes where we may have a
         // different particle rendering each item, we need to track
         // |connByHostedConn| keyed on the particle type.
@@ -79473,7 +79476,7 @@ class FirebaseStorage extends _storage_provider_base__WEBPACK_IMPORTED_MODULE_0_
         return { fbKey, reference };
     }
     // referenceMode is only referred to if shouldExist is false, or if shouldExist is 'unknown'
-    // but this _join creates the storage location. 
+    // but this _join creates the storage location.
     async _join(id, type, keyString, shouldExist, referenceMode = false) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!type.isVariable);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!type.isTypeContainer() || !type.getContainedType().isVariable);
@@ -79609,7 +79612,9 @@ class FirebaseStorageProvider extends _storage_provider_base__WEBPACK_IMPORTED_M
 class FirebaseVariable extends FirebaseStorageProvider {
     constructor(type, storageEngine, id, reference, firebaseKey, shouldExist) {
         super(type, storageEngine, id, reference, firebaseKey);
-        this.localKeyId = 0;
+        // TODO(sjmiles): localId collisions occur when using device-client-pipe,
+        // so I'll randomize localId a bit
+        this.localKeyId = Date.now();
         this.pendingWrites = [];
         this.wasConnect = shouldExist;
         // Current value stored in this variable. Reflects either a
@@ -79643,10 +79648,10 @@ class FirebaseVariable extends FirebaseStorageProvider {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(this.version == null || data.version > this.version);
         // NOTE that remoteStateChanged will be invoked immediately by the
         // this.reference.on(...) call in the constructor; this means that it's possible for this
-        // function to receive data with storageKeys before referenceMode has been switched on (as 
+        // function to receive data with storageKeys before referenceMode has been switched on (as
         // that happens after the constructor has completed). This doesn't matter as data can't
         // be accessed until the constructor's returned (nothing has a handle on the object before
-        // that). 
+        // that).
         this.value = data.value || null;
         this.version = data.version;
         this.resolveInitialized();
@@ -80071,6 +80076,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             // Once entity mutation exists, it shouldn't ever be possible to write
             // different values with the same id.
             await Promise.all(pendingWrites.map(pendingItem => this.backingStore.store(pendingItem.value, [this.storageKey + this.localId++])));
+            //await Promise.all(pendingWrites.map(pendingItem => this.backingStore.store(pendingItem.value, [this.storageKey + Date.now()])));
             // TODO(shans): Returning here prevents us from writing localChanges while there
             // are pendingWrites. This in turn prevents change events for being generated for
             // localChanges that have outstanding pendingWrites.

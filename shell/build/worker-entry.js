@@ -1458,22 +1458,25 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
   /** @method appendRawDataToHandle(handleName, rawDataArray)
    * Create an entity from each rawData, and append to named handle.
    */
-  appendRawDataToHandle(handleName, rawDataArray) {
+  async appendRawDataToHandle(handleName, rawDataArray) {
     const handle = this.handles.get(handleName);
     const entityClass = handle.entityClass;
-    rawDataArray.forEach(raw => {
-      handle.store(new entityClass(raw));
-    });
+    for (const raw of rawDataArray) {
+      await handle.store(new entityClass(raw));
+    }
+    //rawDataArray.forEach(raw => {
+    //  handle.store(new entityClass(raw));
+    //});
   }
-  /** @method updateVariable(handleName, record)
+  /** @method updateVariable(handleName, rawData)
    * Modify value of named handle. A new entity is created
-   * from `record` (`new <EntityClass>(record)`).
+   * from `rawData` (`new <EntityClass>(rawData)`).
    */
-  updateVariable(handleName, record) {
+  updateVariable(handleName, rawData) {
     const handle = this.handles.get(handleName);
-    const newRecord = new (handle.entityClass)(record);
-    handle.set(newRecord);
-    return newRecord;
+    const entity = new (handle.entityClass)(rawData);
+    handle.set(entity);
+    return entity;
   }
   /** @method updateSet(handleName, record)
    * Modify or insert `record` into named handle.
@@ -2352,11 +2355,11 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
       // (perhaps id to index) to make sure we don't map a handle into the inner
       // arc multiple times unnecessarily.
       otherMappedHandles.push(
-          `map '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
+          `use '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
       let hostedOtherConnection = hostedParticle.connections.find(
           conn => conn.isCompatibleType(otherHandle.type));
       if (hostedOtherConnection) {
-        otherConnections.push(`${hostedOtherConnection.name} <- v${index++}`);
+        otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
         // TODO(wkorman): For items with embedded recipes where we may have a
         // different particle rendering each item, we need to track
         // |connByHostedConn| keyed on the particle type.
