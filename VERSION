@@ -1,11 +1,15 @@
-commit 20c757de14a43a23d164d74ea9ed29612a9627ff
+commit 0af6c9f43b533313d92e1934e28bec441f9807d7
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Sep 27 09:00:50 2018 -0700
+Date:   Thu Sep 27 15:01:13 2018 -0700
 
-    M1 tv update (#1996)
+    Must list the pipe-arc in the user's arc directory (#1999)
     
-    * start evolving TVMaze toward new demo specs
+    * remove vestigial
     
-    * all the changes
+    * 'touch' bg-arc so corresponding user knows it exists
     
-    * Remove lint-offending space
+    * remove dead code, plumb userid to data-item
+    
+    * ws changes
+    
+    * put clicked element into `window.$x` for console use

@@ -54252,7 +54252,7 @@ class ThingMapper {
   }
 
   identifierForThing(thing) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._reverseIdMap.has(thing), `Missing thing ${thing}`);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._reverseIdMap.has(thing), `Missing thing [${thing}]`);
     return this._reverseIdMap.get(thing);
   }
 
@@ -54318,7 +54318,7 @@ class APIPort {
         unconvert: a => clazz.fromLiteral(a)
       };
     };
-  
+
     this._testingHook();
   }
 
@@ -66246,6 +66246,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 
 function schemaLocationFor(name) {
@@ -66316,6 +66317,8 @@ class Loader {
         result.push(particleWrapper);
       },
       console,
+      fetch: _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"],
+      setTimeout,
       importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
     };
     script.runInNewContext(self, {filename: fileName, displayErrors: true});
@@ -69023,9 +69026,12 @@ class Planificator {
       this._onDataChange();
     }
 
-    if (this._arc.pec.slotComposer) {
-      let suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_6__["SuggestionComposer"](this._arc.pec.slotComposer);
-      this.registerSuggestChangedCallback((suggestions) => suggestionComposer.setSuggestions(suggestions));
+    const composer = this._arc.pec.slotComposer;
+    if (composer) {
+      if (composer.findContextById('rootslotid-suggestions')) {
+        const suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_6__["SuggestionComposer"](composer);
+        this.registerSuggestChangedCallback((suggestions) => suggestionComposer.setSuggestions(suggestions));
+      }
     }
   }
 
@@ -84083,6 +84089,8 @@ class BrowserLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loa
     //  _resolve method allows particles to request remapping of assets paths
     //  for use in DOM
     let resolver = this._resolve.bind(this);
+    // TODO(sjmiles): hack to plumb `fetch` into Particle space under node
+    const _fetch = BrowserLoader.fetch || fetch;
     return particleWrapper({
       Particle: _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
       DomParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
@@ -84091,7 +84099,8 @@ class BrowserLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loa
       TransformationDomParticle: _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__["TransformationDomParticle"],
       resolver,
       log,
-      html
+      html,
+      _fetch
     });
   }
 }
