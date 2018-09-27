@@ -1,9 +1,9 @@
-commit 9e5b6c5b1470ff454103da006749b00d10f1fa7f
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Sep 26 17:02:15 2018 -0700
+commit bc6c81cd4fe767860163fd0a3c78298eef8deb7d
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Sep 26 17:29:47 2018 -0700
 
-    style inline suggestions (#1992)
+    Fix assignment-instead-of-equality bug in storage tests (#1993)
     
-    * style inline suggestions
+    * Fix broken firebase manual test
     
-    * add missing overfow styling
+    * Fix same error for in-memory, and update pouchdb to use the same check
