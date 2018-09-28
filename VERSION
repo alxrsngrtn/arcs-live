@@ -1,5 +1,5 @@
-commit fcb11edf24991e03e91409aa63742ba797d2c49d
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Sep 28 00:06:51 2018 -0700
+commit de2ff87de644e8b1bf7bdbbed08fe960011c09b3
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Sep 28 00:25:08 2018 -0700
 
-    Don't throw in InMemoryBigCollection.cloneFrom (#2009)
+    repair launcher logic (#2010)
