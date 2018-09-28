@@ -1,9 +1,5 @@
-commit ad864a0449402e7dc327c3f57b0453ee625001d8
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Sep 27 23:45:49 2018 -0700
+commit fcb11edf24991e03e91409aa63742ba797d2c49d
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Sep 28 00:06:51 2018 -0700
 
-    marshal `launcher` recipe directly (don't bother the planner) (#2006)
-    
-    * marshal `launcher` recipe directly (don't bother the planner)
-    
-    * be more careful with async
+    Don't throw in InMemoryBigCollection.cloneFrom (#2009)
