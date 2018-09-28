@@ -1,9 +1,11 @@
-commit 72999ce1dcfa4a67dc209c1bf91ac2511fe7b47f
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Sep 27 15:32:05 2018 -0700
+commit 70a350f6487f573a047caeacdf0e165fe5e31710
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Sep 27 18:05:32 2018 -0700
 
-    Make shell bootstrap from `https://$artifacts/` (#2001)
+    Shell planning runs in same instance as pouchdb service (#2000)
     
-    * use `https://$artifacts` as prefix for canonical manifests
+    * Shell planning runs in same instance as pouchdb service
     
-    * simplifications
+    - Introduce new ShellPlanningInterface class to encapsulate functionality
+    - Add an optional parameter to ArcFactory to resolve artifacts
+    - Start services inside of PouchDB
