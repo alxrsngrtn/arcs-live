@@ -76814,8 +76814,12 @@ class MockSlotDomConsumer extends _ts_build_slot_dom_consumer_js__WEBPACK_IMPORT
 
   getInnerContainer(innerSlotName) {
     let model = this.renderings.map(([subId, {model}]) => model)[0];
-    if (this.consumeConn.slotSpec.getProvidedSlotSpec(innerSlotName).isSet &&
-        model && model.items && model.items.models) {
+    let providedSlotSpec = this.consumeConn.slotSpec.getProvidedSlotSpec(innerSlotName);
+    if (!providedSlotSpec) {
+      console.warn(`Cannot find provided spec for ${innerSlotName} in ${this.consumeConn.getQualifiedName()}`);
+      return;
+    }
+    if (providedSlotSpec.isSet && model && model.items && model.items.models) {
       let innerContainers = {};
       for (let itemModel of model.items.models) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(itemModel.id);
