@@ -69058,6 +69058,10 @@ class Planificator {
     this._plansChangedCallbacks = [];
     this._suggestChangedCallbacks = [];
     this._stateChangedCallbacks = [];
+    if (this._storage) {
+      this._storage.dispose();
+      this._storage = null;
+    }
   }
 
   get userid() { return this._userid; }
@@ -76594,6 +76598,15 @@ class SuggestionStorage {
     }
     console.log(`Suggestions store was updated, ${plans.length} suggestions fetched.`);
     this._suggestionsUpdatedCallbacks.forEach(callback => callback({plans}));
+  }
+
+  dispose() {
+    if (this._store) {
+      this._store.off('change', this._storeCallback);
+      this._store = null;
+    }
+    this._storePromise = null;
+    this._suggestionsUpdatedCallbacks = [];
   }
 
   registerSuggestionsUpdatedCallback(callback) {

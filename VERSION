@@ -1,5 +1,5 @@
-commit b11c24c3176944e78fe7b2de2280bf3172f18fbf
+commit 28c13e18d5915b4553971cd7fc218b1a688844bd
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Sep 27 21:50:32 2018 -0700
+Date:   Thu Sep 27 22:35:30 2018 -0700
 
-    Create suggestions for `launcher` arc and use them for newly created empty arcs as well. (#2002)
+    dispose suggestion storage when planificator is disposed (#2004)
