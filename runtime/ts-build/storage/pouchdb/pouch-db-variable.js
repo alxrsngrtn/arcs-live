@@ -1,5 +1,8 @@
 import { assert } from '../../../../platform/assert-web.js';
 import { PouchDbStorageProvider } from './pouch-db-storage-provider';
+/**
+ * The PouchDB-based implementation of a Variable.
+ */
 export class PouchDbVariable extends PouchDbStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, storageEngine, name, id, key);
@@ -30,7 +33,7 @@ export class PouchDbVariable extends PouchDbStorageProvider {
         if (literal && literal.model && literal.model.length === 1) {
             const newvalue = literal.model[0].value;
             if (newvalue) {
-                this.getStoredAndUpdate(stored => newvalue);
+                await this.getStoredAndUpdate(stored => newvalue);
             }
         }
     }
@@ -84,8 +87,8 @@ export class PouchDbVariable extends PouchDbStorageProvider {
             return value;
         });
         this.version = version;
-        // TODO(plindner): Mimic firebase?
-        // TODO(plindner): firebase fires 'change' events here...
+        // TODO(lindner): Mimic firebase?
+        // TODO(lindner): firebase fires 'change' events here...
     }
     /**
      * @return a promise containing the variable value or null if it does not exist.
@@ -95,8 +98,7 @@ export class PouchDbVariable extends PouchDbStorageProvider {
         if (this.referenceMode && value) {
             try {
                 await this.ensureBackingStore();
-                const result = await this.backingStore.get(value.id);
-                return result;
+                return await this.backingStore.get(value.id);
             }
             catch (err) {
                 console.warn('PouchDbVariable.get err=', err);
@@ -120,16 +122,17 @@ export class PouchDbVariable extends PouchDbStorageProvider {
             // TODO(shans): should we fetch and compare in the case of the ids matching?
             const referredType = this.type;
             const storageKey = this.storageEngine.baseStorageKey(referredType, this.storageKey);
-            // Store the indirect pointer to the storageKey
-            await this.getStoredAndUpdate(stored => {
-                return { id: value.id, storageKey };
-            });
             await this.ensureBackingStore();
             // TODO(shans): mutating the storageKey here to provide unique keys is
             // a hack that can be removed once entity mutation is distinct from collection
             // updates. Once entity mutation exists, it shouldn't ever be possible to write
             // different values with the same id.
             await this.backingStore.store(value, [this.storageKey + this.localKeyId++]);
+            // Store the indirect pointer to the storageKey
+            // Do this *after* the write to backing store, otherwise null responses could occur
+            await this.getStoredAndUpdate(stored => {
+                return { id: value.id, storageKey };
+            });
         }
         else {
             // If there's a barrier set, then the originating storage-proxy is expecting
@@ -176,12 +179,37 @@ export class PouchDbVariable extends PouchDbStorageProvider {
         await this.set(null, originatorId, barrier);
     }
     /**
-     * Triggered when the storage key has been modified.  For now we
-     * just refetch.  This is fast since the data is synced locally.
+     * Triggered when the storage key has been modified or deleted.
      */
-    onRemoteStateSynced() {
-        // updates internal state
-        this.getStored();
+    onRemoteStateSynced(doc) {
+        // Same revs?  No changes, just return.
+        if (doc._rev === this._rev) {
+            return;
+        }
+        // This is null for deleted docs.
+        // TODO(lindner): consider using doc._deleted to special case.
+        const value = doc.value;
+        // Store locally
+        this._stored = value;
+        this._rev = doc._rev;
+        this.version++;
+        // Skip if value == null, which is what happens when docs are deleted..
+        if (this.referenceMode && value) {
+            this.ensureBackingStore().then(async (store) => {
+                const data = await store.get(value.id);
+                if (!data) {
+                    // TODO(lindner): data referred to by this data is missing.
+                    console.log('PouchDbVariable.onRemoteSynced: possible race condition for id=' + value.id);
+                    return;
+                }
+                this._fire('change', { data, version: this.version });
+            });
+        }
+        else {
+            if (value != null) {
+                this._fire('change', { data: value, version: this.version });
+            }
+        }
     }
     /**
      * Pouch stored version of _stored.  Requests the value from the
@@ -200,13 +228,14 @@ export class PouchDbVariable extends PouchDbStorageProvider {
                 this._stored = result['value'];
                 this._rev = result._rev;
                 this.version++;
-                // TODO(lindner): fire change events here?
             }
         }
         catch (err) {
             if (err.name === 'not_found') {
+                // If the item was removed from storage empty out our local storage and bump the version.
                 this._stored = null;
                 this._rev = undefined;
+                this.version++;
             }
             else {
                 console.warn('PouchDbVariable.getStored err=', err);
@@ -242,8 +271,7 @@ export class PouchDbVariable extends PouchDbStorageProvider {
                     // remote revision is different, update local copy.
                     this._stored = doc['value'];
                     this._rev = doc._rev;
-                    this.version++; // yuck.
-                    // TODO(lindner): fire change events here?
+                    this.version++;
                 }
             }
             catch (err) {

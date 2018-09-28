@@ -119,8 +119,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
                 return null;
             }
             await this.ensureBackingStore();
-            const result = await this.backingStore.get(ref.id);
-            return result;
+            return await this.backingStore.get(ref.id);
         }
         const model = await this.getModel();
         return model.getValue(id);
@@ -130,7 +129,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
      *
      * @param value A data object with an id entry that is used as a key.
      * @param keys The CRDT keys used to store this object
-     * @param orginatorId TBD passed to event listeners
+     * @param originatorId TBD passed to event listeners
      */
     async store(value, keys, originatorId = null) {
         assert(keys != null && keys.length > 0, 'keys required');
@@ -184,9 +183,22 @@ export class PouchDbCollection extends PouchDbStorageProvider {
      * just refetch and trigger listeners.  This is fast since the data
      * is synced locally.
      */
-    onRemoteStateSynced() {
+    onRemoteStateSynced(doc) {
         // updates internal state
-        this.getModel();
+        const previousRev = this._rev;
+        const previousModel = this._model;
+        if (this._rev === doc._rev) {
+            return;
+        }
+        // remote revision is different, update local copy.
+        const model = doc['model'];
+        this._model = new CrdtCollectionModel(model);
+        this._rev = doc._rev;
+        this.version++;
+        // TODO(lindner): handle referenceMode
+        // TODO(lindner): calculate added/removed keys from previousModel/model
+        // TODO(lindner): fire change events here?
+        //   this._fire('change', {originatorId: null, version: this.version, add, remove});
     }
     /**
      * Updates the local model cache from PouchDB and returns the CRDT
@@ -306,7 +318,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         }
         catch (err) {
             if (err.name !== 'not_found') {
-                console.log('clearItemsForTesting: error removing', err);
+                console.warn('clearItemsForTesting: error removing', err);
             }
         }
         this._model = new CrdtCollectionModel();

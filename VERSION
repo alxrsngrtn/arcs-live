@@ -1,5 +1,11 @@
-commit 18f455d9bdf40954a8e213d75e39329b3c6eec14
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Sep 28 15:36:53 2018 -0700
+commit a9f6c8f823199bc7f187d4a7a83454c52a5d4407
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Fri Sep 28 16:29:21 2018 -0700
 
-    avoid error when disposing an arc with hosted particles (#2012)
+    Improve PouchDB implementation for replication and APIs (#2015)
+    
+    - Handle replication events for Variables, fire events so UI refreshes
+    - Eliminate double-fetches for replication events
+    - Add TODOs for Collection based replication
+    - Properly implement connect -- return null for keys that do not exist.
+    - Introduce ValueStorage/VariableStorage to define explicit types for storing Variables.

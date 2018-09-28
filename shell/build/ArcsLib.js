@@ -81136,7 +81136,7 @@ class PouchDbBigCollection extends _pouch_db_storage_provider__WEBPACK_IMPORTED_
      * Triggered when the storage key has been modified.  For now we
      * just refetch.  This is fast since the data is synced locally.
      */
-    onRemoteStateSynced() {
+    onRemoteStateSynced(doc) {
         throw new Error('NotImplemented');
     }
 }
@@ -81278,8 +81278,7 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
                 return null;
             }
             await this.ensureBackingStore();
-            const result = await this.backingStore.get(ref.id);
-            return result;
+            return await this.backingStore.get(ref.id);
         }
         const model = await this.getModel();
         return model.getValue(id);
@@ -81289,7 +81288,7 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
      *
      * @param value A data object with an id entry that is used as a key.
      * @param keys The CRDT keys used to store this object
-     * @param orginatorId TBD passed to event listeners
+     * @param originatorId TBD passed to event listeners
      */
     async store(value, keys, originatorId = null) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(keys != null && keys.length > 0, 'keys required');
@@ -81343,9 +81342,22 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
      * just refetch and trigger listeners.  This is fast since the data
      * is synced locally.
      */
-    onRemoteStateSynced() {
+    onRemoteStateSynced(doc) {
         // updates internal state
-        this.getModel();
+        const previousRev = this._rev;
+        const previousModel = this._model;
+        if (this._rev === doc._rev) {
+            return;
+        }
+        // remote revision is different, update local copy.
+        const model = doc['model'];
+        this._model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_0__["CrdtCollectionModel"](model);
+        this._rev = doc._rev;
+        this.version++;
+        // TODO(lindner): handle referenceMode
+        // TODO(lindner): calculate added/removed keys from previousModel/model
+        // TODO(lindner): fire change events here?
+        //   this._fire('change', {originatorId: null, version: this.version, add, remove});
     }
     /**
      * Updates the local model cache from PouchDB and returns the CRDT
@@ -81465,7 +81477,7 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
         }
         catch (err) {
             if (err.name !== 'not_found') {
-                console.log('clearItemsForTesting: error removing', err);
+                console.warn('clearItemsForTesting: error removing', err);
             }
         }
         this._model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_0__["CrdtCollectionModel"]();
@@ -81642,8 +81654,11 @@ __webpack_require__.r(__webpack_exports__);
 class PouchDbStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_1__["StorageBase"] {
     constructor(arcId) {
         super(arcId);
-        // TODO(lindner) add global weak map of keys and handle replication events.
-        this.remoteStateChangedHandlers = new Map();
+        /**
+         * A map of the key location to the actual provider.
+         * Used for replication callbacks and as a short-circuit for the connect method.
+         */
+        this.providerByLocationCache = new Map();
         // Used for reference mode
         this.baseStores = new Map();
         this.baseStorePromises = new Map();
@@ -81665,10 +81680,9 @@ class PouchDbStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_
     }
     async _construct(id, type, keyFragment) {
         const key = new _pouch_db_key_js__WEBPACK_IMPORTED_MODULE_2__["PouchDbKey"](keyFragment);
-        const keystr = key.toString();
         const provider = this.newProvider(type, undefined, id, key.toString());
         // Used to track changes for the key.
-        this.remoteStateChangedHandlers.set(key.location, provider);
+        this.providerByLocationCache.set(key.location, provider);
         return provider;
     }
     /**
@@ -81676,9 +81690,24 @@ class PouchDbStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_
      * Returns null if no such storage key exists.
      */
     async connect(id, type, key) {
-        const imKey = new _pouch_db_key_js__WEBPACK_IMPORTED_MODULE_2__["PouchDbKey"](key);
-        // TODO(lindner): fail if not created.
-        return this.construct(id, type, key);
+        const pouchKey = new _pouch_db_key_js__WEBPACK_IMPORTED_MODULE_2__["PouchDbKey"](key);
+        // Check if we have an already allocated instance
+        const provider = this.providerByLocationCache.get(pouchKey.location);
+        if (provider) {
+            return provider;
+        }
+        // Use a simple fetch to see if the document exists
+        try {
+            // TODO(lindner): optimize away this call.
+            await this.dbForKey(pouchKey).get(pouchKey.toString());
+            return this.construct(id, type, key);
+        }
+        catch (err) {
+            if (err === 'not_found') {
+                return null;
+            }
+            throw err;
+        }
     }
     /** Unit tests should call this in an 'after' block. */
     shutdown() {
@@ -81717,7 +81746,7 @@ class PouchDbStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_
     parseStringAsKey(s) {
         return new _pouch_db_key_js__WEBPACK_IMPORTED_MODULE_2__["PouchDbKey"](s);
     }
-    /** Ceates a new Variable or Collection given basic parameters */
+    /** Creates a new Variable or Collection given basic parameters */
     newProvider(type, name, id, key) {
         if (type.isCollection) {
             return new _pouch_db_collection_js__WEBPACK_IMPORTED_MODULE_3__["PouchDbCollection"](type, this, name, id, key);
@@ -81799,11 +81828,10 @@ class PouchDbStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_
             if (dir === 'pull') {
                 // handle change from the server
                 for (const doc of info.change.docs) {
-                    const handler = this.remoteStateChangedHandlers.get(doc._id);
+                    // Find the handler for the id and pass the changed doc to it.
+                    const handler = this.providerByLocationCache.get(doc._id);
                     if (handler) {
-                        // TODO(lindner): pass the doc into this method to avoid
-                        // extra round-trip fetches.
-                        handler.onRemoteStateSynced();
+                        handler.onRemoteStateSynced(doc);
                     }
                 }
             }
@@ -81853,6 +81881,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pouch_db_storage_provider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pouch-db-storage-provider */ "./runtime/ts-build/storage/pouchdb/pouch-db-storage-provider.js");
 
 
+/**
+ * The PouchDB-based implementation of a Variable.
+ */
 class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODULE_1__["PouchDbStorageProvider"] {
     constructor(type, storageEngine, name, id, key) {
         super(type, storageEngine, name, id, key);
@@ -81883,7 +81914,7 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
         if (literal && literal.model && literal.model.length === 1) {
             const newvalue = literal.model[0].value;
             if (newvalue) {
-                this.getStoredAndUpdate(stored => newvalue);
+                await this.getStoredAndUpdate(stored => newvalue);
             }
         }
     }
@@ -81937,8 +81968,8 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
             return value;
         });
         this.version = version;
-        // TODO(plindner): Mimic firebase?
-        // TODO(plindner): firebase fires 'change' events here...
+        // TODO(lindner): Mimic firebase?
+        // TODO(lindner): firebase fires 'change' events here...
     }
     /**
      * @return a promise containing the variable value or null if it does not exist.
@@ -81948,8 +81979,7 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
         if (this.referenceMode && value) {
             try {
                 await this.ensureBackingStore();
-                const result = await this.backingStore.get(value.id);
-                return result;
+                return await this.backingStore.get(value.id);
             }
             catch (err) {
                 console.warn('PouchDbVariable.get err=', err);
@@ -81973,16 +82003,17 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
             // TODO(shans): should we fetch and compare in the case of the ids matching?
             const referredType = this.type;
             const storageKey = this.storageEngine.baseStorageKey(referredType, this.storageKey);
-            // Store the indirect pointer to the storageKey
-            await this.getStoredAndUpdate(stored => {
-                return { id: value.id, storageKey };
-            });
             await this.ensureBackingStore();
             // TODO(shans): mutating the storageKey here to provide unique keys is
             // a hack that can be removed once entity mutation is distinct from collection
             // updates. Once entity mutation exists, it shouldn't ever be possible to write
             // different values with the same id.
             await this.backingStore.store(value, [this.storageKey + this.localKeyId++]);
+            // Store the indirect pointer to the storageKey
+            // Do this *after* the write to backing store, otherwise null responses could occur
+            await this.getStoredAndUpdate(stored => {
+                return { id: value.id, storageKey };
+            });
         }
         else {
             // If there's a barrier set, then the originating storage-proxy is expecting
@@ -82029,12 +82060,37 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
         await this.set(null, originatorId, barrier);
     }
     /**
-     * Triggered when the storage key has been modified.  For now we
-     * just refetch.  This is fast since the data is synced locally.
+     * Triggered when the storage key has been modified or deleted.
      */
-    onRemoteStateSynced() {
-        // updates internal state
-        this.getStored();
+    onRemoteStateSynced(doc) {
+        // Same revs?  No changes, just return.
+        if (doc._rev === this._rev) {
+            return;
+        }
+        // This is null for deleted docs.
+        // TODO(lindner): consider using doc._deleted to special case.
+        const value = doc.value;
+        // Store locally
+        this._stored = value;
+        this._rev = doc._rev;
+        this.version++;
+        // Skip if value == null, which is what happens when docs are deleted..
+        if (this.referenceMode && value) {
+            this.ensureBackingStore().then(async (store) => {
+                const data = await store.get(value.id);
+                if (!data) {
+                    // TODO(lindner): data referred to by this data is missing.
+                    console.log('PouchDbVariable.onRemoteSynced: possible race condition for id=' + value.id);
+                    return;
+                }
+                this._fire('change', { data, version: this.version });
+            });
+        }
+        else {
+            if (value != null) {
+                this._fire('change', { data: value, version: this.version });
+            }
+        }
     }
     /**
      * Pouch stored version of _stored.  Requests the value from the
@@ -82053,13 +82109,14 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
                 this._stored = result['value'];
                 this._rev = result._rev;
                 this.version++;
-                // TODO(lindner): fire change events here?
             }
         }
         catch (err) {
             if (err.name === 'not_found') {
+                // If the item was removed from storage empty out our local storage and bump the version.
                 this._stored = null;
                 this._rev = undefined;
+                this.version++;
             }
             else {
                 console.warn('PouchDbVariable.getStored err=', err);
@@ -82095,8 +82152,7 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
                     // remote revision is different, update local copy.
                     this._stored = doc['value'];
                     this._rev = doc._rev;
-                    this.version++; // yuck.
-                    // TODO(lindner): fire change events here?
+                    this.version++;
                 }
             }
             catch (err) {
