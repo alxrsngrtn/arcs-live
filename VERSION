@@ -1,11 +1,5 @@
-commit 70a350f6487f573a047caeacdf0e165fe5e31710
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Sep 27 18:05:32 2018 -0700
+commit b11c24c3176944e78fe7b2de2280bf3172f18fbf
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Sep 27 21:50:32 2018 -0700
 
-    Shell planning runs in same instance as pouchdb service (#2000)
-    
-    * Shell planning runs in same instance as pouchdb service
-    
-    - Introduce new ShellPlanningInterface class to encapsulate functionality
-    - Add an optional parameter to ArcFactory to resolve artifacts
-    - Start services inside of PouchDB
+    Create suggestions for `launcher` arc and use them for newly created empty arcs as well. (#2002)
