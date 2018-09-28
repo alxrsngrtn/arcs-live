@@ -1,5 +1,5 @@
-commit de2ff87de644e8b1bf7bdbbed08fe960011c09b3
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Sep 28 00:25:08 2018 -0700
+commit 63d243f50f213189fb0e714eeca663593a48ce1b
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Sep 28 10:23:05 2018 -0700
 
-    repair launcher logic (#2010)
+    temporarily pass UI events directly to hosted particles (#2011)
