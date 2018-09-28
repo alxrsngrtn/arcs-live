@@ -1,5 +1,5 @@
-commit 28c13e18d5915b4553971cd7fc218b1a688844bd
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Sep 27 22:35:30 2018 -0700
+commit 6f8db2e116fbdd6219812a4d1327d70fb992ea17
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Sep 27 23:35:00 2018 -0700
 
-    dispose suggestion storage when planificator is disposed (#2004)
+    BigCollections need to send an initial sync for DomParticle (#2005)

@@ -65626,11 +65626,15 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
   }
   async _handlesToProps() {
     let config = this.config;
-    // acquire (async) list data from handles
+    // acquire (async) list data from handles; BigCollections map to the handle itself
     let data = await Promise.all(
       config.handleNames
       .map(name => this.handles.get(name))
-      .map(handle => handle.toList ? handle.toList() : handle.get())
+      .map(handle => {
+        if (handle.toList) return handle.toList();
+        if (handle.get) return handle.get();
+        return handle;
+      })
     );
     // convert handle data (array) into props (dictionary)
     let props = Object.create(null);
@@ -66141,6 +66145,12 @@ class Cursor {
 class BigCollection extends Handle {
   configure(options) {
     throw new Error('BigCollections do not support sync/update configuration');
+  }
+
+  async _notify(kind, particle, details) {
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(this.canRead, '_notify should not be called for non-readable handles');
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(kind === 'sync', 'BigCollection._notify only supports sync events');
+    await particle.onHandleSync(this, []);
   }
 
   /** @method store(entity)
@@ -73824,6 +73834,42 @@ class VariableProxy extends StorageProxyBase {
   }
 }
 
+// BigCollections are never synchronized. No local state is held and all operations are passed
+// directly through to the backing store.
+class BigCollectionProxy extends StorageProxyBase {
+  register(particle, handle) {
+    if (handle.canRead) {
+      this._scheduler.enqueue(particle, handle, ['sync', particle, {}]);
+    }
+  }
+
+  // TODO: surface get()
+
+  async store(value, keys, particleId) {
+    return new Promise(resolve =>
+      this._port.HandleStore({handle: this, callback: resolve, data: {value, keys}, particleId}));
+  }
+
+  async remove(id, particleId) {
+    return new Promise(resolve =>
+      this._port.HandleRemove({handle: this, callback: resolve, data: {id, keys: []}, particleId}));
+  }
+
+  async stream(pageSize) {
+    return new Promise(resolve =>
+      this._port.HandleStream({handle: this, callback: resolve, pageSize}));
+  }
+
+  async cursorNext(cursorId) {
+    return new Promise(resolve =>
+      this._port.StreamCursorNext({handle: this, callback: resolve, cursorId}));
+  }
+
+  cursorClose(cursorId) {
+    this._port.StreamCursorClose({handle: this, cursorId});
+  }
+}
+
 class StorageProxyScheduler {
   constructor() {
     this._scheduled = false;
@@ -73897,40 +73943,6 @@ class StorageProxyScheduler {
     }
 
     this._updateIdle();
-  }
-}
-
-// BigCollections are never synchronized. No local state is held and all operations are passed
-// directly through to the backing store.
-class BigCollectionProxy extends StorageProxyBase {
-  // BigCollections don't hold a local model so the sync/update mechanism isn't meaningful.
-  register(particle, handle) {
-  }
-
-  // TODO: surface get()
-
-  async store(value, keys, particleId) {
-    return new Promise(resolve =>
-      this._port.HandleStore({handle: this, callback: resolve, data: {value, keys}, particleId}));
-  }
-
-  async remove(id, particleId) {
-    return new Promise(resolve =>
-      this._port.HandleRemove({handle: this, callback: resolve, data: {id, keys: []}, particleId}));
-  }
-
-  async stream(pageSize) {
-    return new Promise(resolve =>
-      this._port.HandleStream({handle: this, callback: resolve, pageSize}));
-  }
-
-  async cursorNext(cursorId) {
-    return new Promise(resolve =>
-      this._port.StreamCursorNext({handle: this, callback: resolve, cursorId}));
-  }
-
-  cursorClose(cursorId) {
-    this._port.StreamCursorClose({handle: this, cursorId});
   }
 }
 
@@ -79398,7 +79410,7 @@ class FirebaseKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_5__["KeyBase"] {
                 this.projectId = this.databaseUrl.split('.')[0];
             }
             else {
-                throw new Error("FirebaseKey must end with .firebaseio.com");
+                throw new Error('FirebaseKey must end with .firebaseio.com');
             }
             this.apiKey = parts[1];
             this.location = parts.slice(2).join('/');
@@ -80231,12 +80243,12 @@ class FirebaseCollection extends FirebaseStorageProvider {
         return (await this._toList()).map(item => item.value);
     }
     async getMultiple(ids) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!this.referenceMode, "getMultiple not implemented for referenceMode stores");
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!this.referenceMode, 'getMultiple not implemented for referenceMode stores');
         await this.initialized;
         return ids.map(id => this.model.getValue(id));
     }
     async storeMultiple(values, keys, originatorId = null) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!this.referenceMode, "storeMultiple not implemented for referenceMode stores");
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!this.referenceMode, 'storeMultiple not implemented for referenceMode stores');
         values.map(value => {
             this.model.add(value.id, value, keys);
             if (!this.localChanges.has(value.id)) {
@@ -80520,11 +80532,17 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     get _hasLocalChanges() {
         return false;
     }
-    // TODO: cloneFrom, toLiteral, fromLiteral ?
+    // TODO: cloneFrom, toLiteral, fromLiteral
     // A cloned instance will probably need to reference the same Firebase URL but collect all
     // modifications locally for speculative execution.
+    async cloneFrom(handle) {
+        throw new Error('FirebaseBigCollection does not yet implement cloneFrom');
+    }
     toLiteral() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(false, "no toLiteral implementation on bigCollection");
+        throw new Error('FirebaseBigCollection does not yet implement toLiteral');
+    }
+    fromLiteral({ version, model }) {
+        throw new Error('FirebaseBigCollection does not yet implement fromLiteral');
     }
 }
 //# sourceMappingURL=firebase-storage.js.map
@@ -81005,6 +81023,10 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
     cursorVersion(cursorId) {
         const cursor = this.cursors.get(cursorId);
         return cursor ? cursor.version : null;
+    }
+    async cloneFrom(handle) {
+        // TODO
+        throw new Error('InMemoryBigCollection does not yet implement cloneFrom');
     }
     // Returns {version, model: [{id, index, value, keys: []}]}
     toLiteral() {
