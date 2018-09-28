@@ -1,5 +1,9 @@
-commit 6f8db2e116fbdd6219812a4d1327d70fb992ea17
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Sep 27 23:35:00 2018 -0700
+commit ad864a0449402e7dc327c3f57b0453ee625001d8
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Sep 27 23:45:49 2018 -0700
 
-    BigCollections need to send an initial sync for DomParticle (#2005)
+    marshal `launcher` recipe directly (don't bother the planner) (#2006)
+    
+    * marshal `launcher` recipe directly (don't bother the planner)
+    
+    * be more careful with async
