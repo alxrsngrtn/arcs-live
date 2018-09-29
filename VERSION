@@ -1,11 +1,15 @@
-commit a9f6c8f823199bc7f187d4a7a83454c52a5d4407
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Fri Sep 28 16:29:21 2018 -0700
+commit 6d196cf6be81a5e0fa9142e37fa72fbd50476efa
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Sep 28 16:56:18 2018 -0700
 
-    Improve PouchDB implementation for replication and APIs (#2015)
+    Flesh out TVUberDemo and ShowcaseArtistDemo (#2003)
     
-    - Handle replication events for Variables, fire events so UI refreshes
-    - Eliminate double-fetches for replication events
-    - Add TODOs for Collection based replication
-    - Properly implement connect -- return null for keys that do not exist.
-    - Introduce ValueStorage/VariableStorage to define explicit types for storing Variables.
+    * more tv goodies
+    
+    * updates
+    
+    * don't search for blank
+    
+    * start plumbing other types
+    
+    * flesh out TVUberDemo and ShowcaseArtistDemo
