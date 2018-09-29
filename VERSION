@@ -1,13 +1,5 @@
-commit c25823517c960b5095b6a462f6a695f52d4c59c3
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Sep 28 19:43:23 2018 -0700
+commit 8275b464c9e514951e701be1489919bab391d80a
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Sep 28 21:18:23 2018 -0700
 
-    Tear down the arc before consuming serialization. (#2016)
-    
-    * Tear down the arc before consuming serialization.
-    
-    Fixes "duplicate root slot" errors.
-    
-    * remove blank line and add comment.
-    
-    * add a todo
+    plumb in ShowcasePlayRecord, work on suggestions (#2017)
