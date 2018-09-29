@@ -1,15 +1,13 @@
-commit 6d196cf6be81a5e0fa9142e37fa72fbd50476efa
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Sep 28 16:56:18 2018 -0700
+commit c25823517c960b5095b6a462f6a695f52d4c59c3
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Sep 28 19:43:23 2018 -0700
 
-    Flesh out TVUberDemo and ShowcaseArtistDemo (#2003)
+    Tear down the arc before consuming serialization. (#2016)
     
-    * more tv goodies
+    * Tear down the arc before consuming serialization.
     
-    * updates
+    Fixes "duplicate root slot" errors.
     
-    * don't search for blank
+    * remove blank line and add comment.
     
-    * start plumbing other types
-    
-    * flesh out TVUberDemo and ShowcaseArtistDemo
+    * add a todo
