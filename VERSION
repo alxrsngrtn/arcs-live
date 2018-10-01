@@ -1,5 +1,8 @@
-commit 5bf602494996707f611045d8c64725304b1f71d6
+commit f06aff232970772d7a507e86e6217c6646f6a52c
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Oct 1 13:45:18 2018 -0700
+Date:   Mon Oct 1 13:47:01 2018 -0700
 
-    Switch remote planning to use Berni by default (#2027)
+    Fix issues with building and running server (#2025)
+    
+    - fix @kubernetes compile error caused by missing http.ClientResponse in newer @types/node
+    - Move @kubernetes/client-node from top level to server since it's only needed there.
