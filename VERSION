@@ -1,11 +1,10 @@
-commit e467ecab9a30a2698bf411752d24fab46e062692
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Oct 1 11:09:14 2018 -0700
+commit 085e90c0f853304debad5fc98a259419d3abfb3e
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Oct 2 04:37:06 2018 +1000
 
-    Support "[Friend] is also watching [Show]" in suggestions (#2019)
+    "Fix" cloning from firebase to in-memory-storage by awaiting local modification flushing. (#2021)
     
-    * numerous changes to fancify TV Show suggestions
+    * "Fix" cloning from firebase to in-memory-storage by awaiting local
+    modification flushing.
     
-    * handle missing show.time
-    
-    * fix ws
+    * Update in-memory-storage.ts
