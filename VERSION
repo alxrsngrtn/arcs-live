@@ -1,13 +1,5 @@
-commit de3c6a6fa722000a48e9ac319c1db7ba187c493a
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Oct 1 13:55:54 2018 -0700
+commit f911c9a3aa3051af338ff76f998517987362c8ac
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Oct 2 08:15:52 2018 +1000
 
-    Filter pipe suggestion against most recent entity type (#2023)
-    
-    * generalize collection utilities
-    
-    * support history for 'artist' and 'play_record'
-    
-    * only pipe suggestions that match the most recent entity-type
-    
-    * factor out TVMazeShow schema
+    Add 'clear' function for Collections. (#2029)

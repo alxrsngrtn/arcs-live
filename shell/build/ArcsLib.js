@@ -54445,6 +54445,7 @@ class PECOuterPort extends APIPort {
     this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('HandleStore', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleRemove', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
+    this.registerHandler('HandleRemoveMultiple', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleStream', {handle: this.Mapped, callback: this.Direct, pageSize: this.Direct});
     this.registerHandler('StreamCursorNext', {handle: this.Mapped, callback: this.Direct, cursorId: this.Direct});
     this.registerHandler('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
@@ -54499,6 +54500,7 @@ class PECInnerPort extends APIPort {
     this.registerCall('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerCall('HandleStore', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
     this.registerCall('HandleRemove', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
+    this.registerCall('HandleRemoveMultiple', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
     this.registerCall('HandleStream', {handle: this.Mapped, callback: this.LocalMapped, pageSize: this.Direct});
     this.registerCall('StreamCursorNext', {handle: this.Mapped, callback: this.LocalMapped, cursorId: this.Direct});
     this.registerCall('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
@@ -66014,6 +66016,18 @@ class Collection extends Handle {
     return this._proxy.store(serialization, keys, this._particleId);
   }
 
+  /** @method clear()
+   * Removes all known entities from the Handle. 
+   * throws: Error if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+   * in the particle's manifest.
+   */
+  async clear() {
+    if (!this.canWrite) {
+      throw new Error('Handle not writeable');
+    }
+    return this._proxy.clear();
+  }
+
   /** @method remove(entity)
    * Removes an entity from the Handle.
    * throws: Error if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
@@ -68260,6 +68274,11 @@ class ParticleExecutionHost {
 
     this._apiPort.onHandleRemove = async ({handle, callback, data: {id, keys}, particleId}) => {
       await handle.remove(id, keys, particleId);
+      this._apiPort.SimpleCallback({callback});
+    };
+
+    this._apiPort.onHandleRemoveMultiple = async ({handle, callback, data, particleId}) => {
+      await handle.removeMultiple(data, particleId);
       this._apiPort.SimpleCallback({callback});
     };
 
@@ -73736,6 +73755,21 @@ class CollectionProxy extends StorageProxyBase {
     }
     let update = {originatorId: particleId, add: [value]};
     this._notify('update', update, options => options.notifyUpdate);
+  }
+
+  clear(particleId) {
+    if (this._synchronized != SyncState.full) {
+      this._port.HandleRemoveMultiple({handle: this, callback: () => {}, data: [], particleId});
+    }
+
+    let items = this._model.toList().map(item => ({id: item.id, keys: this._model.getKeys(item.id)}));
+    this._port.HandleRemoveMultiple({handle: this, callback: () => {}, data: items, particleId});
+
+    items = items.map(({id, keys}) => ({rawData: this._model.getValue(id).rawData, id, keys}));
+    items = items.filter(item => this._model.remove(item.id, item.keys));
+    if (items.length > 0) {
+      this._notify('update', {originatorId: particleId, remove: items}, options => options.notifyUpdate);
+    }
   }
 
   remove(id, keys, particleId) {
@@ -80094,6 +80128,41 @@ class FirebaseCollection extends FirebaseStorageProvider {
         }
         return this.model.getValue(id);
     }
+    async removeMultiple(items, originatorId = null) {
+        await this.initialized;
+        if (items.length === 0) {
+            items = this.model.toList().map(item => ({ id: item.id, keys: [] }));
+        }
+        items.forEach(item => {
+            // 1. Apply the change to the local model.
+            item.value = this.model.getValue(item.id);
+            if (item.value === null) {
+                return;
+            }
+            if (item.keys.length === 0) {
+                item.keys = this.model.getKeys(item.id);
+            }
+            // TODO: These keys might already have been removed (concurrently).
+            // We should exit early in that case.
+            item.effective = this.model.remove(item.id, item.keys);
+        });
+        this.version++;
+        // 2. Notify listeners.
+        items = items.filter(item => item.value);
+        this._fire('change', { remove: items, version: this.version, originatorId });
+        // 3. Add this modification to the set of local changes that need to be persisted.
+        items.forEach(item => {
+            if (!this.localChanges.has(item.id)) {
+                this.localChanges.set(item.id, { add: [], remove: [] });
+            }
+            const localChange = this.localChanges.get(item.id);
+            for (const key of item.keys) {
+                localChange.remove.push(key);
+            }
+        });
+        // 4. Wait for the changes to persist.
+        await this._persistChanges();
+    }
     async remove(id, keys = [], originatorId = null) {
         await this.initialized;
         // 1. Apply the change to the local model.
@@ -80861,6 +80930,22 @@ class InMemoryCollection extends InMemoryStorageProvider {
         this.version++;
         await trace.wait(this._fire('change', { add: [changeEvent], version: this.version, originatorId }));
         trace.end({ args: { value } });
+    }
+    async removeMultiple(items, originatorId = null) {
+        if (items.length === 0) {
+            items = this._model.toList().map(item => ({ id: item.id, keys: [] }));
+        }
+        items.forEach(item => {
+            if (item.keys.length === 0) {
+                item.keys = this._model.getKeys(item.id);
+            }
+            item.value = this._model.getValue(item.id);
+            if (item.value !== null) {
+                item.effective = this._model.remove(item.id, item.keys);
+            }
+        });
+        this.version++;
+        this._fire('change', { remove: items, version: this.version, originatorId });
     }
     async remove(id, keys = [], originatorId = null) {
         const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__["Tracing"].start({ cat: 'handle', name: 'InMemoryCollection::remove', args: { name: this.name } });

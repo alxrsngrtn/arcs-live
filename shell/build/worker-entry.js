@@ -752,6 +752,7 @@ class PECOuterPort extends APIPort {
     this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('HandleStore', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleRemove', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
+    this.registerHandler('HandleRemoveMultiple', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleStream', {handle: this.Mapped, callback: this.Direct, pageSize: this.Direct});
     this.registerHandler('StreamCursorNext', {handle: this.Mapped, callback: this.Direct, cursorId: this.Direct});
     this.registerHandler('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
@@ -806,6 +807,7 @@ class PECInnerPort extends APIPort {
     this.registerCall('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerCall('HandleStore', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
     this.registerCall('HandleRemove', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
+    this.registerCall('HandleRemoveMultiple', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
     this.registerCall('HandleStream', {handle: this.Mapped, callback: this.LocalMapped, pageSize: this.Direct});
     this.registerCall('StreamCursorNext', {handle: this.Mapped, callback: this.LocalMapped, cursorId: this.Direct});
     this.registerCall('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
@@ -1977,6 +1979,18 @@ class Collection extends Handle {
     let serialization = this._serialize(entity);
     let keys = [this._proxy.generateID() + 'key'];
     return this._proxy.store(serialization, keys, this._particleId);
+  }
+
+  /** @method clear()
+   * Removes all known entities from the Handle. 
+   * throws: Error if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+   * in the particle's manifest.
+   */
+  async clear() {
+    if (!this.canWrite) {
+      throw new Error('Handle not writeable');
+    }
+    return this._proxy.clear();
   }
 
   /** @method remove(entity)
@@ -3969,6 +3983,21 @@ class CollectionProxy extends StorageProxyBase {
     }
     let update = {originatorId: particleId, add: [value]};
     this._notify('update', update, options => options.notifyUpdate);
+  }
+
+  clear(particleId) {
+    if (this._synchronized != SyncState.full) {
+      this._port.HandleRemoveMultiple({handle: this, callback: () => {}, data: [], particleId});
+    }
+
+    let items = this._model.toList().map(item => ({id: item.id, keys: this._model.getKeys(item.id)}));
+    this._port.HandleRemoveMultiple({handle: this, callback: () => {}, data: items, particleId});
+
+    items = items.map(({id, keys}) => ({rawData: this._model.getValue(id).rawData, id, keys}));
+    items = items.filter(item => this._model.remove(item.id, item.keys));
+    if (items.length > 0) {
+      this._notify('update', {originatorId: particleId, remove: items}, options => options.notifyUpdate);
+    }
   }
 
   remove(id, keys, particleId) {
