@@ -1598,6 +1598,14 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
     console.warn('DomParticle: `setIfDirty` is deprecated, please use `setState` instead');
     return this._setState(state);
   }
+  /** @method configureHandles(handles)
+   * This is called once during particle setup. Override to control sync and update
+   * configuration on specific handles (via their configure() method).
+   * `handles` is a map from names to handle instances.
+   */
+  configureHandles(handles) {
+    // Example: handles.get('foo').configure({keepSynced: false});
+  }
   /** @method get config()
    * Override if necessary, to modify superclass config.
    */
@@ -1634,8 +1642,15 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
   // end deprecated
   //
   async setHandles(handles) {
+    this.configureHandles(handles);
     this.handles = handles;
-    this._handlesToSync = new Set(this.config.handleNames);
+    this._handlesToSync = new Set();
+    for (let name of this.config.handleNames) {
+      let handle = handles.get(name);
+      if (handle && handle.options.keepSynced && handle.options.notifySync) {
+        this._handlesToSync.add(name);
+      }
+    }
     // make sure we invalidate once, even if there are no incoming handles
     setTimeout(() => !this._hasProps && this._invalidate(), 200);
     //this._invalidate();

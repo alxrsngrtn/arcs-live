@@ -1,5 +1,5 @@
-commit f911c9a3aa3051af338ff76f998517987362c8ac
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Oct 2 08:15:52 2018 +1000
+commit d240e9ffe595f46ae77f91f433d68230ba6f7c9c
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Oct 1 15:22:17 2018 -0700
 
-    Add 'clear' function for Collections. (#2029)
+    Add configureHandles method to DomParticle (#2030)
