@@ -1,5 +1,5 @@
-commit 8275b464c9e514951e701be1489919bab391d80a
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Sep 28 21:18:23 2018 -0700
+commit 8fe453e36dcc1b90bf50bdec0b062b02a7c82c4a
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Oct 2 03:21:26 2018 +1000
 
-    plumb in ShowcasePlayRecord, work on suggestions (#2017)
+    Updates the hardcoded artist to one with a concert in SEA (#2020)
