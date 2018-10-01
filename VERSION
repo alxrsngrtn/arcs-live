@@ -1,5 +1,11 @@
-commit 8fe453e36dcc1b90bf50bdec0b062b02a7c82c4a
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Oct 2 03:21:26 2018 +1000
+commit e467ecab9a30a2698bf411752d24fab46e062692
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Oct 1 11:09:14 2018 -0700
 
-    Updates the hardcoded artist to one with a concert in SEA (#2020)
+    Support "[Friend] is also watching [Show]" in suggestions (#2019)
+    
+    * numerous changes to fancify TV Show suggestions
+    
+    * handle missing show.time
+    
+    * fix ws
