@@ -1,8 +1,13 @@
-commit f06aff232970772d7a507e86e6217c6646f6a52c
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Oct 1 13:47:01 2018 -0700
+commit de3c6a6fa722000a48e9ac319c1db7ba187c493a
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Oct 1 13:55:54 2018 -0700
 
-    Fix issues with building and running server (#2025)
+    Filter pipe suggestion against most recent entity type (#2023)
     
-    - fix @kubernetes compile error caused by missing http.ClientResponse in newer @types/node
-    - Move @kubernetes/client-node from top level to server since it's only needed there.
+    * generalize collection utilities
+    
+    * support history for 'artist' and 'play_record'
+    
+    * only pipe suggestions that match the most recent entity-type
+    
+    * factor out TVMazeShow schema
