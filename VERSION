@@ -1,5 +1,5 @@
-commit d240e9ffe595f46ae77f91f433d68230ba6f7c9c
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Oct 1 15:22:17 2018 -0700
+commit 9717648b7cebad7c0c56170956d37c30e19574ff
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Oct 2 09:25:42 2018 +1000
 
-    Add configureHandles method to DomParticle (#2030)
+    Connects the recipe in Music/ directory to the piped artist (#2031)
