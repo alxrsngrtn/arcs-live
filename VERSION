@@ -1,5 +1,5 @@
-commit b9b5ba76ec427b640ad3511732aa4b38866c22ff
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Oct 2 06:43:07 2018 +1000
+commit 5bf602494996707f611045d8c64725304b1f71d6
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Oct 1 13:45:18 2018 -0700
 
-    Cleans up the music demo (#2028)
+    Switch remote planning to use Berni by default (#2027)
