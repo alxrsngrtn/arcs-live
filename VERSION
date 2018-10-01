@@ -1,10 +1,9 @@
-commit 085e90c0f853304debad5fc98a259419d3abfb3e
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Oct 2 04:37:06 2018 +1000
+commit dc6a82b43977e3334b6abddae696f5633d56cea8
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Oct 1 13:17:35 2018 -0700
 
-    "Fix" cloning from firebase to in-memory-storage by awaiting local modification flushing. (#2021)
+    change inline suggestion color to yellow (#2024)
     
-    * "Fix" cloning from firebase to in-memory-storage by awaiting local
-    modification flushing.
+    * change inline suggestion color to yellow
     
-    * Update in-memory-storage.ts
+    * update box-shadow too
