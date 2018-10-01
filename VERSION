@@ -1,5 +1,5 @@
-commit b0fd0d280fe0f22a10dee67b206e587f57ac2624
+commit b9b5ba76ec427b640ad3511732aa4b38866c22ff
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Oct 2 06:31:08 2018 +1000
+Date:   Tue Oct 2 06:43:07 2018 +1000
 
-    Basic particles and recipes for playlists demo (#2026)
+    Cleans up the music demo (#2028)
