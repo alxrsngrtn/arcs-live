@@ -1,9 +1,5 @@
-commit dc6a82b43977e3334b6abddae696f5633d56cea8
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Oct 1 13:17:35 2018 -0700
+commit b0fd0d280fe0f22a10dee67b206e587f57ac2624
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Oct 2 06:31:08 2018 +1000
 
-    change inline suggestion color to yellow (#2024)
-    
-    * change inline suggestion color to yellow
-    
-    * update box-shadow too
+    Basic particles and recipes for playlists demo (#2026)
