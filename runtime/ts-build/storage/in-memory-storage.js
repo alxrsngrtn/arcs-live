@@ -482,7 +482,10 @@ class InMemoryBigCollection extends InMemoryStorageProvider {
         return cursor ? cursor.version : null;
     }
     async cloneFrom(handle) {
-        // TODO
+        // TODO: clone from non in-memory versions
+        if (handle.items) {
+            this.fromLiteral(handle.toLiteral());
+        }
     }
     // Returns {version, model: [{id, index, value, keys: []}]}
     toLiteral() {
