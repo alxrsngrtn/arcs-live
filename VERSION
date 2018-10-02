@@ -1,5 +1,5 @@
-commit 9717648b7cebad7c0c56170956d37c30e19574ff
+commit 1a88a28360566b2281f962042f86c6da150b9c9e
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Oct 2 09:25:42 2018 +1000
+Date:   Tue Oct 2 11:44:18 2018 +1000
 
-    Connects the recipe in Music/ directory to the piped artist (#2031)
+    Plumb Now Playing history to the Music demo (#2033)
