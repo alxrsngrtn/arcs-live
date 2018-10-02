@@ -1,5 +1,5 @@
-commit d447776bdf3044706a1fcc7a690459efc27d0634
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Oct 2 12:42:51 2018 +1000
+commit d02043aacb01401a073b9f4ec1960f36307ae2ae
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Oct 2 12:58:10 2018 +1000
 
-    Remove footgun (#2034)
+    Schema fixes - things moved on already (#2038)
