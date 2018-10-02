@@ -1,5 +1,5 @@
-commit d02043aacb01401a073b9f4ec1960f36307ae2ae
+commit e3a16d632f81787b507e1e0b7d898869d9fddd93
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Oct 2 12:58:10 2018 +1000
+Date:   Tue Oct 2 12:58:22 2018 +1000
 
-    Schema fixes - things moved on already (#2038)
+    Initialize history of play records with the data from the json file (#2036)
