@@ -1,5 +1,5 @@
-commit d6b9ca519ee9ebf8d37363398776a53a7aa9098c
+commit b04a7e73cb11f068be221937b4268ead09265ade
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Oct 3 02:16:02 2018 +1000
+Date:   Wed Oct 3 02:21:36 2018 +1000
 
-    Better time formatting in play record list (#2058)
+    Strategy Explorer Diff: Use empty string if recipe lacks description (#2059)
