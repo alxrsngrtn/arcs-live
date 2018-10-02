@@ -1,7 +1,5 @@
-commit 32c0d2a93847bc39b63209455877af3dd216490b
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Oct 2 08:43:36 2018 -0700
+commit 5442f3f4b13cbbf10d2fdb64998b26a2d84a38d7
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Oct 3 01:48:30 2018 +1000
 
-    Remove auto-restart after compilation failure from RemotePlanningInterface (#2056)
-    
-    - Also fixes userId vs userid
+    Guard against null artist (#2057)
