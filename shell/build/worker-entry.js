@@ -1380,7 +1380,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     // TODO: only supports a single template for now. add multiple templates support.
     return `default`;
   }
-  /** @method shouldRender(props, state, oldProps, oldState)
+  /** @method shouldRender()
    * Override to return false if the Particle won't use
    * it's slot.
    */
@@ -1451,9 +1451,9 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     if (handle.clear) {
       handle.clear();
     } else {
-      const data = this._props[handleName];
-      if (data) {
-        return Promise.all(data.map(entity => handle.remove(entity)));
+      const entities = await handle.toList();
+      if (entities) {
+        return Promise.all(entities.map(entity => handle.remove(entity)));
       }
     }
   }
@@ -1461,11 +1461,10 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
    * Merge entities from Array into named handle.
    */
   async mergeEntitiesToHandle(handleName, entities) {
-    //const handle = this.handles.get(handleName);
     const idMap = {};
-    const handleEntities = this._props[handleName];
-    handleEntities.forEach(entity => idMap[entity.id] = entity);
     const handle = this.handles.get(handleName);
+    const handleEntities = await handle.toList();
+    handleEntities.forEach(entity => idMap[entity.id] = entity);
     for (const entity of entities) {
       if (!idMap[entity.id]) {
         handle.store(entity);
@@ -1503,13 +1502,13 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
    * Modify or insert `entity` into named handle.
    * Modification is done by removing the old entity and reinserting the new one.
    */
-  updateSet(handleName, entity) {
+  async updateSet(handleName, entity) {
     // Set the entity into the right place in the set. If we find it
     // already present replace it, otherwise, add it.
     // TODO(dstockwell): Replace this with happy entity mutation approach.
     const handle = this.handles.get(handleName);
-    const records = this._props[handleName];
-    const target = records.find(r => r.id === entity.id);
+    const entities = await handle.toList();
+    const target = entities.find(r => r.id === entity.id);
     if (target) {
       handle.remove(target);
     }
@@ -1662,7 +1661,12 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
     }
   }
   async onHandleUpdate(handle, update) {
-    await this._handlesToProps();
+    // TODO(sjmiles): debounce handles updates
+    const work = () => {
+      //console.warn(handle, update);
+      this._handlesToProps();
+    };
+    this._debounce('handleUpdateDebounce', work, 100);
   }
   async _handlesToProps() {
     let config = this.config;
@@ -1689,6 +1693,18 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
       // TODO(sjmiles): remove `this._state` parameter
       this[handler]({data}, this._state);
     }
+  }
+  _debounce(key, func, delay) {
+    const subkey = `_debounce_${key}`;
+    if (!this._state[subkey]) {
+      this.startBusy();
+    }
+    const idleThenFunc = () => {
+      this.doneBusy();
+      func();
+      this._state[subkey] = null;
+    };
+    super._debounce(key, idleThenFunc, delay);
   }
 }
 
@@ -6216,10 +6232,10 @@ const nob = () => Object.create(null);
 
 const debounce = (key, action, delay) => {
   if (key) {
-    window.clearTimeout(key);
+    clearTimeout(key);
   }
   if (action && delay) {
-    return window.setTimeout(action, delay);
+    return setTimeout(action, delay);
   }
 };
 

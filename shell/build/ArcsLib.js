@@ -64532,18 +64532,17 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
     return result;
   }
 
-  async _combineSelectedDescriptions(selectedDescriptions) {
+  async _combineSelectedDescriptions(selectedDescriptions, options) {
     let suggestionByParticleDesc = new Map();
     for (let particleDesc of selectedDescriptions) {
       if (this.seenParticles.has(particleDesc._particle)) {
         continue;
       }
 
-      let {template, model} = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size);
+      let {template, model} = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
 
       let success = await Promise.all(Object.keys(model).map(async tokenKey => {
         let tokens = this._initSubTokens(model[tokenKey], particleDesc);
-        let token = tokens[0];
         return (await Promise.all(tokens.map(async token => {
           let tokenValue = await this.tokenToString(token);
           if (tokenValue == undefined) {
@@ -64579,12 +64578,14 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
 
     if (suggestions.length > 0) {
       let result = this._joinDescriptions(suggestions);
-      result.template += '.';
+      if (!options || !options.skipFormatting) {
+        result.template += '.';
+      }
       return result;
     }
   }
 
-  _retrieveTemplateAndModel(particleDesc, index) {
+  _retrieveTemplateAndModel(particleDesc, index, options) {
     if (particleDesc.template && particleDesc.model) {
       return {template: particleDesc.template, model: particleDesc.model};
     }
@@ -64595,12 +64596,13 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
 
     tokens.forEach((token, i) => {
       if (token.text) {
-        template = template.concat(`${index == 0 && i == 0 ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
+        template = template.concat(
+            `${(index == 0 && i == 0 && !options.skipFormatting) ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
       } else { // handle or slot handle.
         let sanitizedFullName = token.fullName.replace(/[.{}_$]/g, '');
         let attribute = '';
         // TODO(mmandlis): capitalize the data in the model instead.
-        if (i == 0) {
+        if (i == 0 && !options.skipFormatting) {
           // Capitalize the first letter in the token.
           template = template.concat(`<style>
             [firstletter]::first-letter { text-transform: capitalize; }
@@ -64929,7 +64931,7 @@ class DescriptionFormatter {
     return pattern ? {pattern} : {};
   }
 
-  async _combineSelectedDescriptions(selectedDescriptions) {
+  async _combineSelectedDescriptions(selectedDescriptions, options) {
     let suggestions = [];
     await Promise.all(selectedDescriptions.map(async particle => {
       if (!this.seenParticles.has(particle._particle)) {
@@ -64938,7 +64940,11 @@ class DescriptionFormatter {
     }));
     let jointDescription = this._joinDescriptions(suggestions);
     if (jointDescription) {
-      return this._capitalizeAndPunctuate(jointDescription);
+      if ((options || {}).skipFormatting) {
+        return jointDescription;
+      } else {
+        return this._capitalizeAndPunctuate(jointDescription);
+      }
     }
   }
 
@@ -65003,6 +65009,7 @@ class DescriptionFormatter {
     return results;
   }
 
+  //async
   _initSubTokens(pattern, particleDescription) {
     let valueTokens = pattern.match(/\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/);
     let handleNames = valueTokens[1].split('.');
@@ -65035,8 +65042,11 @@ class DescriptionFormatter {
     let particle = particleDescription._particle;
 
     if (handleNames.length == 0) {
-      // Use the full particle description
-      return this._initTokens(particleDescription.pattern || particle.spec.pattern || '', particleDescription);
+      // return a  particle token
+      return {
+        particleName: particle.spec.name,
+        particleDescription
+      };
     }
 
     let handleConn = particle.connections[handleNames[0]];
@@ -65076,12 +65086,19 @@ class DescriptionFormatter {
     if (token.text) {
       return token.text;
     }
+    if (token.particleName) {
+      return this._particleTokenToString(token);
+    }
     if (token.handleName) {
       return this._handleTokenToString(token);
     } else if (token.consumeSlotName && token.provideSlotName) {
       return this._slotTokenToString(token);
     }
     throw new Error('no handle or slot name');
+  }
+
+  async _particleTokenToString(token) {
+    return this._combineSelectedDescriptions([token.particleDescription], {skipFormatting: true}); //debug;
   }
 
   async _handleTokenToString(token) {
@@ -65377,7 +65394,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     // TODO: only supports a single template for now. add multiple templates support.
     return `default`;
   }
-  /** @method shouldRender(props, state, oldProps, oldState)
+  /** @method shouldRender()
    * Override to return false if the Particle won't use
    * it's slot.
    */
@@ -65448,9 +65465,9 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     if (handle.clear) {
       handle.clear();
     } else {
-      const data = this._props[handleName];
-      if (data) {
-        return Promise.all(data.map(entity => handle.remove(entity)));
+      const entities = await handle.toList();
+      if (entities) {
+        return Promise.all(entities.map(entity => handle.remove(entity)));
       }
     }
   }
@@ -65458,11 +65475,10 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
    * Merge entities from Array into named handle.
    */
   async mergeEntitiesToHandle(handleName, entities) {
-    //const handle = this.handles.get(handleName);
     const idMap = {};
-    const handleEntities = this._props[handleName];
-    handleEntities.forEach(entity => idMap[entity.id] = entity);
     const handle = this.handles.get(handleName);
+    const handleEntities = await handle.toList();
+    handleEntities.forEach(entity => idMap[entity.id] = entity);
     for (const entity of entities) {
       if (!idMap[entity.id]) {
         handle.store(entity);
@@ -65500,13 +65516,13 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
    * Modify or insert `entity` into named handle.
    * Modification is done by removing the old entity and reinserting the new one.
    */
-  updateSet(handleName, entity) {
+  async updateSet(handleName, entity) {
     // Set the entity into the right place in the set. If we find it
     // already present replace it, otherwise, add it.
     // TODO(dstockwell): Replace this with happy entity mutation approach.
     const handle = this.handles.get(handleName);
-    const records = this._props[handleName];
-    const target = records.find(r => r.id === entity.id);
+    const entities = await handle.toList();
+    const target = entities.find(r => r.id === entity.id);
     if (target) {
       handle.remove(target);
     }
@@ -65659,7 +65675,12 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
     }
   }
   async onHandleUpdate(handle, update) {
-    await this._handlesToProps();
+    // TODO(sjmiles): debounce handles updates
+    const work = () => {
+      //console.warn(handle, update);
+      this._handlesToProps();
+    };
+    this._debounce('handleUpdateDebounce', work, 100);
   }
   async _handlesToProps() {
     let config = this.config;
@@ -65686,6 +65707,18 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
       // TODO(sjmiles): remove `this._state` parameter
       this[handler]({data}, this._state);
     }
+  }
+  _debounce(key, func, delay) {
+    const subkey = `_debounce_${key}`;
+    if (!this._state[subkey]) {
+      this.startBusy();
+    }
+    const idleThenFunc = () => {
+      this.doneBusy();
+      func();
+      this._state[subkey] = null;
+    };
+    super._debounce(key, idleThenFunc, delay);
   }
 }
 
@@ -81441,6 +81474,25 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
         // Notify Listeners
         this._fire('change', { add: [changeEvent], version: this.version, originatorId });
     }
+    async removeMultiple(items, originatorId = null) {
+        await this.getModelAndUpdate(crdtmodel => {
+            if (items.length === 0) {
+                items = crdtmodel.toList().map(item => ({ id: item.id, keys: [] }));
+            }
+            items.forEach(item => {
+                if (item.keys.length === 0) {
+                    item.keys = crdtmodel.getKeys(item.id);
+                }
+                item.value = crdtmodel.getValue(item.id);
+                if (item.value !== null) {
+                    item.effective = crdtmodel.remove(item.id, item.keys);
+                }
+            });
+            return crdtmodel;
+        }).then(() => {
+            this._fire('change', { remove: items, version: this.version, originatorId });
+        });
+    }
     /**
      * Remove ids from a collection for specific keys.
      * @param id the id to remove.
@@ -83615,10 +83667,10 @@ const nob = () => Object.create(null);
 
 const debounce = (key, action, delay) => {
   if (key) {
-    window.clearTimeout(key);
+    clearTimeout(key);
   }
   if (action && delay) {
-    return window.setTimeout(action, delay);
+    return setTimeout(action, delay);
   }
 };
 
