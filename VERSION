@@ -1,5 +1,9 @@
-commit ba717d5cb9a16da2a2a3af9dccad7cd60135b182
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Oct 1 23:16:33 2018 -0700
+commit f474ac20cb72be6f1a58c960c191ce7d85ac2e6e
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Oct 2 16:28:47 2018 +1000
 
-    add default description to TVMazeDemoShell particle (#2052)
+    Forces DevTools to mostly ignore *-pipes arc (#2053)
+    
+    * fixes devtools to work with *-pipes arc
+    
+    * Forces DevTools to mostly ignore *-pipes arc
