@@ -1,5 +1,5 @@
-commit 1a88a28360566b2281f962042f86c6da150b9c9e
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Oct 2 11:44:18 2018 +1000
+commit e668e496556da0f80d7561af4c5737e8d4ed67c9
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Oct 2 12:36:48 2018 +1000
 
-    Plumb Now Playing history to the Music demo (#2033)
+    Ticketmaster shows (#2032)
