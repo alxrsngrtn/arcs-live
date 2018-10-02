@@ -79477,11 +79477,7 @@ async function resetStorageForTesting(key) {
         projectId: key.projectId,
         databaseURL: key.databaseUrl
     });
-    let reference = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.database(app).ref(key.location);
-    await new Promise(resolve => {
-        reference.remove(resolve);
-    });
-    reference = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.database(app).ref('backingStores');
+    const reference = firebase_app__WEBPACK_IMPORTED_MODULE_1___default.a.database(app).ref(key.location);
     await new Promise(resolve => {
         reference.remove(resolve);
     });
