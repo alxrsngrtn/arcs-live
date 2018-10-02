@@ -1,5 +1,5 @@
-commit e603ae79b50e357d2fd104a5a2d11d6cd453de6d
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Oct 2 09:30:34 2018 -0700
+commit 4eed485f37e3ea111aa789d5310cb490468ae9c4
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Tue Oct 2 13:27:24 2018 -0700
 
-    Use in-memory BigCollection for FilterPlaylist demo (#2061)
+    Add note for zsh users that recommends sourcing nvm before using it (#2007)
