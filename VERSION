@@ -1,5 +1,5 @@
-commit 4eed485f37e3ea111aa789d5310cb490468ae9c4
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Oct 2 13:27:24 2018 -0700
+commit 6545b50282e39bb8f4c7f596c82bb49a4dd8b172
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Oct 2 14:51:18 2018 -0700
 
-    Add note for zsh users that recommends sourcing nvm before using it (#2007)
+    Use corrected docId for checking if document exists (#2062)

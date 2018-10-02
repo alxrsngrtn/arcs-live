@@ -81879,7 +81879,7 @@ class PouchDbStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_
         // Use a simple fetch to see if the document exists
         try {
             // TODO(lindner): optimize away this call.
-            await this.dbForKey(pouchKey).get(pouchKey.toString());
+            await this.dbForKey(pouchKey).get(pouchKey.location);
             return this.construct(id, type, key);
         }
         catch (err) {
