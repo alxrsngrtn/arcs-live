@@ -1,9 +1,5 @@
-commit f474ac20cb72be6f1a58c960c191ce7d85ac2e6e
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Oct 2 16:28:47 2018 +1000
+commit e9f91a765799c2b0a0ff192186bb2d515753814c
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Oct 1 23:31:23 2018 -0700
 
-    Forces DevTools to mostly ignore *-pipes arc (#2053)
-    
-    * fixes devtools to work with *-pipes arc
-    
-    * Forces DevTools to mostly ignore *-pipes arc
+    get rid of MuxedProductItem suggestions (#2054)
