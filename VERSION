@@ -1,5 +1,5 @@
-commit 2b7a37c9437a8db8316716c2ceb4e570bbc6aaa6
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Oct 1 22:26:15 2018 -0700
+commit ba717d5cb9a16da2a2a3af9dccad7cd60135b182
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Oct 1 23:16:33 2018 -0700
 
-    turn off non-trivial WDIO tests (#2051)
+    add default description to TVMazeDemoShell particle (#2052)
