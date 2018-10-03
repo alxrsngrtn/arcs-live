@@ -1,5 +1,9 @@
-commit 6545b50282e39bb8f4c7f596c82bb49a4dd8b172
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Oct 2 14:51:18 2018 -0700
+commit 556734262d343605be2400e639f1c9986c025cc6
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Oct 3 11:21:04 2018 -0700
 
-    Use corrected docId for checking if document exists (#2062)
+    Connect to playlist data in firebase; importer improvements (#2063)
+    
+    - Simple sanitization of some fields
+    - Dedupe artists within playlists
+    - Use the same schema as the prod code
