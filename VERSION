@@ -1,9 +1,7 @@
-commit 556734262d343605be2400e639f1c9986c025cc6
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Oct 3 11:21:04 2018 -0700
+commit 9d8792da41ded61d7db9213474e7d77b57a5e8b1
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Oct 4 09:30:19 2018 -0700
 
-    Connect to playlist data in firebase; importer improvements (#2063)
+    Migrate tuple-fields to typescript (#2067)
     
-    - Simple sanitization of some fields
-    - Dedupe artists within playlists
-    - Use the same schema as the prod code
+    Addresses #1765

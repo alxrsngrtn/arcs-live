@@ -5395,6 +5395,56 @@ class CrdtCollectionModel {
 
 /***/ }),
 
+/***/ "./runtime/ts-build/tuple-fields.js":
+/*!******************************************!*\
+  !*** ./runtime/ts-build/tuple-fields.js ***!
+  \******************************************/
+/*! exports provided: TupleFields */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TupleFields", function() { return TupleFields; });
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class TupleFields {
+    constructor(fieldList) {
+        this.fieldList = fieldList;
+    }
+    static fromLiteral(literal) {
+        return new TupleFields(literal.map(a => _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(a)));
+    }
+    toLiteral() {
+        return this.fieldList.map(a => a.toLiteral());
+    }
+    clone() {
+        return new TupleFields(this.fieldList.map(a => a.clone({})));
+    }
+    equals(other) {
+        if (this.fieldList.length !== other.fieldList.length) {
+            return false;
+        }
+        for (let i = 0; i < this.fieldList.length; i++) {
+            if (!this.fieldList[i].equals(other.fieldList[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+//# sourceMappingURL=tuple-fields.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/type.js":
 /*!**********************************!*\
   !*** ./runtime/ts-build/type.js ***!
@@ -5409,7 +5459,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shape_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./shape.js */ "./runtime/ts-build/shape.js");
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./schema.js */ "./runtime/ts-build/schema.js");
 /* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../type-variable.js */ "./runtime/type-variable.js");
-/* harmony import */ var _tuple_fields_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../tuple-fields.js */ "./runtime/tuple-fields.js");
+/* harmony import */ var _tuple_fields_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tuple-fields.js */ "./runtime/ts-build/tuple-fields.js");
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5915,62 +5965,6 @@ addType('Synthesized');
 
 
 //# sourceMappingURL=type.js.map
-
-/***/ }),
-
-/***/ "./runtime/tuple-fields.js":
-/*!*********************************!*\
-  !*** ./runtime/tuple-fields.js ***!
-  \*********************************/
-/*! exports provided: TupleFields */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TupleFields", function() { return TupleFields; });
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-class TupleFields {
-  constructor(fieldList) {
-    this.fieldList = fieldList;
-  }
-
-  static fromLiteral(literal) {
-    return new TupleFields(literal.map(a => _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(a)));
-  }
-
-  toLiteral() {
-    return this.fieldList.map(a => a.toLiteral());
-  }
-
-  clone() {
-    return new TupleFields(this.fieldList.map(a => a.clone()));
-  }
-
-  equals(other) {
-    if (this.fieldList.length !== other.fieldList.length) {
-      return false;
-    }
-    for (let i = 0; i < this.fieldList.length; i++) {
-      if (!this.fieldList[i].equals(other.fieldList[i])) {
-        return false;
-      }
-    }
-    return true;
-  }
-}
-
 
 /***/ }),
 
