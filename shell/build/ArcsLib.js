@@ -54531,56 +54531,6 @@ class PECInnerPort extends APIPort {
 
 /***/ }),
 
-/***/ "./runtime/arc-exceptions.js":
-/*!***********************************!*\
-  !*** ./runtime/arc-exceptions.js ***!
-  \***********************************/
-/*! exports provided: reportSystemException, registerSystemExceptionHandler, removeSystemExceptionHandler */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reportSystemException", function() { return reportSystemException; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerSystemExceptionHandler", function() { return registerSystemExceptionHandler; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeSystemExceptionHandler", function() { return removeSystemExceptionHandler; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-let systemHandlers = [];
-
-function reportSystemException(exception, methodName, particle) {
-  for (let handler of systemHandlers) {
-    handler(exception, methodName, particle);
-  }
-}
-
-function registerSystemExceptionHandler(handler) {
-  if (!systemHandlers.includes(handler)) {
-    systemHandlers.push(handler);
-  }
-}
-
-function removeSystemExceptionHandler(handler) {
-  let idx = systemHandlers.indexOf(handler);
-  if (idx > -1) {
-    systemHandlers.splice(idx, 1);
-  }
-}
-
-registerSystemExceptionHandler((exception, methodName, particle) => {
-  console.log(methodName, particle);
-  throw exception;
-});
-
-/***/ }),
-
 /***/ "./runtime/arc.js":
 /*!************************!*\
   !*** ./runtime/arc.js ***!
@@ -68258,7 +68208,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api-channel.js */ "./runtime/api-channel.js");
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./manifest.js */ "./runtime/manifest.js");
 /* harmony import */ var _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./recipe/recipe-resolver.js */ "./runtime/recipe/recipe-resolver.js");
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./arc-exceptions.js */ "./runtime/arc-exceptions.js");
+/* harmony import */ var _ts_build_arc_exceptions_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/arc-exceptions.js */ "./runtime/ts-build/arc-exceptions.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -68436,7 +68386,7 @@ class ParticleExecutionHost {
 
     this._apiPort.onRaiseSystemException = async ({exception, methodName, particleId}) => {
      let particle = this._arc.particleHandleMaps.get(particleId).spec.name;
-      Object(_arc_exceptions_js__WEBPACK_IMPORTED_MODULE_4__["reportSystemException"])(exception, methodName, particle);
+      Object(_ts_build_arc_exceptions_js__WEBPACK_IMPORTED_MODULE_4__["reportSystemException"])(exception, methodName, particle);
     };
   }
 
@@ -68966,7 +68916,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _strategies_init_search_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./strategies/init-search.js */ "./runtime/strategies/init-search.js");
 /* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../platform/log-web.js */ "./platform/log-web.js");
 /* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./planner.js */ "./runtime/planner.js");
-/* harmony import */ var _speculator_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./speculator.js */ "./runtime/speculator.js");
+/* harmony import */ var _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ts-build/speculator.js */ "./runtime/ts-build/speculator.js");
 /* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./suggestion-composer.js */ "./runtime/suggestion-composer.js");
 /* harmony import */ var _suggestion_storage_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./suggestion-storage.js */ "./runtime/suggestion-storage.js");
 // Copyright (c) 2018 Google Inc. All rights reserved.
@@ -69078,7 +69028,7 @@ class Planificator {
     options = options || defaultOptions;
     this._userid = options.userid;
     this._mode = options.mode || PlanningMode.full;
-    this._speculator = new _speculator_js__WEBPACK_IMPORTED_MODULE_5__["Speculator"]();
+    this._speculator = new _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_5__["Speculator"]();
     this._search = null;
 
     // The currently running Planner object.
@@ -69470,7 +69420,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _strategies_find_hosted_particle_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./strategies/find-hosted-particle.js */ "./runtime/strategies/find-hosted-particle.js");
 /* harmony import */ var _strategies_coalesce_recipes_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./strategies/coalesce-recipes.js */ "./runtime/strategies/coalesce-recipes.js");
 /* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./strategies/resolve-recipe.js */ "./runtime/strategies/resolve-recipe.js");
-/* harmony import */ var _speculator_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./speculator.js */ "./runtime/speculator.js");
+/* harmony import */ var _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./ts-build/speculator.js */ "./runtime/ts-build/speculator.js");
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ../tracelib/trace.js */ "./tracelib/trace.js");
 /* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
 /* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
@@ -69596,7 +69546,7 @@ class Planner {
     if (!generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_27__["DevtoolsConnection"].isConnected) generations = [];
     let plans = await trace.wait(this.plan(timeout, generations));
     let suggestions = [];
-    speculator = speculator || new _speculator_js__WEBPACK_IMPORTED_MODULE_24__["Speculator"]();
+    speculator = speculator || new _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_24__["Speculator"]();
     // We don't actually know how many threads the VM will decide to use to
     // handle the parallel speculation, but at least we know we won't kick off
     // more than this number and so can somewhat limit resource utilization.
@@ -73394,71 +73344,6 @@ class SlotComposer {
 
 /***/ }),
 
-/***/ "./runtime/speculator.js":
-/*!*******************************!*\
-  !*** ./runtime/speculator.js ***!
-  \*******************************/
-/*! exports provided: Speculator */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Speculator", function() { return Speculator; });
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _relevance_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./relevance.js */ "./runtime/relevance.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class Speculator {
-  constructor() {
-    this._relevanceByHash = new Map();
-  }
-
-  async speculate(arc, plan, hash) {
-    if (this._relevanceByHash.has(hash)) {
-      let arcStoreVersionById = arc.getStoresState({includeContext: true});
-      let relevance = this._relevanceByHash.get(hash);
-      let relevanceStoreVersionById = relevance.arcState;
-      if (plan.handles.every(handle => arcStoreVersionById.get(handle.id) == relevanceStoreVersionById.get(handle.id))) {
-        return relevance;
-      }
-    }
-
-    let newArc = await arc.cloneForSpeculativeExecution();
-    let relevance = new _relevance_js__WEBPACK_IMPORTED_MODULE_1__["Relevance"](arc.getStoresState({includeContext: true}));
-    let relevanceByHash = this._relevanceByHash;
-    async function awaitCompletion() {
-      let messageCount = newArc.pec.messageCount;
-      relevance.apply(await newArc.pec.idle);
-
-      // We expect two messages here, one requesting the idle status, and one answering it.
-      if (newArc.pec.messageCount !== messageCount + 2) {
-        return awaitCompletion();
-      } else {
-        relevance.newArc = newArc;
-        relevanceByHash.set(hash, relevance);
-        return relevance;
-      }
-    }
-
-    return newArc.instantiate(plan).then(a => awaitCompletion());
-  }
-}
-
-
-/***/ }),
-
 /***/ "./runtime/storage-proxy.js":
 /*!**********************************!*\
   !*** ./runtime/storage-proxy.js ***!
@@ -77068,6 +76953,52 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 
+/***/ "./runtime/ts-build/arc-exceptions.js":
+/*!********************************************!*\
+  !*** ./runtime/ts-build/arc-exceptions.js ***!
+  \********************************************/
+/*! exports provided: reportSystemException, registerSystemExceptionHandler, removeSystemExceptionHandler */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reportSystemException", function() { return reportSystemException; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerSystemExceptionHandler", function() { return registerSystemExceptionHandler; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeSystemExceptionHandler", function() { return removeSystemExceptionHandler; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const systemHandlers = [];
+function reportSystemException(exception, methodName, particle) {
+    for (const handler of systemHandlers) {
+        handler(exception, methodName, particle);
+    }
+}
+function registerSystemExceptionHandler(handler) {
+    if (!systemHandlers.includes(handler)) {
+        systemHandlers.push(handler);
+    }
+}
+function removeSystemExceptionHandler(handler) {
+    const idx = systemHandlers.indexOf(handler);
+    if (idx > -1) {
+        systemHandlers.splice(idx, 1);
+    }
+}
+registerSystemExceptionHandler((exception, methodName, particle) => {
+    console.log(methodName, particle);
+    throw exception;
+});
+//# sourceMappingURL=arc-exceptions.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/hosted-slot-consumer.js":
 /*!**************************************************!*\
   !*** ./runtime/ts-build/hosted-slot-consumer.js ***!
@@ -79331,6 +79262,63 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
     }
 }
 //# sourceMappingURL=slot-dom-consumer.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/speculator.js":
+/*!****************************************!*\
+  !*** ./runtime/ts-build/speculator.js ***!
+  \****************************************/
+/*! exports provided: Speculator */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Speculator", function() { return Speculator; });
+/* harmony import */ var _relevance_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../relevance.js */ "./runtime/relevance.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class Speculator {
+    constructor() {
+        this._relevanceByHash = new Map();
+    }
+    async speculate(arc, plan, hash) {
+        if (this._relevanceByHash.has(hash)) {
+            const arcStoreVersionById = arc.getStoresState({ includeContext: true });
+            const relevance = this._relevanceByHash.get(hash);
+            const relevanceStoreVersionById = relevance.arcState;
+            if (plan.handles.every(handle => arcStoreVersionById.get(handle.id) === relevanceStoreVersionById.get(handle.id))) {
+                return relevance;
+            }
+        }
+        const newArc = await arc.cloneForSpeculativeExecution();
+        const relevance = new _relevance_js__WEBPACK_IMPORTED_MODULE_0__["Relevance"](arc.getStoresState({ includeContext: true }));
+        const relevanceByHash = this._relevanceByHash;
+        async function awaitCompletion() {
+            const messageCount = newArc.pec.messageCount;
+            relevance.apply(await newArc.pec.idle);
+            // We expect two messages here, one requesting the idle status, and one answering it.
+            if (newArc.pec.messageCount !== messageCount + 2) {
+                return awaitCompletion();
+            }
+            else {
+                relevance.newArc = newArc;
+                relevanceByHash.set(hash, relevance);
+                return relevance;
+            }
+        }
+        return newArc.instantiate(plan).then(a => awaitCompletion());
+    }
+}
+//# sourceMappingURL=speculator.js.map
 
 /***/ }),
 

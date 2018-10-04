@@ -1,7 +1,5 @@
-commit 9d8792da41ded61d7db9213474e7d77b57a5e8b1
+commit 69570b172c1dac51fd2d28a2966b8320d2ce8e7a
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Oct 4 09:30:19 2018 -0700
+Date:   Thu Oct 4 10:33:05 2018 -0700
 
-    Migrate tuple-fields to typescript (#2067)
-    
-    Addresses #1765
+    migrate slot-info to typescript (#2069)
