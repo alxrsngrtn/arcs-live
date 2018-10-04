@@ -1,5 +1,7 @@
-commit 69570b172c1dac51fd2d28a2966b8320d2ce8e7a
+commit 3a211552cbb2aac0d83bbf3d7694b1aef2168f01
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Oct 4 10:33:05 2018 -0700
+Date:   Thu Oct 4 11:10:26 2018 -0700
 
-    migrate slot-info to typescript (#2069)
+    migrate manifest-meta to typescript (#2071)
+    
+    Addresses #1765

@@ -66383,40 +66383,6 @@ class Loader {
 
 /***/ }),
 
-/***/ "./runtime/manifest-meta.js":
-/*!**********************************!*\
-  !*** ./runtime/manifest-meta.js ***!
-  \**********************************/
-/*! exports provided: ManifestMeta */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ManifestMeta", function() { return ManifestMeta; });
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-class ManifestMeta {
-  constructor() {
-    this.storageKey = null;
-    this.name = null;
-  }
-  apply(items) {
-    items.forEach(item => { this[item.key] = item.value; });
-  }
-}
-
-
-/***/ }),
-
 /***/ "./runtime/manifest.js":
 /*!*****************************!*\
   !*** ./runtime/manifest.js ***!
@@ -66439,7 +66405,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
 /* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./recipe/util.js */ "./runtime/recipe/util.js");
 /* harmony import */ var _ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./ts-build/storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
-/* harmony import */ var _manifest_meta_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./manifest-meta.js */ "./runtime/manifest-meta.js");
+/* harmony import */ var _ts_build_manifest_meta_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./ts-build/manifest-meta.js */ "./runtime/ts-build/manifest-meta.js");
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
 /* harmony import */ var _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./recipe/connection-constraint.js */ "./runtime/recipe/connection-constraint.js");
 /**
@@ -66545,7 +66511,7 @@ class Manifest {
     this._nextLocalID = 0;
     this._id = id;
     this._storageProviderFactory = undefined;
-    this._meta = new _manifest_meta_js__WEBPACK_IMPORTED_MODULE_12__["ManifestMeta"]();
+    this._meta = new _ts_build_manifest_meta_js__WEBPACK_IMPORTED_MODULE_12__["ManifestMeta"]();
     this._resources = {};
     this._storeManifestUrls = new Map();
     this._warnings = [];
@@ -77706,6 +77672,38 @@ class WebCryptoKeyIndexedDBStorage {
     }
 }
 //# sourceMappingURL=webcrypto.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/manifest-meta.js":
+/*!*******************************************!*\
+  !*** ./runtime/ts-build/manifest-meta.js ***!
+  \*******************************************/
+/*! exports provided: ManifestMeta */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ManifestMeta", function() { return ManifestMeta; });
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ManifestMeta {
+    constructor() {
+        this.storageKey = null;
+        this.name = null;
+    }
+    apply(items) {
+        items.forEach(item => { this[item.key] = item.value; });
+    }
+}
+//# sourceMappingURL=manifest-meta.js.map
 
 /***/ }),
 

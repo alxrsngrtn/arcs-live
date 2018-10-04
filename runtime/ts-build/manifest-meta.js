@@ -7,14 +7,13 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-
 export class ManifestMeta {
-  constructor() {
-    this.storageKey = null;
-    this.name = null;
-  }
-  apply(items) {
-    items.forEach(item => { this[item.key] = item.value; });
-  }
+    constructor() {
+        this.storageKey = null;
+        this.name = null;
+    }
+    apply(items) {
+        items.forEach(item => { this[item.key] = item.value; });
+    }
 }
+//# sourceMappingURL=manifest-meta.js.map
