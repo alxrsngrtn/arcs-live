@@ -1,7 +1,7 @@
-commit 3a211552cbb2aac0d83bbf3d7694b1aef2168f01
+commit f7396381ae7c50522342a9537797c27a90a7f8f0
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Oct 4 11:10:26 2018 -0700
+Date:   Thu Oct 4 11:11:00 2018 -0700
 
-    migrate manifest-meta to typescript (#2071)
+    migrate relation.js to typescript (#2070)
     
     Addresses #1765
