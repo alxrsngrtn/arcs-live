@@ -1722,7 +1722,7 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Entity", function() { return Entity; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./symbols.js */ "./runtime/symbols.js");
+/* harmony import */ var _ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/symbols.js */ "./runtime/ts-build/symbols.js");
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1740,7 +1740,7 @@ __webpack_require__.r(__webpack_exports__);
 class Entity {
   constructor(userIDComponent) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
-    this[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = undefined;
+    this[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = undefined;
     this._userIDComponent = userIDComponent;
   }
   get data() {
@@ -1752,16 +1752,16 @@ class Entity {
   }
 
   isIdentified() {
-    return this[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] !== undefined;
+    return this[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] !== undefined;
   }
   // TODO: entity should not be exposing its IDs.
   get id() {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!!this.isIdentified());
-    return this[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier];
+    return this[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier];
   }
   identify(identifier) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified());
-    this[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = identifier;
+    this[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = identifier;
     let components = identifier.split(':');
     if (components[components.length - 2] == 'uid') {
       this._userIDComponent = components[components.length - 1];
@@ -1775,7 +1775,7 @@ class Entity {
     } else {
       id = `${components.base}:${components.component()}`;
     }
-    this[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = id;
+    this[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = id;
   }
   toLiteral() {
     return this.rawData;
@@ -1830,7 +1830,7 @@ const local_fetch = fetch;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleFor", function() { return handleFor; });
 /* harmony import */ var _ts_build_reference_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/reference.js */ "./runtime/ts-build/reference.js");
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./symbols.js */ "./runtime/symbols.js");
+/* harmony import */ var _ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/symbols.js */ "./runtime/ts-build/symbols.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./particle-spec.js */ "./runtime/particle-spec.js");
 /** @license
@@ -1915,7 +1915,7 @@ class Handle {
     if (!entity.isIdentified()) {
       entity.createIdentity(this._proxy.generateIDComponents());
     }
-    let id = entity[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier];
+    let id = entity[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier];
     let rawData = entity.dataClone();
     return {
       id,
@@ -4279,30 +4279,6 @@ class StorageProxyScheduler {
 
 /***/ }),
 
-/***/ "./runtime/symbols.js":
-/*!****************************!*\
-  !*** ./runtime/symbols.js ***!
-  \****************************/
-/*! exports provided: Symbols */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Symbols", function() { return Symbols; });
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-const Symbols = {identifier: Symbol('id')};
-
-
-/***/ }),
-
 /***/ "./runtime/transformation-dom-particle.js":
 /*!************************************************!*\
   !*** ./runtime/transformation-dom-particle.js ***!
@@ -5392,6 +5368,29 @@ class CrdtCollectionModel {
     }
 }
 //# sourceMappingURL=crdt-collection-model.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/symbols.js":
+/*!*************************************!*\
+  !*** ./runtime/ts-build/symbols.js ***!
+  \*************************************/
+/*! exports provided: Symbols */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Symbols", function() { return Symbols; });
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+// tslint:disable-next-line: variable-name
+const Symbols = { identifier: Symbol('id') };
+//# sourceMappingURL=symbols.js.map
 
 /***/ }),
 

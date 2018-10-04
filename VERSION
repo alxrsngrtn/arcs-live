@@ -1,7 +1,7 @@
-commit f7396381ae7c50522342a9537797c27a90a7f8f0
+commit 13e6bd78fb19db8b400e60f89a008e6c5f0d0b1e
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Oct 4 11:11:00 2018 -0700
+Date:   Thu Oct 4 12:14:42 2018 -0700
 
-    migrate relation.js to typescript (#2070)
+    migrate symbols.js to typescript (#2073)
     
     Addresses #1765
