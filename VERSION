@@ -1,7 +1,7 @@
-commit 13e6bd78fb19db8b400e60f89a008e6c5f0d0b1e
+commit 60fc322b5ced23d1bd7b76d0c5c2d24a856f826e
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Oct 4 12:14:42 2018 -0700
+Date:   Thu Oct 4 16:28:49 2018 -0700
 
-    migrate symbols.js to typescript (#2073)
+    convert relevance to typescript (#2074)
     
     Addresses #1765

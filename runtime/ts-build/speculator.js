@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Relevance } from '../relevance.js';
+import { Relevance } from './relevance.js';
 export class Speculator {
     constructor() {
         this._relevanceByHash = new Map();
