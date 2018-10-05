@@ -65762,7 +65762,7 @@ class Entity {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FakePecFactory", function() { return FakePecFactory; });
 /* harmony import */ var _particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./particle-execution-context.js */ "./runtime/particle-execution-context.js");
-/* harmony import */ var _message_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./message-channel.js */ "./runtime/message-channel.js");
+/* harmony import */ var _ts_build_message_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/message-channel.js */ "./runtime/ts-build/message-channel.js");
 /* harmony import */ var _loader_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./loader.js */ "./runtime/loader.js");
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -65781,7 +65781,7 @@ __webpack_require__.r(__webpack_exports__);
 // TODO: Make this generic so that it can also be used in-browser, or add a
 // separate in-process browser pec-factory.
 function FakePecFactory(id) {
-  let channel = new _message_channel_js__WEBPACK_IMPORTED_MODULE_1__["MessageChannel"]();
+  let channel = new _ts_build_message_channel_js__WEBPACK_IMPORTED_MODULE_1__["MessageChannel"]();
   new _particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](channel.port1, `${id}:inner`, new _loader_js__WEBPACK_IMPORTED_MODULE_2__["Loader"]());
   return channel.port2;
 }
@@ -67553,78 +67553,6 @@ ${e.message}
     });
 
     return results.join('\n');
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/message-channel.js":
-/*!************************************!*\
-  !*** ./runtime/message-channel.js ***!
-  \************************************/
-/*! exports provided: MessageChannel */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MessageChannel", function() { return MessageChannel; });
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-class MessagePort {
-  constructor(channel, id, other) {
-    this._channel = channel;
-    this._id = id;
-    this._other = other;
-    this._onmessage = undefined;
-  }
-
-  postMessage(message) {
-    this._channel._post(this._other, message);
-  }
-
-  set onmessage(f) {
-    this._onmessage = f;
-  }
-
-  close() {
-    this.postMessage = function() {};
-  }
-}
-
-class MessageEvent {
-  constructor(message) {
-    this.data = message;
-  }
-}
-
-class MessageChannel {
-  constructor() {
-    this.port1 = new MessagePort(this, 0, 1);
-    this.port2 = new MessagePort(this, 1, 0);
-    this._ports = [this.port1, this.port2];
-  }
-
-  async _post(id, message) {
-    message = JSON.parse(JSON.stringify(message));
-    if (this._ports[id]._onmessage) {
-      try {
-        // Yield so that we deliver the message asynchronously.
-        await 0;
-        await this._ports[id]._onmessage(new MessageEvent(message));
-      } catch (e) {
-        console.error('Exception in particle code\n', e);
-      }
-    }
   }
 }
 
@@ -77577,6 +77505,72 @@ class ManifestMeta {
     }
 }
 //# sourceMappingURL=manifest-meta.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/message-channel.js":
+/*!*********************************************!*\
+  !*** ./runtime/ts-build/message-channel.js ***!
+  \*********************************************/
+/*! exports provided: MessageChannel */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MessageChannel", function() { return MessageChannel; });
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class MessagePort {
+    constructor(channel, id, other) {
+        this._channel = channel;
+        this._id = id;
+        this._other = other;
+        this._onmessage = undefined;
+    }
+    // TODO appears to be {messageType, messageBody}
+    postMessage(message) {
+        this._channel._post(this._other, message);
+    }
+    set onmessage(f) {
+        this._onmessage = f;
+    }
+    close() {
+        this.postMessage = () => { };
+    }
+}
+class MessageEvent {
+    constructor(message) {
+        this.data = message;
+    }
+}
+class MessageChannel {
+    constructor() {
+        this.port1 = new MessagePort(this, 0, 1);
+        this.port2 = new MessagePort(this, 1, 0);
+        this._ports = [this.port1, this.port2];
+    }
+    async _post(id, message) {
+        message = JSON.parse(JSON.stringify(message));
+        if (this._ports[id]._onmessage) {
+            try {
+                // Yield so that we deliver the message asynchronously.
+                await 0;
+                await this._ports[id]._onmessage(new MessageEvent(message));
+            }
+            catch (e) {
+                console.error('Exception in particle code\n', e);
+            }
+        }
+    }
+}
+//# sourceMappingURL=message-channel.js.map
 
 /***/ }),
 

@@ -1,7 +1,7 @@
-commit 5fd55c0c5cd08dc33728e405faf2737d6ed42c5a
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Oct 5 12:52:54 2018 -0700
+commit 159802fcfdaca1ff08995ed9b74d50fecb198c70
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Fri Oct 5 12:54:48 2018 -0700
 
-    Add reverse streaming to FirebaseBigCollection. (#2072)
+    migrate message-channel to typescript (#2078)
     
-    Not surfaced in the PEC or mirrored in InMemoryBigCollection yet.
+    Addresses #1765
