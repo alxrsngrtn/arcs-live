@@ -1,5 +1,5 @@
-commit 54f710cf96842ec1ee459c689e093ecb21518131
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Oct 4 17:38:13 2018 -0700
+commit 6f1cddd3b18b66c3e910e0566b9dfae9f9ea8b9d
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Oct 5 11:07:02 2018 -0700
 
-    sigh: add --all flag for running both normal & manual tests (#2076)
+    Allow Devtools to connect to remote planning node (#2081)
