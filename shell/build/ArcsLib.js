@@ -73129,6 +73129,8 @@ class SlotComposer {
       context.clearSlotConsumers();
       context.container && this._affordance.slotConsumerClass.clear(context.container);
     });
+    this._contexts = this._contexts.filter(c => !c.sourceSlotConsumer);
+    this._consumers = [];
   }
 }
 
