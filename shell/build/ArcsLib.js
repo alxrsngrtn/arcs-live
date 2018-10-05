@@ -340,7 +340,7 @@ function createFirebaseNamespace() {
         app: app,
         apps: null,
         Promise: Promise,
-        SDK_VERSION: '5.0.4',
+        SDK_VERSION: '5.5.0',
         INTERNAL: {
             registerService: registerService,
             createFirebaseNamespace: createFirebaseNamespace,
@@ -22391,8 +22391,7 @@ var issuedAtTime = function (token) {
     return null;
 };
 /**
- * Decodes a Firebase auth. token and checks the validity of its format. Expects a valid issued-at time and non-empty
- * signature.
+ * Decodes a Firebase auth. token and checks the validity of its format. Expects a valid issued-at time.
  *
  * Notes:
  * - May return a false negative if there's no native base64 decoding support.
@@ -22403,10 +22402,7 @@ var issuedAtTime = function (token) {
  */
 var isValidFormat = function (token) {
     var decoded = decode(token), claims = decoded.claims;
-    return (!!decoded.signature &&
-        !!claims &&
-        typeof claims === 'object' &&
-        claims.hasOwnProperty('iat'));
+    return !!claims && typeof claims === 'object' && claims.hasOwnProperty('iat');
 };
 /**
  * Attempts to peer into an auth token and determine if it's an admin auth token by looking at the claims portion.
