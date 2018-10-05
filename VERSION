@@ -1,7 +1,5 @@
-commit 60fc322b5ced23d1bd7b76d0c5c2d24a856f826e
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Oct 4 16:28:49 2018 -0700
+commit 54f710cf96842ec1ee459c689e093ecb21518131
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Oct 4 17:38:13 2018 -0700
 
-    convert relevance to typescript (#2074)
-    
-    Addresses #1765
+    sigh: add --all flag for running both normal & manual tests (#2076)
