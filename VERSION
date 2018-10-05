@@ -1,5 +1,5 @@
-commit 6f1cddd3b18b66c3e910e0566b9dfae9f9ea8b9d
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Oct 5 11:07:02 2018 -0700
+commit 8c06562db9137748d81a25f3ad377d98c652494c
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Oct 5 12:19:20 2018 -0700
 
-    Allow Devtools to connect to remote planning node (#2081)
+    Rename InMemory storage to Volatile (#2075)
