@@ -8,7 +8,7 @@
  */
 import { assert } from '../../platform/assert-web.js';
 import { Type } from './type.js';
-import { handleFor } from '../handle.js';
+import { handleFor } from './handle.js';
 export class Reference {
     constructor(data, type, context) {
         this.entity = null;
