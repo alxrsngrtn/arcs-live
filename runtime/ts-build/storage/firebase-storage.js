@@ -981,13 +981,14 @@ var CursorState;
 // NOTE: entity mutation removes elements from a streamed read; the entity will be updated with an
 // index past the cursor's end but Firebase doesn't issue a child_removed event for it.
 class FirebaseCursor {
-    constructor(reference, pageSize) {
+    constructor(reference, pageSize, forward) {
         this.orderByIndex = reference.child('items').orderByChild('index');
         this.pageSize = pageSize;
+        this.forward = forward;
         this.state = CursorState.new;
         this.removed = [];
         this.baseQuery = null;
-        this.nextStart = null;
+        this.nextBoundary = null;
         this.end = null;
         this.removedFn = null;
     }
@@ -997,13 +998,18 @@ class FirebaseCursor {
         // Retrieve the current last item to establish our streaming version.
         const lastEntry = await getSnapshot(this.orderByIndex.limitToLast(1));
         lastEntry.forEach(entry => this.end = entry.val().index);
-        // Read one past the page size each time to establish the starting index for the next page.
-        this.baseQuery = this.orderByIndex.endAt(this.end).limitToFirst(this.pageSize + 1);
+        // Read one past the page size each time to establish the boundary index for the next page.
+        this.baseQuery = this.forward
+            ? this.orderByIndex.limitToFirst(this.pageSize + 1)
+            : this.orderByIndex.limitToLast(this.pageSize + 1);
         // Attach a listener for removed items and capture any that occur ahead of our streaming
         // frame. These will be returned after the cursor reaches the item at this.end.
         this.removedFn = this.orderByIndex.on('child_removed', snapshot => {
-            if (snapshot.val().index <= this.end &&
-                (this.nextStart === null || snapshot.val().index >= this.nextStart)) {
+            const index = snapshot.val().index;
+            if (index > this.end)
+                return;
+            if (this.nextBoundary === null || (this.forward && index >= this.nextBoundary)
+                || (!this.forward && index <= this.nextBoundary)) {
                 this.removed.push(snapshot.val().value);
             }
         });
@@ -1022,26 +1028,46 @@ class FirebaseCursor {
         }
         let query;
         if (this.state === CursorState.init) {
-            query = this.baseQuery;
+            query = this.baseQuery.endAt(this.end);
             this.state = CursorState.stream;
         }
         else if (this.state === CursorState.stream) {
-            assert(this.nextStart !== null);
-            query = this.baseQuery.startAt(this.nextStart);
+            assert(this.nextBoundary !== null);
+            query = this.forward
+                ? this.baseQuery.startAt(this.nextBoundary).endAt(this.end)
+                : this.baseQuery.endAt(this.nextBoundary);
         }
         const value = [];
         if (this.state === CursorState.stream) {
-            this.nextStart = null;
+            this.nextBoundary = null;
             const queryResults = await getSnapshot(query);
-            queryResults.forEach(entry => {
-                if (value.length < this.pageSize) {
+            if (this.forward) {
+                // For non-final pages, the last entry is the start of the next page.
+                queryResults.forEach(entry => {
+                    if (value.length < this.pageSize) {
+                        value.push(entry.val().value);
+                    }
+                    else {
+                        this.nextBoundary = entry.val().index;
+                    }
+                });
+            }
+            else {
+                // For non-final pages, the first entry is the end of the next page.
+                let startIndex = null;
+                queryResults.forEach(entry => {
                     value.push(entry.val().value);
+                    if (startIndex === null) {
+                        startIndex = entry.val().index;
+                    }
+                });
+                if (value.length > this.pageSize) {
+                    value.shift();
+                    this.nextBoundary = startIndex;
                 }
-                else {
-                    this.nextStart = entry.val().index;
-                }
-            });
-            if (this.nextStart === null) {
+                value.reverse();
+            }
+            if (this.nextBoundary === null) {
                 this._detach();
                 this.state = CursorState.removed;
             }
@@ -1159,10 +1185,14 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     // Returns a FirebaseCursor id for paginated reads of the current version of this BigCollection.
     // The id should be passed to cursorNext() to retrive the contained entities. The cursor itself
     // is held internally by this collection so we can discard it once the stream read has completed.
-    async stream(pageSize) {
+    //
+    // By default items are returned in order of original insertion into the collection (with the
+    // caveat that items removed during a streamed read may be returned at the end). Set forward to
+    // false to return items in reverse insertion order.
+    async stream(pageSize, { forward = true } = {}) {
         assert(!isNaN(pageSize) && pageSize > 0);
         this.cursorIndex++;
-        const cursor = new FirebaseCursor(this.reference, pageSize);
+        const cursor = new FirebaseCursor(this.reference, pageSize, forward);
         await cursor._init();
         this.cursors.set(this.cursorIndex, cursor);
         return this.cursorIndex;
