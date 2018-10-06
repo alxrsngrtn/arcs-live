@@ -54442,7 +54442,7 @@ class PECOuterPort extends APIPort {
     this.registerHandler('HandleStore', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleRemove', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
     this.registerHandler('HandleRemoveMultiple', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
-    this.registerHandler('HandleStream', {handle: this.Mapped, callback: this.Direct, pageSize: this.Direct});
+    this.registerHandler('HandleStream', {handle: this.Mapped, callback: this.Direct, pageSize: this.Direct, forward: this.Direct});
     this.registerHandler('StreamCursorNext', {handle: this.Mapped, callback: this.Direct, cursorId: this.Direct});
     this.registerHandler('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
 
@@ -54497,7 +54497,7 @@ class PECInnerPort extends APIPort {
     this.registerCall('HandleStore', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
     this.registerCall('HandleRemove', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
     this.registerCall('HandleRemoveMultiple', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
-    this.registerCall('HandleStream', {handle: this.Mapped, callback: this.LocalMapped, pageSize: this.Direct});
+    this.registerCall('HandleStream', {handle: this.Mapped, callback: this.LocalMapped, pageSize: this.Direct, forward: this.Direct});
     this.registerCall('StreamCursorNext', {handle: this.Mapped, callback: this.LocalMapped, cursorId: this.Direct});
     this.registerCall('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
 
@@ -67742,8 +67742,8 @@ class ParticleExecutionHost {
       this._apiPort.SimpleCallback({callback});
     };
 
-    this._apiPort.onHandleStream = async ({handle, callback, pageSize}) => {
-      this._apiPort.SimpleCallback({callback, data: await handle.stream(pageSize)});
+    this._apiPort.onHandleStream = async ({handle, callback, pageSize, forward}) => {
+      this._apiPort.SimpleCallback({callback, data: await handle.stream(pageSize, forward)});
     };
 
     this._apiPort.onStreamCursorNext = async ({handle, callback, cursorId}) => {
@@ -73224,9 +73224,9 @@ class BigCollectionProxy extends StorageProxyBase {
       this._port.HandleRemove({handle: this, callback: resolve, data: {id, keys: []}, particleId}));
   }
 
-  async stream(pageSize) {
+  async stream(pageSize, forward) {
     return new Promise(resolve =>
-      this._port.HandleStream({handle: this, callback: resolve, pageSize}));
+      this._port.HandleStream({handle: this, callback: resolve, pageSize, forward}));
   }
 
   async cursorNext(cursorId) {
@@ -76711,18 +76711,26 @@ class BigCollection extends Handle {
         const serialization = this._serialize(entity);
         return this._proxy.remove(serialization.id, [], this._particleId);
     }
-    /** @method stream(pageSize)
+    /** @method stream({pageSize, forward})
      * Returns a Cursor instance that iterates over the full set of entities, reading `pageSize`
      * entities at a time. The cursor views a snapshot of the collection, locked to the version
      * at which the cursor is created.
+     *
+     * By default items are returned in order of original insertion into the collection (with the
+     * caveat that items removed during a streamed read may be returned at the end). Set `forward`
+     * to false to return items in reverse insertion order.
+     *
      * throws: Error if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
-    async stream(pageSize) {
+    async stream({ pageSize, forward = true }) {
         if (!this.canRead) {
             throw new Error('Handle not readable');
         }
-        const cursorId = await this._proxy.stream(pageSize);
+        if (isNaN(pageSize) || pageSize < 1) {
+            throw new Error('Streamed reads require a positive pageSize');
+        }
+        const cursorId = await this._proxy.stream(pageSize, forward);
         return new Cursor(this, cursorId);
     }
 }
@@ -80594,7 +80602,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     // By default items are returned in order of original insertion into the collection (with the
     // caveat that items removed during a streamed read may be returned at the end). Set forward to
     // false to return items in reverse insertion order.
-    async stream(pageSize, { forward = true } = {}) {
+    async stream(pageSize, forward = true) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!isNaN(pageSize) && pageSize > 0);
         this.cursorIndex++;
         const cursor = new FirebaseCursor(this.reference, pageSize, forward);
@@ -82597,12 +82605,15 @@ class VolatileVariable extends VolatileStorageProvider {
 }
 // Volatile version of the BigCollection API; primarily for testing.
 class VolatileCursor {
-    constructor(version, data, pageSize) {
+    constructor(version, data, pageSize, forward) {
         this.version = version;
         this.pageSize = pageSize;
         const copy = [...data];
         copy.sort((a, b) => a.index - b.index);
         this.data = copy.map(v => v.value);
+        if (!forward) {
+            this.data.reverse();
+        }
     }
     async next() {
         if (this.data.length === 0) {
@@ -82646,10 +82657,10 @@ class VolatileBigCollection extends VolatileStorageProvider {
         this.version++;
         this.items.delete(id);
     }
-    async stream(pageSize) {
+    async stream(pageSize, forward = true) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!isNaN(pageSize) && pageSize > 0);
         this.cursorIndex++;
-        const cursor = new VolatileCursor(this.version, this.items.values(), pageSize);
+        const cursor = new VolatileCursor(this.version, this.items.values(), pageSize, forward);
         this.cursors.set(this.cursorIndex, cursor);
         return this.cursorIndex;
     }

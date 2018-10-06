@@ -1,7 +1,7 @@
-commit 9dc3de2e84753709fd2bcf092e3591aa63fb2012
+commit 6910dd63fba8dc43f878e9658276558ff25933bb
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Fri Oct 5 14:38:30 2018 -0700
+Date:   Sat Oct 6 09:45:28 2018 -0700
 
-    convert handle to typescript (#2083)
+    Revert "reimplement bytes class (#2066)" (#2087)
     
-    Addresses #1765
+    This reverts commit a6b3f0f68cf6275cb3d7192a81787c32dc0939a8.
