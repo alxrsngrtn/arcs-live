@@ -1,5 +1,5 @@
-commit ea26fe53456a714ea43a3a8889bd212b7c0adb59
+commit c3c847ef58564fac22676f9d57c1e2fe65091e65
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Oct 9 12:26:32 2018 -0700
+Date:   Wed Oct 10 08:37:33 2018 +1100
 
-    Don't keep in-memory traces if streaming them to DevTools (#2091)
+    Auto range resize in devtools tracing UI (#2092)
