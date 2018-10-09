@@ -1,7 +1,5 @@
-commit 6910dd63fba8dc43f878e9658276558ff25933bb
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Sat Oct 6 09:45:28 2018 -0700
+commit 773cf94e2e42ac3def045aefd0589923379a7cec
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Oct 9 10:28:15 2018 -0700
 
-    Revert "reimplement bytes class (#2066)" (#2087)
-    
-    This reverts commit a6b3f0f68cf6275cb3d7192a81787c32dc0939a8.
+    Decentralized Planning design doc (#1869)
