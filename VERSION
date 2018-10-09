@@ -1,5 +1,5 @@
-commit 773cf94e2e42ac3def045aefd0589923379a7cec
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Oct 9 10:28:15 2018 -0700
+commit ea26fe53456a714ea43a3a8889bd212b7c0adb59
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Oct 9 12:26:32 2018 -0700
 
-    Decentralized Planning design doc (#1869)
+    Don't keep in-memory traces if streaming them to DevTools (#2091)
