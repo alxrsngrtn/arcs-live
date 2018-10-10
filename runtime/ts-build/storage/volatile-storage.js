@@ -27,7 +27,7 @@ class VolatileKey extends KeyBase {
         assert(this.toString() === key);
     }
     childKeyForHandle(id) {
-        return new VolatileKey('volatile://');
+        return new VolatileKey('volatile');
     }
     toString() {
         if (this.location !== undefined && this.arcId !== undefined) {
@@ -377,7 +377,7 @@ class VolatileVariable extends VolatileStorageProvider {
             // TODO(shans): mutating the storageKey here to provide unique keys is
             // a hack that can be removed once entity mutation is distinct from collection
             // updates. Once entity mutation exists, it shouldn't ever be possible to write
-            // different values with the same id. 
+            // different values with the same id.
             await this.backingStore.store(value, [this.storageKey + this.localKeyId++]);
         }
         else {

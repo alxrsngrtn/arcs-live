@@ -1,5 +1,29 @@
-commit c3c847ef58564fac22676f9d57c1e2fe65091e65
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Oct 10 08:37:33 2018 +1100
+commit 8f1601f771d97529d07723d81899164abc9ad956
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Oct 10 10:38:58 2018 -0700
 
-    Auto range resize in devtools tracing UI (#2092)
+    experimental Shell 0_6_0 work (#2088)
+    
+    * temporarily disable tracing so web apps so traces don't grow unbounded
+    
+    * retry to commit files that git lost :(
+    
+    * introduce shell_0_6_0
+    
+    * wip
+    
+    * wip
+    
+    * updates
+    
+    * fix tests
+    
+    * control sharing from launcher
+    
+    * undo tracing hack
+    
+    * ignore build files in shell_0_6_0
+    
+    * don't commit build files
+    
+    * Auto range resize in devtools tracing UI (#2092)

@@ -1490,7 +1490,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
   }
   /** @method updateVariable(handleName, rawData)
    * Modify value of named handle. A new entity is created
-   * from `rawData` (`new <EntityClass>(rawData)`).
+   * from `rawData` (`new [EntityClass](rawData)`).
    */
   updateVariable(handleName, rawData) {
     const handle = this.handles.get(handleName);
@@ -1507,11 +1507,12 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     // already present replace it, otherwise, add it.
     // TODO(dstockwell): Replace this with happy entity mutation approach.
     const handle = this.handles.get(handleName);
-    const entities = await handle.toList();
-    const target = entities.find(r => r.id === entity.id);
-    if (target) {
-      handle.remove(target);
-    }
+    // const entities = await handle.toList();
+    // const target = entities.find(r => r.id === entity.id);
+    // if (target) {
+    //   handle.remove(target);
+    // }
+    handle.remove(entity);
     handle.store(entity);
   }
   /** @method boxQuery(box, userid)
@@ -6433,6 +6434,7 @@ class BrowserLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loa
   }
   requireParticle(fileName) {
     const path = this._resolve(fileName);
+    //console.log(`requireParticle [${path}]`);
     // inject path to this particle into the UrlMap,
     // allows "foo.js" particle to invoke `importScripts(resolver('foo/othermodule.js'))`
     this.mapParticleUrl(path);

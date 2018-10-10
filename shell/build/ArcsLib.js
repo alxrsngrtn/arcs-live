@@ -65450,7 +65450,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
   }
   /** @method updateVariable(handleName, rawData)
    * Modify value of named handle. A new entity is created
-   * from `rawData` (`new <EntityClass>(rawData)`).
+   * from `rawData` (`new [EntityClass](rawData)`).
    */
   updateVariable(handleName, rawData) {
     const handle = this.handles.get(handleName);
@@ -65467,11 +65467,12 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     // already present replace it, otherwise, add it.
     // TODO(dstockwell): Replace this with happy entity mutation approach.
     const handle = this.handles.get(handleName);
-    const entities = await handle.toList();
-    const target = entities.find(r => r.id === entity.id);
-    if (target) {
-      handle.remove(target);
-    }
+    // const entities = await handle.toList();
+    // const target = entities.find(r => r.id === entity.id);
+    // if (target) {
+    //   handle.remove(target);
+    // }
+    handle.remove(entity);
     handle.store(entity);
   }
   /** @method boxQuery(box, userid)
@@ -79032,8 +79033,12 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         container.textContent = '';
     }
     static dispose() {
+        // TODO(sjmiles): dumping the template cache causes errors when running parallel arcs
+        // in shell. Disable for now, the corpus of templates is static at this time.
         // empty template cache
-        templateByName.clear();
+        if (!SlotDomConsumer['multitenant']) {
+            templateByName.clear();
+        }
     }
     static findRootContainers(topContainer) {
         const containerBySlotId = {};
@@ -82229,7 +82234,7 @@ class VolatileKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.toString() === key);
     }
     childKeyForHandle(id) {
-        return new VolatileKey('volatile://');
+        return new VolatileKey('volatile');
     }
     toString() {
         if (this.location !== undefined && this.arcId !== undefined) {
@@ -82579,7 +82584,7 @@ class VolatileVariable extends VolatileStorageProvider {
             // TODO(shans): mutating the storageKey here to provide unique keys is
             // a hack that can be removed once entity mutation is distinct from collection
             // updates. Once entity mutation exists, it shouldn't ever be possible to write
-            // different values with the same id. 
+            // different values with the same id.
             await this.backingStore.store(value, [this.storageKey + this.localKeyId++]);
         }
         else {
@@ -84215,15 +84220,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../runtime/planificator.js */ "./runtime/planificator.js");
 /* harmony import */ var _runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../runtime/slot-composer.js */ "./runtime/slot-composer.js");
 /* harmony import */ var _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../runtime/ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./browser-loader.js */ "./shell/source/browser-loader.js");
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../runtime/particle-execution-context.js */ "./runtime/particle-execution-context.js");
-/* harmony import */ var _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../runtime/ts-build/storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var firebase_database__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! firebase/database */ "./node_modules/firebase/database/dist/index.esm.js");
-/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! firebase/storage */ "./node_modules/firebase/storage/dist/index.esm.js");
-/* harmony import */ var _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../runtime/ts-build/keymgmt/manager.js */ "./runtime/ts-build/keymgmt/manager.js");
+/* harmony import */ var _runtime_manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../runtime/manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./browser-loader.js */ "./shell/source/browser-loader.js");
+/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
+/* harmony import */ var _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../runtime/particle-execution-context.js */ "./runtime/particle-execution-context.js");
+/* harmony import */ var _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../runtime/ts-build/storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var firebase_database__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! firebase/database */ "./node_modules/firebase/database/dist/index.esm.js");
+/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! firebase/storage */ "./node_modules/firebase/storage/dist/index.esm.js");
+/* harmony import */ var _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../runtime/ts-build/keymgmt/manager.js */ "./runtime/ts-build/keymgmt/manager.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -84248,6 +84254,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 // Keep in sync with runtime/ts/storage/firebase-storage.ts
 
 
@@ -84255,21 +84262,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-//Tracing.enable();
-
 const Arcs = {
-  version: '0.4',
-  Tracing: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_6__["Tracing"],
+  version: '0.5',
+  Tracing: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_7__["Tracing"],
   Arc: _runtime_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"],
+  Manifest: _runtime_manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"],
   Runtime: _runtime_ts_build_runtime_js__WEBPACK_IMPORTED_MODULE_0__["Runtime"],
   Planificator: _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_2__["Planificator"],
   SlotComposer: _runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_3__["SlotComposer"],
   Type: _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__["Type"],
-  BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_5__["BrowserLoader"],
-  StorageProviderFactory: _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_8__["StorageProviderFactory"],
-  ParticleExecutionContext: _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_7__["ParticleExecutionContext"],
-  KeyManager: _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_12__["KeyManager"],
-  firebase: (firebase_app__WEBPACK_IMPORTED_MODULE_9___default())
+  BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_6__["BrowserLoader"],
+  StorageProviderFactory: _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__["StorageProviderFactory"],
+  ParticleExecutionContext: _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_8__["ParticleExecutionContext"],
+  KeyManager: _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_13__["KeyManager"],
+  firebase: (firebase_app__WEBPACK_IMPORTED_MODULE_10___default())
 };
 
 // TODO(sjmiles): can't export because WebPack won't make a built version with a module export
@@ -84355,6 +84361,7 @@ class BrowserLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loa
   }
   requireParticle(fileName) {
     const path = this._resolve(fileName);
+    //console.log(`requireParticle [${path}]`);
     // inject path to this particle into the UrlMap,
     // allows "foo.js" particle to invoke `importScripts(resolver('foo/othermodule.js'))`
     this.mapParticleUrl(path);
