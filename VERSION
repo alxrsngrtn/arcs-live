@@ -1,41 +1,7 @@
-commit b93296fef006a57588d0a8fe81cadd4217c08c32
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Oct 11 15:54:02 2018 -0700
+commit 2744bda4a2a0932c529cd966f28d0c2e3831f8d4
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Oct 11 16:23:13 2018 -0700
 
-    More New Shell (0_6_0) (#2099)
+    convert jsonldToManifest to typescript, manual tests pass (#2079)
     
-    * temporarily disable tracing so web apps so traces don't grow unbounded
-    
-    * retry to commit files that git lost :(
-    
-    * introduce shell_0_6_0
-    
-    * wip
-    
-    * wip
-    
-    * updates
-    
-    * undo tracing hack
-    
-    * work
-    
-    * remove accidental build files
-    
-    * refactor ui bits
-    
-    * scope particle sub-trees with ShadowDom
-    
-    * bake boilerplate styles into Particle shadowRoot automagically
-    
-    * cleanups
-    
-    * better logging
-    
-    * use build out of the old shell (so Live will work)
-    
-    * workaround for #2097
-    
-    * restore suggestion ui
-    
-    * crib FB logic for creating IDs
+    Addresses #1765

@@ -838,135 +838,6 @@ class PECInnerPort extends APIPort {
 
 /***/ }),
 
-/***/ "./runtime/converters/jsonldToManifest.js":
-/*!************************************************!*\
-  !*** ./runtime/converters/jsonldToManifest.js ***!
-  \************************************************/
-/*! exports provided: JsonldToManifest */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "JsonldToManifest", function() { return JsonldToManifest; });
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-let supportedTypes = ['Text', 'URL', 'Number', 'Boolean'];
-
-class JsonldToManifest {
-  static convert(jsonld, theClass) {
-    let obj = JSON.parse(jsonld);
-    let classes = {};
-    let properties = {};
-
-    if (!obj['@graph']) {
-      obj['@graph'] = [obj];
-    }
-
-    for (let item of obj['@graph']) {
-      if (item['@type'] == 'rdf:Property') {
-        properties[item['@id']] = item;
-      } else if (item['@type'] == 'rdfs:Class') {
-        classes[item['@id']] = item;
-        item.subclasses = [];
-        item.superclass = null;
-      }
-    }
-
-    for (let clazz of Object.values(classes)) {
-      if (clazz['rdfs:subClassOf'] !== undefined) {
-        if (clazz['rdfs:subClassOf'].length == undefined) {
-          clazz['rdfs:subClassOf'] = [clazz['rdfs:subClassOf']];
-        }
-        for (let subClass of clazz['rdfs:subClassOf']) {
-          let superclass = subClass['@id'];
-          if (clazz.superclass == undefined) {
-            clazz.superclass = [];
-          }
-          if (classes[superclass]) {
-            classes[superclass].subclasses.push(clazz);
-            clazz.superclass.push(classes[superclass]);
-          } else {
-            clazz.superclass.push({'@id': superclass});
-          }
-        }
-      }
-    }
-
-    for (let clazz of Object.values(classes)) {
-      if (clazz.subclasses.length == 0 && theClass == undefined) {
-        theClass = clazz;
-      }
-    }
-
-    let relevantProperties = [];
-    for (let property of Object.values(properties)) {
-      let domains = property['schema:domainIncludes'];
-      if (!domains) {
-        domains = {'@id': theClass['@id']};
-      }
-      if (!domains.length) {
-        domains = [domains];
-      }
-      domains = domains.map(a => a['@id']);
-      if (domains.includes(theClass['@id'])) {
-        let name = property['@id'].split(':')[1];
-        let type = property['schema:rangeIncludes'];
-        if (!type) {
-          console.log(property);
-        }
-        if (!type.length) {
-          type = [type];
-        }
-
-        type = type.map(a => a['@id'].split(':')[1]);
-        type = type.filter(type => supportedTypes.includes(type));
-        if (type.length > 0) {
-          relevantProperties.push({name, type});
-        }
-      }
-    }
-
-    let className = theClass['@id'].split(':')[1];
-    let superNames = theClass.superclass ? theClass.superclass.map(a => a['@id'].split(':')[1]) : [];
-
-    let s = '';
-    for (let superName of superNames) {
-      s += `import 'https://schema.org/${superName}'\n\n`;
-    }
-
-    s += `schema ${className}`;
-    if (superNames.length > 0) {
-      s += ` extends ${superNames.join(', ')}`;
-    }
-
-    if (relevantProperties.length > 0) {
-      for (let property of relevantProperties) {
-        let type;
-        if (property.type.length > 1) {
-          type = '(' + property.type.join(' or ') + ')';
-        } else {
-          type = property.type[0];
-        }
-        s += `\n  ${type} ${property.name}`;
-      }
-    }
-    s += '\n';
-
-    return s;
-  }
-}
-
-
-/***/ }),
-
 /***/ "./runtime/debug/abstract-devtools-channel.js":
 /*!****************************************************!*\
   !*** ./runtime/debug/abstract-devtools-channel.js ***!
@@ -1839,7 +1710,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./multiplexer-dom-particle.js */ "./runtime/multiplexer-dom-particle.js");
 /* harmony import */ var _ts_build_reference_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ts-build/reference.js */ "./runtime/ts-build/reference.js");
 /* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./transformation-dom-particle.js */ "./runtime/transformation-dom-particle.js");
-/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./converters/jsonldToManifest.js */ "./runtime/converters/jsonldToManifest.js");
+/* harmony import */ var _ts_build_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ts-build/converters/jsonldToManifest.js */ "./runtime/ts-build/converters/jsonldToManifest.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1907,9 +1778,9 @@ class Loader {
   _loadURL(url) {
     if (/\/\/schema.org\//.test(url)) {
       if (url.endsWith('/Thing')) {
-        return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data, {'@id': 'schema:Thing'}));
+        return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => _ts_build_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data, {'@id': 'schema:Thing'}));
       }
-      return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url + '.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data));
+      return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url + '.jsonld').then(res => res.text()).then(data => _ts_build_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data));
     }
     return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url).then(res => res.text());
   }
@@ -3913,6 +3784,125 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
   }
 }
 
+
+/***/ }),
+
+/***/ "./runtime/ts-build/converters/jsonldToManifest.js":
+/*!*********************************************************!*\
+  !*** ./runtime/ts-build/converters/jsonldToManifest.js ***!
+  \*********************************************************/
+/*! exports provided: JsonldToManifest */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "JsonldToManifest", function() { return JsonldToManifest; });
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const supportedTypes = ['Text', 'URL', 'Number', 'Boolean'];
+class JsonldToManifest {
+    static convert(jsonld, theClass) {
+        const obj = JSON.parse(jsonld);
+        const classes = {};
+        const properties = {};
+        if (!obj['@graph']) {
+            obj['@graph'] = [obj];
+        }
+        for (const item of obj['@graph']) {
+            if (item['@type'] === 'rdf:Property') {
+                properties[item['@id']] = item;
+            }
+            else if (item['@type'] === 'rdfs:Class') {
+                classes[item['@id']] = item;
+                item['subclasses'] = [];
+                item['superclass'] = null;
+            }
+        }
+        for (const clazz of Object.values(classes)) {
+            if (clazz['rdfs:subClassOf'] !== undefined) {
+                if (clazz['rdfs:subClassOf'].length == undefined) {
+                    clazz['rdfs:subClassOf'] = [clazz['rdfs:subClassOf']];
+                }
+                for (const subClass of clazz['rdfs:subClassOf']) {
+                    const superclass = subClass['@id'];
+                    if (clazz['superclass'] == undefined) {
+                        clazz['superclass'] = [];
+                    }
+                    if (classes[superclass]) {
+                        classes[superclass].subclasses.push(clazz);
+                        clazz['superclass'].push(classes[superclass]);
+                    }
+                    else {
+                        clazz['superclass'].push({ '@id': superclass });
+                    }
+                }
+            }
+        }
+        for (const clazz of Object.values(classes)) {
+            if (clazz['subclasses'].length === 0 && theClass == undefined) {
+                theClass = clazz;
+            }
+        }
+        const relevantProperties = [];
+        for (const property of Object.values(properties)) {
+            let domains = property['schema:domainIncludes'];
+            if (!domains) {
+                domains = { '@id': theClass['@id'] };
+            }
+            if (!domains.length) {
+                domains = [domains];
+            }
+            domains = domains.map(a => a['@id']);
+            if (domains.includes(theClass['@id'])) {
+                const name = property['@id'].split(':')[1];
+                let type = property['schema:rangeIncludes'];
+                if (!type) {
+                    console.log(property);
+                }
+                if (!type.length) {
+                    type = [type];
+                }
+                type = type.map(a => a['@id'].split(':')[1]);
+                type = type.filter(type => supportedTypes.includes(type));
+                if (type.length > 0) {
+                    relevantProperties.push({ name, type });
+                }
+            }
+        }
+        const className = theClass['@id'].split(':')[1];
+        const superNames = theClass.superclass ? theClass.superclass.map(a => a['@id'].split(':')[1]) : [];
+        let s = '';
+        for (const superName of superNames) {
+            s += `import 'https://schema.org/${superName}'\n\n`;
+        }
+        s += `schema ${className}`;
+        if (superNames.length > 0) {
+            s += ` extends ${superNames.join(', ')}`;
+        }
+        if (relevantProperties.length > 0) {
+            for (const property of relevantProperties) {
+                let type;
+                if (property.type.length > 1) {
+                    type = '(' + property.type.join(' or ') + ')';
+                }
+                else {
+                    type = property.type[0];
+                }
+                s += `\n  ${type} ${property.name}`;
+            }
+        }
+        s += '\n';
+        return s;
+    }
+}
+//# sourceMappingURL=jsonldToManifest.js.map
 
 /***/ }),
 
