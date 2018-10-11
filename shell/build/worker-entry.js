@@ -2885,7 +2885,7 @@ class Particle {
     this._busy++;
   }
   
-   doneBusy() {
+  doneBusy() {
     this._busy--;
     if (this._busy == 0) {
       this._idleResolver();
@@ -2937,7 +2937,7 @@ class Particle {
       descriptions.store(new descriptions.entityClass({key: connectionName, value: pattern}, this.spec.name + '-' + connectionName));
       return true;
     }
-    return false;
+    throw new Error('A particle needs a description handle to set a decription pattern');
   }
 }
 

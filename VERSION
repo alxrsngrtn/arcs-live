@@ -1,5 +1,5 @@
-commit e7daa16aa31c8dcf3d3d5c24601cb7da74d9b74a
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Oct 10 14:10:15 2018 -0700
+commit 6831a371c8965a884280ef4fbc9f1cd254652d51
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Oct 11 11:52:12 2018 +1100
 
-    fix shell components paths (#2095)
+    Fail fast if descriptions handle is missing (#2094)
