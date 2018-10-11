@@ -1,5 +1,41 @@
-commit 6831a371c8965a884280ef4fbc9f1cd254652d51
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Oct 11 11:52:12 2018 +1100
+commit b93296fef006a57588d0a8fe81cadd4217c08c32
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Oct 11 15:54:02 2018 -0700
 
-    Fail fast if descriptions handle is missing (#2094)
+    More New Shell (0_6_0) (#2099)
+    
+    * temporarily disable tracing so web apps so traces don't grow unbounded
+    
+    * retry to commit files that git lost :(
+    
+    * introduce shell_0_6_0
+    
+    * wip
+    
+    * wip
+    
+    * updates
+    
+    * undo tracing hack
+    
+    * work
+    
+    * remove accidental build files
+    
+    * refactor ui bits
+    
+    * scope particle sub-trees with ShadowDom
+    
+    * bake boilerplate styles into Particle shadowRoot automagically
+    
+    * cleanups
+    
+    * better logging
+    
+    * use build out of the old shell (so Live will work)
+    
+    * workaround for #2097
+    
+    * restore suggestion ui
+    
+    * crib FB logic for creating IDs

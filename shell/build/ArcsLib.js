@@ -78922,6 +78922,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-consumer.js */ "./runtime/ts-build/slot-consumer.js");
 /* harmony import */ var _shell_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shell/components/xen/xen-template.js */ "./shell/components/xen/xen-template.js");
+/* harmony import */ var _shell_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../shell/components/icons.css.js */ "./shell/components/icons.css.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -78931,6 +78932,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -78965,7 +78967,13 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
             newContainer.setAttribute('particle-host', this.consumeConn.getQualifiedName());
         }
         contextContainer.appendChild(newContainer);
-        return newContainer;
+        //return newContainer;
+        // TODO(sjmiles): introduce tree scope
+        newContainer.attachShadow({ mode: `open` });
+        // provision basic stylesheet
+        _shell_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["default"].stamp(`<style>${_shell_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__["default"]}</style>`).appendTo(newContainer.shadowRoot);
+        // TODO(sjmiles): maybe inject boilerplate styles
+        return newContainer.shadowRoot;
     }
     deleteContainer(container) {
         if (container.parentNode) {
@@ -79134,16 +79142,18 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         if (innerContainer === container) {
             return true;
         }
-        let parentNode = innerContainer.parentNode;
+        const parentOf = elt => elt.parentNode;
+        let parentNode = parentOf(innerContainer);
         while (parentNode) {
             if (parentNode === container) {
                 return true;
             }
-            if (parentNode.getAttribute('slotid')) {
+            // only some HTMLNodes have `getAttribute` (i.e. HTMLElement)
+            if (parentNode.getAttribute && parentNode.getAttribute('slotid')) {
                 // this is an inner slot of an inner slot.
                 return false;
             }
-            parentNode = parentNode.parentNode;
+            parentNode = parentOf(parentNode);
         }
         // innerContainer won't be a child node of container if the method is triggered
         // by mutation observer record and innerContainer was removed.
@@ -83621,6 +83631,34 @@ class TypeVariable {
     return (this._resolution && this._resolution.isResolved());
   }
 }
+
+
+/***/ }),
+
+/***/ "./shell/components/icons.css.js":
+/*!***************************************!*\
+  !*** ./shell/components/icons.css.js ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = (`icon {
+    font-family: "Material Icons";
+    font-size: 24px;
+    font-style: normal;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    /*vertical-align: middle;*/
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    /* partial FOUC prevention */
+    width: 24px;
+    height: 24px;
+    overflow: hidden;;
+  }`);
 
 
 /***/ }),
