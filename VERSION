@@ -1,7 +1,9 @@
-commit 2744bda4a2a0932c529cd966f28d0c2e3831f8d4
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Oct 11 16:23:13 2018 -0700
+commit 04dbf9c5db849678626951c853f951e19bf277e2
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Oct 11 18:04:37 2018 -0700
 
-    convert jsonldToManifest to typescript, manual tests pass (#2079)
+    immediately plan on planificator init. (#2098)
     
-    Addresses #1765
+    * immediately plan on planificator init.
+    
+    * fix planificator tests
