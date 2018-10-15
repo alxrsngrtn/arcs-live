@@ -1,9 +1,7 @@
-commit 04dbf9c5db849678626951c853f951e19bf277e2
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Oct 11 18:04:37 2018 -0700
+commit a8e07ddcb8f6f7bcb32034a1d93d9ba92de5aec5
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Oct 15 06:31:21 2018 -0700
 
-    immediately plan on planificator init. (#2098)
+    convert type-variable to typescript (#2077)
     
-    * immediately plan on planificator init.
-    
-    * fix planificator tests
+    Addresses #1765

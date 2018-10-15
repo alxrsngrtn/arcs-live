@@ -71789,7 +71789,7 @@ class Slot {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeChecker", function() { return TypeChecker; });
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../type-variable.js */ "./runtime/type-variable.js");
+/* harmony import */ var _ts_build_type_variable_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/type-variable.js */ "./runtime/ts-build/type-variable.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -71813,7 +71813,7 @@ class TypeChecker {
   // NOTE: you probably don't want to call this function, if you think you
   // do, talk to shans@.
   static processTypeList(baseType, list) {
-    let newBaseType = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"](''));
+    let newBaseType = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _ts_build_type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"](''));
     if (baseType) {
       newBaseType.data.resolution = baseType;
     }
@@ -71924,7 +71924,7 @@ class TypeChecker {
         // If this is an undifferentiated variable then we need to create structure to match against. That's
         // allowed because this variable could represent anything, and it needs to represent this structure
         // in order for type resolution to succeed.
-        let newVar = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]('a'));
+        let newVar = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _ts_build_type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]('a'));
         primitiveHandleType.variable.resolution = 
             primitiveConnectionType.isCollection ? _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newCollection(newVar) : (primitiveConnectionType.isBigCollection ? _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newBigCollection(newVar) : _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newReference(newVar));
         let unwrap = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
@@ -82797,6 +82797,206 @@ class TupleFields {
 
 /***/ }),
 
+/***/ "./runtime/ts-build/type-variable.js":
+/*!*******************************************!*\
+  !*** ./runtime/ts-build/type-variable.js ***!
+  \*******************************************/
+/*! exports provided: TypeVariable */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariable", function() { return TypeVariable; });
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./schema.js */ "./runtime/ts-build/schema.js");
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+class TypeVariable {
+    constructor(name, canWriteSuperset, canReadSubset) {
+        this.name = name;
+        this._canWriteSuperset = canWriteSuperset;
+        this._canReadSubset = canReadSubset;
+        this._resolution = null;
+    }
+    /**
+     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
+     * of two variables together. Use this when two separate type variables need to resolve
+     * to the same value.
+     */
+    maybeMergeConstraints(variable) {
+        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
+            return false;
+        }
+        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
+    }
+    /**
+     * Merge a type variable's read subset (upper bound) constraints into this variable.
+     * This is used to accumulate read constraints when resolving a handle's type.
+     */
+    maybeMergeCanReadSubset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canReadSubset == null) {
+            this.canReadSubset = constraint;
+            return true;
+        }
+        if (this.canReadSubset.isSlot && constraint.isSlot) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        const mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
+        if (!mergedSchema) {
+            return false;
+        }
+        this.canReadSubset = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newEntity(mergedSchema);
+        return true;
+    }
+    /**
+     * merge a type variable's write superset (lower bound) constraints into this variable.
+     * This is used to accumulate write constraints when resolving a handle's type.
+     */
+    maybeMergeCanWriteSuperset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canWriteSuperset == null) {
+            this.canWriteSuperset = constraint;
+            return true;
+        }
+        if (this.canWriteSuperset.isSlot && constraint.isSlot) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        const mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
+        if (!mergedSchema) {
+            return false;
+        }
+        this.canWriteSuperset = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newEntity(mergedSchema);
+        return true;
+    }
+    isSatisfiedBy(type) {
+        const constraint = this._canWriteSuperset;
+        if (!constraint) {
+            return true;
+        }
+        if (!constraint.isEntity || !type.isEntity) {
+            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
+        }
+        return type.entitySchema.isMoreSpecificThan(constraint.entitySchema);
+    }
+    get resolution() {
+        if (this._resolution) {
+            return this._resolution.resolvedType();
+        }
+        return null;
+    }
+    set resolution(value) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._resolution);
+        const elementType = value.resolvedType().getContainedType();
+        if (elementType !== null && elementType.isVariable) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(elementType.variable !== this, 'variable cannot resolve to collection of itself');
+        }
+        let probe = value;
+        while (probe) {
+            if (!probe.isVariable) {
+                break;
+            }
+            if (probe.variable === this) {
+                return;
+            }
+            probe = probe.variable.resolution;
+        }
+        this._resolution = value;
+        this._canWriteSuperset = null;
+        this._canReadSubset = null;
+    }
+    get canWriteSuperset() {
+        if (this._resolution) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._canWriteSuperset);
+            if (this._resolution.isVariable) {
+                return this._resolution.variable.canWriteSuperset;
+            }
+            return null;
+        }
+        return this._canWriteSuperset;
+    }
+    set canWriteSuperset(value) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._resolution);
+        this._canWriteSuperset = value;
+    }
+    get canReadSubset() {
+        if (this._resolution) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._canReadSubset);
+            if (this._resolution.isVariable) {
+                return this._resolution.variable.canReadSubset;
+            }
+            return null;
+        }
+        return this._canReadSubset;
+    }
+    set canReadSubset(value) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._resolution);
+        this._canReadSubset = value;
+    }
+    get hasConstraint() {
+        return this._canReadSubset !== null || this._canWriteSuperset !== null;
+    }
+    canEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.canEnsureResolved();
+        }
+        if (this._canWriteSuperset || this._canReadSubset) {
+            return true;
+        }
+        return false;
+    }
+    maybeEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.maybeEnsureResolved();
+        }
+        if (this._canWriteSuperset) {
+            this.resolution = this._canWriteSuperset;
+            return true;
+        }
+        if (this._canReadSubset) {
+            this.resolution = this._canReadSubset;
+            return true;
+        }
+        return false;
+    }
+    toLiteral() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(this.resolution == null);
+        return this.toLiteralIgnoringResolutions();
+    }
+    toLiteralIgnoringResolutions() {
+        return {
+            name: this.name,
+            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
+            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
+        };
+    }
+    static fromLiteral(data) {
+        return new TypeVariable(data.name, data.canWriteSuperset ? _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(data.canReadSubset) : null);
+    }
+    isResolved() {
+        return (this._resolution && this._resolution.isResolved());
+    }
+}
+//# sourceMappingURL=type-variable.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/type.js":
 /*!**********************************!*\
   !*** ./runtime/ts-build/type.js ***!
@@ -82810,7 +83010,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _shape_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./shape.js */ "./runtime/ts-build/shape.js");
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./schema.js */ "./runtime/ts-build/schema.js");
-/* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../type-variable.js */ "./runtime/type-variable.js");
+/* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./type-variable.js */ "./runtime/ts-build/type-variable.js");
 /* harmony import */ var _tuple_fields_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tuple-fields.js */ "./runtime/ts-build/tuple-fields.js");
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
 // @license
@@ -82852,7 +83052,9 @@ class Type {
         }
         if (tag === 'Variable') {
             if (!(data instanceof _type_variable_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariable"])) {
-                data = new _type_variable_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariable"](data.name, data.constraint);
+                // type constraints ("~a with EntityName") should be considered minimum requirements
+                // for the type, so are fed in as 'canWriteSuperset' (i.e. low-watermark) constraints.
+                data = new _type_variable_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariable"](data.name, data.constraint, null);
             }
         }
         this.tag = tag;
@@ -83390,238 +83592,6 @@ function setDiffCustom(from, to, keyFn) {
     return result;
 }
 //# sourceMappingURL=util.js.map
-
-/***/ }),
-
-/***/ "./runtime/type-variable.js":
-/*!**********************************!*\
-  !*** ./runtime/type-variable.js ***!
-  \**********************************/
-/*! exports provided: TypeVariable */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariable", function() { return TypeVariable; });
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/schema.js */ "./runtime/ts-build/schema.js");
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-class TypeVariable {
-  constructor(name, canWriteSuperset, canReadSubset) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(typeof name == 'string');
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(canWriteSuperset == null || canWriteSuperset instanceof _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"]);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(canReadSubset == null || canReadSubset instanceof _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"]);
-    this.name = name;
-    this._canWriteSuperset = canWriteSuperset;
-    this._canReadSubset = canReadSubset;
-    this._resolution = null;
-  }
-
-  // Merge both the read subset (upper bound) and write superset (lower bound) constraints
-  // of two variables together. Use this when two separate type variables need to resolve
-  // to the same value.
-  maybeMergeConstraints(variable) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(variable instanceof TypeVariable);
-
-    if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
-      return false;
-    }
-    return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
-  }
-
-  // merge a type variable's read subset (upper bound) constraints into this variable.
-  // This is used to accumulate read constraints when resolving a handle's type.
-  maybeMergeCanReadSubset(constraint) {
-    if (constraint == null) {
-      return true;
-    }
-
-    if (this.canReadSubset == null) {
-      this.canReadSubset = constraint;
-      return true;
-    }
-
-    if (this.canReadSubset.isSlot && constraint.isSlot) {
-      // TODO: formFactor compatibility, etc.
-      return true;
-    }
-
-    let mergedSchema = _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
-    if (!mergedSchema) {
-      return false;
-    }
-
-    this.canReadSubset = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newEntity(mergedSchema);
-    return true;
-  }
-
-  // merge a type variable's write superset (lower bound) constraints into this variable.
-  // This is used to accumulate write constraints when resolving a handle's type.
-  maybeMergeCanWriteSuperset(constraint) {
-    if (constraint == null) {
-      return true;
-    }
-
-    if (this.canWriteSuperset == null) {
-      this.canWriteSuperset = constraint;
-      return true;
-    }
-
-    if (this.canWriteSuperset.isSlot && constraint.isSlot) {
-      // TODO: formFactor compatibility, etc.
-      return true;
-    }
-
-    let mergedSchema = _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
-    if (!mergedSchema) {
-      return false;
-    }
-
-    this.canWriteSuperset = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newEntity(mergedSchema);
-    return true;
-  }
-
-  isSatisfiedBy(type) {
-    let constraint = this._canWriteSuperset;
-    if (!constraint) {
-      return true;
-    }
-    if (!constraint.isEntity || !type.isEntity) {
-      throw new Error(`constraint checking not implemented for ${this} and ${type}`);
-    }
-    return type.entitySchema.isMoreSpecificThan(constraint.entitySchema);
-  }
-
-  get resolution() {
-    if (this._resolution) {
-      return this._resolution.resolvedType();
-    }
-    return null;
-  }
-
-  set resolution(value) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(value instanceof _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"]);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._resolution);
-    let elementType = value.resolvedType().getContainedType();
-    if (elementType !== null && elementType.isVariable) {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(elementType.variable != this, 'variable cannot resolve to collection of itself');
-    }
-
-    let probe = value;
-    while (probe) {
-      if (!probe.isVariable) {
-        break;
-      }
-      if (probe.variable == this) {
-        return;
-      }
-      probe = probe.variable.resolution;
-    }
-
-    this._resolution = value;
-    this._canWriteSuperset = null;
-    this._canReadSubset = null;
-  }
-
-  get canWriteSuperset() {
-    if (this._resolution) {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._canWriteSuperset);
-      if (this._resolution.isVariable) {
-        return this._resolution.variable.canWriteSuperset;
-      }
-      return null;
-    }
-    return this._canWriteSuperset;
-  }
-
-  set canWriteSuperset(value) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._resolution);
-    this._canWriteSuperset = value;
-  }
-
-  get canReadSubset() {
-    if (this._resolution) {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._canReadSubset);
-      if (this._resolution.isVariable) {
-        return this._resolution.variable.canReadSubset;
-      }
-      return null;
-    }
-    return this._canReadSubset;
-  }
-
-  set canReadSubset(value) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._resolution);
-    this._canReadSubset = value;
-  }
-
-  get hasConstraint() {
-    return this._canReadSubset !== null || this._canWriteSuperset !== null;
-  }
-
-  canEnsureResolved() {
-    if (this._resolution) {
-      return this._resolution.canEnsureResolved();
-    }
-    if (this._canWriteSuperset || this._canReadSubset) {
-      return true;
-    }
-    return false;
-  }
-
-  maybeEnsureResolved() {
-    if (this._resolution) {
-      return this._resolution.maybeEnsureResolved();
-    }
-    if (this._canWriteSuperset) {
-      this.resolution = this._canWriteSuperset;
-      return true;
-    }
-    if (this._canReadSubset) {
-      this.resolution = this._canReadSubset;
-      return true;
-    }
-    return false;
-  }
-
-  toLiteral() {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(this.resolution == null);
-    return this.toLiteralIgnoringResolutions();
-  }
-
-  toLiteralIgnoringResolutions() {
-    return {
-      name: this.name,
-      canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
-      canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
-    };
-  }
-
-  static fromLiteral(data) {
-    return new TypeVariable(
-        data.name,
-        data.canWriteSuperset ? _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(data.canWriteSuperset) : null,
-        data.canReadSubset ? _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(data.canReadSubset) : null);
-  }
-
-  isResolved() {
-    return (this._resolution && this._resolution.isResolved());
-  }
-}
-
 
 /***/ }),
 
