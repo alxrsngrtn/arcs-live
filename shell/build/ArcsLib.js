@@ -54099,65 +54099,6 @@ const vm = {};
 
 /***/ }),
 
-/***/ "./runtime/affordance.js":
-/*!*******************************!*\
-  !*** ./runtime/affordance.js ***!
-  \*******************************/
-/*! exports provided: Affordance */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Affordance", function() { return Affordance; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/slot-dom-consumer.js */ "./runtime/ts-build/slot-dom-consumer.js");
-/* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./suggest-dom-consumer.js */ "./runtime/suggest-dom-consumer.js");
-/* harmony import */ var _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./testing/mock-slot-dom-consumer.js */ "./runtime/testing/mock-slot-dom-consumer.js");
-/* harmony import */ var _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./testing/mock-suggest-dom-consumer.js */ "./runtime/testing/mock-suggest-dom-consumer.js");
-/* harmony import */ var _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./description-dom-formatter.js */ "./runtime/description-dom-formatter.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-class Affordance {
-  constructor(options) {
-    Object.keys(options).forEach(key => {
-      this[`_${key}`] = options[key];
-      Object.defineProperty(this, [key], {
-        get: function() {
-          return this[`_${key}`];
-        }});
-    });
-  }
-  static forName(name) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(_affordances[name], `Unsupported affordance ${name}`);
-    return _affordances[name];
-  }
-}
-
-let _affordances = {};
-[
-  {name: 'dom', slotConsumerClass: _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"], suggestionConsumerClass: _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestDomConsumer"], descriptionFormatter: _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__["DescriptionDomFormatter"]},
-  {name: 'dom-touch', slotConsumerClass: _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"], suggestionConsumerClass: _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestDomConsumer"], descriptionFormatter: _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__["DescriptionDomFormatter"]},
-  {name: 'vr', slotConsumerClass: _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"], suggestionConsumerClass: _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestDomConsumer"], descriptionFormatter: _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__["DescriptionDomFormatter"]},
-  {name: 'mock', slotConsumerClass: _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__["MockSlotDomConsumer"], suggestionConsumerClass: _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__["MockSuggestDomConsumer"]}
-].forEach(options => _affordances[options.name] = new Affordance(options));
-
-
-/***/ }),
-
 /***/ "./runtime/api-channel.js":
 /*!********************************!*\
   !*** ./runtime/api-channel.js ***!
@@ -72404,7 +72345,7 @@ Walker.Independent = _walker_base_js__WEBPACK_IMPORTED_MODULE_0__["WalkerBase"].
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotComposer", function() { return SlotComposer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _affordance_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./affordance.js */ "./runtime/affordance.js");
+/* harmony import */ var _ts_build_affordance_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/affordance.js */ "./runtime/ts-build/affordance.js");
 /* harmony import */ var _ts_build_slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/slot-context.js */ "./runtime/ts-build/slot-context.js");
 /* harmony import */ var _ts_build_hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ts-build/hosted-slot-consumer.js */ "./runtime/ts-build/hosted-slot-consumer.js");
 /**
@@ -72438,7 +72379,7 @@ class SlotComposer {
       'Root container is mandatory unless it is explicitly skipped');
 
     this._containerKind = options.containerKind;
-    this._affordance = _affordance_js__WEBPACK_IMPORTED_MODULE_1__["Affordance"].forName(options.affordance);
+    this._affordance = _ts_build_affordance_js__WEBPACK_IMPORTED_MODULE_1__["Affordance"].forName(options.affordance);
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._affordance.slotConsumerClass);
 
     this._consumers = [];
@@ -75622,7 +75563,7 @@ class SuggestDomConsumer extends _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTE
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestionComposer", function() { return SuggestionComposer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _affordance_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./affordance.js */ "./runtime/affordance.js");
+/* harmony import */ var _ts_build_affordance_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/affordance.js */ "./runtime/ts-build/affordance.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -75638,7 +75579,7 @@ __webpack_require__.r(__webpack_exports__);
 class SuggestionComposer {
   constructor(slotComposer) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slotComposer);
-    this._affordance = _affordance_js__WEBPACK_IMPORTED_MODULE_1__["Affordance"].forName(slotComposer.affordance);
+    this._affordance = _ts_build_affordance_js__WEBPACK_IMPORTED_MODULE_1__["Affordance"].forName(slotComposer.affordance);
     this._container = slotComposer.findContainerByName('suggestions');
 
     this._suggestions = [];
@@ -76163,6 +76104,64 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
   }
 }
 
+
+/***/ }),
+
+/***/ "./runtime/ts-build/affordance.js":
+/*!****************************************!*\
+  !*** ./runtime/ts-build/affordance.js ***!
+  \****************************************/
+/*! exports provided: Affordance */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Affordance", function() { return Affordance; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-dom-consumer.js */ "./runtime/ts-build/slot-dom-consumer.js");
+/* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../suggest-dom-consumer.js */ "./runtime/suggest-dom-consumer.js");
+/* harmony import */ var _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../testing/mock-slot-dom-consumer.js */ "./runtime/testing/mock-slot-dom-consumer.js");
+/* harmony import */ var _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../testing/mock-suggest-dom-consumer.js */ "./runtime/testing/mock-suggest-dom-consumer.js");
+/* harmony import */ var _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../description-dom-formatter.js */ "./runtime/description-dom-formatter.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+class Affordance {
+    constructor(options) {
+        Object.keys(options).forEach(key => {
+            this[`_${key}`] = options[key];
+            Object.defineProperty(this, key, {
+                get() {
+                    return this[`_${key}`];
+                }
+            });
+        });
+    }
+    static forName(name) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(_affordances[name], `Unsupported affordance ${name}`);
+        return _affordances[name];
+    }
+}
+const _affordances = {};
+[
+    { name: 'dom', slotConsumerClass: _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"], suggestionConsumerClass: _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestDomConsumer"], descriptionFormatter: _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__["DescriptionDomFormatter"] },
+    { name: 'dom-touch', slotConsumerClass: _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"], suggestionConsumerClass: _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestDomConsumer"], descriptionFormatter: _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__["DescriptionDomFormatter"] },
+    { name: 'vr', slotConsumerClass: _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"], suggestionConsumerClass: _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestDomConsumer"], descriptionFormatter: _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__["DescriptionDomFormatter"] },
+    { name: 'mock', slotConsumerClass: _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__["MockSlotDomConsumer"], suggestionConsumerClass: _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__["MockSuggestDomConsumer"] }
+].forEach(options => _affordances[options.name] = new Affordance(options));
+//# sourceMappingURL=affordance.js.map
 
 /***/ }),
 

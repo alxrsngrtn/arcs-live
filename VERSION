@@ -1,7 +1,5 @@
-commit a8e07ddcb8f6f7bcb32034a1d93d9ba92de5aec5
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Oct 15 06:31:21 2018 -0700
+commit 0ebc66c8903c61e0d4becb6e35da166beadfb461
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Oct 16 03:17:50 2018 +1100
 
-    convert type-variable to typescript (#2077)
-    
-    Addresses #1765
+    Move affordance.js to ts. (#2101)
