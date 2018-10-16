@@ -1,5 +1,8 @@
-commit 0ebc66c8903c61e0d4becb6e35da166beadfb461
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Oct 16 03:17:50 2018 +1100
+commit 5f8006f2c721bfe566d32920c7e9951930c5b09e
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Oct 16 14:25:56 2018 -0700
 
-    Move affordance.js to ts. (#2101)
+    Improve Developer Documentation (#2100)
+    
+    - Switch documentation to jsdoc style
+    - add a typedoc step to the Travis build so docs are available on the web.

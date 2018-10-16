@@ -6,7 +6,9 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
-// Returns the set delta between two lists based on direct object comparison.
+/**
+ * Returns the set delta between two lists based on direct object comparison.
+ */
 export function setDiff(from, to) {
     const result = { add: [], remove: [] };
     const items = new Set([...from, ...to]);
@@ -25,8 +27,10 @@ export function setDiff(from, to) {
     }
     return result;
 }
-// Returns the set delta between two lists based on custom object comparison.
-// `keyFn` takes type T and returns the value by which items should be compared.
+/**
+ * Returns the set delta between two lists based on custom object comparison.
+ * `keyFn` takes type T and returns the value by which items should be compared.
+ */
 export function setDiffCustom(from, to, keyFn) {
     const result = { add: [], remove: [] };
     const items = new Map();

@@ -9,9 +9,11 @@
  */
 import { assert } from '../../platform/assert-web.js';
 import { ProvidedSlotSpec } from '../particle-spec.js';
-// Holds container (eg div element) and its additional info.
-// Must be initialized either with a container (for root slots provided by the shell) or
-// tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
+/**
+ * Holds container (eg div element) and its additional info.
+ * Must be initialized either with a container (for root slots provided by the shell) or
+ * tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
+ */
 export class SlotContext {
     constructor(id, name, tags, container, spec, sourceSlotConsumer = null) {
         this.tags = [];

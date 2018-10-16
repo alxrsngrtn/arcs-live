@@ -65839,7 +65839,9 @@ class StorageStub {
   }
 }
 
-// Calls `this.visit()` for each node in a manfest AST, parents before children.
+/**
+ * Calls `this.visit()` for each node in a manfest AST, parents before children.
+ */
 class ManifestVisitor {
   traverse(ast) {
     if (['string', 'number', 'boolean'].includes(typeof ast) || ast === null) {
@@ -72614,7 +72616,9 @@ class StorageProxyBase {
     return this._type;
   }
 
-  // Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
+  /**
+   *  Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
+   */
   register(particle, handle) {
     if (!handle.canRead) {
       return;
@@ -72762,21 +72766,22 @@ class StorageProxyBase {
   }
 }
 
-
-// Collections are synchronized in a CRDT Observed/Removed scheme.
-// Each value is identified by an ID and a set of membership keys.
-// Concurrent adds of the same value will specify the same ID but different
-// keys. A value is removed by removing all of the observed keys. A value
-// is considered to be removed if all of it's keys have been removed.
-//
-// In synchronized mode mutation takes place synchronously inside the proxy.
-// The proxy uses the originatorId to skip over redundant events sent back
-// by the storage object.
-//
-// In unsynchronized mode removal is not based on the keys observed at the
-// proxy, since the proxy does not remember the state, but instead the set
-// of keys that exist at the storage object at the time it receives the
-// request.
+/**
+ * Collections are synchronized in a CRDT Observed/Removed scheme.
+ * Each value is identified by an ID and a set of membership keys.
+ * Concurrent adds of the same value will specify the same ID but different
+ * keys. A value is removed by removing all of the observed keys. A value
+ * is considered to be removed if all of it's keys have been removed.
+ *
+ * In synchronized mode mutation takes place synchronously inside the proxy.
+ * The proxy uses the originatorId to skip over redundant events sent back
+ * by the storage object.
+ *
+ * In unsynchronized mode removal is not based on the keys observed at the
+ * proxy, since the proxy does not remember the state, but instead the set
+ * of keys that exist at the storage object at the time it receives the
+ * request.
+ */
 class CollectionProxy extends StorageProxyBase {
   constructor(...args) {
     super(...args);
@@ -72908,11 +72913,13 @@ class CollectionProxy extends StorageProxyBase {
   }
 }
 
-// Variables are synchronized in a 'last-writer-wins' scheme. When the
-// VariableProxy mutates the model, it sets a barrier and expects to
-// receive the barrier value echoed back in a subsequent update event.
-// Between those two points in time updates are not applied or
-// notified about as these reflect concurrent writes that did not 'win'.
+/**
+ * Variables are synchronized in a 'last-writer-wins' scheme. When the
+ * VariableProxy mutates the model, it sets a barrier and expects to
+ * receive the barrier value echoed back in a subsequent update event.
+ * Between those two points in time updates are not applied or
+ * notified about as these reflect concurrent writes that did not 'win'.
+ */
 class VariableProxy extends StorageProxyBase {
   constructor(...args) {
     super(...args);
@@ -77824,20 +77831,26 @@ class Runtime {
         // user information. One persona per runtime for now.
     }
     // Stuff the shell needs
-    // Given an arc, returns it's description as a string.
+    /**
+     * Given an arc, returns it's description as a string.
+     */
     static getArcDescription(arc) {
         // Verify that it's one of my arcs, and make this non-static, once I have
         // Runtime objects in the calling code.
         return new _description_js__WEBPACK_IMPORTED_MODULE_0__["Description"](arc).getArcDescription();
     }
-    // Parse a textual manifest and return a Manifest object. See the Manifest
-    // class for the options accepted.
+    /**
+     * Parse a textual manifest and return a Manifest object. See the Manifest
+     * class for the options accepted.
+     */
     static parseManifest(content, options) {
         return _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(content, options);
     }
-    // Load and parse a manifest from a resource (not striclty a file) and return
-    // a Manifest object. The loader determines the semantics of the fileName. See
-    // the Manifest class for details.
+    /**
+     * Load and parse a manifest from a resource (not striclty a file) and return
+     * a Manifest object. The loader determines the semantics of the fileName. See
+     * the Manifest class for details.
+     */
     static loadManifest(fileName, loader, options) {
         return _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].load(fileName, loader, options);
     }
@@ -78829,9 +78842,11 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-// Holds container (eg div element) and its additional info.
-// Must be initialized either with a container (for root slots provided by the shell) or
-// tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
+/**
+ * Holds container (eg div element) and its additional info.
+ * Must be initialized either with a container (for root slots provided by the shell) or
+ * tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
+ */
 class SlotContext {
     constructor(id, name, tags, container, spec, sourceSlotConsumer = null) {
         this.tags = [];
@@ -79296,9 +79311,11 @@ class CrdtCollectionModel {
             }
         }
     }
-    // Adds membership, `keys`, of `value` indexed by `id` to this collection.
-    // Returns whether the change is effective (`id` is new to the collection,
-    // or `value` is different to the value previously stored).
+    /**
+     * Adds membership, `keys`, of `value` indexed by `id` to this collection.
+     * Returns whether the change is effective (`id` is new to the collection,
+     * or `value` is different to the value previously stored).
+     */
     add(id, value, keys) {
         // Ensure that keys is actually an array, not a single string.
         // TODO(shans): remove this when all callers are implemented in typeScript.
@@ -79346,9 +79363,11 @@ class CrdtCollectionModel {
         }
         return JSON.stringify(value1) === JSON.stringify(value2);
     }
-    // Removes the membership, `keys`, of the value indexed by `id` from this collection.
-    // Returns whether the change is effective (the value is no longer present
-    // in the collection because all of the keys have been removed).
+    /**
+     * Removes the membership, `keys`, of the value indexed by `id` from this collection.
+     * Returns whether the change is effective (the value is no longer present
+     * in the collection because all of the keys have been removed).
+     */
     remove(id, keys) {
         const item = this.items.get(id);
         if (!item) {
@@ -79681,31 +79700,33 @@ class FirebaseStorageProvider extends _storage_provider_base__WEBPACK_IMPORTED_M
         }
     }
 }
-// Models a Variable that is persisted to firebase in a
-// last-writer-wins scheme.
-//
-// Initialization: After construct/connect the variable is
-// not fully initialized, calls to `get` and `toLiteral`
-// will not complete until either:
-//  * The initial value is supplied via the firebase `.on`
-//    subscription.
-//  * A value is written to the store by a call to `set`.
-//
-// Updates from firebase: Each time an update is received
-// from firebase we update the local version and value,
-// unless there is a pending local modification (see below).
-//
-// Local modifications: When a local modification is applied
-// by a call to `set` we increment the version number,
-// mark this variable as locally modified, and start a
-// process to atomically persist the change to firebase.
-// Until this process has completed we suppress incoming
-// changes from firebase. The version that we have chosen
-// (by incrementing) may not match the final state that is
-// written to firebase (if there are concurrent changes in
-// firebase, or if we have queued up multiple local
-// modifications), but the result will always be
-// monotonically increasing.
+/**
+ * Models a Variable that is persisted to firebase in a
+ * last-writer-wins scheme.
+ *
+ * Initialization: After construct/connect the variable is
+ * not fully initialized, calls to `get` and `toLiteral`
+ * will not complete until either:
+ *  * The initial value is supplied via the firebase `.on`
+ *    subscription.
+ *  * A value is written to the store by a call to `set`.
+ *
+ * Updates from firebase: Each time an update is received
+ * from firebase we update the local version and value,
+ * unless there is a pending local modification (see below).
+ *
+ * Local modifications: When a local modification is applied
+ * by a call to `set` we increment the version number,
+ * mark this variable as locally modified, and start a
+ * process to atomically persist the change to firebase.
+ * Until this process has completed we suppress incoming
+ * changes from firebase. The version that we have chosen
+ * (by incrementing) may not match the final state that is
+ * written to firebase (if there are concurrent changes in
+ * firebase, or if we have queued up multiple local
+ * modifications), but the result will always be
+ * monotonically increasing.
+ */
 class FirebaseVariable extends FirebaseStorageProvider {
     constructor(type, storageEngine, id, reference, firebaseKey, shouldExist) {
         super(type, storageEngine, id, reference, firebaseKey);
@@ -79912,37 +79933,39 @@ class FirebaseVariable extends FirebaseStorageProvider {
         this.version = version;
     }
 }
-// Models a Collection that is persisted to firebase in scheme similar
-// to the CRDT OR-set. We don't model sets of both observed
-// and removed keys but instead we maintain a list of current keys and
-// add/remove as the corresponding operations are received. We're
-// able to do this as we only ever synchronize between the same two points
-// (the client & firebase).
-//
-// Initialization: The collection is not initialized and calls to read
-// and mutate the collection will not complete until the initial state
-// is received via the firebase `.on` subscription.
-// Note, this is different to FirebaseVariable as mutations do not cause
-// the collection to become initialized (since we do not have enough state
-// to generate events).
-//
-// Updates from firebase: Each time an update is received from firebase
-// we compare the new remote state with the previous remote state. We are
-// able to detect which entries (and the corresponding keys) that have been
-// added and removed remotely. These are filtered by a set of suppressions
-// for adds that we have previously issued and then applied to our local
-// model. Each time we receive an update from firebase, we update our local
-// version number. We align it with the remote version when possible.
-//
-// Local modifications: Additions and removal of entries (and membership
-// keys) are tracked in a local structure, `localChanges`, and a process
-// is started to persist remotely. These changes are applied to the remote
-// state and committed atomically. Any added keys are added to sets in
-// `addSuppressions` to prevent applying our own writes when they
-// are received back in a subsequent update from firebase. Each time we
-// receive a local modification we increment our local version number.
-// When we persist our changes to firebase we align it with the remote
-// version.
+/**
+ * Models a Collection that is persisted to firebase in scheme similar
+ * to the CRDT OR-set. We don't model sets of both observed
+ * and removed keys but instead we maintain a list of current keys and
+ * add/remove as the corresponding operations are received. We're
+ * able to do this as we only ever synchronize between the same two points
+ * (the client & firebase).
+ *
+ * Initialization: The collection is not initialized and calls to read
+ * and mutate the collection will not complete until the initial state
+ * is received via the firebase `.on` subscription.
+ * Note, this is different to FirebaseVariable as mutations do not cause
+ * the collection to become initialized (since we do not have enough state
+ * to generate events).
+ *
+ * Updates from firebase: Each time an update is received from firebase
+ * we compare the new remote state with the previous remote state. We are
+ * able to detect which entries (and the corresponding keys) that have been
+ * added and removed remotely. These are filtered by a set of suppressions
+ * for adds that we have previously issued and then applied to our local
+ * model. Each time we receive an update from firebase, we update our local
+ * version number. We align it with the remote version when possible.
+ *
+ * Local modifications: Additions and removal of entries (and membership
+ * keys) are tracked in a local structure, `localChanges`, and a process
+ * is started to persist remotely. These changes are applied to the remote
+ * state and committed atomically. Any added keys are added to sets in
+ * `addSuppressions` to prevent applying our own writes when they
+ * are received back in a subsequent update from firebase. Each time we
+ * receive a local modification we increment our local version number.
+ * When we persist our changes to firebase we align it with the remote
+ * version.
+ */
 class FirebaseCollection extends FirebaseStorageProvider {
     constructor(type, storageEngine, id, reference, firebaseKey) {
         super(type, storageEngine, id, reference, firebaseKey);
@@ -80389,14 +80412,16 @@ var CursorState;
     CursorState[CursorState["removed"] = 3] = "removed";
     CursorState[CursorState["done"] = 4] = "done";
 })(CursorState || (CursorState = {}));
-// FirebaseCursor provides paginated reads over the contents of a BigCollection, locked to the
-// version of the collection at which the cursor was created.
-//
-// This class technically conforms to the iterator protocol but is not marked as iterable because
-// next() is async, which is currently not supported by implicit iteration in Javascript.
-//
-// NOTE: entity mutation removes elements from a streamed read; the entity will be updated with an
-// index past the cursor's end but Firebase doesn't issue a child_removed event for it.
+/**
+ * FirebaseCursor provides paginated reads over the contents of a BigCollection, locked to the
+ * version of the collection at which the cursor was created.
+ *
+ * This class technically conforms to the iterator protocol but is not marked as iterable because
+ * next() is async, which is currently not supported by implicit iteration in Javascript.
+ *
+ * NOTE: entity mutation removes elements from a streamed read; the entity will be updated with an
+ * index past the cursor's end but Firebase doesn't issue a child_removed event for it.
+ */
 class FirebaseCursor {
     constructor(reference, pageSize, forward) {
         this.orderByIndex = reference.child('items').orderByChild('index');
@@ -80513,25 +80538,30 @@ class FirebaseCursor {
         }
     }
 }
-// Provides access to large collections without pulling the entire contents locally.
-//
-// get(), store() and remove() all call immediately through to the backing Firebase collection.
-// There is currently no option for bulk instantiations of these methods.
-//
-// The full collection can be read via a paginated FirebaseCursor returned by stream(). This views
-// a snapshot of the collection, locked to the version at which the cursor is created.
-//
-// To get pagination working, we need to add an index field to items as they are stored, and that
-// field must be marked for indexing in the Firebase rules:
-//    "rules": {
-//      "<storage-root>": {
-//        "$collection": {
-//          "items": {
-//            ".indexOn": ["index"]
-//          }
-//        }
-//      }
-//    }
+/**
+ * Provides access to large collections without pulling the entire contents locally.
+ *
+ * get(), store() and remove() all call immediately through to the backing Firebase collection.
+ * There is currently no option for bulk instantiations of these methods.
+ *
+ * The full collection can be read via a paginated FirebaseCursor returned by stream(). This views
+ * a snapshot of the collection, locked to the version at which the cursor is created.
+ *
+ * To get pagination working, we need to add an index field to items as they are stored, and that
+ * field must be marked for indexing in the Firebase rules:
+ *
+ * ```
+ *    "rules": {
+ *      "<storage-root>": {
+ *        "$collection": {
+ *          "items": {
+ *            ".indexOn": ["index"]
+ *          }
+ *        }
+ *      }
+ *    }
+ * ```
+ */
 class FirebaseBigCollection extends FirebaseStorageProvider {
     constructor(type, storageEngine, id, reference, firebaseKey) {
         super(type, storageEngine, id, reference, firebaseKey);
@@ -80599,13 +80629,15 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
         const encId = FirebaseStorage.encodeKey(id);
         await this.reference.child('items/' + encId).remove();
     }
-    // Returns a FirebaseCursor id for paginated reads of the current version of this BigCollection.
-    // The id should be passed to cursorNext() to retrive the contained entities. The cursor itself
-    // is held internally by this collection so we can discard it once the stream read has completed.
-    //
-    // By default items are returned in order of original insertion into the collection (with the
-    // caveat that items removed during a streamed read may be returned at the end). Set forward to
-    // false to return items in reverse insertion order.
+    /**
+     * Returns a FirebaseCursor id for paginated reads of the current version of this BigCollection.
+     * The id should be passed to cursorNext() to retrive the contained entities. The cursor itself
+     * is held internally by this collection so we can discard it once the stream read has completed.
+     *
+     * By default items are returned in order of original insertion into the collection (with the
+     * caveat that items removed during a streamed read may be returned at the end). Set forward to
+     * false to return items in reverse insertion order.
+     */
     async stream(pageSize, forward = true) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!isNaN(pageSize) && pageSize > 0);
         this.cursorIndex++;
@@ -80614,8 +80646,10 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
         this.cursors.set(this.cursorIndex, cursor);
         return this.cursorIndex;
     }
-    // Calls next() on the cursor identified by cursorId. The cursor will be discarded once the end
-    // of the stream has been reached.
+    /**
+     * Calls next() on the cursor identified by cursorId. The cursor will be discarded once the end
+     * of the stream has been reached.
+     */
     async cursorNext(cursorId) {
         const cursor = this.cursors.get(cursorId);
         if (!cursor) {
@@ -80627,7 +80661,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
         }
         return data;
     }
-    // Calls close() on and discards the cursor identified by cursorId.
+    /** Calls close() on and discards the cursor identified by cursorId. */
     cursorClose(cursorId) {
         const cursor = this.cursors.get(cursorId);
         if (cursor) {
@@ -80635,7 +80669,9 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
             cursor.close();
         }
     }
-    // Returns the version at which the cursor identified by cursorId is reading.
+    /**
+     * Returns the version at which the cursor identified by cursorId is reading.
+     */
     cursorVersion(cursorId) {
         const cursor = this.cursors.get(cursorId);
         return cursor ? cursor.version : null;
@@ -83324,14 +83360,16 @@ class Type {
         }
         return true;
     }
-    // Tests whether two types' constraints are compatible with each other
+    /** Tests whether two types' constraints are compatible with each other. */
     static canMergeConstraints(type1, type2) {
         return Type._canMergeCanReadSubset(type1, type2) && Type._canMergeCanWriteSuperset(type1, type2);
     }
-    // Clone a type object.
-    // When cloning multiple types, variables that were associated with the same name
-    // before cloning should still be associated after cloning. To maintain this 
-    // property, create a Map() and pass it into all clone calls in the group.
+    /**
+     * Clone a type object.
+     * When cloning multiple types, variables that were associated with the same name
+     * before cloning should still be associated after cloning. To maintain this
+     * property, create a Map() and pass it into all clone calls in the group.
+     */
     clone(variableMap) {
         const type = this.resolvedType();
         if (type.isVariable) {
@@ -83349,10 +83387,12 @@ class Type {
         }
         return Type.fromLiteral(type.toLiteral());
     }
-    // Clone a type object, maintaining resolution information.
-    // This function SHOULD NOT BE USED at the type level. In order for type variable
-    // information to be maintained correctly, an entire context root needs to be
-    // cloned.
+    /**
+     * Clone a type object, maintaining resolution information.
+     * This function SHOULD NOT BE USED at the type level. In order for type variable
+     * information to be maintained correctly, an entire context root needs to be
+     * cloned.
+     */
     _cloneWithResolutions(variableMap) {
         if (this.isVariable) {
             if (variableMap.has(this.variable)) {
@@ -83541,7 +83581,9 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-// Returns the set delta between two lists based on direct object comparison.
+/**
+ * Returns the set delta between two lists based on direct object comparison.
+ */
 function setDiff(from, to) {
     const result = { add: [], remove: [] };
     const items = new Set([...from, ...to]);
@@ -83560,8 +83602,10 @@ function setDiff(from, to) {
     }
     return result;
 }
-// Returns the set delta between two lists based on custom object comparison.
-// `keyFn` takes type T and returns the value by which items should be compared.
+/**
+ * Returns the set delta between two lists based on custom object comparison.
+ * `keyFn` takes type T and returns the value by which items should be compared.
+ */
 function setDiffCustom(from, to, keyFn) {
     const result = { add: [], remove: [] };
     const items = new Map();
