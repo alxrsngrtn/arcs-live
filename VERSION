@@ -1,8 +1,16 @@
-commit 5f8006f2c721bfe566d32920c7e9951930c5b09e
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Oct 16 14:25:56 2018 -0700
+commit 9b012bba1edbab54819ffa82f57f9bd057a4b56f
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Tue Oct 16 16:10:02 2018 -0700
 
-    Improve Developer Documentation (#2100)
+    Update WebCrypto storage (#2107)
     
-    - Switch documentation to jsdoc style
-    - add a typedoc step to the Travis build so docs are available on the web.
+    * Update WebCrypto storage
+    
+    * use KeyPath in IndexDB instead of auto-incrementing keys
+    * Make keyFingerPrint the key
+    * Improve fingerprint function
+    * Fix bug where instanceof was being used on CryptoKeyPair
+    
+    * Remove stale comment, add comment to fingerprint
+    
+    * Add comment

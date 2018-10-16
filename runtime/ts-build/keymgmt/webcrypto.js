@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import idb from 'idb';
-import { encode } from './base64';
+import { decode, encode } from './base64';
 import rs from 'jsrsasign';
 const DEVICE_KEY_ALGORITHM = 'RSA-OAEP';
 const X509_CERTIFICATE_ALGORITHM = "RSA-OAEP";
@@ -91,9 +91,34 @@ class WebCryptoPublicKey extends WebCryptoStorableKey {
     cryptoKey() {
         return this.storableKey();
     }
+    static digest(str) {
+        return WebCryptoPublicKey.sha256(str);
+    }
+    static hex(buffer) {
+        const hexCodes = [];
+        const view = new DataView(buffer);
+        for (let i = 0; i < view.byteLength; i += 4) {
+            // Using getUint32 reduces the number of iterations needed (we process 4 bytes each time)
+            const value = view.getUint32(i);
+            // toString(16) will give the hex representation of the number without padding
+            const stringValue = value.toString(16);
+            // We use concatenation and slice for padding
+            const padding = '00000000';
+            const paddedValue = (padding + stringValue).slice(-padding.length);
+            hexCodes.push(paddedValue);
+        }
+        // Join all the hex strings into one
+        return hexCodes.join("");
+    }
+    static sha256(str) {
+        // We transform the string into an arraybuffer.
+        const buffer = new Uint8Array(str.split('').map(x => x.charCodeAt(0)));
+        return crypto.subtle.digest("SHA-256", buffer).then((hash) => WebCryptoPublicKey.hex(hash));
+    }
     fingerprint() {
-        // TODO: fix this with a proper hash based fingerprint/thumbprint, right now is just serializes to JWK.
-        return crypto.subtle.exportKey("jwk", this.cryptoKey()).then(key => JSON.stringify(key));
+        return crypto.subtle.exportKey("jwk", this.cryptoKey())
+            // Use the modulus 'n' as the fingerprint since 'e' is fixed
+            .then(key => WebCryptoPublicKey.digest(key['n']));
     }
 }
 class WebCryptoSessionKey {
@@ -202,6 +227,10 @@ export class WebCryptoKeyGenerator {
             hash: { name: X509_CERTIFICATE_HASH_ALGORITHM }
         }, true, ["encrypt", "wrapKey"]).then(ikey => new WebCryptoPublicKey(ikey));
     }
+    importWrappedKey(wrappedKey, wrappedBy) {
+        const decodedKey = decode(wrappedKey);
+        return Promise.resolve(new WebCryptoWrappedKey(decodedKey, wrappedBy));
+    }
 }
 /**
  * The Web Crypto spec states that IndexDB may be used to store CryptoKey objects without ever exposing
@@ -210,7 +239,7 @@ export class WebCryptoKeyGenerator {
 export class WebCryptoKeyIndexedDBStorage {
     async runOnStore(fn) {
         try {
-            const db = await idb.open(ARCS_CRYPTO_INDEXDB_NAME, 1, upgradeDB => upgradeDB.createObjectStore(ARCS_CRYPTO_STORE_NAME, { autoIncrement: true }));
+            const db = await idb.open(ARCS_CRYPTO_INDEXDB_NAME, 1, upgradeDB => upgradeDB.createObjectStore(ARCS_CRYPTO_STORE_NAME, { keyPath: "keyFingerPrint" }));
             const tx = db.transaction(ARCS_CRYPTO_STORE_NAME, 'readwrite');
             const store = tx.objectStore(ARCS_CRYPTO_STORE_NAME);
             const result = await fn(store);
@@ -226,7 +255,11 @@ export class WebCryptoKeyIndexedDBStorage {
         const result = await this.runOnStore(store => {
             return store.get(keyId);
         });
-        if (result.key instanceof CryptoKeyPair) {
+        if (!result) {
+            return Promise.resolve(null);
+        }
+        // CryptoKeyPair in WebIDL is an interface, not a ctor so use structural check
+        if (result.key && result.key['privateKey'] && result.key['publicKey']) {
             return Promise.resolve(new WebCryptoDeviceKey(result.key));
         }
         else if (result.key instanceof CryptoKey) {
