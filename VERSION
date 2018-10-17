@@ -1,5 +1,5 @@
-commit 0b6a69e1b7d5e1bad47dad641b56f9567bdadaaf
-Author: shans <shane.stephens@gmail.com>
-Date:   Wed Oct 17 16:03:58 2018 +1100
+commit 08b1ff5342e3beaa86d18190388316c9c7c47d58
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Oct 17 12:04:50 2018 -0700
 
-    Convert loader & browser-loader to typeScript (#2110)
+    allow travis to deploy from dist directories, use sed command to delete lines (#2112)

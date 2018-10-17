@@ -1,0 +1,798 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>arcs</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">arcs</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> arcs</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<p><a href="https://travis-ci.org/PolymerLabs/arcs"><img src="https://travis-ci.org/PolymerLabs/arcs.svg?branch=master" alt="Build Status"></a>
+				<a href="https://ci.appveyor.com/project/arcs/arcs-3i77k/branch/master"><img src="https://ci.appveyor.com/api/projects/status/rswlpkq2vtp9cns0/branch/master?svg=true" alt="AppVeyor Build status"></a></p>
+				<h1 id="arcs">arcs</h1>
+				<p>Particle developers should visit our <a href="https://polymerlabs.github.io/arcs-live/shell/docs/">particle developer
+					website</a>. This document is
+				targeted at Arcs core system developers.</p>
+				<p>A hosted version of Arcs is available in both tagged and bleeding edge forms.
+				Neither is stable -- the runtime, database and front-end are all iterating rapidly.</p>
+				<p>Tagged release URLs have the form
+					<code>https://cdn.rawgit.com/PolymerLabs/arcs-live/&lt;release_number&gt;/shell/apps/web/index.html</code>
+					(the list of releases is
+					<a href="https://github.com/PolymerLabs/arcs-live/releases">here</a>). A recent version
+					(latest as of this writing) is
+				<a href="https://cdn.rawgit.com/PolymerLabs/arcs-live/v0.4.1/shell/apps/web/index.html">v0.4.1</a>.</p>
+				<p>Bleeding edge often works and is available via github pages:
+				<a href="https://polymerlabs.github.io/arcs-live/shell/apps/web/">https://polymerlabs.github.io/arcs-live/shell/apps/web/</a>.</p>
+				<h2 id="install">Install</h2>
+				<p>Arcs is developed with a recent version of Node (v9.4.0 at the time of this
+					writing), in particular as we use new ES6 features. You can check our <a href="https://github.com/PolymerLabs/arcs/blob/master/.travis.yml">Travis
+					config</a> to see what
+					version is used for automated build status. More recent versions should work,
+					but if for example you see test errors on a version that&#39;s a full release later
+					(ex. v10+) you may want to try rolling back to an earlier version. We welcome
+					patches that will allow more recent versions to operate, ideally without
+				requiring an upgrade to our current version.</p>
+				<h3 id="installing-from-scratch">Installing from scratch</h3>
+				<p>1) Install nvm.</p>
+				<p>   As per the <a href="https://github.com/creationix/nvm/blob/master/README.md#installation">installation instructions</a>,
+					download and run the installation script directly in your terminal (yes, you
+				read that correctly):</p>
+				<pre><code>   $ curl -o- https:<span class="hljs-regexp">//</span>raw.githubusercontent.com<span class="hljs-regexp">/creationix/</span>nvm<span class="hljs-regexp">/v0.33.11/i</span>nstall.sh | bash</code></pre><p>   If you&#39;re using zsh you may need to <code>source ~/.nvm/nvm.sh</code> after this.</p>
+				<p>1) Install node.</p>
+				<pre><code><span class="hljs-meta">   $</span><span class="bash"> nvm install 9.4</span></code></pre><p>1) If you need to update npm to a later version (our build checks for the
+				minimum required version):</p>
+				<pre><code>   $ npm <span class="hljs-keyword">install</span> -g npm   # can <span class="hljs-keyword">use</span> npm@<span class="hljs-number">6.3</span><span class="hljs-number">.0</span> <span class="hljs-keyword">to</span> <span class="hljs-keyword">install</span> a specific <span class="hljs-keyword">version</span></code></pre><h3 id="installing-within-the-arcs-project-">Installing within the Arcs project:</h3>
+				<pre><code><span class="hljs-meta">$</span><span class="bash"> npm install</span>
+<span class="hljs-meta">$</span><span class="bash"> ./tools/sigh</span></code></pre><p><code>npm install</code> is required on a fresh checkout. After that it only needs to be
+					re-run infrequently as new dependencies are included, and usually a build
+				failure will be the signal for that.</p>
+				<h3 id="windows-installation-notes">Windows Installation Notes</h3>
+				<ul>
+					<li><a href="https://git-scm.com/downloads">Git for Windows</a> is one of many Git options.</li>
+					<li>Consider using <a href="https://github.com/coreybutler/nvm-windows/">nvm-windows</a>
+					to allow more easily switching between Node versions.</li>
+					<li>As part of <code>npm install</code> you&#39;ll need to build <code>fibers</code> which uses <code>node-gyp</code>
+						which in turn requires <code>windows-build-tools</code>. Follow the <a href="https://github.com/nodejs/node-gyp#option-1">node-gyp Windows
+						build instructions</a>. If option
+						1 hangs or otherwise hits issues, you can try <a href="https://github.com/nodejs/node-gyp#option-2">option 2</a>. Note the
+						<a href="https://www.microsoft.com/en-us/download/details.aspx?id=48159">Microsoft Build Tools 2015</a> can be
+						downloaded separately from Visual Studio (and the links in the <code>node-gyp</code>
+						documentation are stale), but you&#39;ll still need to do the
+						<code>npm config set msvs_version 2015</code> bit, and similar for Python if you
+					install that manually per <code>node-gyp</code> option 2 instructions.</li>
+				</ul>
+				<h2 id="starting-arcs">Starting Arcs</h2>
+				<p>After the full build (<code>npm install &amp;&amp; tools/sigh</code>) run: (note that <code>npm
+start</code> will block, so you&#39;ll have to run the second command in a new shell):</p>
+				<pre><code><span class="hljs-meta">$</span><span class="bash"> npm start</span></code></pre><p>Then open <code>http://localhost:8080/shell/apps/web/index.html</code> in a web browser
+				(or, on MacOS, use <code>open &#39;http://localhost:8080/shell/apps/web/index.html&#39;</code>).</p>
+				<h2 id="subprojects">Subprojects</h2>
+				<p>Subcomponents have more detailed descriptions. Particularly the extensions
+				also have individual installation steps.</p>
+				<h3 id="shell">Shell</h3>
+				<p>For more information on the shell, see <a href="shell/README.md">shell</a>.</p>
+				<h3 id="chrome-extension">Chrome Extension</h3>
+				<p>See <a href="extension/README.md">extension</a>.</p>
+				<h3 id="chrome-developer-tools-extension">Chrome Developer Tools Extension</h3>
+				<p>See <a href="devtools/README.md">devtools</a>.</p>
+				<h3 id="enclaves">Enclaves</h3>
+				<p>See <a href="enclave/README.md">enclave</a>.</p>
+				<h2 id="testing">Testing</h2>
+				<p>The simplest way to run tests is to let the targets do all the work. These
+					commands will install all packages, run a build, start a background server,
+				run all the tests, and kill the background server:</p>
+				<pre><code><span class="hljs-meta">$</span><span class="bash"> npm install</span>
+<span class="hljs-meta">$</span><span class="bash"> npm run <span class="hljs-built_in">test</span>-with-start</span></code></pre><p>There are additional targets provided to run subsets of those commands.</p>
+				<ul>
+					<li><code>npm start</code>: spins up a server (and blocks), serving in port 8080.</li>
+					<li><code>tools/sigh</code>: run a subset of tests and build packed artifacts.</li>
+					<li><code>npm test</code>: run all tests (using currently built artifacts) against an
+					already-running server (assumed to be port 8080).</li>
+					<li><code>npm run test-no-web</code>: run all non-web tests.</li>
+				</ul>
+				<p>To run a specific Selenium test using Mocha&#39;s &#39;grep&#39; capability:</p>
+				<ul>
+					<li>In one terminal: <code>npm start</code></li>
+					<li>In another: <code>npm run test-wdio -- --mochaOpts.grep &#39;regex&#39;</code></li>
+				</ul>
+				<h3 id="debugging-tests">Debugging tests</h3>
+				<p>If you see errors like</p>
+				<pre><code><span class="hljs-symbol">ERROR:</span> connect ECONNREFUSED <span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">9515</span>
+chrome
+    at new RuntimeError (...\node_modules\webdriverio\build\<span class="hljs-class"><span class="hljs-keyword">lib</span>\<span class="hljs-title">utils</span>\<span class="hljs-title">ErrorHandler</span>.<span class="hljs-title">js</span>:144:12)</span>
+    at Request._callback (...\node_modules\webdriverio\build\<span class="hljs-class"><span class="hljs-keyword">lib</span>\<span class="hljs-title">utils</span>\<span class="hljs-title">RequestHandler</span>.<span class="hljs-title">js</span>:327:43)</span></code></pre><p>It may indicate that chromedriver hasn&#39;t been installed completely. Run the install script:</p>
+				<pre><code><span class="hljs-keyword">node</span> <span class="hljs-title">node_modules</span>\chromedriver\install.js</code></pre><h3 id="debugging-selenium-failures">Debugging Selenium Failures</h3>
+				<p>Selenium failures are often easy to cause due to seemingly unrelated changes,
+				and difficult to diagnose.</p>
+				<p>There are 2 main avenues to debug them in this system. The first is to have
+					the browser run in a graphical manner (as opposed to the default headless
+				configuration). The second is to actually debug the running selenium instance.</p>
+				<p>There are some debugging hints (code and configuration you can uncomment to
+					make debugging easier) in <code>test/specs/starter-test.js</code> and <code>test/wdio.conf.js</code>
+				marked with the phrase <code>debug hint</code>.</p>
+				<p>To activate a sane set of helpful debugging flags, there&#39;s a <code>wdio-debug</code>
+					command line argument that you can pass in. This will run Chrome in a
+				non-headless fashion, and will increase timeouts.</p>
+				<p>Through npm: <code>npm run test-wdio --wdio-debug=true</code> (or <code>npm test
+--wdio-debug=true</code>).  Directly through wdio: <code>node_modules/.bin/wdio
+--wdio-debug=true shell/test/wdio.conf.js</code>.</p>
+				<p>Webdriver takes screenshots of failures, which are saved to the
+					<code>./shell/test/errorShots/</code> directory. When running on Travis, the screenshots
+				are uploaded to the <code>Arcs Webdriver Screenshots</code> team drive.</p>
+				<h4 id="graphical-non-headless-">Graphical (non-headless)</h4>
+				<p>It may be easiest to see the problem in a browser window to diagnose it. Edit
+					<code>wdio.conf.js</code> in the branch with failures, comment out the <code>&#39;--headless&#39;</code>
+					option and increase the mocha timeout. In combination, these two changes will
+					allow you to see what&#39;s happening on the screen, and will give you enough time
+				to debug the situation.</p>
+				<pre><code>arcs/shell&gt; vi test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
+arcs/shell&gt; git diff test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
+diff --git a/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span> b/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
+index <span class="hljs-number">0</span>e36452..<span class="hljs-number">8</span>ecf3d6 <span class="hljs-number">100644</span>
+--- a/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
++++ b/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
+@@ -<span class="hljs-number">50</span>,<span class="hljs-number">7</span> +<span class="hljs-number">50</span>,<span class="hljs-number">7</span> @@ exports<span class="hljs-selector-class">.config</span> = {
+       chromeOptions: {
+         args: [
+           <span class="hljs-comment">// arcs note: comment this out to see the system running</span>
+-          <span class="hljs-string">'--headless'</span>
++          <span class="hljs-comment">// '--headless'</span>
+         ]
+       }
+     }
+@@ -<span class="hljs-number">139</span>,<span class="hljs-number">7</span> +<span class="hljs-number">139</span>,<span class="hljs-number">7</span> @@ exports<span class="hljs-selector-class">.config</span> = {
+   mochaOpts: {
+     ui: <span class="hljs-string">'bdd'</span>,
+     <span class="hljs-comment">// arcs note: increase this timeout for debugging</span>
+-    timeout: <span class="hljs-number">20003</span>
++    timeout: <span class="hljs-number">2000003</span>
+   }
+   <span class="hljs-comment">//</span>
+   <span class="hljs-comment">// =====</span></code></pre><p>Then, in your test, you can add a breakpoint (via <code>browser.debug();</code>) to pause
+					execution so you can debug in the browser. It may be worthwhile to add several
+					<code>browser.debug()</code> invocations through your flow to trace execution (<code>.exit</code>
+				will exit the debugger and continue execution of the test).</p>
+				<p>At that point you can open up DevTools in the browser to debug the current
+					state, or inspect it visually. Some utilities (those in <code>selenium-utils.js</code>,
+				including <code>pierceShadows</code>) have already been loaded.</p>
+				<p>There are also some commands available natively at that point, including
+					<code>.help</code> and the <code>browser</code> variable (including methods such as
+				<code>browser.execute()</code>).</p>
+				<h4 id="attaching-a-debugger">Attaching a Debugger</h4>
+				<p>To attach a debugger, uncomment the <code>execArgv</code> <code>--inspect</code> configuration option.
+					It&#39;s likely that you&#39;ll still want to have increased the <code>mochaTimeout</code> and to
+				be running graphically, so those are in the example as well:</p>
+				<pre><code>arcs/shell&gt; git diff test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
+diff --git a/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span> b/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
+index <span class="hljs-number">0</span>e36452..<span class="hljs-number">4240</span>c0a <span class="hljs-number">100644</span>
+--- a/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
++++ b/test/wdio<span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.js</span>
+@@ -<span class="hljs-number">50</span>,<span class="hljs-number">11</span> +<span class="hljs-number">50</span>,<span class="hljs-number">12</span> @@ exports<span class="hljs-selector-class">.config</span> = {
+       chromeOptions: {
+         args: [
+           <span class="hljs-comment">// arcs note: comment this out to see the system running</span>
+-          <span class="hljs-string">'--headless'</span>
++          <span class="hljs-comment">// '--headless'</span>
+         ]
+       }
+     }
+   ],
++  execArgv: [<span class="hljs-string">'--inspect'</span>],
+   <span class="hljs-comment">//</span>
+   <span class="hljs-comment">// ===================</span>
+   <span class="hljs-comment">// Test Configurations</span>
+@@ -<span class="hljs-number">139</span>,<span class="hljs-number">7</span> +<span class="hljs-number">140</span>,<span class="hljs-number">7</span> @@ exports<span class="hljs-selector-class">.config</span> = {
+   mochaOpts: {
+     ui: <span class="hljs-string">'bdd'</span>,
+     <span class="hljs-comment">// arcs note: increase this timeout for debugging</span>
+-    timeout: <span class="hljs-number">20003</span>
++    timeout: <span class="hljs-number">2000003</span>
+   }
+   <span class="hljs-comment">//</span>
+   <span class="hljs-comment">// =====</span></code></pre><p>When starting, you should see log item like <code>debugger listening on
+ws://127.0.0.1:9229/..</code> as normally appears for <a href="https://nodejs.org/api/debugger.html">node
+					debugging</a>. Passing the <code>--inspect</code>
+					argument will also enable the <a href="https://nodejs.org/api/debugger.html">V8 Inspector
+					Integration</a> which may be easier to use
+				(to activate this, look for a node icon in a Chrome DevTools process).</p>
+				<p>Adding <code>debugger;</code> statements may be the easiest way to activate the debugger.
+					Using <code>browser.debug();</code> statements to pause execution to give you time to
+				attach a debugger may be helpful as well.</p>
+				<h2 id="releasing">Releasing</h2>
+				<p>Our release process is pretty minimal, but requires a few steps across the
+					<a href="https://github.com/PolymerLabs/arcs">arcs</a> and
+				<a href="https://github.com/PolymerLabs/arcs-live">arcs-live</a> repositories.</p>
+				<p>Our standard is to have the stable versions start with clean (empty)
+				databases, but to continue a single mainline/unstable database.</p>
+				<p>1) Decide what your new mainline and stable versions will be. For an example
+					here, I&#39;ll use <code>0.3.5-alpha</code> as the old mainline, <code>0.3.6-alpha</code> as the new
+				mainline, and <code>0.3.5</code> as the new stable version.</p>
+				<p>1) In order to keep the mainline data roughly consistent, clone the data at
+					the current firebase key to the new mainline release number. To do this, I
+					used the firebase web interface to &quot;Export JSON&quot; for the current tree, and
+				&quot;Import JSON&quot; to the new tree.</p>
+				<p>  For example, clone from <code>&lt;snip&gt;/database/arcs-storage/data/0_3_5-alpha</code> to
+				<code>&lt;snip&gt;/database/arcs-storage/data/0_3_6-alpha</code>.</p>
+				<p>  If the web interface is read-only due to too many nodes, you can visit the
+				new version&#39;s URL directly to Import JSON.</p>
+				<p>1) Update the version in <code>shell/apps/common/firebase-config.js</code> to a
+					reasonable stable version (in our example, <code>0.3.5</code>). See
+					<a href="https://github.com/PolymerLabs/arcs/pull/1114">#1114</a> for an example.
+				Update the links README.md (this file) to reflect this new version.</p>
+				<p>1) Once the deploy is done to
+					<a href="https://github.com/PolymerLabs/arcs-live">arcs-live</a>, create a new
+					<a href="https://github.com/PolymerLabs/arcs-live/releases">release</a>. Note that we
+					remap the versions slightly between the two systems for legibility in
+					different systems - a version of <code>0_3_5</code> (in <code>firebase-config.js</code>) becomes
+				<code>v0.3.5</code> (in the arcs-live repo).</p>
+				<p>1) Update the version in <code>shell/apps/common/firebase-config.js</code> to the
+					new mainline development version (perhaps using the <code>-alpha</code> suffix; in our
+					example, <code>0.3.6-alpha</code>).  See
+				<a href="https://github.com/PolymerLabs/arcs/pull/1155">#1155</a> for an example.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-enum tsd-is-not-exported">
+						<a href="enums/category.html" class="tsd-kind-icon">Category</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-is-not-exported">
+						<a href="enums/cursorstate.html" class="tsd-kind-icon">Cursor<wbr>State</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-is-not-exported">
+						<a href="enums/eventkind.html" class="tsd-kind-icon">Event<wbr>Kind</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-is-not-exported">
+						<a href="enums/referencemode.html" class="tsd-kind-icon">Reference<wbr>Mode</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-is-not-exported">
+						<a href="enums/scope.html" class="tsd-kind-icon">Scope</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/affordance.html" class="tsd-kind-icon">Affordance</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/arc.html" class="tsd-kind-icon">Arc</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/bigcollection.html" class="tsd-kind-icon">Big<wbr>Collection</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/browserloader.html" class="tsd-kind-icon">Browser<wbr>Loader</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/collection.html" class="tsd-kind-icon">Collection</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/crdtcollectionmodel.html" class="tsd-kind-icon">Crdt<wbr>Collection<wbr>Model</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/cursor.html" class="tsd-kind-icon">Cursor</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/firebasebigcollection.html" class="tsd-kind-icon">Firebase<wbr>Big<wbr>Collection</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/firebasecollection.html" class="tsd-kind-icon">Firebase<wbr>Collection</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/firebasecursor.html" class="tsd-kind-icon">Firebase<wbr>Cursor</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/firebasekey.html" class="tsd-kind-icon">Firebase<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/firebasestorage.html" class="tsd-kind-icon">Firebase<wbr>Storage</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/firebasestorageprovider.html" class="tsd-kind-icon">Firebase<wbr>Storage<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/firebasevariable.html" class="tsd-kind-icon">Firebase<wbr>Variable</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/handle.html" class="tsd-kind-icon">Handle</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/hostedslotconsumer.html" class="tsd-kind-icon">Hosted<wbr>Slot<wbr>Consumer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/hostedslotcontext.html" class="tsd-kind-icon">Hosted<wbr>Slot<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/id.html" class="tsd-kind-icon">Id</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/jsonldtomanifest.html" class="tsd-kind-icon">Jsonld<wbr>ToManifest</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/keybase.html" class="tsd-kind-icon">Key<wbr>Base</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/keymanager.html" class="tsd-kind-icon">Key<wbr>Manager</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/loader.html" class="tsd-kind-icon">Loader</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/manifestmeta.html" class="tsd-kind-icon">Manifest<wbr>Meta</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/mathrandomrng.html" class="tsd-kind-icon">Math<wbr>RandomRNG</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/messagechannel.html" class="tsd-kind-icon">Message<wbr>Channel</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/messageevent.html" class="tsd-kind-icon">Message<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/messageport.html" class="tsd-kind-icon">Message<wbr>Port</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/pouchdbbigcollection.html" class="tsd-kind-icon">Pouch<wbr>DbBig<wbr>Collection</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/pouchdbcollection.html" class="tsd-kind-icon">Pouch<wbr>DbCollection</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/pouchdbkey.html" class="tsd-kind-icon">Pouch<wbr>DbKey</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/pouchdbstorage.html" class="tsd-kind-icon">Pouch<wbr>DbStorage</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/pouchdbstorageprovider.html" class="tsd-kind-icon">Pouch<wbr>DbStorage<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/pouchdbvariable.html" class="tsd-kind-icon">Pouch<wbr>DbVariable</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/rng.html" class="tsd-kind-icon">RNG</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/random.html" class="tsd-kind-icon">Random</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/reference.html" class="tsd-kind-icon">Reference</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/relation.html" class="tsd-kind-icon">Relation</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/relevance.html" class="tsd-kind-icon">Relevance</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/runtime.html" class="tsd-kind-icon">Runtime</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/schema.html" class="tsd-kind-icon">Schema</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/seededrng.html" class="tsd-kind-icon">SeededRNG</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/shape.html" class="tsd-kind-icon">Shape</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/slotconsumer.html" class="tsd-kind-icon">Slot<wbr>Consumer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/slotcontext.html" class="tsd-kind-icon">Slot<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/slotdomconsumer.html" class="tsd-kind-icon">Slot<wbr>Dom<wbr>Consumer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/slotinfo.html" class="tsd-kind-icon">Slot<wbr>Info</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/speculator.html" class="tsd-kind-icon">Speculator</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/storagebase.html" class="tsd-kind-icon">Storage<wbr>Base</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/storageproviderbase.html" class="tsd-kind-icon">Storage<wbr>Provider<wbr>Base</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/storageproviderfactory.html" class="tsd-kind-icon">Storage<wbr>Provider<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/syntheticcollection.html" class="tsd-kind-icon">Synthetic<wbr>Collection</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/synthetickey.html" class="tsd-kind-icon">Synthetic<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/syntheticstorage.html" class="tsd-kind-icon">Synthetic<wbr>Storage</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/tuplefields.html" class="tsd-kind-icon">Tuple<wbr>Fields</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/type.html" class="tsd-kind-icon">Type</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/typevariable.html" class="tsd-kind-icon">Type<wbr>Variable</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/variable.html" class="tsd-kind-icon">Variable</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/volatilebigcollection.html" class="tsd-kind-icon">Volatile<wbr>Big<wbr>Collection</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/volatilecollection.html" class="tsd-kind-icon">Volatile<wbr>Collection</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/volatilecursor.html" class="tsd-kind-icon">Volatile<wbr>Cursor</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/volatilekey.html" class="tsd-kind-icon">Volatile<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/volatilestorage.html" class="tsd-kind-icon">Volatile<wbr>Storage</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/volatilestorageprovider.html" class="tsd-kind-icon">Volatile<wbr>Storage<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/volatilevariable.html" class="tsd-kind-icon">Volatile<wbr>Variable</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/webcryptodevicekey.html" class="tsd-kind-icon">Web<wbr>Crypto<wbr>Device<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webcryptokeygenerator.html" class="tsd-kind-icon">Web<wbr>Crypto<wbr>Key<wbr>Generator</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webcryptokeyindexeddbstorage.html" class="tsd-kind-icon">Web<wbr>Crypto<wbr>Key<wbr>IndexedDBStorage</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/webcryptomemorykeystorage.html" class="tsd-kind-icon">Web<wbr>Crypto<wbr>Memory<wbr>Key<wbr>Storage</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/webcryptoprivatekey.html" class="tsd-kind-icon">Web<wbr>Crypto<wbr>Private<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/webcryptopublickey.html" class="tsd-kind-icon">Web<wbr>Crypto<wbr>Public<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/webcryptosessionkey.html" class="tsd-kind-icon">Web<wbr>Crypto<wbr>Session<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter tsd-is-not-exported">
+						<a href="classes/webcryptostorablekey.html" class="tsd-kind-icon">Web<wbr>Crypto<wbr>Storable<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="classes/webcryptowrappedkey.html" class="tsd-kind-icon">Web<wbr>Crypto<wbr>Wrapped<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/class.html" class="tsd-kind-icon">Class</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/crdtcollectionmodelmutator.html" class="tsd-kind-icon">Crdt<wbr>Collection<wbr>Model<wbr>Mutator</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/devicekey.html" class="tsd-kind-icon">Device<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/fingerprintable.html" class="tsd-kind-icon">Fingerprintable</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/key.html" class="tsd-kind-icon">Key</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/keygenerator.html" class="tsd-kind-icon">Key<wbr>Generator</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/keyrecord.html" class="tsd-kind-icon">Key<wbr>Record</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/keystorage.html" class="tsd-kind-icon">Key<wbr>Storage</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/model.html" class="tsd-kind-icon">Model</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/privatekey.html" class="tsd-kind-icon">Private<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/publickey.html" class="tsd-kind-icon">Public<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/recoverykey.html" class="tsd-kind-icon">Recovery<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/sessionkey.html" class="tsd-kind-icon">Session<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/slot.html" class="tsd-kind-icon">Slot</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/testablekey.html" class="tsd-kind-icon">Testable<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/valuestorage.html" class="tsd-kind-icon">Value<wbr>Storage</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/valuestoragemutator.html" class="tsd-kind-icon">Value<wbr>Storage<wbr>Mutator</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/variablestorage.html" class="tsd-kind-icon">Variable<wbr>Storage</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/wrappedkey.html" class="tsd-kind-icon">Wrapped<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#arcoptions" class="tsd-kind-icon">Arc<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#callback" class="tsd-kind-icon">Callback</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#plancallback" class="tsd-kind-icon">Plan<wbr>Callback</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#serializecontext" class="tsd-kind-icon">Serialize<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#arcs_crypto_indexdb_name" class="tsd-kind-icon">ARCS_<wbr>CRYPTO_<wbr>INDEXDB_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#arcs_crypto_store_name" class="tsd-kind-icon">ARCS_<wbr>CRYPTO_<wbr>STORE_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#device_key_algorithm" class="tsd-kind-icon">DEVICE_<wbr>KEY_<wbr>ALGORITHM</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#device_key_hash_algorithm" class="tsd-kind-icon">DEVICE_<wbr>KEY_<wbr>HASH_<wbr>ALGORITHM</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#storage_key_algorithm" class="tsd-kind-icon">STORAGE_<wbr>KEY_<wbr>ALGORITHM</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#x509_certificate_algorithm" class="tsd-kind-icon">X509_<wbr>CERTIFICATE_<wbr>ALGORITHM</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#x509_certificate_hash_algorithm" class="tsd-kind-icon">X509_<wbr>CERTIFICATE_<wbr>HASH_<wbr>ALGORITHM</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#__storagecache" class="tsd-kind-icon">__storage<wbr>Cache</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#_affordances" class="tsd-kind-icon">_affordances</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#_nextappnamesuffix" class="tsd-kind-icon">_next<wbr>App<wbr>Name<wbr>Suffix</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#alphabet" class="tsd-kind-icon">alphabet</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#global" class="tsd-kind-icon">global</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#handlefields" class="tsd-kind-icon">handle<wbr>Fields</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#random" class="tsd-kind-icon">random</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#slotfields" class="tsd-kind-icon">slot<wbr>Fields</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#supportedtypes" class="tsd-kind-icon">supported<wbr>Types</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#systemhandlers" class="tsd-kind-icon">system<wbr>Handlers</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#templatebyname" class="tsd-kind-icon">template<wbr>ByName</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#values" class="tsd-kind-icon">values</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#_fromliteral" class="tsd-kind-icon">_from<wbr>Literal</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#_toliteral" class="tsd-kind-icon">_to<wbr>Literal</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#addtype" class="tsd-kind-icon">add<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#clonedata" class="tsd-kind-icon">clone<wbr>Data</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#decode" class="tsd-kind-icon">decode</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#encode" class="tsd-kind-icon">encode</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#getsnapshot" class="tsd-kind-icon">get<wbr>Snapshot</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#handlefor" class="tsd-kind-icon">handle<wbr>For</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#html" class="tsd-kind-icon">html</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#importscripts" class="tsd-kind-icon">import<wbr>Scripts</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#isfirebasekey" class="tsd-kind-icon">is<wbr>Firebase<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#newclientreference" class="tsd-kind-icon">new<wbr>Client<wbr>Reference</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#registersystemexceptionhandler" class="tsd-kind-icon">register<wbr>System<wbr>Exception<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#removesystemexceptionhandler" class="tsd-kind-icon">remove<wbr>System<wbr>Exception<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#reportsystemexception" class="tsd-kind-icon">report<wbr>System<wbr>Exception</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#resetstoragefortesting" class="tsd-kind-icon">reset<wbr>Storage<wbr>For<wbr>Testing</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#resetvolatilestoragefortesting" class="tsd-kind-icon">reset<wbr>Volatile<wbr>Storage<wbr>For<wbr>Testing</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#restore" class="tsd-kind-icon">restore</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#schemalocationfor" class="tsd-kind-icon">schema<wbr>Location<wbr>For</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#setdiff" class="tsd-kind-icon">set<wbr>Diff</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#setdiffcustom" class="tsd-kind-icon">set<wbr>Diff<wbr>Custom</a>
+					</li>
+					<li class=" tsd-kind-object-literal">
+						<a href="globals.html#symbols" class="tsd-kind-icon">Symbols</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

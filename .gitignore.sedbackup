@@ -13,7 +13,6 @@
 runtime/browser-test/browser-test-ified.js
 manifest-railroad.html
 **/*.code-workspace
-
 shell_0_6_0/build
 shell/test/errorShots
 devtools/deps
@@ -22,7 +21,6 @@ enclave/sdk
 enclave/toolchains
 enclave/host/storage/db.img
 enclave/host/storage/key
-runtime/ts-build
 .vscode
 devtools/build
 server/log.txt
