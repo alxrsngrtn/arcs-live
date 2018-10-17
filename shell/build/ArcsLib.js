@@ -54468,707 +54468,6 @@ class PECInnerPort extends APIPort {
 
 /***/ }),
 
-/***/ "./runtime/arc.js":
-/*!************************!*\
-  !*** ./runtime/arc.js ***!
-  \************************/
-/*! exports provided: Arc */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Arc", function() { return Arc; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _particle_execution_host_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./particle-execution-host.js */ "./runtime/particle-execution-host.js");
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./recipe/handle.js */ "./runtime/recipe/handle.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./manifest.js */ "./runtime/manifest.js");
-/* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./description.js */ "./runtime/description.js");
-/* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./recipe/util.js */ "./runtime/recipe/util.js");
-/* harmony import */ var _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./fake-pec-factory.js */ "./runtime/fake-pec-factory.js");
-/* harmony import */ var _ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ts-build/storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
-/* harmony import */ var _ts_build_id_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./ts-build/id.js */ "./runtime/ts-build/id.js");
-/* harmony import */ var _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./debug/arc-debug-handler.js */ "./runtime/debug/arc-debug-handler.js");
-/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./recipe-index.js */ "./runtime/recipe-index.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class Arc {
-  constructor({id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, scheduler, recipeIndex}) {
-    // TODO: context should not be optional.
-    this._context = context || new _manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"]({id});
-    // TODO: pecFactory should not be optional. update all callers and fix here.
-    this._pecFactory = pecFactory || _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__["FakePecFactory"].bind(null);
-
-    // for now, every Arc gets its own session
-    this.sessionId = _ts_build_id_js__WEBPACK_IMPORTED_MODULE_11__["Id"].newSessionId();
-    this.id = this.sessionId.fromString(id);
-    this._speculative = !!speculative; // undefined => false
-    this._nextLocalID = 0;
-    this._activeRecipe = new _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__["Recipe"]();
-    // TODO: rename: this are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
-    this._recipes = [];
-    this._loader = loader;
-    this._dataChangeCallbacks = new Map();
-
-    // All the stores, mapped by store ID
-    this._storesById = new Map();
-
-    // storage keys for referenced handles
-    this._storageKeys = {};
-    this._storageKey = storageKey;
-
-    this.particleHandleMaps = new Map();
-    let pecId = this.generateID();
-    let innerPecPort = this._pecFactory(pecId);
-    this.pec = new _particle_execution_host_js__WEBPACK_IMPORTED_MODULE_2__["ParticleExecutionHost"](innerPecPort, slotComposer, this, `${pecId}:outer`);
-    if (slotComposer) {
-      slotComposer.arc = this;
-    }
-    this._storageProviderFactory = storageProviderFactory || new _ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__["StorageProviderFactory"](this.id);
-
-    // Map from each store to a set of tags.
-    this._storeTags = new Map();
-    // Map from each store to its description (originating in the manifest).
-    this._storeDescriptions = new Map();
-
-    this._description = new _description_js__WEBPACK_IMPORTED_MODULE_6__["Description"](this);
-
-    this._instantiatePlanCallbacks = [];
-    this._recipeIndex = recipeIndex || new _recipe_index_js__WEBPACK_IMPORTED_MODULE_13__["RecipeIndex"](this._context, loader, slotComposer && slotComposer.affordance);
-
-    _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_10__["DevtoolsConnection"].onceConnected.then(
-        devtoolsChannel => new _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_12__["ArcDebugHandler"](this, devtoolsChannel));
-  }
-  get loader() {
-    return this._loader;
-  }
-
-  get description() {
-    return this._description;
-  }
-
-  get recipeIndex() {
-    return this._recipeIndex;
-  }
-
-  registerInstantiatePlanCallback(callback) {
-    this._instantiatePlanCallbacks.push(callback);
-  }
-
-  unregisterInstantiatePlanCallback(callback) {
-    let index = this._instantiatePlanCallbacks.indexOf(callback);
-    if (index >= 0) {
-      this._instantiatePlanCallbacks.splice(index, 1);
-      return true;
-    }
-    return false;
-  }
-
-  dispose() {
-    this._instantiatePlanCallbacks = [];
-    // TODO: disconnect all assocated store event handlers
-    this.pec.close();
-    this.pec.slotComposer && this.pec.slotComposer.dispose();
-  }
-
-  // Returns a promise that spins sending a single `AwaitIdle` message until it
-  // sees no other messages were sent.
-  async _waitForIdle() {
-    let messageCount;
-    do {
-      messageCount = this.pec.messageCount;
-      await this.pec.idle;
-      // We expect two messages here, one requesting the idle status, and one answering it.
-    } while (this.pec.messageCount !== messageCount + 2);
-  }
-
-  get idle() {
-    if (!this._waitForIdlePromise) {
-      // Store one active completion promise for use by any subsequent callers.
-      // We explicitly want to avoid, for example, multiple simultaneous
-      // attempts to identify idle state each sending their own `AwaitIdle`
-      // message and expecting settlement that will never arrive.
-      this._waitForIdlePromise =
-          this._waitForIdle().then(() => this._waitForIdlePromise = null);
-    }
-    return this._waitForIdlePromise;
-  }
-
-  get isSpeculative() {
-    return this._speculative;
-  }
-
-  async _serializeHandle(handle, context, id) {
-    let type = handle.type.getContainedType() || handle.type;
-    if (type.isInterface) {
-      context.interfaces += type.interfaceShape.toString() + '\n';
-    }
-    let key = this._storageProviderFactory.parseStringAsKey(handle.storageKey);
-    let tags = this._storeTags.get(handle) || [];
-    let handleTags = [...tags].map(a => `#${a}`).join(' ');
-
-    const actualHandle = this.activeRecipe.findHandle(handle.id);
-    const originalId = actualHandle ? actualHandle.originalId : null;
-    let combinedId = `'${handle.id}'`;
-    if (originalId) {
-      combinedId += `!!'${originalId}'`;
-    }
-
-    switch (key.protocol) {
-      case 'firebase':
-      case 'pouchdb':
-        context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version === null ? 0 : handle.version} ${handleTags} at '${handle.storageKey}'\n`;
-        break;
-      case 'volatile': {
-        // TODO(sjmiles): emit empty data for stores marked `nosync`: shell will supply data
-        const nosync = handleTags.includes('nosync');
-        let serializedData = [];
-        if (!nosync) {
-          // TODO: include keys in serialized [big]collections?
-          serializedData = (await handle.toLiteral()).model.map(({id, value, index}) => {
-            if (value == null) {
-              return null;
-            }
-
-            let result;
-            if (value.rawData) {
-              result = {$id: id};
-              for (let field in value.rawData) {
-                result[field] = value.rawData[field];
-              }
-            } else {
-              result = value;
-            }
-            if (index !== undefined) {
-              result.$index = index;
-            }
-            return result;
-          });
-        }
-        if (handle.referenceMode && serializedData.length > 0) {
-          const storageKey = serializedData[0].storageKey;
-          if (!context.dataResources.has(storageKey)) {
-            const storeId = `${id}_Data`;
-            context.dataResources.set(storageKey, storeId);
-            // TODO: can't just reach into the store for the backing Store like this, should be an
-            // accessor that loads-on-demand in the storage objects.
-            await handle.ensureBackingStore();
-            await this._serializeHandle(handle.backingStore, context, storeId);
-          }
-          const storeId = context.dataResources.get(storageKey);
-          serializedData.forEach(a => {a.storageKey = storeId;});
-        }
-
-        context.resources += `resource ${id}Resource\n`;
-        let indent = '  ';
-        context.resources += indent + 'start\n';
-
-        let data = JSON.stringify(serializedData);
-        context.resources += data.split('\n').map(line => indent + line).join('\n');
-        context.resources += '\n';
-        context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version || 0} ${handleTags} in ${id}Resource\n`;
-        break;
-      }
-    }
-  }
-
-  async _serializeHandles() {
-    let context = {handles: '', resources: '', interfaces: '', dataResources: new Map()};
-
-    let id = 0;
-    let importSet = new Set();
-    let handleSet = new Set();
-    const contextSet = new Set(this.context._stores.map(store => store.id));
-    for (let handle of this._activeRecipe.handles) {
-      if (handle.fate == 'map') {
-        importSet.add(this.context.findManifestUrlForHandleId(handle.id));
-      } else {
-        handleSet.add(handle.id);
-      }
-    }
-    for (let url of importSet.values()) {
-      context.resources += `import '${url}'\n`;
-    }
-
-    for (let handle of this._stores) {
-      if (!handleSet.has(handle.id) || contextSet.has(handle.id)) {
-        continue;
-      }
-
-      await this._serializeHandle(handle, context, `Store${id++}`);
-    }
-
-    return context.resources + context.interfaces + context.handles;
-  }
-
-  _serializeParticles() {
-    return this._activeRecipe.particles.map(entry => entry.spec.toString()).join('\n');
-  }
-
-  _serializeStorageKey() {
-    if (this._storageKey) {
-      return `storageKey: '${this._storageKey}'\n`;
-    }
-    return '';
-  }
-
-  async serialize() {
-    await this.idle;
-    return `
-meta
-  name: '${this.id}'
-  ${this._serializeStorageKey()}
-
-${await this._serializeHandles()}
-
-${this._serializeParticles()}
-
-@active
-${this.activeRecipe.toString()}`;
-  }
-
-  static async deserialize({serialization, pecFactory, slotComposer, loader, fileName, context}) {
-    let manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"].parse(serialization, {loader, fileName, context});
-    let arc = new Arc({
-      id: manifest.meta.name,
-      storageKey: manifest.meta.storageKey,
-      slotComposer,
-      pecFactory,
-      loader,
-      storageProviderFactory: manifest._storageProviderFactory,
-      context
-    });
-    await Promise.all(manifest.stores.map(async store => {
-      const tags = manifest._storeTags.get(store);
-      if (store.constructor.name == 'StorageStub') {
-        store = await store.inflate();
-      }
-      arc._registerStore(store, tags);
-    }));
-    let recipe = manifest.activeRecipe.clone();
-    let options = {errors: new Map()};
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe.normalize(options), `Couldn't normalize recipe ${recipe.toString()}:\n${[...options.errors.values()].join('\n')}`);
-    await arc.instantiate(recipe);
-    return arc;
-  }
-
-  get context() {
-    return this._context;
-  }
-
-  get activeRecipe() { return this._activeRecipe; }
-  get recipes() { return this._recipes; }
-
-  loadedParticles() {
-    return [...this.particleHandleMaps.values()].map(({spec}) => spec);
-  }
-
-  _instantiateParticle(recipeParticle) {
-    let id = this.generateID('particle');
-    let handleMap = {spec: recipeParticle.spec, handles: new Map()};
-    this.particleHandleMaps.set(id, handleMap);
-
-    for (let [name, connection] of Object.entries(recipeParticle.connections)) {
-      if (!connection.handle) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(connection.isOptional);
-        continue;
-      }
-      let handle = this.findStoreById(connection.handle.id);
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle, `can't find handle of id ${connection.handle.id}`);
-      this._connectParticleToHandle(id, recipeParticle, name, handle);
-    }
-
-    // At least all non-optional connections must be resolved
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleMap.handles.size >= handleMap.spec.connections.filter(c => !c.isOptional).length,
-           `Not all mandatory connections are resolved for {$particle}`);
-    this.pec.instantiate(recipeParticle, id, handleMap.spec, handleMap.handles);
-    return id;
-  }
-
-  generateID(component) {
-    return this.id.createId(component).toString();
-  }
-
-  generateIDComponents() {
-    return {base: this.id, component: () => this._nextLocalID++};
-  }
-
-  get _stores() {
-    return [...this._storesById.values()];
-  }
-
-  // Makes a copy of the arc used for speculative execution.
-  async cloneForSpeculativeExecution() {
-    let arc = new Arc({id: this.generateID().toString(), pecFactory: this._pecFactory, context: this.context, loader: this._loader, recipeIndex: this._recipeIndex, speculative: true});
-    let handleMap = new Map();
-    for (let handle of this._stores) {
-      let clone = await arc._storageProviderFactory.construct(handle.id, handle.type, 'volatile');
-      await clone.cloneFrom(handle);
-      handleMap.set(handle, clone);
-      if (this._storeDescriptions.has(handle)) {
-        arc._storeDescriptions.set(clone, this._storeDescriptions.get(handle));
-      }
-    }
-    this.particleHandleMaps.forEach((value, key) => {
-      arc.particleHandleMaps.set(key, {
-        spec: value.spec,
-        handles: new Map()
-      });
-      value.handles.forEach(handle => arc.particleHandleMaps.get(key).handles.set(handle.name, handleMap.get(handle)));
-    });
-
-   let {particles, handles, slots} = this._activeRecipe.mergeInto(arc._activeRecipe);
-   let particleIndex = 0;
-   let handleIndex = 0;
-   let slotIndex = 0;
-
-   this._recipes.forEach(recipe => {
-     let arcRecipe = {particles: [], handles: [], slots: [], innerArcs: new Map(), patterns: recipe.patterns};
-     recipe.particles.forEach(p => {
-       arcRecipe.particles.push(particles[particleIndex++]);
-       if (recipe.innerArcs.has(p)) {
-         let thisInnerArc = recipe.innerArcs.get(p);
-         let transformationParticle = arcRecipe.particles[arcRecipe.particles.length - 1];
-         let innerArc = {activeRecipe: new _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__["Recipe"](), recipes: []};
-         let innerTuples = thisInnerArc.activeRecipe.mergeInto(innerArc.activeRecipe);
-         thisInnerArc.recipes.forEach(thisInnerArcRecipe => {
-           let innerArcRecipe = {particles: [], handles: [], slots: [], innerArcs: new Map()};
-           let innerIndex = 0;
-           thisInnerArcRecipe.particles.forEach(thisInnerArcRecipeParticle => {
-             innerArcRecipe.particles.push(innerTuples.particles[innerIndex++]);
-           });
-           innerIndex = 0;
-           thisInnerArcRecipe.handles.forEach(thisInnerArcRecipeParticle => {
-             innerArcRecipe.handles.push(innerTuples.handles[innerIndex++]);
-           });
-           innerIndex = 0;
-           thisInnerArcRecipe.slots.forEach(thisInnerArcRecipeParticle => {
-             innerArcRecipe.slots.push(innerTuples.slots[innerIndex++]);
-           });
-           innerArc.recipes.push(innerArcRecipe);
-         });
-         arcRecipe.innerArcs.set(transformationParticle, innerArc);
-       }
-     });
-     recipe.handles.forEach(p => {
-       arcRecipe.handles.push(handles[handleIndex++]);
-     });
-     recipe.slots.forEach(p => {
-       arcRecipe.slots.push(slots[slotIndex++]);
-     });
-
-     arc._recipes.push(arcRecipe);
-   });
-
-    for (let v of handleMap.values()) {
-      // FIXME: Tags
-      arc._registerStore(v, []);
-    }
-    return arc;
-  }
-
-  async instantiate(recipe, innerArc) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({showUnresolved: true})}`);
-
-    let currentArc = {activeRecipe: this._activeRecipe, recipes: this._recipes};
-    if (innerArc) {
-      let innerArcs = this._recipes.find(r => !!r.particles.find(p => p == innerArc.particle)).innerArcs;
-      if (!innerArcs.has(innerArc.particle)) {
-         innerArcs.set(innerArc.particle, {activeRecipe: new _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__["Recipe"](), recipes: []});
-      }
-      currentArc = innerArcs.get(innerArc.particle);
-    }
-    let {handles, particles, slots} = recipe.mergeInto(currentArc.activeRecipe);
-    currentArc.recipes.push({particles, handles, slots, innerArcs: new Map(), patterns: recipe.patterns});
-
-    // TODO(mmandlis): Get rid of populating the missing local slot IDs here,
-    // it should be done at planning stage.
-    slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
-
-    for (let recipeHandle of handles) {
-      if (['copy', 'create'].includes(recipeHandle.fate)) {
-        let type = recipeHandle.type;
-        if (recipeHandle.fate == 'create') {
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);
-        }
-
-        type = type.resolvedType();
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.isResolved(), `Can't create handle for unresolved type ${type}`);
-
-        let newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags);
-        if (recipeHandle.id && recipeHandle.type.isInterface
-            && recipeHandle.id.includes(':particle-literal:')) {
-          // 'particle-literal' handles are created by the FindHostedParticle strategy.
-          let particleName = recipeHandle.id.match(/:particle-literal:([a-zA-Z]+)$/)[1];
-          let particle = this.context.findParticleByName(particleName);
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipeHandle.type.interfaceShape.particleMatches(particle));
-          const particleClone = particle.clone().toLiteral();
-          particleClone.id = recipeHandle.id;
-          await newStore.set(particleClone);
-        } else if (recipeHandle.fate === 'copy') {
-          let copiedStore = this.findStoreById(recipeHandle.id);
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(copiedStore, `Cannot find store ${recipeHandle.id}`);
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
-          await newStore.cloneFrom(copiedStore);
-          this._tagStore(newStore, this.findStoreTags(copiedStore));
-          let copiedStoreDesc = this.getStoreDescription(copiedStore);
-          if (copiedStoreDesc) {
-            this._storeDescriptions.set(newStore, copiedStoreDesc);
-          }
-        }
-        recipeHandle.id = newStore.id;
-        recipeHandle.fate = 'use';
-        recipeHandle.storageKey = newStore.storageKey;
-        continue;
-        // TODO: move the call to ParticleExecutionHost's DefineHandle to here
-      }
-
-      // TODO(shans/sjmiles): This shouldn't be possible, but at the moment the
-      // shell pre-populates all arcs with a set of handles so if a recipe explicitly
-      // asks for one of these there's a conflict. Ideally these will end up as a
-      // part of the context and will be populated on-demand like everything else.
-      if (this._storesById.has(recipeHandle.id)) {
-        continue;
-      }
-
-      let storageKey = recipeHandle.storageKey;
-      if (!storageKey) {
-        storageKey = this.keyForId(recipeHandle.id);
-      }
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
-      let type = recipeHandle.type.resolvedType();
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.isResolved());
-      let store = await this._storageProviderFactory.connect(recipeHandle.id, type, storageKey);
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `store '${recipeHandle.id}' was not found`);
-      this._registerStore(store, recipeHandle.tags);
-    }
-
-    particles.forEach(recipeParticle => this._instantiateParticle(recipeParticle));
-
-    if (this.pec.slotComposer) {
-      // TODO: pass slot-connections instead
-      this.pec.slotComposer.initializeRecipe(particles);
-    }
-
-    if (!this.isSpeculative && !innerArc) {
-      // Note: callbacks not triggered for inner-arc recipe instantiation or speculative arcs.
-      this._instantiatePlanCallbacks.forEach(callback => callback(recipe));
-    }
-  }
-
-  _connectParticleToHandle(particleId, particle, name, targetHandle) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targetHandle, 'no target handle provided');
-    let handleMap = this.particleHandleMaps.get(particleId);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleMap.spec.connectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
-    handleMap.handles.set(name, targetHandle);
-  }
-
-  async createStore(type, name, id, tags, storageKey) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type instanceof _ts_build_type_js__WEBPACK_IMPORTED_MODULE_1__["Type"], `can't createStore with type ${type} that isn't a Type`);
-
-    if (type.isRelation) {
-      type = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newCollection(type);
-    }
-
-    if (id == undefined) {
-      id = this.generateID();
-    }
-
-    if (storageKey == undefined && this._storageKey) {
-      storageKey =
-          this._storageProviderFactory.parseStringAsKey(this._storageKey)
-              .childKeyForHandle(id)
-              .toString();
-    }
-
-    // TODO(sjmiles): use `volatile` for nosync stores
-    const hasNosyncTag = tags => tags && ((Array.isArray(tags) && tags.includes('nosync')) || tags === 'nosync');
-    if (storageKey == undefined || hasNosyncTag(tags)) {
-      storageKey = 'volatile';
-    }
-
-    let store = await this._storageProviderFactory.construct(id, type, storageKey);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `failed to create store with id [${id}]`);
-    store.name = name;
-
-    this._registerStore(store, tags);
-    return store;
-  }
-
-  _registerStore(store, tags) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._storesById.has(store.id), `Store already registered '${store.id}'`);
-    tags = tags || [];
-    tags = Array.isArray(tags) ? tags : [tags];
-
-
-    this._storesById.set(store.id, store);
-
-    this._storeTags.set(store, new Set(tags));
-
-    this._storageKeys[store.id] = store.storageKey;
-    store.on('change', () => this._onDataChange(), this);
-  }
-
-  _tagStore(store, tags) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._storesById.has(store.id) && this._storeTags.has(store), `Store not registered '${store.id}'`);
-    let storeTags = this._storeTags.get(store);
-    (tags || []).forEach(tag => storeTags.add(tag));
-  }
-
-  _onDataChange() {
-    for (let callback of this._dataChangeCallbacks.values()) {
-      callback();
-    }
-  }
-
-  onDataChange(callback, registration) {
-    this._dataChangeCallbacks.set(registration, callback);
-  }
-
-  clearDataChange(registration) {
-    this._dataChangeCallbacks.delete(registration);
-  }
-
-  // Convert a type to a normalized key that we can use for
-  // equality testing.
-  //
-  // TODO: we should be testing the schemas for compatiblity instead of using just the name.
-  // TODO: now that this is only used to implement findStoresByType we can probably replace
-  // the check there with a type system equality check or similar.
-  static _typeToKey(type) {
-    let elementType = type.getContainedType();
-    if (elementType) {
-      let key = this._typeToKey(elementType);
-      if (key) {
-        return `list:${key}`;
-      }
-    } else if (type.isEntity) {
-      return type.entitySchema.name;
-    } else if (type.isShape) {
-      // TODO we need to fix this too, otherwise all handles of shape type will
-      // be of the 'same type' when searching by type.
-      return type.shapeShape;
-    } else if (type.isVariable && type.isResolved()) {
-      return Arc._typeToKey(type.resolvedType());
-    }
-  }
-
-  findStoresByType(type, options) {
-    let typeKey = Arc._typeToKey(type);
-    let stores = [...this._storesById.values()].filter(handle => {
-      if (typeKey) {
-        let handleKey = Arc._typeToKey(handle.type);
-        if (typeKey === handleKey) {
-          return true;
-        }
-      } else {
-        if (type.isVariable && !type.isResolved() && handle.type.isEntity) {
-          return true;
-        }
-        // elementType will only be non-null if type is either Collection or BigCollection; the tag
-        // comparison ensures that handle.type is the same sort of collection.
-        let elementType = type.getContainedType();
-        if (elementType && elementType.isVariable && !elementType.isResolved() && type.tag === handle.type.tag) {
-          return true;
-        }
-      }
-      return false;
-    });
-
-    if (options && options.tags && options.tags.length > 0) {
-      stores = stores.filter(store => options.tags.filter(tag => !this._storeTags.get(store).has(tag)).length == 0);
-    }
-
-    // Quick check that a new handle can fulfill the type contract.
-    // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
-    return stores.filter(s => !!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(
-      type, [{type: s.type, direction: s.type.isInterface ? 'host' : 'inout'}]));
-  }
-
-  findStoreById(id) {
-    let store = this._storesById.get(id);
-    if (store == null) {
-      store = this._context.findStoreById(id);
-    }
-    return store;
-  }
-
-  findStoreTags(store) {
-    if (this._storeTags.has(store)) {
-      return this._storeTags.get(store);
-    }
-    return this._context.findStoreTags(store);
-  }
-
-  getStoreDescription(store) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'Cannot fetch description for nonexistent store');
-    return this._storeDescriptions.get(store) || store.description;
-  }
-
-  getStoresState(options) {
-    let versionById = new Map();
-    this._storesById.forEach((handle, id) => versionById.set(id, handle.version));
-    if ((options || {}).includeContext) {
-      this._context.allStores.forEach(handle => versionById.set(handle.id, handle.version));
-    }
-    return versionById;
-  }
-
-  keyForId(id) {
-    return this._storageKeys[id];
-  }
-
-  stop() {
-    this.pec.stop();
-  }
-
-  toContextString(options) {
-    let results = [];
-    let stores = [...this._storesById.values()].sort(_recipe_util_js__WEBPACK_IMPORTED_MODULE_7__["compareComparables"]);
-    stores.forEach(store => {
-      results.push(store.toString(this._storeTags.get(store)));
-    });
-
-    // TODO: include stores entities
-    // TODO: include (remote) slots?
-
-    if (!this._activeRecipe.isEmpty()) {
-      results.push(this._activeRecipe.toString());
-    }
-
-    return results.join('\n');
-  }
-}
-
-
-/***/ }),
-
 /***/ "./runtime/build/manifest-parser.js":
 /*!******************************************!*\
   !*** ./runtime/build/manifest-parser.js ***!
@@ -65576,7 +64875,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FakePecFactory", function() { return FakePecFactory; });
 /* harmony import */ var _particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./particle-execution-context.js */ "./runtime/particle-execution-context.js");
 /* harmony import */ var _ts_build_message_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/message-channel.js */ "./runtime/ts-build/message-channel.js");
-/* harmony import */ var _loader_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./loader.js */ "./runtime/loader.js");
+/* harmony import */ var _ts_build_loader_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/loader.js */ "./runtime/ts-build/loader.js");
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -65595,7 +64894,7 @@ __webpack_require__.r(__webpack_exports__);
 // separate in-process browser pec-factory.
 function FakePecFactory(id) {
   let channel = new _ts_build_message_channel_js__WEBPACK_IMPORTED_MODULE_1__["MessageChannel"]();
-  new _particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](channel.port1, `${id}:inner`, new _loader_js__WEBPACK_IMPORTED_MODULE_2__["Loader"]());
+  new _particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](channel.port1, `${id}:inner`, new _ts_build_loader_js__WEBPACK_IMPORTED_MODULE_2__["Loader"]());
   return channel.port2;
 }
 
@@ -65626,140 +64925,6 @@ __webpack_require__.r(__webpack_exports__);
 
 const local_fetch = fetch;
 
-
-
-/***/ }),
-
-/***/ "./runtime/loader.js":
-/*!***************************!*\
-  !*** ./runtime/loader.js ***!
-  \***************************/
-/*! exports provided: Loader */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
-/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/fs-web.js */ "./platform/fs-web.js");
-/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../platform/vm-web.js */ "./platform/vm-web.js");
-/* harmony import */ var _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fetch-web.js */ "./runtime/fetch-web.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./particle.js */ "./runtime/particle.js");
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./dom-particle.js */ "./runtime/dom-particle.js");
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./multiplexer-dom-particle.js */ "./runtime/multiplexer-dom-particle.js");
-/* harmony import */ var _ts_build_reference_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ts-build/reference.js */ "./runtime/ts-build/reference.js");
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./transformation-dom-particle.js */ "./runtime/transformation-dom-particle.js");
-/* harmony import */ var _ts_build_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ts-build/converters/jsonldToManifest.js */ "./runtime/ts-build/converters/jsonldToManifest.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-
-
-
-
-
-const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
-
-function schemaLocationFor(name) {
-  return `../entities/${name}.schema`;
-}
-
-class Loader {
-  path(fileName) {
-    let path = fileName.replace(/[/][^/]+$/, '/');
-    return path;
-  }
-
-  join(prefix, path) {
-    if (/^https?:\/\//.test(path)) {
-      return path;
-    }
-    // TODO: replace this with something that isn't hacky
-    if (path[0] == '/' || path[1] == ':') {
-      return path;
-    }
-    prefix = this.path(prefix);
-    return prefix + path;
-  }
-
-  loadResource(file) {
-    if (/^https?:\/\//.test(file)) {
-      return this._loadURL(file);
-    }
-    return this._loadFile(file);
-  }
-
-  _loadFile(file) {
-    return new Promise((resolve, reject) => {
-      _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__["fs"].readFile(file, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data.toString('utf-8'));
-        }
-      });
-    });
-  }
-
-  _loadURL(url) {
-    if (/\/\/schema.org\//.test(url)) {
-      if (url.endsWith('/Thing')) {
-        return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => _ts_build_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data, {'@id': 'schema:Thing'}));
-      }
-      return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url + '.jsonld').then(res => res.text()).then(data => _ts_build_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data));
-    }
-    return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url).then(res => res.text());
-  }
-
-  async loadParticleClass(spec) {
-    let clazz = await this.requireParticle(spec.implFile);
-    clazz.spec = spec;
-    return clazz;
-  }
-
-  async requireParticle(fileName) {
-    if (fileName === null) fileName = '';
-    let src = await this.loadResource(fileName);
-    // Note. This is not real isolation.
-    let script = new _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__["vm"].Script(src, {filename: fileName, displayErrors: true});
-    let result = [];
-    let self = {
-      defineParticle(particleWrapper) {
-        result.push(particleWrapper);
-      },
-      console,
-      fetch: _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"],
-      setTimeout,
-      importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
-    };
-    script.runInNewContext(self, {filename: fileName, displayErrors: true});
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(result.length > 0 && typeof result[0] == 'function', `Error while instantiating particle implementation from ${fileName}`);
-    return this.unwrapParticle(result[0]);
-  }
-
-  setParticleExecutionContext(pec) {
-    this._pec = pec;
-  }
-
-  unwrapParticle(particleWrapper) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(this._pec);
-    return particleWrapper({Particle: _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"], DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"], TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__["TransformationDomParticle"], MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"], Reference: Object(_ts_build_reference_js__WEBPACK_IMPORTED_MODULE_7__["newClientReference"])(this._pec), html});
-  }
-
-}
 
 
 /***/ }),
@@ -67576,9 +66741,9 @@ class ParticleExecutionHost {
 
     this._apiPort.onGetBackingStore = async ({callback, type, storageKey}) => {
       if (!storageKey) {
-        storageKey = this._arc._storageProviderFactory.baseStorageKey(type, this._arc._storageKey || 'volatile');
+        storageKey = this._arc.storageProviderFactory.baseStorageKey(type, this._arc._storageKey || 'volatile');
       }
-      let store = await this._arc._storageProviderFactory.baseStorageFor(type, storageKey);
+      let store = await this._arc.storageProviderFactory.baseStorageFor(type, storageKey);
       // TODO(shans): THIS IS NOT SAFE!
       //
       // Without an auditor on the runtime side that inspects what is being fetched from
@@ -68951,7 +68116,7 @@ Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.Resoluti
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeIndex", function() { return RecipeIndex; });
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./manifest.js */ "./runtime/manifest.js");
-/* harmony import */ var _arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./arc.js */ "./runtime/arc.js");
+/* harmony import */ var _ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/arc.js */ "./runtime/ts-build/arc.js");
 /* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./slot-composer.js */ "./runtime/slot-composer.js");
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../strategizer/strategizer.js */ "./strategizer/strategizer.js");
 /* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
@@ -69043,7 +68208,7 @@ const IndexStrategies = [
 class RecipeIndex {
   constructor(context, loader, affordance) {
     let trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__["Tracing"].start({cat: 'indexing', name: 'RecipeIndex::constructor', overview: true});
-    let arcStub = new _arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"]({
+    let arcStub = new _ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"]({
       id: 'index-stub',
       context: new _manifest_js__WEBPACK_IMPORTED_MODULE_0__["Manifest"]({id: 'empty-context'}),
       loader,
@@ -76218,6 +75383,629 @@ registerSystemExceptionHandler((exception, methodName, particle) => {
 
 /***/ }),
 
+/***/ "./runtime/ts-build/arc.js":
+/*!*********************************!*\
+  !*** ./runtime/ts-build/arc.js ***!
+  \*********************************/
+/*! exports provided: Arc */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Arc", function() { return Arc; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _particle_execution_host_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../particle-execution-host.js */ "./runtime/particle-execution-host.js");
+/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/handle.js */ "./runtime/recipe/handle.js");
+/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../description.js */ "./runtime/description.js");
+/* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../recipe/util.js */ "./runtime/recipe/util.js");
+/* harmony import */ var _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../fake-pec-factory.js */ "./runtime/fake-pec-factory.js");
+/* harmony import */ var _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./id.js */ "./runtime/ts-build/id.js");
+/* harmony import */ var _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../debug/arc-debug-handler.js */ "./runtime/debug/arc-debug-handler.js");
+/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../recipe-index.js */ "./runtime/recipe-index.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Arc {
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, recipeIndex }) {
+        this.nextLocalID = 0;
+        this._activeRecipe = new _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__["Recipe"]();
+        this._recipes = [];
+        this.dataChangeCallbacks = new Map();
+        // All the stores, mapped by store ID
+        this.storesById = new Map();
+        // storage keys for referenced handles
+        this.storageKeys = {};
+        // Map from each store to a set of tags.
+        this.storeTags = new Map();
+        // Map from each store to its description (originating in the manifest).
+        this.storeDescriptions = new Map();
+        this.instantiatePlanCallbacks = [];
+        this.sessionId = _id_js__WEBPACK_IMPORTED_MODULE_11__["Id"].newSessionId();
+        this.particleHandleMaps = new Map();
+        // TODO: context should not be optional.
+        this._context = context || new _manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"]({ id });
+        // TODO: pecFactory should not be optional. update all callers and fix here.
+        this.pecFactory = pecFactory || _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__["FakePecFactory"].bind(null);
+        // for now, every Arc gets its own session
+        this.id = this.sessionId.fromString(id);
+        this.speculative = !!speculative; // undefined => false
+        // TODO: rename: this are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
+        this._loader = loader;
+        this.storageKey = storageKey;
+        const pecId = this.generateID();
+        const innerPecPort = this.pecFactory(pecId);
+        this.pec = new _particle_execution_host_js__WEBPACK_IMPORTED_MODULE_2__["ParticleExecutionHost"](innerPecPort, slotComposer, this, `${pecId}:outer`);
+        if (slotComposer) {
+            slotComposer.arc = this;
+        }
+        this.storageProviderFactory = storageProviderFactory || new _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__["StorageProviderFactory"](this.id);
+        this._description = new _description_js__WEBPACK_IMPORTED_MODULE_6__["Description"](this);
+        this._recipeIndex = recipeIndex || new _recipe_index_js__WEBPACK_IMPORTED_MODULE_13__["RecipeIndex"](this._context, loader, slotComposer && slotComposer.affordance);
+        _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_10__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => new _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_12__["ArcDebugHandler"](this, devtoolsChannel));
+    }
+    get loader() {
+        return this._loader;
+    }
+    get description() {
+        return this._description;
+    }
+    get recipeIndex() {
+        return this._recipeIndex;
+    }
+    registerInstantiatePlanCallback(callback) {
+        this.instantiatePlanCallbacks.push(callback);
+    }
+    unregisterInstantiatePlanCallback(callback) {
+        const index = this.instantiatePlanCallbacks.indexOf(callback);
+        if (index >= 0) {
+            this.instantiatePlanCallbacks.splice(index, 1);
+            return true;
+        }
+        return false;
+    }
+    dispose() {
+        this.instantiatePlanCallbacks = [];
+        // TODO: disconnect all assocated store event handlers
+        this.pec.close();
+        if (this.pec.slotComposer) {
+            this.pec.slotComposer.dispose();
+        }
+    }
+    // Returns a promise that spins sending a single `AwaitIdle` message until it
+    // sees no other messages were sent.
+    async _waitForIdle() {
+        let messageCount;
+        do {
+            messageCount = this.pec.messageCount;
+            await this.pec.idle;
+            // We expect two messages here, one requesting the idle status, and one answering it.
+        } while (this.pec.messageCount !== messageCount + 2);
+    }
+    get idle() {
+        if (!this.waitForIdlePromise) {
+            // Store one active completion promise for use by any subsequent callers.
+            // We explicitly want to avoid, for example, multiple simultaneous
+            // attempts to identify idle state each sending their own `AwaitIdle`
+            // message and expecting settlement that will never arrive.
+            this.waitForIdlePromise =
+                this._waitForIdle().then(() => this.waitForIdlePromise = null);
+        }
+        return this.waitForIdlePromise;
+    }
+    get isSpeculative() {
+        return this.speculative;
+    }
+    async _serializeHandle(handle, context, id) {
+        const type = handle.type.getContainedType() || handle.type;
+        if (type.isInterface) {
+            context.interfaces += type.interfaceShape.toString() + '\n';
+        }
+        const key = this.storageProviderFactory.parseStringAsKey(handle.storageKey);
+        const tags = this.storeTags.get(handle) || [];
+        const handleTags = [...tags].map(a => `#${a}`).join(' ');
+        const actualHandle = this.activeRecipe.findHandle(handle.id);
+        const originalId = actualHandle ? actualHandle.originalId : null;
+        let combinedId = `'${handle.id}'`;
+        if (originalId) {
+            combinedId += `!!'${originalId}'`;
+        }
+        switch (key.protocol) {
+            case 'firebase':
+            case 'pouchdb':
+                context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version === null ? 0 : handle.version} ${handleTags} at '${handle.storageKey}'\n`;
+                break;
+            case 'volatile': {
+                // TODO(sjmiles): emit empty data for stores marked `nosync`: shell will supply data
+                const nosync = handleTags.includes('nosync');
+                let serializedData = [];
+                if (!nosync) {
+                    // TODO: include keys in serialized [big]collections?
+                    serializedData = (await handle.toLiteral()).model.map(({ id, value, index }) => {
+                        if (value == null) {
+                            return null;
+                        }
+                        let result;
+                        if (value.rawData) {
+                            result = { $id: id };
+                            for (const field of Object.keys(value.rawData)) {
+                                result[field] = value.rawData[field];
+                            }
+                        }
+                        else {
+                            result = value;
+                        }
+                        if (index !== undefined) {
+                            result.$index = index;
+                        }
+                        return result;
+                    });
+                }
+                if (handle.referenceMode && serializedData.length > 0) {
+                    const storageKey = serializedData[0].storageKey;
+                    if (!context.dataResources.has(storageKey)) {
+                        const storeId = `${id}_Data`;
+                        context.dataResources.set(storageKey, storeId);
+                        // TODO: can't just reach into the store for the backing Store like this, should be an
+                        // accessor that loads-on-demand in the storage objects.
+                        await handle.ensureBackingStore();
+                        await this._serializeHandle(handle.backingStore, context, storeId);
+                    }
+                    const storeId = context.dataResources.get(storageKey);
+                    serializedData.forEach(a => { a.storageKey = storeId; });
+                }
+                context.resources += `resource ${id}Resource\n`;
+                const indent = '  ';
+                context.resources += indent + 'start\n';
+                const data = JSON.stringify(serializedData);
+                context.resources += data.split('\n').map(line => indent + line).join('\n');
+                context.resources += '\n';
+                context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version || 0} ${handleTags} in ${id}Resource\n`;
+                break;
+            }
+            default:
+                throw new Error(`unknown storageKey protocol ${key.protocol}`);
+        }
+    }
+    async _serializeHandles() {
+        const context = { handles: '', resources: '', interfaces: '', dataResources: new Map() };
+        let id = 0;
+        const importSet = new Set();
+        const handleSet = new Set();
+        const contextSet = new Set(this.context._stores.map(store => store.id));
+        for (const handle of this._activeRecipe.handles) {
+            if (handle.fate === 'map') {
+                importSet.add(this.context.findManifestUrlForHandleId(handle.id));
+            }
+            else {
+                handleSet.add(handle.id);
+            }
+        }
+        for (const url of importSet.values()) {
+            context.resources += `import '${url}'\n`;
+        }
+        for (const handle of this._stores) {
+            if (!handleSet.has(handle.id) || contextSet.has(handle.id)) {
+                continue;
+            }
+            await this._serializeHandle(handle, context, `Store${id++}`);
+        }
+        return context.resources + context.interfaces + context.handles;
+    }
+    _serializeParticles() {
+        return this._activeRecipe.particles.map(entry => entry.spec.toString()).join('\n');
+    }
+    _serializeStorageKey() {
+        if (this.storageKey) {
+            return `storageKey: '${this.storageKey}'\n`;
+        }
+        return '';
+    }
+    async serialize() {
+        await this.idle;
+        return `
+meta
+  name: '${this.id}'
+  ${this._serializeStorageKey()}
+
+${await this._serializeHandles()}
+
+${this._serializeParticles()}
+
+@active
+${this.activeRecipe.toString()}`;
+    }
+    static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context }) {
+        const manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"].parse(serialization, { loader, fileName, context });
+        const arc = new Arc({
+            id: manifest.meta.name,
+            storageKey: manifest.meta.storageKey,
+            slotComposer,
+            pecFactory,
+            loader,
+            storageProviderFactory: manifest._storageProviderFactory,
+            context
+        });
+        await Promise.all(manifest.stores.map(async (store) => {
+            const tags = manifest._storeTags.get(store);
+            if (store.constructor.name === 'StorageStub') {
+                store = await store.inflate();
+            }
+            arc._registerStore(store, tags);
+        }));
+        const recipe = manifest.activeRecipe.clone();
+        const options = { errors: new Map() };
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe.normalize(options), `Couldn't normalize recipe ${recipe.toString()}:\n${[...options.errors.values()].join('\n')}`);
+        await arc.instantiate(recipe);
+        return arc;
+    }
+    get context() {
+        return this._context;
+    }
+    get activeRecipe() { return this._activeRecipe; }
+    get recipes() { return this._recipes; }
+    loadedParticles() {
+        return [...this.particleHandleMaps.values()].map(({ spec }) => spec);
+    }
+    _instantiateParticle(recipeParticle) {
+        const id = this.generateID('particle');
+        const handleMap = { spec: recipeParticle.spec, handles: new Map() };
+        this.particleHandleMaps.set(id, handleMap);
+        // TODO(shans): remove type override once recipes are typeScriptized.
+        for (const [name, connection] of Object.entries(recipeParticle.connections)) {
+            if (!connection.handle) {
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(connection.isOptional);
+                continue;
+            }
+            const handle = this.findStoreById(connection.handle.id);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle, `can't find handle of id ${connection.handle.id}`);
+            this._connectParticleToHandle(id, recipeParticle, name, handle);
+        }
+        // At least all non-optional connections must be resolved
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleMap.handles.size >= handleMap.spec.connections.filter(c => !c.isOptional).length, `Not all mandatory connections are resolved for {$particle}`);
+        this.pec.instantiate(recipeParticle, id, handleMap.spec, handleMap.handles);
+        return id;
+    }
+    generateID(component = '') {
+        return this.id.createId(component).toString();
+    }
+    generateIDComponents() {
+        return { base: this.id, component: () => this.nextLocalID++ };
+    }
+    get _stores() {
+        return [...this.storesById.values()];
+    }
+    // Makes a copy of the arc used for speculative execution.
+    async cloneForSpeculativeExecution() {
+        const arc = new Arc({ id: this.generateID().toString(), pecFactory: this.pecFactory, context: this.context, loader: this._loader, recipeIndex: this._recipeIndex, speculative: true });
+        const handleMap = new Map();
+        for (const handle of this._stores) {
+            const clone = await arc.storageProviderFactory.construct(handle.id, handle.type, 'volatile');
+            await clone.cloneFrom(handle);
+            handleMap.set(handle, clone);
+            if (this.storeDescriptions.has(handle)) {
+                arc.storeDescriptions.set(clone, this.storeDescriptions.get(handle));
+            }
+        }
+        this.particleHandleMaps.forEach((value, key) => {
+            arc.particleHandleMaps.set(key, {
+                spec: value.spec,
+                handles: new Map()
+            });
+            value.handles.forEach(handle => arc.particleHandleMaps.get(key).handles.set(handle.name, handleMap.get(handle)));
+        });
+        const { particles, handles, slots } = this._activeRecipe.mergeInto(arc._activeRecipe);
+        let particleIndex = 0;
+        let handleIndex = 0;
+        let slotIndex = 0;
+        this._recipes.forEach(recipe => {
+            const arcRecipe = { particles: [], handles: [], slots: [], innerArcs: new Map(), patterns: recipe.patterns };
+            recipe.particles.forEach(p => {
+                arcRecipe.particles.push(particles[particleIndex++]);
+                if (recipe.innerArcs.has(p)) {
+                    const thisInnerArc = recipe.innerArcs.get(p);
+                    const transformationParticle = arcRecipe.particles[arcRecipe.particles.length - 1];
+                    const innerArc = { activeRecipe: new _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__["Recipe"](), recipes: [] };
+                    const innerTuples = thisInnerArc.activeRecipe.mergeInto(innerArc.activeRecipe);
+                    thisInnerArc.recipes.forEach(thisInnerArcRecipe => {
+                        const innerArcRecipe = { particles: [], handles: [], slots: [], innerArcs: new Map() };
+                        let innerIndex = 0;
+                        thisInnerArcRecipe.particles.forEach(thisInnerArcRecipeParticle => {
+                            innerArcRecipe.particles.push(innerTuples.particles[innerIndex++]);
+                        });
+                        innerIndex = 0;
+                        thisInnerArcRecipe.handles.forEach(thisInnerArcRecipeParticle => {
+                            innerArcRecipe.handles.push(innerTuples.handles[innerIndex++]);
+                        });
+                        innerIndex = 0;
+                        thisInnerArcRecipe.slots.forEach(thisInnerArcRecipeParticle => {
+                            innerArcRecipe.slots.push(innerTuples.slots[innerIndex++]);
+                        });
+                        innerArc.recipes.push(innerArcRecipe);
+                    });
+                    arcRecipe.innerArcs.set(transformationParticle, innerArc);
+                }
+            });
+            recipe.handles.forEach(p => {
+                arcRecipe.handles.push(handles[handleIndex++]);
+            });
+            recipe.slots.forEach(p => {
+                arcRecipe.slots.push(slots[slotIndex++]);
+            });
+            arc._recipes.push(arcRecipe);
+        });
+        for (const v of handleMap.values()) {
+            // FIXME: Tags
+            arc._registerStore(v, []);
+        }
+        return arc;
+    }
+    async instantiate(recipe, innerArc = undefined) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({ showUnresolved: true })}`);
+        let currentArc = { activeRecipe: this._activeRecipe, recipes: this._recipes };
+        if (innerArc) {
+            const innerArcs = this._recipes.find(r => !!r.particles.find(p => p === innerArc.particle)).innerArcs;
+            if (!innerArcs.has(innerArc.particle)) {
+                innerArcs.set(innerArc.particle, { activeRecipe: new _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__["Recipe"](), recipes: [] });
+            }
+            currentArc = innerArcs.get(innerArc.particle);
+        }
+        const { handles, particles, slots } = recipe.mergeInto(currentArc.activeRecipe);
+        currentArc.recipes.push({ particles, handles, slots, innerArcs: new Map(), patterns: recipe.patterns });
+        // TODO(mmandlis): Get rid of populating the missing local slot IDs here,
+        // it should be done at planning stage.
+        slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
+        for (const recipeHandle of handles) {
+            if (['copy', 'create'].includes(recipeHandle.fate)) {
+                let type = recipeHandle.type;
+                if (recipeHandle.fate === 'create') {
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);
+                }
+                type = type.resolvedType();
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.isResolved(), `Can't create handle for unresolved type ${type}`);
+                const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags);
+                if (recipeHandle.id && recipeHandle.type.isInterface
+                    && recipeHandle.id.includes(':particle-literal:')) {
+                    // 'particle-literal' handles are created by the FindHostedParticle strategy.
+                    const particleName = recipeHandle.id.match(/:particle-literal:([a-zA-Z]+)$/)[1];
+                    const particle = this.context.findParticleByName(particleName);
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipeHandle.type.interfaceShape.particleMatches(particle));
+                    const particleClone = particle.clone().toLiteral();
+                    particleClone.id = recipeHandle.id;
+                    // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
+                    // tslint:disable-next-line: no-any
+                    await newStore.set(particleClone);
+                }
+                else if (recipeHandle.fate === 'copy') {
+                    const copiedStore = this.findStoreById(recipeHandle.id);
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(copiedStore, `Cannot find store ${recipeHandle.id}`);
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
+                    await newStore.cloneFrom(copiedStore);
+                    this._tagStore(newStore, this.findStoreTags(copiedStore));
+                    const copiedStoreDesc = this.getStoreDescription(copiedStore);
+                    if (copiedStoreDesc) {
+                        this.storeDescriptions.set(newStore, copiedStoreDesc);
+                    }
+                }
+                recipeHandle.id = newStore.id;
+                recipeHandle.fate = 'use';
+                recipeHandle.storageKey = newStore.storageKey;
+                continue;
+                // TODO: move the call to ParticleExecutionHost's DefineHandle to here
+            }
+            // TODO(shans/sjmiles): This shouldn't be possible, but at the moment the
+            // shell pre-populates all arcs with a set of handles so if a recipe explicitly
+            // asks for one of these there's a conflict. Ideally these will end up as a
+            // part of the context and will be populated on-demand like everything else.
+            if (this.storesById.has(recipeHandle.id)) {
+                continue;
+            }
+            let storageKey = recipeHandle.storageKey;
+            if (!storageKey) {
+                storageKey = this.keyForId(recipeHandle.id);
+            }
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
+            const type = recipeHandle.type.resolvedType();
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.isResolved());
+            const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `store '${recipeHandle.id}' was not found`);
+            this._registerStore(store, recipeHandle.tags);
+        }
+        particles.forEach(recipeParticle => this._instantiateParticle(recipeParticle));
+        if (this.pec.slotComposer) {
+            // TODO: pass slot-connections instead
+            this.pec.slotComposer.initializeRecipe(particles);
+        }
+        if (!this.isSpeculative && !innerArc) {
+            // Note: callbacks not triggered for inner-arc recipe instantiation or speculative arcs.
+            this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
+        }
+    }
+    _connectParticleToHandle(particleId, particle, name, targetHandle) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targetHandle, 'no target handle provided');
+        const handleMap = this.particleHandleMaps.get(particleId);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleMap.spec.connectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
+        handleMap.handles.set(name, targetHandle);
+    }
+    async createStore(type, name, id, tags, storageKey = undefined) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"], `can't createStore with type ${type} that isn't a Type`);
+        if (type.isRelation) {
+            type = _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newCollection(type);
+        }
+        if (id == undefined) {
+            id = this.generateID();
+        }
+        if (storageKey == undefined && this.storageKey) {
+            storageKey =
+                this.storageProviderFactory.parseStringAsKey(this.storageKey)
+                    .childKeyForHandle(id)
+                    .toString();
+        }
+        // TODO(sjmiles): use `volatile` for nosync stores
+        const hasNosyncTag = tags => tags && ((Array.isArray(tags) && tags.includes('nosync')) || tags === 'nosync');
+        if (storageKey == undefined || hasNosyncTag(tags)) {
+            storageKey = 'volatile';
+        }
+        const store = await this.storageProviderFactory.construct(id, type, storageKey);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `failed to create store with id [${id}]`);
+        store.name = name;
+        this._registerStore(store, tags);
+        return store;
+    }
+    _registerStore(store, tags) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.storesById.has(store.id), `Store already registered '${store.id}'`);
+        tags = tags || [];
+        tags = Array.isArray(tags) ? tags : [tags];
+        this.storesById.set(store.id, store);
+        this.storeTags.set(store, new Set(tags));
+        this.storageKeys[store.id] = store.storageKey;
+        store.on('change', () => this._onDataChange(), this);
+    }
+    _tagStore(store, tags) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.storesById.has(store.id) && this.storeTags.has(store), `Store not registered '${store.id}'`);
+        const storeTags = this.storeTags.get(store);
+        (tags || []).forEach(tag => storeTags.add(tag));
+    }
+    _onDataChange() {
+        for (const callback of this.dataChangeCallbacks.values()) {
+            callback();
+        }
+    }
+    onDataChange(callback, registration) {
+        this.dataChangeCallbacks.set(registration, callback);
+    }
+    clearDataChange(registration) {
+        this.dataChangeCallbacks.delete(registration);
+    }
+    // Convert a type to a normalized key that we can use for
+    // equality testing.
+    //
+    // TODO: we should be testing the schemas for compatiblity instead of using just the name.
+    // TODO: now that this is only used to implement findStoresByType we can probably replace
+    // the check there with a type system equality check or similar.
+    static _typeToKey(type) {
+        const elementType = type.getContainedType();
+        if (elementType) {
+            const key = this._typeToKey(elementType);
+            if (key) {
+                return `list:${key}`;
+            }
+        }
+        else if (type.isEntity) {
+            return type.entitySchema.name;
+        }
+        else if (type.isShape) {
+            // TODO we need to fix this too, otherwise all handles of shape type will
+            // be of the 'same type' when searching by type.
+            return type.shapeShape;
+        }
+        else if (type.isVariable && type.isResolved()) {
+            return Arc._typeToKey(type.resolvedType());
+        }
+    }
+    findStoresByType(type, options) {
+        const typeKey = Arc._typeToKey(type);
+        let stores = [...this.storesById.values()].filter(handle => {
+            if (typeKey) {
+                const handleKey = Arc._typeToKey(handle.type);
+                if (typeKey === handleKey) {
+                    return true;
+                }
+            }
+            else {
+                if (type.isVariable && !type.isResolved() && handle.type.isEntity) {
+                    return true;
+                }
+                // elementType will only be non-null if type is either Collection or BigCollection; the tag
+                // comparison ensures that handle.type is the same sort of collection.
+                const elementType = type.getContainedType();
+                if (elementType && elementType.isVariable && !elementType.isResolved() && type.tag === handle.type.tag) {
+                    return true;
+                }
+            }
+            return false;
+        });
+        if (options && options.tags && options.tags.length > 0) {
+            stores = stores.filter(store => options.tags.filter(tag => !this.storeTags.get(store).has(tag)).length === 0);
+        }
+        // Quick check that a new handle can fulfill the type contract.
+        // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
+        return stores.filter(s => !!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(type, [{ type: s.type, direction: s.type.isInterface ? 'host' : 'inout' }]));
+    }
+    findStoreById(id) {
+        let store = this.storesById.get(id);
+        if (store == null) {
+            store = this._context.findStoreById(id);
+        }
+        return store;
+    }
+    findStoreTags(store) {
+        if (this.storeTags.has(store)) {
+            return this.storeTags.get(store);
+        }
+        return this._context.findStoreTags(store);
+    }
+    getStoreDescription(store) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'Cannot fetch description for nonexistent store');
+        return this.storeDescriptions.get(store) || store.description;
+    }
+    getStoresState(options) {
+        const versionById = new Map();
+        this.storesById.forEach((handle, id) => versionById.set(id, handle.version));
+        if ((options || {}).includeContext) {
+            this._context.allStores.forEach(handle => versionById.set(handle.id, handle.version));
+        }
+        return versionById;
+    }
+    keyForId(id) {
+        return this.storageKeys[id];
+    }
+    stop() {
+        this.pec.stop();
+    }
+    toContextString(options) {
+        const results = [];
+        const stores = [...this.storesById.values()].sort(_recipe_util_js__WEBPACK_IMPORTED_MODULE_7__["compareComparables"]);
+        stores.forEach(store => {
+            results.push(store.toString(this.storeTags.get(store)));
+        });
+        // TODO: include stores entities
+        // TODO: include (remote) slots?
+        if (!this._activeRecipe.isEmpty()) {
+            results.push(this._activeRecipe.toString());
+        }
+        return results.join('\n');
+    }
+}
+//# sourceMappingURL=arc.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/converters/jsonldToManifest.js":
 /*!*********************************************************!*\
   !*** ./runtime/ts-build/converters/jsonldToManifest.js ***!
@@ -76239,7 +76027,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 const supportedTypes = ['Text', 'URL', 'Number', 'Boolean'];
 class JsonldToManifest {
-    static convert(jsonld, theClass) {
+    static convert(jsonld, theClass = undefined) {
         const obj = JSON.parse(jsonld);
         const classes = {};
         const properties = {};
@@ -76308,7 +76096,7 @@ class JsonldToManifest {
             }
         }
         const className = theClass['@id'].split(':')[1];
-        const superNames = theClass.superclass ? theClass.superclass.map(a => a['@id'].split(':')[1]) : [];
+        const superNames = theClass && theClass.superclass ? theClass.superclass.map(a => a['@id'].split(':')[1]) : [];
         let s = '';
         for (const superName of superNames) {
             s += `import 'https://schema.org/${superName}'\n\n`;
@@ -76811,6 +76599,8 @@ class HostedSlotConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__[
     getInnerContainer(name) {
         const innerContainer = this.transformationSlotConsumer.getInnerContainer(name);
         if (innerContainer && this.storeId) {
+            // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
+            // tslint:disable-next-line: no-any
             const subId = this.arc.findStoreById(this.storeId)._stored.id;
             return innerContainer[subId];
         }
@@ -77492,6 +77282,129 @@ class WebCryptoKeyIndexedDBStorage {
     }
 }
 //# sourceMappingURL=webcrypto.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/loader.js":
+/*!************************************!*\
+  !*** ./runtime/ts-build/loader.js ***!
+  \************************************/
+/*! exports provided: Loader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
+/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/fs-web.js */ "./platform/fs-web.js");
+/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/vm-web.js */ "./platform/vm-web.js");
+/* harmony import */ var _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../fetch-web.js */ "./runtime/fetch-web.js");
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../particle.js */ "./runtime/particle.js");
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../dom-particle.js */ "./runtime/dom-particle.js");
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../multiplexer-dom-particle.js */ "./runtime/multiplexer-dom-particle.js");
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./reference.js */ "./runtime/ts-build/reference.js");
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../transformation-dom-particle.js */ "./runtime/transformation-dom-particle.js");
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./converters/jsonldToManifest.js */ "./runtime/ts-build/converters/jsonldToManifest.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+
+
+
+
+const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
+function schemaLocationFor(name) {
+    return `../entities/${name}.schema`;
+}
+class Loader {
+    path(fileName) {
+        const path = fileName.replace(/[/][^/]+$/, '/');
+        return path;
+    }
+    join(prefix, path) {
+        if (/^https?:\/\//.test(path)) {
+            return path;
+        }
+        // TODO: replace this with something that isn't hacky
+        if (path[0] === '/' || path[1] === ':') {
+            return path;
+        }
+        prefix = this.path(prefix);
+        return prefix + path;
+    }
+    loadResource(file) {
+        if (/^https?:\/\//.test(file)) {
+            return this._loadURL(file);
+        }
+        return this._loadFile(file);
+    }
+    _loadFile(file) {
+        return new Promise((resolve, reject) => {
+            _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__["fs"].readFile(file, (err, data) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(data.toString('utf-8'));
+                }
+            });
+        });
+    }
+    _loadURL(url) {
+        if (/\/\/schema.org\//.test(url)) {
+            if (url.endsWith('/Thing')) {
+                return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data, { '@id': 'schema:Thing' }));
+            }
+            return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url + '.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data));
+        }
+        return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url).then(res => res.text());
+    }
+    async loadParticleClass(spec) {
+        const clazz = await this.requireParticle(spec.implFile);
+        clazz.spec = spec;
+        return clazz;
+    }
+    async requireParticle(fileName) {
+        if (fileName === null)
+            fileName = '';
+        const src = await this.loadResource(fileName);
+        // Note. This is not real isolation.
+        const script = new _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__["vm"].Script(src, { filename: fileName, displayErrors: true });
+        const result = [];
+        const self = {
+            defineParticle(particleWrapper) {
+                result.push(particleWrapper);
+            },
+            console,
+            fetch: _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"],
+            setTimeout,
+            importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
+        };
+        script.runInNewContext(self, { filename: fileName, displayErrors: true });
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(result.length > 0 && typeof result[0] === 'function', `Error while instantiating particle implementation from ${fileName}`);
+        return this.unwrapParticle(result[0]);
+    }
+    setParticleExecutionContext(pec) {
+        this.pec = pec;
+    }
+    unwrapParticle(particleWrapper) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(this.pec);
+        return particleWrapper({ Particle: _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"], DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"], TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__["TransformationDomParticle"], MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"], Reference: Object(_reference_js__WEBPACK_IMPORTED_MODULE_7__["newClientReference"])(this.pec), html });
+    }
+}
+//# sourceMappingURL=loader.js.map
 
 /***/ }),
 
@@ -80790,6 +80703,9 @@ class PouchDbBigCollection extends _pouch_db_storage_provider__WEBPACK_IMPORTED_
     toLiteral() {
         throw new Error('NotImplemented');
     }
+    cloneFrom() {
+        throw new Error('NotImplemented');
+    }
     /**
      * Triggered when the storage key has been modified.  For now we
      * just refetch.  This is fast since the data is synced locally.
@@ -82209,6 +82125,7 @@ class SyntheticStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODUL
 class SyntheticCollection extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_1__["StorageProviderBase"] {
     constructor(type, id, key, reference) {
         super(type, undefined, id, key);
+        this.backingStore = undefined;
         this.reference = reference;
         this.model = [];
         this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
@@ -82251,6 +82168,12 @@ class SyntheticCollection extends _storage_provider_base_js__WEBPACK_IMPORTED_MO
     }
     async toLiteral() {
         return this.toList();
+    }
+    cloneFrom() {
+        throw new Error("cloneFrom should never be called on SyntheticCollection!");
+    }
+    ensureBackingStore() {
+        throw new Error("ensureBackingStore should never be called on SyntheticCollection!");
     }
 }
 //# sourceMappingURL=synthetic-storage.js.map
@@ -84290,7 +84213,7 @@ const createTemplate = innerHTML => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _runtime_ts_build_runtime_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/ts-build/runtime.js */ "./runtime/ts-build/runtime.js");
-/* harmony import */ var _runtime_arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../runtime/arc.js */ "./runtime/arc.js");
+/* harmony import */ var _runtime_ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../runtime/ts-build/arc.js */ "./runtime/ts-build/arc.js");
 /* harmony import */ var _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../runtime/planificator.js */ "./runtime/planificator.js");
 /* harmony import */ var _runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../runtime/slot-composer.js */ "./runtime/slot-composer.js");
 /* harmony import */ var _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../runtime/ts-build/type.js */ "./runtime/ts-build/type.js");
@@ -84339,7 +84262,7 @@ __webpack_require__.r(__webpack_exports__);
 const Arcs = {
   version: '0.5',
   Tracing: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_7__["Tracing"],
-  Arc: _runtime_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"],
+  Arc: _runtime_ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"],
   Manifest: _runtime_manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"],
   Runtime: _runtime_ts_build_runtime_js__WEBPACK_IMPORTED_MODULE_0__["Runtime"],
   Planificator: _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_2__["Planificator"],
@@ -84372,7 +84295,7 @@ window.Arcs = window.Arcs ? Object.assign(window.Arcs, Arcs) : Arcs;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrowserLoader", function() { return BrowserLoader; });
-/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/loader.js */ "./runtime/loader.js");
+/* harmony import */ var _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/ts-build/loader.js */ "./runtime/ts-build/loader.js");
 /* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../runtime/particle.js */ "./runtime/particle.js");
 /* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../runtime/dom-particle.js */ "./runtime/dom-particle.js");
 /* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../runtime/multiplexer-dom-particle.js */ "./runtime/multiplexer-dom-particle.js");
@@ -84398,7 +84321,7 @@ const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + stri
 
 const dumbCache = {};
 
-class BrowserLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
+class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
   constructor(urlMap) {
     super();
     this._urlMap = urlMap;

@@ -9,7 +9,7 @@
  */
 const supportedTypes = ['Text', 'URL', 'Number', 'Boolean'];
 export class JsonldToManifest {
-    static convert(jsonld, theClass) {
+    static convert(jsonld, theClass = undefined) {
         const obj = JSON.parse(jsonld);
         const classes = {};
         const properties = {};
@@ -78,7 +78,7 @@ export class JsonldToManifest {
             }
         }
         const className = theClass['@id'].split(':')[1];
-        const superNames = theClass.superclass ? theClass.superclass.map(a => a['@id'].split(':')[1]) : [];
+        const superNames = theClass && theClass.superclass ? theClass.superclass.map(a => a['@id'].split(':')[1]) : [];
         let s = '';
         for (const superName of superNames) {
             s += `import 'https://schema.org/${superName}'\n\n`;

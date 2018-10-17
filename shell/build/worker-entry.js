@@ -1691,140 +1691,6 @@ const local_fetch = fetch;
 
 /***/ }),
 
-/***/ "./runtime/loader.js":
-/*!***************************!*\
-  !*** ./runtime/loader.js ***!
-  \***************************/
-/*! exports provided: Loader */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
-/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/fs-web.js */ "./platform/fs-web.js");
-/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../platform/vm-web.js */ "./platform/vm-web.js");
-/* harmony import */ var _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fetch-web.js */ "./runtime/fetch-web.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./particle.js */ "./runtime/particle.js");
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./dom-particle.js */ "./runtime/dom-particle.js");
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./multiplexer-dom-particle.js */ "./runtime/multiplexer-dom-particle.js");
-/* harmony import */ var _ts_build_reference_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ts-build/reference.js */ "./runtime/ts-build/reference.js");
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./transformation-dom-particle.js */ "./runtime/transformation-dom-particle.js");
-/* harmony import */ var _ts_build_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ts-build/converters/jsonldToManifest.js */ "./runtime/ts-build/converters/jsonldToManifest.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-
-
-
-
-
-const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
-
-function schemaLocationFor(name) {
-  return `../entities/${name}.schema`;
-}
-
-class Loader {
-  path(fileName) {
-    let path = fileName.replace(/[/][^/]+$/, '/');
-    return path;
-  }
-
-  join(prefix, path) {
-    if (/^https?:\/\//.test(path)) {
-      return path;
-    }
-    // TODO: replace this with something that isn't hacky
-    if (path[0] == '/' || path[1] == ':') {
-      return path;
-    }
-    prefix = this.path(prefix);
-    return prefix + path;
-  }
-
-  loadResource(file) {
-    if (/^https?:\/\//.test(file)) {
-      return this._loadURL(file);
-    }
-    return this._loadFile(file);
-  }
-
-  _loadFile(file) {
-    return new Promise((resolve, reject) => {
-      _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__["fs"].readFile(file, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data.toString('utf-8'));
-        }
-      });
-    });
-  }
-
-  _loadURL(url) {
-    if (/\/\/schema.org\//.test(url)) {
-      if (url.endsWith('/Thing')) {
-        return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => _ts_build_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data, {'@id': 'schema:Thing'}));
-      }
-      return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url + '.jsonld').then(res => res.text()).then(data => _ts_build_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data));
-    }
-    return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url).then(res => res.text());
-  }
-
-  async loadParticleClass(spec) {
-    let clazz = await this.requireParticle(spec.implFile);
-    clazz.spec = spec;
-    return clazz;
-  }
-
-  async requireParticle(fileName) {
-    if (fileName === null) fileName = '';
-    let src = await this.loadResource(fileName);
-    // Note. This is not real isolation.
-    let script = new _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__["vm"].Script(src, {filename: fileName, displayErrors: true});
-    let result = [];
-    let self = {
-      defineParticle(particleWrapper) {
-        result.push(particleWrapper);
-      },
-      console,
-      fetch: _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"],
-      setTimeout,
-      importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
-    };
-    script.runInNewContext(self, {filename: fileName, displayErrors: true});
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(result.length > 0 && typeof result[0] == 'function', `Error while instantiating particle implementation from ${fileName}`);
-    return this.unwrapParticle(result[0]);
-  }
-
-  setParticleExecutionContext(pec) {
-    this._pec = pec;
-  }
-
-  unwrapParticle(particleWrapper) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(this._pec);
-    return particleWrapper({Particle: _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"], DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"], TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__["TransformationDomParticle"], MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"], Reference: Object(_ts_build_reference_js__WEBPACK_IMPORTED_MODULE_7__["newClientReference"])(this._pec), html});
-  }
-
-}
-
-
-/***/ }),
-
 /***/ "./runtime/multiplexer-dom-particle.js":
 /*!*********************************************!*\
   !*** ./runtime/multiplexer-dom-particle.js ***!
@@ -3813,7 +3679,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 const supportedTypes = ['Text', 'URL', 'Number', 'Boolean'];
 class JsonldToManifest {
-    static convert(jsonld, theClass) {
+    static convert(jsonld, theClass = undefined) {
         const obj = JSON.parse(jsonld);
         const classes = {};
         const properties = {};
@@ -3882,7 +3748,7 @@ class JsonldToManifest {
             }
         }
         const className = theClass['@id'].split(':')[1];
-        const superNames = theClass.superclass ? theClass.superclass.map(a => a['@id'].split(':')[1]) : [];
+        const superNames = theClass && theClass.superclass ? theClass.superclass.map(a => a['@id'].split(':')[1]) : [];
         let s = '';
         for (const superName of superNames) {
             s += `import 'https://schema.org/${superName}'\n\n`;
@@ -4323,6 +4189,129 @@ function handleFor(proxy, name = null, particleId = 0, canRead = true, canWrite 
     return handle;
 }
 //# sourceMappingURL=handle.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/loader.js":
+/*!************************************!*\
+  !*** ./runtime/ts-build/loader.js ***!
+  \************************************/
+/*! exports provided: Loader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
+/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/fs-web.js */ "./platform/fs-web.js");
+/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/vm-web.js */ "./platform/vm-web.js");
+/* harmony import */ var _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../fetch-web.js */ "./runtime/fetch-web.js");
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../particle.js */ "./runtime/particle.js");
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../dom-particle.js */ "./runtime/dom-particle.js");
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../multiplexer-dom-particle.js */ "./runtime/multiplexer-dom-particle.js");
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./reference.js */ "./runtime/ts-build/reference.js");
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../transformation-dom-particle.js */ "./runtime/transformation-dom-particle.js");
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./converters/jsonldToManifest.js */ "./runtime/ts-build/converters/jsonldToManifest.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+
+
+
+
+const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
+function schemaLocationFor(name) {
+    return `../entities/${name}.schema`;
+}
+class Loader {
+    path(fileName) {
+        const path = fileName.replace(/[/][^/]+$/, '/');
+        return path;
+    }
+    join(prefix, path) {
+        if (/^https?:\/\//.test(path)) {
+            return path;
+        }
+        // TODO: replace this with something that isn't hacky
+        if (path[0] === '/' || path[1] === ':') {
+            return path;
+        }
+        prefix = this.path(prefix);
+        return prefix + path;
+    }
+    loadResource(file) {
+        if (/^https?:\/\//.test(file)) {
+            return this._loadURL(file);
+        }
+        return this._loadFile(file);
+    }
+    _loadFile(file) {
+        return new Promise((resolve, reject) => {
+            _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__["fs"].readFile(file, (err, data) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(data.toString('utf-8'));
+                }
+            });
+        });
+    }
+    _loadURL(url) {
+        if (/\/\/schema.org\//.test(url)) {
+            if (url.endsWith('/Thing')) {
+                return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data, { '@id': 'schema:Thing' }));
+            }
+            return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url + '.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data));
+        }
+        return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url).then(res => res.text());
+    }
+    async loadParticleClass(spec) {
+        const clazz = await this.requireParticle(spec.implFile);
+        clazz.spec = spec;
+        return clazz;
+    }
+    async requireParticle(fileName) {
+        if (fileName === null)
+            fileName = '';
+        const src = await this.loadResource(fileName);
+        // Note. This is not real isolation.
+        const script = new _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__["vm"].Script(src, { filename: fileName, displayErrors: true });
+        const result = [];
+        const self = {
+            defineParticle(particleWrapper) {
+                result.push(particleWrapper);
+            },
+            console,
+            fetch: _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"],
+            setTimeout,
+            importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
+        };
+        script.runInNewContext(self, { filename: fileName, displayErrors: true });
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(result.length > 0 && typeof result[0] === 'function', `Error while instantiating particle implementation from ${fileName}`);
+        return this.unwrapParticle(result[0]);
+    }
+    setParticleExecutionContext(pec) {
+        this.pec = pec;
+    }
+    unwrapParticle(particleWrapper) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(this.pec);
+        return particleWrapper({ Particle: _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"], DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"], TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__["TransformationDomParticle"], MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"], Reference: Object(_reference_js__WEBPACK_IMPORTED_MODULE_7__["newClientReference"])(this.pec), html });
+    }
+}
+//# sourceMappingURL=loader.js.map
 
 /***/ }),
 
@@ -6344,7 +6333,7 @@ const XenStateMixin = Base => class extends Base {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrowserLoader", function() { return BrowserLoader; });
-/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/loader.js */ "./runtime/loader.js");
+/* harmony import */ var _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/ts-build/loader.js */ "./runtime/ts-build/loader.js");
 /* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../runtime/particle.js */ "./runtime/particle.js");
 /* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../runtime/dom-particle.js */ "./runtime/dom-particle.js");
 /* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../runtime/multiplexer-dom-particle.js */ "./runtime/multiplexer-dom-particle.js");
@@ -6370,7 +6359,7 @@ const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + stri
 
 const dumbCache = {};
 
-class BrowserLoader extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
+class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
   constructor(urlMap) {
     super();
     this._urlMap = urlMap;

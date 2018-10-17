@@ -1,16 +1,5 @@
-commit 9b012bba1edbab54819ffa82f57f9bd057a4b56f
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Tue Oct 16 16:10:02 2018 -0700
+commit 0b6a69e1b7d5e1bad47dad641b56f9567bdadaaf
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Oct 17 16:03:58 2018 +1100
 
-    Update WebCrypto storage (#2107)
-    
-    * Update WebCrypto storage
-    
-    * use KeyPath in IndexDB instead of auto-incrementing keys
-    * Make keyFingerPrint the key
-    * Improve fingerprint function
-    * Fix bug where instanceof was being used on CryptoKeyPair
-    
-    * Remove stale comment, add comment to fingerprint
-    
-    * Add comment
+    Convert loader & browser-loader to typeScript (#2110)

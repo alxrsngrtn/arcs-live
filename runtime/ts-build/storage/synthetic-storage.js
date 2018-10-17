@@ -81,6 +81,7 @@ export class SyntheticStorage extends StorageBase {
 class SyntheticCollection extends StorageProviderBase {
     constructor(type, id, key, reference) {
         super(type, undefined, id, key);
+        this.backingStore = undefined;
         this.reference = reference;
         this.model = [];
         this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
@@ -123,6 +124,12 @@ class SyntheticCollection extends StorageProviderBase {
     }
     async toLiteral() {
         return this.toList();
+    }
+    cloneFrom() {
+        throw new Error("cloneFrom should never be called on SyntheticCollection!");
+    }
+    ensureBackingStore() {
+        throw new Error("ensureBackingStore should never be called on SyntheticCollection!");
     }
 }
 //# sourceMappingURL=synthetic-storage.js.map

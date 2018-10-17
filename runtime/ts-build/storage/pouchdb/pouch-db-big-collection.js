@@ -21,6 +21,9 @@ export class PouchDbBigCollection extends PouchDbStorageProvider {
     toLiteral() {
         throw new Error('NotImplemented');
     }
+    cloneFrom() {
+        throw new Error('NotImplemented');
+    }
     /**
      * Triggered when the storage key has been modified.  For now we
      * just refetch.  This is fast since the data is synced locally.

@@ -44,6 +44,8 @@ export class HostedSlotConsumer extends SlotConsumer {
     getInnerContainer(name) {
         const innerContainer = this.transformationSlotConsumer.getInnerContainer(name);
         if (innerContainer && this.storeId) {
+            // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
+            // tslint:disable-next-line: no-any
             const subId = this.arc.findStoreById(this.storeId)._stored.id;
             return innerContainer[subId];
         }
