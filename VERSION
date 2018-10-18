@@ -1,5 +1,5 @@
-commit 4e81d5a726e1c8a00c300fe2ab71062ce78b7732
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Oct 18 20:52:18 2018 +1100
+commit e139e8837a8830eb15022f5c479d3f12104f7c27
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Oct 19 07:45:04 2018 +1100
 
-    Small fixes to DevTools (#2115)
+    Throw error when a handle tries to write to a non-handle (#2117)
