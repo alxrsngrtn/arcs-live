@@ -1,5 +1,9 @@
-commit e139e8837a8830eb15022f5c479d3f12104f7c27
+commit 84ef0406f6f66600c03c8aa5837f082a9b7cd615
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Oct 19 07:45:04 2018 +1100
+Date:   Fri Oct 19 08:03:32 2018 +1100
 
-    Throw error when a handle tries to write to a non-handle (#2117)
+    Create SLANDLES version of recipe slots with tags test (#2116)
+    
+    * Add slandles test
+    
+    * Rewrite SLANDLES test to use handles as slots
