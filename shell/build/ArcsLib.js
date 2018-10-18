@@ -64949,18 +64949,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../platform/digest-web.js */ "./platform/digest-web.js");
 /* harmony import */ var _build_manifest_parser_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./build/manifest-parser.js */ "./runtime/build/manifest-parser.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./recipe/handle.js */ "./runtime/recipe/handle.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./particle-spec.js */ "./runtime/particle-spec.js");
 /* harmony import */ var _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ts-build/schema.js */ "./runtime/ts-build/schema.js");
-/* harmony import */ var _recipe_search_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./recipe/search.js */ "./runtime/recipe/search.js");
+/* harmony import */ var _ts_build_recipe_search_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ts-build/recipe/search.js */ "./runtime/ts-build/recipe/search.js");
 /* harmony import */ var _ts_build_shape_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ts-build/shape.js */ "./runtime/ts-build/shape.js");
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./recipe/util.js */ "./runtime/recipe/util.js");
+/* harmony import */ var _ts_build_recipe_util_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./ts-build/recipe/util.js */ "./runtime/ts-build/recipe/util.js");
 /* harmony import */ var _ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./ts-build/storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
 /* harmony import */ var _ts_build_manifest_meta_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./ts-build/manifest-meta.js */ "./runtime/ts-build/manifest-meta.js");
-/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
-/* harmony import */ var _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./recipe/connection-constraint.js */ "./runtime/recipe/connection-constraint.js");
+/* harmony import */ var _ts_build_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./ts-build/recipe/type-checker.js */ "./runtime/ts-build/recipe/type-checker.js");
+/* harmony import */ var _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./ts-build/recipe/connection-constraint.js */ "./runtime/ts-build/recipe/connection-constraint.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -65224,7 +65224,7 @@ class Manifest {
 
     // Quick check that a new handle can fulfill the type contract.
     // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
-    return stores.filter(s => !!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__["Handle"].effectiveType(
+    return stores.filter(s => !!_ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__["Handle"].effectiveType(
       type, [{type: s.type, direction: s.type.isInterface ? 'host' : 'inout'}]));
   }
   findShapeByName(name) {
@@ -65662,7 +65662,7 @@ ${e.message}
                 connection.location,
                 `param '${info.param}' is not defined by '${info.particle}'`);
           }
-          return new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__["ParticleEndPoint"](particle, info.param);
+          return new _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__["ParticleEndPoint"](particle, info.param);
         }
         case 'localName': {
           if (!items.byName.has(info.name)) {
@@ -65672,12 +65672,12 @@ ${e.message}
           }
           if (info.param == null && info.tags.length == 0 &&
               items.byName.get(info.name).handle) {
-            return new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__["HandleEndPoint"](items.byName.get(info.name).handle);
+            return new _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__["HandleEndPoint"](items.byName.get(info.name).handle);
           }
           throw new ManifestError(connection.location, `references to particles by local name not yet supported`);
         }
         case 'tag': {
-          return new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__["TagEndPoint"](info.tags);
+          return new _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__["TagEndPoint"](info.tags);
         }
         default:
           throw new Error(`endpoint ${info.targetType} not supported`);
@@ -65691,7 +65691,7 @@ ${e.message}
     }
 
     if (items.search) {
-      recipe.search = new _recipe_search_js__WEBPACK_IMPORTED_MODULE_7__["Search"](items.search.phrase, items.search.tokens);
+      recipe.search = new _ts_build_recipe_search_js__WEBPACK_IMPORTED_MODULE_7__["Search"](items.search.phrase, items.search.tokens);
     }
 
     for (let item of items.slots) {
@@ -66074,7 +66074,7 @@ ${e.message}
     return store;
   }
   _newRecipe(name) {
-    let recipe = new _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_3__["Recipe"](name);
+    let recipe = new _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_3__["Recipe"](name);
     this._recipes.push(recipe);
     return recipe;
   }
@@ -66106,7 +66106,7 @@ ${e.message}
       results.push(r.toString(options));
     });
 
-    let stores = [...this.stores].sort(_recipe_util_js__WEBPACK_IMPORTED_MODULE_10__["compareComparables"]);
+    let stores = [...this.stores].sort(_ts_build_recipe_util_js__WEBPACK_IMPORTED_MODULE_10__["compareComparables"]);
     stores.forEach(store => {
       results.push(store.toString(this._storeTags.get(store).map(a => `#${a}`)));
     });
@@ -66656,7 +66656,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api-channel.js */ "./runtime/api-channel.js");
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./manifest.js */ "./runtime/manifest.js");
-/* harmony import */ var _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./recipe/recipe-resolver.js */ "./runtime/recipe/recipe-resolver.js");
+/* harmony import */ var _ts_build_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ts-build/recipe/recipe-resolver.js */ "./runtime/ts-build/recipe/recipe-resolver.js");
 /* harmony import */ var _ts_build_arc_exceptions_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/arc-exceptions.js */ "./runtime/ts-build/arc-exceptions.js");
 /**
  * @license
@@ -66803,7 +66803,7 @@ class ParticleExecutionHost {
           handle.mapToStorage(fromHandle);
         }
         if (missingHandles.length > 0) {
-          const resolvedRecipe = await new _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_3__["RecipeResolver"](this._arc).resolve(recipe0);
+          const resolvedRecipe = await new _ts_build_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_3__["RecipeResolver"](this._arc).resolve(recipe0);
           if (!resolvedRecipe) {
             error = `Recipe couldn't load due to missing handles [recipe=${recipe0}, missingHandles=${missingHandles.join('\n')}].`;
           } else {
@@ -66889,15 +66889,16 @@ class ParticleExecutionHost {
 /*!**********************************!*\
   !*** ./runtime/particle-spec.js ***!
   \**********************************/
-/*! exports provided: ProvidedSlotSpec, ParticleSpec */
+/*! exports provided: SlotSpec, ProvidedSlotSpec, ParticleSpec */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotSpec", function() { return SlotSpec; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProvidedSlotSpec", function() { return ProvidedSlotSpec; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleSpec", function() { return ParticleSpec; });
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
+/* harmony import */ var _ts_build_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/recipe/type-checker.js */ "./runtime/ts-build/recipe/type-checker.js");
 /* harmony import */ var _ts_build_shape_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/shape.js */ "./runtime/ts-build/shape.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /**
@@ -66945,7 +66946,7 @@ class ConnectionSpec {
   }
 
   isCompatibleType(type) {
-    return _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({type}, {type: this.type, direction: this.direction});
+    return _ts_build_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({type}, {type: this.type, direction: this.direction});
   }
 }
 
@@ -67849,7 +67850,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../strategizer/strategizer.js */ "./strategizer/strategizer.js");
 /* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./strategies/rulesets.js */ "./runtime/strategies/rulesets.js");
 /* harmony import */ var _platform_deviceinfo_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../platform/deviceinfo-web.js */ "./platform/deviceinfo-web.js");
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./recipe/recipe-util.js */ "./runtime/recipe/recipe-util.js");
+/* harmony import */ var _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
 /* harmony import */ var _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./strategies/convert-constraints-to-connections.js */ "./runtime/strategies/convert-constraints-to-connections.js");
 /* harmony import */ var _strategies_assign_handles_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./strategies/assign-handles.js */ "./runtime/strategies/assign-handles.js");
 /* harmony import */ var _strategies_init_population_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./strategies/init-population.js */ "./runtime/strategies/init-population.js");
@@ -67865,21 +67866,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _strategies_group_handle_connections_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./strategies/group-handle-connections.js */ "./runtime/strategies/group-handle-connections.js");
 /* harmony import */ var _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./strategies/match-free-handles-to-connections.js */ "./runtime/strategies/match-free-handles-to-connections.js");
 /* harmony import */ var _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./strategies/create-handle-group.js */ "./runtime/strategies/create-handle-group.js");
-/* harmony import */ var _strategies_combined_strategy_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./strategies/combined-strategy.js */ "./runtime/strategies/combined-strategy.js");
-/* harmony import */ var _strategies_find_hosted_particle_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./strategies/find-hosted-particle.js */ "./runtime/strategies/find-hosted-particle.js");
-/* harmony import */ var _strategies_coalesce_recipes_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./strategies/coalesce-recipes.js */ "./runtime/strategies/coalesce-recipes.js");
-/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./strategies/resolve-recipe.js */ "./runtime/strategies/resolve-recipe.js");
-/* harmony import */ var _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./ts-build/speculator.js */ "./runtime/ts-build/speculator.js");
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
+/* harmony import */ var _strategies_find_hosted_particle_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./strategies/find-hosted-particle.js */ "./runtime/strategies/find-hosted-particle.js");
+/* harmony import */ var _strategies_coalesce_recipes_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./strategies/coalesce-recipes.js */ "./runtime/strategies/coalesce-recipes.js");
+/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./strategies/resolve-recipe.js */ "./runtime/strategies/resolve-recipe.js");
+/* harmony import */ var _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./ts-build/speculator.js */ "./runtime/ts-build/speculator.js");
+/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ../tracelib/trace.js */ "./tracelib/trace.js");
+/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 
 
@@ -67924,7 +67923,7 @@ class Planner {
 
   // Specify a timeout value less than zero to disable timeouts.
   async plan(timeout, generations) {
-    let trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_25__["Tracing"].start({cat: 'planning', name: 'Planner::plan', overview: true, args: {timeout}});
+    let trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({cat: 'planning', name: 'Planner::plan', overview: true, args: {timeout}});
     timeout = timeout || -1;
     let allResolved = [];
     let start = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__["now"])();
@@ -67991,11 +67990,11 @@ class Planner {
     return groups;
   }
   async suggest(timeout, generations, speculator) {
-    let trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_25__["Tracing"].start({cat: 'planning', name: 'Planner::suggest', overview: true, args: {timeout}});
-    if (!generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_27__["DevtoolsConnection"].isConnected) generations = [];
+    let trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({cat: 'planning', name: 'Planner::suggest', overview: true, args: {timeout}});
+    if (!generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__["DevtoolsConnection"].isConnected) generations = [];
     let plans = await trace.wait(this.plan(timeout, generations));
     let suggestions = [];
-    speculator = speculator || new _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_24__["Speculator"]();
+    speculator = speculator || new _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_23__["Speculator"]();
     // We don't actually know how many threads the VM will decide to use to
     // handle the parallel speculation, but at least we know we won't kick off
     // more than this number and so can somewhat limit resource utilization.
@@ -68008,12 +68007,12 @@ class Planner {
       for (let plan of group) {
         let hash = ((hash) => { return hash.substring(hash.length - 4);})(await plan.digest());
 
-        if (_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_4__["RecipeUtil"].matchesRecipe(this._arc._activeRecipe, plan)) {
+        if (_ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_4__["RecipeUtil"].matchesRecipe(this._arc._activeRecipe, plan)) {
           this._updateGeneration(generations, hash, (g) => g.active = true);
           continue;
         }
 
-        let planTrace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_25__["Tracing"].start({
+        let planTrace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({
           cat: 'speculating',
           sequence: `speculator_${groupIndex}`,
           overview: true,
@@ -68057,8 +68056,8 @@ class Planner {
 
     this._relevances = [];
 
-    if (generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_27__["DevtoolsConnection"].isConnected) {
-      _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_26__["StrategyExplorerAdapter"].processGenerations(generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_27__["DevtoolsConnection"].get());
+    if (generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__["DevtoolsConnection"].isConnected) {
+      _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_25__["StrategyExplorerAdapter"].processGenerations(generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__["DevtoolsConnection"].get());
     }
 
     return trace.endWith(results);
@@ -68102,9 +68101,9 @@ Planner.ResolutionStrategies = [
   _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_12__["AddMissingHandles"],
   _strategies_create_description_handle_js__WEBPACK_IMPORTED_MODULE_13__["CreateDescriptionHandle"],
   _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_18__["MatchFreeHandlesToConnections"],
-  _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_23__["ResolveRecipe"],
-  _strategies_find_hosted_particle_js__WEBPACK_IMPORTED_MODULE_21__["FindHostedParticle"],
-  _strategies_coalesce_recipes_js__WEBPACK_IMPORTED_MODULE_22__["CoalesceRecipes"]
+  _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_22__["ResolveRecipe"],
+  _strategies_find_hosted_particle_js__WEBPACK_IMPORTED_MODULE_20__["FindHostedParticle"],
+  _strategies_coalesce_recipes_js__WEBPACK_IMPORTED_MODULE_21__["CoalesceRecipes"]
 ];
 
 Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.ResolutionStrategies);
@@ -68136,8 +68135,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./strategies/rulesets.js */ "./runtime/strategies/rulesets.js");
 /* harmony import */ var _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./strategies/map-slots.js */ "./runtime/strategies/map-slots.js");
 /* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./recipe/recipe-util.js */ "./runtime/recipe/recipe-util.js");
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./recipe/handle.js */ "./runtime/recipe/handle.js");
+/* harmony import */ var _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./ts-build/recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
+/* harmony import */ var _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./ts-build/recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /**
  * @license
@@ -68319,8 +68318,8 @@ class RecipeIndex {
     // active recipe, and ? could end up as anything.
     let fates = [handle.originalFate, handle.fate, otherHandle.originalFate, otherHandle.fate];
     if (!fates.includes('copy') && !fates.includes('map')) {
-      let counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(handle);
-      let otherCounts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(otherHandle);
+      let counts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(handle);
+      let otherCounts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(otherHandle);
       // Someone has to read and someone has to write.
       if (otherCounts.in + counts.in === 0 || otherCounts.out + counts.out === 0) {
         return false;
@@ -68333,7 +68332,7 @@ class RecipeIndex {
     }
 
     // If types don't match.
-    if (!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(handle._mappedType, [...handle.connections, ...otherHandle.connections])) {
+    if (!_ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(handle._mappedType, [...handle.connections, ...otherHandle.connections])) {
       return false;
     }
 
@@ -68360,7 +68359,7 @@ class RecipeIndex {
               let matchingConns = Object.values(slotConn.particle.connections).filter(particleConn => {
                 return particleConn.direction !== 'host'
                     && (!particleConn.handle || !particleConn.handle.id || particleConn.handle.id == slotHandleConn.handle.id)
-                    && _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(slotHandleConn.handle._mappedType, [particleConn]);
+                    && _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(slotHandleConn.handle._mappedType, [particleConn]);
               });
               matchingConns.forEach(matchingConn => {
                 if (this._fatesAndDirectionsMatch(slotHandleConn, matchingConn)) {
@@ -68454,3056 +68453,6 @@ class RecipeIndex {
     return otherToHandle;
   }
 }
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/connection-constraint.js":
-/*!*************************************************!*\
-  !*** ./runtime/recipe/connection-constraint.js ***!
-  \*************************************************/
-/*! exports provided: ParticleEndPoint, InstanceEndPoint, HandleEndPoint, TagEndPoint, ConnectionConstraint */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleEndPoint", function() { return ParticleEndPoint; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InstanceEndPoint", function() { return InstanceEndPoint; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleEndPoint", function() { return HandleEndPoint; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TagEndPoint", function() { return TagEndPoint; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConnectionConstraint", function() { return ConnectionConstraint; });
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util.js */ "./runtime/recipe/util.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-class ParticleEndPoint {
-  constructor(particle, connection) {
-    this.particle = particle;
-    this.connection = connection;
-  }
-
-  _clone() {
-    return new ParticleEndPoint(this.particle, this.connection);
-  }
-
-  _compareTo(other) {
-    let cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"](this.particle.name, other.particle.name)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"](this.connection, other.connection)) != 0) return cmp;
-    return 0;
-  }
-
-  toString() {
-    if (!this.connection) {
-      return `${this.particle.name}`;
-    }
-    return `${this.particle.name}.${this.connection}`;
-  }
-}
-
-class InstanceEndPoint {
-  constructor(instance, connection) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(instance);
-    this.recipe = instance.recipe;
-    this.instance = instance;
-    this.connection = connection;
-  }
-
-  _clone(cloneMap) {
-    return new InstanceEndPoint(cloneMap.get(this.instance), this.connection);
-  }
-
-  _compareTo(other) {
-    let cmp;
-    if ((cmp = this.instance._compareTo(other.instance)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"](this.connection, other.connection)) != 0) return cmp;
-    return 0;
-  }
-
-  toString(nameMap) {
-    if (!this.connection) {
-      return `${nameMap.get(this.instance)}`;
-    }
-    return `${nameMap.get(this.instance)}.${this.connection}`;
-  }
-}
-
-class HandleEndPoint {
-  constructor(handle) {
-    this.handle = handle;
-  }
-
-  _clone() {
-    return new HandleEndPoint(this.handle);
-  }
-
-  _compareTo(other) {
-    let cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"](this.handle.localName, other.handle.localName)) != 0) return cmp;
-    return 0;
-  }
-
-  toString() {
-    return `${this.handle.localName}`;
-  }
-}
-
-class TagEndPoint {
-  constructor(tags) {
-    this.tags = tags;
-  }
-
-  _clone() {
-    return new TagEndPoint(this.tags);
-  }
-
-  _compareTo(other) {
-    let cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_0__["compareArrays"](this.handle.tags, other.handle.tags, _util_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])) != 0) return cmp;
-    return 0;
-  }
-
-  toString() {
-    return this.tags.map(a => `#${a}`).join(' ');
-  }
-}
-
-class ConnectionConstraint {
-  constructor(fromConnection, toConnection, direction, type) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(direction);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(type);
-    this.from = fromConnection;
-    this.to = toConnection;
-    this.direction = direction;
-    this.type = type;
-    Object.freeze(this);
-  }
-
-  _copyInto(recipe, cloneMap) {
-    if (this.type == 'constraint') {
-      return recipe.newConnectionConstraint(
-          this.from._clone(), this.to._clone(), this.direction);
-    }
-    return recipe.newObligation(this.from._clone(cloneMap), this.to._clone(cloneMap), this.direction);
-  }
-    
-  _compareTo(other) {
-    let cmp;
-    if ((cmp = this.from._compareTo(other.from)) != 0) return cmp;
-    if ((cmp = this.to._compareTo(other.to)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"](this.direction, other.direction)) != 0) return cmp;
-    return 0;
-  }
-
-  toString(nameMap, options) {
-    let unresolved = '';
-    if (options && options.showUnresolved == true && this.type == 'obligation') {
-      unresolved = ' // unresolved obligation';
-    }
-    return `${this.from.toString(nameMap)} ${this.direction} ${this.to.toString(nameMap)}${unresolved}`;
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/handle-connection.js":
-/*!*********************************************!*\
-  !*** ./runtime/recipe/handle-connection.js ***!
-  \*********************************************/
-/*! exports provided: HandleConnection */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleConnection", function() { return HandleConnection; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util.js */ "./runtime/recipe/util.js");
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/type.js */ "./runtime/ts-build/type.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-class HandleConnection {
-  constructor(name, particle) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particle);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particle.recipe);
-    this._recipe = particle.recipe;
-    this._name = name;
-    this._tags = [];
-    this._type = undefined;
-    this._rawType = undefined;
-    this._direction = undefined;
-    this._particle = particle;
-    this._handle = undefined;
-  }
-
-  _clone(particle, cloneMap) {
-    if (cloneMap.has(this)) {
-      return cloneMap.get(this);
-    }
-    let handleConnection = new HandleConnection(this._name, particle);
-    handleConnection._tags = [...this._tags];
-    // Note that _rawType will be cloned later by the particle that references this connection.
-    // Doing it there allows the particle to maintain variable associations across the particle
-    // scope.    
-    handleConnection._rawType = this._rawType;
-    handleConnection._direction = this._direction;
-    if (this._handle != undefined) {
-      handleConnection._handle = cloneMap.get(this._handle);
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleConnection._handle !== undefined);
-      handleConnection._handle.connections.push(handleConnection);
-    }
-    cloneMap.set(this, handleConnection);
-    return handleConnection;
-  }
-
-  _normalize() {
-    this._tags.sort();
-    // TODO: type?
-    Object.freeze(this);
-  }
-
-  _compareTo(other) {
-    let cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareComparables"](this._particle, other._particle)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"](this._name, other._name)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareArrays"](this._tags, other._tags, _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareComparables"](this._handle, other._handle)) != 0) return cmp;
-    // TODO: add type comparison
-    // if ((cmp = util.compareStrings(this._type, other._type)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"](this._direction, other._direction)) != 0) return cmp;
-    return 0;
-  }
-
-  get recipe() { return this._recipe; }
-  get name() { return this._name; } // Parameter name?
-  getQualifiedName() { return `${this.particle.name}::${this.name}`; }
-  get tags() { return this._tags; }
-  get type() {
-    if (this._type) {
-      return this._type;
-    }
-    return this._rawType;
-  }
-  get rawType() {
-    return this._rawType;
-  }
-  get direction() { return this._direction; } // in/out
-  get isInput() {
-    return this.direction == 'in' || this.direction == 'inout';
-  }
-  get isOutput() {
-    return this.direction == 'out' || this.direction == 'inout';
-  }
-  get handle() { return this._handle; } // Handle?
-  get particle() { return this._particle; } // never null
-
-  set tags(tags) { this._tags = tags; }
-  set type(type) {
-    this._rawType = type;
-    this._type = undefined;
-    this._resetHandleType();
-  }
-
-  set direction(direction) {
-    this._direction = direction;
-    this._resetHandleType();
-  }
-
-  get spec() {
-    if (this.particle.spec == null) {
-      return null;
-    }
-    return this.particle.spec.connectionMap.get(this.name);
-  }
-
-  get isOptional() {
-    if (this.spec == null) {
-      return false;
-    }
-    return this.spec.isOptional;
-  }
-
-  _isValid(options) {
-    if (this.direction && !['in', 'out', 'inout', 'host', '`consume', '`provide'].includes(this.direction)) {
-      if (options && options.errors) {
-        options.errors.set(this, `Invalid direction '${this.direction}' for handle connection '${this.getQualifiedName()}'`);
-      }
-      return false;
-    }
-    if (this.type && this.spec) {
-      let connectionSpec = this.spec;
-      if (!connectionSpec.isCompatibleType(this.rawType)) {
-        if (options && options.errors) {
-          options.errors.set(this, `Type '${this.rawType.toString()} for handle connection '${this.getQualifiedName()}' doesn't match particle spec's type '${connectionSpec.type.toString()}'`);
-        }
-        return false;
-      }
-      if (this.direction != connectionSpec.direction) {
-        if (options && options.errors) {
-          options.errors.set(this, `Direction '${this.direction}' for handle connection '${this.getQualifiedName()}' doesn't match particle spec's direction '${connectionSpec.direction}'`);
-        }
-        return false;
-      }
-    }
-    return true;
-  }
-
-  isResolved(options) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this));
-
-    if (this.isOptional) {
-      return true;
-    }
-
-    let parent;
-    if (this.spec && this.spec.parentConnection) {
-      parent = this.particle.connections[this.spec.parentConnection.name];
-    }
-
-    // TODO: This should use this._type, or possibly not consider type at all.
-    if (!this.type) {
-      if (options) {
-        options.details = 'missing type';
-      }
-      return false;
-    }
-    if (!this._direction) {
-      if (options) {
-        options.details = 'missing direction';
-      }
-      return false;
-    }
-    if (!this.handle) {
-      if (parent && parent.isOptional && !parent.handle) {
-        return true;
-      }
-      if (options) {
-        options.details = 'missing handle';
-      }
-      return false;
-    } else if (parent) {
-      if (!parent.handle) {
-        if (options) {
-          options.details = 'parent connection missing handle';
-        }
-        return false;
-      }
-    }
-    return true;
-  }
-
-  _resetHandleType() {
-    if (this._handle) {
-      this._handle._type = undefined;
-    }
-  }
-
-  connectToHandle(handle) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle.recipe == this.recipe);
-    this._handle = handle;
-    this._resetHandleType();
-    this._handle.connections.push(this);
-  }
-
-  disconnectHandle() {
-    let idx = this._handle.connections.indexOf(this);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx >= 0);
-    this._handle.connections.splice(idx, 1);
-    this._handle = undefined;
-  }
-
-  toString(nameMap, options) {
-    let result = [];
-    result.push(this.name || '*');
-    // TODO: better deal with unspecified direction.
-    result.push({'in': '<-', 'out': '->', 'inout': '=', 'host': '=', '`consume': '<-', '`provide': '->'}[this.direction] || this.direction || '=');
-    if (this.handle) {
-      result.push(`${(nameMap && nameMap.get(this.handle)) || this.handle.localName}`);
-    }
-    result.push(...this.tags.map(a => `#${a}`));
-
-    if (options && options.showUnresolved) {
-      if (!this.isResolved(options)) {
-        result.push(`// unresolved handle-connection: ${options.details}`);
-      }
-    }
-
-    return result.join(' ');
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/handle.js":
-/*!**********************************!*\
-  !*** ./runtime/recipe/handle.js ***!
-  \**********************************/
-/*! exports provided: Handle */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Handle", function() { return Handle; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util.js */ "./runtime/recipe/util.js");
-/* harmony import */ var _type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./type-checker.js */ "./runtime/recipe/type-checker.js");
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../ts-build/type.js */ "./runtime/ts-build/type.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-class Handle {
-  constructor(recipe) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe);
-    this._recipe = recipe;
-    this._id = null;
-    this._localName = undefined;
-    this._tags = [];
-    this._type = undefined;
-    this._fate = null;
-    // TODO: replace originalFate and originalId with more generic mechanism for tracking
-    // how and from what the recipe was generated.
-    this._originalFate = null;
-    this._originalId = null;
-    this._connections = [];
-    this._mappedType = undefined;
-    this._storageKey = undefined;
-    this._pattern = undefined;
-  }
-
-  _copyInto(recipe) {
-    let handle = undefined;
-    if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate)) {
-      handle = recipe.findHandle(this._id);
-    }
-
-    if (handle == undefined) {
-      handle = recipe.newHandle();
-      handle._id = this._id;
-      handle._tags = [...this._tags];
-      handle._type = this._type ? _ts_build_type_js__WEBPACK_IMPORTED_MODULE_3__["Type"].fromLiteral(this._type.toLiteral()) : undefined;
-      handle._fate = this._fate;
-      handle._originalFate = this._originalFate;
-      handle._originalId = this._originalId;
-      handle._mappedType = this._mappedType;
-      handle._storageKey = this._storageKey;
-
-      // the connections are re-established when Particles clone their
-      // attached HandleConnection objects.
-      handle._connections = [];
-      handle._pattern = this._pattern;
-    }
-    return handle;
-  }
-
-  // Merges `this` recipe handle into `handle`
-  mergeInto(handle) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.recipe == handle.recipe, 'Cannot merge handles from different recipes.');
-    while (this.connections.length > 0) {
-      let [connection] = this.connections;
-      connection.disconnectHandle();
-      connection.connectToHandle(handle);
-    }
-    handle.tags = handle.tags.concat(this.tags);
-    handle.recipe.removeHandle(this);
-    handle.fate = this._mergedFate([this.fate, handle.fate]);
-  }
-
-  _mergedFate(fates) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(fates.length > 0, `Cannot merge empty fates list`);
-    // Merging handles only used in coalesce-recipe strategy, which is only done for use/create/? fates.
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!fates.includes('map') && !fates.includes('copy'), `Merging map/copy not supported yet`);
-
-    // If all fates were `use` keep their fate, otherwise set to `create`.
-    return fates.every(fate => fate == 'use') ? 'use' : 'create';
-  }
-
-  _startNormalize() {
-    this._localName = null;
-    this._tags.sort();
-    // TODO: type?
-  }
-
-  _finishNormalize() {
-    for (let connection of this._connections) {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(connection), `Handle connection '${connection.name}' is not frozen.`);
-    }
-    this._connections.sort(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareComparables"]);
-    Object.freeze(this);
-  }
-
-  _compareTo(other) {
-    let cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"](this._id, other._id)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"](this._localName, other._localName)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareArrays"](this._tags, other._tags, _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])) != 0) return cmp;
-    // TODO: type?
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"](this.fate, other.fate)) != 0) return cmp;
-    return 0;
-  }
-
-  // a resolved Handle has either an id or create=true
-  get fate() { return this._fate || '?'; }
-  set fate(fate) {
-    if (this._originalFate == null) {
-      this._originalFate = this._fate;
-    }
-    this._fate = fate;
-  }
-  get originalFate() { return this._originalFate || '?'; }
-  get originalId() { return this._originalId; }
-  get recipe() { return this._recipe; }
-  get tags() { return this._tags; } // only tags owned by the handle
-  set tags(tags) { this._tags = tags; }
-  get type() { return this._type; } // nullable
-  get id() { return this._id; }
-  set id(id) {
-    if (!this._originalId) {
-      this._originalId = this._id;
-    }
-    this._id = id;
-  }
-  mapToStorage(storage) {
-    this._id = storage.id;
-    this._originalId = storage.originalId;
-    this._type = undefined;
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(storage.type == undefined || !(storage.type.hasVariableReference), `variable references shouldn't be part of handle types`);
-    this._mappedType = storage.type;
-    this._storageKey = storage.storageKey;
-  }
-  get localName() { return this._localName; }
-  set localName(name) { this._localName = name; }
-  get connections() { return this._connections; } // HandleConnection*
-  get storageKey() { return this._storageKey; }
-  set storageKey(key) { this._storageKey = key; }
-  get pattern() { return this._pattern; }
-  set pattern(pattern) { this._pattern = pattern; }
-  get mappedType() { return this._mappedType; }
-
-  static effectiveType(handleType, connections) {
-    let variableMap = new Map();
-    // It's OK to use _cloneWithResolutions here as for the purpose of this test, the handle set + handleType 
-    // contain the full set of type variable information that needs to be maintained across the clone.
-    let typeSet = connections.filter(connection => connection.type != null).map(connection => ({type: connection.type._cloneWithResolutions(variableMap), direction: connection.direction}));
-    return _type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"].processTypeList(handleType ? handleType._cloneWithResolutions(variableMap) : null, typeSet);
-  }
-
-  static resolveEffectiveType(handleType, connections) {
-    let typeSet = connections.filter(connection => connection.type != null).map(connection => ({type: connection.type, direction: connection.direction}));
-    return _type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"].processTypeList(handleType, typeSet);   
-  }
-
-  _isValid(options) {
-    let tags = new Set();
-    for (let connection of this._connections) {
-      // A remote handle cannot be connected to an output param.
-      if (this.fate == 'map' && ['out', 'inout'].includes(connection.direction)) {
-        if (options && options.errors) {
-          options.errors.set(this, `Invalid fate '${this.fate}' for handle '${this}'; it is used for '${connection.direction}' ${connection.getQualifiedName()} connection`);
-        }
-        return false;
-      }
-      connection.tags.forEach(tag => tags.add(tag));
-    }
-    let type = Handle.resolveEffectiveType(this._mappedType, this._connections);
-    if (type) {
-      this._type = type;
-      this._tags.forEach(tag => tags.add(tag));
-      this._tags = [...tags];
-      return true;
-    }
-    if (options && options.errors) {
-      // TODO: pass options to TypeChecker.processTypeList for better error.
-      options.errors.set(this, `Type validations failed for handle '${this}'`);
-    }
-    return false;
-  }
-
-  isResolved(options) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this));
-    let resolved = true;
-    if (this.type) {
-      let mustBeResolved = true;
-      if (this.fate == 'create' || this.fate == '`slot') {
-        mustBeResolved = false;
-      }
-      if ((mustBeResolved && !this.type.isResolved()) || !this.type.canEnsureResolved()) {
-        if (options) {
-          options.details.push('unresolved type');
-        }
-        resolved = false;
-      }
-    } else {
-      if (options) {
-        options.details.push('missing type');
-      }
-      resolved = false;
-    }
-
-    switch (this.fate) {
-      case '?': {
-        if (options) {
-          options.details.push('missing fate');
-        }
-        resolved = false;
-        break;
-      }
-      case 'copy':
-      case 'map':
-      case 'use': {
-        if (options && this.id === null) {
-          options.details.push('missing id');
-        }
-        resolved = resolved && (this.id !== null);
-        break;
-      }
-      case '`slot':
-      case 'create':
-        break;
-      default: {
-        if (options) {
-          options.details.push(`invalid fate ${this.fate}`);
-        }
-        throw new Error(`Unexpected fate: ${this.fate}`);
-      }
-    }
-    return resolved;
-  }
-
-  toString(nameMap, options) {
-    options = options || {};
-    // TODO: type? maybe output in a comment
-    let result = [];
-    result.push(this.fate);
-    if (this.id) {
-      result.push(`'${this.id}'`);
-    }
-    result.push(...this.tags.map(a => `#${a}`));
-    result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
-    if (this.type) {
-      result.push('//');
-      if (this.type.isResolved()) {
-        result.push(this.type.resolvedType().toString({hideFields: options.hideFields == undefined ? true: options.hideFields}));
-      } else {
-        // TODO: include the unresolved constraints in toString (ie in the hash).
-        result.push(this.type.toString());
-        if (options.showUnresolved && this.type.canEnsureResolved()) {
-          let type = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_3__["Type"].fromLiteral(this.type.toLiteral());
-          type.maybeEnsureResolved();
-          result.push('//');
-          result.push(type.resolvedType().toString({hideFields: options.hideFields == undefined ? true: options.hideFields}));
-        }
-      }
-    }
-    if (options.showUnresolved) {
-      let unresolvedOptions = {details: []};
-      if (!this.isResolved(unresolvedOptions)) {
-        result.push(` // unresolved handle: ${unresolvedOptions.details.join(', ')}`);
-      }
-    }
-
-    return result.join(' ');
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/particle.js":
-/*!************************************!*\
-  !*** ./runtime/recipe/particle.js ***!
-  \************************************/
-/*! exports provided: Particle */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Particle", function() { return Particle; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _slot_connection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-connection.js */ "./runtime/recipe/slot-connection.js");
-/* harmony import */ var _handle_connection_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./handle-connection.js */ "./runtime/recipe/handle-connection.js");
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util.js */ "./runtime/recipe/util.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-class Particle {
-  constructor(recipe, name) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe);
-    this._recipe = recipe;
-    this._id = undefined;
-    this._name = name;
-    this._localName = undefined;
-    this._spec = undefined;
-    this._verbs = [];
-
-    this._connections = {};
-    // TODO: replace with constraint connections on the recipe
-    this._unnamedConnections = [];
-    this._consumedSlotConnections = {}; // map of consumed Slot connections by slot name.
-  }
-
-  _copyInto(recipe, cloneMap) {
-    let particle = recipe.newParticle(this._name);
-    particle._id = this._id;
-    particle._verbs = [...this._verbs];
-    particle._spec = this._spec;
-
-    Object.keys(this._connections).forEach(key => {
-      particle._connections[key] = this._connections[key]._clone(particle, cloneMap);
-    });
-    particle._unnamedConnections = this._unnamedConnections.map(connection => connection._clone(particle, cloneMap));
-    particle._cloneConnectionRawTypes();
-    Object.keys(this._consumedSlotConnections).forEach(key => {
-      particle._consumedSlotConnections[key] = this._consumedSlotConnections[key]._clone(particle, cloneMap);
-    });
-
-    return particle;
-  }
-
-  _cloneConnectionRawTypes() {
-    // TODO(shans): evaluate whether this is the appropriate context root for cloneWithResolution
-    let map = new Map();
-    for (let connection of Object.values(this._connections)) {
-      if (connection._rawType) {
-        connection._rawType = connection._rawType._cloneWithResolutions(map);
-      }
-    }
-    for (let connection of this._unnamedConnections) {
-      if (connection._rawType) {
-        connection._rawType = connection._rawType._cloneWithResolutions(map);
-      }
-    }
-  }
-
-  _startNormalize() {
-    this._localName = null;
-    this._verbs.sort();
-    let normalizedConnections = {};
-    for (let key of (Object.keys(this._connections).sort())) {
-      normalizedConnections[key] = this._connections[key];
-    }
-    this._connections = normalizedConnections;
-
-    let normalizedSlotConnections = {};
-    for (let key of (Object.keys(this._consumedSlotConnections).sort())) {
-      normalizedSlotConnections[key] = this._consumedSlotConnections[key];
-    }
-    this._consumedSlotConnections = normalizedSlotConnections;
-  }
-
-  _finishNormalize() {
-    this._unnamedConnections.sort(_util_js__WEBPACK_IMPORTED_MODULE_3__["compareComparables"]);
-    Object.freeze(this);
-  }
-
-  _compareTo(other) {
-    let cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_3__["compareStrings"](this._id, other._id)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_3__["compareStrings"](this._name, other._name)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_3__["compareStrings"](this._localName, other._localName)) != 0) return cmp;
-    // TODO: spec?
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_3__["compareArrays"](this._verbs, other._verbs, _util_js__WEBPACK_IMPORTED_MODULE_3__["compareStrings"])) != 0) return cmp;
-    // TODO: slots
-    return 0;
-  }
-
-  _isValid(options) {
-    if (!this.spec) {
-      return true;
-    }
-    if (!this.name && !this.primaryVerb) {
-      // Must have either name of a verb
-      if (options && options.errors) {
-        options.errors.set(this, `Particle has no name and no verb`);
-      }
-      return false;
-    }
-    // TODO: What
-    return true;
-  }
-
-  isResolved(options) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this));
-    let consumedSlotConnections = Object.values(this.consumedSlotConnections);
-    if (consumedSlotConnections.length > 0) {
-      let fulfilledSlotConnections = consumedSlotConnections.filter(connection => connection.targetSlot !== undefined);
-      if (fulfilledSlotConnections.length == 0) {
-        if (options && options.showUnresolved) {
-          options.details = 'unfullfilled slot connections';
-        }
-        return false;
-      }
-    }
-    if (!this.spec) {
-      if (options && options.showUnresolved) {
-        options.details = 'missing spec';
-      }
-      return false;
-    }
-    if (this.spec.connectionMap.size != Object.keys(this._connections).length) {
-      if (options && options.showUnresolved) {
-        options.details = 'unresolved connections';
-      }
-      return false;
-    }
-    if (this.unnamedConnections.length != 0) {
-      if (options && options.showUnresolved) {
-        options.details = `${this.unnamedConnections.length} unnamed connections`;
-      }
-      return false;
-    }
-    return true;
-  }
-
-  get recipe() { return this._recipe; }
-  get localName() { return this._localName; }
-  set localName(name) { this._localName = name; }
-  get id() { return this._id; } // Not resolved until we have an ID.
-  get name() { return this._name; }
-  set name(name) { this._name = name; }
-  get spec() { return this._spec; }
-  get connections() { return this._connections; } // {parameter -> HandleConnection}
-  get unnamedConnections() { return this._unnamedConnections; } // HandleConnection*
-  get consumedSlotConnections() { return this._consumedSlotConnections; }
-  get primaryVerb() { return (this._verbs.length > 0) ? this._verbs[0] : undefined; }
-  set verbs(verbs) { this._verbs = verbs; }
-
-  set spec(spec) {
-    this._spec = spec;
-    for (let connectionName of spec.connectionMap.keys()) {
-      let speccedConnection = spec.connectionMap.get(connectionName);
-      let connection = this.connections[connectionName];
-      if (connection == undefined) {
-        connection = this.addConnectionName(connectionName);
-      }
-      // TODO: don't just overwrite here, check that the types
-      // are compatible if one already exists.
-      connection.type = speccedConnection.type;
-      connection.direction = speccedConnection.direction;
-    }
-    spec.slots.forEach(slotSpec => {
-      if (this._consumedSlotConnections[slotSpec.name] == undefined) {
-        this.addSlotConnection(slotSpec.name);
-      }
-      this._consumedSlotConnections[slotSpec.name].slotSpec = slotSpec;
-    });
-  }
-
-  addUnnamedConnection() {
-    let connection = new _handle_connection_js__WEBPACK_IMPORTED_MODULE_2__["HandleConnection"](undefined, this);
-    this._unnamedConnections.push(connection);
-    return connection;
-  }
-
-  addConnectionName(name) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._connections[name] == undefined);
-    this._connections[name] = new _handle_connection_js__WEBPACK_IMPORTED_MODULE_2__["HandleConnection"](name, this);
-    return this._connections[name];
-  }
-
-  allConnections() {
-    return Object.values(this._connections).concat(this._unnamedConnections);
-  }
-
-  ensureConnectionName(name) {
-    return this._connections[name] || this.addConnectionName(name);
-  }
-
-  getConnectionByName(name) {
-    return this._connections[name];
-  }
-
-  nameConnection(connection, name) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._connections[name].handle, `Connection "${name}" already has a handle`);
-
-    let idx = this._unnamedConnections.indexOf(connection);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx >= 0, `Cannot name '${name}' nonexistent unnamed connection.`);
-    connection._name = name;
-
-    connection.type = this._connections[name].type;
-    if (connection.direction != this._connections[name].direction) {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(connection.direction == 'inout',
-             `Unnamed connection cannot adjust direction ${connection.direction} to ${name}'s direction ${this._connections[name].direction}`);
-      connection.direction = this._connections[name].direction;
-    }
-
-    this._connections[name] = connection;
-    this._unnamedConnections.splice(idx, 1);
-  }
-
-  addSlotConnection(name) {
-    let slotConn = new _slot_connection_js__WEBPACK_IMPORTED_MODULE_1__["SlotConnection"](name, this);
-    this._consumedSlotConnections[name] = slotConn;
-    return slotConn;
-  }
-
-  removeSlotConnection(slotConnection) {
-    this._consumedSlotConnections[slotConnection._name] = null;
-    slotConnection.disconnectFromSlot();
-  }
-
-  remove() {
-    this.recipe.removeParticle(this);
-  }
-
-  toString(nameMap, options) {
-    let result = [];
-    // TODO: we need at least name or verb(s)
-    if (this.name) {
-      result.push(this.name);
-
-      result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
-      if (this.primaryVerb && this.primaryVerb != this.name) {
-        result.push(`// verb=${this.primaryVerb}`);
-      }
-    } else { // verb must exist, if there is no name.
-      result.push(`&${this.primaryVerb}`);
-    }
-    if (options && options.showUnresolved) {
-      if (!this.isResolved(options)) {
-        result.push(`// unresolved particle: ${options.details}`);
-      }
-    }
-
-    result = [result.join(' ')];
-
-    for (let connection of this.unnamedConnections) {
-      result.push(connection.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
-    }
-    for (let connection of Object.values(this.connections)) {
-      result.push(connection.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
-    }
-    for (let slotConnection of Object.values(this._consumedSlotConnections)) {
-      result.push(slotConnection.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
-    }
-    return result.join('\n');
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/recipe-resolver.js":
-/*!*******************************************!*\
-  !*** ./runtime/recipe/recipe-resolver.js ***!
-  \*******************************************/
-/*! exports provided: RecipeResolver */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeResolver", function() { return RecipeResolver; });
-/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../strategies/resolve-recipe.js */ "./runtime/strategies/resolve-recipe.js");
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-// Provides basic recipe resolution for recipes against a particular arc.
-class RecipeResolver {
-  constructor(arc) {
-    this._resolver = new _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_0__["ResolveRecipe"](arc);
-  }
-
-  // Attempts to run basic resolution on the given recipe. Returns a new
-  // instance of the recipe normalized and resolved if possible. Returns null if
-  // normalization or attempting to resolve slot connection fails.
-  async resolve(recipe) {
-    recipe = recipe.clone();
-    let options = {errors: new Map()};
-    if (!recipe.normalize(options)) {
-      console.warn(`could not normalize a recipe: ${
-              [...options.errors.values()].join('\n')}.\n${recipe.toString()}`);
-      return null;
-    }
-
-    const result = await this._resolver.generate(
-        {generated: [{result: recipe, score: 1}], terminal: []});
-    return (result.length == 0) ? null : result[0].result;
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/recipe-util.js":
-/*!***************************************!*\
-  !*** ./runtime/recipe/recipe-util.js ***!
-  \***************************************/
-/*! exports provided: RecipeUtil */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeUtil", function() { return RecipeUtil; });
-/* harmony import */ var _recipe_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-class Shape {
-  constructor(recipe, particles, handles, hcs) {
-    this.recipe = recipe;
-    this.particles = particles;
-    this.handles = handles;
-    this.reverse = new Map();
-    for (let p in particles) {
-      this.reverse.set(particles[p], p);
-    }
-    for (let h of handles.keys()) {
-      this.reverse.set(handles.get(h), h);
-    }
-    for (let hc in hcs) {
-      this.reverse.set(hcs[hc], hc);
-    }
-  }
-}
-
-class RecipeUtil {
-  static makeShape(particles, handles, map, recipe) {
-    recipe = recipe || new _recipe_js__WEBPACK_IMPORTED_MODULE_0__["Recipe"]();
-    let pMap = {};
-    let hMap = new Map();
-    let hcMap = {};
-    particles.forEach(particle => pMap[particle] = recipe.newParticle(particle));
-    handles.forEach(handle => hMap.set(handle, recipe.newHandle()));
-    Object.keys(map).forEach(key => {
-      Object.keys(map[key]).forEach(name => {
-        let handle = map[key][name];
-        let direction = '=';
-        let tags = [];
-        if (handle.handle) {
-        // NOTE: for now, '=' on the shape means "accept anything". This is going
-        // to change when we redo capabilities; for now it's modeled by mapping '=' to
-        // '=' rather than to 'inout'.
-
-          direction = {'->': 'out', '<-': 'in', '=': '='}[handle.direction];
-          tags = handle.tags || [];
-          handle = handle.handle;
-        }
-        if (handle.localName) {
-          hMap.get(handle).localName = handle.localName;
-        }
-
-        let connection = pMap[key].addConnectionName(name);
-        connection.direction = direction;
-        hMap.get(handle).tags = tags;
-        connection.connectToHandle(hMap.get(handle));
-        hcMap[key + ':' + name] = pMap[key].connections[name];
-      });
-    });
-    return new Shape(recipe, pMap, hMap, hcMap);
-  }
-
-  static recipeToShape(recipe) {
-    let particles = {};
-    let id = 0;
-    recipe.particles.forEach(particle => particles[particle.name] = particle);
-    let handles = new Map();
-    recipe.handles.forEach(handle => handles.set('h' + id++, handle));
-    let hcs = {};
-    recipe.handleConnections.forEach(hc => hcs[hc.particle.name + ':' + hc.name] = hc);
-    return new Shape(recipe, particles, handles, hcs);
-  }
-
-  static find(recipe, shape) {
-
-    function _buildNewHCMatches(recipe, shapeHC, match, outputList) {
-      let {forward, reverse, score} = match;
-      let matchFound = false;
-      for (let recipeHC of recipe.handleConnections) {
-        // TODO are there situations where multiple handleConnections should
-        // be allowed to point to the same one in the recipe?
-        if (reverse.has(recipeHC)) {
-          continue;
-        }
-
-        // TODO support unnamed shape particles.
-        if (recipeHC.particle.name != shapeHC.particle.name) {
-          continue;
-        }
-
-        if (shapeHC.name && shapeHC.name != recipeHC.name) {
-          continue;
-        }
-
-        let acceptedDirections = {'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host']};
-        if (recipeHC.direction) {
-          if (!acceptedDirections[shapeHC.direction].includes(
-                  recipeHC.direction)) {
-            continue;
-          }
-        }
-
-        if (shapeHC.handle && recipeHC.handle && shapeHC.handle.localName &&
-            shapeHC.handle.localName !== recipeHC.handle.localName) {
-          continue;
-        }
-
-        // recipeHC is a candidate for shapeHC. shapeHC references a
-        // particle, so recipeHC must reference the matching particle,
-        // or a particle that isn't yet mapped from shape.
-        if (reverse.has(recipeHC.particle)) {
-          if (reverse.get(recipeHC.particle) != shapeHC.particle) {
-            continue;
-          }
-        } else if (forward.has(shapeHC.particle)) {
-          // we've already mapped the particle referenced by shapeHC
-          // and it doesn't match recipeHC's particle as recipeHC's
-          // particle isn't mapped
-          continue;
-        }
-
-        // shapeHC doesn't necessarily reference a handle, but if it does
-        // then recipeHC needs to reference the matching handle, or one
-        // that isn't yet mapped, or no handle yet.
-        if (shapeHC.handle && recipeHC.handle) {
-          if (reverse.has(recipeHC.handle)) {
-            if (reverse.get(recipeHC.handle) != shapeHC.handle) {
-              continue;
-            }
-          } else if (forward.has(shapeHC.handle) && forward.get(shapeHC.handle) !== null) {
-            continue;
-          }
-          // Check whether shapeHC and recipeHC reference the same handle.
-          // Note: the id of a handle with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
-          // Skip the check if handles have 'create' fate (their ids are arbitrary).
-          if ((shapeHC.handle.fate != 'create' || (recipeHC.handle.fate != 'create' && recipeHC.handle.originalFate != 'create')) &&
-              shapeHC.handle.id != recipeHC.handle.id && shapeHC.handle.id != recipeHC.handle.originalId) {
-            // this is a different handle.
-            continue;
-          }
-        }
-
-        // clone forward and reverse mappings and establish new components.
-        let newMatch = {forward: new Map(forward), reverse: new Map(reverse), score};
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!newMatch.reverse.has(recipeHC.particle) || newMatch.reverse.get(recipeHC.particle) == shapeHC.particle);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) == recipeHC.particle);
-        newMatch.forward.set(shapeHC.particle, recipeHC.particle);
-        newMatch.reverse.set(recipeHC.particle, shapeHC.particle);
-        if (shapeHC.handle) {
-          if (!recipeHC.handle) {
-            if (!newMatch.forward.has(shapeHC.handle)) {
-              newMatch.forward.set(shapeHC.handle, null);
-              newMatch.score -= 2;
-            }
-          } else {
-            newMatch.forward.set(shapeHC.handle, recipeHC.handle);
-            newMatch.reverse.set(recipeHC.handle, shapeHC.handle);
-          }
-        }
-        newMatch.forward.set(shapeHC, recipeHC);
-        newMatch.reverse.set(recipeHC, shapeHC);
-        outputList.push(newMatch);
-        matchFound = true;
-      }
-
-      if (matchFound == false) {
-        // Non-null particle in the `forward` map means that some of the particle
-        // handle connections were successful matches, but some couldn't be matched.
-        // It means that this match in invalid.
-        if (match.forward.get(shapeHC.particle)) {
-          return;
-        }
-        // The current handle connection from the shape doesn't match anything
-        // in the recipe. Find (or create) a particle for it.
-        let newMatches = [];
-        _buildNewParticleMatches(recipe, shapeHC.particle, match, newMatches);
-        newMatches.forEach(newMatch => {
-          // the shape references a handle, might also need to create a recipe
-          // handle for it (if there isn't already one from a previous match).
-          if (shapeHC.handle && !newMatch.forward.has(shapeHC.handle)) {
-            newMatch.forward.set(shapeHC.handle, null);
-            newMatch.score -= 2;
-          }
-          newMatch.forward.set(shapeHC, null);
-          newMatch.score -= 1;
-          outputList.push(newMatch);
-        });
-      }
-    }
-
-    function _buildNewParticleMatches(recipe, shapeParticle, match, newMatches) {
-      let {forward, reverse, score} = match;
-      let matchFound = false;
-      for (let recipeParticle of recipe.particles) {
-        if (reverse.has(recipeParticle)) {
-          continue;
-        }
-
-        if (recipeParticle.name != shapeParticle.name) {
-          continue;
-        }
-
-        let handleNamesMatch = true;
-        for (let connectionName in recipeParticle.connections) {
-          let recipeConnection = recipeParticle.connections[connectionName];
-          if (!recipeConnection.handle) {
-            continue;
-          }
-          let shapeConnection = shapeParticle.connections[connectionName];
-          if (shapeConnection && shapeConnection.handle && shapeConnection.handle.localName && shapeConnection.handle.localName !== recipeConnection.handle.localName) {
-            handleNamesMatch = false;
-            break;
-          }
-        }
-
-        if (!handleNamesMatch) {
-          continue;
-        }
-
-        let newMatch = {forward: new Map(forward), reverse: new Map(reverse), score};
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!newMatch.forward.has(shapeParticle) || newMatch.forward.get(shapeParticle) == recipeParticle);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!newMatch.reverse.has(recipeParticle) || newMatch.reverse.get(recipeParticle) == shapeParticle);
-        newMatch.forward.set(shapeParticle, recipeParticle);
-        newMatch.reverse.set(recipeParticle, shapeParticle);
-        newMatches.push(newMatch);
-        matchFound = true;
-      }
-      if (matchFound == false) {
-        let newMatch = {forward: new Map(), reverse: new Map(), score: 0};
-        forward.forEach((value, key) => {
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!newMatch.forward.has(key) || newMatch.forward.get(key) == value);
-          newMatch.forward.set(key, value);
-        });
-        reverse.forEach((value, key) => {
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!newMatch.reverse.has(key) || newMatch.reverse.get(key) == value);
-          newMatch.reverse.set(key, value);
-        });
-        if (!newMatch.forward.has(shapeParticle)) {
-          newMatch.forward.set(shapeParticle, null);
-          newMatch.score = match.score - 1;
-        }
-        newMatches.push(newMatch);
-      }
-    }
-
-    function _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles) {
-      if (emptyHandles.length == 1) {
-        let matches = [];
-        let {forward, reverse, score} = match;
-        for (let nullHandle of nullHandles) {
-          let tagsMatch = true;
-          for (let tag of nullHandle.tags) {
-            if (!emptyHandles[0].tags.includes(tag)) {
-              tagsMatch = false;
-              break;
-            }
-          }
-          if (!tagsMatch) {
-            continue;
-          }
-          let newMatch = {forward: new Map(forward), reverse: new Map(reverse), score: score + 1};
-          newMatch.forward.set(nullHandle, emptyHandles[0]);
-          newMatch.reverse.set(emptyHandles[0], nullHandle);
-          matches.push(newMatch);
-        }
-        return matches;
-      }
-      let thisHandle = emptyHandles.pop();
-      let matches = _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles);
-      let newMatches = [];
-      for (let match of matches) {
-        let nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) == null);
-        if (nullHandles.length > 0) {
-          newMatches = newMatches.concat(
-              _assignHandlesToEmptyPosition(match, [thisHandle], nullHandles));
-        } else {
-          newMatches.concat(match);
-        }
-      }
-      return newMatches;
-    }
-
-    // Particles and Handles are initially stored by a forward map from
-    // shape component to recipe component.
-    // Handle connections, particles and handles are also stored by a reverse map
-    // from recipe component to shape component.
-
-    // Start with a single, empty match
-    let matches = [{forward: new Map(), reverse: new Map(), score: 0}];
-    for (let shapeHC of shape.recipe.handleConnections) {
-      let newMatches = [];
-      for (let match of matches) {
-        // collect matching handle connections into a new matches list
-        _buildNewHCMatches(recipe, shapeHC, match, newMatches);
-      }
-      matches = newMatches;
-    }
-
-    for (let shapeParticle of shape.recipe.particles) {
-      if (Object.keys(shapeParticle.connections).length > 0) {
-        continue;
-      }
-      if (shapeParticle.unnamedConnections.length > 0) {
-        continue;
-      }
-      let newMatches = [];
-      for (let match of matches) {
-        _buildNewParticleMatches(recipe, shapeParticle, match, newMatches);
-      }
-      matches = newMatches;
-    }
-
-    let emptyHandles = recipe.handles.filter(handle => handle.connections.length == 0);
-
-    if (emptyHandles.length > 0) {
-      let newMatches = [];
-      for (let match of matches) {
-        let nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) == null);
-        if (nullHandles.length > 0) {
-          newMatches = newMatches.concat(
-              _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles));
-        } else {
-          newMatches.concat(match);
-        }
-      }
-      matches = newMatches;
-    }
-
-    return matches.map(({forward, score}) => {
-      let match = {};
-      forward.forEach((value, key) => match[shape.reverse.get(key)] = value);
-      return {match, score};
-    });
-  }
-
-  static directionCounts(handle) {
-    let counts = {'in': 0, 'out': 0, 'inout': 0, 'unknown': 0};
-    for (let connection of handle.connections) {
-      let direction = connection.direction;
-      if (counts[direction] == undefined) {
-        direction = 'unknown';
-      }
-      counts[direction]++;
-    }
-    counts.in += counts.inout;
-    counts.out += counts.inout;
-    return counts;
-  }
-
-  // Returns true if `otherRecipe` matches the shape of recipe.
-  static matchesRecipe(recipe, otherRecipe) {
-    let shape = RecipeUtil.recipeToShape(otherRecipe);
-    let result = RecipeUtil.find(recipe, shape);
-    return result.some(r => r.score == 0);
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/recipe.js":
-/*!**********************************!*\
-  !*** ./runtime/recipe/recipe.js ***!
-  \**********************************/
-/*! exports provided: Recipe */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Recipe", function() { return Recipe; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/digest-web.js */ "./platform/digest-web.js");
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./connection-constraint.js */ "./runtime/recipe/connection-constraint.js");
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./particle.js */ "./runtime/recipe/particle.js");
-/* harmony import */ var _search_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./search.js */ "./runtime/recipe/search.js");
-/* harmony import */ var _slot_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./slot.js */ "./runtime/recipe/slot.js");
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./handle.js */ "./runtime/recipe/handle.js");
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./util.js */ "./runtime/recipe/util.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-
-
-
-
-
-class Recipe {
-  constructor(name) {
-    this._particles = [];
-    this._handles = [];
-    this._slots = [];
-    this._name = name;
-
-    // TODO: Recipes should be collections of records that are tagged
-    // with a type. Strategies should register the record types they
-    // can handle. ConnectionConstraints should be a different record
-    // type to particles/handles.
-    this._connectionConstraints = [];
-
-    // Obligations are like connection constraints in that they describe
-    // required connections between particles/verbs. However, where 
-    // connection constraints can be acted upon in order to create these
-    // connections, obligations can't be. Instead, they describe requirements
-    // that must be discharged before a recipe can be considered to be
-    // resolved.
-    this._obligations = [];
-
-    this._verbs = [];
-
-    // TODO: Change to array, if needed for search strings of merged recipes.
-    this._search = null;
-
-    this._patterns = [];
-  }
-
-  newConnectionConstraint(from, to, direction) {
-    let result = new _connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["ConnectionConstraint"](from, to, direction, 'constraint');
-    this._connectionConstraints.push(result);
-    return result;
-  }
-
-  newObligation(from, to, direction) {
-    let result = new _connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["ConnectionConstraint"](from, to, direction, 'obligation');
-    this._obligations.push(result);
-    return result;
-  }
-  
-  removeObligation(obligation) {
-    let idx = this._obligations.indexOf(obligation);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx > -1);
-    this._obligations.splice(idx, 1);
-  }
-
-  removeConstraint(constraint) {
-    let idx = this._connectionConstraints.indexOf(constraint);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx >= 0);
-    this._connectionConstraints.splice(idx, 1);
-  }
-
-  clearConnectionConstraints() {
-    this._connectionConstraints = [];
-  }
-
-  newParticle(name) {
-    let particle = new _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"](this, name);
-    this._particles.push(particle);
-    return particle;
-  }
-
-  removeParticle(particle) {
-    let idx = this._particles.indexOf(particle);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx > -1);
-    this._particles.splice(idx, 1);
-    for (let slotConnection of Object.values(
-             particle._consumedSlotConnections)) {
-      slotConnection.remove();
-    }
-  }
-
-  newHandle() {
-    let handle = new _handle_js__WEBPACK_IMPORTED_MODULE_7__["Handle"](this);
-    this._handles.push(handle);
-    return handle;
-  }
-
-  removeHandle(handle) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle.connections.length == 0);
-    let idx = this._handles.indexOf(handle);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx > -1);
-    this._handles.splice(idx, 1);
-  }
-
-  newSlot(name) {
-    let slot = new _slot_js__WEBPACK_IMPORTED_MODULE_6__["Slot"](this, name);
-    this._slots.push(slot);
-    return slot;
-  }
-
-  removeSlot(slot) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slot.consumeConnections.length == 0);
-    let idx = this._slots.indexOf(slot);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx > -1);
-    this._slots.splice(idx, 1);
-  }
-
-  isResolved() {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this), 'Recipe must be normalized to be resolved.');
-    if (this._obligations.length > 0) {
-      return false;
-    }
-    return this._connectionConstraints.length == 0
-        && (this._search === null || this._search.isResolved())
-        && this._handles.every(handle => handle.isResolved())
-        && this._particles.every(particle => particle.isResolved())
-        && this._slots.every(slot => slot.isResolved())
-        && this.handleConnections.every(connection => connection.isResolved())
-        && this.slotConnections.every(slotConnection => slotConnection.isResolved());
-
-    // TODO: check recipe level resolution requirements, eg there is no slot loops.
-  }
-
-  _findDuplicate(items, options) {
-    let seenHandles = new Set();
-    let duplicateHandle = items.find(handle => {
-      if (handle.id) {
-        if (seenHandles.has(handle.id)) {
-          return handle;
-        }
-        seenHandles.add(handle.id);
-      }
-    });
-    if (duplicateHandle && options && options.errors) {
-      options.errors.set(duplicateHandle, `Has Duplicate ${duplicateHandle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_7__["Handle"] ? 'Handle' : 'Slot'} '${duplicateHandle.id}'`);
-    }
-    return duplicateHandle;
-  }
-
-  _isValid(options) {
-    return !this._findDuplicate(this._handles, options)
-        && !this._findDuplicate(this._slots, options)
-        && this._handles.every(handle => handle._isValid(options))
-        && this._particles.every(particle => particle._isValid(options))
-        && this._slots.every(slot => slot._isValid(options))
-        && this.handleConnections.every(connection => connection._isValid(options))
-        && this.slotConnections.every(connection => connection._isValid(options))
-        && (!this.search || this.search.isValid(options));
-  }
-
-  get name() { return this._name; }
-  set name(name) { this._name = name; }
-  get localName() { return this._localName; }
-  set localName(name) { this._localName = name; }
-  get particles() { return this._particles; } // Particle*
-  set particles(particles) { this._particles = particles; }
-  get handles() { return this._handles; } // Handle*
-  set handles(handles) { this._handles = handles; }
-  get slots() { return this._slots; } // Slot*
-  set slots(slots) { this._slots = slots; }
-  get connectionConstraints() { return this._connectionConstraints; }
-  get obligations() { return this._obligations; }
-  get verbs() { return this._verbs; }
-  set verbs(verbs) { this._verbs = verbs; }
-  get search() { return this._search; }
-  set search(search) {
-    this._search = search;
-  }
-  setSearchPhrase(phrase) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._search, 'Cannot override search phrase');
-    if (phrase) {
-      this._search = new _search_js__WEBPACK_IMPORTED_MODULE_5__["Search"](phrase);
-    }
-  }
-
-  get slotConnections() { // SlotConnection*
-    let slotConnections = [];
-    this._particles.forEach(particle => {
-      slotConnections.push(...Object.values(particle.consumedSlotConnections));
-    });
-    return slotConnections;
-  }
-
-  get handleConnections() {
-    let handleConnections = [];
-    this._particles.forEach(particle => {
-      handleConnections.push(...Object.values(particle.connections));
-      handleConnections.push(...particle._unnamedConnections);
-    });
-    return handleConnections;
-  }
-
-  isEmpty() {
-    return this.particles.length == 0 &&
-           this.handles.length == 0 &&
-           this.slots.length == 0 &&
-           this._connectionConstraints.length == 0;
-  }
-
-  findHandle(id) {
-    for (let handle of this.handles) {
-      if (handle.id == id) {
-        return handle;
-      }
-    }
-  }
-
-  findSlot(id) {
-    for (let slot of this.slots) {
-      if (slot.id == id) {
-        return slot;
-      }
-    }
-  }
-  get patterns() { return this._patterns; }
-  set patterns(patterns) { this._patterns = patterns; }
-  set description(description) {
-    let pattern = description.find(desc => desc.name == 'pattern');
-    if (pattern) {
-      pattern.patterns.forEach(pattern => this._patterns.push(pattern));
-    }
-    description.forEach(desc => {
-      if (desc.name != 'pattern') {
-        let handle = this.handles.find(handle => handle.localName == desc.name);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle, `Cannot set description pattern for nonexistent handle ${desc.name}.`);
-        handle.pattern = desc.pattern;
-      }
-    });
-  }
-
-  async digest() {
-    return Object(_platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__["digest"])(this.toString());
-  }
-
-  normalize(options) {
-    if (Object.isFrozen(this)) {
-      if (options && options.errors) {
-        options.errors.set(this, 'already normalized');
-      }
-      return;
-    }
-    if (!this._isValid()) {
-      this._findDuplicate(this._handles, options);
-      this._findDuplicate(this._slots, options);
-      let checkForInvalid = (list) => list.forEach(item => !item._isValid(options));
-      checkForInvalid(this._handles);
-      checkForInvalid(this._particles);
-      checkForInvalid(this._slots);
-      checkForInvalid(this.handleConnections);
-      checkForInvalid(this.slotConnections);
-      return false;
-    }
-    // Get handles and particles ready to sort connections.
-    for (let particle of this._particles) {
-      particle._startNormalize();
-    }
-    for (let handle of this._handles) {
-      handle._startNormalize();
-    }
-    for (let slot of this._slots) {
-      slot._startNormalize();
-    }
-
-    // Sort and normalize handle connections.
-    let connections = this.handleConnections;
-    for (let connection of connections) {
-      connection._normalize();
-    }
-    connections.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
-
-    // Sort and normalize slot connections.
-    let slotConnections = this.slotConnections;
-    for (let slotConnection of slotConnections) {
-      slotConnection._normalize();
-    }
-    slotConnections.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
-
-    if (this.search) {
-      this.search._normalize();
-    }
-
-    // Finish normalizing particles and handles with sorted connections.
-    for (let particle of this._particles) {
-      particle._finishNormalize();
-    }
-    for (let handle of this._handles) {
-      handle._finishNormalize();
-    }
-    for (let slot of this._slots) {
-      slot._finishNormalize();
-    }
-
-    let seenHandles = new Set();
-    let seenParticles = new Set();
-    let seenSlots = new Set();
-    let particles = [];
-    let handles = [];
-    let slots = [];
-    // Reorder connections so that interfaces come last.
-    // TODO: update handle-connection comparison method instead?
-    for (let connection of connections.filter(c => !c.type || !c.type.isInterface).concat(connections.filter(c => !!c.type && !!c.type.isInterface))) {
-      if (!seenParticles.has(connection.particle)) {
-        particles.push(connection.particle);
-        seenParticles.add(connection.particle);
-      }
-      if (connection.handle && !seenHandles.has(connection.handle)) {
-        handles.push(connection.handle);
-        seenHandles.add(connection.handle);
-      }
-    }
-
-    for (let slotConnection of slotConnections) {
-      if (slotConnection.targetSlot && !seenSlots.has(slotConnection.targetSlot)) {
-        slots.push(slotConnection.targetSlot);
-        seenSlots.add(slotConnection.targetSlot);
-      }
-      Object.values(slotConnection.providedSlots).forEach(ps => {
-        if (!seenSlots.has(ps)) {
-          slots.push(ps);
-          seenSlots.add(ps);
-        }
-      });
-    }
-
-    let orphanedHandles = this._handles.filter(handle => !seenHandles.has(handle));
-    orphanedHandles.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
-    handles.push(...orphanedHandles);
-
-    let orphanedParticles = this._particles.filter(particle => !seenParticles.has(particle));
-    orphanedParticles.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
-    particles.push(...orphanedParticles);
-
-    let orphanedSlots = this._slots.filter(slot => !seenSlots.has(slot));
-    orphanedSlots.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
-    slots.push(...orphanedSlots);
-
-    // Put particles and handles in their final ordering.
-    this._particles = particles;
-    this._handles = handles;
-    this._slots = slots;
-    this._connectionConstraints.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
-
-    this._verbs.sort();
-    this._patterns.sort();
-
-    Object.freeze(this._particles);
-    Object.freeze(this._handles);
-    Object.freeze(this._slots);
-    Object.freeze(this._connectionConstraints);
-    Object.freeze(this);
-
-    return true;
-  }
-
-  clone(cloneMap) {
-    // for now, just copy everything
-
-    let recipe = new Recipe(this.name);
-
-    if (cloneMap == undefined) {
-      cloneMap = new Map();
-    }
-
-    this._copyInto(recipe, cloneMap);
-
-    // TODO: figure out a better approach than stashing the cloneMap permanently
-    // on the recipe
-    recipe._cloneMap = cloneMap;
-
-    return recipe;
-  }
-
-  mergeInto(recipe) {
-    let cloneMap = new Map();
-    let numHandles = recipe._handles.length;
-    let numParticles = recipe._particles.length;
-    let numSlots = recipe._slots.length;
-    this._copyInto(recipe, cloneMap);
-    return {
-      handles: recipe._handles.slice(numHandles),
-      particles: recipe._particles.slice(numParticles),
-      slots: recipe._slots.slice(numSlots),
-      cloneMap
-    };
-  }
-
-  _copyInto(recipe, cloneMap) {
-    function cloneTheThing(object) {
-      let clonedObject = object._copyInto(recipe, cloneMap);
-      cloneMap.set(object, clonedObject);
-    }
-
-    recipe._name = this.name;
-    recipe._verbs = this._verbs.slice();
-    this._handles.forEach(cloneTheThing);
-    this._particles.forEach(cloneTheThing);
-    this._slots.forEach(cloneTheThing);
-    this._connectionConstraints.forEach(cloneTheThing);
-    this._obligations.forEach(cloneTheThing);
-    recipe.verbs = recipe.verbs.slice();
-    if (this.search) {
-      this.search._copyInto(recipe);
-    }
-
-    recipe.patterns = recipe.patterns.concat(this.patterns);
-  }
-
-  updateToClone(dict) {
-    let result = {};
-    Object.keys(dict).forEach(key => result[key] = this._cloneMap.get(dict[key]));
-    return result;
-  }
-
-  static over(results, walker, strategy) {
-    return _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_2__["Strategizer"].over(results, walker, strategy);
-  }
-
-  _makeLocalNameMap() {
-    let names = new Set();
-    for (let particle of this.particles) {
-      names.add(particle.localName);
-    }
-    for (let handle of this.handles) {
-      names.add(handle.localName);
-    }
-    for (let slot of this.slots) {
-      names.add(slot.localName);
-    }
-
-    let nameMap = new Map();
-    let i = 0;
-    for (let particle of this.particles) {
-      let localName = particle.localName;
-      if (!localName) {
-        do {
-          localName = `particle${i++}`;
-        } while (names.has(localName));
-      }
-      nameMap.set(particle, localName);
-    }
-
-    i = 0;
-    for (let handle of this.handles) {
-      let localName = handle.localName;
-      if (!localName) {
-        do {
-          localName = `handle${i++}`;
-        } while (names.has(localName));
-      }
-      nameMap.set(handle, localName);
-    }
-
-    i = 0;
-    for (let slot of this.slots) {
-      let localName = slot.localName;
-      if (!localName) {
-        do {
-          localName = `slot${i++}`;
-        } while (names.has(localName));
-      }
-      nameMap.set(slot, localName);
-    }
-
-    return nameMap;
-  }
-
-  // TODO: Add a normalize() which strips local names and puts and nested
-  //       lists into a normal ordering.
-  //
-  // use { showUnresolved: true } in options to see why a recipe can't resolve.
-  toString(options) {
-    let nameMap = this._makeLocalNameMap();
-    let result = [];
-    let verbs = this.verbs.length > 0 ? ` ${this.verbs.map(verb => `&${verb}`).join(' ')}` : '';
-    result.push(`recipe${this.name ? ` ${this.name}` : ''}${verbs}`);
-    if (this.search) {
-      result.push(this.search.toString(options).replace(/^|(\n)/g, '$1  '));
-    }
-    for (let constraint of this._connectionConstraints) {
-      let constraintStr = constraint.toString().replace(/^|(\n)/g, '$1  ');
-      if (options && options.showUnresolved) {
-        constraintStr = constraintStr.concat(' // unresolved connection-constraint');
-      }
-      result.push(constraintStr);
-    }
-    for (let handle of this.handles) {
-      result.push(handle.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
-    }
-    for (let slot of this.slots) {
-      let slotString = slot.toString(nameMap, options);
-      if (slotString) {
-        result.push(slotString.replace(/^|(\n)/g, '$1  '));
-      }
-    }
-    for (let particle of this.particles) {
-      result.push(particle.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
-    }
-    if (this.patterns.length > 0 || this.handles.find(h => h.pattern)) {
-      result.push(`  description \`${this.patterns[0]}\``);
-      for (let i = 1; i < this.patterns.length; ++i) {
-        result.push(`    pattern \`${this.patterns[i]}\``);
-      }
-      this.handles.forEach(h => {
-        if (h.pattern) {
-          result.push(`    ${h.localName} \`${h.pattern}\``);
-        }
-      });
-    }
-    if (this._obligations.length > 0) {
-      result.push('  obligations');
-      for (let obligation of this._obligations) {
-        let obligationStr = obligation.toString(nameMap, options).replace(/^|(\n)/g, '$1    ');
-        result.push(obligationStr);
-      }
-    }
-    return result.join('\n');
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/search.js":
-/*!**********************************!*\
-  !*** ./runtime/recipe/search.js ***!
-  \**********************************/
-/*! exports provided: Search */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Search", function() { return Search; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-class Search {
-  constructor(phrase, unresolvedTokens) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(phrase);
-    this._phrase = phrase;
-
-    let tokens = this.phrase.toLowerCase().split(/[^a-z0-9]/g);
-    // If unresolvedTokens not passed, consider all tokens unresolved.
-    this._unresolvedTokens = [];
-    (unresolvedTokens || tokens).forEach(token => this._unresolvedTokens.push(token));
-
-    // compute the resolved tokens
-    this._resolvedTokens = tokens.slice();
-    for (let token of this.unresolvedTokens) {
-      let index = this._resolvedTokens.indexOf(token);
-      if (index >= 0) {
-        this._resolvedTokens.splice(index, 1);
-      }
-    }
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(tokens.length == this.unresolvedTokens.length + this.resolvedTokens.length);
-  }
-
-  _append(phrase, unresolvedTokens, resolvedTokens) {
-    // concat phrase
-    if (this._phrase.length > 0) {
-      this._phrase = this.phrase.concat(' ');
-    }
-    this._phrase = this._phrase.concat(phrase);
-    resolvedTokens.forEach(t => this._resolvedTokens.push(t));
-    unresolvedTokens.forEach(t => this._unresolvedTokens.push(t));
-  }
-
-  get phrase() { return this._phrase; }
-  get unresolvedTokens() { return this._unresolvedTokens; }
-  get resolvedTokens() { return this._resolvedTokens; }
-  resolveToken(token) {
-    let index = this.unresolvedTokens.indexOf(token.toLowerCase());
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(index >= 0, `Cannot resolved nonexistent token ${token}`);
-    this._unresolvedTokens.splice(index, 1);
-    this._resolvedTokens.push(token.toLowerCase());
-  }
-
-  isValid() {
-    return this._unresolvedTokens.length > 0 || this._resolvedTokens.length > 0;
-  }
-
-  isResolved() {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this));
-    // Recipe is considered resolved, if at least one of the search tokens was resolved.
-    // TODO: Unresolved tokens don't prevent the recipe from being resolved. For now...
-    return this._resolvedTokens.length > 0;
-  }
-
-  _normalize() {
-    this._unresolvedTokens.sort();
-    this._resolvedTokens.sort();
-
-    Object.freeze(this);
-  }
-
-  _copyInto(recipe) {
-    if (recipe.search) {
-      recipe.search._append(this.phrase, this.unresolvedTokens, this.resolvedTokens);
-    } else {
-      recipe.search = new Search(this.phrase, this.unresolvedTokens, this.resolvedTokens);
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe.search.resolvedTokens.length == this.resolvedTokens.length,
-             `${recipe.search.resolvedTokens} is not same as ${this.resolvedTokens}`);
-    }
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.resolvedTokens.every(rt => recipe.search.resolvedTokens.indexOf(rt) >= 0) &&
-           this.unresolvedTokens.every(rt => recipe.search.unresolvedTokens.indexOf(rt) >= 0));
-    return recipe.search;
-  }
-
-  toString(options) {
-    let result = [];
-    result.push(`search \`${this.phrase}\``);
-
-    let tokenStr = [];
-    tokenStr.push('  tokens');
-    if (this.unresolvedTokens.length > 0) {
-      tokenStr.push(this.unresolvedTokens.map(t => `\`${t}\``).join(' '));
-    }
-    if (this.resolvedTokens.length > 0) {
-      tokenStr.push(`// ${this.resolvedTokens.map(t => `\`${t}\``).join(' ')}`);
-    }
-    if (options && options.showUnresolved) {
-      if (this.unresolvedTokens.length > 0) {
-        tokenStr.push('// unresolved search tokens');
-      }
-    }
-    result.push(tokenStr.join(' '));
-
-    return result.join('\n');
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/slot-connection.js":
-/*!*******************************************!*\
-  !*** ./runtime/recipe/slot-connection.js ***!
-  \*******************************************/
-/*! exports provided: SlotConnection */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotConnection", function() { return SlotConnection; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util.js */ "./runtime/recipe/util.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-class SlotConnection {
-  constructor(name, particle) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particle);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particle.recipe);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(name);
-
-    this._recipe = particle.recipe;
-    this._particle = particle;
-    this._name = name;
-    this._slotSpec = undefined; // isRequired + formFactor
-    this._targetSlot = undefined; // Slot?
-    this._providedSlots = {}; // Slot*
-    this._tags = [];
-  }
-
-  remove() {
-    this._particle.removeSlotConnection(this);
-  }
-
-  get recipe() { return this._recipe; }
-  get particle() { return this._particle; }
-  get name() { return this._name; }
-  getQualifiedName() { return `${this.particle.name}::${this.name}`; }
-  get slotSpec() { return this._slotSpec; }
-  get targetSlot() { return this._targetSlot; }
-  get providedSlots() { return this._providedSlots; }
-  get tags() { return this._tags; }
-  set tags(tags) { this._tags = tags; }
-
-  set slotSpec(slotSpec) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.name == slotSpec.name);
-    this._slotSpec = slotSpec;
-    slotSpec.providedSlots.forEach(providedSlot => {
-      let slot = this.providedSlots[providedSlot.name];
-      if (slot == undefined) {
-        slot = this.recipe.newSlot(providedSlot.name);
-        slot._sourceConnection = this;
-        slot._name = providedSlot.name;
-        this.providedSlots[providedSlot.name] = slot;
-      }
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slot.handleConnections.length == 0, 'Handle connections must be empty');
-      providedSlot.handles.forEach(handle => slot.handleConnections.push(this.particle.connections[handle]));
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slot._name == providedSlot.name);
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!slot.formFactor);
-      slot.formFactor = providedSlot.formFactor;
-    });
-  }
-
-  connectToSlot(targetSlot) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targetSlot);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.targetSlot);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.recipe == targetSlot.recipe, 'Cannot connect to slot from different recipe');
-
-    this._targetSlot = targetSlot;
-    targetSlot.consumeConnections.push(this);
-  }
-
-  disconnectFromSlot() {
-    if (this._targetSlot) {
-      this._targetSlot.removeConsumeConnection(this);
-      this._targetSlot = undefined;
-    }
-  }
-  
-  _clone(particle, cloneMap) {
-    if (cloneMap.has(this)) {
-      return cloneMap.get(this);
-    }
-
-    let slotConnection = particle.addSlotConnection(this.name);
-    slotConnection.tags = this.tags;
-    if (this.slotSpec) {
-      slotConnection._slotSpec = particle.spec.getSlotSpec(this.name);
-    }
-
-    cloneMap.set(this, slotConnection);
-    return slotConnection;
-  }
-
-  _normalize() {
-    let normalizedSlots = {};
-    for (let key of (Object.keys(this._providedSlots).sort())) {
-      normalizedSlots[key] = this._providedSlots[key];
-    }
-    this._providedSlots = normalizedSlots;
-    Object.freeze(this);
-  }
-
-  _compareTo(other) {
-    let cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"](this.name, other.name)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareComparables"](this._targetSlot, other._targetSlot)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareComparables"](this._particle, other._particle)) != 0) return cmp;
-    return 0;
-  }
-
-  _isValid(options) {
-    if (this._targetSlot && this._targetSlot.sourceConnection &&
-        this._targetSlot != this._targetSlot.sourceConnection.providedSlots[this._targetSlot.name]) {
-      if (options && options.errors) {
-        options.errors.set(this, `Invalid target slot '${this._targetSlot.name}' for slot connection '${this.name}' of particle ${this.particle.name}`);
-      }
-      return false;
-    }
-
-    // TODO: add more checks.
-    return true;
-  }
-
-  isResolved(options) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this));
-
-    if (!this.name) {
-      if (options) {
-        options.details = 'missing name';
-      }
-      return false;
-    }
-    if (!this.particle) {
-      if (options) {
-        options.details = 'missing particle';
-      }
-      return false;
-    }
-
-    if (this.slotSpec.isRequired) {
-      if (!this.targetSlot || !(this.targetSlot.id || this.targetSlot.sourceConnection.isConnected())) {
-        // The required connection has no target slot
-        // or its target slot it not resolved (has no ID or source connection).
-        if (options) {
-          options.details = 'missing target-slot';
-        }
-        return false;
-      }
-    }
-    if (!this.targetSlot) {
-      return true;
-    }
-
-    return this.slotSpec.providedSlots.every(providedSlot => {
-      if (providedSlot.isRequired && this.providedSlots[providedSlot.name].consumeConnections.length == 0) {
-        if (options) {
-          options.details = 'missing consuming slot';
-        }
-        return false;
-      }
-      return true;
-    });
-  }
-
-  isConnectedToInternalSlot() {
-    return this.targetSlot && (!!this.targetSlot.sourceConnection);
-  }
-  isConnectedToRemoteSlot() {
-    return this.targetSlot && (!!this.targetSlot.id);
-  }
-  isConnected() {
-    return this.isConnectedToInternalSlot() || this.isConnectedToRemoteSlot();
-  }
-
-  toString(nameMap, options) {
-    let consumeRes = [];
-    consumeRes.push('consume');
-    consumeRes.push(`${this.name}`);
-    if (this.targetSlot) {
-      consumeRes.push(`as ${
-          (nameMap && nameMap.get(this.targetSlot)) ||
-          this.targetSlot.localName}`);
-    }
-
-    if (options && options.showUnresolved) {
-      if (!this.isResolved(options)) {
-        consumeRes.push(`// unresolved slot-connection: ${options.details}`);
-      }
-    }
-
-    let result = [];
-    result.push(consumeRes.join(' '));
-
-    Object.keys(this.providedSlots).forEach(psName => {
-      let providedSlot = this.providedSlots[psName];
-      let provideRes = [];
-      provideRes.push('  provide');
-      
-      // Only assert that there's a spec for this provided slot if there's a spec for
-      // the consumed slot .. otherwise this is just a constraint.
-      if (this.slotSpec) {
-        let providedSlotSpec = this.slotSpec.getProvidedSlotSpec(psName);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
-      }
-      provideRes.push(`${psName} as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);
-      result.push(provideRes.join(' '));
-    });
-    return result.join('\n');
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/slot.js":
-/*!********************************!*\
-  !*** ./runtime/recipe/slot.js ***!
-  \********************************/
-/*! exports provided: Slot */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Slot", function() { return Slot; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util.js */ "./runtime/recipe/util.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-class Slot {
-  constructor(recipe, name) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe);
-
-    this._recipe = recipe;
-    this._id = undefined; // The ID of the slot in the context
-    this._localName = undefined; // Local id within the recipe
-    this._name = name;
-    this._tags = [];
-
-    this._formFactor = undefined;
-    this._handleConnections = []; // HandleConnection* (can only be set if source connection is set and particle in slot connections is set)
-    this._sourceConnection = undefined; // SlotConnection
-    this._consumeConnections = []; // SlotConnection*
-  }
-
-  get recipe() { return this._recipe; }
-  get id() { return this._id; }
-  set id(id) { this._id = id; }
-  get localName() { return this._localName; }
-  set localName(localName) { this._localName = localName; }
-  get name() { return this._name; }
-  set name(name) { this._name = name; }
-  get tags() { return this._tags; }
-  set tags(tags) { this._tags = tags; }
-  get formFactor() { return this._formFactor; }
-  set formFactor(formFactor) { this._formFactor = formFactor; }
-  get handleConnections() { return this._handleConnections; }
-  get sourceConnection() { return this._sourceConnection; }
-  set sourceConnection(sourceConnection) { this._sourceConnection = sourceConnection; }
-  get consumeConnections() { return this._consumeConnections; }
-  get spec() {
-    // TODO: should this return something that indicates this isn't available yet instead of 
-    // the constructed {isSet: false, tags: []}?
-    return (this.sourceConnection && this.sourceConnection.slotSpec) ? this.sourceConnection.slotSpec.getProvidedSlotSpec(this.name) : {isSet: false, tags: []};
-  }
-  get handles() {
-    return this.handleConnections.map(connection => connection.handle).filter(a => a !== undefined);
-  }
-
-  _copyInto(recipe, cloneMap) {
-    let slot = undefined;
-    if (!this.sourceConnection && this.id) {
-      slot = recipe.findSlot(this.id);
-    }
-    if (slot == undefined) {
-      slot = recipe.newSlot(this.name);
-      slot._id = this.id;
-      slot._formFactor = this.formFactor;
-      slot._localName = this._localName;
-      slot._tags = [...this._tags];
-      // the connections are re-established when Particles clone their attached SlotConnection objects.
-      slot._sourceConnection = cloneMap.get(this._sourceConnection);
-      if (slot.sourceConnection) {
-        slot.sourceConnection._providedSlots[slot.name] = slot;
-      }
-      this._handleConnections.forEach(connection => slot._handleConnections.push(cloneMap.get(connection)));
-    }
-    this._consumeConnections.forEach(connection => cloneMap.get(connection).connectToSlot(slot));
-    return slot;
-  }
-
-  _startNormalize() {
-    this.localName = null;
-    this._tags.sort();
-  }
-
-  _finishNormalize() {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this._source));
-    this._consumeConnections.forEach(cc => Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(cc)));
-    this._consumeConnections.sort(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareComparables"]);
-    Object.freeze(this);
-  }
-
-  _compareTo(other) {
-    let cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"](this.id, other.id)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"](this.localName, other.localName)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"](this.formFactor, other.formFactor)) != 0) return cmp;
-    if ((cmp = _util_js__WEBPACK_IMPORTED_MODULE_1__["compareArrays"](this._tags, other._tags, _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])) != 0) return cmp;
-    return 0;
-  }
-
-  removeConsumeConnection(slotConnection) {
-    let idx = this._consumeConnections.indexOf(slotConnection);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx > -1);
-    this._consumeConnections.splice(idx, 1);
-    if (this._consumeConnections.length == 0) {
-      this.remove();
-    }
-  }
-
-  remove() {
-    this._recipe.removeSlot(this);
-  }
-
-  isResolved(options) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this));
-
-    if (options && options.showUnresolved) {
-      options.details = [];
-      if (!this._sourceConnection) {
-        options.details.push('missing source-connection');
-      }
-      if (!this.id) {
-        options.details.push('missing id');
-      }
-      options.details = options.details.join('; ');
-    }
-
-    return this._sourceConnection || this.id;
-  }
-
-  _isValid(options) {
-    // TODO: implement
-    return true;
-  }
-
-  toString(nameMap, options) {
-    let result = [];
-    result.push('slot');
-    if (this.id) {
-      result.push(`'${this.id}'`);
-    }
-    if (this.tags.length > 0) {
-      result.push(this.tags.map(tag => `#${tag}`).join(' '));
-    }
-    result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
-    let includeUnresolved = options && options.showUnresolved && !this.isResolved(options);
-    if (includeUnresolved) {
-      result.push(`// unresolved slot: ${options.details}`);
-    }
-
-    if (this.id || includeUnresolved) {
-      return result.join(' ');
-    }
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/type-checker.js":
-/*!****************************************!*\
-  !*** ./runtime/recipe/type-checker.js ***!
-  \****************************************/
-/*! exports provided: TypeChecker */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeChecker", function() { return TypeChecker; });
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _ts_build_type_variable_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/type-variable.js */ "./runtime/ts-build/type-variable.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-class TypeChecker {
-
-  // resolve a list of handleConnection types against a handle
-  // base type. This is the core type resolution mechanism, but should only
-  // be used when types can actually be associated with each other / constrained.
-  //
-  // By design this function is called exactly once per handle in a recipe during
-  // normalization, and should provide the same final answers regardless of the
-  // ordering of handles within that recipe
-  //
-  // NOTE: you probably don't want to call this function, if you think you
-  // do, talk to shans@.
-  static processTypeList(baseType, list) {
-    let newBaseType = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _ts_build_type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"](''));
-    if (baseType) {
-      newBaseType.data.resolution = baseType;
-    }
-    baseType = newBaseType;
-
-    let concreteTypes = [];
-
-    // baseType might be a variable (and is definitely a variable if no baseType was available).
-    // Some of the list might contain variables too.
-
-    // First attempt to merge all the variables into the baseType
-    //
-    // If the baseType is a variable then this results in a single place to manipulate the constraints
-    // of all the other connected variables at the same time.
-    for (let item of list) {
-      if (item.type.resolvedType().hasVariable) {
-        baseType = TypeChecker._tryMergeTypeVariable(baseType, item.type);
-        if (baseType == null) {
-          return null;
-        }
-      } else {
-        concreteTypes.push(item);
-      }
-    }
-
-    for (let item of concreteTypes) {
-      if (!TypeChecker._tryMergeConstraints(baseType, item)) {
-        return null;
-      }
-    }
-
-    let getResolution = candidate => {
-      if (candidate.isVariable == false) {
-        return candidate;
-      }
-      if (candidate.canReadSubset == null || candidate.canWriteSuperset == null) {
-        return candidate;
-      }
-      if (candidate.canReadSubset.isMoreSpecificThan(candidate.canWriteSuperset)) {
-        if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset)) {
-          candidate.variable.resolution = candidate.canReadSubset;
-        }
-        return candidate;
-      }
-      return null;
-    };
-
-    let candidate = baseType.resolvedType();
-
-    if (candidate.isCollection) {
-      let resolution = getResolution(candidate.collectionType);
-      return (resolution !== null) ? resolution.collectionOf() : null;
-    }
-    if (candidate.isBigCollection) {
-      let resolution = getResolution(candidate.bigCollectionType);
-      return (resolution !== null) ? resolution.bigCollectionOf() : null;
-    }
-
-    return getResolution(candidate);
-  }
-
-  static _tryMergeTypeVariable(base, onto) {
-    let [primitiveBase, primitiveOnto] = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(base.resolvedType(), onto.resolvedType());
-
-    if (primitiveBase.isVariable) {
-      if (primitiveOnto.isVariable) {
-        // base, onto both variables.
-        let result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
-        if (result == false) {
-          return null;
-        }
-        // Here onto grows, one level at a time,
-        // as we assign new resolution to primitiveOnto, which is a leaf.
-        primitiveOnto.variable.resolution = primitiveBase;
-      } else {
-        // base variable, onto not.
-        primitiveBase.variable.resolution = primitiveOnto;
-      }
-      return base;
-    } else if (primitiveOnto.isVariable) {
-      // onto variable, base not.
-      primitiveOnto.variable.resolution = primitiveBase;
-      return onto;
-    } else if (primitiveBase.isInterface && primitiveOnto.isInterface) {
-      let result = primitiveBase.interfaceShape.tryMergeTypeVariablesWith(primitiveOnto.interfaceShape);
-      if (result == null) {
-        return null;
-      }
-      return _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newInterface(result);
-    } else if ((primitiveBase.isTypeContainer() && primitiveBase.hasVariable)
-               || (primitiveOnto.isTypeContainer() && primitiveOnto.hasVariable)) {
-      // Cannot merge [~a] with a type that is not a variable and not a collection.
-      return null;
-    }
-    throw new Error('tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
-  }
-
-  static _tryMergeConstraints(handleType, {type, direction}) {
-    let [primitiveHandleType, primitiveConnectionType] = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(handleType.resolvedType(), type.resolvedType());
-    if (primitiveHandleType.isVariable) {
-      while (primitiveConnectionType.isTypeContainer()) {
-        if (primitiveHandleType.variable.resolution != null
-            || primitiveHandleType.variable.canReadSubset != null
-            || primitiveHandleType.variable.canWriteSuperset != null) {
-          // Resolved and/or constrained variables can only represent Entities, not sets.
-          return false;
-        }
-        // If this is an undifferentiated variable then we need to create structure to match against. That's
-        // allowed because this variable could represent anything, and it needs to represent this structure
-        // in order for type resolution to succeed.
-        let newVar = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _ts_build_type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]('a'));
-        primitiveHandleType.variable.resolution = 
-            primitiveConnectionType.isCollection ? _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newCollection(newVar) : (primitiveConnectionType.isBigCollection ? _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newBigCollection(newVar) : _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newReference(newVar));
-        let unwrap = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
-        [primitiveHandleType, primitiveConnectionType] = unwrap;
-      }
-
-      if (direction == 'out' || direction == 'inout' || direction == '`provide') {
-        // the canReadSubset of the handle represents the maximal type that can be read from the
-        // handle, so we need to intersect out any type that is more specific than the maximal type
-        // that could be written.
-        if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset)) {
-          return false;
-        }
-      }
-      if (direction == 'in' || direction == 'inout' || direction == '`consume') {
-        // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
-        // so we need to union it with the type that wants to be read here.
-        if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset)) {
-          return false;
-        }
-      }
-    } else {
-      if (primitiveConnectionType.tag !== primitiveHandleType.tag) {
-        return false;
-      }
-
-      if (direction == 'out' || direction == 'inout') {
-        if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
-          return false;
-        }
-      }
-      if (direction == 'in' || direction == 'inout') {
-        if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  }
-
-  static _writeConstraintsApply(handleType, connectionType) {
-    // this connection wants to write to this handle. If the written type is
-    // more specific than the canReadSubset then it isn't violating the maximal type
-    // that can be read.
-    let writtenType = connectionType.canWriteSuperset;
-    if (writtenType == null || handleType.canReadSubset == null) {
-      return true;
-    }
-    if (writtenType.isMoreSpecificThan(handleType.canReadSubset)) {
-      return true;
-    }
-    return false;
-  }
-
-  static _readConstraintsApply(handleType, connectionType) {
-    // this connection wants to read from this handle. If the read type
-    // is less specific than the canWriteSuperset, then it isn't violating
-    // the maximum lower-bound read type.
-    let readType = connectionType.canReadSubset;
-    if (readType == null || handleType.canWriteSuperset == null) {
-      return true;
-    }
-    if (handleType.canWriteSuperset.isMoreSpecificThan(readType)) {
-      return true;
-    }
-    return false;
-  }
-
-  // Compare two types to see if they could be potentially resolved (in the absence of other
-  // information). This is used as a filter when selecting compatible handles or checking
-  // validity of recipes. This function returning true never implies that full type resolution
-  // will succeed, but if the function returns false for a pair of types that are associated
-  // then type resolution is guaranteed to fail.
-  //
-  // left, right: {type, direction, connection}
-  static compareTypes(left, right) {
-    let resolvedLeft = left.type.resolvedType();
-    let resolvedRight = right.type.resolvedType();
-    let [leftType, rightType] = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(resolvedLeft, resolvedRight);
-
-    // a variable is compatible with a set only if it is unconstrained.
-    if (leftType.isVariable && rightType.isTypeContainer()) {
-      return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
-    }
-    if (rightType.isVariable && leftType.isTypeContainer()) {
-      return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
-    }
-
-    if (leftType.isVariable || rightType.isVariable) {
-      // TODO: everything should use this, eventually. Need to implement the
-      // right functionality in Shapes first, though.
-      return _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].canMergeConstraints(leftType, rightType);
-    }
-
-    if ((leftType == undefined) !== (rightType == undefined)) {
-      return false;
-    }
-    if (leftType == rightType) {
-      return true;
-    }
-
-    if (leftType.tag != rightType.tag) {
-      return false;
-    }
-
-    if (leftType.isSlot) {
-      return true;
-    }
-
-    // TODO: we need a generic way to evaluate type compatibility
-    //       shapes + entities + etc
-    if (leftType.isInterface && rightType.isInterface) {
-      if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
-        return true;
-      }
-    }
-
-    if (!leftType.isEntity || !rightType.isEntity) {
-      return false;
-    }
-
-    let leftIsSub = leftType.entitySchema.isMoreSpecificThan(rightType.entitySchema);
-    let leftIsSuper = rightType.entitySchema.isMoreSpecificThan(leftType.entitySchema);
-
-    if (leftIsSuper && leftIsSub) {
-       return true;
-    }
-    if (!leftIsSuper && !leftIsSub) {
-      return false;
-    }
-    let [superclass, subclass] = leftIsSuper ? [left, right] : [right, left];
-
-    // treat handle types as if they were 'inout' connections. Note that this
-    // guarantees that the handle's type will be preserved, and that the fact
-    // that the type comes from a handle rather than a connection will also
-    // be preserved.
-    let superDirection = superclass.direction || (superclass.connection ? superclass.connection.direction : 'inout');
-    let subDirection = subclass.direction || (subclass.connection ? subclass.connection.direction : 'inout');
-    if (superDirection == 'in') {
-      return true;
-    }
-    if (subDirection == 'out') {
-      return true;
-    }
-    return false;
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/util.js":
-/*!********************************!*\
-  !*** ./runtime/recipe/util.js ***!
-  \********************************/
-/*! exports provided: compareNulls, compareStrings, compareNumbers, compareBools, compareArrays, compareObjects, compareComparables */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareNulls", function() { return compareNulls; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareStrings", function() { return compareStrings; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareNumbers", function() { return compareNumbers; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareBools", function() { return compareBools; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareArrays", function() { return compareArrays; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareObjects", function() { return compareObjects; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareComparables", function() { return compareComparables; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-function compareNulls(o1, o2) {
-  if (o1 == o2) return 0;
-  if (o1 == null) return -1;
-  return 1;
-}
-
-function compareStrings(s1, s2) {
-  if (s1 == null || s2 == null) return compareNulls(s1, s2);
-  return s1.localeCompare(s2);
-}
-
-function compareNumbers(n1, n2) {
-  if (n1 == null || n2 == null) return compareNulls(n1, n2);
-  return n1 - n2;
-}
-
-function compareBools(b1, b2) {
-  if (b1 == null || b2 == null) return compareNulls(b1, b2);
-  return b1 - b2;
-}
-
-function compareArrays(a1, a2, compare) {
-  Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(a1 != null);
-  Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(a2 != null);
-  if (a1.length != a2.length) return compareNumbers(a1.length, a2.length);
-  for (let i = 0; i < a1.length; i++) {
-    let result;
-    if ((result = compare(a1[i], a2[i])) != 0) return result;
-  }
-  return 0;
-}
-
-function compareObjects(o1, o2, compare) {
-  let keys = Object.keys(o1);
-  let result;
-  if ((result = compareNumbers(keys.length, Object.keys(o2).length)) != 0) return result;
-  for (let key of keys) {
-    if ((result = compare(o1[key], o2[key])) != 0) return result;
-  }
-  return 0;
-}
-
-function compareComparables(o1, o2) {
-  if (o1 == null || o2 == null) return compareNulls(o1, o2);
-  return o1._compareTo(o2);
-}
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/walker-base.js":
-/*!***************************************!*\
-  !*** ./runtime/recipe/walker-base.js ***!
-  \***************************************/
-/*! exports provided: WalkerBase */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WalkerBase", function() { return WalkerBase; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-/**
- * Walkers traverse an object, calling methods based on the
- * features encountered on that object. For example, a RecipeWalker
- * takes a list of recipes and calls methods when:
- *  - a new recipe is encountered
- *  - a handle is found inside a recipe
- *  - a particle is found inside a recipe
- *  - etc..
- * 
- * Each of these methods can return a list of updates:
- *   [(recipe, encountered_thing) => new_recipe]
- *
- * The walker then does something with the updates depending on the
- * tactic selected.
- * 
- * If the tactic is "Permuted", then an output will be generated
- * for every combination of 1 element drawn from each update list.
- * For example, if 3 methods return [a,b], [c,d,e], and [f] respectively
- * then "Permuted" will cause 6 outputs to be generated: [acf, adf, aef, bcf, bdf, bef]
- * 
- * If the tactic is "Independent", an output will be generated for each
- * update, regardless of the list the update is in. For example,
- * if 3 methods return [a,b], [c,d,e], and [f] respectively,
- * then "Independent" will cause 6 outputs to be generated: [a,b,c,d,e,f]
- */
-class WalkerBase extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].Walker {
-  constructor(tactic) {
-    super();
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(tactic);
-    this.tactic = tactic;
-  }
-
-  _runUpdateList(recipe, updateList) {
-    let newRecipes = [];
-    if (updateList.length) {
-      switch (this.tactic) {
-        case WalkerBase.Permuted: {
-          let permutations = [[]];
-          updateList.forEach(({continuation, context}) => {
-            let newResults = [];
-            if (typeof continuation == 'function') {
-              continuation = [continuation];
-            }
-            continuation.forEach(f => {
-              permutations.forEach(p => {
-                let newP = p.slice();
-                newP.push({f, context});
-                newResults.push(newP);
-              });
-            });
-            permutations = newResults;
-          });
-
-          for (let permutation of permutations) {
-            let cloneMap = new Map();
-            let newRecipe = recipe.clone(cloneMap);
-            let score = 0;
-            permutation = permutation.filter(p => p.f !== null);
-            if (permutation.length == 0) {
-              continue;
-            }
-            permutation.forEach(({f, context}) => {
-              score += f(newRecipe, cloneMap.get(context));
-            });
-
-            newRecipes.push({recipe: newRecipe, score});
-          }
-          break;
-        }
-        case WalkerBase.Independent:
-          updateList.forEach(({continuation, context}) => {
-            if (typeof continuation == 'function') {
-              continuation = [continuation];
-            }
-            continuation.forEach(f => {
-              if (f == null) {
-                f = () => 0;
-              }
-              let cloneMap = new Map();
-              let newRecipe = recipe.clone(cloneMap);
-              let score = f(newRecipe, cloneMap.get(context));
-              newRecipes.push({recipe: newRecipe, score});
-            });
-          });
-          break;
-        default:
-          throw `${this.tactic} not supported`;
-      }
-    }
-
-    // commit phase - output results.
-
-    for (let newRecipe of newRecipes) {
-      let result = this.createDescendant(newRecipe.recipe, newRecipe.score);
-    }
-  }
-
-  createDescendant(recipe, score) {
-    let valid = recipe.normalize();
-    //if (!valid) debugger;
-    let hash = valid ? recipe.digest() : null;
-    super.createDescendant(recipe, score, hash, valid);
-  }
-
-  isEmptyResult(result) {
-    if (!result) {
-      return true;
-    }
-
-    if (result.constructor == Array && result.length <= 0) {
-      return true;
-    }
-
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(typeof result == 'function' || result.length);
-
-    return false;
-  }
-}
-
-WalkerBase.Permuted = 'permuted';
-WalkerBase.Independent = 'independent';
-
-
-/***/ }),
-
-/***/ "./runtime/recipe/walker.js":
-/*!**********************************!*\
-  !*** ./runtime/recipe/walker.js ***!
-  \**********************************/
-/*! exports provided: Walker */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Walker", function() { return Walker; });
-/* harmony import */ var _walker_base_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./walker-base.js */ "./runtime/recipe/walker-base.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-class Walker extends _walker_base_js__WEBPACK_IMPORTED_MODULE_0__["WalkerBase"] {
-  onResult(result) {
-    super.onResult(result);
-    let recipe = result.result;
-    let updateList = [];
-
-    // update phase - walk through recipe and call onRecipe,
-    // onHandle, etc.
-
-    if (this.onRecipe) {
-      result = this.onRecipe(recipe, result);
-      if (!this.isEmptyResult(result)) {
-        updateList.push({continuation: result});
-      }
-    }
-    for (let particle of recipe.particles) {
-      if (this.onParticle) {
-        let result = this.onParticle(recipe, particle);
-        if (!this.isEmptyResult(result)) {
-          updateList.push({continuation: result, context: particle});
-        }
-      }
-    }
-    for (let handleConnection of recipe.handleConnections) {
-      if (this.onHandleConnection) {
-        let result = this.onHandleConnection(recipe, handleConnection);
-        if (!this.isEmptyResult(result)) {
-          updateList.push({continuation: result, context: handleConnection});
-        }
-      }
-    }
-    for (let handle of recipe.handles) {
-      if (this.onHandle) {
-        let result = this.onHandle(recipe, handle);
-        if (!this.isEmptyResult(result)) {
-          updateList.push({continuation: result, context: handle});
-        }
-      }
-    }
-    for (let slotConnection of recipe.slotConnections) {
-      if (this.onSlotConnection) {
-        let result = this.onSlotConnection(recipe, slotConnection);
-        if (!this.isEmptyResult(result)) {
-          updateList.push({continuation: result, context: slotConnection});
-        }
-      }
-    }
-    for (let slot of recipe.slots) {
-      if (this.onSlot) {
-        let result = this.onSlot(recipe, slot);
-        if (!this.isEmptyResult(result)) {
-          updateList.push({continuation: result, context: slot});
-        }
-      }
-    }
-    for (let obligation of recipe.obligations) {
-      if (this.onObligation) {
-        let result = this.onObligation(recipe, obligation);
-        if (!this.isEmptyResult(result)) {
-          updateList.push({continuation: result, context: obligation});
-        }
-      }
-    }
-
-    this._runUpdateList(recipe, updateList);
-  }
-}
-
-Walker.Permuted = _walker_base_js__WEBPACK_IMPORTED_MODULE_0__["WalkerBase"].Permuted;
-Walker.Independent = _walker_base_js__WEBPACK_IMPORTED_MODULE_0__["WalkerBase"].Independent;
 
 
 /***/ }),
@@ -72321,8 +69270,8 @@ class StorageProxyScheduler {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddMissingHandles", function() { return AddMissingHandles; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -72337,7 +69286,7 @@ __webpack_require__.r(__webpack_exports__);
 class AddMissingHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
   // TODO: move generation to use an async generator.
   async generate(inputParams) {
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onRecipe(recipe) {
         // Don't add use handles while there are outstanding constraints
         if (recipe.connectionConstraints.length > 0) {
@@ -72367,7 +69316,7 @@ class AddMissingHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
           return 0;
         };
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
   }
 }
 
@@ -72385,9 +69334,9 @@ class AddMissingHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AssignHandles", function() { return AssignHandles; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/recipe-util.js */ "./runtime/recipe/recipe-util.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../ts-build/recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -72413,7 +69362,7 @@ class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
   async generate(inputParams) {
     let self = this;
 
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
       onHandle(recipe, handle) {
         if (!['?', 'use', 'copy', 'map'].includes(handle.fate)) {
           return;
@@ -72434,7 +69383,7 @@ class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
         // TODO: using the connection to retrieve type information is wrong.
         // Once validation of recipes generates type information on the handle
         // we should switch to using that instead.
-        let counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].directionCounts(handle);
+        let counts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].directionCounts(handle);
         if (counts.unknown > 0) {
           return;
         }
@@ -72487,7 +69436,7 @@ class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
         return score;
       }
 
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
   }
 
   getMappableStores(fate, type, tags, counts) {
@@ -72519,10 +69468,10 @@ class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CoalesceRecipes", function() { return CoalesceRecipes; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/recipe-util.js */ "./runtime/recipe/recipe-util.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../recipe/handle.js */ "./runtime/recipe/handle.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../ts-build/recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../ts-build/type.js */ "./runtime/ts-build/type.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 // Copyright (c) 2018 Google Inc. All rights reserved.
@@ -72562,7 +69511,7 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
     const index = this.arc.recipeIndex;
     await index.ready;
 
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"] {
       // Find a provided slot for unfulfilled consume connection.
       onSlotConnection(recipe, slotConnection) {
         if (slotConnection.isResolved()) {
@@ -72586,7 +69535,7 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
           // Don't grow recipes above 10 particles, otherwise we might never stop.
           if (recipe.particles.length + providedSlot.recipe.particles.length > 10) continue;
 
-          if (_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
+          if (_ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
             // skip candidate recipe, if matches the shape of the arc's active recipe
             continue;
           }
@@ -72626,12 +69575,12 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
           // Don't grow recipes above 10 particles, otherwise we might never stop.
           if (recipe.particles.length + slotConn.recipe.particles.length > 10) continue;
 
-          if (_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].matchesRecipe(arc.activeRecipe, slotConn.recipe)) {
+          if (_ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].matchesRecipe(arc.activeRecipe, slotConn.recipe)) {
             // skip candidate recipe, if matches the shape of the arc's active recipe
             continue;
           }
 
-          if (_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].matchesRecipe(recipe, slotConn.recipe)) {
+          if (_ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].matchesRecipe(recipe, slotConn.recipe)) {
             // skip candidate recipe, if matches the shape of the currently explored recipe
             continue;
           }
@@ -72702,12 +69651,12 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
             if (resolved.isVariable && !resolved.canReadSubset) continue;
           }
 
-          if (_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
+          if (_ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
             // skip candidate recipe, if matches the shape of the arc's active recipe
             continue;
           }
 
-          if (_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].matchesRecipe(recipe, otherHandle.recipe)) {
+          if (_ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].matchesRecipe(recipe, otherHandle.recipe)) {
             // skip candidate recipe, if matches the shape of the currently explored recipe
             continue;
           }
@@ -72765,82 +69714,11 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
         let cloneMap = new Map();
         let recipeClone = handle.recipe.clone(cloneMap);
         recipeClone.normalize();
-        return _recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__["Handle"].effectiveType(cloneMap.get(handle).type,
+        return _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__["Handle"].effectiveType(cloneMap.get(handle).type,
             [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
       }
 
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"].Independent), this);
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/strategies/combined-strategy.js":
-/*!*************************************************!*\
-  !*** ./runtime/strategies/combined-strategy.js ***!
-  \*************************************************/
-/*! exports provided: CombinedStrategy */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CombinedStrategy", function() { return CombinedStrategy; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-class CombinedStrategy extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategy"] {
-  constructor(strategies) {
-    super();
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(strategies.length > 1, 'Strategies must contain at least 2 elements.');
-    this._strategies = strategies;
-    this._strategies.forEach(strategy => Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(strategy.walker));
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._strategies[0].getResults);
-  }
-  _getLeaves(results) {
-    // Only use leaf recipes.
-    let recipeByParent = new Map();
-    let resultsList = [...results.values()];
-    resultsList.forEach(r => {
-      r.derivation.forEach(d => {
-        if (d.parent) {
-          recipeByParent.set(d.parent, r);
-        }
-      });
-    });
-    return resultsList.filter(r => !recipeByParent.has(r));
-  }
-  async generate(inputParams) {
-    let results = this._strategies[0].getResults(inputParams);
-    let totalResults = new Map();
-    for (let strategy of this._strategies) {
-      results = _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(results, strategy.walker, strategy);
-      results = await Promise.all(results.map(async result => {
-        if (result.hash) {
-          result.hash = await result.hash;
-        }
-        if (!totalResults.has(result.hash)) {
-          // TODO: deduping of results is already done in strategizer.
-          // It should dedup the intermeditate derivations as well.
-          totalResults.set(result.hash, result);
-        }
-        return result;
-      }));
-      results = this._getLeaves(totalResults);
-    }
-
-    return results;
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"].Independent), this);
   }
 }
 
@@ -72858,10 +69736,10 @@ class CombinedStrategy extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MOD
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConvertConstraintsToConnections", function() { return ConvertConstraintsToConnections; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/recipe-util.js */ "./runtime/recipe/recipe-util.js");
-/* harmony import */ var _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../recipe/connection-constraint.js */ "./runtime/recipe/connection-constraint.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../ts-build/recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
+/* harmony import */ var _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../ts-build/recipe/connection-constraint.js */ "./runtime/ts-build/recipe/connection-constraint.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -72882,7 +69760,7 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
   }
   async generate(inputParams) {
     let affordance = this.affordance;
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onRecipe(recipe) {
         // The particles & handles Sets are used as input to RecipeUtil's shape functionality
         // (this is the algorithm that "finds" the constraint set in the recipe).
@@ -72911,7 +69789,7 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
           let handle;
           let handleIsConcrete = false;
           let createObligation = false;
-          if (constraint.from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["ParticleEndPoint"]) {
+          if (constraint.from instanceof _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["ParticleEndPoint"]) {
             particles.add(constraint.from.particle.name);
             if (map[constraint.from.particle.name] == undefined) {
               map[constraint.from.particle.name] = {};
@@ -72924,11 +69802,11 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
               createObligation = true;
             }
           }
-          if (constraint.from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["HandleEndPoint"]) {
+          if (constraint.from instanceof _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["HandleEndPoint"]) {
             handle = {handle: constraint.from.handle, direction: reverse[constraint.direction]};
             handles.add(handle.handle);
           }
-          if (constraint.to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["ParticleEndPoint"]) {
+          if (constraint.to instanceof _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["ParticleEndPoint"]) {
             particles.add(constraint.to.particle.name);
             if (map[constraint.to.particle.name] == undefined) {
               map[constraint.to.particle.name] = {};
@@ -72944,7 +69822,7 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
               createObligation = true;
             }
           }
-          if (constraint.to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["HandleEndPoint"]) {
+          if (constraint.to instanceof _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["HandleEndPoint"]) {
             handle = {handle: constraint.to.handle, direction: constraint.direction};
             handles.add(handle.handle);
           }
@@ -72954,9 +69832,9 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
               handles.add(handle.handle);
             }
           }
-          if (constraint.from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["TagEndPoint"]) {
+          if (constraint.from instanceof _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["TagEndPoint"]) {
             handle.tags = constraint.from.tags;
-          } else if (constraint.to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["TagEndPoint"]) {
+          } else if (constraint.to instanceof _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["TagEndPoint"]) {
             handle.tags = constraint.to.tags;
           }
 
@@ -72982,7 +69860,7 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
           };
 
           let direction = constraint.direction;
-          if (constraint.from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["ParticleEndPoint"]) {
+          if (constraint.from instanceof _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["ParticleEndPoint"]) {
             let connection = constraint.from.connection;
             if (connection) {
               let existingHandle = map[constraint.from.particle.name][connection];
@@ -72997,7 +69875,7 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
           }
 
           direction = reverse[constraint.direction];          
-          if (constraint.to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["ParticleEndPoint"]) {
+          if (constraint.to instanceof _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["ParticleEndPoint"]) {
             let connection = constraint.to.connection;
             if (connection) {
               let existingHandle = map[constraint.to.particle.name][connection];
@@ -73011,9 +69889,9 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
             }
           }
         }
-        let shape = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].makeShape([...particles.values()], [...handles.values()], map);
+        let shape = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].makeShape([...particles.values()], [...handles.values()], map);
 
-        let results = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].find(recipe, shape);
+        let results = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].find(recipe, shape);
 
         results = results.filter(match => {
           // Ensure that every handle is either matched, or an input of at least one
@@ -73068,8 +69946,8 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
             }
             recipe.clearConnectionConstraints();
             for (let obligation of obligations) {
-              let from = new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["InstanceEndPoint"](recipeMap[obligation.from.particle.name], obligation.from.connection);
-              let to = new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["InstanceEndPoint"](recipeMap[obligation.to.particle.name], obligation.to.connection);
+              let from = new _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["InstanceEndPoint"](recipeMap[obligation.from.particle.name], obligation.from.connection);
+              let to = new _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["InstanceEndPoint"](recipeMap[obligation.to.particle.name], obligation.to.connection);
               recipe.newObligation(from, to, obligation.direction);
             }
             return score;
@@ -73078,7 +69956,7 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
 
         return results;
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Independent), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Independent), this);
   }
 }
 
@@ -73096,8 +69974,8 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CreateDescriptionHandle", function() { return CreateDescriptionHandle; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -73111,7 +69989,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class CreateDescriptionHandle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
   async generate(inputParams) {
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onHandleConnection(recipe, handleConnection) {
         if (handleConnection.handle) {
           return;
@@ -73127,7 +70005,7 @@ class CreateDescriptionHandle extends _strategizer_strategizer_js__WEBPACK_IMPOR
           return 1;
         };
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
   }
 }
 
@@ -73145,9 +70023,9 @@ class CreateDescriptionHandle extends _strategizer_strategizer_js__WEBPACK_IMPOR
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CreateHandleGroup", function() { return CreateHandleGroup; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/handle.js */ "./runtime/recipe/handle.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../ts-build/recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -73163,7 +70041,7 @@ __webpack_require__.r(__webpack_exports__);
 class CreateHandleGroup extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
 
   async generate(inputParams) {
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onRecipe(recipe) {
         // Resolve constraints before assuming connections are free.
         if (recipe.connectionConstraints.length > 0) return;
@@ -73172,14 +70050,14 @@ class CreateHandleGroup extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
         let maximalGroup = null;
         for (let writer of freeConnections.filter(hc => hc.isOutput)) {
           let compatibleConnections = [writer];
-          let effectiveType = _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(null, compatibleConnections);
+          let effectiveType = _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(null, compatibleConnections);
           let typeCandidate = null;
           let involvedParticles = new Set([writer.particle]);
 
           let foundSomeReader = false;
           for (let reader of freeConnections.filter(hc => hc.isInput)) {
             if (!involvedParticles.has(reader.particle) &&
-                (typeCandidate = _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(effectiveType, [reader])) !== null) {
+                (typeCandidate = _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(effectiveType, [reader])) !== null) {
               compatibleConnections.push(reader);
               involvedParticles.add(reader.particle);
               effectiveType = typeCandidate;
@@ -73192,7 +70070,7 @@ class CreateHandleGroup extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
 
           for (let otherWriter of freeConnections.filter(hc => hc.isOutput)) {
             if (!involvedParticles.has(otherWriter.particle) &&
-                (typeCandidate = _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(effectiveType, [otherWriter])) !== null) {
+                (typeCandidate = _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(effectiveType, [otherWriter])) !== null) {
               compatibleConnections.push(otherWriter);
               involvedParticles.add(otherWriter.particle);
               effectiveType = typeCandidate;
@@ -73215,7 +70093,7 @@ class CreateHandleGroup extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
           };
         }
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Independent), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Independent), this);
   }
 }
 
@@ -73233,9 +70111,9 @@ class CreateHandleGroup extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FindHostedParticle", function() { return FindHostedParticle; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
-/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../ts-build/recipe/type-checker.js */ "./runtime/ts-build/recipe/type-checker.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -73259,7 +70137,7 @@ class FindHostedParticle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_M
 
   async generate(inputParams) {
     let arc = this._arc;
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onHandleConnection(recipe, connection) {
         if (connection.direction !== 'host' || connection.handle) return;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(connection.type.isInterface);
@@ -73315,7 +70193,7 @@ class FindHostedParticle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_M
         }
         return results;
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
   }
 }
 
@@ -73334,8 +70212,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GroupHandleConnections", function() { return GroupHandleConnections; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -73352,7 +70230,7 @@ class GroupHandleConnections extends _strategizer_strategizer_js__WEBPACK_IMPORT
   constructor() {
     super();
 
-    this._walker = new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"] {
+    this._walker = new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"] {
       onRecipe(recipe) {
         // Only apply this strategy if ALL handle connections are named and have types.
         if (recipe.handleConnections.find(hc => !hc.type || !hc.name || hc.isOptional)) {
@@ -73443,13 +70321,13 @@ class GroupHandleConnections extends _strategizer_strategizer_js__WEBPACK_IMPORT
           };
         }
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"].Permuted);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"].Permuted);
   }
   get walker() {
     return this._walker;
   }
   async generate(inputParams) {
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), this.walker, this);
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), this.walker, this);
   }
 }
 
@@ -73547,7 +70425,7 @@ class InitPopulation extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODUL
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InitSearch", function() { return InitSearch; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -73570,7 +70448,7 @@ class InitSearch extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
       return [];
     }
 
-    let recipe = new _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"]();
+    let recipe = new _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"]();
     recipe.setSearchPhrase(this._search);
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(recipe.normalize());
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(!recipe.isResolved());
@@ -73598,8 +70476,8 @@ class InitSearch extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MapSlots", function() { return MapSlots; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -73621,7 +70499,7 @@ class MapSlots extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__[
   async generate(inputParams) {
     let arc = this._arc;
 
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onSlotConnection(recipe, slotConnection) {
         // don't try to connect verb constraints
         // TODO: is this right? Should constraints be connectible, in order to precompute the
@@ -73648,7 +70526,7 @@ class MapSlots extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__[
           return 1;
         }));
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
   }
 
   // Helper methods.
@@ -73759,8 +70637,8 @@ class MapSlots extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__[
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MatchFreeHandlesToConnections", function() { return MatchFreeHandlesToConnections; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -73780,7 +70658,7 @@ class MatchFreeHandlesToConnections extends _strategizer_strategizer_js__WEBPACK
   async generate(inputParams) {
     let self = this;
 
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
       onHandle(recipe, handle) {
         if (handle.connections.length > 0) {
           return;
@@ -73796,7 +70674,7 @@ class MatchFreeHandlesToConnections extends _strategizer_strategizer_js__WEBPACK
           };
         });
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
   }
 }
 
@@ -73814,8 +70692,8 @@ class MatchFreeHandlesToConnections extends _strategizer_strategizer_js__WEBPACK
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MatchParticleByVerb", function() { return MatchParticleByVerb; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -73835,7 +70713,7 @@ class MatchParticleByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_
 
   async generate(inputParams) {
     let arc = this._arc;
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onParticle(recipe, particle) {
         if (particle.name) {
           // Particle already has explicit name.
@@ -73856,7 +70734,7 @@ class MatchParticleByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_
           };
         });
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
   }
 }
 
@@ -73874,9 +70752,9 @@ class MatchParticleByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MatchRecipeByVerb", function() { return MatchRecipeByVerb; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/handle.js */ "./runtime/recipe/handle.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../ts-build/recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -73910,7 +70788,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
 
   async generate(inputParams) {
     let arc = this._arc;
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onParticle(recipe, particle) {
         if (particle.name) {
           // Particle already has explicit name.
@@ -74043,7 +70921,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
           };
         });
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
   }
 
   static satisfiesHandleConstraints(recipe, handleConstraints) {
@@ -74097,7 +70975,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
     if (!handleData.handle) {
       return true;
     }
-    return _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(handleData.handle._mappedType, handleData.handle.connections.concat(connection)) != null;
+    return _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(handleData.handle._mappedType, handleData.handle.connections.concat(connection)) != null;
   }
 
   static satisfiesSlotConstraints(recipe, slotConstraints) {
@@ -74151,8 +71029,8 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NameUnnamedConnections", function() { return NameUnnamedConnections; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -74166,7 +71044,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class NameUnnamedConnections extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
   async generate(inputParams) {
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onHandleConnection(recipe, handleConnection) {
         if (handleConnection.name) {
           // it is already named.
@@ -74192,7 +71070,7 @@ class NameUnnamedConnections extends _strategizer_strategizer_js__WEBPACK_IMPORT
           };
         });
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
   }
 }
 
@@ -74210,9 +71088,9 @@ class NameUnnamedConnections extends _strategizer_strategizer_js__WEBPACK_IMPORT
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ResolveRecipe", function() { return ResolveRecipe; });
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/recipe-util.js */ "./runtime/recipe/recipe-util.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../ts-build/recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
 /* harmony import */ var _map_slots_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./map-slots.js */ "./runtime/strategies/map-slots.js");
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -74235,7 +71113,7 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
 
   async generate(inputParams) {
     let arc = this._arc;
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
       onHandle(recipe, handle) {
         if (handle.connections.length == 0 ||
             (handle.id && handle.storageKey) || (!handle.type) ||
@@ -74247,7 +71125,7 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
 
         if (!handle.id) {
           // Handle doesn't have an ID, finding by type and tags.
-          const counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].directionCounts(handle);
+          const counts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].directionCounts(handle);
           switch (handle.fate) {
             case 'use':
               mappable = arc.findStoresByType(handle.type, {tags: handle.tags, subtype: counts.out == 0});
@@ -74334,7 +71212,7 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
           }
         }
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
   }
 }
 
@@ -74442,11 +71320,10 @@ const ExperimentalLinear = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MOD
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SearchTokensToHandles", function() { return SearchTokensToHandles; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/recipe-util.js */ "./runtime/recipe/recipe-util.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
+/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -74459,8 +71336,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-class SearchTokensToHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategy"] {
+class SearchTokensToHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
   constructor(arc) {
     super();
     this._arc = arc;
@@ -74471,7 +71347,7 @@ class SearchTokensToHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTE
     // Finds stores matching the provided token and compatible with the provided handle's type,
     // which are not already mapped into the provided handle's recipe
     let findMatchingStores = (token, handle) => {
-      const counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].directionCounts(handle);
+      const counts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].directionCounts(handle);
       let stores = arc.findStoresByType(handle.type, {tags: [`${token}`], subtype: counts.out == 0});
       let fate = 'use';
       if (stores.length == 0) {
@@ -74482,7 +71358,7 @@ class SearchTokensToHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTE
       return stores.map(store => { return {store, fate, token}; });
     };
 
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_4__["Walker"] {
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"] {
       onHandle(recipe, handle) {
         if (!recipe.search || recipe.search.unresolvedTokens.length == 0) {
           return;
@@ -74506,7 +71382,7 @@ class SearchTokensToHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTE
           };
         });
       }
-    }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_4__["Walker"].Permuted), this);
+    }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"].Permuted), this);
   }
 }
 
@@ -74525,8 +71401,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SearchTokensToParticles", function() { return SearchTokensToParticles; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/recipe/walker.js");
+/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../ts-build/recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -74551,7 +71427,7 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
       thing.verbs.forEach(verb => this._addThing(verb, packaged, thingByToken, thingByPhrase));
     }
 
-    class SearchWalker extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"] {
+    class SearchWalker extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"] {
       constructor(tactic, arc) {
         super(tactic);
         this.index = arc.recipeIndex;
@@ -74618,7 +71494,7 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
         });
       }
     }
-    this._walker = new SearchWalker(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"].Permuted, arc);
+    this._walker = new SearchWalker(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"].Permuted, arc);
   }
 
   get walker() {
@@ -74654,7 +71530,7 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
 
   async generate(inputParams) {
     await this.walker.index.ready;
-    return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), this.walker, this);
+    return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), this.walker, this);
   }
 }
 
@@ -74872,7 +71748,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestionStorage", function() { return SuggestionStorage; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./manifest.js */ "./runtime/manifest.js");
-/* harmony import */ var _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./recipe/recipe-resolver.js */ "./runtime/recipe/recipe-resolver.js");
+/* harmony import */ var _ts_build_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/recipe/recipe-resolver.js */ "./runtime/ts-build/recipe/recipe-resolver.js");
 /* harmony import */ var _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ts-build/schema.js */ "./runtime/ts-build/schema.js");
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
 /**
@@ -74902,7 +71778,7 @@ class SuggestionStorage {
     this._storageKey = 
       `${storageKeyTokens.slice(0, -2).join('/')}/users/${userid}/suggestions/${this._arcKey}`;
 
-    this._recipeResolver = new _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_2__["RecipeResolver"](this._arc);
+    this._recipeResolver = new _ts_build_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_2__["RecipeResolver"](this._arc);
     this._suggestionsUpdatedCallbacks = [];
 
     this._storeCallback = () => this._onStoreUpdated();
@@ -75403,11 +72279,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
 /* harmony import */ var _particle_execution_host_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../particle-execution-host.js */ "./runtime/particle-execution-host.js");
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/handle.js */ "./runtime/recipe/handle.js");
-/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/recipe/recipe.js");
+/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
+/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../manifest.js */ "./runtime/manifest.js");
 /* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../description.js */ "./runtime/description.js");
-/* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../recipe/util.js */ "./runtime/recipe/util.js");
+/* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./recipe/util.js */ "./runtime/ts-build/recipe/util.js");
 /* harmony import */ var _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../fake-pec-factory.js */ "./runtime/fake-pec-factory.js");
 /* harmony import */ var _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
 /* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
@@ -75683,7 +72559,6 @@ ${this.activeRecipe.toString()}`;
         const id = this.generateID('particle');
         const handleMap = { spec: recipeParticle.spec, handles: new Map() };
         this.particleHandleMaps.set(id, handleMap);
-        // TODO(shans): remove type override once recipes are typeScriptized.
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
             if (!connection.handle) {
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(connection.isOptional);
@@ -75710,13 +72585,13 @@ ${this.activeRecipe.toString()}`;
     // Makes a copy of the arc used for speculative execution.
     async cloneForSpeculativeExecution() {
         const arc = new Arc({ id: this.generateID().toString(), pecFactory: this.pecFactory, context: this.context, loader: this._loader, recipeIndex: this._recipeIndex, speculative: true });
-        const handleMap = new Map();
-        for (const handle of this._stores) {
-            const clone = await arc.storageProviderFactory.construct(handle.id, handle.type, 'volatile');
-            await clone.cloneFrom(handle);
-            handleMap.set(handle, clone);
-            if (this.storeDescriptions.has(handle)) {
-                arc.storeDescriptions.set(clone, this.storeDescriptions.get(handle));
+        const storeMap = new Map();
+        for (const store of this._stores) {
+            const clone = await arc.storageProviderFactory.construct(store.id, store.type, 'volatile');
+            await clone.cloneFrom(store);
+            storeMap.set(store, clone);
+            if (this.storeDescriptions.has(store)) {
+                arc.storeDescriptions.set(clone, this.storeDescriptions.get(store));
             }
         }
         this.particleHandleMaps.forEach((value, key) => {
@@ -75724,7 +72599,7 @@ ${this.activeRecipe.toString()}`;
                 spec: value.spec,
                 handles: new Map()
             });
-            value.handles.forEach(handle => arc.particleHandleMaps.get(key).handles.set(handle.name, handleMap.get(handle)));
+            value.handles.forEach(handle => arc.particleHandleMaps.get(key).handles.set(handle.name, storeMap.get(handle)));
         });
         const { particles, handles, slots } = this._activeRecipe.mergeInto(arc._activeRecipe);
         let particleIndex = 0;
@@ -75766,7 +72641,7 @@ ${this.activeRecipe.toString()}`;
             });
             arc._recipes.push(arcRecipe);
         });
-        for (const v of handleMap.values()) {
+        for (const v of storeMap.values()) {
             // FIXME: Tags
             arc._registerStore(v, []);
         }
@@ -76659,6 +73534,7 @@ class HostedSlotContext extends _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["S
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.sourceSlotConsumer instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__["HostedSlotConsumer"]);
         const hostedSourceSlotConsumer = this.sourceSlotConsumer;
         if (hostedSourceSlotConsumer.storeId) {
+            // TODO(mmandlis): This up-cast is dangerous. Why do we need to fake a Handle here?
             this.handles = [{ id: hostedSourceSlotConsumer.storeId }];
         }
     }
@@ -77583,6 +74459,2817 @@ class Random {
 
 /***/ }),
 
+/***/ "./runtime/ts-build/recipe/connection-constraint.js":
+/*!**********************************************************!*\
+  !*** ./runtime/ts-build/recipe/connection-constraint.js ***!
+  \**********************************************************/
+/*! exports provided: ParticleEndPoint, InstanceEndPoint, HandleEndPoint, TagEndPoint, ConnectionConstraint */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleEndPoint", function() { return ParticleEndPoint; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InstanceEndPoint", function() { return InstanceEndPoint; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleEndPoint", function() { return HandleEndPoint; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TagEndPoint", function() { return TagEndPoint; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConnectionConstraint", function() { return ConnectionConstraint; });
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util.js */ "./runtime/ts-build/recipe/util.js");
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+class ParticleEndPoint {
+    constructor(particle, connection) {
+        this.particle = particle;
+        this.connection = connection;
+    }
+    _clone(cloneMap = undefined) {
+        return new ParticleEndPoint(this.particle, this.connection);
+    }
+    _compareTo(other) {
+        let cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])(this.particle.name, other.particle.name)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])(this.connection, other.connection)) !== 0)
+            return cmp;
+        return 0;
+    }
+    toString(nameMap = undefined) {
+        if (!this.connection) {
+            return `${this.particle.name}`;
+        }
+        return `${this.particle.name}.${this.connection}`;
+    }
+}
+class InstanceEndPoint {
+    constructor(instance, connection) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(instance);
+        this.recipe = instance.recipe;
+        this.instance = instance;
+        this.connection = connection;
+    }
+    _clone(cloneMap) {
+        return new InstanceEndPoint(cloneMap.get(this.instance), this.connection);
+    }
+    _compareTo(other) {
+        let cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["compareComparables"])(this.instance, other.instance)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])(this.connection, other.connection)) !== 0)
+            return cmp;
+        return 0;
+    }
+    toString(nameMap) {
+        if (!this.connection) {
+            return `${nameMap.get(this.instance)}`;
+        }
+        return `${nameMap.get(this.instance)}.${this.connection}`;
+    }
+}
+class HandleEndPoint {
+    constructor(handle) {
+        this.handle = handle;
+    }
+    _clone(cloneMap = undefined) {
+        return new HandleEndPoint(this.handle);
+    }
+    _compareTo(other) {
+        let cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])(this.handle.localName, other.handle.localName)) !== 0)
+            return cmp;
+        return 0;
+    }
+    toString(nameMap = undefined) {
+        return `${this.handle.localName}`;
+    }
+}
+class TagEndPoint {
+    constructor(tags) {
+        this.tags = tags;
+    }
+    _clone(cloneMap = undefined) {
+        return new TagEndPoint(this.tags);
+    }
+    _compareTo(other) {
+        let cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["compareArrays"])(this.tags, other.tags, _util_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])) !== 0)
+            return cmp;
+        return 0;
+    }
+    toString(nameMap = undefined) {
+        return this.tags.map(a => `#${a}`).join(' ');
+    }
+}
+class ConnectionConstraint {
+    constructor(fromConnection, toConnection, direction, type) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(direction);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(type);
+        this.from = fromConnection;
+        this.to = toConnection;
+        this.direction = direction;
+        this.type = type;
+        Object.freeze(this);
+    }
+    _copyInto(recipe, cloneMap) {
+        if (this.type === 'constraint') {
+            if (this.from instanceof InstanceEndPoint || this.to instanceof InstanceEndPoint) {
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!`Can't have connection constraints of type constraint with InstanceEndPoints`);
+            }
+            else {
+                return recipe.newConnectionConstraint(this.from._clone(), this.to._clone(), this.direction);
+            }
+        }
+        return recipe.newObligation(this.from._clone(cloneMap), this.to._clone(cloneMap), this.direction);
+    }
+    _compareTo(other) {
+        let cmp;
+        if ((cmp = this.from._compareTo(other.from)) !== 0)
+            return cmp;
+        if ((cmp = this.to._compareTo(other.to)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_0__["compareStrings"])(this.direction, other.direction)) !== 0)
+            return cmp;
+        return 0;
+    }
+    toString(nameMap = undefined, options = undefined) {
+        let unresolved = '';
+        if (options && options.showUnresolved === true && this.type === 'obligation') {
+            unresolved = ' // unresolved obligation';
+        }
+        return `${this.from.toString(nameMap)} ${this.direction} ${this.to.toString(nameMap)}${unresolved}`;
+    }
+}
+//# sourceMappingURL=connection-constraint.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/handle-connection.js":
+/*!******************************************************!*\
+  !*** ./runtime/ts-build/recipe/handle-connection.js ***!
+  \******************************************************/
+/*! exports provided: HandleConnection */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleConnection", function() { return HandleConnection; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util.js */ "./runtime/ts-build/recipe/util.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+class HandleConnection {
+    constructor(name, particle) {
+        this._tags = [];
+        this._type = undefined;
+        this._rawType = undefined;
+        this._direction = undefined;
+        this._handle = undefined;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particle);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particle.recipe);
+        this._recipe = particle.recipe;
+        this._name = name;
+        this._particle = particle;
+    }
+    _clone(particle, cloneMap) {
+        if (cloneMap.has(this)) {
+            return cloneMap.get(this);
+        }
+        const handleConnection = new HandleConnection(this._name, particle);
+        handleConnection._tags = [...this._tags];
+        // Note that _rawType will be cloned later by the particle that references this connection.
+        // Doing it there allows the particle to maintain variable associations across the particle
+        // scope.    
+        handleConnection._rawType = this._rawType;
+        handleConnection._direction = this._direction;
+        if (this._handle != undefined) {
+            handleConnection._handle = cloneMap.get(this._handle);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleConnection._handle !== undefined);
+            handleConnection._handle.connections.push(handleConnection);
+        }
+        cloneMap.set(this, handleConnection);
+        return handleConnection;
+    }
+    _normalize() {
+        this._tags.sort();
+        // TODO: type?
+        Object.freeze(this);
+    }
+    _compareTo(other) {
+        let cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareComparables"])(this._particle, other._particle)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])(this._name, other._name)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareArrays"])(this._tags, other._tags, _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareComparables"])(this._handle, other._handle)) !== 0)
+            return cmp;
+        // TODO: add type comparison
+        // if ((cmp = compareStrings(this._type, other._type)) != 0) return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])(this._direction, other._direction)) !== 0)
+            return cmp;
+        return 0;
+    }
+    get recipe() { return this._recipe; }
+    get name() { return this._name; } // Parameter name?
+    getQualifiedName() { return `${this.particle.name}::${this.name}`; }
+    get tags() { return this._tags; }
+    get type() {
+        if (this._type) {
+            return this._type;
+        }
+        return this._rawType;
+    }
+    get rawType() {
+        return this._rawType;
+    }
+    get direction() { return this._direction; } // in/out
+    get isInput() {
+        return this.direction === 'in' || this.direction === 'inout';
+    }
+    get isOutput() {
+        return this.direction === 'out' || this.direction === 'inout';
+    }
+    get handle() { return this._handle; } // Handle?
+    get particle() { return this._particle; } // never null
+    set tags(tags) { this._tags = tags; }
+    set type(type) {
+        this._rawType = type;
+        this._type = undefined;
+        this._resetHandleType();
+    }
+    set direction(direction) {
+        this._direction = direction;
+        this._resetHandleType();
+    }
+    get spec() {
+        if (this.particle.spec == null) {
+            return null;
+        }
+        return this.particle.spec.connectionMap.get(this.name);
+    }
+    get isOptional() {
+        if (this.spec == null) {
+            return false;
+        }
+        return this.spec.isOptional;
+    }
+    _isValid(options) {
+        if (this.direction && !['in', 'out', 'inout', 'host', '`consume', '`provide'].includes(this.direction)) {
+            if (options && options.errors) {
+                options.errors.set(this, `Invalid direction '${this.direction}' for handle connection '${this.getQualifiedName()}'`);
+            }
+            return false;
+        }
+        if (this.type && this.spec) {
+            const connectionSpec = this.spec;
+            if (!connectionSpec.isCompatibleType(this.rawType)) {
+                if (options && options.errors) {
+                    options.errors.set(this, `Type '${this.rawType.toString()} for handle connection '${this.getQualifiedName()}' doesn't match particle spec's type '${connectionSpec.type.toString()}'`);
+                }
+                return false;
+            }
+            if (this.direction !== connectionSpec.direction) {
+                if (options && options.errors) {
+                    options.errors.set(this, `Direction '${this.direction}' for handle connection '${this.getQualifiedName()}' doesn't match particle spec's direction '${connectionSpec.direction}'`);
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+    isResolved(options) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this));
+        if (this.isOptional) {
+            return true;
+        }
+        let parent;
+        if (this.spec && this.spec.parentConnection) {
+            parent = this.particle.connections[this.spec.parentConnection.name];
+        }
+        // TODO: This should use this._type, or possibly not consider type at all.
+        if (!this.type) {
+            if (options) {
+                options.details = 'missing type';
+            }
+            return false;
+        }
+        if (!this._direction) {
+            if (options) {
+                options.details = 'missing direction';
+            }
+            return false;
+        }
+        if (!this.handle) {
+            if (parent && parent.isOptional && !parent.handle) {
+                return true;
+            }
+            if (options) {
+                options.details = 'missing handle';
+            }
+            return false;
+        }
+        else if (parent) {
+            if (!parent.handle) {
+                if (options) {
+                    options.details = 'parent connection missing handle';
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+    _resetHandleType() {
+        if (this._handle) {
+            this._handle._type = undefined;
+        }
+    }
+    connectToHandle(handle) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle.recipe === this.recipe);
+        this._handle = handle;
+        this._resetHandleType();
+        this._handle.connections.push(this);
+    }
+    disconnectHandle() {
+        const idx = this._handle.connections.indexOf(this);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx >= 0);
+        this._handle.connections.splice(idx, 1);
+        this._handle = undefined;
+    }
+    toString(nameMap, options) {
+        const result = [];
+        result.push(this.name || '*');
+        // TODO: better deal with unspecified direction.
+        result.push({ 'in': '<-', 'out': '->', 'inout': '=', 'host': '=', '`consume': '<-', '`provide': '->' }[this.direction] || this.direction || '=');
+        if (this.handle) {
+            result.push(`${(nameMap && nameMap.get(this.handle)) || this.handle.localName}`);
+        }
+        result.push(...this.tags.map(a => `#${a}`));
+        if (options && options.showUnresolved) {
+            if (!this.isResolved(options)) {
+                result.push(`// unresolved handle-connection: ${options.details}`);
+            }
+        }
+        return result.join(' ');
+    }
+}
+//# sourceMappingURL=handle-connection.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/handle.js":
+/*!*******************************************!*\
+  !*** ./runtime/ts-build/recipe/handle.js ***!
+  \*******************************************/
+/*! exports provided: Handle */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Handle", function() { return Handle; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util.js */ "./runtime/ts-build/recipe/util.js");
+/* harmony import */ var _type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./type-checker.js */ "./runtime/ts-build/recipe/type-checker.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+class Handle {
+    constructor(recipe) {
+        this._id = null;
+        this._localName = undefined;
+        this._tags = [];
+        this._type = undefined;
+        this._fate = null;
+        // TODO: replace originalFate and originalId with more generic mechanism for tracking
+        // how and from what the recipe was generated.
+        this._originalFate = null;
+        this._originalId = null;
+        this._connections = [];
+        this._mappedType = undefined;
+        this._storageKey = undefined;
+        this._pattern = undefined;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe);
+        this._recipe = recipe;
+    }
+    _copyInto(recipe) {
+        let handle = undefined;
+        if (this._id !== null && ['map', 'use', 'copy'].includes(this.fate)) {
+            handle = recipe.findHandle(this._id);
+        }
+        if (handle == undefined) {
+            handle = recipe.newHandle();
+            handle._id = this._id;
+            handle._tags = [...this._tags];
+            handle._type = this._type ? _type_js__WEBPACK_IMPORTED_MODULE_3__["Type"].fromLiteral(this._type.toLiteral()) : undefined;
+            handle._fate = this._fate;
+            handle._originalFate = this._originalFate;
+            handle._originalId = this._originalId;
+            handle._mappedType = this._mappedType;
+            handle._storageKey = this._storageKey;
+            // the connections are re-established when Particles clone their
+            // attached HandleConnection objects.
+            handle._connections = [];
+            handle._pattern = this._pattern;
+        }
+        return handle;
+    }
+    // Merges `this` recipe handle into `handle`
+    mergeInto(handle) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.recipe === handle.recipe, 'Cannot merge handles from different recipes.');
+        while (this.connections.length > 0) {
+            const [connection] = this.connections;
+            connection.disconnectHandle();
+            connection.connectToHandle(handle);
+        }
+        handle.tags = handle.tags.concat(this.tags);
+        handle.recipe.removeHandle(this);
+        handle.fate = this._mergedFate([this.fate, handle.fate]);
+    }
+    _mergedFate(fates) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(fates.length > 0, `Cannot merge empty fates list`);
+        // Merging handles only used in coalesce-recipe strategy, which is only done for use/create/? fates.
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!fates.includes('map') && !fates.includes('copy'), `Merging map/copy not supported yet`);
+        // If all fates were `use` keep their fate, otherwise set to `create`.
+        return fates.every(fate => fate === 'use') ? 'use' : 'create';
+    }
+    _startNormalize() {
+        this._localName = null;
+        this._tags.sort();
+        // TODO: type?
+    }
+    _finishNormalize() {
+        for (const connection of this._connections) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(connection), `Handle connection '${connection.name}' is not frozen.`);
+        }
+        this._connections.sort(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareComparables"]);
+        Object.freeze(this);
+    }
+    _compareTo(other) {
+        let cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])(this._id, other._id)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])(this._localName, other._localName)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareArrays"])(this._tags, other._tags, _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])) !== 0)
+            return cmp;
+        // TODO: type?
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])(this.fate, other.fate)) !== 0)
+            return cmp;
+        return 0;
+    }
+    // a resolved Handle has either an id or create=true
+    get fate() { return this._fate || '?'; }
+    set fate(fate) {
+        if (this._originalFate == null) {
+            this._originalFate = this._fate;
+        }
+        this._fate = fate;
+    }
+    get originalFate() { return this._originalFate || '?'; }
+    get originalId() { return this._originalId; }
+    get recipe() { return this._recipe; }
+    get tags() { return this._tags; } // only tags owned by the handle
+    set tags(tags) { this._tags = tags; }
+    get type() { return this._type; } // nullable
+    get id() { return this._id; }
+    set id(id) {
+        if (!this._originalId) {
+            this._originalId = this._id;
+        }
+        this._id = id;
+    }
+    mapToStorage(storage) {
+        this._id = storage.id;
+        this._originalId = storage.originalId;
+        this._type = undefined;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(storage.type == undefined || !(storage.type.hasVariableReference), `variable references shouldn't be part of handle types`);
+        this._mappedType = storage.type;
+        this._storageKey = storage.storageKey;
+    }
+    get localName() { return this._localName; }
+    set localName(name) { this._localName = name; }
+    get connections() { return this._connections; } // HandleConnection*
+    get storageKey() { return this._storageKey; }
+    set storageKey(key) { this._storageKey = key; }
+    get pattern() { return this._pattern; }
+    set pattern(pattern) { this._pattern = pattern; }
+    get mappedType() { return this._mappedType; }
+    static effectiveType(handleType, connections) {
+        const variableMap = new Map();
+        // It's OK to use _cloneWithResolutions here as for the purpose of this test, the handle set + handleType 
+        // contain the full set of type variable information that needs to be maintained across the clone.
+        const typeSet = connections.filter(connection => connection.type != null).map(connection => ({ type: connection.type._cloneWithResolutions(variableMap), direction: connection.direction }));
+        return _type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"].processTypeList(handleType ? handleType._cloneWithResolutions(variableMap) : null, typeSet);
+    }
+    static resolveEffectiveType(handleType, connections) {
+        const typeSet = connections.filter(connection => connection.type != null).map(connection => ({ type: connection.type, direction: connection.direction }));
+        return _type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"].processTypeList(handleType, typeSet);
+    }
+    _isValid(options) {
+        const tags = new Set();
+        for (const connection of this._connections) {
+            // A remote handle cannot be connected to an output param.
+            if (this.fate === 'map' && ['out', 'inout'].includes(connection.direction)) {
+                if (options && options.errors) {
+                    options.errors.set(this, `Invalid fate '${this.fate}' for handle '${this}'; it is used for '${connection.direction}' ${connection.getQualifiedName()} connection`);
+                }
+                return false;
+            }
+            connection.tags.forEach(tag => tags.add(tag));
+        }
+        const type = Handle.resolveEffectiveType(this._mappedType, this._connections);
+        if (type) {
+            this._type = type;
+            this._tags.forEach(tag => tags.add(tag));
+            this._tags = [...tags];
+            return true;
+        }
+        if (options && options.errors) {
+            // TODO: pass options to TypeChecker.processTypeList for better error.
+            options.errors.set(this, `Type validations failed for handle '${this}'`);
+        }
+        return false;
+    }
+    isResolved(options = undefined) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this));
+        let resolved = true;
+        if (this.type) {
+            let mustBeResolved = true;
+            if (this.fate === 'create' || this.fate === '`slot') {
+                mustBeResolved = false;
+            }
+            if ((mustBeResolved && !this.type.isResolved()) || !this.type.canEnsureResolved()) {
+                if (options) {
+                    options.details.push('unresolved type');
+                }
+                resolved = false;
+            }
+        }
+        else {
+            if (options) {
+                options.details.push('missing type');
+            }
+            resolved = false;
+        }
+        switch (this.fate) {
+            case '?': {
+                if (options) {
+                    options.details.push('missing fate');
+                }
+                resolved = false;
+                break;
+            }
+            case 'copy':
+            case 'map':
+            case 'use': {
+                if (options && this.id === null) {
+                    options.details.push('missing id');
+                }
+                resolved = resolved && (this.id !== null);
+                break;
+            }
+            case '`slot':
+            case 'create':
+                break;
+            default: {
+                if (options) {
+                    options.details.push(`invalid fate ${this.fate}`);
+                }
+                throw new Error(`Unexpected fate: ${this.fate}`);
+            }
+        }
+        return resolved;
+    }
+    toString(nameMap, options) {
+        options = options || {};
+        // TODO: type? maybe output in a comment
+        const result = [];
+        result.push(this.fate);
+        if (this.id) {
+            result.push(`'${this.id}'`);
+        }
+        result.push(...this.tags.map(a => `#${a}`));
+        result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
+        if (this.type) {
+            result.push('//');
+            if (this.type.isResolved()) {
+                result.push(this.type.resolvedType().toString({ hideFields: options.hideFields == undefined ? true : options.hideFields }));
+            }
+            else {
+                // TODO: include the unresolved constraints in toString (ie in the hash).
+                result.push(this.type.toString());
+                if (options.showUnresolved && this.type.canEnsureResolved()) {
+                    const type = _type_js__WEBPACK_IMPORTED_MODULE_3__["Type"].fromLiteral(this.type.toLiteral());
+                    type.maybeEnsureResolved();
+                    result.push('//');
+                    result.push(type.resolvedType().toString({ hideFields: options.hideFields == undefined ? true : options.hideFields }));
+                }
+            }
+        }
+        if (options.showUnresolved) {
+            const unresolvedOptions = { details: [] };
+            if (!this.isResolved(unresolvedOptions)) {
+                result.push(` // unresolved handle: ${unresolvedOptions.details.join(', ')}`);
+            }
+        }
+        return result.join(' ');
+    }
+}
+//# sourceMappingURL=handle.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/particle.js":
+/*!*********************************************!*\
+  !*** ./runtime/ts-build/recipe/particle.js ***!
+  \*********************************************/
+/*! exports provided: Particle */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Particle", function() { return Particle; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _slot_connection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-connection.js */ "./runtime/ts-build/recipe/slot-connection.js");
+/* harmony import */ var _handle_connection_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./handle-connection.js */ "./runtime/ts-build/recipe/handle-connection.js");
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util.js */ "./runtime/ts-build/recipe/util.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+class Particle {
+    constructor(recipe, name) {
+        this._id = undefined;
+        this._localName = undefined;
+        this._spec = undefined;
+        this._verbs = [];
+        this._connections = {};
+        // TODO: replace with constraint connections on the recipe
+        this._unnamedConnections = [];
+        // map of consumed Slot connections by slot name.
+        this._consumedSlotConnections = {};
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe);
+        this._recipe = recipe;
+        this._name = name;
+    }
+    _copyInto(recipe, cloneMap) {
+        const particle = recipe.newParticle(this._name);
+        particle._id = this._id;
+        particle._verbs = [...this._verbs];
+        particle._spec = this._spec;
+        Object.keys(this._connections).forEach(key => {
+            particle._connections[key] = this._connections[key]._clone(particle, cloneMap);
+        });
+        particle._unnamedConnections = this._unnamedConnections.map(connection => connection._clone(particle, cloneMap));
+        particle._cloneConnectionRawTypes();
+        Object.keys(this._consumedSlotConnections).forEach(key => {
+            particle._consumedSlotConnections[key] = this._consumedSlotConnections[key]._clone(particle, cloneMap);
+        });
+        return particle;
+    }
+    _cloneConnectionRawTypes() {
+        // TODO(shans): evaluate whether this is the appropriate context root for cloneWithResolution
+        const map = new Map();
+        for (const connection of Object.values(this._connections)) {
+            if (connection.rawType) {
+                connection._rawType = connection.rawType._cloneWithResolutions(map);
+            }
+        }
+        for (const connection of this._unnamedConnections) {
+            if (connection.rawType) {
+                connection._rawType = connection.rawType._cloneWithResolutions(map);
+            }
+        }
+    }
+    _startNormalize() {
+        this._localName = null;
+        this._verbs.sort();
+        const normalizedConnections = {};
+        for (const key of (Object.keys(this._connections).sort())) {
+            normalizedConnections[key] = this._connections[key];
+        }
+        this._connections = normalizedConnections;
+        const normalizedSlotConnections = {};
+        for (const key of (Object.keys(this._consumedSlotConnections).sort())) {
+            normalizedSlotConnections[key] = this._consumedSlotConnections[key];
+        }
+        this._consumedSlotConnections = normalizedSlotConnections;
+    }
+    _finishNormalize() {
+        this._unnamedConnections.sort(_util_js__WEBPACK_IMPORTED_MODULE_3__["compareComparables"]);
+        Object.freeze(this);
+    }
+    _compareTo(other) {
+        let cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_3__["compareStrings"])(this._id, other._id)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_3__["compareStrings"])(this._name, other._name)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_3__["compareStrings"])(this._localName, other._localName)) !== 0)
+            return cmp;
+        // TODO: spec?
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_3__["compareArrays"])(this._verbs, other._verbs, _util_js__WEBPACK_IMPORTED_MODULE_3__["compareStrings"])) !== 0)
+            return cmp;
+        // TODO: slots
+        return 0;
+    }
+    _isValid(options) {
+        if (!this.spec) {
+            return true;
+        }
+        if (!this.name && !this.primaryVerb) {
+            // Must have either name of a verb
+            if (options && options.errors) {
+                options.errors.set(this, `Particle has no name and no verb`);
+            }
+            return false;
+        }
+        // TODO: What
+        return true;
+    }
+    isResolved(options = undefined) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this));
+        const consumedSlotConnections = Object.values(this.consumedSlotConnections);
+        if (consumedSlotConnections.length > 0) {
+            const fulfilledSlotConnections = consumedSlotConnections.filter(connection => connection.targetSlot !== undefined);
+            if (fulfilledSlotConnections.length === 0) {
+                if (options && options.showUnresolved) {
+                    options.details = 'unfullfilled slot connections';
+                }
+                return false;
+            }
+        }
+        if (!this.spec) {
+            if (options && options.showUnresolved) {
+                options.details = 'missing spec';
+            }
+            return false;
+        }
+        if (this.spec.connectionMap.size !== Object.keys(this._connections).length) {
+            if (options && options.showUnresolved) {
+                options.details = 'unresolved connections';
+            }
+            return false;
+        }
+        if (this.unnamedConnections.length !== 0) {
+            if (options && options.showUnresolved) {
+                options.details = `${this.unnamedConnections.length} unnamed connections`;
+            }
+            return false;
+        }
+        return true;
+    }
+    get recipe() { return this._recipe; }
+    get localName() { return this._localName; }
+    set localName(name) { this._localName = name; }
+    get id() { return this._id; } // Not resolved until we have an ID.
+    get name() { return this._name; }
+    set name(name) { this._name = name; }
+    get spec() { return this._spec; }
+    get connections() { return this._connections; } // {parameter -> HandleConnection}
+    get unnamedConnections() { return this._unnamedConnections; } // HandleConnection*
+    get consumedSlotConnections() { return this._consumedSlotConnections; }
+    get primaryVerb() { return (this._verbs.length > 0) ? this._verbs[0] : undefined; }
+    set verbs(verbs) { this._verbs = verbs; }
+    set spec(spec) {
+        this._spec = spec;
+        for (const connectionName of spec.connectionMap.keys()) {
+            const speccedConnection = spec.connectionMap.get(connectionName);
+            let connection = this.connections[connectionName];
+            if (connection == undefined) {
+                connection = this.addConnectionName(connectionName);
+            }
+            // TODO: don't just overwrite here, check that the types
+            // are compatible if one already exists.
+            connection.type = speccedConnection.type;
+            connection.direction = speccedConnection.direction;
+        }
+        spec.slots.forEach(slotSpec => {
+            if (this._consumedSlotConnections[slotSpec.name] == undefined) {
+                this.addSlotConnection(slotSpec.name);
+            }
+            this._consumedSlotConnections[slotSpec.name].slotSpec = slotSpec;
+        });
+    }
+    addUnnamedConnection() {
+        const connection = new _handle_connection_js__WEBPACK_IMPORTED_MODULE_2__["HandleConnection"](undefined, this);
+        this._unnamedConnections.push(connection);
+        return connection;
+    }
+    addConnectionName(name) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._connections[name] == undefined);
+        this._connections[name] = new _handle_connection_js__WEBPACK_IMPORTED_MODULE_2__["HandleConnection"](name, this);
+        return this._connections[name];
+    }
+    allConnections() {
+        return Object.values(this._connections).concat(this._unnamedConnections);
+    }
+    ensureConnectionName(name) {
+        return this._connections[name] || this.addConnectionName(name);
+    }
+    getConnectionByName(name) {
+        return this._connections[name];
+    }
+    nameConnection(connection, name) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._connections[name].handle, `Connection "${name}" already has a handle`);
+        const idx = this._unnamedConnections.indexOf(connection);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx >= 0, `Cannot name '${name}' nonexistent unnamed connection.`);
+        connection._name = name;
+        connection.type = this._connections[name].type;
+        if (connection.direction !== this._connections[name].direction) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(connection.direction === 'inout', `Unnamed connection cannot adjust direction ${connection.direction} to ${name}'s direction ${this._connections[name].direction}`);
+            connection.direction = this._connections[name].direction;
+        }
+        this._connections[name] = connection;
+        this._unnamedConnections.splice(idx, 1);
+    }
+    addSlotConnection(name) {
+        const slotConn = new _slot_connection_js__WEBPACK_IMPORTED_MODULE_1__["SlotConnection"](name, this);
+        this._consumedSlotConnections[name] = slotConn;
+        return slotConn;
+    }
+    removeSlotConnection(slotConnection) {
+        this._consumedSlotConnections[slotConnection._name] = null;
+        slotConnection.disconnectFromSlot();
+    }
+    remove() {
+        this.recipe.removeParticle(this);
+    }
+    toString(nameMap, options) {
+        let result = [];
+        // TODO: we need at least name or verb(s)
+        if (this.name) {
+            result.push(this.name);
+            result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
+            if (this.primaryVerb && this.primaryVerb !== this.name) {
+                result.push(`// verb=${this.primaryVerb}`);
+            }
+        }
+        else { // verb must exist, if there is no name.
+            result.push(`&${this.primaryVerb}`);
+        }
+        if (options && options.showUnresolved) {
+            if (!this.isResolved(options)) {
+                result.push(`// unresolved particle: ${options.details}`);
+            }
+        }
+        result = [result.join(' ')];
+        for (const connection of this.unnamedConnections) {
+            result.push(connection.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
+        }
+        for (const connection of Object.values(this.connections)) {
+            result.push(connection.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
+        }
+        for (const slotConnection of Object.values(this._consumedSlotConnections)) {
+            result.push(slotConnection.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
+        }
+        return result.join('\n');
+    }
+}
+//# sourceMappingURL=particle.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/recipe-resolver.js":
+/*!****************************************************!*\
+  !*** ./runtime/ts-build/recipe/recipe-resolver.js ***!
+  \****************************************************/
+/*! exports provided: RecipeResolver */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeResolver", function() { return RecipeResolver; });
+/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../strategies/resolve-recipe.js */ "./runtime/strategies/resolve-recipe.js");
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+// Provides basic recipe resolution for recipes against a particular arc.
+class RecipeResolver {
+    constructor(arc) {
+        this.resolver = new _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_0__["ResolveRecipe"](arc);
+    }
+    // Attempts to run basic resolution on the given recipe. Returns a new
+    // instance of the recipe normalized and resolved if possible. Returns null if
+    // normalization or attempting to resolve slot connection fails.
+    async resolve(recipe) {
+        recipe = recipe.clone();
+        const options = { errors: new Map() };
+        if (!recipe.normalize(options)) {
+            console.warn(`could not normalize a recipe: ${[...options.errors.values()].join('\n')}.\n${recipe.toString()}`);
+            return null;
+        }
+        const result = await this.resolver.generate({ generated: [{ result: recipe, score: 1 }], terminal: [] });
+        return (result.length === 0) ? null : result[0].result;
+    }
+}
+//# sourceMappingURL=recipe-resolver.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/recipe-util.js":
+/*!************************************************!*\
+  !*** ./runtime/ts-build/recipe/recipe-util.js ***!
+  \************************************************/
+/*! exports provided: RecipeUtil */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeUtil", function() { return RecipeUtil; });
+/* harmony import */ var _recipe_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+class Shape {
+    constructor(recipe, particles, handles, hcs) {
+        this.recipe = recipe;
+        this.particles = particles;
+        this.handles = handles;
+        this.reverse = new Map();
+        for (const p of Object.keys(particles)) {
+            this.reverse.set(particles[p], p);
+        }
+        for (const h of handles.keys()) {
+            this.reverse.set(handles.get(h), h);
+        }
+        for (const hc of Object.keys(hcs)) {
+            this.reverse.set(hcs[hc], hc);
+        }
+    }
+}
+class RecipeUtil {
+    static makeShape(particles, handles, map, recipe) {
+        recipe = recipe || new _recipe_js__WEBPACK_IMPORTED_MODULE_0__["Recipe"]();
+        const pMap = {};
+        const hMap = new Map();
+        const hcMap = {};
+        particles.forEach(particle => pMap[particle] = recipe.newParticle(particle));
+        handles.forEach(handle => hMap.set(handle, recipe.newHandle()));
+        Object.keys(map).forEach(key => {
+            Object.keys(map[key]).forEach(name => {
+                let handle = map[key][name];
+                let direction = '=';
+                let tags = [];
+                if (handle.handle) {
+                    // NOTE: for now, '=' on the shape means "accept anything". This is going
+                    // to change when we redo capabilities; for now it's modeled by mapping '=' to
+                    // '=' rather than to 'inout'.
+                    direction = { '->': 'out', '<-': 'in', '=': '=' }[handle.direction];
+                    tags = handle.tags || [];
+                    handle = handle.handle;
+                }
+                if (handle.localName) {
+                    hMap.get(handle).localName = handle.localName;
+                }
+                const connection = pMap[key].addConnectionName(name);
+                connection.direction = direction;
+                hMap.get(handle).tags = tags;
+                connection.connectToHandle(hMap.get(handle));
+                hcMap[key + ':' + name] = pMap[key].connections[name];
+            });
+        });
+        return new Shape(recipe, pMap, hMap, hcMap);
+    }
+    static recipeToShape(recipe) {
+        const particles = {};
+        let id = 0;
+        recipe.particles.forEach(particle => particles[particle.name] = particle);
+        const handles = new Map();
+        recipe.handles.forEach(handle => handles.set('h' + id++, handle));
+        const hcs = {};
+        recipe.handleConnections.forEach(hc => hcs[hc.particle.name + ':' + hc.name] = hc);
+        return new Shape(recipe, particles, handles, hcs);
+    }
+    static find(recipe, shape) {
+        function _buildNewHCMatches(recipe, shapeHC, match, outputList) {
+            const { forward, reverse, score } = match;
+            let matchFound = false;
+            for (const recipeHC of recipe.handleConnections) {
+                // TODO are there situations where multiple handleConnections should
+                // be allowed to point to the same one in the recipe?
+                if (reverse.has(recipeHC)) {
+                    continue;
+                }
+                // TODO support unnamed shape particles.
+                if (recipeHC.particle.name !== shapeHC.particle.name) {
+                    continue;
+                }
+                if (shapeHC.name && shapeHC.name !== recipeHC.name) {
+                    continue;
+                }
+                const acceptedDirections = { 'in': ['in', 'inout'], 'out': ['out', 'inout'], '=': ['in', 'out', 'inout'], 'inout': ['inout'], 'host': ['host'] };
+                if (recipeHC.direction) {
+                    if (!acceptedDirections[shapeHC.direction].includes(recipeHC.direction)) {
+                        continue;
+                    }
+                }
+                if (shapeHC.handle && recipeHC.handle && shapeHC.handle.localName &&
+                    shapeHC.handle.localName !== recipeHC.handle.localName) {
+                    continue;
+                }
+                // recipeHC is a candidate for shapeHC. shapeHC references a
+                // particle, so recipeHC must reference the matching particle,
+                // or a particle that isn't yet mapped from shape.
+                if (reverse.has(recipeHC.particle)) {
+                    if (reverse.get(recipeHC.particle) !== shapeHC.particle) {
+                        continue;
+                    }
+                }
+                else if (forward.has(shapeHC.particle)) {
+                    // we've already mapped the particle referenced by shapeHC
+                    // and it doesn't match recipeHC's particle as recipeHC's
+                    // particle isn't mapped
+                    continue;
+                }
+                // shapeHC doesn't necessarily reference a handle, but if it does
+                // then recipeHC needs to reference the matching handle, or one
+                // that isn't yet mapped, or no handle yet.
+                if (shapeHC.handle && recipeHC.handle) {
+                    if (reverse.has(recipeHC.handle)) {
+                        if (reverse.get(recipeHC.handle) !== shapeHC.handle) {
+                            continue;
+                        }
+                    }
+                    else if (forward.has(shapeHC.handle) && forward.get(shapeHC.handle) !== null) {
+                        continue;
+                    }
+                    // Check whether shapeHC and recipeHC reference the same handle.
+                    // Note: the id of a handle with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
+                    // Skip the check if handles have 'create' fate (their ids are arbitrary).
+                    if ((shapeHC.handle.fate !== 'create' || (recipeHC.handle.fate !== 'create' && recipeHC.handle.originalFate !== 'create')) &&
+                        shapeHC.handle.id !== recipeHC.handle.id && shapeHC.handle.id !== recipeHC.handle.originalId) {
+                        // this is a different handle.
+                        continue;
+                    }
+                }
+                // clone forward and reverse mappings and establish new components.
+                const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!newMatch.reverse.has(recipeHC.particle) || newMatch.reverse.get(recipeHC.particle) === shapeHC.particle);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) === recipeHC.particle);
+                newMatch.forward.set(shapeHC.particle, recipeHC.particle);
+                newMatch.reverse.set(recipeHC.particle, shapeHC.particle);
+                if (shapeHC.handle) {
+                    if (!recipeHC.handle) {
+                        if (!newMatch.forward.has(shapeHC.handle)) {
+                            newMatch.forward.set(shapeHC.handle, null);
+                            newMatch.score -= 2;
+                        }
+                    }
+                    else {
+                        newMatch.forward.set(shapeHC.handle, recipeHC.handle);
+                        newMatch.reverse.set(recipeHC.handle, shapeHC.handle);
+                    }
+                }
+                newMatch.forward.set(shapeHC, recipeHC);
+                newMatch.reverse.set(recipeHC, shapeHC);
+                outputList.push(newMatch);
+                matchFound = true;
+            }
+            if (matchFound === false) {
+                // Non-null particle in the `forward` map means that some of the particle
+                // handle connections were successful matches, but some couldn't be matched.
+                // It means that this match in invalid.
+                if (match.forward.get(shapeHC.particle)) {
+                    return;
+                }
+                // The current handle connection from the shape doesn't match anything
+                // in the recipe. Find (or create) a particle for it.
+                const newMatches = [];
+                _buildNewParticleMatches(recipe, shapeHC.particle, match, newMatches);
+                newMatches.forEach(newMatch => {
+                    // the shape references a handle, might also need to create a recipe
+                    // handle for it (if there isn't already one from a previous match).
+                    if (shapeHC.handle && !newMatch.forward.has(shapeHC.handle)) {
+                        newMatch.forward.set(shapeHC.handle, null);
+                        newMatch.score -= 2;
+                    }
+                    newMatch.forward.set(shapeHC, null);
+                    newMatch.score -= 1;
+                    outputList.push(newMatch);
+                });
+            }
+        }
+        function _buildNewParticleMatches(recipe, shapeParticle, match, newMatches) {
+            const { forward, reverse, score } = match;
+            let matchFound = false;
+            for (const recipeParticle of recipe.particles) {
+                if (reverse.has(recipeParticle)) {
+                    continue;
+                }
+                if (recipeParticle.name !== shapeParticle.name) {
+                    continue;
+                }
+                let handleNamesMatch = true;
+                for (const connectionName of Object.keys(recipeParticle.connections)) {
+                    const recipeConnection = recipeParticle.connections[connectionName];
+                    if (!recipeConnection.handle) {
+                        continue;
+                    }
+                    const shapeConnection = shapeParticle.connections[connectionName];
+                    if (shapeConnection && shapeConnection.handle && shapeConnection.handle.localName && shapeConnection.handle.localName !== recipeConnection.handle.localName) {
+                        handleNamesMatch = false;
+                        break;
+                    }
+                }
+                if (!handleNamesMatch) {
+                    continue;
+                }
+                const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!newMatch.forward.has(shapeParticle) || newMatch.forward.get(shapeParticle) === recipeParticle);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!newMatch.reverse.has(recipeParticle) || newMatch.reverse.get(recipeParticle) === shapeParticle);
+                newMatch.forward.set(shapeParticle, recipeParticle);
+                newMatch.reverse.set(recipeParticle, shapeParticle);
+                newMatches.push(newMatch);
+                matchFound = true;
+            }
+            if (matchFound === false) {
+                const newMatch = { forward: new Map(), reverse: new Map(), score: 0 };
+                forward.forEach((value, key) => {
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!newMatch.forward.has(key) || newMatch.forward.get(key) === value);
+                    newMatch.forward.set(key, value);
+                });
+                reverse.forEach((value, key) => {
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!newMatch.reverse.has(key) || newMatch.reverse.get(key) === value);
+                    newMatch.reverse.set(key, value);
+                });
+                if (!newMatch.forward.has(shapeParticle)) {
+                    newMatch.forward.set(shapeParticle, null);
+                    newMatch.score = match.score - 1;
+                }
+                newMatches.push(newMatch);
+            }
+        }
+        function _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles) {
+            if (emptyHandles.length === 1) {
+                const matches = [];
+                const { forward, reverse, score } = match;
+                for (const nullHandle of nullHandles) {
+                    let tagsMatch = true;
+                    for (const tag of nullHandle.tags) {
+                        if (!emptyHandles[0].tags.includes(tag)) {
+                            tagsMatch = false;
+                            break;
+                        }
+                    }
+                    if (!tagsMatch) {
+                        continue;
+                    }
+                    const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score: score + 1 };
+                    newMatch.forward.set(nullHandle, emptyHandles[0]);
+                    newMatch.reverse.set(emptyHandles[0], nullHandle);
+                    matches.push(newMatch);
+                }
+                return matches;
+            }
+            const thisHandle = emptyHandles.pop();
+            const matches = _assignHandlesToEmptyPosition(match, emptyHandles, nullHandles);
+            let newMatches = [];
+            for (const match of matches) {
+                const nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) === null);
+                if (nullHandles.length > 0) {
+                    newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, [thisHandle], nullHandles));
+                }
+                else {
+                    newMatches.concat(match);
+                }
+            }
+            return newMatches;
+        }
+        // Particles and Handles are initially stored by a forward map from
+        // shape component to recipe component.
+        // Handle connections, particles and handles are also stored by a reverse map
+        // from recipe component to shape component.
+        // Start with a single, empty match
+        let matches = [{ forward: new Map(), reverse: new Map(), score: 0 }];
+        for (const shapeHC of shape.recipe.handleConnections) {
+            const newMatches = [];
+            for (const match of matches) {
+                // collect matching handle connections into a new matches list
+                _buildNewHCMatches(recipe, shapeHC, match, newMatches);
+            }
+            matches = newMatches;
+        }
+        for (const shapeParticle of shape.recipe.particles) {
+            if (Object.keys(shapeParticle.connections).length > 0) {
+                continue;
+            }
+            if (shapeParticle.unnamedConnections.length > 0) {
+                continue;
+            }
+            const newMatches = [];
+            for (const match of matches) {
+                _buildNewParticleMatches(recipe, shapeParticle, match, newMatches);
+            }
+            matches = newMatches;
+        }
+        const emptyHandles = recipe.handles.filter(handle => handle.connections.length === 0);
+        if (emptyHandles.length > 0) {
+            let newMatches = [];
+            for (const match of matches) {
+                const nullHandles = [...shape.handles.values()].filter(handle => match.forward.get(handle) === null);
+                if (nullHandles.length > 0) {
+                    newMatches = newMatches.concat(_assignHandlesToEmptyPosition(match, emptyHandles, nullHandles));
+                }
+                else {
+                    newMatches.concat(match);
+                }
+            }
+            matches = newMatches;
+        }
+        return matches.map(({ forward, score }) => {
+            const match = {};
+            forward.forEach((value, key) => match[shape.reverse.get(key)] = value);
+            return { match, score };
+        });
+    }
+    static directionCounts(handle) {
+        const counts = { 'in': 0, 'out': 0, 'inout': 0, 'unknown': 0 };
+        for (const connection of handle.connections) {
+            let direction = connection.direction;
+            if (counts[direction] === undefined) {
+                direction = 'unknown';
+            }
+            counts[direction]++;
+        }
+        counts.in += counts.inout;
+        counts.out += counts.inout;
+        return counts;
+    }
+    // Returns true if `otherRecipe` matches the shape of recipe.
+    static matchesRecipe(recipe, otherRecipe) {
+        const shape = RecipeUtil.recipeToShape(otherRecipe);
+        const result = RecipeUtil.find(recipe, shape);
+        return result.some(r => r.score === 0);
+    }
+}
+//# sourceMappingURL=recipe-util.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/recipe.js":
+/*!*******************************************!*\
+  !*** ./runtime/ts-build/recipe/recipe.js ***!
+  \*******************************************/
+/*! exports provided: Recipe */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Recipe", function() { return Recipe; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../platform/digest-web.js */ "./platform/digest-web.js");
+/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
+/* harmony import */ var _connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./connection-constraint.js */ "./runtime/ts-build/recipe/connection-constraint.js");
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./particle.js */ "./runtime/ts-build/recipe/particle.js");
+/* harmony import */ var _search_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./search.js */ "./runtime/ts-build/recipe/search.js");
+/* harmony import */ var _slot_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./slot.js */ "./runtime/ts-build/recipe/slot.js");
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./handle.js */ "./runtime/ts-build/recipe/handle.js");
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./util.js */ "./runtime/ts-build/recipe/util.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+
+
+
+
+class Recipe {
+    constructor(name = undefined) {
+        this._particles = [];
+        this._handles = [];
+        this._slots = [];
+        this._localName = undefined;
+        // TODO: Recipes should be collections of records that are tagged
+        // with a type. Strategies should register the record types they
+        // can handle. ConnectionConstraints should be a different record
+        // type to particles/handles.
+        this._connectionConstraints = [];
+        // Obligations are like connection constraints in that they describe
+        // required connections between particles/verbs. However, where 
+        // connection constraints can be acted upon in order to create these
+        // connections, obligations can't be. Instead, they describe requirements
+        // that must be discharged before a recipe can be considered to be
+        // resolved.
+        this._obligations = [];
+        this._verbs = [];
+        // TODO: Change to array, if needed for search strings of merged recipes.
+        this._search = null;
+        this._patterns = [];
+        this._name = name;
+    }
+    newConnectionConstraint(from, to, direction) {
+        const result = new _connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["ConnectionConstraint"](from, to, direction, 'constraint');
+        this._connectionConstraints.push(result);
+        return result;
+    }
+    newObligation(from, to, direction) {
+        const result = new _connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["ConnectionConstraint"](from, to, direction, 'obligation');
+        this._obligations.push(result);
+        return result;
+    }
+    removeObligation(obligation) {
+        const idx = this._obligations.indexOf(obligation);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx > -1);
+        this._obligations.splice(idx, 1);
+    }
+    removeConstraint(constraint) {
+        const idx = this._connectionConstraints.indexOf(constraint);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx >= 0);
+        this._connectionConstraints.splice(idx, 1);
+    }
+    clearConnectionConstraints() {
+        this._connectionConstraints = [];
+    }
+    newParticle(name) {
+        const particle = new _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"](this, name);
+        this._particles.push(particle);
+        return particle;
+    }
+    removeParticle(particle) {
+        const idx = this._particles.indexOf(particle);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx > -1);
+        this._particles.splice(idx, 1);
+        for (const slotConnection of Object.values(particle._consumedSlotConnections)) {
+            slotConnection.remove();
+        }
+    }
+    newHandle() {
+        const handle = new _handle_js__WEBPACK_IMPORTED_MODULE_7__["Handle"](this);
+        this._handles.push(handle);
+        return handle;
+    }
+    removeHandle(handle) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle.connections.length === 0);
+        const idx = this._handles.indexOf(handle);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx > -1);
+        this._handles.splice(idx, 1);
+    }
+    newSlot(name) {
+        const slot = new _slot_js__WEBPACK_IMPORTED_MODULE_6__["Slot"](this, name);
+        this._slots.push(slot);
+        return slot;
+    }
+    removeSlot(slot) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slot.consumeConnections.length === 0);
+        const idx = this._slots.indexOf(slot);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx > -1);
+        this._slots.splice(idx, 1);
+    }
+    isResolved() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this), 'Recipe must be normalized to be resolved.');
+        if (this._obligations.length > 0) {
+            return false;
+        }
+        return this._connectionConstraints.length === 0
+            && (this._search === null || this._search.isResolved())
+            && this._handles.every(handle => handle.isResolved())
+            && this._particles.every(particle => particle.isResolved())
+            && this._slots.every(slot => slot.isResolved())
+            && this.handleConnections.every(connection => connection.isResolved())
+            && this.slotConnections.every(slotConnection => slotConnection.isResolved());
+        // TODO: check recipe level resolution requirements, eg there is no slot loops.
+    }
+    _findDuplicate(items, options) {
+        const seenHandles = new Set();
+        const duplicateHandle = items.find(handle => {
+            if (handle.id) {
+                if (seenHandles.has(handle.id)) {
+                    return handle;
+                }
+                seenHandles.add(handle.id);
+            }
+        });
+        if (duplicateHandle && options && options.errors) {
+            options.errors.set(duplicateHandle, `Has Duplicate ${duplicateHandle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_7__["Handle"] ? 'Handle' : 'Slot'} '${duplicateHandle.id}'`);
+        }
+        return duplicateHandle;
+    }
+    _isValid(options = undefined) {
+        return !this._findDuplicate(this._handles, options)
+            && !this._findDuplicate(this._slots, options)
+            && this._handles.every(handle => handle._isValid(options))
+            && this._particles.every(particle => particle._isValid(options))
+            && this._slots.every(slot => slot._isValid(options))
+            && this.handleConnections.every(connection => connection._isValid(options))
+            && this.slotConnections.every(connection => connection._isValid(options))
+            && (!this.search || this.search.isValid());
+    }
+    get name() { return this._name; }
+    set name(name) { this._name = name; }
+    get localName() { return this._localName; }
+    set localName(name) { this._localName = name; }
+    get particles() { return this._particles; } // Particle*
+    set particles(particles) { this._particles = particles; }
+    get handles() { return this._handles; } // Handle*
+    set handles(handles) { this._handles = handles; }
+    get slots() { return this._slots; } // Slot*
+    set slots(slots) { this._slots = slots; }
+    get connectionConstraints() { return this._connectionConstraints; }
+    get obligations() { return this._obligations; }
+    get verbs() { return this._verbs; }
+    set verbs(verbs) { this._verbs = verbs; }
+    get search() { return this._search; }
+    set search(search) {
+        this._search = search;
+    }
+    setSearchPhrase(phrase) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._search, 'Cannot override search phrase');
+        if (phrase) {
+            this._search = new _search_js__WEBPACK_IMPORTED_MODULE_5__["Search"](phrase);
+        }
+    }
+    get slotConnections() {
+        const slotConnections = [];
+        this._particles.forEach(particle => {
+            slotConnections.push(...Object.values(particle.consumedSlotConnections));
+        });
+        return slotConnections;
+    }
+    get handleConnections() {
+        const handleConnections = [];
+        this._particles.forEach(particle => {
+            handleConnections.push(...Object.values(particle.connections));
+            handleConnections.push(...particle._unnamedConnections);
+        });
+        return handleConnections;
+    }
+    isEmpty() {
+        return this.particles.length === 0 &&
+            this.handles.length === 0 &&
+            this.slots.length === 0 &&
+            this._connectionConstraints.length === 0;
+    }
+    findHandle(id) {
+        for (const handle of this.handles) {
+            if (handle.id === id) {
+                return handle;
+            }
+        }
+        return null;
+    }
+    findSlot(id) {
+        for (const slot of this.slots) {
+            if (slot.id === id) {
+                return slot;
+            }
+        }
+        return null;
+    }
+    get patterns() { return this._patterns; }
+    set patterns(patterns) { this._patterns = patterns; }
+    set description(description) {
+        const pattern = description.find(desc => desc.name === 'pattern');
+        if (pattern) {
+            pattern.patterns.forEach(pattern => this._patterns.push(pattern));
+        }
+        description.forEach(desc => {
+            if (desc.name !== 'pattern') {
+                const handle = this.handles.find(handle => handle.localName === desc.name);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle, `Cannot set description pattern for nonexistent handle ${desc.name}.`);
+                handle.pattern = desc.pattern;
+            }
+        });
+    }
+    async digest() {
+        return Object(_platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__["digest"])(this.toString());
+    }
+    normalize(options) {
+        if (Object.isFrozen(this)) {
+            if (options && options.errors) {
+                options.errors.set(this, 'already normalized');
+            }
+            return false;
+        }
+        if (!this._isValid()) {
+            this._findDuplicate(this._handles, options);
+            this._findDuplicate(this._slots, options);
+            const checkForInvalid = (list) => list.forEach(item => !item._isValid(options));
+            checkForInvalid(this._handles);
+            checkForInvalid(this._particles);
+            checkForInvalid(this._slots);
+            checkForInvalid(this.handleConnections);
+            checkForInvalid(this.slotConnections);
+            return false;
+        }
+        // Get handles and particles ready to sort connections.
+        for (const particle of this._particles) {
+            particle._startNormalize();
+        }
+        for (const handle of this._handles) {
+            handle._startNormalize();
+        }
+        for (const slot of this._slots) {
+            slot._startNormalize();
+        }
+        // Sort and normalize handle connections.
+        const connections = this.handleConnections;
+        for (const connection of connections) {
+            connection._normalize();
+        }
+        connections.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
+        // Sort and normalize slot connections.
+        const slotConnections = this.slotConnections;
+        for (const slotConnection of slotConnections) {
+            slotConnection._normalize();
+        }
+        slotConnections.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
+        if (this.search) {
+            this.search._normalize();
+        }
+        // Finish normalizing particles and handles with sorted connections.
+        for (const particle of this._particles) {
+            particle._finishNormalize();
+        }
+        for (const handle of this._handles) {
+            handle._finishNormalize();
+        }
+        for (const slot of this._slots) {
+            slot._finishNormalize();
+        }
+        const seenHandles = new Set();
+        const seenParticles = new Set();
+        const seenSlots = new Set();
+        const particles = [];
+        const handles = [];
+        const slots = [];
+        // Reorder connections so that interfaces come last.
+        // TODO: update handle-connection comparison method instead?
+        for (const connection of connections.filter(c => !c.type || !c.type.isInterface).concat(connections.filter(c => !!c.type && !!c.type.isInterface))) {
+            if (!seenParticles.has(connection.particle)) {
+                particles.push(connection.particle);
+                seenParticles.add(connection.particle);
+            }
+            if (connection.handle && !seenHandles.has(connection.handle)) {
+                handles.push(connection.handle);
+                seenHandles.add(connection.handle);
+            }
+        }
+        for (const slotConnection of slotConnections) {
+            if (slotConnection.targetSlot && !seenSlots.has(slotConnection.targetSlot)) {
+                slots.push(slotConnection.targetSlot);
+                seenSlots.add(slotConnection.targetSlot);
+            }
+            Object.values(slotConnection.providedSlots).forEach(ps => {
+                if (!seenSlots.has(ps)) {
+                    slots.push(ps);
+                    seenSlots.add(ps);
+                }
+            });
+        }
+        const orphanedHandles = this._handles.filter(handle => !seenHandles.has(handle));
+        orphanedHandles.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
+        handles.push(...orphanedHandles);
+        const orphanedParticles = this._particles.filter(particle => !seenParticles.has(particle));
+        orphanedParticles.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
+        particles.push(...orphanedParticles);
+        const orphanedSlots = this._slots.filter(slot => !seenSlots.has(slot));
+        orphanedSlots.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
+        slots.push(...orphanedSlots);
+        // Put particles and handles in their final ordering.
+        this._particles = particles;
+        this._handles = handles;
+        this._slots = slots;
+        this._connectionConstraints.sort(_util_js__WEBPACK_IMPORTED_MODULE_8__["compareComparables"]);
+        this._verbs.sort();
+        this._patterns.sort();
+        Object.freeze(this._particles);
+        Object.freeze(this._handles);
+        Object.freeze(this._slots);
+        Object.freeze(this._connectionConstraints);
+        Object.freeze(this);
+        return true;
+    }
+    clone(cloneMap) {
+        // for now, just copy everything
+        const recipe = new Recipe(this.name);
+        if (cloneMap == undefined) {
+            cloneMap = new Map();
+        }
+        this._copyInto(recipe, cloneMap);
+        // TODO: figure out a better approach than stashing the cloneMap permanently
+        // on the recipe
+        recipe._cloneMap = cloneMap;
+        return recipe;
+    }
+    mergeInto(recipe) {
+        const cloneMap = new Map();
+        const numHandles = recipe._handles.length;
+        const numParticles = recipe._particles.length;
+        const numSlots = recipe._slots.length;
+        this._copyInto(recipe, cloneMap);
+        return {
+            handles: recipe._handles.slice(numHandles),
+            particles: recipe._particles.slice(numParticles),
+            slots: recipe._slots.slice(numSlots),
+            cloneMap
+        };
+    }
+    _copyInto(recipe, cloneMap) {
+        function cloneTheThing(object) {
+            const clonedObject = object._copyInto(recipe, cloneMap);
+            cloneMap.set(object, clonedObject);
+        }
+        recipe._name = this.name;
+        recipe._verbs = this._verbs.slice();
+        this._handles.forEach(cloneTheThing);
+        this._particles.forEach(cloneTheThing);
+        this._slots.forEach(cloneTheThing);
+        this._connectionConstraints.forEach(cloneTheThing);
+        this._obligations.forEach(cloneTheThing);
+        recipe.verbs = recipe.verbs.slice();
+        if (this.search) {
+            this.search._copyInto(recipe);
+        }
+        recipe.patterns = recipe.patterns.concat(this.patterns);
+    }
+    updateToClone(dict) {
+        const result = {};
+        Object.keys(dict).forEach(key => result[key] = this._cloneMap.get(dict[key]));
+        return result;
+    }
+    static over(results, walker, strategy) {
+        return _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_2__["Strategizer"].over(results, walker, strategy);
+    }
+    _makeLocalNameMap() {
+        const names = new Set();
+        for (const particle of this.particles) {
+            names.add(particle.localName);
+        }
+        for (const handle of this.handles) {
+            names.add(handle.localName);
+        }
+        for (const slot of this.slots) {
+            names.add(slot.localName);
+        }
+        const nameMap = new Map();
+        let i = 0;
+        for (const particle of this.particles) {
+            let localName = particle.localName;
+            if (!localName) {
+                do {
+                    localName = `particle${i++}`;
+                } while (names.has(localName));
+            }
+            nameMap.set(particle, localName);
+        }
+        i = 0;
+        for (const handle of this.handles) {
+            let localName = handle.localName;
+            if (!localName) {
+                do {
+                    localName = `handle${i++}`;
+                } while (names.has(localName));
+            }
+            nameMap.set(handle, localName);
+        }
+        i = 0;
+        for (const slot of this.slots) {
+            let localName = slot.localName;
+            if (!localName) {
+                do {
+                    localName = `slot${i++}`;
+                } while (names.has(localName));
+            }
+            nameMap.set(slot, localName);
+        }
+        return nameMap;
+    }
+    // TODO: Add a normalize() which strips local names and puts and nested
+    //       lists into a normal ordering.
+    //
+    // use { showUnresolved: true } in options to see why a recipe can't resolve.
+    toString(options = undefined) {
+        const nameMap = this._makeLocalNameMap();
+        const result = [];
+        const verbs = this.verbs.length > 0 ? ` ${this.verbs.map(verb => `&${verb}`).join(' ')}` : '';
+        result.push(`recipe${this.name ? ` ${this.name}` : ''}${verbs}`);
+        if (this.search) {
+            result.push(this.search.toString(options).replace(/^|(\n)/g, '$1  '));
+        }
+        for (const constraint of this._connectionConstraints) {
+            let constraintStr = constraint.toString().replace(/^|(\n)/g, '$1  ');
+            if (options && options.showUnresolved) {
+                constraintStr = constraintStr.concat(' // unresolved connection-constraint');
+            }
+            result.push(constraintStr);
+        }
+        for (const handle of this.handles) {
+            result.push(handle.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
+        }
+        for (const slot of this.slots) {
+            const slotString = slot.toString(nameMap, options);
+            if (slotString) {
+                result.push(slotString.replace(/^|(\n)/g, '$1  '));
+            }
+        }
+        for (const particle of this.particles) {
+            result.push(particle.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
+        }
+        if (this.patterns.length > 0 || this.handles.find(h => h.pattern !== undefined)) {
+            result.push(`  description \`${this.patterns[0]}\``);
+            for (let i = 1; i < this.patterns.length; ++i) {
+                result.push(`    pattern \`${this.patterns[i]}\``);
+            }
+            this.handles.forEach(h => {
+                if (h.pattern) {
+                    result.push(`    ${h.localName} \`${h.pattern}\``);
+                }
+            });
+        }
+        if (this._obligations.length > 0) {
+            result.push('  obligations');
+            for (const obligation of this._obligations) {
+                const obligationStr = obligation.toString(nameMap, options).replace(/^|(\n)/g, '$1    ');
+                result.push(obligationStr);
+            }
+        }
+        return result.join('\n');
+    }
+}
+//# sourceMappingURL=recipe.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/search.js":
+/*!*******************************************!*\
+  !*** ./runtime/ts-build/recipe/search.js ***!
+  \*******************************************/
+/*! exports provided: Search */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Search", function() { return Search; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+class Search {
+    constructor(phrase, unresolvedTokens = undefined) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(phrase);
+        this._phrase = phrase;
+        const tokens = this.phrase.toLowerCase().split(/[^a-z0-9]/g);
+        // If unresolvedTokens not passed, consider all tokens unresolved.
+        this._unresolvedTokens = [];
+        (unresolvedTokens || tokens).forEach(token => this._unresolvedTokens.push(token));
+        // compute the resolved tokens
+        this._resolvedTokens = tokens.slice();
+        for (const token of this.unresolvedTokens) {
+            const index = this._resolvedTokens.indexOf(token);
+            if (index >= 0) {
+                this._resolvedTokens.splice(index, 1);
+            }
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(tokens.length === this.unresolvedTokens.length + this.resolvedTokens.length);
+    }
+    _append(phrase, unresolvedTokens, resolvedTokens) {
+        // concat phrase
+        if (this._phrase.length > 0) {
+            this._phrase = this.phrase.concat(' ');
+        }
+        this._phrase = this._phrase.concat(phrase);
+        resolvedTokens.forEach(t => this._resolvedTokens.push(t));
+        unresolvedTokens.forEach(t => this._unresolvedTokens.push(t));
+    }
+    get phrase() { return this._phrase; }
+    get unresolvedTokens() { return this._unresolvedTokens; }
+    get resolvedTokens() { return this._resolvedTokens; }
+    resolveToken(token) {
+        const index = this.unresolvedTokens.indexOf(token.toLowerCase());
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(index >= 0, `Cannot resolved nonexistent token ${token}`);
+        this._unresolvedTokens.splice(index, 1);
+        this._resolvedTokens.push(token.toLowerCase());
+    }
+    isValid() {
+        return this._unresolvedTokens.length > 0 || this._resolvedTokens.length > 0;
+    }
+    isResolved() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this));
+        // Recipe is considered resolved, if at least one of the search tokens was resolved.
+        // TODO: Unresolved tokens don't prevent the recipe from being resolved. For now...
+        return this._resolvedTokens.length > 0;
+    }
+    _normalize() {
+        this._unresolvedTokens.sort();
+        this._resolvedTokens.sort();
+        Object.freeze(this);
+    }
+    _copyInto(recipe) {
+        if (recipe.search) {
+            recipe.search._append(this.phrase, this.unresolvedTokens, this.resolvedTokens);
+        }
+        else {
+            recipe.search = new Search(this.phrase, this.unresolvedTokens);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe.search.resolvedTokens.length === this.resolvedTokens.length, `${recipe.search.resolvedTokens} is not same as ${this.resolvedTokens}`);
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.resolvedTokens.every(rt => recipe.search.resolvedTokens.indexOf(rt) >= 0) &&
+            this.unresolvedTokens.every(rt => recipe.search.unresolvedTokens.indexOf(rt) >= 0));
+        return recipe.search;
+    }
+    toString(options) {
+        const result = [];
+        result.push(`search \`${this.phrase}\``);
+        const tokenStr = [];
+        tokenStr.push('  tokens');
+        if (this.unresolvedTokens.length > 0) {
+            tokenStr.push(this.unresolvedTokens.map(t => `\`${t}\``).join(' '));
+        }
+        if (this.resolvedTokens.length > 0) {
+            tokenStr.push(`// ${this.resolvedTokens.map(t => `\`${t}\``).join(' ')}`);
+        }
+        if (options && options.showUnresolved) {
+            if (this.unresolvedTokens.length > 0) {
+                tokenStr.push('// unresolved search tokens');
+            }
+        }
+        result.push(tokenStr.join(' '));
+        return result.join('\n');
+    }
+}
+//# sourceMappingURL=search.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/slot-connection.js":
+/*!****************************************************!*\
+  !*** ./runtime/ts-build/recipe/slot-connection.js ***!
+  \****************************************************/
+/*! exports provided: SlotConnection */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotConnection", function() { return SlotConnection; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util.js */ "./runtime/ts-build/recipe/util.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+class SlotConnection {
+    constructor(name, particle) {
+        this._slotSpec = undefined;
+        this._targetSlot = undefined;
+        this._providedSlots = {};
+        this._tags = [];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particle);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particle.recipe);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(name);
+        this._recipe = particle.recipe;
+        this._particle = particle;
+        this._name = name;
+    }
+    remove() {
+        this._particle.removeSlotConnection(this);
+    }
+    get recipe() { return this._recipe; }
+    get particle() { return this._particle; }
+    get name() { return this._name; }
+    getQualifiedName() { return `${this.particle.name}::${this.name}`; }
+    get slotSpec() { return this._slotSpec; }
+    get targetSlot() { return this._targetSlot; }
+    get providedSlots() { return this._providedSlots; }
+    get tags() { return this._tags; }
+    set tags(tags) { this._tags = tags; }
+    set slotSpec(slotSpec) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.name === slotSpec.name);
+        this._slotSpec = slotSpec;
+        slotSpec.providedSlots.forEach(providedSlot => {
+            let slot = this.providedSlots[providedSlot.name];
+            if (slot == undefined) {
+                slot = this.recipe.newSlot(providedSlot.name);
+                slot._sourceConnection = this;
+                slot._name = providedSlot.name;
+                this.providedSlots[providedSlot.name] = slot;
+            }
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slot.handleConnections.length === 0, 'Handle connections must be empty');
+            providedSlot.handles.forEach(handle => slot.handleConnections.push(this.particle.connections[handle]));
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slot._name === providedSlot.name);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!slot.formFactor);
+            slot.formFactor = providedSlot.formFactor;
+        });
+    }
+    connectToSlot(targetSlot) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targetSlot);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.targetSlot);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.recipe === targetSlot.recipe, 'Cannot connect to slot from different recipe');
+        this._targetSlot = targetSlot;
+        targetSlot.consumeConnections.push(this);
+    }
+    disconnectFromSlot() {
+        if (this._targetSlot) {
+            this._targetSlot.removeConsumeConnection(this);
+            this._targetSlot = undefined;
+        }
+    }
+    _clone(particle, cloneMap) {
+        if (cloneMap.has(this)) {
+            return cloneMap.get(this);
+        }
+        const slotConnection = particle.addSlotConnection(this.name);
+        slotConnection.tags = this.tags;
+        if (this.slotSpec) {
+            slotConnection._slotSpec = particle.spec.getSlotSpec(this.name);
+        }
+        cloneMap.set(this, slotConnection);
+        return slotConnection;
+    }
+    _normalize() {
+        const normalizedSlots = {};
+        for (const key of (Object.keys(this._providedSlots).sort())) {
+            normalizedSlots[key] = this._providedSlots[key];
+        }
+        this._providedSlots = normalizedSlots;
+        Object.freeze(this);
+    }
+    _compareTo(other) {
+        let cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])(this.name, other.name)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareComparables"])(this._targetSlot, other._targetSlot)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareComparables"])(this._particle, other._particle)) !== 0)
+            return cmp;
+        return 0;
+    }
+    _isValid(options) {
+        if (this._targetSlot && this._targetSlot.sourceConnection &&
+            this._targetSlot !== this._targetSlot.sourceConnection.providedSlots[this._targetSlot.name]) {
+            if (options && options.errors) {
+                options.errors.set(this, `Invalid target slot '${this._targetSlot.name}' for slot connection '${this.name}' of particle ${this.particle.name}`);
+            }
+            return false;
+        }
+        // TODO: add more checks.
+        return true;
+    }
+    isResolved(options) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this));
+        if (!this.name) {
+            if (options) {
+                options.details = 'missing name';
+            }
+            return false;
+        }
+        if (!this.particle) {
+            if (options) {
+                options.details = 'missing particle';
+            }
+            return false;
+        }
+        if (this.slotSpec.isRequired) {
+            if (!this.targetSlot || !(this.targetSlot.id || this.targetSlot.sourceConnection.isConnected())) {
+                // The required connection has no target slot
+                // or its target slot it not resolved (has no ID or source connection).
+                if (options) {
+                    options.details = 'missing target-slot';
+                }
+                return false;
+            }
+        }
+        if (!this.targetSlot) {
+            return true;
+        }
+        return this.slotSpec.providedSlots.every(providedSlot => {
+            if (providedSlot.isRequired && this.providedSlots[providedSlot.name].consumeConnections.length === 0) {
+                if (options) {
+                    options.details = 'missing consuming slot';
+                }
+                return false;
+            }
+            return true;
+        });
+    }
+    isConnectedToInternalSlot() {
+        return this.targetSlot && (!!this.targetSlot.sourceConnection);
+    }
+    isConnectedToRemoteSlot() {
+        return this.targetSlot && (!!this.targetSlot.id);
+    }
+    isConnected() {
+        return this.isConnectedToInternalSlot() || this.isConnectedToRemoteSlot();
+    }
+    toString(nameMap, options) {
+        const consumeRes = [];
+        consumeRes.push('consume');
+        consumeRes.push(`${this.name}`);
+        if (this.targetSlot) {
+            consumeRes.push(`as ${(nameMap && nameMap.get(this.targetSlot)) ||
+                this.targetSlot.localName}`);
+        }
+        if (options && options.showUnresolved) {
+            if (!this.isResolved(options)) {
+                consumeRes.push(`// unresolved slot-connection: ${options.details}`);
+            }
+        }
+        const result = [];
+        result.push(consumeRes.join(' '));
+        Object.keys(this.providedSlots).forEach(psName => {
+            const providedSlot = this.providedSlots[psName];
+            const provideRes = [];
+            provideRes.push('  provide');
+            // Only assert that there's a spec for this provided slot if there's a spec for
+            // the consumed slot .. otherwise this is just a constraint.
+            if (this.slotSpec) {
+                const providedSlotSpec = this.slotSpec.getProvidedSlotSpec(psName);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
+            }
+            provideRes.push(`${psName} as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);
+            result.push(provideRes.join(' '));
+        });
+        return result.join('\n');
+    }
+}
+//# sourceMappingURL=slot-connection.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/slot.js":
+/*!*****************************************!*\
+  !*** ./runtime/ts-build/recipe/slot.js ***!
+  \*****************************************/
+/*! exports provided: Slot */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Slot", function() { return Slot; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util.js */ "./runtime/ts-build/recipe/util.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+class Slot {
+    constructor(recipe, name) {
+        this._id = undefined;
+        this._localName = undefined;
+        this._tags = [];
+        this._sourceConnection = undefined;
+        this._formFactor = undefined;
+        // can only be set if source connection is set and particle in slot connections is set
+        this._handleConnections = [];
+        this._consumeConnections = [];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe);
+        this._recipe = recipe;
+        this._name = name;
+    }
+    get recipe() { return this._recipe; }
+    get id() { return this._id; }
+    set id(id) { this._id = id; }
+    get localName() { return this._localName; }
+    set localName(localName) { this._localName = localName; }
+    get name() { return this._name; }
+    set name(name) { this._name = name; }
+    get tags() { return this._tags; }
+    set tags(tags) { this._tags = tags; }
+    get formFactor() { return this._formFactor; }
+    set formFactor(formFactor) { this._formFactor = formFactor; }
+    get handleConnections() { return this._handleConnections; }
+    get sourceConnection() { return this._sourceConnection; }
+    set sourceConnection(sourceConnection) { this._sourceConnection = sourceConnection; }
+    get consumeConnections() { return this._consumeConnections; }
+    get spec() {
+        // TODO: should this return something that indicates this isn't available yet instead of 
+        // the constructed {isSet: false, tags: []}?
+        return (this.sourceConnection && this.sourceConnection.slotSpec) ? this.sourceConnection.slotSpec.getProvidedSlotSpec(this.name) : { isSet: false, tags: [] };
+    }
+    get handles() {
+        return this.handleConnections.map(connection => connection.handle).filter(a => a !== undefined);
+    }
+    _copyInto(recipe, cloneMap) {
+        let slot = undefined;
+        if (!this.sourceConnection && this.id) {
+            slot = recipe.findSlot(this.id);
+        }
+        if (slot == undefined) {
+            slot = recipe.newSlot(this.name);
+            slot._id = this.id;
+            slot._formFactor = this.formFactor;
+            slot._localName = this._localName;
+            slot._tags = [...this._tags];
+            // the connections are re-established when Particles clone their attached SlotConnection objects.
+            slot._sourceConnection = cloneMap.get(this._sourceConnection);
+            if (slot.sourceConnection) {
+                slot.sourceConnection._providedSlots[slot.name] = slot;
+            }
+            this._handleConnections.forEach(connection => slot._handleConnections.push(cloneMap.get(connection)));
+        }
+        this._consumeConnections.forEach(connection => cloneMap.get(connection).connectToSlot(slot));
+        return slot;
+    }
+    _startNormalize() {
+        this.localName = null;
+        this._tags.sort();
+    }
+    _finishNormalize() {
+        // TODO(mmandlis): This was assert(Object.isFroze(this._source)) - but there is no _source.
+        // Changing to _sourceConnection makes the assert fail.
+        // assert(Object.isFrozen(this._sourceConnection));
+        this._consumeConnections.forEach(cc => Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(cc)));
+        this._consumeConnections.sort(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareComparables"]);
+        Object.freeze(this);
+    }
+    _compareTo(other) {
+        let cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])(this.id, other.id)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])(this.localName, other.localName)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])(this.formFactor, other.formFactor)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareArrays"])(this._tags, other._tags, _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])) !== 0)
+            return cmp;
+        return 0;
+    }
+    removeConsumeConnection(slotConnection) {
+        const idx = this._consumeConnections.indexOf(slotConnection);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(idx > -1);
+        this._consumeConnections.splice(idx, 1);
+        if (this._consumeConnections.length === 0) {
+            this.remove();
+        }
+    }
+    remove() {
+        this._recipe.removeSlot(this);
+    }
+    isResolved(options = undefined) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.isFrozen(this));
+        if (options && options.showUnresolved) {
+            options.details = [];
+            if (!this._sourceConnection) {
+                options.details.push('missing source-connection');
+            }
+            if (!this.id) {
+                options.details.push('missing id');
+            }
+            options.details = options.details.join('; ');
+        }
+        return Boolean(this._sourceConnection || this.id);
+    }
+    _isValid(options) {
+        // TODO: implement
+        return true;
+    }
+    toString(nameMap, options) {
+        const result = [];
+        result.push('slot');
+        if (this.id) {
+            result.push(`'${this.id}'`);
+        }
+        if (this.tags.length > 0) {
+            result.push(this.tags.map(tag => `#${tag}`).join(' '));
+        }
+        result.push(`as ${(nameMap && nameMap.get(this)) || this.localName}`);
+        const includeUnresolved = options && options.showUnresolved && !this.isResolved(options);
+        if (includeUnresolved) {
+            result.push(`// unresolved slot: ${options.details}`);
+        }
+        if (this.id || includeUnresolved) {
+            return result.join(' ');
+        }
+        return '';
+    }
+}
+//# sourceMappingURL=slot.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/type-checker.js":
+/*!*************************************************!*\
+  !*** ./runtime/ts-build/recipe/type-checker.js ***!
+  \*************************************************/
+/*! exports provided: TypeChecker */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeChecker", function() { return TypeChecker; });
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../type-variable.js */ "./runtime/ts-build/type-variable.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+class TypeChecker {
+    // resolve a list of handleConnection types against a handle
+    // base type. This is the core type resolution mechanism, but should only
+    // be used when types can actually be associated with each other / constrained.
+    //
+    // By design this function is called exactly once per handle in a recipe during
+    // normalization, and should provide the same final answers regardless of the
+    // ordering of handles within that recipe
+    //
+    // NOTE: you probably don't want to call this function, if you think you
+    // do, talk to shans@.
+    static processTypeList(baseType, list) {
+        const newBaseTypeVariable = new _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]('', null, null);
+        if (baseType) {
+            newBaseTypeVariable.resolution = baseType;
+        }
+        const newBaseType = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(newBaseTypeVariable);
+        baseType = newBaseType;
+        const concreteTypes = [];
+        // baseType might be a variable (and is definitely a variable if no baseType was available).
+        // Some of the list might contain variables too.
+        // First attempt to merge all the variables into the baseType
+        //
+        // If the baseType is a variable then this results in a single place to manipulate the constraints
+        // of all the other connected variables at the same time.
+        for (const item of list) {
+            if (item.type.resolvedType().hasVariable) {
+                baseType = TypeChecker._tryMergeTypeVariable(baseType, item.type);
+                if (baseType == null) {
+                    return null;
+                }
+            }
+            else {
+                concreteTypes.push(item);
+            }
+        }
+        for (const item of concreteTypes) {
+            if (!TypeChecker._tryMergeConstraints(baseType, item)) {
+                return null;
+            }
+        }
+        const getResolution = candidate => {
+            if (candidate.isVariable === false) {
+                return candidate;
+            }
+            if (candidate.canReadSubset == null || candidate.canWriteSuperset == null) {
+                return candidate;
+            }
+            if (candidate.canReadSubset.isMoreSpecificThan(candidate.canWriteSuperset)) {
+                if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset)) {
+                    candidate.variable.resolution = candidate.canReadSubset;
+                }
+                return candidate;
+            }
+            return null;
+        };
+        const candidate = baseType.resolvedType();
+        if (candidate.isCollection) {
+            const resolution = getResolution(candidate.collectionType);
+            return (resolution !== null) ? resolution.collectionOf() : null;
+        }
+        if (candidate.isBigCollection) {
+            const resolution = getResolution(candidate.bigCollectionType);
+            return (resolution !== null) ? resolution.bigCollectionOf() : null;
+        }
+        return getResolution(candidate);
+    }
+    static _tryMergeTypeVariable(base, onto) {
+        const [primitiveBase, primitiveOnto] = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(base.resolvedType(), onto.resolvedType());
+        if (primitiveBase.isVariable) {
+            if (primitiveOnto.isVariable) {
+                // base, onto both variables.
+                const result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
+                if (result === false) {
+                    return null;
+                }
+                // Here onto grows, one level at a time,
+                // as we assign new resolution to primitiveOnto, which is a leaf.
+                primitiveOnto.variable.resolution = primitiveBase;
+            }
+            else {
+                // base variable, onto not.
+                primitiveBase.variable.resolution = primitiveOnto;
+            }
+            return base;
+        }
+        else if (primitiveOnto.isVariable) {
+            // onto variable, base not.
+            primitiveOnto.variable.resolution = primitiveBase;
+            return onto;
+        }
+        else if (primitiveBase.isInterface && primitiveOnto.isInterface) {
+            const result = primitiveBase.interfaceShape.tryMergeTypeVariablesWith(primitiveOnto.interfaceShape);
+            if (result == null) {
+                return null;
+            }
+            return _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newInterface(result);
+        }
+        else if ((primitiveBase.isTypeContainer() && primitiveBase.hasVariable)
+            || (primitiveOnto.isTypeContainer() && primitiveOnto.hasVariable)) {
+            // Cannot merge [~a] with a type that is not a variable and not a collection.
+            return null;
+        }
+        throw new Error('tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
+    }
+    static _tryMergeConstraints(handleType, { type, direction }) {
+        let [primitiveHandleType, primitiveConnectionType] = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(handleType.resolvedType(), type.resolvedType());
+        if (primitiveHandleType.isVariable) {
+            while (primitiveConnectionType.isTypeContainer()) {
+                if (primitiveHandleType.variable.resolution != null
+                    || primitiveHandleType.variable.canReadSubset != null
+                    || primitiveHandleType.variable.canWriteSuperset != null) {
+                    // Resolved and/or constrained variables can only represent Entities, not sets.
+                    return false;
+                }
+                // If this is an undifferentiated variable then we need to create structure to match against. That's
+                // allowed because this variable could represent anything, and it needs to represent this structure
+                // in order for type resolution to succeed.
+                const newVar = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]('a', null, null));
+                primitiveHandleType.variable.resolution =
+                    primitiveConnectionType.isCollection ? _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newCollection(newVar) : (primitiveConnectionType.isBigCollection ? _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newBigCollection(newVar) : _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newReference(newVar));
+                const unwrap = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
+                [primitiveHandleType, primitiveConnectionType] = unwrap;
+            }
+            if (direction === 'out' || direction === 'inout' || direction === '`provide') {
+                // the canReadSubset of the handle represents the maximal type that can be read from the
+                // handle, so we need to intersect out any type that is more specific than the maximal type
+                // that could be written.
+                if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset)) {
+                    return false;
+                }
+            }
+            if (direction === 'in' || direction === 'inout' || direction === '`consume') {
+                // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
+                // so we need to union it with the type that wants to be read here.
+                if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset)) {
+                    return false;
+                }
+            }
+        }
+        else {
+            if (primitiveConnectionType.tag !== primitiveHandleType.tag) {
+                return false;
+            }
+            if (direction === 'out' || direction === 'inout') {
+                if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
+                    return false;
+                }
+            }
+            if (direction === 'in' || direction === 'inout') {
+                if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    static _writeConstraintsApply(handleType, connectionType) {
+        // this connection wants to write to this handle. If the written type is
+        // more specific than the canReadSubset then it isn't violating the maximal type
+        // that can be read.
+        const writtenType = connectionType.canWriteSuperset;
+        if (writtenType == null || handleType.canReadSubset == null) {
+            return true;
+        }
+        if (writtenType.isMoreSpecificThan(handleType.canReadSubset)) {
+            return true;
+        }
+        return false;
+    }
+    static _readConstraintsApply(handleType, connectionType) {
+        // this connection wants to read from this handle. If the read type
+        // is less specific than the canWriteSuperset, then it isn't violating
+        // the maximum lower-bound read type.
+        const readType = connectionType.canReadSubset;
+        if (readType == null || handleType.canWriteSuperset == null) {
+            return true;
+        }
+        if (handleType.canWriteSuperset.isMoreSpecificThan(readType)) {
+            return true;
+        }
+        return false;
+    }
+    // Compare two types to see if they could be potentially resolved (in the absence of other
+    // information). This is used as a filter when selecting compatible handles or checking
+    // validity of recipes. This function returning true never implies that full type resolution
+    // will succeed, but if the function returns false for a pair of types that are associated
+    // then type resolution is guaranteed to fail.
+    //
+    // left, right: {type, direction, connection}
+    static compareTypes(left, right) {
+        const resolvedLeft = left.type.resolvedType();
+        const resolvedRight = right.type.resolvedType();
+        const [leftType, rightType] = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(resolvedLeft, resolvedRight);
+        // a variable is compatible with a set only if it is unconstrained.
+        if (leftType.isVariable && rightType.isTypeContainer()) {
+            return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
+        }
+        if (rightType.isVariable && leftType.isTypeContainer()) {
+            return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
+        }
+        if (leftType.isVariable || rightType.isVariable) {
+            // TODO: everything should use this, eventually. Need to implement the
+            // right functionality in Shapes first, though.
+            return _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].canMergeConstraints(leftType, rightType);
+        }
+        if ((leftType === undefined) !== (rightType === undefined)) {
+            return false;
+        }
+        if (leftType === rightType) {
+            return true;
+        }
+        if (leftType.tag !== rightType.tag) {
+            return false;
+        }
+        if (leftType.isSlot) {
+            return true;
+        }
+        // TODO: we need a generic way to evaluate type compatibility
+        //       shapes + entities + etc
+        if (leftType.isInterface && rightType.isInterface) {
+            if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
+                return true;
+            }
+        }
+        if (!leftType.isEntity || !rightType.isEntity) {
+            return false;
+        }
+        const leftIsSub = leftType.entitySchema.isMoreSpecificThan(rightType.entitySchema);
+        const leftIsSuper = rightType.entitySchema.isMoreSpecificThan(leftType.entitySchema);
+        if (leftIsSuper && leftIsSub) {
+            return true;
+        }
+        if (!leftIsSuper && !leftIsSub) {
+            return false;
+        }
+        const [superclass, subclass] = leftIsSuper ? [left, right] : [right, left];
+        // treat handle types as if they were 'inout' connections. Note that this
+        // guarantees that the handle's type will be preserved, and that the fact
+        // that the type comes from a handle rather than a connection will also
+        // be preserved.
+        const superDirection = superclass.direction || (superclass.connection ? superclass.connection.direction : 'inout');
+        const subDirection = subclass.direction || (subclass.connection ? subclass.connection.direction : 'inout');
+        if (superDirection === 'in') {
+            return true;
+        }
+        if (subDirection === 'out') {
+            return true;
+        }
+        return false;
+    }
+}
+//# sourceMappingURL=type-checker.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/util.js":
+/*!*****************************************!*\
+  !*** ./runtime/ts-build/recipe/util.js ***!
+  \*****************************************/
+/*! exports provided: compareNulls, compareStrings, compareNumbers, compareBools, compareArrays, compareObjects, compareComparables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareNulls", function() { return compareNulls; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareStrings", function() { return compareStrings; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareNumbers", function() { return compareNumbers; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareBools", function() { return compareBools; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareArrays", function() { return compareArrays; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareObjects", function() { return compareObjects; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareComparables", function() { return compareComparables; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+function compareNulls(o1, o2) {
+    if (o1 === o2)
+        return 0;
+    if (o1 === null)
+        return -1;
+    return 1;
+}
+function compareStrings(s1, s2) {
+    if (s1 == null || s2 == null)
+        return compareNulls(s1, s2);
+    return s1.localeCompare(s2);
+}
+function compareNumbers(n1, n2) {
+    if (n1 == null || n2 == null)
+        return compareNulls(n1, n2);
+    return n1 - n2;
+}
+function compareBools(b1, b2) {
+    if (b1 == null || b2 == null)
+        return compareNulls(b1, b2);
+    return Number(b1) - Number(b2);
+}
+function compareArrays(a1, a2, compare) {
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(a1 != null);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(a2 != null);
+    if (a1.length !== a2.length)
+        return compareNumbers(a1.length, a2.length);
+    for (let i = 0; i < a1.length; i++) {
+        let result;
+        if ((result = compare(a1[i], a2[i])) !== 0)
+            return result;
+    }
+    return 0;
+}
+function compareObjects(o1, o2, compare) {
+    const keys = Object.keys(o1);
+    let result;
+    if ((result = compareNumbers(keys.length, Object.keys(o2).length)) !== 0)
+        return result;
+    for (const key of keys) {
+        if ((result = compare(o1[key], o2[key])) !== 0)
+            return result;
+    }
+    return 0;
+}
+function compareComparables(o1, o2) {
+    if (o1 == null || o2 == null)
+        return compareNulls(o1, o2);
+    return o1._compareTo(o2);
+}
+//# sourceMappingURL=util.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/walker-base.js":
+/*!************************************************!*\
+  !*** ./runtime/ts-build/recipe/walker-base.js ***!
+  \************************************************/
+/*! exports provided: WalkerTactic, WalkerBase */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WalkerTactic", function() { return WalkerTactic; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WalkerBase", function() { return WalkerBase; });
+/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+/**
+ * Walkers traverse an object, calling methods based on the
+ * features encountered on that object. For example, a RecipeWalker
+ * takes a list of recipes and calls methods when:
+ *  - a new recipe is encountered
+ *  - a handle is found inside a recipe
+ *  - a particle is found inside a recipe
+ *  - etc..
+ *
+ * Each of these methods can return a list of updates:
+ *   [(recipe, encountered_thing) => new_recipe]
+ *
+ * The walker then does something with the updates depending on the
+ * tactic selected.
+ *
+ * If the tactic is "Permuted", then an output will be generated
+ * for every combination of 1 element drawn from each update list.
+ * For example, if 3 methods return [a,b], [c,d,e], and [f] respectively
+ * then "Permuted" will cause 6 outputs to be generated: [acf, adf, aef, bcf, bdf, bef]
+ *
+ * If the tactic is "Independent", an output will be generated for each
+ * update, regardless of the list the update is in. For example,
+ * if 3 methods return [a,b], [c,d,e], and [f] respectively,
+ * then "Independent" will cause 6 outputs to be generated: [a,b,c,d,e,f]
+ */
+var WalkerTactic;
+(function (WalkerTactic) {
+    WalkerTactic["Permuted"] = "permuted";
+    WalkerTactic["Independent"] = "independent";
+})(WalkerTactic || (WalkerTactic = {}));
+class WalkerBase extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].Walker {
+    constructor(tactic) {
+        super();
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(tactic);
+        this.tactic = tactic;
+    }
+    _runUpdateList(recipe, updateList) {
+        const newRecipes = [];
+        if (updateList.length) {
+            switch (this.tactic) {
+                case WalkerTactic.Permuted: {
+                    let permutations = [[]];
+                    updateList.forEach(({ continuation, context }) => {
+                        const newResults = [];
+                        if (typeof continuation === 'function') {
+                            continuation = [continuation];
+                        }
+                        continuation.forEach(f => {
+                            permutations.forEach(p => {
+                                const newP = p.slice();
+                                newP.push({ f, context });
+                                newResults.push(newP);
+                            });
+                        });
+                        permutations = newResults;
+                    });
+                    for (let permutation of permutations) {
+                        const cloneMap = new Map();
+                        const newRecipe = recipe.clone(cloneMap);
+                        let score = 0;
+                        permutation = permutation.filter(p => p.f !== null);
+                        if (permutation.length === 0) {
+                            continue;
+                        }
+                        permutation.forEach(({ f, context }) => {
+                            score += f(newRecipe, cloneMap.get(context));
+                        });
+                        newRecipes.push({ recipe: newRecipe, score });
+                    }
+                    break;
+                }
+                case WalkerTactic.Independent:
+                    updateList.forEach(({ continuation, context }) => {
+                        if (typeof continuation === 'function') {
+                            continuation = [continuation];
+                        }
+                        continuation.forEach(f => {
+                            if (f == null) {
+                                f = () => 0;
+                            }
+                            const cloneMap = new Map();
+                            const newRecipe = recipe.clone(cloneMap);
+                            const score = f(newRecipe, cloneMap.get(context));
+                            newRecipes.push({ recipe: newRecipe, score });
+                        });
+                    });
+                    break;
+                default:
+                    throw new Error(`${this.tactic} not supported`);
+            }
+        }
+        // commit phase - output results.
+        for (const newRecipe of newRecipes) {
+            const result = this.createDescendant(newRecipe.recipe, newRecipe.score);
+        }
+    }
+    createDescendant(recipe, score) {
+        const valid = recipe.normalize();
+        //if (!valid) debugger;
+        const hash = valid ? recipe.digest() : null;
+        super.createDescendant(recipe, score, hash, valid);
+    }
+    isEmptyResult(result) {
+        if (!result) {
+            return true;
+        }
+        if (result.constructor === Array && result.length <= 0) {
+            return true;
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(typeof result === 'function' || result.length);
+        return false;
+    }
+}
+//# sourceMappingURL=walker-base.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/recipe/walker.js":
+/*!*******************************************!*\
+  !*** ./runtime/ts-build/recipe/walker.js ***!
+  \*******************************************/
+/*! exports provided: Walker */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Walker", function() { return Walker; });
+/* harmony import */ var _walker_base_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./walker-base.js */ "./runtime/ts-build/recipe/walker-base.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+class Walker extends _walker_base_js__WEBPACK_IMPORTED_MODULE_0__["WalkerBase"] {
+    onResult(result) {
+        super.onResult(result);
+        const recipe = result.result;
+        const updateList = [];
+        // update phase - walk through recipe and call onRecipe,
+        // onHandle, etc.
+        if (this.onRecipe) {
+            result = this.onRecipe(recipe, result);
+            if (!this.isEmptyResult(result)) {
+                updateList.push({ continuation: result });
+            }
+        }
+        for (const particle of recipe.particles) {
+            if (this.onParticle) {
+                const result = this.onParticle(recipe, particle);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context: particle });
+                }
+            }
+        }
+        for (const handleConnection of recipe.handleConnections) {
+            if (this.onHandleConnection) {
+                const result = this.onHandleConnection(recipe, handleConnection);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context: handleConnection });
+                }
+            }
+        }
+        for (const handle of recipe.handles) {
+            if (this.onHandle) {
+                const result = this.onHandle(recipe, handle);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context: handle });
+                }
+            }
+        }
+        for (const slotConnection of recipe.slotConnections) {
+            if (this.onSlotConnection) {
+                const result = this.onSlotConnection(recipe, slotConnection);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context: slotConnection });
+                }
+            }
+        }
+        for (const slot of recipe.slots) {
+            if (this.onSlot) {
+                const result = this.onSlot(recipe, slot);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context: slot });
+                }
+            }
+        }
+        for (const obligation of recipe.obligations) {
+            if (this.onObligation) {
+                const result = this.onObligation(recipe, obligation);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context: obligation });
+                }
+            }
+        }
+        this._runUpdateList(recipe, updateList);
+    }
+}
+Walker.Permuted = _walker_base_js__WEBPACK_IMPORTED_MODULE_0__["WalkerTactic"].Permuted;
+Walker.Independent = _walker_base_js__WEBPACK_IMPORTED_MODULE_0__["WalkerTactic"].Independent;
+//# sourceMappingURL=walker.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/reference.js":
 /*!***************************************!*\
   !*** ./runtime/ts-build/reference.js ***!
@@ -77837,7 +77524,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Schema", function() { return Schema; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
+/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./recipe/type-checker.js */ "./runtime/ts-build/recipe/type-checker.js");
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../entity.js */ "./runtime/entity.js");
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./reference.js */ "./runtime/ts-build/reference.js");
 /**
@@ -78262,7 +77949,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Shape", function() { return Shape; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
+/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./recipe/type-checker.js */ "./runtime/ts-build/recipe/type-checker.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -81829,7 +81516,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProviderBase", function() { return StorageProviderBase; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../recipe/util.js */ "./runtime/recipe/util.js");
+/* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/util.js */ "./runtime/ts-build/recipe/util.js");
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -81929,16 +81616,16 @@ class StorageProviderBase {
     }
     _compareTo(other) {
         let cmp;
-        cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.name, other.name);
+        cmp = Object(_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"])(this.name, other.name);
         if (cmp !== 0)
             return cmp;
-        cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareNumbers"](this.version, other.version);
+        cmp = Object(_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareNumbers"])(this.version, other.version);
         if (cmp !== 0)
             return cmp;
-        cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.source, other.source);
+        cmp = Object(_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"])(this.source, other.source);
         if (cmp !== 0)
             return cmp;
-        cmp = _recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"](this.id, other.id);
+        cmp = Object(_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["compareStrings"])(this.id, other.id);
         if (cmp !== 0)
             return cmp;
         return 0;
@@ -83023,7 +82710,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./schema.js */ "./runtime/ts-build/schema.js");
 /* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./type-variable.js */ "./runtime/ts-build/type-variable.js");
 /* harmony import */ var _tuple_fields_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tuple-fields.js */ "./runtime/ts-build/tuple-fields.js");
-/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../recipe/type-checker.js */ "./runtime/recipe/type-checker.js");
+/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./recipe/type-checker.js */ "./runtime/ts-build/recipe/type-checker.js");
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at

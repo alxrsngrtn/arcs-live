@@ -356,5 +356,5 @@ ${this._slotsToManifestString()}
     }
 }
 import { Type } from './type.js';
-import { TypeChecker } from '../recipe/type-checker.js';
+import { TypeChecker } from './recipe/type-checker.js';
 //# sourceMappingURL=shape.js.map

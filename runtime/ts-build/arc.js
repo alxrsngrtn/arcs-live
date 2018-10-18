@@ -11,11 +11,11 @@
 import { assert } from '../../platform/assert-web.js';
 import { Type } from './type.js';
 import { ParticleExecutionHost } from '../particle-execution-host.js';
-import { Handle } from '../recipe/handle.js';
-import { Recipe } from '../recipe/recipe.js';
+import { Handle } from './recipe/handle.js';
+import { Recipe } from './recipe/recipe.js';
 import { Manifest } from '../manifest.js';
 import { Description } from '../description.js';
-import * as util from '../recipe/util.js';
+import { compareComparables } from './recipe/util.js';
 import { FakePecFactory } from '../fake-pec-factory.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { DevtoolsConnection } from '../debug/devtools-connection.js';
@@ -267,7 +267,6 @@ ${this.activeRecipe.toString()}`;
         const id = this.generateID('particle');
         const handleMap = { spec: recipeParticle.spec, handles: new Map() };
         this.particleHandleMaps.set(id, handleMap);
-        // TODO(shans): remove type override once recipes are typeScriptized.
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
             if (!connection.handle) {
                 assert(connection.isOptional);
@@ -294,13 +293,13 @@ ${this.activeRecipe.toString()}`;
     // Makes a copy of the arc used for speculative execution.
     async cloneForSpeculativeExecution() {
         const arc = new Arc({ id: this.generateID().toString(), pecFactory: this.pecFactory, context: this.context, loader: this._loader, recipeIndex: this._recipeIndex, speculative: true });
-        const handleMap = new Map();
-        for (const handle of this._stores) {
-            const clone = await arc.storageProviderFactory.construct(handle.id, handle.type, 'volatile');
-            await clone.cloneFrom(handle);
-            handleMap.set(handle, clone);
-            if (this.storeDescriptions.has(handle)) {
-                arc.storeDescriptions.set(clone, this.storeDescriptions.get(handle));
+        const storeMap = new Map();
+        for (const store of this._stores) {
+            const clone = await arc.storageProviderFactory.construct(store.id, store.type, 'volatile');
+            await clone.cloneFrom(store);
+            storeMap.set(store, clone);
+            if (this.storeDescriptions.has(store)) {
+                arc.storeDescriptions.set(clone, this.storeDescriptions.get(store));
             }
         }
         this.particleHandleMaps.forEach((value, key) => {
@@ -308,7 +307,7 @@ ${this.activeRecipe.toString()}`;
                 spec: value.spec,
                 handles: new Map()
             });
-            value.handles.forEach(handle => arc.particleHandleMaps.get(key).handles.set(handle.name, handleMap.get(handle)));
+            value.handles.forEach(handle => arc.particleHandleMaps.get(key).handles.set(handle.name, storeMap.get(handle)));
         });
         const { particles, handles, slots } = this._activeRecipe.mergeInto(arc._activeRecipe);
         let particleIndex = 0;
@@ -350,7 +349,7 @@ ${this.activeRecipe.toString()}`;
             });
             arc._recipes.push(arcRecipe);
         });
-        for (const v of handleMap.values()) {
+        for (const v of storeMap.values()) {
             // FIXME: Tags
             arc._registerStore(v, []);
         }
@@ -581,7 +580,7 @@ ${this.activeRecipe.toString()}`;
     }
     toContextString(options) {
         const results = [];
-        const stores = [...this.storesById.values()].sort(util.compareComparables);
+        const stores = [...this.storesById.values()].sort(compareComparables);
         stores.forEach(store => {
             results.push(store.toString(this.storeTags.get(store)));
         });

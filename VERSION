@@ -1,27 +1,13 @@
-commit 719c7a6a737c5b7a0a0d7e5b61a93acf3e01f45d
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Oct 17 14:38:58 2018 -0700
+commit dc8e3fa4ae38060215e765c60e0fb97dafac3e97
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu Oct 18 13:13:59 2018 +1100
 
-    More shell debt-service (#2109)
+    Comvert recipe subdirectory to typescript (#2111)
     
-    * live arcs preview experiment
+    Also removed 2 typescript lint rules:
     
-    * start fleshing out artifacts
+    no-angle-bracket-type-assertion:
+    This lint rule is only relevant if the project uses .tsx, which we don't. `<string>foo` is closer to other language casts than `foo as string`, so it's worth allowing this syntax.
     
-    * cleanup, support instantiating recipes after construction
-    
-    * null-check handles
-    
-    * reduce logging
-    
-    * create arc+dom+composer encapsulation (web-arc), factor live launcher (web-launcher)
-    
-    * create recipe test app
-    
-    * single-shell allows trying recipes in isolation
-    
-    * fix Restaurants/Reservations
-    
-    * normalize dots for loader paths
-    
-    * port dot-normalization to loader.ts
+    no-conditional-assignment:
+    conditional assignment is used pretty heavily in recipe comparators and they're a lot more readable as a result. I think the benefit of keeping this technique outweighs the potential costs of accidentally performing an assignment in a conditional expression.

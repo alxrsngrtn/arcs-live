@@ -17,6 +17,7 @@ export class HostedSlotContext extends SlotContext {
         assert(this.sourceSlotConsumer instanceof HostedSlotConsumer);
         const hostedSourceSlotConsumer = this.sourceSlotConsumer;
         if (hostedSourceSlotConsumer.storeId) {
+            // TODO(mmandlis): This up-cast is dangerous. Why do we need to fake a Handle here?
             this.handles = [{ id: hostedSourceSlotConsumer.storeId }];
         }
     }

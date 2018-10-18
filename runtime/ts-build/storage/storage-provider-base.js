@@ -7,7 +7,7 @@
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../../platform/assert-web.js';
 import { Tracing } from '../../../tracelib/trace.js';
-import * as util from '../../recipe/util.js';
+import { compareStrings, compareNumbers } from '../recipe/util.js';
 var EventKind;
 (function (EventKind) {
     EventKind["change"] = "Change";
@@ -97,16 +97,16 @@ export class StorageProviderBase {
     }
     _compareTo(other) {
         let cmp;
-        cmp = util.compareStrings(this.name, other.name);
+        cmp = compareStrings(this.name, other.name);
         if (cmp !== 0)
             return cmp;
-        cmp = util.compareNumbers(this.version, other.version);
+        cmp = compareNumbers(this.version, other.version);
         if (cmp !== 0)
             return cmp;
-        cmp = util.compareStrings(this.source, other.source);
+        cmp = compareStrings(this.source, other.source);
         if (cmp !== 0)
             return cmp;
-        cmp = util.compareStrings(this.id, other.id);
+        cmp = compareStrings(this.id, other.id);
         if (cmp !== 0)
             return cmp;
         return 0;
