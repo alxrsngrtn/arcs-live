@@ -1,9 +1,5 @@
-commit 84ef0406f6f66600c03c8aa5837f082a9b7cd615
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Oct 19 08:03:32 2018 +1100
+commit 8fbbc972c79d2d45319db7fa46c910d11ad01366
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Oct 18 14:25:14 2018 -0700
 
-    Create SLANDLES version of recipe slots with tags test (#2116)
-    
-    * Add slandles test
-    
-    * Rewrite SLANDLES test to use handles as slots
+    use sub-template instead of (deprecated) x-list (#2119)
