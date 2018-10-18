@@ -1,13 +1,5 @@
-commit dc8e3fa4ae38060215e765c60e0fb97dafac3e97
+commit b54b02e3b7c1a3dab73dfd795590184c06779c77
 Author: shans <shane.stephens@gmail.com>
-Date:   Thu Oct 18 13:13:59 2018 +1100
+Date:   Thu Oct 18 14:18:17 2018 +1100
 
-    Comvert recipe subdirectory to typescript (#2111)
-    
-    Also removed 2 typescript lint rules:
-    
-    no-angle-bracket-type-assertion:
-    This lint rule is only relevant if the project uses .tsx, which we don't. `<string>foo` is closer to other language casts than `foo as string`, so it's worth allowing this syntax.
-    
-    no-conditional-assignment:
-    conditional assignment is used pretty heavily in recipe comparators and they're a lot more readable as a result. I think the benefit of keeping this technique outweighs the potential costs of accidentally performing an assignment in a conditional expression.
+    Fix a couple of references to arc._storageKey. (#2114)
