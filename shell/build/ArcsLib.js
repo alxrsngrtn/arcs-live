@@ -63060,7 +63060,7 @@ class ArcStoresFetcher {
       return tags;
     };
     return {
-      arcStores: await this._digestStores(this._arc._storeTags),
+      arcStores: await this._digestStores(this._arc.storeTags),
       contextStores: await this._digestStores(find(this._arc.context))
     };
   }

@@ -1,5 +1,5 @@
-commit b54b02e3b7c1a3dab73dfd795590184c06779c77
-Author: shans <shane.stephens@gmail.com>
-Date:   Thu Oct 18 14:18:17 2018 +1100
+commit 4e81d5a726e1c8a00c300fe2ab71062ce78b7732
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Oct 18 20:52:18 2018 +1100
 
-    Fix a couple of references to arc._storageKey. (#2114)
+    Small fixes to DevTools (#2115)
