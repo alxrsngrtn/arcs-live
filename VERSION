@@ -1,5 +1,7 @@
-commit ad0a0fbdff2252c8700dc1f3be7ea9f2f059daa0
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Oct 19 15:26:59 2018 +1100
+commit 39c33306788f0879190aafb72514f921f2e26fe8
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Oct 19 21:51:25 2018 +1100
 
-    A log of calls across the PEC in devtools (#2123)
+    Add SLANDLES version of 'recipe slots with different names' test (#2118)
+    
+    * Add SLANDLES version of 'recipe slots with different names' test
