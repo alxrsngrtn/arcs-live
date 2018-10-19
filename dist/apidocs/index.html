@@ -96,11 +96,11 @@
 				read that correctly):</p>
 				<pre><code>   $ curl -o- https:<span class="hljs-regexp">//</span>raw.githubusercontent.com<span class="hljs-regexp">/creationix/</span>nvm<span class="hljs-regexp">/v0.33.11/i</span>nstall.sh | bash</code></pre><p>   If you&#39;re using zsh you may need to <code>source ~/.nvm/nvm.sh</code> after this.</p>
 				<p>1) Install node.</p>
-				<pre><code><span class="hljs-meta">   $</span><span class="bash"> nvm install 9.4</span></code></pre><p>1) If you need to update npm to a later version (our build checks for the
+				<pre><code>   $ nvm install <span class="hljs-number">9.4</span></code></pre><p>1) If you need to update npm to a later version (our build checks for the
 				minimum required version):</p>
-				<pre><code>   $ npm <span class="hljs-keyword">install</span> -g npm   # can <span class="hljs-keyword">use</span> npm@<span class="hljs-number">6.3</span><span class="hljs-number">.0</span> <span class="hljs-keyword">to</span> <span class="hljs-keyword">install</span> a specific <span class="hljs-keyword">version</span></code></pre><h3 id="installing-within-the-arcs-project-">Installing within the Arcs project:</h3>
-				<pre><code><span class="hljs-meta">$</span><span class="bash"> npm install</span>
-<span class="hljs-meta">$</span><span class="bash"> ./tools/sigh</span></code></pre><p><code>npm install</code> is required on a fresh checkout. After that it only needs to be
+				<pre><code>   $ <span class="hljs-built_in">npm</span> install -g <span class="hljs-built_in">npm</span>   <span class="hljs-comment"># can use npm@6.3.0 to install a specific version</span></code></pre><h3 id="installing-within-the-arcs-project-">Installing within the Arcs project:</h3>
+				<pre><code><span class="hljs-variable">$ </span>npm install
+<span class="hljs-variable">$ </span>./tools/sigh</code></pre><p><code>npm install</code> is required on a fresh checkout. After that it only needs to be
 					re-run infrequently as new dependencies are included, and usually a build
 				failure will be the signal for that.</p>
 				<h3 id="windows-installation-notes">Windows Installation Notes</h3>
@@ -121,7 +121,7 @@
 				<h2 id="starting-arcs">Starting Arcs</h2>
 				<p>After the full build (<code>npm install &amp;&amp; tools/sigh</code>) run: (note that <code>npm
 start</code> will block, so you&#39;ll have to run the second command in a new shell):</p>
-				<pre><code><span class="hljs-meta">$</span><span class="bash"> npm start</span></code></pre><p>Then open <code>http://localhost:8080/shell/apps/web/index.html</code> in a web browser
+				<pre><code>$ <span class="hljs-built_in">npm</span> start</code></pre><p>Then open <code>http://localhost:8080/shell/apps/web/index.html</code> in a web browser
 				(or, on MacOS, use <code>open &#39;http://localhost:8080/shell/apps/web/index.html&#39;</code>).</p>
 				<h2 id="subprojects">Subprojects</h2>
 				<p>Subcomponents have more detailed descriptions. Particularly the extensions
@@ -138,8 +138,8 @@ start</code> will block, so you&#39;ll have to run the second command in a new s
 				<p>The simplest way to run tests is to let the targets do all the work. These
 					commands will install all packages, run a build, start a background server,
 				run all the tests, and kill the background server:</p>
-				<pre><code><span class="hljs-meta">$</span><span class="bash"> npm install</span>
-<span class="hljs-meta">$</span><span class="bash"> npm run <span class="hljs-built_in">test</span>-with-start</span></code></pre><p>There are additional targets provided to run subsets of those commands.</p>
+				<pre><code>$ npm <span class="hljs-keyword">install</span>
+$ npm run <span class="hljs-keyword">test</span>-<span class="hljs-keyword">with</span>-<span class="hljs-keyword">start</span></code></pre><p>There are additional targets provided to run subsets of those commands.</p>
 				<ul>
 					<li><code>npm start</code>: spins up a server (and blocks), serving in port 8080.</li>
 					<li><code>tools/sigh</code>: run a subset of tests and build packed artifacts.</li>
