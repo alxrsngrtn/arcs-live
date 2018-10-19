@@ -660,10 +660,11 @@ class APIPort {
     }
     let handlerName = 'on' + e.data.messageType;
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this[handlerName], `no handler named ${handlerName}`);
-    let result = this[handlerName](args);
-    if (this._debugAttachment && this._debugAttachment[handlerName]) {
-      this._debugAttachment[handlerName](args);
+    if (this._debugAttachment) {
+      if (this._debugAttachment[handlerName]) this._debugAttachment[handlerName](args);
+      this._debugAttachment.handlePecMessage(handlerName, e.data.messageBody);
     }
+    let result = this[handlerName](args);
     if (handler.isInitializer) {
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(args.identifier);
       await this._mapper.establishThingMapping(args.identifier, result);
@@ -691,8 +692,9 @@ class APIPort {
       let call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
       this.messageCount++;
       this._port.postMessage(call);
-      if (this._debugAttachment && this._debugAttachment[name]) {
-        this._debugAttachment[name](args);
+      if (this._debugAttachment) {
+        if (this._debugAttachment[name]) this._debugAttachment[name](args);
+        this._debugAttachment.handlePecMessage(name, call.messageBody);
       }
     };
   }
@@ -721,8 +723,9 @@ class APIPort {
       call.messageBody.identifier = this._mapper.createMappingForThing(thing, requestedId);
       this.messageCount++;
       this._port.postMessage(call);
-      if (this._debugAttachment && this._debugAttachment[name]) {
-        this._debugAttachment[name](thing, args);
+      if (this._debugAttachment) {
+        if (this._debugAttachment[name]) this._debugAttachment[name](thing, args);
+        this._debugAttachment.handlePecMessage(name, call.messageBody);
       }
     };
   }
@@ -1014,6 +1017,15 @@ class OuterPortAttachment {
     this._speculative = arc.isSpeculative;
     this._callbackRegistry = {};
     this._particleRegistry = {};
+  }
+
+  handlePecMessage(name, pecMsgBody) {
+    // Skip speculative and pipes arcs for now.
+    if (this._arcIdString.endsWith('-pipes') || this._speculative) return;
+    this._devtoolsChannel.send({
+      messageType: 'PecLog',
+      messageBody: {name, pecMsgBody, timestamp: Date.now()},
+    });
   }
 
   InstantiateParticle(particle, {id, spec, handles}) {
