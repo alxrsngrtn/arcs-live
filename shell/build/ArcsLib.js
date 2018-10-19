@@ -112,7 +112,7 @@ __webpack_require__.r(__webpack_exports__);
 
 // Data needs to be referenced via a global object, otherwise extension and
 // Arcs have different instances.
-let root = typeof window === 'object' ? window : global;
+const root = typeof window === 'object' ? window : global;
 
 if (!root._arcDebugPromise) {
   root._arcDebugPromise = new Promise(resolve => {
@@ -54020,8 +54020,8 @@ __webpack_require__.r(__webpack_exports__);
 // http://polymer.github.io/PATENTS.txt
 
 async function digest(str) {
-  let buffer = new TextEncoder('utf-8').encode(str);
-  let digest = await crypto.subtle.digest('SHA-1', buffer);
+  const buffer = new TextEncoder('utf-8').encode(str);
+  const digest = await crypto.subtle.digest('SHA-1', buffer);
   return Array.from(new Uint8Array(digest)).map(x => ('00' + x.toString(16)).slice(-2)).join('');
 }
 
@@ -84177,9 +84177,9 @@ class Strategizer {
   }
   async generate() {
     // Generate
-    let generation = this.generation + 1;
+    const generation = this.generation + 1;
     let generated = await Promise.all(this._strategies.map(strategy => {
-      let recipeFilter = recipe => this._ruleset.isAllowed(strategy, recipe);
+      const recipeFilter = recipe => this._ruleset.isAllowed(strategy, recipe);
       return strategy.generate({
         generation: this.generation,
         generated: this.generated.filter(recipeFilter),
@@ -84188,7 +84188,7 @@ class Strategizer {
       });
     }));
 
-    let record = {};
+    const record = {};
     record.generation = generation;
     record.sizeOfLastGeneration = this.generated.length;
     record.generatedDerivationsByStrategy = {};
@@ -84215,9 +84215,9 @@ class Strategizer {
     record.duplicateSameParentDerivationsByStrategy = {};
 
     generated = generated.filter(result => {
-      let strategy = result.derivation[0].strategy.constructor.name;
+      const strategy = result.derivation[0].strategy.constructor.name;
       if (result.hash) {
-        let existingResult = this.populationHash.get(result.hash);
+        const existingResult = this.populationHash.get(result.hash);
         if (existingResult) {
           if (result.derivation[0].parent == existingResult) {
             record.nullDerivations += 1;
@@ -84253,12 +84253,12 @@ class Strategizer {
     });
 
     let terminal = new Map();
-    for (let candidate of this.generated) {
+    for (const candidate of this.generated) {
       terminal.set(candidate.result, candidate);
     }
     // TODO(piotrs): This is inefficient, improve at some point.
-    for (let result of this.populationHash.values()) {
-      for (let {parent} of result.derivation) {
+    for (const result of this.populationHash.values()) {
+      for (const {parent} of result.derivation) {
         if (parent && terminal.has(parent.result)) {
           terminal.delete(parent.result);
         }
@@ -84279,10 +84279,10 @@ class Strategizer {
     });
 
     // Evalute
-    let evaluations = await Promise.all(this._evaluators.map(strategy => {
+    const evaluations = await Promise.all(this._evaluators.map(strategy => {
       return strategy.evaluate(this, generated);
     }));
-    let fitness = Strategizer._mergeEvaluations(evaluations, generated);
+    const fitness = Strategizer._mergeEvaluations(evaluations, generated);
 
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(fitness.length == generated.length);
     for (let i = 0; i < fitness.length; i++) {
@@ -84305,12 +84305,12 @@ class Strategizer {
   }
 
   static _mergeEvaluations(evaluations, generated) {
-    let n = generated.length;
-    let mergedEvaluations = [];
+    const n = generated.length;
+    const mergedEvaluations = [];
     for (let i = 0; i < n; i++) {
       let merged = NaN;
-      for (let evaluation of evaluations) {
-        let fitness = evaluation[i];
+      for (const evaluation of evaluations) {
+        const fitness = evaluation[i];
         if (isNaN(fitness)) {
           continue;
         }
@@ -84405,7 +84405,7 @@ class Ruleset {
   }
 
   isAllowed(strategy, recipe) {
-    let forbiddenAncestors = this._orderingRules.get(strategy.constructor);
+    const forbiddenAncestors = this._orderingRules.get(strategy.constructor);
     if (!forbiddenAncestors) return true;
     // TODO: This can be sped up with AND-ing bitsets of derivation strategies and forbiddenAncestors.
     return !recipe.derivation.some(d => forbiddenAncestors.has(d.strategy.constructor));
@@ -84438,14 +84438,14 @@ Ruleset.Builder = class {
    */
   order(...strategiesOrGroups) {
     for (let i = 0; i < strategiesOrGroups.length - 1; i++) {
-      let current = strategiesOrGroups[i];
-      let next = strategiesOrGroups[i + 1];
-      for (let strategy of Array.isArray(current) ? current : [current]) {
+      const current = strategiesOrGroups[i];
+      const next = strategiesOrGroups[i + 1];
+      for (const strategy of Array.isArray(current) ? current : [current]) {
         let set = this._orderingRules.get(strategy);
         if (!set) {
           this._orderingRules.set(strategy, set = new Set());
         }
-        for (let nextStrategy of Array.isArray(next) ? next : [next]) {
+        for (const nextStrategy of Array.isArray(next) ? next : [next]) {
           set.add(nextStrategy);
         }
       }
@@ -84455,9 +84455,9 @@ Ruleset.Builder = class {
 
   build() {
     // Making the ordering transitive.
-    let beingExpanded = new Set();
-    let alreadyExpanded = new Set();
-    for (let strategy of this._orderingRules.keys()) {
+    const beingExpanded = new Set();
+    const alreadyExpanded = new Set();
+    for (const strategy of this._orderingRules.keys()) {
       this._transitiveClosureFor(strategy, beingExpanded, alreadyExpanded);
     }
     return new Ruleset(this._orderingRules);
@@ -84466,13 +84466,13 @@ Ruleset.Builder = class {
   _transitiveClosureFor(strategy, beingExpanded, alreadyExpanded) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!beingExpanded.has(strategy), 'Detected a loop in the ordering rules');
 
-    let followingStrategies = this._orderingRules.get(strategy);
+    const followingStrategies = this._orderingRules.get(strategy);
     if (alreadyExpanded.has(strategy)) return followingStrategies || [];
 
     if (followingStrategies) {
       beingExpanded.add(strategy);
-      for (let following of followingStrategies) {
-        for (let expanded of this._transitiveClosureFor(
+      for (const following of followingStrategies) {
+        for (const expanded of this._transitiveClosureFor(
             following, beingExpanded, alreadyExpanded)) {
           followingStrategies.add(expanded);
         }
@@ -84511,7 +84511,7 @@ __webpack_require__.r(__webpack_exports__);
   limitations under the License.
 */
 
-let events = [];
+const events = [];
 let pid;
 let now;
 if (typeof document == 'object') {
@@ -84522,7 +84522,7 @@ if (typeof document == 'object') {
 } else {
   pid = process.pid;
   now = function() {
-    let t = process.hrtime();
+    const t = process.hrtime();
     return t[0] * 1000000 + t[1] / 1000;
   };
 }
@@ -84542,7 +84542,7 @@ function parseInfo(info) {
   return info;
 }
 
-let streamingCallbacks = [];
+const streamingCallbacks = [];
 function pushEvent(event) {
     event.pid = pid;
     event.tid = 0;
@@ -84558,13 +84558,13 @@ function pushEvent(event) {
     // Only keep events in memory if we're not streaming them.
     if (streamingCallbacks.length === 0) events.push(event);
     Promise.resolve().then(() => {
-      for (let {callback, predicate} of streamingCallbacks) {
+      for (const {callback, predicate} of streamingCallbacks) {
           if (!predicate || predicate(event)) callback(event);
       }
     });
 }
 
-let module = {exports: {}};
+const module = {exports: {}};
 const Tracing = module.exports;
 module.exports.enabled = false;
 module.exports.enable = function() {
@@ -84577,7 +84577,7 @@ module.exports.enable = function() {
 //var enabled = Boolean(options.traceFile);
 
 function init() {
-  let result = {
+  const result = {
     wait: async function(v) {
       return v;
     },
@@ -84612,7 +84612,7 @@ function init() {
 
   module.exports.wrap = function(info, fn) {
     return function(...args) {
-      let t = module.exports.start(info);
+      const t = module.exports.start(info);
       try {
         return fn(...args);
       } finally {
@@ -84624,7 +84624,7 @@ function init() {
   function startSyncTrace(info) {
     info = parseInfo(info);
     let args = info.args;
-    let begin = now();
+    const begin = now();
     return {
       addArgs: function(extraArgs) {
         args = Object.assign(args || {}, extraArgs);
@@ -84655,10 +84655,10 @@ function init() {
   module.exports.start = function(info) {
     let trace = startSyncTrace(info);
     let flow;
-    let baseInfo = {cat: info.cat, name: info.name + ' (async)', overview: info.overview, sequence: info.sequence};
+    const baseInfo = {cat: info.cat, name: info.name + ' (async)', overview: info.overview, sequence: info.sequence};
     return {
       async wait(v, info) {
-        let flowExisted = !!flow;
+        const flowExisted = !!flow;
         if (!flowExisted) {
           flow = module.exports.flow(baseInfo);
         }
@@ -84701,11 +84701,11 @@ function init() {
   };
   module.exports.flow = function(info) {
     info = parseInfo(info);
-    let id = flowId++;
+    const id = flowId++;
     let started = false;
     return {
       start: function(startInfo) {
-        let ts = (startInfo && startInfo.ts) || now();
+        const ts = (startInfo && startInfo.ts) || now();
         started = true;
         pushEvent({
           ph: 's',
@@ -84721,7 +84721,7 @@ function init() {
       },
       end: function(endInfo) {
         if (!started) return;
-        let ts = (endInfo && endInfo.ts) || now();
+        const ts = (endInfo && endInfo.ts) || now();
         endInfo = parseInfo(endInfo);
         pushEvent({
           ph: 'f',
@@ -84738,7 +84738,7 @@ function init() {
       },
       step: function(stepInfo) {
         if (!started) return;
-        let ts = (stepInfo && stepInfo.ts) || now();
+        const ts = (stepInfo && stepInfo.ts) || now();
         stepInfo = parseInfo(stepInfo);
         pushEvent({
           ph: 't',
@@ -84759,7 +84759,7 @@ function init() {
     return {traceEvents: events};
   };
   module.exports.download = function() {
-    let a = document.createElement('a');
+    const a = document.createElement('a');
     a.download = 'trace.json';
     a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(module.exports.save()));
     a.click();

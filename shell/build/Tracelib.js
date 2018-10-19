@@ -331,7 +331,7 @@ __webpack_require__.r(__webpack_exports__);
   limitations under the License.
 */
 
-let events = [];
+const events = [];
 let pid;
 let now;
 if (typeof document == 'object') {
@@ -342,7 +342,7 @@ if (typeof document == 'object') {
 } else {
   pid = process.pid;
   now = function() {
-    let t = process.hrtime();
+    const t = process.hrtime();
     return t[0] * 1000000 + t[1] / 1000;
   };
 }
@@ -362,7 +362,7 @@ function parseInfo(info) {
   return info;
 }
 
-let streamingCallbacks = [];
+const streamingCallbacks = [];
 function pushEvent(event) {
     event.pid = pid;
     event.tid = 0;
@@ -378,13 +378,13 @@ function pushEvent(event) {
     // Only keep events in memory if we're not streaming them.
     if (streamingCallbacks.length === 0) events.push(event);
     Promise.resolve().then(() => {
-      for (let {callback, predicate} of streamingCallbacks) {
+      for (const {callback, predicate} of streamingCallbacks) {
           if (!predicate || predicate(event)) callback(event);
       }
     });
 }
 
-let module = {exports: {}};
+const module = {exports: {}};
 const Tracing = module.exports;
 module.exports.enabled = false;
 module.exports.enable = function() {
@@ -397,7 +397,7 @@ module.exports.enable = function() {
 //var enabled = Boolean(options.traceFile);
 
 function init() {
-  let result = {
+  const result = {
     wait: async function(v) {
       return v;
     },
@@ -432,7 +432,7 @@ function init() {
 
   module.exports.wrap = function(info, fn) {
     return function(...args) {
-      let t = module.exports.start(info);
+      const t = module.exports.start(info);
       try {
         return fn(...args);
       } finally {
@@ -444,7 +444,7 @@ function init() {
   function startSyncTrace(info) {
     info = parseInfo(info);
     let args = info.args;
-    let begin = now();
+    const begin = now();
     return {
       addArgs: function(extraArgs) {
         args = Object.assign(args || {}, extraArgs);
@@ -475,10 +475,10 @@ function init() {
   module.exports.start = function(info) {
     let trace = startSyncTrace(info);
     let flow;
-    let baseInfo = {cat: info.cat, name: info.name + ' (async)', overview: info.overview, sequence: info.sequence};
+    const baseInfo = {cat: info.cat, name: info.name + ' (async)', overview: info.overview, sequence: info.sequence};
     return {
       async wait(v, info) {
-        let flowExisted = !!flow;
+        const flowExisted = !!flow;
         if (!flowExisted) {
           flow = module.exports.flow(baseInfo);
         }
@@ -521,11 +521,11 @@ function init() {
   };
   module.exports.flow = function(info) {
     info = parseInfo(info);
-    let id = flowId++;
+    const id = flowId++;
     let started = false;
     return {
       start: function(startInfo) {
-        let ts = (startInfo && startInfo.ts) || now();
+        const ts = (startInfo && startInfo.ts) || now();
         started = true;
         pushEvent({
           ph: 's',
@@ -541,7 +541,7 @@ function init() {
       },
       end: function(endInfo) {
         if (!started) return;
-        let ts = (endInfo && endInfo.ts) || now();
+        const ts = (endInfo && endInfo.ts) || now();
         endInfo = parseInfo(endInfo);
         pushEvent({
           ph: 'f',
@@ -558,7 +558,7 @@ function init() {
       },
       step: function(stepInfo) {
         if (!started) return;
-        let ts = (stepInfo && stepInfo.ts) || now();
+        const ts = (stepInfo && stepInfo.ts) || now();
         stepInfo = parseInfo(stepInfo);
         pushEvent({
           ph: 't',
@@ -579,7 +579,7 @@ function init() {
     return {traceEvents: events};
   };
   module.exports.download = function() {
-    let a = document.createElement('a');
+    const a = document.createElement('a');
     a.download = 'trace.json';
     a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(module.exports.save()));
     a.click();
