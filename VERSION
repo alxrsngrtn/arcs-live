@@ -1,5 +1,7 @@
-commit d58bb5ab2f6c0d6edbad1c39e0c146097ec92b9b
+commit 339fe61435ea63d71202ee0727230dbd0d949cca
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Sun Oct 21 23:38:59 2018 -0700
+Date:   Mon Oct 22 14:58:59 2018 -0700
 
-    constify runtime testing/test code (#2127)
+    constify remaining runtime js files (#2129)
+    
+    Automated conversion of runtime js files using eslint --fix

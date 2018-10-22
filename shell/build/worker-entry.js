@@ -597,13 +597,13 @@ class APIPort {
     this.Map = function(keyprimitive, valueprimitive) {
       return {
         convert: a => {
-          let r = {};
+          const r = {};
           a.forEach((value, key) => r[keyprimitive.convert(key)] = valueprimitive.convert(value));
           return r;
         },
         unconvert: a => {
-          let r = new Map();
-          for (let key in a) {
+          const r = new Map();
+          for (const key in a) {
             r.set(
                 keyprimitive.unconvert(key), valueprimitive.unconvert(a[key]));
           }
@@ -642,7 +642,7 @@ class APIPort {
 
     this.messageCount++;
 
-    let handler = this._messageMap.get(e.data.messageType);
+    const handler = this._messageMap.get(e.data.messageType);
     let args;
     try {
       args = this._unprocessArguments(handler.args, e.data.messageBody);
@@ -652,19 +652,19 @@ class APIPort {
     }
     // If any of the converted arguments are still pending promises
     // wait for them to complete before processing the message.
-    for (let arg of Object.values(args)) {
+    for (const arg of Object.values(args)) {
       if (arg instanceof Promise) {
         arg.then(() => this._processMessage(e));
         return;
       }
     }
-    let handlerName = 'on' + e.data.messageType;
+    const handlerName = 'on' + e.data.messageType;
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this[handlerName], `no handler named ${handlerName}`);
     if (this._debugAttachment) {
       if (this._debugAttachment[handlerName]) this._debugAttachment[handlerName](args);
       this._debugAttachment.handlePecMessage(handlerName, e.data.messageBody);
     }
-    let result = this[handlerName](args);
+    const result = this[handlerName](args);
     if (handler.isInitializer) {
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(args.identifier);
       await this._mapper.establishThingMapping(args.identifier, result);
@@ -672,16 +672,16 @@ class APIPort {
   }
 
   _processArguments(argumentTypes, args) {
-    let messageBody = {};
-    for (let argument in argumentTypes) {
+    const messageBody = {};
+    for (const argument in argumentTypes) {
       messageBody[argument] = argumentTypes[argument].convert(args[argument]);
     }
     return messageBody;
   }
 
   _unprocessArguments(argumentTypes, args) {
-    let messageBody = {};
-    for (let argument in argumentTypes) {
+    const messageBody = {};
+    for (const argument in argumentTypes) {
       messageBody[argument] = argumentTypes[argument].unconvert(args[argument]);
     }
     return messageBody;
@@ -689,7 +689,7 @@ class APIPort {
 
   registerCall(name, argumentTypes) {
     this[name] = args => {
-      let call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
+      const call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
       this.messageCount++;
       this._port.postMessage(call);
       if (this._debugAttachment) {
@@ -718,8 +718,8 @@ class APIPort {
   registerInitializer(name, argumentTypes, mappingIdArg = null, redundant = false) {
     this[name] = (thing, args) => {
       if (redundant && this._mapper.hasMappingForThing(thing)) return;
-      let call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
-      let requestedId = mappingIdArg && args[mappingIdArg];
+      const call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
+      const requestedId = mappingIdArg && args[mappingIdArg];
       call.messageBody.identifier = this._mapper.createMappingForThing(thing, requestedId);
       this.messageCount++;
       this._port.postMessage(call);
@@ -895,11 +895,11 @@ class AbstractDevtoolsChannel {
   }
 
   _handleMessage(msg) {
-    let listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
+    const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
     if (!listeners) {
       console.warn(`No one is listening to ${msg.messageType} message`);
     } else {
-      for (let listener of listeners) listener(msg);
+      for (const listener of listeners) listener(msg);
     }
   }
 
@@ -1040,7 +1040,7 @@ class OuterPortAttachment {
   }
 
   SimpleCallback({callback, data}) {
-    let callbackDetails = this._callbackRegistry[callback];
+    const callbackDetails = this._callbackRegistry[callback];
     if (callbackDetails) {
       // Copying callback data, as the callback can be used multiple times.
       this._sendDataflowMessage(Object.assign({}, callbackDetails), data);
@@ -1096,7 +1096,7 @@ class OuterPortAttachment {
   }
 
   _describeHandleCall({operation, handle, particleId}) {
-    let metadata = Object.assign(this._arcMetadata(), {
+    const metadata = Object.assign(this._arcMetadata(), {
       operation,
       handle: this._describeHandle(handle)
     });
@@ -1112,7 +1112,7 @@ class OuterPortAttachment {
   }
 
   _trimParticleSpec(id, spec, handles) {
-    let connections = {};
+    const connections = {};
     spec.connectionMap.forEach((value, key) => {
       connections[key] = Object.assign({
         direction: value.direction
@@ -1127,7 +1127,7 @@ class OuterPortAttachment {
   }
 
   _describeParticle(id) {
-    let particleSpec = this._particleRegistry[id];
+    const particleSpec = this._particleRegistry[id];
     return {
       id,
       name: particleSpec && particleSpec.name
@@ -1278,7 +1278,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
   }
   renderSlot(slotName, contentTypes) {
     const stateArgs = this._getStateArgs();
-    let slot = this.getSlot(slotName);
+    const slot = this.getSlot(slotName);
     if (!slot) {
       return; // didn't receive StartRender.
     }
@@ -1288,7 +1288,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     contentTypes.forEach(ct => slot._requestedContentTypes.add(ct));
     // TODO(sjmiles): redundant, same answer for every slot
     if (this.shouldRender(...stateArgs)) {
-      let content = {};
+      const content = {};
       if (slot._requestedContentTypes.has('template')) {
         content.template = this.getTemplate(slot.slotName);
       }
@@ -1535,8 +1535,8 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
     this.configureHandles(handles);
     this.handles = handles;
     this._handlesToSync = new Set();
-    for (let name of this.config.handleNames) {
-      let handle = handles.get(name);
+    for (const name of this.config.handleNames) {
+      const handle = handles.get(name);
       if (handle && handle.options.keepSynced && handle.options.notifySync) {
         this._handlesToSync.add(name);
       }
@@ -1560,9 +1560,9 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
     this._debounce('handleUpdateDebounce', work, 100);
   }
   async _handlesToProps() {
-    let config = this.config;
+    const config = this.config;
     // acquire (async) list data from handles; BigCollections map to the handle itself
-    let data = await Promise.all(
+    const data = await Promise.all(
       config.handleNames
       .map(name => this.handles.get(name))
       .map(handle => {
@@ -1572,7 +1572,7 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
       })
     );
     // convert handle data (array) into props (dictionary)
-    let props = Object.create(null);
+    const props = Object.create(null);
     config.handleNames.forEach((name, i) => {
       props[name] = data[i];
     });
@@ -1653,7 +1653,7 @@ class Entity {
   identify(identifier) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified());
     this[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = identifier;
-    let components = identifier.split(':');
+    const components = identifier.split(':');
     if (components[components.length - 2] == 'uid') {
       this._userIDComponent = components[components.length - 1];
     }
@@ -1751,11 +1751,11 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
       hostedParticle,
       handles,
       arc) {
-    let otherMappedHandles = [];
-    let otherConnections = [];
+    const otherMappedHandles = [];
+    const otherConnections = [];
     let index = 2;
     const skipConnectionNames = [listHandleName, particleHandleName];
-    for (let [connectionName, otherHandle] of handles) {
+    for (const [connectionName, otherHandle] of handles) {
       if (skipConnectionNames.includes(connectionName)) {
         continue;
       }
@@ -1764,7 +1764,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
       // arc multiple times unnecessarily.
       otherMappedHandles.push(
           `use '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
-      let hostedOtherConnection = hostedParticle.connections.find(
+      const hostedOtherConnection = hostedParticle.connections.find(
           conn => conn.isCompatibleType(otherHandle.type));
       if (hostedOtherConnection) {
         otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
@@ -1779,10 +1779,10 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 
   async setHandles(handles) {
     this.handleIds = {};
-    let arc = await this.constructInnerArc();
+    const arc = await this.constructInnerArc();
     const listHandleName = 'list';
     const particleHandleName = 'hostedParticle';
-    let particleHandle = handles.get(particleHandleName);
+    const particleHandle = handles.get(particleHandleName);
     let hostedParticle = null;
     let otherMappedHandles = [];
     let otherConnections = [];
@@ -1812,19 +1812,19 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
       this.relevance = 0.1;
     }
 
-    for (let [index, item] of this.getListEntries(list)) {
+    for (const [index, item] of this.getListEntries(list)) {
       let resolvedHostedParticle = hostedParticle;
       if (this.handleIds[item.id]) {
-        let itemHandle = await this.handleIds[item.id];
+        const itemHandle = await this.handleIds[item.id];
         itemHandle.set(item);
         continue;
       }
 
-      let itemHandlePromise =
+      const itemHandlePromise =
           arc.createHandle(type.primitiveType(), 'item' + index);
       this.handleIds[item.id] = itemHandlePromise;
 
-      let itemHandle = await itemHandlePromise;
+      const itemHandle = await itemHandlePromise;
 
       if (!resolvedHostedParticle) {
         // If we're muxing on behalf of an item with an embedded recipe, the
@@ -1847,9 +1847,9 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
                 this.handles,
                 arc);
       }
-      let hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
-      let slotName = [...this.spec.slots.values()][0].name;
-      let slotId = await arc.createSlot(
+      const hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
+      const slotName = [...this.spec.slots.values()][0].name;
+      const slotId = await arc.createSlot(
           this, slotName, resolvedHostedParticle.name, hostedSlotName, itemHandle._id);
 
       if (!slotId) {
@@ -1875,13 +1875,13 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
   }
 
   combineHostedModel(slotName, hostedSlotId, content) {
-    let subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
+    const subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
     if (!subId) {
       return;
     }
-    let items = this._state.renderModel ? this._state.renderModel.items : [];
-    let listIndex = items.findIndex(item => item.subId == subId);
-    let item = Object.assign({}, content.model, {subId});
+    const items = this._state.renderModel ? this._state.renderModel.items : [];
+    const listIndex = items.findIndex(item => item.subId == subId);
+    const item = Object.assign({}, content.model, {subId});
     if (listIndex >= 0 && listIndex < items.length) {
       items[listIndex] = item;
     } else {
@@ -1891,7 +1891,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
   }
 
   combineHostedTemplate(slotName, hostedSlotId, content) {
-    let subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
+    const subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
     if (!subId) {
       return;
     }
@@ -1993,14 +1993,14 @@ class ParticleExecutionContext {
     };
 
     this._apiPort.onGetBackingStoreCallback = ({type, id, name, callback, storageKey}) => {
-      let proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
+      const proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
       proxy.storageKey = storageKey;
       return [proxy, () => callback(proxy, storageKey)];
     };
 
 
     this._apiPort.onCreateHandleCallback = ({type, id, name, callback}) => {
-      let proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
+      const proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
       return [proxy, () => callback(proxy)];
     };
 
@@ -2077,7 +2077,7 @@ class ParticleExecutionContext {
           this._handlers.set(name, []);
         }
         fireEvent(event) {
-          for (let handler of this._handlers.get(event.handler) || []) {
+          for (const handler of this._handlers.get(event.handler) || []) {
             handler(event);
           }
         }
@@ -2103,12 +2103,12 @@ class ParticleExecutionContext {
   }
 
   innerArcHandle(arcId, particleId) {
-    let pec = this;
+    const pec = this;
     return {
       createHandle: function(type, name, hostParticle) {
         return new Promise((resolve, reject) =>
           pec._apiPort.ArcCreateHandle({arc: arcId, type, name, callback: proxy => {
-            let handle = Object(_ts_build_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, particleId);
+            const handle = Object(_ts_build_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, particleId);
             resolve(handle);
             if (hostParticle) {
               proxy.register(hostParticle, handle);
@@ -2168,22 +2168,22 @@ class ParticleExecutionContext {
   }
 
   async _instantiateParticle(id, spec, proxies) {
-    let name = spec.name;
+    const name = spec.name;
     let resolve = null;
-    let p = new Promise(res => resolve = res);
+    const p = new Promise(res => resolve = res);
     this._pendingLoads.push(p);
-    let clazz = await this._loader.loadParticleClass(spec);
-    let capabilities = this.defaultCapabilitySet();
-    let particle = new clazz(); // TODO: how can i add an argument to DomParticle ctor?
+    const clazz = await this._loader.loadParticleClass(spec);
+    const capabilities = this.defaultCapabilitySet();
+    const particle = new clazz(); // TODO: how can i add an argument to DomParticle ctor?
     particle.id = id;
     particle.capabilities = capabilities;
     this._particles.push(particle);
 
-    let handleMap = new Map();
-    let registerList = [];
+    const handleMap = new Map();
+    const registerList = [];
     proxies.forEach((proxy, name) => {
-      let connSpec = spec.connectionMap.get(name);
-      let handle = Object(_ts_build_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, id, connSpec.isInput, connSpec.isOutput);
+      const connSpec = spec.connectionMap.get(name);
+      const handle = Object(_ts_build_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, id, connSpec.isInput, connSpec.isOutput);
       handleMap.set(name, handle);
 
       // Defer registration of handles with proxies until after particles have a chance to
@@ -2194,14 +2194,14 @@ class ParticleExecutionContext {
     return [particle, async () => {
       await particle.setHandles(handleMap);
       registerList.forEach(({proxy, particle, handle}) => proxy.register(particle, handle));
-      let idx = this._pendingLoads.indexOf(p);
+      const idx = this._pendingLoads.indexOf(p);
       this._pendingLoads.splice(idx, 1);
       resolve();
     }];
   }
 
   get relevance() {
-    let rMap = new Map();
+    const rMap = new Map();
     this._particles.forEach(p => {
       if (p.relevances.length == 0) {
         return;
@@ -2226,7 +2226,7 @@ class ParticleExecutionContext {
     if (!this.busy) {
       return Promise.resolve();
     }
-    let busyParticlePromises = this._particles.filter(particle => particle.busy).map(particle => particle.idle);
+    const busyParticlePromises = this._particles.filter(particle => particle.busy).map(particle => particle.idle);
     return Promise.all([this._scheduler.idle, ...this._pendingLoads, ...busyParticlePromises]).then(() => this.idle);
   }
 }
@@ -2278,8 +2278,8 @@ class ConnectionSpec {
   }
 
   instantiateDependentConnections(particle, typeVarMap) {
-    for (let dependentArg of this.rawData.dependentConnections) {
-      let dependentConnection = particle.createConnection(dependentArg, typeVarMap);
+    for (const dependentArg of this.rawData.dependentConnections) {
+      const dependentConnection = particle.createConnection(dependentArg, typeVarMap);
       dependentConnection.parentConnection = this;
       this.dependentConnections.push(dependentConnection);
     }
@@ -2337,7 +2337,7 @@ class ParticleSpec {
     this._model = model;
     this.name = model.name;
     this.verbs = model.verbs;
-    let typeVarMap = new Map();
+    const typeVarMap = new Map();
     this.connections = [];
     model.args.forEach(arg => this.createConnection(arg, typeVarMap));
     this.connectionMap = new Map();
@@ -2368,18 +2368,18 @@ class ParticleSpec {
   }
 
   createConnection(arg, typeVarMap) {
-    let connection = new ConnectionSpec(arg, typeVarMap);
+    const connection = new ConnectionSpec(arg, typeVarMap);
     this.connections.push(connection);
     connection.instantiateDependentConnections(this, typeVarMap);
     return connection;
   }
 
   isInput(param) {
-    for (let input of this.inputs) if (input.name == param) return true;
+    for (const input of this.inputs) if (input.name == param) return true;
   }
 
   isOutput(param) {
-    for (let outputs of this.outputs) if (outputs.name == param) return true;
+    for (const outputs of this.outputs) if (outputs.name == param) return true;
   }
 
   getSlotSpec(slotName) {
@@ -2396,14 +2396,14 @@ class ParticleSpec {
 
   toLiteral() {
     let {args, name, verbs, description, implFile, affordance, slots} = this._model;
-    let connectionToLiteral = ({type, direction, name, isOptional, dependentConnections}) => ({type: type.toLiteral(), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral)});
+    const connectionToLiteral = ({type, direction, name, isOptional, dependentConnections}) => ({type: type.toLiteral(), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral)});
     args = args.map(a => connectionToLiteral(a));
     return {args, name, verbs, description, implFile, affordance, slots};
   }
 
   static fromLiteral(literal) {
     let {args, name, verbs, description, implFile, affordance, slots} = literal;
-    let connectionFromLiteral = ({type, direction, name, isOptional, dependentConnections}) =>
+    const connectionFromLiteral = ({type, direction, name, isOptional, dependentConnections}) =>
       ({type: _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : []});
     args = args.map(connectionFromLiteral);
     return new ParticleSpec({args, name, verbs: verbs || [], description, implFile, affordance, slots});
@@ -2436,21 +2436,21 @@ class ParticleSpec {
   }
 
   toString() {
-    let results = [];
+    const results = [];
     let verbs = '';
     if (this.verbs.length > 0) {
       verbs = ' ' + this.verbs.map(verb => `&${verb}`).join(' ');
     }
     results.push(`particle ${this.name}${verbs} in '${this.implFile}'`.trim());
-    let indent = '  ';
-    let writeConnection = (connection, indent) => {
+    const indent = '  ';
+    const writeConnection = (connection, indent) => {
       results.push(`${indent}${connection.direction} ${connection.type.toString()}${connection.isOptional ? '?' : ''} ${connection.name}`);
-      for (let dependent of connection.dependentConnections) {
+      for (const dependent of connection.dependentConnections) {
         writeConnection(dependent, indent + '  ');
       }
     };
 
-    for (let connection of this.connections) {
+    for (const connection of this.connections) {
       if (connection.parentConnection) {
         continue;
       }
@@ -2460,7 +2460,7 @@ class ParticleSpec {
     this.affordance.filter(a => a != 'mock').forEach(a => results.push(`  affordance ${a}`));
     this.slots.forEach(s => {
       // Consume slot.
-      let consume = [];
+      const consume = [];
       if (s.isRequired) {
         consume.push('must');
       }
@@ -2478,7 +2478,7 @@ class ParticleSpec {
       }
       // Provided slots.
       s.providedSlots.forEach(ps => {
-        let provide = [];
+        const provide = [];
         if (ps.isRequired) {
           provide.push('must');
         }
@@ -2665,10 +2665,10 @@ class Particle {
   }
 
   static buildManifest(strings, ...bits) {
-    let output = [];
+    const output = [];
     for (let i = 0; i < bits.length; i++) {
-        let str = strings[i];
-        let indent = / *$/.exec(str)[0];
+        const str = strings[i];
+        const indent = / *$/.exec(str)[0];
         let bitStr;
         if (typeof bits[i] == 'string') {
           bitStr = bits[i];
@@ -2689,7 +2689,7 @@ class Particle {
     return this.setDescriptionPattern('pattern', pattern);
   }
   setDescriptionPattern(connectionName, pattern) {
-    let descriptions = this.handles.get('descriptions');
+    const descriptions = this.handles.get('descriptions');
     if (descriptions) {
       descriptions.store(new descriptions.entityClass({key: connectionName, value: pattern}, this.spec.name + '-' + connectionName));
       return true;
@@ -2820,7 +2820,7 @@ class StorageProxyBase {
       // If a handle configured for sync notifications registers after we've received the full
       // model, notify it immediately.
       if (handle.options.notifySync && this._synchronized == SyncState.full) {
-        let syncModel = this._getModelForSync();
+        const syncModel = this._getModelForSync();
         this._scheduler.enqueue(particle, handle, ['sync', particle, syncModel]);
       }
     }
@@ -2845,7 +2845,7 @@ class StorageProxyBase {
       this._updates.shift();
     }
 
-    let syncModel = this._getModelForSync();
+    const syncModel = this._getModelForSync();
     this._notify('sync', syncModel, options => options.keepSynced && options.notifySync);
     this._processUpdates();
   }
@@ -2853,7 +2853,7 @@ class StorageProxyBase {
   _onUpdate(update) {
     // Immediately notify any handles that are not configured with keepSynced but do want updates.
     if (this._observers.find(({handle}) => !handle.options.keepSynced && handle.options.notifyUpdate)) {
-      let handleUpdate = this._processUpdate(update, false);
+      const handleUpdate = this._processUpdate(update, false);
       this._notify('update', handleUpdate, options => !options.keepSynced && options.notifyUpdate);
     }
 
@@ -2875,7 +2875,7 @@ class StorageProxyBase {
   }
 
   _notify(kind, details, predicate=() => true) {
-    for (let {handle, particle} of this._observers) {
+    for (const {handle, particle} of this._observers) {
       if (predicate(handle.options)) {
         this._scheduler.enqueue(particle, handle, [kind, particle, details]);
       }
@@ -2884,7 +2884,7 @@ class StorageProxyBase {
 
   _processUpdates() {
 
-    let updateIsNext = update => {
+    const updateIsNext = update => {
       if (update.version == this._version + 1) {
         return true;
       }
@@ -2903,10 +2903,10 @@ class StorageProxyBase {
 
     // Consume all queued updates whose versions are monotonically increasing from our stored one.
     while (this._updates.length > 0 && updateIsNext(this._updates[0])) {
-      let update = this._updates.shift();
+      const update = this._updates.shift();
 
       // Fold the update into our stored model.
-      let handleUpdate = this._processUpdate(update);
+      const handleUpdate = this._processUpdate(update);
       this._version = update.version;
 
       // Notify handles configured with keepSynced and notifyUpdates (non-keepSynced handles are
@@ -2922,7 +2922,7 @@ class StorageProxyBase {
       if (this._synchronized != SyncState.none) {
         this._synchronized = SyncState.none;
         this._port.SynchronizeProxy({handle: this, callback: x => this._onSynchronize(x)});
-        for (let {handle, particle} of this._observers) {
+        for (const {handle, particle} of this._observers) {
           if (handle.options.notifyDesync) {
             this._scheduler.enqueue(particle, handle, ['desync', particle]);
           }
@@ -2979,22 +2979,22 @@ class CollectionProxy extends StorageProxyBase {
     if (this._synchronized == SyncState.full) {
       // If we're synchronized, then any updates we sent have
       // already been applied/notified.
-      for (let {handle} of this._observers) {
+      for (const {handle} of this._observers) {
         if (update.originatorId == handle._particleId) {
           return null;
         }
       }
     }
-    let added = [];
-    let removed = [];
+    const added = [];
+    const removed = [];
     if ('add' in update) {
-      for (let {value, keys, effective} of update.add) {
+      for (const {value, keys, effective} of update.add) {
         if (apply && this._model.add(value.id, value, keys) || !apply && effective) {
           added.push(value);
         }
       }
     } else if ('remove' in update) {
-      for (let {value, keys, effective} of update.remove) {
+      for (const {value, keys, effective} of update.remove) {
         const localValue = this._model.getValue(value.id);
         if (apply && this._model.remove(value.id, keys) || !apply && effective) {
           removed.push(localValue);
@@ -3004,7 +3004,7 @@ class CollectionProxy extends StorageProxyBase {
       throw new Error(`StorageProxy received invalid update event: ${JSON.stringify(update)}`);
     }
     if (added.length || removed.length) {
-      let result = {};
+      const result = {};
       if (added.length) result.add = added;
       if (removed.length) result.remove = removed;
       result.originatorId = update.originatorId;
@@ -3036,8 +3036,8 @@ class CollectionProxy extends StorageProxyBase {
   }
 
   store(value, keys, particleId) {
-    let id = value.id;
-    let data = {value, keys};
+    const id = value.id;
+    const data = {value, keys};
     this._port.HandleStore({handle: this, callback: () => {}, data, particleId});
 
     if (this._synchronized != SyncState.full) {
@@ -3046,7 +3046,7 @@ class CollectionProxy extends StorageProxyBase {
     if (!this._model.add(id, value, keys)) {
       return;
     }
-    let update = {originatorId: particleId, add: [value]};
+    const update = {originatorId: particleId, add: [value]};
     this._notify('update', update, options => options.notifyUpdate);
   }
 
@@ -3067,25 +3067,25 @@ class CollectionProxy extends StorageProxyBase {
 
   remove(id, keys, particleId) {
     if (this._synchronized != SyncState.full) {
-      let data = {id, keys: []};
+      const data = {id, keys: []};
       this._port.HandleRemove({handle: this, callback: () => {}, data, particleId});
       return;
     }
 
-    let value = this._model.getValue(id);
+    const value = this._model.getValue(id);
     if (!value) {
       return;
     }
     if (keys.length == 0) {
       keys = this._model.getKeys(id);
     }
-    let data = {id, keys};
+    const data = {id, keys};
     this._port.HandleRemove({handle: this, callback: () => {}, data, particleId});
 
     if (!this._model.remove(id, keys)) {
       return;
     }
-    let update = {originatorId: particleId, remove: [value]};
+    const update = {originatorId: particleId, remove: [value]};
     this._notify('update', update, options => options.notifyUpdate);
   }
 }
@@ -3139,7 +3139,7 @@ class VariableProxy extends StorageProxyBase {
         // TODO(shans): refactor this code so we don't need to layer-violate. 
         if (this._synchronized !== SyncState.full) {
           this._synchronized = SyncState.full;
-          let syncModel = this._getModelForSync();
+          const syncModel = this._getModelForSync();
           this._notify('sync', syncModel, options => options.keepSynced && options.notifySync);
 
         }
@@ -3183,7 +3183,7 @@ class VariableProxy extends StorageProxyBase {
     this._model = JSON.parse(JSON.stringify(entity));
     this._barrier = barrier;
     this._port.HandleSet({data: entity, handle: this, particleId, barrier});
-    let update = {originatorId: particleId, data: entity};
+    const update = {originatorId: particleId, data: entity};
     this._notify('update', update, options => options.notifyUpdate);
   }
 
@@ -3191,11 +3191,11 @@ class VariableProxy extends StorageProxyBase {
     if (this._model == null) {
       return;
     }
-    let barrier = this.generateID('barrier');
+    const barrier = this.generateID('barrier');
     this._model = null;
     this._barrier = barrier;
     this._port.HandleClear({handle: this, particleId, barrier});
-    let update = {originatorId: particleId, data: null};
+    const update = {originatorId: particleId, data: null};
     this._notify('update', update, options => options.notifyUpdate);
   }
 }
@@ -3248,11 +3248,11 @@ class StorageProxyScheduler {
     if (!this._queues.has(particle)) {
       this._queues.set(particle, new Map());
     }
-    let byHandle = this._queues.get(particle);
+    const byHandle = this._queues.get(particle);
     if (!byHandle.has(handle)) {
       byHandle.set(handle, []);
     }
-    let queue = byHandle.get(handle);
+    const queue = byHandle.get(handle);
     queue.push(args);
     this._schedule();
   }
@@ -3293,11 +3293,11 @@ class StorageProxyScheduler {
   _dispatch() {
     // TODO: should we process just one particle per task?
     while (this._queues.size > 0) {
-      let particle = [...this._queues.keys()][0];
-      let byHandle = this._queues.get(particle);
+      const particle = [...this._queues.keys()][0];
+      const byHandle = this._queues.get(particle);
       this._queues.delete(particle);
-      for (let [handle, queue] of byHandle.entries()) {
-        for (let args of queue) {
+      for (const [handle, queue] of byHandle.entries()) {
+        for (const args of queue) {
           try {
             handle._notify(...args);
           } catch (e) {
@@ -3340,7 +3340,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // Regex to separate style and template.
-let re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
+const re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
 
 /** @class TransformationDomParticle
  * Particle that does transformation stuff with DOM.

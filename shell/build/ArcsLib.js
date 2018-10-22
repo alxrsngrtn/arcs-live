@@ -54227,13 +54227,13 @@ class APIPort {
     this.Map = function(keyprimitive, valueprimitive) {
       return {
         convert: a => {
-          let r = {};
+          const r = {};
           a.forEach((value, key) => r[keyprimitive.convert(key)] = valueprimitive.convert(value));
           return r;
         },
         unconvert: a => {
-          let r = new Map();
-          for (let key in a) {
+          const r = new Map();
+          for (const key in a) {
             r.set(
                 keyprimitive.unconvert(key), valueprimitive.unconvert(a[key]));
           }
@@ -54272,7 +54272,7 @@ class APIPort {
 
     this.messageCount++;
 
-    let handler = this._messageMap.get(e.data.messageType);
+    const handler = this._messageMap.get(e.data.messageType);
     let args;
     try {
       args = this._unprocessArguments(handler.args, e.data.messageBody);
@@ -54282,19 +54282,19 @@ class APIPort {
     }
     // If any of the converted arguments are still pending promises
     // wait for them to complete before processing the message.
-    for (let arg of Object.values(args)) {
+    for (const arg of Object.values(args)) {
       if (arg instanceof Promise) {
         arg.then(() => this._processMessage(e));
         return;
       }
     }
-    let handlerName = 'on' + e.data.messageType;
+    const handlerName = 'on' + e.data.messageType;
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this[handlerName], `no handler named ${handlerName}`);
     if (this._debugAttachment) {
       if (this._debugAttachment[handlerName]) this._debugAttachment[handlerName](args);
       this._debugAttachment.handlePecMessage(handlerName, e.data.messageBody);
     }
-    let result = this[handlerName](args);
+    const result = this[handlerName](args);
     if (handler.isInitializer) {
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(args.identifier);
       await this._mapper.establishThingMapping(args.identifier, result);
@@ -54302,16 +54302,16 @@ class APIPort {
   }
 
   _processArguments(argumentTypes, args) {
-    let messageBody = {};
-    for (let argument in argumentTypes) {
+    const messageBody = {};
+    for (const argument in argumentTypes) {
       messageBody[argument] = argumentTypes[argument].convert(args[argument]);
     }
     return messageBody;
   }
 
   _unprocessArguments(argumentTypes, args) {
-    let messageBody = {};
-    for (let argument in argumentTypes) {
+    const messageBody = {};
+    for (const argument in argumentTypes) {
       messageBody[argument] = argumentTypes[argument].unconvert(args[argument]);
     }
     return messageBody;
@@ -54319,7 +54319,7 @@ class APIPort {
 
   registerCall(name, argumentTypes) {
     this[name] = args => {
-      let call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
+      const call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
       this.messageCount++;
       this._port.postMessage(call);
       if (this._debugAttachment) {
@@ -54348,8 +54348,8 @@ class APIPort {
   registerInitializer(name, argumentTypes, mappingIdArg = null, redundant = false) {
     this[name] = (thing, args) => {
       if (redundant && this._mapper.hasMappingForThing(thing)) return;
-      let call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
-      let requestedId = mappingIdArg && args[mappingIdArg];
+      const call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
+      const requestedId = mappingIdArg && args[mappingIdArg];
       call.messageBody.identifier = this._mapper.createMappingForThing(thing, requestedId);
       this.messageCount++;
       this._port.postMessage(call);
@@ -62866,11 +62866,11 @@ class AbstractDevtoolsChannel {
   }
 
   _handleMessage(msg) {
-    let listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
+    const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
     if (!listeners) {
       console.warn(`No one is listening to ${msg.messageType} message`);
     } else {
-      for (let listener of listeners) listener(msg);
+      for (const listener of listeners) listener(msg);
     }
   }
 
@@ -62983,7 +62983,7 @@ class ArcPlannerInvoker {
   }
 
   async invokePlanner(msg) {
-    let strategy = this.planner.strategizer._strategies.find(s => s.constructor.name === msg.strategy);
+    const strategy = this.planner.strategizer._strategies.find(s => s.constructor.name === msg.strategy);
     if (!strategy) return {error: 'could not find strategy'};
 
     let manifest;
@@ -62993,24 +62993,24 @@ class ArcPlannerInvoker {
       return {error: error.message};
     }
 
-    let recipe = manifest.recipes[0];
+    const recipe = manifest.recipes[0];
     recipe.normalize();
 
-    let results = await strategy.generate({
+    const results = await strategy.generate({
       generation: 0,
       generated: [{result: recipe, score: 1}],
       population: [{result: recipe, score: 1}],
       terminal: []
     });
 
-    for (let result of results) {
+    for (const result of results) {
       result.hash = await result.hash;
       result.derivation = undefined;
-      let recipe = result.result;
+      const recipe = result.result;
       result.result = recipe.toString({showUnresolved: true});
 
       if (!Object.isFrozen(recipe)) {
-        let errors = new Map();
+        const errors = new Map();
         recipe.normalize({errors});
         result.errors = [...errors.keys()].map(thing => ({id: thing.id, error: errors.get(thing)}));
         result.normalized = recipe.toString();
@@ -63070,7 +63070,7 @@ class ArcStoresFetcher {
 
   async _digestStores(stores) {
     const result = [];
-    for (let [store, tags] of stores) {
+    for (const [store, tags] of stores) {
       let value = `(don't know how to dereference)`;
       if (store.toList) {
         value = await store.toList();
@@ -63223,7 +63223,7 @@ class OuterPortAttachment {
   }
 
   SimpleCallback({callback, data}) {
-    let callbackDetails = this._callbackRegistry[callback];
+    const callbackDetails = this._callbackRegistry[callback];
     if (callbackDetails) {
       // Copying callback data, as the callback can be used multiple times.
       this._sendDataflowMessage(Object.assign({}, callbackDetails), data);
@@ -63279,7 +63279,7 @@ class OuterPortAttachment {
   }
 
   _describeHandleCall({operation, handle, particleId}) {
-    let metadata = Object.assign(this._arcMetadata(), {
+    const metadata = Object.assign(this._arcMetadata(), {
       operation,
       handle: this._describeHandle(handle)
     });
@@ -63295,7 +63295,7 @@ class OuterPortAttachment {
   }
 
   _trimParticleSpec(id, spec, handles) {
-    let connections = {};
+    const connections = {};
     spec.connectionMap.forEach((value, key) => {
       connections[key] = Object.assign({
         direction: value.direction
@@ -63310,7 +63310,7 @@ class OuterPortAttachment {
   }
 
   _describeParticle(id) {
-    let particleSpec = this._particleRegistry[id];
+    const particleSpec = this._particleRegistry[id];
     return {
       id,
       name: particleSpec && particleSpec.name
@@ -63385,7 +63385,7 @@ class StrategyExplorerAdapter {
     let lastID = 0;
     const assignIdAndCopy = recipe => {
       idMap.set(recipe, lastID);
-      let {result, score, derivation, description, hash, valid, active, irrelevant} = recipe;
+      const {result, score, derivation, description, hash, valid, active, irrelevant} = recipe;
       return {result, score, derivation, description, hash, valid, active, irrelevant, id: lastID++};
     };
     generations = generations.map(pop => ({
@@ -63395,8 +63395,8 @@ class StrategyExplorerAdapter {
 
     // CombinedStrategy creates recipes with derivations that are missing
     // from the population. Re-adding them as 'combined'.
-    for (let pop of generations) {
-      let lengthWithoutCombined = pop.generated.length;
+    for (const pop of generations) {
+      const lengthWithoutCombined = pop.generated.length;
       for (let i = 0; i < lengthWithoutCombined; i++) {
         pop.generated[i].derivation.forEach(function addMissing({parent}) {
           if (parent && !idMap.has(parent)) {
@@ -63409,8 +63409,8 @@ class StrategyExplorerAdapter {
 
     // Change recipes in derivation to IDs and compute resolved stats.
     return generations.map(pop => {
-      let population = pop.generated;
-      let record = pop.record;
+      const population = pop.generated;
+      const record = pop.record;
       // Adding those here to reuse recipe resolution computation.
       record.resolvedDerivations = 0;
       record.resolvedDerivationsByStrategy = {};
@@ -63430,23 +63430,23 @@ class StrategyExplorerAdapter {
         item.resolved = item.result.isResolved();
         if (item.resolved) {
           record.resolvedDerivations++;
-          let strategy = item.derivation[0].strategy;
+          const strategy = item.derivation[0].strategy;
           if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
             record.resolvedDerivationsByStrategy[strategy] = 0;
           }
           record.resolvedDerivationsByStrategy[strategy]++;
         }
-        let options = {showUnresolved: true, showInvalid: false, details: ''};
+        const options = {showUnresolved: true, showInvalid: false, details: ''};
         item.result = item.result.toString(options);
       });
-      let populationMap = {};
+      const populationMap = {};
       population.forEach(item => {
         if (populationMap[item.derivation[0].strategy] == undefined) {
           populationMap[item.derivation[0].strategy] = [];
         }
         populationMap[item.derivation[0].strategy].push(item);
       });
-      let result = {population: [], record};
+      const result = {population: [], record};
       Object.keys(populationMap).forEach(strategy => {
         result.population.push({strategy: strategy, recipes: populationMap[strategy]});
       });
@@ -63602,18 +63602,18 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
   }
 
   async _combineSelectedDescriptions(selectedDescriptions, options) {
-    let suggestionByParticleDesc = new Map();
-    for (let particleDesc of selectedDescriptions) {
+    const suggestionByParticleDesc = new Map();
+    for (const particleDesc of selectedDescriptions) {
       if (this.seenParticles.has(particleDesc._particle)) {
         continue;
       }
 
       let {template, model} = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
 
-      let success = await Promise.all(Object.keys(model).map(async tokenKey => {
-        let tokens = this._initSubTokens(model[tokenKey], particleDesc);
+      const success = await Promise.all(Object.keys(model).map(async tokenKey => {
+        const tokens = this._initSubTokens(model[tokenKey], particleDesc);
         return (await Promise.all(tokens.map(async token => {
-          let tokenValue = await this.tokenToString(token);
+          const tokenValue = await this.tokenToString(token);
           if (tokenValue == undefined) {
             return false;
           } else if (tokenValue && tokenValue.template && tokenValue.model) {
@@ -63623,7 +63623,7 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
             model = Object.assign(model, tokenValue.model);
           } else { // Text token.
             // Replace tokenKey, in case multiple selected suggestions use the same key.
-            let newTokenKey = `${tokenKey}${++this._nextID}`;
+            const newTokenKey = `${tokenKey}${++this._nextID}`;
             template = template.replace(`{{${tokenKey}}}`, `{{${newTokenKey}}}`);
             delete model[tokenKey];
             model[newTokenKey] = tokenValue;
@@ -63638,7 +63638,7 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
     }
 
     // Populate suggestions list while maintaining original particles order.
-    let suggestions = [];
+    const suggestions = [];
     selectedDescriptions.forEach(desc => {
       if (suggestionByParticleDesc.has(desc)) {
         suggestions.push(suggestionByParticleDesc.get(desc));
@@ -63646,7 +63646,7 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
     });
 
     if (suggestions.length > 0) {
-      let result = this._joinDescriptions(suggestions);
+      const result = this._joinDescriptions(suggestions);
       if (!options || !options.skipFormatting) {
         result.template += '.';
       }
@@ -63660,15 +63660,15 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
     }
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particleDesc.pattern, 'Description must contain template and model, or pattern');
     let template = '';
-    let model = {};
-    let tokens = this._initTokens(particleDesc.pattern, particleDesc);
+    const model = {};
+    const tokens = this._initTokens(particleDesc.pattern, particleDesc);
 
     tokens.forEach((token, i) => {
       if (token.text) {
         template = template.concat(
             `${(index == 0 && i == 0 && !options.skipFormatting) ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
       } else { // handle or slot handle.
-        let sanitizedFullName = token.fullName.replace(/[.{}_$]/g, '');
+        const sanitizedFullName = token.fullName.replace(/[.{}_$]/g, '');
         let attribute = '';
         // TODO(mmandlis): capitalize the data in the model instead.
         if (i == 0 && !options.skipFormatting) {
@@ -63693,9 +63693,9 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
     }
 
     // Capitalize the first element in the DOM template.
-    let tokens = sentence.template.match(/<[a-zA-Z0-9]+>{{([a-zA-Z0-9]*)}}<\/[a-zA-Z0-9]+>/);
+    const tokens = sentence.template.match(/<[a-zA-Z0-9]+>{{([a-zA-Z0-9]*)}}<\/[a-zA-Z0-9]+>/);
     if (tokens && tokens.length > 1 && sentence.model[tokens[1]]) {
-      let modelToken = sentence.model[tokens[1]];
+      const modelToken = sentence.model[tokens[1]];
       if (modelToken.length > 0) {
         sentence.model[tokens[1]] = `${modelToken[0].toUpperCase()}${modelToken.substr(1)}`;
       }
@@ -63710,8 +63710,8 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
       return super._joinDescriptions(descs);
     }
 
-    let result = {template: '', model: {}};
-    let count = descs.length;
+    const result = {template: '', model: {}};
+    const count = descs.length;
     descs.forEach((desc, i) => {
       if (typeof desc === 'string') {
         desc = Object.assign({}, {template: desc, model: {}});
@@ -63748,7 +63748,7 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
       return token;
     });
 
-    let nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
+    const nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
     return {
       template: nonEmptyTokens.map(token => token.template).join(''),
       model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => Object.assign(prev, curr), {})
@@ -63762,7 +63762,7 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
         model: Object.assign(description.model, storeValue.model)
       };
     }
-    let descKey = `${token.handleName}Description${++this._nextID}`;
+    const descKey = `${token.handleName}Description${++this._nextID}`;
     return {
       template: `<span>{{${descKey}}}</span> (${storeValue.template})`,
       model: Object.assign({[descKey]: description}, storeValue.model)
@@ -63770,7 +63770,7 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
   }
 
   _formatEntityProperty(handleName, properties, value) {
-    let key = `${handleName}${properties.join('')}Value${++this._nextID}`;
+    const key = `${handleName}${properties.join('')}Value${++this._nextID}`;
     return {
       template: `<b>{{${key}}}</b>`,
       model: {[`${key}`]: value}
@@ -63778,7 +63778,7 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
   }
 
   _formatCollection(handleName, values) {
-    let handleKey = `${handleName}${++this._nextID}`;
+    const handleKey = `${handleName}${++this._nextID}`;
     if (values[0].rawData.name) {
       if (values.length > 2) {
         return {
@@ -63805,7 +63805,7 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
   }
 
   _formatSingleton(handleName, value, handleDescription) {
-    let formattedValue = super._formatSingleton(handleName, value, handleDescription);
+    const formattedValue = super._formatSingleton(handleName, value, handleDescription);
     if (formattedValue) {
       return {
         template: `<b>{{${handleName}Var}}</b>`,
@@ -63856,15 +63856,15 @@ class Description {
   set relevance(relevance) { this._relevance = relevance; }
 
   async getArcDescription(formatterClass) {
-    let desc = await new (formatterClass || DescriptionFormatter)(this).getDescription(this._arc.activeRecipe);
+    const desc = await new (formatterClass || DescriptionFormatter)(this).getDescription(this._arc.activeRecipe);
     if (desc) {
       return desc;
     }
   }
 
   async getRecipeSuggestion(formatterClass) {
-    let formatter = await new (formatterClass || DescriptionFormatter)(this);
-    let desc = await formatter.getDescription(this._arc.recipes[this._arc.recipes.length - 1]);
+    const formatter = await new (formatterClass || DescriptionFormatter)(this);
+    const desc = await formatter.getDescription(this._arc.recipes[this._arc.recipes.length - 1]);
     if (desc) {
       return desc;
     }
@@ -63875,7 +63875,7 @@ class Description {
   async getHandleDescription(recipeHandle) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipeHandle.connections.length > 0, 'handle has no connections?');
 
-    let formatter = new DescriptionFormatter(this);
+    const formatter = new DescriptionFormatter(this);
     formatter.excludeValues = true;
     return await formatter.getHandleDescription(recipeHandle);
   }
@@ -63899,7 +63899,7 @@ class DescriptionFormatter {
 
     if (recipe.patterns.length > 0) {
       let recipePatterns = [];
-      for (let pattern of recipe.patterns) {
+      for (const pattern of recipe.patterns) {
         recipePatterns.push(await this.patternToSuggestion(pattern, {_recipe: recipe}));
       }
       recipePatterns = recipePatterns.filter(pattern => Boolean(pattern));
@@ -63910,7 +63910,7 @@ class DescriptionFormatter {
     }
 
     // Choose particles, sort them by rank and generate suggestions.
-    let particlesSet = new Set(recipe.particles);
+    const particlesSet = new Set(recipe.particles);
     let selectedDescriptions = this._particleDescriptions
       .filter(desc => (particlesSet.has(desc._particle) && this._isSelectedDescription(desc)));
     // Prefer particles that render UI, if any.
@@ -63931,8 +63931,8 @@ class DescriptionFormatter {
   async getHandleDescription(recipeHandle) {
     await this._updateDescriptionHandles(this._description);
 
-    let handleConnection = this._selectHandleConnection(recipeHandle) || recipeHandle.connections[0];
-    let store = this._arc.findStoreById(recipeHandle.id);
+    const handleConnection = this._selectHandleConnection(recipeHandle) || recipeHandle.connections[0];
+    const store = this._arc.findStoreById(recipeHandle.id);
     return this._formatDescription(handleConnection, store);
   }
 
@@ -63940,9 +63940,9 @@ class DescriptionFormatter {
     this._particleDescriptions = [];
 
     // Combine all particles from direct and inner arcs.
-    let innerParticlesByName = {};
+    const innerParticlesByName = {};
     description._arc.recipes.forEach(recipe => {
-      let innerArcs = [...recipe.innerArcs.values()];
+      const innerArcs = [...recipe.innerArcs.values()];
       innerArcs.forEach(innerArc => {
         innerArc.recipes.forEach(innerRecipe => {
           innerRecipe.particles.forEach(innerParticle => {
@@ -63953,7 +63953,7 @@ class DescriptionFormatter {
         });
       });
     });
-    let allParticles = description.arc.activeRecipe.particles.concat(Object.values(innerParticlesByName));
+    const allParticles = description.arc.activeRecipe.particles.concat(Object.values(innerParticlesByName));
 
     await Promise.all(allParticles.map(async particle => {
       this._particleDescriptions.push(await this._createParticleDescription(particle, description.relevance));
@@ -63969,13 +63969,13 @@ class DescriptionFormatter {
       pDesc._rank = relevance.calcParticleRelevance(particle);
     }
 
-    let descByName = await this._getPatternByNameFromDescriptionHandle(particle) || {};
+    const descByName = await this._getPatternByNameFromDescriptionHandle(particle) || {};
     pDesc = Object.assign(pDesc, this._populateParticleDescription(particle, descByName));
     Object.values(particle.connections).forEach(handleConn => {
-      let specConn = particle.spec.connectionMap.get(handleConn.name);
-      let pattern = descByName[handleConn.name] || specConn.pattern;
+      const specConn = particle.spec.connectionMap.get(handleConn.name);
+      const pattern = descByName[handleConn.name] || specConn.pattern;
       if (pattern) {
-        let handleDescription = {pattern: pattern, _handleConn: handleConn, _store: this._arc.findStoreById(handleConn.handle.id)};
+        const handleDescription = {pattern: pattern, _handleConn: handleConn, _store: this._arc.findStoreById(handleConn.handle.id)};
         pDesc._connections[handleConn.name] = handleDescription;
       }
     });
@@ -63983,12 +63983,12 @@ class DescriptionFormatter {
   }
 
   async _getPatternByNameFromDescriptionHandle(particle) {
-    let descriptionConn = particle.connections['descriptions'];
+    const descriptionConn = particle.connections['descriptions'];
     if (descriptionConn && descriptionConn.handle && descriptionConn.handle.id) {
-      let descHandle = this._arc.findStoreById(descriptionConn.handle.id);
+      const descHandle = this._arc.findStoreById(descriptionConn.handle.id);
       if (descHandle) {
-        let descList = await descHandle.toList();
-        let descByName = {};
+        const descList = await descHandle.toList();
+        const descByName = {};
         descList.forEach(d => descByName[d.rawData.key] = d.rawData.value);
         return descByName;
       }
@@ -63996,18 +63996,18 @@ class DescriptionFormatter {
   }
 
   _populateParticleDescription(particle, descriptionByName) {
-    let pattern = descriptionByName['pattern'] || particle.spec.pattern;
+    const pattern = descriptionByName['pattern'] || particle.spec.pattern;
     return pattern ? {pattern} : {};
   }
 
   async _combineSelectedDescriptions(selectedDescriptions, options) {
-    let suggestions = [];
+    const suggestions = [];
     await Promise.all(selectedDescriptions.map(async particle => {
       if (!this.seenParticles.has(particle._particle)) {
         suggestions.push(await this.patternToSuggestion(particle.pattern, particle));
       }
     }));
-    let jointDescription = this._joinDescriptions(suggestions);
+    const jointDescription = this._joinDescriptions(suggestions);
     if (jointDescription) {
       if ((options || {}).skipFormatting) {
         return jointDescription;
@@ -64018,14 +64018,14 @@ class DescriptionFormatter {
   }
 
   _joinDescriptions(strings) {
-    let nonEmptyStrings = strings.filter(str => str);
-    let count = nonEmptyStrings.length;
+    const nonEmptyStrings = strings.filter(str => str);
+    const count = nonEmptyStrings.length;
     if (count > 0) {
       // Combine descriptions into a sentence:
       // "A."
       // "A and b."
       // "A, b, ..., and z." (Oxford comma ftw)
-      let delim = ['', '', ' and ', ', and '][Math.min(3, count)];
+      const delim = ['', '', ' and ', ', and '][Math.min(3, count)];
       const lastString = nonEmptyStrings.pop();
       return `${nonEmptyStrings.join(', ')}${delim}${lastString}`;
     }
@@ -64038,14 +64038,14 @@ class DescriptionFormatter {
   _capitalizeAndPunctuate(sentence) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(sentence);
     // "Capitalize, punctuate." (if the sentence doesn't end with a punctuation character).
-    let last = sentence.length - 1;
+    const last = sentence.length - 1;
     return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9()'>\]]/i) ? '.' : ''}`;
   }
 
   async patternToSuggestion(pattern, particleDescription) {
-    let tokens = this._initTokens(pattern, particleDescription);
-    let tokenPromises = tokens.map(async token => await this.tokenToString(token));
-    let tokenResults = await Promise.all(tokenPromises);
+    const tokens = this._initTokens(pattern, particleDescription);
+    const tokenPromises = tokens.map(async token => await this.tokenToString(token));
+    const tokenResults = await Promise.all(tokenPromises);
     if (tokenResults.filter(res => res == undefined).length == 0) {
       return this._joinTokens(tokenResults);
     }
@@ -64055,7 +64055,7 @@ class DescriptionFormatter {
     pattern = pattern.replace(/</g, '&lt;');
     let results = [];
     while (pattern.length > 0) {
-      let tokens = pattern.match(/\${[a-zA-Z0-9.]+}(?:\.[_a-zA-Z]+)?/g);
+      const tokens = pattern.match(/\${[a-zA-Z0-9.]+}(?:\.[_a-zA-Z]+)?/g);
       let firstToken;
       let tokenIndex;
       if (tokens) {
@@ -64066,7 +64066,7 @@ class DescriptionFormatter {
         tokenIndex = pattern.length;
       }
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(tokenIndex >= 0);
-      let nextToken = pattern.substring(0, tokenIndex);
+      const nextToken = pattern.substring(0, tokenIndex);
       if (nextToken.length > 0) {
         results.push({text: nextToken});
       }
@@ -64080,19 +64080,19 @@ class DescriptionFormatter {
 
   //async
   _initSubTokens(pattern, particleDescription) {
-    let valueTokens = pattern.match(/\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/);
-    let handleNames = valueTokens[1].split('.');
-    let extra = valueTokens.length == 3 ? valueTokens[2] : undefined;
+    const valueTokens = pattern.match(/\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/);
+    const handleNames = valueTokens[1].split('.');
+    const extra = valueTokens.length == 3 ? valueTokens[2] : undefined;
     let valueToken;
 
     // Fetch the particle description by name from the value token - if it wasn't passed, this is a recipe description.
     if (!particleDescription._particle) {
-      let particleName = handleNames.shift();
+      const particleName = handleNames.shift();
       if (particleName[0] !== particleName[0].toUpperCase()) {
         console.warn(`Invalid particle name '${particleName}' - must start with a capital letter.`);
         return [];
       }
-      let particleDescriptions = this._particleDescriptions.filter(desc => {
+      const particleDescriptions = this._particleDescriptions.filter(desc => {
         return desc._particle.name == particleName
             // The particle description is from the current recipe.
             && particleDescription._recipe.particles.find(p => p == desc._particle);
@@ -64108,7 +64108,7 @@ class DescriptionFormatter {
       // there will be a duplicate particle-description.
       particleDescription = particleDescriptions[particleDescriptions.length - 1];
     }
-    let particle = particleDescription._particle;
+    const particle = particleDescription._particle;
 
     if (handleNames.length == 0) {
       // return a  particle token
@@ -64118,7 +64118,7 @@ class DescriptionFormatter {
       };
     }
 
-    let handleConn = particle.connections[handleNames[0]];
+    const handleConn = particle.connections[handleNames[0]];
     if (handleConn) { // handle connection
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleConn.handle && handleConn.handle.id, 'Missing id???');
       return [{
@@ -64140,7 +64140,7 @@ class DescriptionFormatter {
       return [];
     }
 
-    let providedSlotConn = particle.consumedSlotConnections[handleNames[0]].providedSlots[handleNames[1]];
+    const providedSlotConn = particle.consumedSlotConnections[handleNames[0]].providedSlots[handleNames[1]];
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(providedSlotConn, `Could not find handle ${handleNames.join('.')}`);
     return [{
       fullName: valueTokens[0],
@@ -64183,7 +64183,7 @@ class DescriptionFormatter {
 
         // Transformation's hosted particle.
         if (token._handleConn.type.isInterface) {
-          let particleSpec = _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"].fromLiteral(await token._store.get());
+          const particleSpec = _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"].fromLiteral(await token._store.get());
           // TODO: call this.patternToSuggestion(...) to resolved expressions in the pattern template.
           return particleSpec.pattern;
         }
@@ -64196,7 +64196,7 @@ class DescriptionFormatter {
         // full handle description
         let description = (await this._formatDescriptionPattern(token._handleConn)) ||
                           this._formatStoreDescription(token._handleConn, token._store);
-        let storeValue = await this._formatStoreValue(token.handleName, token._store);
+        const storeValue = await this._formatStoreValue(token.handleName, token._store);
         if (!description) {
           // For singleton handle, if there is no real description (the type was used), use the plain value for description.
           // TODO: should this look at type.getContainedType() (which includes references), or maybe just type.isEntity?
@@ -64231,9 +64231,9 @@ class DescriptionFormatter {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!token.extra, `Unrecognized slot extra ${token.extra}`);
     }
 
-    let results = (await Promise.all(token._providedSlotConn.consumeConnections.map(async consumeConn => {
-      let particle = consumeConn.particle;
-      let particleDescription = this._particleDescriptions.find(desc => desc._particle == particle);
+    const results = (await Promise.all(token._providedSlotConn.consumeConnections.map(async consumeConn => {
+      const particle = consumeConn.particle;
+      const particleDescription = this._particleDescriptions.find(desc => desc._particle == particle);
       this.seenParticles.add(particle);
       return this.patternToSuggestion(particle.spec.pattern, particleDescription);
     })));
@@ -64245,7 +64245,7 @@ class DescriptionFormatter {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!store.type.isCollection && !store.type.isBigCollection,
            `Cannot return property ${properties.join(',')} for Collection or BigCollection`);
     // Use singleton value's property (eg. "09/15" for person's birthday)
-    let valueVar = await store.get();
+    const valueVar = await store.get();
     if (valueVar) {
       let value = valueVar.rawData;
       properties.forEach(p => {
@@ -64268,19 +64268,19 @@ class DescriptionFormatter {
       return;
     }
     if (store.type.isCollection) {
-      let values = await store.toList();
+      const values = await store.toList();
       if (values && values.length > 0) {
         return this._formatCollection(handleName, values);
       }
     } else if (store.type.isBigCollection) {
-      let cursorId = await store.stream(1);
-      let {value, done} = await store.cursorNext(cursorId);
+      const cursorId = await store.stream(1);
+      const {value, done} = await store.cursorNext(cursorId);
       store.cursorClose(cursorId);
       if (!done && value[0].rawData.name) {
         return await this._formatBigCollection(handleName, value[0]);
       }
     } else {
-      let value = await store.get();
+      const value = await store.get();
       if (value) {
         return this._formatSingleton(handleName, value, store.type.data.description.value);
       }
@@ -64328,14 +64328,14 @@ class DescriptionFormatter {
     // For "out" connection, use its own description
     // For "in" connection, use description of the highest ranked out connection with description.
     if (!chosenConnection.spec.isOutput) {
-      let otherConnection = this._selectHandleConnection(handleConnection.handle);
+      const otherConnection = this._selectHandleConnection(handleConnection.handle);
       if (otherConnection) {
         chosenConnection = otherConnection;
       }
     }
 
-    let chosenParticleDescription = this._particleDescriptions.find(desc => desc._particle == chosenConnection.particle);
-    let handleDescription = chosenParticleDescription ? chosenParticleDescription._connections[chosenConnection.name] : null;
+    const chosenParticleDescription = this._particleDescriptions.find(desc => desc._particle == chosenConnection.particle);
+    const handleDescription = chosenParticleDescription ? chosenParticleDescription._connections[chosenConnection.name] : null;
     // Add description to result array.
     if (handleDescription) {
       // Add the connection spec's description pattern.
@@ -64344,8 +64344,8 @@ class DescriptionFormatter {
   }
   _formatStoreDescription(handleConn, store) {
     if (store) {
-      let storeDescription = this._arc.getStoreDescription(store);
-      let handleType = this._formatHandleType(handleConn);
+      const storeDescription = this._arc.getStoreDescription(store);
+      const handleType = this._formatHandleType(handleConn);
       // Use the handle description available in the arc (if it is different than type name).
       if (!!storeDescription && storeDescription != handleType) {
         return storeDescription;
@@ -64353,28 +64353,28 @@ class DescriptionFormatter {
     }
   }
   _formatHandleType(handleConnection) {
-    let type = handleConnection.handle && handleConnection.handle.type.isResolved() ? handleConnection.handle.type : handleConnection.type;
+    const type = handleConnection.handle && handleConnection.handle.type.isResolved() ? handleConnection.handle.type : handleConnection.type;
     return type.toPrettyString().toLowerCase();
   }
 
   _selectHandleConnection(recipeHandle) {
-    let possibleConnections = recipeHandle.connections.filter(connection => {
+    const possibleConnections = recipeHandle.connections.filter(connection => {
       // Choose connections with patterns (manifest-based or dynamic).
-      let connectionSpec = connection.spec;
-      let particleDescription = this._particleDescriptions.find(desc => desc._particle == connection.particle);
+      const connectionSpec = connection.spec;
+      const particleDescription = this._particleDescriptions.find(desc => desc._particle == connection.particle);
       return !!connectionSpec.pattern || !!particleDescription._connections[connection.name];
     });
 
     possibleConnections.sort((c1, c2) => {
-      let isOutput1 = c1.spec.isOutput;
-      let isOutput2 = c2.spec.isOutput;
+      const isOutput1 = c1.spec.isOutput;
+      const isOutput2 = c2.spec.isOutput;
       if (isOutput1 != isOutput2) {
         // Prefer output connections
         return isOutput1 ? -1 : 1;
       }
 
-      let d1 = this._particleDescriptions.find(desc => desc._particle == c1.particle);
-      let d2 = this._particleDescriptions.find(desc => desc._particle == c2.particle);
+      const d1 = this._particleDescriptions.find(desc => desc._particle == c1.particle);
+      const d2 = this._particleDescriptions.find(desc => desc._particle == c2.particle);
       // Sort by particle's rank in descending order.
       return d2._rank - d1._rank;
     });
@@ -64385,10 +64385,10 @@ class DescriptionFormatter {
   }
 
   static sort(p1, p2) {
-    let isRoot = (slotSpec) => slotSpec.name == 'root' || slotSpec.tags.includes('root');
+    const isRoot = (slotSpec) => slotSpec.name == 'root' || slotSpec.tags.includes('root');
     // Root slot comes first.
-    let hasRoot1 = Boolean([...p1._particle.spec.slots.values()].find(slotSpec => isRoot(slotSpec)));
-    let hasRoot2 = Boolean([...p2._particle.spec.slots.values()].find(slotSpec => isRoot(slotSpec)));
+    const hasRoot1 = Boolean([...p1._particle.spec.slots.values()].find(slotSpec => isRoot(slotSpec)));
+    const hasRoot2 = Boolean([...p2._particle.spec.slots.values()].find(slotSpec => isRoot(slotSpec)));
     if (hasRoot1 != hasRoot2) {
       return hasRoot1 ? -1 : 1;
     }
@@ -64478,7 +64478,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
   }
   renderSlot(slotName, contentTypes) {
     const stateArgs = this._getStateArgs();
-    let slot = this.getSlot(slotName);
+    const slot = this.getSlot(slotName);
     if (!slot) {
       return; // didn't receive StartRender.
     }
@@ -64488,7 +64488,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     contentTypes.forEach(ct => slot._requestedContentTypes.add(ct));
     // TODO(sjmiles): redundant, same answer for every slot
     if (this.shouldRender(...stateArgs)) {
-      let content = {};
+      const content = {};
       if (slot._requestedContentTypes.has('template')) {
         content.template = this.getTemplate(slot.slotName);
       }
@@ -64735,8 +64735,8 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
     this.configureHandles(handles);
     this.handles = handles;
     this._handlesToSync = new Set();
-    for (let name of this.config.handleNames) {
-      let handle = handles.get(name);
+    for (const name of this.config.handleNames) {
+      const handle = handles.get(name);
       if (handle && handle.options.keepSynced && handle.options.notifySync) {
         this._handlesToSync.add(name);
       }
@@ -64760,9 +64760,9 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
     this._debounce('handleUpdateDebounce', work, 100);
   }
   async _handlesToProps() {
-    let config = this.config;
+    const config = this.config;
     // acquire (async) list data from handles; BigCollections map to the handle itself
-    let data = await Promise.all(
+    const data = await Promise.all(
       config.handleNames
       .map(name => this.handles.get(name))
       .map(handle => {
@@ -64772,7 +64772,7 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
       })
     );
     // convert handle data (array) into props (dictionary)
-    let props = Object.create(null);
+    const props = Object.create(null);
     config.handleNames.forEach((name, i) => {
       props[name] = data[i];
     });
@@ -64853,7 +64853,7 @@ class Entity {
   identify(identifier) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified());
     this[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = identifier;
-    let components = identifier.split(':');
+    const components = identifier.split(':');
     if (components[components.length - 2] == 'uid') {
       this._userIDComponent = components[components.length - 1];
     }
@@ -64912,7 +64912,7 @@ __webpack_require__.r(__webpack_exports__);
 // TODO: Make this generic so that it can also be used in-browser, or add a
 // separate in-process browser pec-factory.
 function FakePecFactory(id) {
-  let channel = new _ts_build_message_channel_js__WEBPACK_IMPORTED_MODULE_1__["MessageChannel"]();
+  const channel = new _ts_build_message_channel_js__WEBPACK_IMPORTED_MODULE_1__["MessageChannel"]();
   new _particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](channel.port1, `${id}:inner`, new _ts_build_loader_js__WEBPACK_IMPORTED_MODULE_2__["Loader"]());
   return channel.port2;
 }
@@ -64989,11 +64989,11 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
       hostedParticle,
       handles,
       arc) {
-    let otherMappedHandles = [];
-    let otherConnections = [];
+    const otherMappedHandles = [];
+    const otherConnections = [];
     let index = 2;
     const skipConnectionNames = [listHandleName, particleHandleName];
-    for (let [connectionName, otherHandle] of handles) {
+    for (const [connectionName, otherHandle] of handles) {
       if (skipConnectionNames.includes(connectionName)) {
         continue;
       }
@@ -65002,7 +65002,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
       // arc multiple times unnecessarily.
       otherMappedHandles.push(
           `use '${await arc.mapHandle(otherHandle._proxy)}' as v${index}`);
-      let hostedOtherConnection = hostedParticle.connections.find(
+      const hostedOtherConnection = hostedParticle.connections.find(
           conn => conn.isCompatibleType(otherHandle.type));
       if (hostedOtherConnection) {
         otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
@@ -65017,10 +65017,10 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 
   async setHandles(handles) {
     this.handleIds = {};
-    let arc = await this.constructInnerArc();
+    const arc = await this.constructInnerArc();
     const listHandleName = 'list';
     const particleHandleName = 'hostedParticle';
-    let particleHandle = handles.get(particleHandleName);
+    const particleHandle = handles.get(particleHandleName);
     let hostedParticle = null;
     let otherMappedHandles = [];
     let otherConnections = [];
@@ -65050,19 +65050,19 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
       this.relevance = 0.1;
     }
 
-    for (let [index, item] of this.getListEntries(list)) {
+    for (const [index, item] of this.getListEntries(list)) {
       let resolvedHostedParticle = hostedParticle;
       if (this.handleIds[item.id]) {
-        let itemHandle = await this.handleIds[item.id];
+        const itemHandle = await this.handleIds[item.id];
         itemHandle.set(item);
         continue;
       }
 
-      let itemHandlePromise =
+      const itemHandlePromise =
           arc.createHandle(type.primitiveType(), 'item' + index);
       this.handleIds[item.id] = itemHandlePromise;
 
-      let itemHandle = await itemHandlePromise;
+      const itemHandle = await itemHandlePromise;
 
       if (!resolvedHostedParticle) {
         // If we're muxing on behalf of an item with an embedded recipe, the
@@ -65085,9 +65085,9 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
                 this.handles,
                 arc);
       }
-      let hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
-      let slotName = [...this.spec.slots.values()][0].name;
-      let slotId = await arc.createSlot(
+      const hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
+      const slotName = [...this.spec.slots.values()][0].name;
+      const slotId = await arc.createSlot(
           this, slotName, resolvedHostedParticle.name, hostedSlotName, itemHandle._id);
 
       if (!slotId) {
@@ -65113,13 +65113,13 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
   }
 
   combineHostedModel(slotName, hostedSlotId, content) {
-    let subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
+    const subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
     if (!subId) {
       return;
     }
-    let items = this._state.renderModel ? this._state.renderModel.items : [];
-    let listIndex = items.findIndex(item => item.subId == subId);
-    let item = Object.assign({}, content.model, {subId});
+    const items = this._state.renderModel ? this._state.renderModel.items : [];
+    const listIndex = items.findIndex(item => item.subId == subId);
+    const item = Object.assign({}, content.model, {subId});
     if (listIndex >= 0 && listIndex < items.length) {
       items[listIndex] = item;
     } else {
@@ -65129,7 +65129,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
   }
 
   combineHostedTemplate(slotName, hostedSlotId, content) {
-    let subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
+    const subId = this._itemSubIdByHostedSlotId.get(hostedSlotId);
     if (!subId) {
       return;
     }
@@ -65231,14 +65231,14 @@ class ParticleExecutionContext {
     };
 
     this._apiPort.onGetBackingStoreCallback = ({type, id, name, callback, storageKey}) => {
-      let proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
+      const proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
       proxy.storageKey = storageKey;
       return [proxy, () => callback(proxy, storageKey)];
     };
 
 
     this._apiPort.onCreateHandleCallback = ({type, id, name, callback}) => {
-      let proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
+      const proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
       return [proxy, () => callback(proxy)];
     };
 
@@ -65315,7 +65315,7 @@ class ParticleExecutionContext {
           this._handlers.set(name, []);
         }
         fireEvent(event) {
-          for (let handler of this._handlers.get(event.handler) || []) {
+          for (const handler of this._handlers.get(event.handler) || []) {
             handler(event);
           }
         }
@@ -65341,12 +65341,12 @@ class ParticleExecutionContext {
   }
 
   innerArcHandle(arcId, particleId) {
-    let pec = this;
+    const pec = this;
     return {
       createHandle: function(type, name, hostParticle) {
         return new Promise((resolve, reject) =>
           pec._apiPort.ArcCreateHandle({arc: arcId, type, name, callback: proxy => {
-            let handle = Object(_ts_build_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, particleId);
+            const handle = Object(_ts_build_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, particleId);
             resolve(handle);
             if (hostParticle) {
               proxy.register(hostParticle, handle);
@@ -65406,22 +65406,22 @@ class ParticleExecutionContext {
   }
 
   async _instantiateParticle(id, spec, proxies) {
-    let name = spec.name;
+    const name = spec.name;
     let resolve = null;
-    let p = new Promise(res => resolve = res);
+    const p = new Promise(res => resolve = res);
     this._pendingLoads.push(p);
-    let clazz = await this._loader.loadParticleClass(spec);
-    let capabilities = this.defaultCapabilitySet();
-    let particle = new clazz(); // TODO: how can i add an argument to DomParticle ctor?
+    const clazz = await this._loader.loadParticleClass(spec);
+    const capabilities = this.defaultCapabilitySet();
+    const particle = new clazz(); // TODO: how can i add an argument to DomParticle ctor?
     particle.id = id;
     particle.capabilities = capabilities;
     this._particles.push(particle);
 
-    let handleMap = new Map();
-    let registerList = [];
+    const handleMap = new Map();
+    const registerList = [];
     proxies.forEach((proxy, name) => {
-      let connSpec = spec.connectionMap.get(name);
-      let handle = Object(_ts_build_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, id, connSpec.isInput, connSpec.isOutput);
+      const connSpec = spec.connectionMap.get(name);
+      const handle = Object(_ts_build_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, id, connSpec.isInput, connSpec.isOutput);
       handleMap.set(name, handle);
 
       // Defer registration of handles with proxies until after particles have a chance to
@@ -65432,14 +65432,14 @@ class ParticleExecutionContext {
     return [particle, async () => {
       await particle.setHandles(handleMap);
       registerList.forEach(({proxy, particle, handle}) => proxy.register(particle, handle));
-      let idx = this._pendingLoads.indexOf(p);
+      const idx = this._pendingLoads.indexOf(p);
       this._pendingLoads.splice(idx, 1);
       resolve();
     }];
   }
 
   get relevance() {
-    let rMap = new Map();
+    const rMap = new Map();
     this._particles.forEach(p => {
       if (p.relevances.length == 0) {
         return;
@@ -65464,7 +65464,7 @@ class ParticleExecutionContext {
     if (!this.busy) {
       return Promise.resolve();
     }
-    let busyParticlePromises = this._particles.filter(particle => particle.busy).map(particle => particle.idle);
+    const busyParticlePromises = this._particles.filter(particle => particle.busy).map(particle => particle.idle);
     return Promise.all([this._scheduler.idle, ...this._pendingLoads, ...busyParticlePromises]).then(() => this.idle);
   }
 }
@@ -65524,12 +65524,12 @@ class ParticleExecutionHost {
     };
 
     this._apiPort.onInitializeProxy = async ({handle, callback}) => {
-      let target = {};
+      const target = {};
       handle.on('change', data => this._apiPort.SimpleCallback({callback, data}), target);
     };
 
     this._apiPort.onSynchronizeProxy = async ({handle, callback}) => {
-      let data = await handle.modelForSynchronization();
+      const data = await handle.modelForSynchronization();
       this._apiPort.SimpleCallback({callback, data});
     };
 
@@ -65580,7 +65580,7 @@ class ParticleExecutionHost {
       if (!storageKey) {
         storageKey = this._arc.storageProviderFactory.baseStorageKey(type, this._arc.storageKey || 'volatile');
       }
-      let store = await this._arc.storageProviderFactory.baseStorageFor(type, storageKey);
+      const store = await this._arc.storageProviderFactory.baseStorageFor(type, storageKey);
       // TODO(shans): THIS IS NOT SAFE!
       //
       // Without an auditor on the runtime side that inspects what is being fetched from
@@ -65589,7 +65589,7 @@ class ParticleExecutionHost {
     };
 
     this._apiPort.onConstructInnerArc = ({callback, particle}) => {
-      let arc = {particle};
+      const arc = {particle};
       this._apiPort.ConstructArcCallback({callback, arc});
     };
 
@@ -65598,7 +65598,7 @@ class ParticleExecutionHost {
       // recreated when an arc is deserialized. As a consequence of this, dynamically 
       // created handles for inner arcs must always be volatile to prevent storage 
       // in firebase.
-      let store = await this._arc.createStore(type, name, null, [], 'volatile');
+      const store = await this._arc.createStore(type, name, null, [], 'volatile');
       this._apiPort.CreateHandleCallback(store, {type, name, callback, id: store.id});
     };
 
@@ -65617,14 +65617,14 @@ class ParticleExecutionHost {
     };
 
     this._apiPort.onArcLoadRecipe = async ({arc, recipe, callback}) => {
-      let manifest = await _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_2__["Manifest"].parse(recipe, {loader: this._arc._loader, fileName: ''});
+      const manifest = await _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_2__["Manifest"].parse(recipe, {loader: this._arc._loader, fileName: ''});
       let error = undefined;
       // TODO(wkorman): Consider reporting an error or at least warning if
       // there's more than one recipe since currently we silently ignore them.
       let recipe0 = manifest.recipes[0];
       if (recipe0) {
         const missingHandles = [];
-        for (let handle of recipe0.handles) {
+        for (const handle of recipe0.handles) {
           const fromHandle = this._arc.findStoreById(handle.id) || manifest.findStoreById(handle.id);
           if (!fromHandle) {
             missingHandles.push(handle);
@@ -65641,7 +65641,7 @@ class ParticleExecutionHost {
           }
         }
         if (!error) {
-          let options = {errors: new Map()};
+          const options = {errors: new Map()};
           // If we had missing handles but we made it here, then we ran recipe
           // resolution which will have already normalized the recipe.
           if ((missingHandles.length > 0) || recipe0.normalize(options)) {
@@ -65664,7 +65664,7 @@ class ParticleExecutionHost {
     };
 
     this._apiPort.onRaiseSystemException = async ({exception, methodName, particleId}) => {
-     let particle = this._arc.particleHandleMaps.get(particleId).spec.name;
+     const particle = this._arc.particleHandleMaps.get(particleId).spec.name;
       Object(_ts_build_arc_exceptions_js__WEBPACK_IMPORTED_MODULE_4__["reportSystemException"])(exception, methodName, particle);
     };
   }
@@ -65758,8 +65758,8 @@ class ConnectionSpec {
   }
 
   instantiateDependentConnections(particle, typeVarMap) {
-    for (let dependentArg of this.rawData.dependentConnections) {
-      let dependentConnection = particle.createConnection(dependentArg, typeVarMap);
+    for (const dependentArg of this.rawData.dependentConnections) {
+      const dependentConnection = particle.createConnection(dependentArg, typeVarMap);
       dependentConnection.parentConnection = this;
       this.dependentConnections.push(dependentConnection);
     }
@@ -65817,7 +65817,7 @@ class ParticleSpec {
     this._model = model;
     this.name = model.name;
     this.verbs = model.verbs;
-    let typeVarMap = new Map();
+    const typeVarMap = new Map();
     this.connections = [];
     model.args.forEach(arg => this.createConnection(arg, typeVarMap));
     this.connectionMap = new Map();
@@ -65848,18 +65848,18 @@ class ParticleSpec {
   }
 
   createConnection(arg, typeVarMap) {
-    let connection = new ConnectionSpec(arg, typeVarMap);
+    const connection = new ConnectionSpec(arg, typeVarMap);
     this.connections.push(connection);
     connection.instantiateDependentConnections(this, typeVarMap);
     return connection;
   }
 
   isInput(param) {
-    for (let input of this.inputs) if (input.name == param) return true;
+    for (const input of this.inputs) if (input.name == param) return true;
   }
 
   isOutput(param) {
-    for (let outputs of this.outputs) if (outputs.name == param) return true;
+    for (const outputs of this.outputs) if (outputs.name == param) return true;
   }
 
   getSlotSpec(slotName) {
@@ -65876,14 +65876,14 @@ class ParticleSpec {
 
   toLiteral() {
     let {args, name, verbs, description, implFile, affordance, slots} = this._model;
-    let connectionToLiteral = ({type, direction, name, isOptional, dependentConnections}) => ({type: type.toLiteral(), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral)});
+    const connectionToLiteral = ({type, direction, name, isOptional, dependentConnections}) => ({type: type.toLiteral(), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral)});
     args = args.map(a => connectionToLiteral(a));
     return {args, name, verbs, description, implFile, affordance, slots};
   }
 
   static fromLiteral(literal) {
     let {args, name, verbs, description, implFile, affordance, slots} = literal;
-    let connectionFromLiteral = ({type, direction, name, isOptional, dependentConnections}) =>
+    const connectionFromLiteral = ({type, direction, name, isOptional, dependentConnections}) =>
       ({type: _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : []});
     args = args.map(connectionFromLiteral);
     return new ParticleSpec({args, name, verbs: verbs || [], description, implFile, affordance, slots});
@@ -65916,21 +65916,21 @@ class ParticleSpec {
   }
 
   toString() {
-    let results = [];
+    const results = [];
     let verbs = '';
     if (this.verbs.length > 0) {
       verbs = ' ' + this.verbs.map(verb => `&${verb}`).join(' ');
     }
     results.push(`particle ${this.name}${verbs} in '${this.implFile}'`.trim());
-    let indent = '  ';
-    let writeConnection = (connection, indent) => {
+    const indent = '  ';
+    const writeConnection = (connection, indent) => {
       results.push(`${indent}${connection.direction} ${connection.type.toString()}${connection.isOptional ? '?' : ''} ${connection.name}`);
-      for (let dependent of connection.dependentConnections) {
+      for (const dependent of connection.dependentConnections) {
         writeConnection(dependent, indent + '  ');
       }
     };
 
-    for (let connection of this.connections) {
+    for (const connection of this.connections) {
       if (connection.parentConnection) {
         continue;
       }
@@ -65940,7 +65940,7 @@ class ParticleSpec {
     this.affordance.filter(a => a != 'mock').forEach(a => results.push(`  affordance ${a}`));
     this.slots.forEach(s => {
       // Consume slot.
-      let consume = [];
+      const consume = [];
       if (s.isRequired) {
         consume.push('must');
       }
@@ -65958,7 +65958,7 @@ class ParticleSpec {
       }
       // Provided slots.
       s.providedSlots.forEach(ps => {
-        let provide = [];
+        const provide = [];
         if (ps.isRequired) {
           provide.push('must');
         }
@@ -66145,10 +66145,10 @@ class Particle {
   }
 
   static buildManifest(strings, ...bits) {
-    let output = [];
+    const output = [];
     for (let i = 0; i < bits.length; i++) {
-        let str = strings[i];
-        let indent = / *$/.exec(str)[0];
+        const str = strings[i];
+        const indent = / *$/.exec(str)[0];
         let bitStr;
         if (typeof bits[i] == 'string') {
           bitStr = bits[i];
@@ -66169,7 +66169,7 @@ class Particle {
     return this.setDescriptionPattern('pattern', pattern);
   }
   setDescriptionPattern(connectionName, pattern) {
-    let descriptions = this.handles.get('descriptions');
+    const descriptions = this.handles.get('descriptions');
     if (descriptions) {
       descriptions.store(new descriptions.entityClass({key: connectionName, value: pattern}, this.spec.name + '-' + connectionName));
       return true;
@@ -66215,7 +66215,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-let defaultTimeoutMs = 5000;
+const defaultTimeoutMs = 5000;
 
 const log = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_3__["logFactory"])('Planificator', '#ff0090', 'log');
 const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_3__["logFactory"])('Planificator', '#ff0090', 'error');
@@ -66246,7 +66246,7 @@ class ReplanQueue {
       this._changes = [];
     } else if (this._changes.length > 0) {
       // Schedule delayed planning.
-      let timeNow = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_1__["now"])();
+      const timeNow = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_1__["now"])();
       this._changes.forEach((ch, i) => this._changes[i] = timeNow);
       this._scheduleReplan(this._options.defaultReplanDelayMs);
     }
@@ -66268,9 +66268,9 @@ class ReplanQueue {
     if (this._changes.length <= 1) {
       return;
     }
-    let now = this._changes[this._changes.length - 1];
-    let sincePrevChangeMs = now - this._changes[this._changes.length - 2];
-    let sinceFirstChangeMs = now - this._changes[0];
+    const now = this._changes[this._changes.length - 1];
+    const sincePrevChangeMs = now - this._changes[this._changes.length - 2];
+    const sinceFirstChangeMs = now - this._changes[0];
     if (this._canPostponeReplan(sinceFirstChangeMs)) {
       this._cancelReplanIfScheduled();
       let nextReplanDelayMs = this._options.defaultReplanDelayMs;
@@ -66369,7 +66369,7 @@ class Planificator {
       return;
     }
 
-    let suggestionStorage = new _suggestion_storage_js__WEBPACK_IMPORTED_MODULE_7__["SuggestionStorage"](this._arc, this.userid);
+    const suggestionStorage = new _suggestion_storage_js__WEBPACK_IMPORTED_MODULE_7__["SuggestionStorage"](this._arc, this.userid);
     if (this.isConsumer) {
       // Listen to suggestion-store updates, and update the `current` suggestions on change.
       suggestionStorage.registerSuggestionsUpdatedCallback(
@@ -66419,21 +66419,21 @@ class Planificator {
 
     search = search ? search.toLowerCase().trim() : null;
     search = (search !== '') ? search : null;
-    let showAll = search === '*';
+    const showAll = search === '*';
     search = showAll ? null : search;
     if (showAll == this.suggestFilter.showAll && search == this.suggestFilter.search) {
       return;
     }
 
-    let previousSuggestions = this.getCurrentSuggestions();
+    const previousSuggestions = this.getCurrentSuggestions();
     this.suggestFilter = {showAll, search};
-    let suggestions = this.getCurrentSuggestions();
+    const suggestions = this.getCurrentSuggestions();
 
     if (this._plansDiffer(suggestions, previousSuggestions)) {
       this._suggestChangedCallbacks.forEach(callback => callback(suggestions));
     }
 
-    let previousSearch = this._search;
+    const previousSearch = this._search;
     this._search = search;
 
     if (!this._current.contextual && (showAll || !search)) {
@@ -66480,16 +66480,16 @@ class Planificator {
         });
       } else {
         suggestions = suggestions.filter(suggestion => {
-          let plan = suggestion.plan;
-          let usesHandlesFromActiveRecipe = plan.handles.find(handle => {
+          const plan = suggestion.plan;
+          const usesHandlesFromActiveRecipe = plan.handles.find(handle => {
             // TODO(mmandlis): find a generic way to exlude system handles (eg Theme), either by tagging or
             // by exploring connection directions etc.
             return !!handle.id && this._arc._activeRecipe.handles.find(activeHandle => activeHandle.id == handle.id);
           });
-          let usesRemoteNonRootSlots = plan.slots.find(slot => {
+          const usesRemoteNonRootSlots = plan.slots.find(slot => {
             return !slot.name.includes('root') && !slot.tags.includes('root') && slot.id && !slot.id.includes('root');
           });
-          let onlyUsesNonRootSlots = !plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
+          const onlyUsesNonRootSlots = !plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
           return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
         });
       }
@@ -66508,7 +66508,7 @@ class Planificator {
   }
 
   _onPlanInstantiated(plan) {
-    let planString = plan.toString();
+    const planString = plan.toString();
     // Check that plan is in this._current.plans
     // TODO(mmandlis): re-enable this when the planner asynchrony doesn't cause it to be false.
     // assert(this._current.plans.some(currentPlan => currentPlan.plan.toString() == planString),
@@ -66620,7 +66620,7 @@ class Planificator {
     }
 
     if (hasChange) {
-      let previousSuggestions = this.getCurrentSuggestions();
+      const previousSuggestions = this.getCurrentSuggestions();
       if (append) {
         this._current.plans.push(...newPlans);
         this._current.generations.push(...current.generations);
@@ -66628,7 +66628,7 @@ class Planificator {
         this._current = current;
       }
       this._plansChangedCallbacks.forEach(callback => callback(this._current));
-      let suggestions = this.getCurrentSuggestions();
+      const suggestions = this.getCurrentSuggestions();
       if (this._plansDiffer(suggestions, previousSuggestions)) {
         this._suggestChangedCallbacks.forEach(callback => callback(suggestions));
       }
@@ -66652,7 +66652,7 @@ class Planificator {
   _isArcPopulated() {
     if (this._arc.recipes.length == 0) return false;
     if (this._arc.recipes.length == 1) {
-      let [recipe] = this._arc.recipes;
+      const [recipe] = this._arc.recipes;
       if (recipe.particles.length == 0 ||
           (recipe.particles.length == 1 && recipe.particles[0].name === 'Launcher')) {
         // TODO: Check for Launcher is hacky, find a better way.
@@ -66753,13 +66753,13 @@ class Planner {
 
   // Specify a timeout value less than zero to disable timeouts.
   async plan(timeout, generations) {
-    let trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({cat: 'planning', name: 'Planner::plan', overview: true, args: {timeout}});
+    const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({cat: 'planning', name: 'Planner::plan', overview: true, args: {timeout}});
     timeout = timeout || -1;
-    let allResolved = [];
-    let start = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__["now"])();
+    const allResolved = [];
+    const start = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__["now"])();
     do {
-      let record = await trace.wait(this.strategizer.generate());
-      let generated = this.strategizer.generated;
+      const record = await trace.wait(this.strategizer.generate());
+      const generated = this.strategizer.generated;
       trace.addArgs({
         generated: generated.length,
         generation: this.strategizer.generation
@@ -66768,7 +66768,7 @@ class Planner {
         generations.push({generated, record});
       }
 
-      let resolved = this.strategizer.generated
+      const resolved = this.strategizer.generated
           .map(individual => individual.result)
           .filter(recipe => recipe.isResolved());
 
@@ -66820,10 +66820,10 @@ class Planner {
     return groups;
   }
   async suggest(timeout, generations, speculator) {
-    let trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({cat: 'planning', name: 'Planner::suggest', overview: true, args: {timeout}});
+    const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({cat: 'planning', name: 'Planner::suggest', overview: true, args: {timeout}});
     if (!generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__["DevtoolsConnection"].isConnected) generations = [];
-    let plans = await trace.wait(this.plan(timeout, generations));
-    let suggestions = [];
+    const plans = await trace.wait(this.plan(timeout, generations));
+    const suggestions = [];
     speculator = speculator || new _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_23__["Speculator"]();
     // We don't actually know how many threads the VM will decide to use to
     // handle the parallel speculation, but at least we know we won't kick off
@@ -66833,16 +66833,16 @@ class Planner {
     const threadCount = this._speculativeThreadCount();
     const planGroups = this._splitToGroups(plans, threadCount);
     let results = await trace.wait(Promise.all(planGroups.map(async (group, groupIndex) => {
-      let results = [];
-      for (let plan of group) {
-        let hash = ((hash) => { return hash.substring(hash.length - 4);})(await plan.digest());
+      const results = [];
+      for (const plan of group) {
+        const hash = ((hash) => { return hash.substring(hash.length - 4);})(await plan.digest());
 
         if (_ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_4__["RecipeUtil"].matchesRecipe(this._arc._activeRecipe, plan)) {
           this._updateGeneration(generations, hash, (g) => g.active = true);
           continue;
         }
 
-        let planTrace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({
+        const planTrace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({
           cat: 'speculating',
           sequence: `speculator_${groupIndex}`,
           overview: true,
@@ -66851,17 +66851,17 @@ class Planner {
 
         // TODO(wkorman): Look at restoring trace.wait() here, and whether we
         // should do similar for the async getRecipeSuggestion() below as well?
-        let relevance = await speculator.speculate(this._arc, plan, hash);
+        const relevance = await speculator.speculate(this._arc, plan, hash);
         this._relevances.push(relevance);
         if (!relevance.isRelevant(plan)) {
           this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
           planTrace.end({name: '[Irrelevant suggestion]', hash, groupIndex});
           continue;
         }
-        let rank = relevance.calcRelevanceScore();
+        const rank = relevance.calcRelevanceScore();
 
         relevance.newArc.description.relevance = relevance;
-        let description = await relevance.newArc.description.getRecipeSuggestion();
+        const description = await relevance.newArc.description.getRecipeSuggestion();
 
         this._updateGeneration(generations, hash, (g) => g.description = description);
 
@@ -67006,7 +67006,7 @@ class RelevantContextRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORT
       }
 
       recipe = recipe.clone();
-      let options = {errors: new Map()};
+      const options = {errors: new Map()};
       if (recipe.normalize(options)) {
         this._recipes.push(recipe);
       } else {
@@ -67043,8 +67043,8 @@ const IndexStrategies = [
 
 class RecipeIndex {
   constructor(context, loader, affordance) {
-    let trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__["Tracing"].start({cat: 'indexing', name: 'RecipeIndex::constructor', overview: true});
-    let arcStub = new _ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"]({
+    const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__["Tracing"].start({cat: 'indexing', name: 'RecipeIndex::constructor', overview: true});
+    const arcStub = new _ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"]({
       id: 'index-stub',
       context: new _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_0__["Manifest"]({id: 'empty-context'}),
       loader,
@@ -67053,7 +67053,7 @@ class RecipeIndex {
       // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
       speculative: true
     });
-    let strategizer = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"](
+    const strategizer = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"](
       [
         new RelevantContextRecipes(context, affordance),
         ...IndexStrategies.map(S => new S(arcStub))
@@ -67062,10 +67062,10 @@ class RecipeIndex {
       _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__["Empty"]
     );
     this.ready = trace.endWith(new Promise(async resolve => {
-      let generations = [];
+      const generations = [];
 
       do {
-        let record = await strategizer.generate();
+        const record = await strategizer.generate();
         generations.push({record, generated: strategizer.generated});
       } while (strategizer.generated.length + strategizer.terminal.length > 0);
 
@@ -67074,10 +67074,10 @@ class RecipeIndex {
             generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].get(), {label: 'Index', keep: true});
       }
 
-      let population = strategizer.population;
-      let candidates = new Set(population);
-      for (let result of population) {
-        for (let deriv of result.derivation) {
+      const population = strategizer.population;
+      const candidates = new Set(population);
+      for (const result of population) {
+        for (const deriv of result.derivation) {
           if (deriv.parent) candidates.delete(deriv.parent);
         }
       }
@@ -67101,16 +67101,16 @@ class RecipeIndex {
   findHandleMatch(handle, requestedFates) {
     this.ensureReady();
 
-    let particleNames = handle.connections.map(conn => conn.particle.name);
+    const particleNames = handle.connections.map(conn => conn.particle.name);
 
-    let results = [];
-    for (let recipe of this._recipes) {
+    const results = [];
+    for (const recipe of this._recipes) {
       if (recipe.particles.some(particle => !particle.name)) {
         // Skip recipes where not all verbs are resolved to specific particles
         // to avoid trying to coalesce a recipe with itself.
         continue;
       }
-      for (let otherHandle of recipe.handles) {
+      for (const otherHandle of recipe.handles) {
         if (requestedFates && !(requestedFates.includes(otherHandle.fate))) {
           continue;
         }
@@ -67146,10 +67146,10 @@ class RecipeIndex {
     // everyone can be a reader.
     // We inspect both fate and originalFate as copy ends up as use in an
     // active recipe, and ? could end up as anything.
-    let fates = [handle.originalFate, handle.fate, otherHandle.originalFate, otherHandle.fate];
+    const fates = [handle.originalFate, handle.fate, otherHandle.originalFate, otherHandle.fate];
     if (!fates.includes('copy') && !fates.includes('map')) {
-      let counts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(handle);
-      let otherCounts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(otherHandle);
+      const counts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(handle);
+      const otherCounts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(otherHandle);
       // Someone has to read and someone has to write.
       if (otherCounts.in + counts.in === 0 || otherCounts.out + counts.out === 0) {
         return false;
@@ -67173,20 +67173,20 @@ class RecipeIndex {
   findConsumeSlotConnectionMatch(slot) {
     this.ensureReady();
 
-    let consumeConns = [];
-    for (let recipe of this._recipes) {
+    const consumeConns = [];
+    for (const recipe of this._recipes) {
       if (recipe.particles.some(particle => !particle.name)) {
         // Skip recipes where not all verbs are resolved to specific particles
         // to avoid trying to coalesce a recipe with itself.
         continue;
       }
-      for (let slotConn of recipe.slotConnections) {
+      for (const slotConn of recipe.slotConnections) {
         if (!slotConn.targetSlot && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].specMatch(slotConn, slot) && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].tagsOrNameMatch(slotConn, slot)) {
-          let matchingHandles = [];
+          const matchingHandles = [];
           if (!_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].handlesMatch(slotConn, slot)) {
             // Find potential handle connections to coalesce
             slot.handleConnections.forEach(slotHandleConn => {
-              let matchingConns = Object.values(slotConn.particle.connections).filter(particleConn => {
+              const matchingConns = Object.values(slotConn.particle.connections).filter(particleConn => {
                 return particleConn.direction !== 'host'
                     && (!particleConn.handle || !particleConn.handle.id || particleConn.handle.id == slotHandleConn.handle.id)
                     && _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(slotHandleConn.handle._mappedType, [particleConn]);
@@ -67212,15 +67212,15 @@ class RecipeIndex {
   findProvidedSlot(slotConn) {
     this.ensureReady();
 
-    let providedSlots = [];
-    for (let recipe of this._recipes) {
+    const providedSlots = [];
+    for (const recipe of this._recipes) {
       if (recipe.particles.some(particle => !particle.name)) {
         // Skip recipes where not all verbs are resolved to specific particles
         // to avoid trying to coalesce a recipe with itself.
         continue;
       }
-      for (let consumeConn of recipe.slotConnections) {
-        for (let providedSlot of Object.values(consumeConn.providedSlots)) {
+      for (const consumeConn of recipe.slotConnections) {
+        for (const providedSlot of Object.values(consumeConn.providedSlots)) {
           if (_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].slotMatches(slotConn, providedSlot)) {
             providedSlots.push(providedSlot);
           }
@@ -67236,9 +67236,9 @@ class RecipeIndex {
   // `matchingHandleConn` - a handle connection of a particle, whose slot connection is explored
   // as a potential match to a slot above.
   _fatesAndDirectionsMatch(slotHandleConn, matchingHandleConn) {
-    let matchingHandle = matchingHandleConn.handle;
-    let allMatchingHandleConns = matchingHandle ? matchingHandle.connections : [matchingHandleConn];
-    let matchingHandleConnsHasOutput = allMatchingHandleConns.find(conn => ['out', 'inout'].includes(conn.direction));
+    const matchingHandle = matchingHandleConn.handle;
+    const allMatchingHandleConns = matchingHandle ? matchingHandle.connections : [matchingHandleConn];
+    const matchingHandleConnsHasOutput = allMatchingHandleConns.find(conn => ['out', 'inout'].includes(conn.direction));
     switch (slotHandleConn.handle.fate) {
       case 'create':
         // matching handle not defined or its fate is 'create' or '?'.
@@ -67263,13 +67263,13 @@ class RecipeIndex {
 
   findCoalescableHandles(recipe, otherRecipe, usedHandles) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(recipe != otherRecipe, 'Cannot coalesce handles in the same recipe');
-    let otherToHandle = new Map();
+    const otherToHandle = new Map();
     usedHandles = usedHandles || new Set();
-    for (let handle of recipe.handles) {
+    for (const handle of recipe.handles) {
       if (usedHandles.has(handle) || !this.coalescableFates.includes(handle.fate)) {
         continue;
       }
-      for (let otherHandle of otherRecipe.handles) {
+      for (const otherHandle of otherRecipe.handles) {
         if (usedHandles.has(otherHandle) || !this.coalescableFates.includes(otherHandle.fate)) {
           continue;
         }
@@ -67342,7 +67342,7 @@ class SlotComposer {
       return;
     }
 
-    let containerByName = this._affordance.slotConsumerClass.findRootContainers(options.rootContainer) || {};
+    const containerByName = this._affordance.slotConsumerClass.findRootContainers(options.rootContainer) || {};
     if (Object.keys(containerByName).length == 0) {
       // fallback to single 'root' slot using the rootContainer.
       containerByName['root'] = options.rootContainer;
@@ -67362,7 +67362,7 @@ class SlotComposer {
   }
 
   findContainerByName(name) {
-    let contexts = this._contexts.filter(context => context.name === name);
+    const contexts = this._contexts.filter(context => context.name === name);
     if (contexts.length == 0) {
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(`No containers for '${name}'`);
     } else if (contexts.length == 1) {
@@ -67377,17 +67377,17 @@ class SlotComposer {
   }
 
   createHostedSlot(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, storeId) {
-    let hostedSlotId = this.arc.generateID();
+    const hostedSlotId = this.arc.generateID();
 
-    let transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
+    const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(transformationSlotConsumer,
            `Unexpected transformation slot particle ${transformationParticle.name}:${transformationSlotName}, hosted particle ${hostedParticleName}, slot name ${hostedSlotName}`);
 
-    let hostedSlotConsumer = new _ts_build_hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__["HostedSlotConsumer"](transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId, this.arc);
+    const hostedSlotConsumer = new _ts_build_hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__["HostedSlotConsumer"](transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId, this.arc);
     hostedSlotConsumer.renderCallback = this.arc.pec.innerArcRender.bind(this.arc.pec);
     this._addSlotConsumer(hostedSlotConsumer);
 
-    let context = this.findContextById(transformationSlotConsumer.consumeConn.targetSlot.id);
+    const context = this.findContextById(transformationSlotConsumer.consumeConn.targetSlot.id);
     context.addSlotConsumer(hostedSlotConsumer);
 
     return hostedSlotId;
@@ -67400,7 +67400,7 @@ class SlotComposer {
   }
 
   initializeRecipe(recipeParticles) {
-    let newConsumers = [];
+    const newConsumers = [];
     // Create slots for each of the recipe's particles slot connections.
     recipeParticles.forEach(p => {
       Object.values(p.consumedSlotConnections).forEach(cs => {
@@ -67425,25 +67425,25 @@ class SlotComposer {
     // Set context for each of the slots.
     newConsumers.forEach(consumer => {
       this._addSlotConsumer(consumer);
-      let context = this.findContextById(consumer.consumeConn.targetSlot.id);
+      const context = this.findContextById(consumer.consumeConn.targetSlot.id);
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
       context.addSlotConsumer(consumer);
     });
   }
 
   async renderSlot(particle, slotName, content) {
-    let slotConsumer = this.getSlotConsumer(particle, slotName);
+    const slotConsumer = this.getSlotConsumer(particle, slotName);
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
 
     await slotConsumer.setContent(content, async (eventlet) => {
       this.arc.pec.sendEvent(particle, slotName, eventlet);
       if (eventlet.data && eventlet.data.key) {
-        let hostedConsumers = this.consumers.filter(c => c.transformationSlotConsumer == slotConsumer);
-        for (let hostedConsumer of hostedConsumers) {
+        const hostedConsumers = this.consumers.filter(c => c.transformationSlotConsumer == slotConsumer);
+        for (const hostedConsumer of hostedConsumers) {
           if (hostedConsumer.storeId) {
-            let store = this.arc.findStoreById(hostedConsumer.storeId);
+            const store = this.arc.findStoreById(hostedConsumer.storeId);
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store);
-            let value = await store.get();
+            const value = await store.get();
             if (value && (value.id == eventlet.data.key)) {
               this.arc.pec.sendEvent(
                   hostedConsumer.consumeConn.particle,
@@ -67594,7 +67594,7 @@ class StorageProxyBase {
       // If a handle configured for sync notifications registers after we've received the full
       // model, notify it immediately.
       if (handle.options.notifySync && this._synchronized == SyncState.full) {
-        let syncModel = this._getModelForSync();
+        const syncModel = this._getModelForSync();
         this._scheduler.enqueue(particle, handle, ['sync', particle, syncModel]);
       }
     }
@@ -67619,7 +67619,7 @@ class StorageProxyBase {
       this._updates.shift();
     }
 
-    let syncModel = this._getModelForSync();
+    const syncModel = this._getModelForSync();
     this._notify('sync', syncModel, options => options.keepSynced && options.notifySync);
     this._processUpdates();
   }
@@ -67627,7 +67627,7 @@ class StorageProxyBase {
   _onUpdate(update) {
     // Immediately notify any handles that are not configured with keepSynced but do want updates.
     if (this._observers.find(({handle}) => !handle.options.keepSynced && handle.options.notifyUpdate)) {
-      let handleUpdate = this._processUpdate(update, false);
+      const handleUpdate = this._processUpdate(update, false);
       this._notify('update', handleUpdate, options => !options.keepSynced && options.notifyUpdate);
     }
 
@@ -67649,7 +67649,7 @@ class StorageProxyBase {
   }
 
   _notify(kind, details, predicate=() => true) {
-    for (let {handle, particle} of this._observers) {
+    for (const {handle, particle} of this._observers) {
       if (predicate(handle.options)) {
         this._scheduler.enqueue(particle, handle, [kind, particle, details]);
       }
@@ -67658,7 +67658,7 @@ class StorageProxyBase {
 
   _processUpdates() {
 
-    let updateIsNext = update => {
+    const updateIsNext = update => {
       if (update.version == this._version + 1) {
         return true;
       }
@@ -67677,10 +67677,10 @@ class StorageProxyBase {
 
     // Consume all queued updates whose versions are monotonically increasing from our stored one.
     while (this._updates.length > 0 && updateIsNext(this._updates[0])) {
-      let update = this._updates.shift();
+      const update = this._updates.shift();
 
       // Fold the update into our stored model.
-      let handleUpdate = this._processUpdate(update);
+      const handleUpdate = this._processUpdate(update);
       this._version = update.version;
 
       // Notify handles configured with keepSynced and notifyUpdates (non-keepSynced handles are
@@ -67696,7 +67696,7 @@ class StorageProxyBase {
       if (this._synchronized != SyncState.none) {
         this._synchronized = SyncState.none;
         this._port.SynchronizeProxy({handle: this, callback: x => this._onSynchronize(x)});
-        for (let {handle, particle} of this._observers) {
+        for (const {handle, particle} of this._observers) {
           if (handle.options.notifyDesync) {
             this._scheduler.enqueue(particle, handle, ['desync', particle]);
           }
@@ -67753,22 +67753,22 @@ class CollectionProxy extends StorageProxyBase {
     if (this._synchronized == SyncState.full) {
       // If we're synchronized, then any updates we sent have
       // already been applied/notified.
-      for (let {handle} of this._observers) {
+      for (const {handle} of this._observers) {
         if (update.originatorId == handle._particleId) {
           return null;
         }
       }
     }
-    let added = [];
-    let removed = [];
+    const added = [];
+    const removed = [];
     if ('add' in update) {
-      for (let {value, keys, effective} of update.add) {
+      for (const {value, keys, effective} of update.add) {
         if (apply && this._model.add(value.id, value, keys) || !apply && effective) {
           added.push(value);
         }
       }
     } else if ('remove' in update) {
-      for (let {value, keys, effective} of update.remove) {
+      for (const {value, keys, effective} of update.remove) {
         const localValue = this._model.getValue(value.id);
         if (apply && this._model.remove(value.id, keys) || !apply && effective) {
           removed.push(localValue);
@@ -67778,7 +67778,7 @@ class CollectionProxy extends StorageProxyBase {
       throw new Error(`StorageProxy received invalid update event: ${JSON.stringify(update)}`);
     }
     if (added.length || removed.length) {
-      let result = {};
+      const result = {};
       if (added.length) result.add = added;
       if (removed.length) result.remove = removed;
       result.originatorId = update.originatorId;
@@ -67810,8 +67810,8 @@ class CollectionProxy extends StorageProxyBase {
   }
 
   store(value, keys, particleId) {
-    let id = value.id;
-    let data = {value, keys};
+    const id = value.id;
+    const data = {value, keys};
     this._port.HandleStore({handle: this, callback: () => {}, data, particleId});
 
     if (this._synchronized != SyncState.full) {
@@ -67820,7 +67820,7 @@ class CollectionProxy extends StorageProxyBase {
     if (!this._model.add(id, value, keys)) {
       return;
     }
-    let update = {originatorId: particleId, add: [value]};
+    const update = {originatorId: particleId, add: [value]};
     this._notify('update', update, options => options.notifyUpdate);
   }
 
@@ -67841,25 +67841,25 @@ class CollectionProxy extends StorageProxyBase {
 
   remove(id, keys, particleId) {
     if (this._synchronized != SyncState.full) {
-      let data = {id, keys: []};
+      const data = {id, keys: []};
       this._port.HandleRemove({handle: this, callback: () => {}, data, particleId});
       return;
     }
 
-    let value = this._model.getValue(id);
+    const value = this._model.getValue(id);
     if (!value) {
       return;
     }
     if (keys.length == 0) {
       keys = this._model.getKeys(id);
     }
-    let data = {id, keys};
+    const data = {id, keys};
     this._port.HandleRemove({handle: this, callback: () => {}, data, particleId});
 
     if (!this._model.remove(id, keys)) {
       return;
     }
-    let update = {originatorId: particleId, remove: [value]};
+    const update = {originatorId: particleId, remove: [value]};
     this._notify('update', update, options => options.notifyUpdate);
   }
 }
@@ -67913,7 +67913,7 @@ class VariableProxy extends StorageProxyBase {
         // TODO(shans): refactor this code so we don't need to layer-violate. 
         if (this._synchronized !== SyncState.full) {
           this._synchronized = SyncState.full;
-          let syncModel = this._getModelForSync();
+          const syncModel = this._getModelForSync();
           this._notify('sync', syncModel, options => options.keepSynced && options.notifySync);
 
         }
@@ -67957,7 +67957,7 @@ class VariableProxy extends StorageProxyBase {
     this._model = JSON.parse(JSON.stringify(entity));
     this._barrier = barrier;
     this._port.HandleSet({data: entity, handle: this, particleId, barrier});
-    let update = {originatorId: particleId, data: entity};
+    const update = {originatorId: particleId, data: entity};
     this._notify('update', update, options => options.notifyUpdate);
   }
 
@@ -67965,11 +67965,11 @@ class VariableProxy extends StorageProxyBase {
     if (this._model == null) {
       return;
     }
-    let barrier = this.generateID('barrier');
+    const barrier = this.generateID('barrier');
     this._model = null;
     this._barrier = barrier;
     this._port.HandleClear({handle: this, particleId, barrier});
-    let update = {originatorId: particleId, data: null};
+    const update = {originatorId: particleId, data: null};
     this._notify('update', update, options => options.notifyUpdate);
   }
 }
@@ -68022,11 +68022,11 @@ class StorageProxyScheduler {
     if (!this._queues.has(particle)) {
       this._queues.set(particle, new Map());
     }
-    let byHandle = this._queues.get(particle);
+    const byHandle = this._queues.get(particle);
     if (!byHandle.has(handle)) {
       byHandle.set(handle, []);
     }
-    let queue = byHandle.get(handle);
+    const queue = byHandle.get(handle);
     queue.push(args);
     this._schedule();
   }
@@ -68067,11 +68067,11 @@ class StorageProxyScheduler {
   _dispatch() {
     // TODO: should we process just one particle per task?
     while (this._queues.size > 0) {
-      let particle = [...this._queues.keys()][0];
-      let byHandle = this._queues.get(particle);
+      const particle = [...this._queues.keys()][0];
+      const byHandle = this._queues.get(particle);
       this._queues.delete(particle);
-      for (let [handle, queue] of byHandle.entries()) {
-        for (let args of queue) {
+      for (const [handle, queue] of byHandle.entries()) {
+        for (const args of queue) {
           try {
             handle._notify(...args);
           } catch (e) {
@@ -68123,14 +68123,14 @@ class AddMissingHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
           return;
         }
         // Don't add use handles to a recipe with free handles
-        let freeHandles = recipe.handles.filter(handle => handle.connections.length == 0);
+        const freeHandles = recipe.handles.filter(handle => handle.connections.length == 0);
         if (freeHandles.length > 0) {
           return;
         }
 
         // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
         // not being properly supported in arc instantiation). For now just hardcode skiping them.
-        let disconnectedConnections = recipe.handleConnections.filter(
+        const disconnectedConnections = recipe.handleConnections.filter(
             hc => hc.handle == null && !hc.isOptional && hc.name != 'descriptions' && hc.direction !== 'host');
         if (disconnectedConnections.length == 0) {
           return;
@@ -68138,8 +68138,8 @@ class AddMissingHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
 
         return recipe => {
           disconnectedConnections.forEach(hc => {
-            let clonedHC = recipe.updateToClone({hc}).hc;
-            let handle = recipe.newHandle();
+            const clonedHC = recipe.updateToClone({hc}).hc;
+            const handle = recipe.newHandle();
             handle.fate = '?';
             clonedHC.connectToHandle(handle);
           });
@@ -68190,7 +68190,7 @@ class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
   get arc() { return this._arc; }
 
   async generate(inputParams) {
-    let self = this;
+    const self = this;
 
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
       onHandle(recipe, handle) {
@@ -68213,23 +68213,23 @@ class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
         // TODO: using the connection to retrieve type information is wrong.
         // Once validation of recipes generates type information on the handle
         // we should switch to using that instead.
-        let counts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].directionCounts(handle);
+        const counts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].directionCounts(handle);
         if (counts.unknown > 0) {
           return;
         }
 
-        let score = this._getScore(counts, handle.tags);
+        const score = this._getScore(counts, handle.tags);
 
         if (counts.out > 0 && handle.fate == 'map') {
           return;
         }
-        let stores = self.getMappableStores(handle.fate, handle.type, handle.tags, counts);
+        const stores = self.getMappableStores(handle.fate, handle.type, handle.tags, counts);
         if (handle.fate != '?' && stores.size < 2) {
           // These handles are mapped by resolve-recipe strategy.
           return;
         }
 
-        let responses = [...stores.keys()].map(store =>
+        const responses = [...stores.keys()].map(store =>
           ((recipe, clonedHandle) => {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(store.id);
             if (recipe.handles.find(handle => handle.id == store.id)) {
@@ -68270,9 +68270,9 @@ class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
   }
 
   getMappableStores(fate, type, tags, counts) {
-    let stores = new Map();
+    const stores = new Map();
     if (fate == 'use' || fate == '?') {
-      let subtype = counts.out == 0;
+      const subtype = counts.out == 0;
       // TODO: arc.findStoresByType doesn't use `subtype`. Shall it be removed?
       this.arc.findStoresByType(type, {tags, subtype}).forEach(store => stores.set(store, 'use'));
     }
@@ -68358,10 +68358,10 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
         // TODO: also support a consume slot connection that is NOT required,
         // but no other connections are resolved.
 
-        let results = [];
+        const results = [];
         // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
         // these handles are coalescable? Add support for this.
-        for (let providedSlot of index.findProvidedSlot(slotConnection)) {
+        for (const providedSlot of index.findProvidedSlot(slotConnection)) {
           // Don't grow recipes above 10 particles, otherwise we might never stop.
           if (recipe.particles.length + providedSlot.recipe.particles.length > 10) continue;
 
@@ -68371,10 +68371,10 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
           }
 
           results.push((recipe, slotConnection) => {
-            let otherToHandle = index.findCoalescableHandles(recipe, providedSlot.recipe);
+            const otherToHandle = index.findCoalescableHandles(recipe, providedSlot.recipe);
 
-            let {cloneMap} = providedSlot.recipe.mergeInto(slotConnection.recipe);
-            let mergedSlot = cloneMap.get(providedSlot);
+            const {cloneMap} = providedSlot.recipe.mergeInto(slotConnection.recipe);
+            const mergedSlot = cloneMap.get(providedSlot);
             slotConnection.connectToSlot(mergedSlot);
 
             this._connectOtherHandles(otherToHandle, cloneMap, false);
@@ -68400,8 +68400,8 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
           return; // either a remote slot (no source connection), or a not required one.
         }
 
-        let results = [];
-        for (let {slotConn, matchingHandles} of index.findConsumeSlotConnectionMatch(slot)) {
+        const results = [];
+        for (const {slotConn, matchingHandles} of index.findConsumeSlotConnectionMatch(slot)) {
           // Don't grow recipes above 10 particles, otherwise we might never stop.
           if (recipe.particles.length + slotConn.recipe.particles.length > 10) continue;
 
@@ -68417,23 +68417,23 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
 
           results.push((recipe, slot) => {
             // Find other handles that may be merged, as recipes are being coalesced.
-            let otherToHandle = index.findCoalescableHandles(recipe, slotConn.recipe,
+            const otherToHandle = index.findCoalescableHandles(recipe, slotConn.recipe,
               new Set(slot.handleConnections.map(hc => hc.handle).concat(matchingHandles.map(({handle, matchingConn}) => matchingConn.handle))));
 
-            let {cloneMap} = slotConn.recipe.mergeInto(slot.recipe);
-            let mergedSlotConn = cloneMap.get(slotConn);
+            const {cloneMap} = slotConn.recipe.mergeInto(slot.recipe);
+            const mergedSlotConn = cloneMap.get(slotConn);
             mergedSlotConn.connectToSlot(slot);
-            for (let {handle, matchingConn} of matchingHandles) {
+            for (const {handle, matchingConn} of matchingHandles) {
               // matchingConn in the mergedSlotConnection's recipe should be connected to `handle` in the slot's recipe.
-              let mergedMatchingConn = cloneMap.get(matchingConn);
-              let disconnectedHandle = mergedMatchingConn.handle;
-              let clonedHandle = slot.handleConnections.find(handleConn => handleConn.handle && handleConn.handle.id == handle.id).handle;
+              const mergedMatchingConn = cloneMap.get(matchingConn);
+              const disconnectedHandle = mergedMatchingConn.handle;
+              const clonedHandle = slot.handleConnections.find(handleConn => handleConn.handle && handleConn.handle.id == handle.id).handle;
               if (disconnectedHandle == clonedHandle) {
                 continue; // this handle was already reconnected
               }
 
               while (disconnectedHandle.connections.length > 0) {
-                let conn = disconnectedHandle.connections[0];
+                const conn = disconnectedHandle.connections[0];
                 conn.disconnectHandle();
                 conn.connectToHandle(clonedHandle);
               }
@@ -68463,9 +68463,9 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
             || handle.id
             || handle.connections.length === 0
             || handle.name === 'descriptions') return;
-        let results = [];
+        const results = [];
 
-        for (let otherHandle of index.findHandleMatch(handle, index.coalescableFates)) {
+        for (const otherHandle of index.findHandleMatch(handle, index.coalescableFates)) {
           // Don't grow recipes above 10 particles, otherwise we might never stop.
           if (recipe.particles.length + otherHandle.recipe.particles.length > 10) continue;
 
@@ -68493,9 +68493,9 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
 
           results.push((recipe, handle) => {
             // Find other handles in the original recipe that could be coalesced with handles in otherHandle's recipe.
-            let otherToHandle = index.findCoalescableHandles(recipe, otherHandle.recipe, new Set([handle, otherHandle]));
+            const otherToHandle = index.findCoalescableHandles(recipe, otherHandle.recipe, new Set([handle, otherHandle]));
 
-            let {cloneMap} = otherHandle.recipe.mergeInto(handle.recipe);
+            const {cloneMap} = otherHandle.recipe.mergeInto(handle.recipe);
 
             // Connect the handle that the recipes are being coalesced on.
             cloneMap.get(otherHandle).mergeInto(handle);
@@ -68518,7 +68518,7 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
 
       _connectOtherHandles(otherToHandle, cloneMap, verifyTypes) {
         otherToHandle.forEach((otherHandle, handle) => {
-          let otherHandleClone = cloneMap.get(otherHandle);
+          const otherHandleClone = cloneMap.get(otherHandle);
 
           // For coalescing that was triggered by handle coalescing (vs slot or slot connection)
           // once the main handle (one that triggered coalescing) was coalesced, types may have changed.
@@ -68541,8 +68541,8 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
       // Returns true, if both handles have types that can be coalesced.
       _reverifyHandleTypes(handle, otherHandle) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_6__["assert"])(handle.recipe == otherHandle.recipe);
-        let cloneMap = new Map();
-        let recipeClone = handle.recipe.clone(cloneMap);
+        const cloneMap = new Map();
+        const recipeClone = handle.recipe.clone(cloneMap);
         recipeClone.normalize();
         return _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__["Handle"].effectiveType(cloneMap.get(handle).type,
             [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
@@ -68589,31 +68589,31 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
     this.affordance = arc.pec.slotComposer ? arc.pec.slotComposer.affordance : null;
   }
   async generate(inputParams) {
-    let affordance = this.affordance;
+    const affordance = this.affordance;
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onRecipe(recipe) {
         // The particles & handles Sets are used as input to RecipeUtil's shape functionality
         // (this is the algorithm that "finds" the constraint set in the recipe).
         // They track which particles/handles need to be found/created.
-        let particles = new Set();
-        let handles = new Set();
+        const particles = new Set();
+        const handles = new Set();
         // The map object tracks the connections between particles that need to be found/created.
         // It's another input to RecipeUtil.makeShape.
-        let map = {};
-        let particlesByName = {};
+        const map = {};
+        const particlesByName = {};
         let handleCount = 0;
-        let obligations = [];
+        const obligations = [];
         if (recipe.connectionConstraints.length == 0) {
           return;
         }
 
-        for (let constraint of recipe.connectionConstraints) {
+        for (const constraint of recipe.connectionConstraints) {
           // Don't process constraints if their listed particles don't match the current affordance.
           if (affordance && (!constraint.from.particle.matchAffordance(affordance) || !constraint.to.particle.matchAffordance(affordance))) {
             return;
           }
 
-          let reverse = {'->': '<-', '=': '=', '<-': '->'};
+          const reverse = {'->': '<-', '=': '=', '<-': '->'};
 
           // Set up initial mappings & input to RecipeUtil.
           let handle;
@@ -68676,7 +68676,7 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
             });
           }
 
-          let unionDirections = (a, b) => {
+          const unionDirections = (a, b) => {
             if (a == '=') {
               return '=';
             }
@@ -68691,9 +68691,9 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
 
           let direction = constraint.direction;
           if (constraint.from instanceof _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["ParticleEndPoint"]) {
-            let connection = constraint.from.connection;
+            const connection = constraint.from.connection;
             if (connection) {
-              let existingHandle = map[constraint.from.particle.name][connection];
+              const existingHandle = map[constraint.from.particle.name][connection];
               if (existingHandle) {
                 direction = unionDirections(direction, existingHandle.direction);
                 if (direction == null) {
@@ -68706,9 +68706,9 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
 
           direction = reverse[constraint.direction];          
           if (constraint.to instanceof _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["ParticleEndPoint"]) {
-            let connection = constraint.to.connection;
+            const connection = constraint.to.connection;
             if (connection) {
-              let existingHandle = map[constraint.to.particle.name][connection];
+              const existingHandle = map[constraint.to.particle.name][connection];
               if (existingHandle) {
                 direction = unionDirections(direction, existingHandle.direction);
                 if (direction == null) {
@@ -68719,24 +68719,24 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
             }
           }
         }
-        let shape = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].makeShape([...particles.values()], [...handles.values()], map);
+        const shape = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].makeShape([...particles.values()], [...handles.values()], map);
 
         let results = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].find(recipe, shape);
 
         results = results.filter(match => {
           // Ensure that every handle is either matched, or an input of at least one
           // connected particle in the constraints.
-          let resolvedHandles = {};
-          for (let particle in map) {
-            for (let connection in map[particle]) {
-              let handle = map[particle][connection].handle;
+          const resolvedHandles = {};
+          for (const particle in map) {
+            for (const connection in map[particle]) {
+              const handle = map[particle][connection].handle;
               if (resolvedHandles[handle]) {
                 continue;
               }
               if (match.match[handle]) {
                 resolvedHandles[handle] = true;
               } else {
-                let spec = particlesByName[particle];
+                const spec = particlesByName[particle];
                 resolvedHandles[handle] = spec.isOutput(connection);
               }
             }
@@ -68744,10 +68744,10 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
           return Object.values(resolvedHandles).every(value => value);
         }).map(match => {
           return (recipe) => {
-            let score = recipe.connectionConstraints.length + match.score;
-            let recipeMap = recipe.updateToClone(match.match);
+            const score = recipe.connectionConstraints.length + match.score;
+            const recipeMap = recipe.updateToClone(match.match);
             
-            for (let particle in map) {
+            for (const particle in map) {
               let recipeParticle = recipeMap[particle];
               if (!recipeParticle) {
                 recipeParticle = recipe.newParticle(particle);
@@ -68755,8 +68755,8 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
                 recipeMap[particle] = recipeParticle;
               }
 
-              for (let connection in map[particle]) {
-                let handle = map[particle][connection];
+              for (const connection in map[particle]) {
+                const handle = map[particle][connection];
                 let recipeHandleConnection = recipeParticle.connections[connection];
                 if (recipeHandleConnection == undefined) {
                   recipeHandleConnection =
@@ -68775,9 +68775,9 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
               }
             }
             recipe.clearConnectionConstraints();
-            for (let obligation of obligations) {
-              let from = new _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["InstanceEndPoint"](recipeMap[obligation.from.particle.name], obligation.from.connection);
-              let to = new _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["InstanceEndPoint"](recipeMap[obligation.to.particle.name], obligation.to.connection);
+            for (const obligation of obligations) {
+              const from = new _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["InstanceEndPoint"](recipeMap[obligation.from.particle.name], obligation.from.connection);
+              const to = new _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_4__["InstanceEndPoint"](recipeMap[obligation.to.particle.name], obligation.to.connection);
               recipe.newObligation(from, to, obligation.direction);
             }
             return score;
@@ -68829,7 +68829,7 @@ class CreateDescriptionHandle extends _strategizer_strategizer_js__WEBPACK_IMPOR
         }
 
         return (recipe, handleConnection) => {
-          let handle = recipe.newHandle();
+          const handle = recipe.newHandle();
           handle.fate = 'create';
           handleConnection.connectToHandle(handle);
           return 1;
@@ -68878,14 +68878,14 @@ class CreateHandleGroup extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
 
         const freeConnections = recipe.handleConnections.filter(hc => !hc.handle && !hc.isOptional);
         let maximalGroup = null;
-        for (let writer of freeConnections.filter(hc => hc.isOutput)) {
-          let compatibleConnections = [writer];
+        for (const writer of freeConnections.filter(hc => hc.isOutput)) {
+          const compatibleConnections = [writer];
           let effectiveType = _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(null, compatibleConnections);
           let typeCandidate = null;
-          let involvedParticles = new Set([writer.particle]);
+          const involvedParticles = new Set([writer.particle]);
 
           let foundSomeReader = false;
-          for (let reader of freeConnections.filter(hc => hc.isInput)) {
+          for (const reader of freeConnections.filter(hc => hc.isInput)) {
             if (!involvedParticles.has(reader.particle) &&
                 (typeCandidate = _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(effectiveType, [reader])) !== null) {
               compatibleConnections.push(reader);
@@ -68898,7 +68898,7 @@ class CreateHandleGroup extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
           // Only make a 'create' group for a writer->reader case.
           if (!foundSomeReader) continue;
 
-          for (let otherWriter of freeConnections.filter(hc => hc.isOutput)) {
+          for (const otherWriter of freeConnections.filter(hc => hc.isOutput)) {
             if (!involvedParticles.has(otherWriter.particle) &&
                 (typeCandidate = _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(effectiveType, [otherWriter])) !== null) {
               compatibleConnections.push(otherWriter);
@@ -68914,10 +68914,10 @@ class CreateHandleGroup extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
 
         if (maximalGroup) {
           return recipe => {
-            let newHandle = recipe.newHandle();
+            const newHandle = recipe.newHandle();
             newHandle.fate = 'create';
-            for (let conn of maximalGroup) {
-              let cloneConn = recipe.updateToClone({conn}).conn;
+            for (const conn of maximalGroup) {
+              const cloneConn = recipe.updateToClone({conn}).conn;
               cloneConn.connectToHandle(newHandle);
             }
           };
@@ -68966,17 +68966,17 @@ class FindHostedParticle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_M
   }
 
   async generate(inputParams) {
-    let arc = this._arc;
+    const arc = this._arc;
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onHandleConnection(recipe, connection) {
         if (connection.direction !== 'host' || connection.handle) return;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(connection.type.isInterface);
 
-        let results = [];
-        for (let particle of arc.context.particles) {
+        const results = [];
+        for (const particle of arc.context.particles) {
           // This is what shape.particleMatches() does, but we also do
           // canEnsureResolved at the end:
-          let shapeClone = connection.type.interfaceShape.cloneWithResolutions(new Map());
+          const shapeClone = connection.type.interfaceShape.cloneWithResolutions(new Map());
           // If particle doesn't match the requested shape.
           if (shapeClone.restrictType(particle) === false) continue;
           // If we still have unresolvable shape after matching a particle.
@@ -69002,7 +69002,7 @@ class FindHostedParticle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_M
             const id = `${arc.id}:particle-literal:${particle.name}`;
 
             // Reuse a handle if we already hold this particle spec in the recipe.
-            for (let handle of recipe.handles) {
+            for (const handle of recipe.handles) {
               if (handle.id === id && handle.fate === 'copy'
                   && handle._mappedType && handle._mappedType.equals(handleType)) {
                 hc.connectToHandle(handle);
@@ -69014,7 +69014,7 @@ class FindHostedParticle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_M
             //       can ensure we load the correct particle. It is currently
             //       hard as digest is asynchronous and recipe walker is
             //       synchronous.
-            let handle = recipe.newHandle();
+            const handle = recipe.newHandle();
             handle._mappedType = handleType;
             handle.fate = 'copy';
             handle.id = id;
@@ -69067,28 +69067,28 @@ class GroupHandleConnections extends _strategizer_strategizer_js__WEBPACK_IMPORT
           return;
         }
         // Find all unique types used in the recipe that have unbound handle connections.
-        let types = new Set();
+        const types = new Set();
         recipe.handleConnections.forEach(hc => {
           if (!hc.isOptional && !hc.handle && !Array.from(types).find(t => t.equals(hc.type))) {
             types.add(hc.type);
           }
         });
 
-        let groupsByType = new Map();
+        const groupsByType = new Map();
         types.forEach(type => {
           // Find the particle with the largest number of unbound connections of the same type.
-          let countConnectionsByType = (connections) => Object.values(connections).filter(conn => {
+          const countConnectionsByType = (connections) => Object.values(connections).filter(conn => {
             return !conn.isOptional && !conn.handle && type.equals(conn.type);
           }).length;
-          let sortedParticles = [...recipe.particles].sort((p1, p2) => {
+          const sortedParticles = [...recipe.particles].sort((p1, p2) => {
             return countConnectionsByType(p2.connections) - countConnectionsByType(p1.connections);
           }).filter(p => countConnectionsByType(p.connections) > 0);
           Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(sortedParticles.length > 0);
 
           // Handle connections of the same particle cannot be bound to the same handle. Iterate on handle connections of the particle
           // with the most connections of the given type, and group each of them with same typed handle connections of other particles.
-          let particleWithMostConnectionsOfType = sortedParticles[0];
-          let groups = new Map();
+          const particleWithMostConnectionsOfType = sortedParticles[0];
+          const groups = new Map();
           let allTypeHandleConnections = recipe.handleConnections.filter(c => {
             return !c.isOptional && !c.handle && type.equals(c.type) && (c.particle != particleWithMostConnectionsOfType);
           });
@@ -69102,10 +69102,10 @@ class GroupHandleConnections extends _strategizer_strategizer_js__WEBPACK_IMPORT
               if (!groups.has(handleConnection)) {
                 groups.set(handleConnection, []);
               }
-              let group = groups.get(handleConnection);
+              const group = groups.get(handleConnection);
 
               // filter all connections where this particle is already in a group.
-              let possibleConnections = allTypeHandleConnections.filter(c => !group.find(gc => gc.particle == c.particle));
+              const possibleConnections = allTypeHandleConnections.filter(c => !group.find(gc => gc.particle == c.particle));
               let selectedConn = possibleConnections.find(c => handleConnection.isInput != c.isInput || handleConnection.isOutput != c.isOutput);
               // TODO: consider tags.
               // TODO: Slots handle restrictions should also be accounted for when grouping.
@@ -69140,9 +69140,9 @@ class GroupHandleConnections extends _strategizer_strategizer_js__WEBPACK_IMPORT
           return recipe => {
             groupsByType.forEach((groups, type) => {
               groups.forEach(group => {
-                let recipeHandle = recipe.newHandle();
+                const recipeHandle = recipe.newHandle();
                 group.forEach(conn => {
-                  let cloneConn = recipe.updateToClone({conn}).conn;
+                  const cloneConn = recipe.updateToClone({conn}).conn;
                   cloneConn.connectToHandle(recipeHandle);
                 });
               });
@@ -69214,18 +69214,18 @@ class InitPopulation extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODUL
   }
 
   _contextualResults() {
-    let results = [];
-    for (let slot of this._arc.activeRecipe.slots.filter(s => s.sourceConnection)) {
+    const results = [];
+    for (const slot of this._arc.activeRecipe.slots.filter(s => s.sourceConnection)) {
       results.push(...this._arc.recipeIndex.findConsumeSlotConnectionMatch(slot).map(
           ({slotConn}) => ({recipe: slotConn.recipe})));
     }
     let innerArcHandles = [];
-    for (let recipe of this._arc._recipes) {
-      for (let innerArc of [...recipe.innerArcs.values()]) {
+    for (const recipe of this._arc._recipes) {
+      for (const innerArc of [...recipe.innerArcs.values()]) {
         innerArcHandles = innerArcHandles.concat(innerArc.activeRecipe.handles);
       }
     }
-    for (let handle of this._arc.activeRecipe.handles.concat(innerArcHandles)) {
+    for (const handle of this._arc.activeRecipe.handles.concat(innerArcHandles)) {
       results.push(...this._arc.recipeIndex.findHandleMatch(handle, ['use', '?']).map(
           otherHandle => ({recipe: otherHandle.recipe})));
     }
@@ -69278,7 +69278,7 @@ class InitSearch extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
       return [];
     }
 
-    let recipe = new _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"]();
+    const recipe = new _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"]();
     recipe.setSearchPhrase(this._search);
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(recipe.normalize());
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(!recipe.isResolved());
@@ -69327,7 +69327,7 @@ class MapSlots extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__[
     this._arc = arc;
   }
   async generate(inputParams) {
-    let arc = this._arc;
+    const arc = this._arc;
 
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onSlotConnection(recipe, slotConnection) {
@@ -69342,7 +69342,7 @@ class MapSlots extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__[
           return;
         }
 
-        let {local, remote} = MapSlots.findAllSlotCandidates(slotConnection, arc);
+        const {local, remote} = MapSlots.findAllSlotCandidates(slotConnection, arc);
 
         // ResolveRecipe handles one-slot case.
         if (local.length + remote.length < 2) {
@@ -69350,7 +69350,7 @@ class MapSlots extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__[
         }
 
         // If there are any local slots, prefer them over remote slots.
-        let slotList = local.length > 0 ? local : remote;
+        const slotList = local.length > 0 ? local : remote;
         return slotList.map(slot => ((recipe, slotConnection) => {
           MapSlots.connectSlotConnection(slotConnection, slot);
           return 1;
@@ -69362,7 +69362,7 @@ class MapSlots extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__[
   // Helper methods.
   // Connect the given slot connection to the selectedSlot, create the slot, if needed.
   static connectSlotConnection(slotConnection, selectedSlot) {
-    let recipe = slotConnection.recipe;
+    const recipe = slotConnection.recipe;
     if (!slotConnection.targetSlot) {
       let clonedSlot = recipe.updateToClone({selectedSlot}).selectedSlot;
 
@@ -69397,7 +69397,7 @@ class MapSlots extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__[
 
   // Returns the given slot candidates, sorted by "quality".
   static _findSlotCandidates(slotConnection, slots) {
-    let possibleSlots = slots.filter(s => this.slotMatches(slotConnection, s));
+    const possibleSlots = slots.filter(s => this.slotMatches(slotConnection, s));
     possibleSlots.sort((slot1, slot2) => {
         // TODO: implement.
         return slot1.name < slot2.name;
@@ -69430,8 +69430,8 @@ class MapSlots extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__[
   // Returns true, if the slot connection's tags intersection with slot's tags is nonempty.
   // TODO: replace with generic tag matcher
   static tagsOrNameMatch(slotConnection, slot) {
-    let consumeConnTags = [].concat(slotConnection.slotSpec.tags || [], slotConnection.tags, slotConnection.targetSlot ? slotConnection.targetSlot.tags : []);
-    let slotTags = new Set([].concat(slot.tags, slot.spec.tags || [], [slot.name]));
+    const consumeConnTags = [].concat(slotConnection.slotSpec.tags || [], slotConnection.tags, slotConnection.targetSlot ? slotConnection.targetSlot.tags : []);
+    const slotTags = new Set([].concat(slot.tags, slot.spec.tags || [], [slot.name]));
     // Consume connection tags aren't empty and intersection with the slot isn't empty.
     if (consumeConnTags.length > 0 && consumeConnTags.some(t => slotTags.has(t))) {
       return true;
@@ -69486,7 +69486,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 class MatchFreeHandlesToConnections extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
   async generate(inputParams) {
-    let self = this;
+    const self = this;
 
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
       onHandle(recipe, handle) {
@@ -69494,11 +69494,11 @@ class MatchFreeHandlesToConnections extends _strategizer_strategizer_js__WEBPACK
           return;
         }
 
-        let matchingConnections = recipe.handleConnections.filter(connection => connection.handle == undefined && connection.name !== 'descriptions');
+        const matchingConnections = recipe.handleConnections.filter(connection => connection.handle == undefined && connection.name !== 'descriptions');
 
         return matchingConnections.map(connection => {
           return (recipe, handle) => {
-            let newConnection = recipe.updateToClone({connection}).connection;
+            const newConnection = recipe.updateToClone({connection}).connection;
             newConnection.connectToHandle(handle);
             return 1;
           };
@@ -69542,7 +69542,7 @@ class MatchParticleByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_
   }
 
   async generate(inputParams) {
-    let arc = this._arc;
+    const arc = this._arc;
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onParticle(recipe, particle) {
         if (particle.name) {
@@ -69550,12 +69550,12 @@ class MatchParticleByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_
           return;
         }
 
-        let particleSpecs = arc.context.findParticlesByVerb(particle.primaryVerb)
+        const particleSpecs = arc.context.findParticlesByVerb(particle.primaryVerb)
             .filter(spec => !arc.pec.slotComposer || spec.matchAffordance(arc.pec.slotComposer.affordance));
 
         return particleSpecs.map(spec => {
           return (recipe, particle) => {
-            let score = 1;
+            const score = 1;
 
             particle.name = spec.name;
             particle.spec = spec;
@@ -69617,7 +69617,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
   }
 
   async generate(inputParams) {
-    let arc = this._arc;
+    const arc = this._arc;
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onParticle(recipe, particle) {
         if (particle.name) {
@@ -69632,21 +69632,21 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
         //
         // Note that slots are only included if connected to other components of the recipe - e.g.
         // the target slot has a source connection.
-        let slotConstraints = {};
-        for (let consumeSlot of Object.values(particle.consumedSlotConnections)) {
-          let targetSlot = consumeSlot.targetSlot && consumeSlot.targetSlot.sourceConnection ? consumeSlot.targetSlot : null;
+        const slotConstraints = {};
+        for (const consumeSlot of Object.values(particle.consumedSlotConnections)) {
+          const targetSlot = consumeSlot.targetSlot && consumeSlot.targetSlot.sourceConnection ? consumeSlot.targetSlot : null;
           slotConstraints[consumeSlot.name] = {targetSlot, providedSlots: {}};
-          for (let providedSlot of Object.keys(consumeSlot.providedSlots)) {
-            let sourceSlot = consumeSlot.providedSlots[providedSlot].consumeConnections.length > 0 ? consumeSlot.providedSlots[providedSlot] : null;
+          for (const providedSlot of Object.keys(consumeSlot.providedSlots)) {
+            const sourceSlot = consumeSlot.providedSlots[providedSlot].consumeConnections.length > 0 ? consumeSlot.providedSlots[providedSlot] : null;
             slotConstraints[consumeSlot.name].providedSlots[providedSlot] = sourceSlot;
           }
         }
 
-        let handleConstraints = {named: {}, unnamed: []};
-        for (let handleConnection of Object.values(particle.connections)) {
+        const handleConstraints = {named: {}, unnamed: []};
+        for (const handleConnection of Object.values(particle.connections)) {
           handleConstraints.named[handleConnection.name] = {direction: handleConnection.direction, handle: handleConnection.handle};
         }
-        for (let unnamedConnection of particle.unnamedConnections) {
+        for (const unnamedConnection of particle.unnamedConnections) {
           handleConstraints.unnamed.push({direction: unnamedConnection.direction, handle: unnamedConnection.handle});
         }
 
@@ -69655,28 +69655,28 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
 
         return recipes.map(recipe => {
           return (outputRecipe, particleForReplacing) => {
-            let {handles, particles, slots} = recipe.mergeInto(outputRecipe);
+            const {handles, particles, slots} = recipe.mergeInto(outputRecipe);
 
             particleForReplacing.remove();
 
 
-            for (let consumeSlot in slotConstraints) {
+            for (const consumeSlot in slotConstraints) {
               if (slotConstraints[consumeSlot].targetSlot || Object.values(slotConstraints[consumeSlot].providedSlots).filter(a => a != null).length > 0) {
                 let slotMapped = false;
-                for (let particle of particles) {
+                for (const particle of particles) {
                   if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, consumeSlot, slotConstraints[consumeSlot].providedSlots)) {
                     if (slotConstraints[consumeSlot].targetSlot) {
-                      let {mappedSlot} = outputRecipe.updateToClone({mappedSlot: slotConstraints[consumeSlot].targetSlot});
+                      const {mappedSlot} = outputRecipe.updateToClone({mappedSlot: slotConstraints[consumeSlot].targetSlot});
                       particle.consumedSlotConnections[consumeSlot]._targetSlot = mappedSlot;
                       mappedSlot.consumeConnections.push(particle.consumedSlotConnections[consumeSlot]);
                     }
-                    for (let slotName in slotConstraints[consumeSlot].providedSlots) {
-                      let slot = slotConstraints[consumeSlot].providedSlots[slotName];
+                    for (const slotName in slotConstraints[consumeSlot].providedSlots) {
+                      const slot = slotConstraints[consumeSlot].providedSlots[slotName];
                       if (slot == null) {
                         continue;
                       }
-                      let {mappedSlot} = outputRecipe.updateToClone({mappedSlot: slot});
-                      let oldSlot = particle.consumedSlotConnections[consumeSlot].providedSlots[slotName];
+                      const {mappedSlot} = outputRecipe.updateToClone({mappedSlot: slot});
+                      const oldSlot = particle.consumedSlotConnections[consumeSlot].providedSlots[slotName];
                       oldSlot.remove();
                       particle.consumedSlotConnections[consumeSlot].providedSlots[slotName] = mappedSlot;
                       mappedSlot._sourceConnection = particle.consumedSlotConnections[consumeSlot];
@@ -69698,7 +69698,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
                 return false;
               }
               for (let i = 0; i < handle.connections.length; i++) {
-                let candidate = handle.connections[i];
+                const candidate = handle.connections[i];
                 if (candidate.particle == particleForReplacing && candidate.name == name) {
                   connection._handle = handle;
                   handle.connections[i] = connection;
@@ -69709,8 +69709,8 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
             }
 
             function applyHandleConstraint(name, constraint, handle) {
-              let {mappedHandle} = outputRecipe.updateToClone({mappedHandle: handle});
-              for (let particle of particles) {
+              const {mappedHandle} = outputRecipe.updateToClone({mappedHandle: handle});
+              for (const particle of particles) {
                 if (name) {
                   if (tryApplyHandleConstraint(
                           name,
@@ -69720,7 +69720,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
                     return true;
                   }
                 } else {
-                  for (let connection of Object.values(particle.connections)) {
+                  for (const connection of Object.values(particle.connections)) {
                     if (tryApplyHandleConstraint(
                             name, connection, constraint, mappedHandle)) {
                       return true;
@@ -69731,7 +69731,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
               return false;
             }
 
-            for (let name in handleConstraints.named) {
+            for (const name in handleConstraints.named) {
               if (handleConstraints.named[name].handle) {
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(applyHandleConstraint(
                     name,
@@ -69740,7 +69740,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
               }
             }
 
-            for (let connection of handleConstraints.unnamed) {
+            for (const connection of handleConstraints.unnamed) {
               if (connection.handle) {
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(
                     applyHandleConstraint(null, connection, connection.handle));
@@ -69755,13 +69755,13 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
   }
 
   static satisfiesHandleConstraints(recipe, handleConstraints) {
-    for (let handleName in handleConstraints.named) {
+    for (const handleName in handleConstraints.named) {
       if (!MatchRecipeByVerb.satisfiesHandleConnection(
               recipe, handleName, handleConstraints.named[handleName])) {
         return false;
       }
     }
-    for (let handleData of handleConstraints.unnamed) {
+    for (const handleData of handleConstraints.unnamed) {
       if (!MatchRecipeByVerb.satisfiesUnnamedHandleConnection(
               recipe, handleData)) {
         return false;
@@ -69775,8 +69775,8 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
     if (!handleData.handle) {
       return false;
     }
-    for (let particle of recipe.particles) {
-      for (let connection of Object.values(particle.connections)) {
+    for (const particle of recipe.particles) {
+      for (const connection of Object.values(particle.connections)) {
         if (MatchRecipeByVerb.connectionMatchesConstraint(
                 connection, handleData)) {
           return true;
@@ -69787,7 +69787,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
   }
 
   static satisfiesHandleConnection(recipe, handleName, handleData) {
-    for (let particle of recipe.particles) {
+    for (const particle of recipe.particles) {
       if (particle.connections[handleName]) {
         if (MatchRecipeByVerb.connectionMatchesConstraint(
                 particle.connections[handleName], handleData)) {
@@ -69809,7 +69809,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
   }
 
   static satisfiesSlotConstraints(recipe, slotConstraints) {
-    for (let slotName in slotConstraints) {
+    for (const slotName in slotConstraints) {
       if (!MatchRecipeByVerb.satisfiesSlotConnection(
               recipe, slotName, slotConstraints[slotName])) {
         return false;
@@ -69819,7 +69819,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
   }
 
   static satisfiesSlotConnection(recipe, slotName, constraints) {
-    for (let particle of recipe.particles) {
+    for (const particle of recipe.particles) {
       if (MatchRecipeByVerb.slotsMatchConstraint(
               particle.consumedSlotConnections, slotName, constraints)) {
         return true;
@@ -69836,7 +69836,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
         constraints.targetSlot != null) {
       return false;
     }
-    for (let provideName in constraints.providedSlots) {
+    for (const provideName in constraints.providedSlots) {
       if (connections[name].providedSlots[provideName] == null) {
         return false;
       }
@@ -69886,7 +69886,7 @@ class NameUnnamedConnections extends _strategizer_strategizer_js__WEBPACK_IMPORT
           return;
         }
 
-        let possibleSpecConns = handleConnection.particle.spec.connections.filter(specConn => {
+        const possibleSpecConns = handleConnection.particle.spec.connections.filter(specConn => {
           // filter specs with matching types that don't have handles bound to the corresponding handle connection.
           return !specConn.isOptional &&
                  handleConnection.handle.type.equals(specConn.type) &&
@@ -69942,7 +69942,7 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
   }
 
   async generate(inputParams) {
-    let arc = this._arc;
+    const arc = this._arc;
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
       onHandle(recipe, handle) {
         if (handle.connections.length == 0 ||
@@ -69992,7 +69992,7 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
         }
 
         mappable = mappable.filter(incomingHandle => {
-          for (let existingHandle of recipe.handles) {
+          for (const existingHandle of recipe.handles) {
             if (incomingHandle.id == existingHandle.id &&
                 existingHandle !== handle) {
               return false;
@@ -70013,15 +70013,15 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
           return;
         }
 
-        let {local, remote} = _map_slots_js__WEBPACK_IMPORTED_MODULE_4__["MapSlots"].findAllSlotCandidates(slotConnection, arc);
-        let allSlots = [...local, ...remote];
+        const {local, remote} = _map_slots_js__WEBPACK_IMPORTED_MODULE_4__["MapSlots"].findAllSlotCandidates(slotConnection, arc);
+        const allSlots = [...local, ...remote];
 
         // MapSlots handles a multi-slot case.
         if (allSlots.length !== 1) {
           return;
         }
 
-        let selectedSlot = allSlots[0];
+        const selectedSlot = allSlots[0];
         return (recipe, slotConnection) => {
           _map_slots_js__WEBPACK_IMPORTED_MODULE_4__["MapSlots"].connectSlotConnection(slotConnection, selectedSlot);
           return 1;
@@ -70029,10 +70029,10 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
       }
 
       onObligation(recipe, obligation) {
-        let fromParticle = obligation.from.instance;
-        let toParticle = obligation.to.instance;
-        for (let fromConnection of Object.values(fromParticle.connections)) {
-          for (let toConnection of Object.values(toParticle.connections)) {
+        const fromParticle = obligation.from.instance;
+        const toParticle = obligation.to.instance;
+        for (const fromConnection of Object.values(fromParticle.connections)) {
+          for (const toConnection of Object.values(toParticle.connections)) {
             if (fromConnection.handle && fromConnection.handle == toConnection.handle) {
               return (recipe, obligation) => {
                 recipe.removeObligation(obligation);
@@ -70173,10 +70173,10 @@ class SearchTokensToHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTE
   }
 
   async generate(inputParams) {
-    let arc = this._arc;
+    const arc = this._arc;
     // Finds stores matching the provided token and compatible with the provided handle's type,
     // which are not already mapped into the provided handle's recipe
-    let findMatchingStores = (token, handle) => {
+    const findMatchingStores = (token, handle) => {
       const counts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].directionCounts(handle);
       let stores = arc.findStoresByType(handle.type, {tags: [`${token}`], subtype: counts.out == 0});
       let fate = 'use';
@@ -70197,8 +70197,8 @@ class SearchTokensToHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTE
           return;
         }
 
-        let possibleMatches = [];
-        for (let token of recipe.search.unresolvedTokens) {
+        const possibleMatches = [];
+        for (const token of recipe.search.unresolvedTokens) {
           possibleMatches.push(...findMatchingStores(token, handle));
         }
         if (possibleMatches.length == 0) {
@@ -70249,9 +70249,9 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
   constructor(arc) {
     super();
 
-    let thingByToken = {};
-    let thingByPhrase = {};
-    for (let [thing, packaged] of [...arc.context.particles.map(p => [p, {spec: p}]),
+    const thingByToken = {};
+    const thingByPhrase = {};
+    for (const [thing, packaged] of [...arc.context.particles.map(p => [p, {spec: p}]),
                                    ...arc.context.recipes.map(r => [r, {innerRecipe: r}])]) {
       this._addThing(thing.name, packaged, thingByToken, thingByPhrase);
       thing.verbs.forEach(verb => this._addThing(verb, packaged, thingByToken, thingByPhrase));
@@ -70268,9 +70268,9 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
           return;
         }
 
-        let byToken = {};
-        let resolvedTokens = new Set();
-        let _addThingsByToken = (token, things) => {
+        const byToken = {};
+        const resolvedTokens = new Set();
+        const _addThingsByToken = (token, things) => {
           things.forEach(thing => {
             byToken[token] = byToken[token] || [];
             byToken[token].push(thing);
@@ -70278,19 +70278,19 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
           });
         };
 
-        for (let [phrase, things] of Object.entries(thingByPhrase)) {
-          let tokens = phrase.split(' ');
+        for (const [phrase, things] of Object.entries(thingByPhrase)) {
+          const tokens = phrase.split(' ');
           if (tokens.every(token => recipe.search.unresolvedTokens.find(unresolved => unresolved == token)) &&
               recipe.search.phrase.includes(phrase)) {
             _addThingsByToken(phrase, things);
           }
         }
 
-        for (let token of recipe.search.unresolvedTokens) {
+        for (const token of recipe.search.unresolvedTokens) {
           if (resolvedTokens.has(token)) {
             continue;
           }
-          let things = thingByToken[token];
+          const things = thingByToken[token];
           things && _addThingsByToken(token, things);
         }
 
@@ -70303,19 +70303,19 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
           sets.reduce((acc, set) =>
             flatten(acc.map(x => set.map(y => [...x, y]))),
             [[]]);
-        let possibleCombinations = product(...Object.values(byToken).map(v => flatten(v)));
+        const possibleCombinations = product(...Object.values(byToken).map(v => flatten(v)));
 
         return possibleCombinations.map(combination => {
           return recipe => {
             resolvedTokens.forEach(token => recipe.search.resolveToken(token));
             combination.forEach(({spec, innerRecipe}) => {
               if (spec) {
-                let particle = recipe.newParticle(spec.name);
+                const particle = recipe.newParticle(spec.name);
                 particle.spec = spec;
               } else {
-                let otherToHandle = this.index.findCoalescableHandles(recipe, innerRecipe);
+                const otherToHandle = this.index.findCoalescableHandles(recipe, innerRecipe);
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(innerRecipe);
-                let {cloneMap} = innerRecipe.mergeInto(recipe);
+                const {cloneMap} = innerRecipe.mergeInto(recipe);
                 otherToHandle.forEach((otherHandle, handle) => cloneMap.get(otherHandle).mergeInto(handle));
               }
             });
@@ -70333,8 +70333,8 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
 
   getResults(inputParams) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(inputParams);
-    let generated = super.getResults(inputParams).filter(result => !result.result.isResolved());
-    let terminal = inputParams.terminal;
+    const generated = super.getResults(inputParams).filter(result => !result.result.isResolved());
+    const terminal = inputParams.terminal;
     return [...generated, ...terminal];
   }
 
@@ -70345,7 +70345,7 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
     this._addThingByToken(token.toLowerCase(), thing, thingByToken);
 
     // split DoSomething into "do something" and add the phrase
-    let phrase = token.replace(/([^A-Z])([A-Z])/g, '$1 $2').replace(/([A-Z][^A-Z])/g, ' $1').replace(/[\s]+/g, ' ').trim();
+    const phrase = token.replace(/([^A-Z])([A-Z])/g, '$1 $2').replace(/([A-Z][^A-Z])/g, ' $1').replace(/[\s]+/g, ' ').trim();
     if (phrase != token) {
       this._addThingByToken(phrase.toLowerCase(), thing, thingByPhrase);
     }
@@ -70422,10 +70422,10 @@ class SuggestDomConsumer extends _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTE
   }
 
   static render(container, plan, content) {
-    let consumer = new _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"]();
-    let suggestionContainer = Object.assign(document.createElement('suggestion-element'), {plan});
+    const consumer = new _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"]();
+    const suggestionContainer = Object.assign(document.createElement('suggestion-element'), {plan});
     container.appendChild(suggestionContainer, container.firstElementChild);
-    let rendering = {container: suggestionContainer, model: content.model};
+    const rendering = {container: suggestionContainer, model: content.model};
     consumer._renderingBySubId.set(undefined, rendering);
     consumer._eventHandler = (() => {});
     consumer._stampTemplate(rendering, consumer.createTemplateElement(content.template));
@@ -70500,11 +70500,11 @@ class SuggestionComposer {
   async _updateSuggestions(suggestions) {
     this.clear();
 
-    let sortedSuggestions = suggestions.sort((s1, s2) => s2.rank - s1.rank);
-    for (let suggestion of sortedSuggestions) {
+    const sortedSuggestions = suggestions.sort((s1, s2) => s2.rank - s1.rank);
+    for (const suggestion of sortedSuggestions) {
       // TODO(mmandlis): This hack is needed for deserialized suggestions to work. Should
       // instead serialize the description object and generation suggestion content here.
-      let suggestionContent = suggestion.suggestionContent ? suggestion.suggestionContent :
+      const suggestionContent = suggestion.suggestionContent ? suggestion.suggestionContent :
         await suggestion.description.getRecipeSuggestion(this._affordance.descriptionFormatter);
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(suggestionContent, 'No suggestion content available');
 
@@ -70517,13 +70517,13 @@ class SuggestionComposer {
   }
 
   _addInlineSuggestion(suggestion, suggestionContent) {
-    let remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
+    const remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
     if (remoteSlots.length != 1) {
       return;
     }
-    let remoteSlot = remoteSlots[0];
+    const remoteSlot = remoteSlots[0];
 
-    let context = this._slotComposer.findContextById(remoteSlot.id);
+    const context = this._slotComposer.findContextById(remoteSlot.id);
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(context);
 
     if (context.spec.isSet) {
@@ -70540,18 +70540,18 @@ class SuggestionComposer {
       return;
     }
 
-    let handleIds = context.spec.handles.map(
+    const handleIds = context.spec.handles.map(
       handleName => context.sourceSlotConsumer.consumeConn.particle.connections[handleName].handle.id);
     if (!handleIds.find(handleId => suggestion.plan.handles.find(handle => handle.id == handleId))) {
       // the suggestion doesn't use any of the handles that the context is restricted to.
       return;
     }
 
-    let suggestConsumer = new this._affordance.suggestionConsumerClass(this._slotComposer._containerKind, suggestion, suggestionContent, (eventlet) => {
-      let suggestion = this._suggestions.find(s => s.hash == eventlet.data.key);
+    const suggestConsumer = new this._affordance.suggestionConsumerClass(this._slotComposer._containerKind, suggestion, suggestionContent, (eventlet) => {
+      const suggestion = this._suggestions.find(s => s.hash == eventlet.data.key);
       suggestConsumer.dispose();
       if (suggestion) {
-        let index = this._suggestConsumers.findIndex(consumer => consumer == suggestConsumer);
+        const index = this._suggestConsumers.findIndex(consumer => consumer == suggestConsumer);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(index >= 0, 'cannot find suggest slot context');
         this._suggestConsumers.splice(index, 1);
 
@@ -70603,7 +70603,7 @@ class SuggestionStorage {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, `User id must not be null`);
 
     this._arc = arc;
-    let storageKeyTokens = this._arc.storageKey.split('/');
+    const storageKeyTokens = this._arc.storageKey.split('/');
     this._arcKey = storageKeyTokens.slice(-1)[0];
     this._storageKey = 
       `${storageKeyTokens.slice(0, -2).join('/')}/users/${userid}/suggestions/${this._arcKey}`;
@@ -70630,8 +70630,8 @@ class SuggestionStorage {
   }
 
   _initStore(id, storageKey, callback) {
-    let schema = new _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_3__["Schema"]({names: ['Suggestions'], fields: {current: 'Object'}});
-    let type = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__["Type"].newEntity(schema);
+    const schema = new _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_3__["Schema"]({names: ['Suggestions'], fields: {current: 'Object'}});
+    const type = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__["Type"].newEntity(schema);
     const promise = this._arc._storageProviderFactory._storageForKey(storageKey)._join(
         id, type, storageKey, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
     promise.then(
@@ -70655,13 +70655,13 @@ class SuggestionStorage {
       return;
     }
 
-    let value = (await (store || this._store).get()) || {};
+    const value = (await (store || this._store).get()) || {};
     if (!value.current) {
       return;
     }
 
-    let plans = [];
-    for (let {descriptionText, recipe, hash, rank, suggestionContent} of value.current.plans) {
+    const plans = [];
+    for (const {descriptionText, recipe, hash, rank, suggestionContent} of value.current.plans) {
       try {
         plans.push({
           plan: await this._planFromString(recipe),
@@ -70693,19 +70693,19 @@ class SuggestionStorage {
   }
 
   async _planFromString(planString) {
-    let manifest = await _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(
+    const manifest = await _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(
         planString, {loader: this._arc.loader, context: this._arc._context, fileName: ''});
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest._recipes.length == 1);
     let plan = manifest._recipes[0];
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan.normalize(), `can't normalize deserialized suggestion: ${plan.toString()}`);
     if (!plan.isResolved()) {
-      let resolvedPlan = await this._recipeResolver.resolve(plan);
+      const resolvedPlan = await this._recipeResolver.resolve(plan);
       Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(resolvedPlan, `can't resolve plan: ${plan.toString({showUnresolved: true})}`);
       if (resolvedPlan) {
         plan = resolvedPlan;
       }
     }
-    for (let store of manifest.stores) {
+    for (const store of manifest.stores) {
       // If recipe has hosted particles, manifest will have stores with hosted
       // particle specs. Moving these stores into the current arc's context.
       // TODO: This is a hack, find a proper way of doing this.
@@ -70717,8 +70717,8 @@ class SuggestionStorage {
   async storeCurrent(current) {
     await this.ensureInitialized();
 
-    let plans = [];
-    for (let plan of current.plans) {
+    const plans = [];
+    for (const plan of current.plans) {
       plans.push({
         recipe: this._planToString(plan.plan),
         hash: plan.hash,
@@ -70742,16 +70742,16 @@ class SuggestionStorage {
     // TODO: This is a transformation particle hack for plans resolved by
     // FindHostedParticle strategy. Find a proper way to do this.
     // Update hosted particle handles and connections.
-    let planClone = plan.clone();
+    const planClone = plan.clone();
     planClone.slots.forEach(slot => slot.id = slot.id || `slotid-${this._arc.generateID()}`);
 
-    let hostedParticleSpecs = [];
+    const hostedParticleSpecs = [];
     for (let i = 0; i < planClone.handles.length; ++i) {
-      let handle = planClone.handles[i];
+      const handle = planClone.handles[i];
       if (handle.id && handle.id.includes('particle-literal')) {
-        let hostedParticleName = handle.id.substr(handle.id.lastIndexOf(':') + 1);
+        const hostedParticleName = handle.id.substr(handle.id.lastIndexOf(':') + 1);
         // Add particle spec to the list.
-        let hostedParticleSpec = this._arc._context.findParticleByName(hostedParticleName);
+        const hostedParticleSpec = this._arc._context.findParticleByName(hostedParticleName);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(hostedParticleSpec, `Cannot find spec for particle '${hostedParticleName}'.`);
         hostedParticleSpecs.push(hostedParticleSpec.toString());
 
@@ -70953,7 +70953,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // Regex to separate style and template.
-let re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
+const re = /<style>((?:.|[\r\n])*)<\/style>((?:.|[\r\n])*)/;
 
 /** @class TransformationDomParticle
  * Particle that does transformation stuff with DOM.
