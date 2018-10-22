@@ -1,14 +1,5 @@
-commit ad86a81bac16154d6625888b3463416a13850849
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Oct 22 11:38:33 2018 +1100
+commit d58bb5ab2f6c0d6edbad1c39e0c146097ec92b9b
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Sun Oct 21 23:38:59 2018 -0700
 
-    Convert manifest.js to typeScript (#2124)
-    
-    Modified tslint.configs:
-    prefer-const: [true] -> prefer-const: [true, {"destructuring": "all"}]
-    prevents warnings when destructuring multiple fields, unless they should all be const.
-    e.g.
-    ```
-    let {foo, bar} = far;
-    bar += 1;
-    ```
+    constify runtime testing/test code (#2127)
