@@ -1,7 +1,13 @@
-commit 339fe61435ea63d71202ee0727230dbd0d949cca
+commit b5878ff7a1a97b5b4cc44dc7d51e770b3c6dfc4a
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Oct 22 14:58:59 2018 -0700
+Date:   Mon Oct 22 15:49:30 2018 -0700
 
-    constify remaining runtime js files (#2129)
+    Restore AddToCollection.js (#2130)
     
-    Automated conversion of runtime js files using eslint --fix
+    * Restore AddToCollection.js
+    
+    Partial rollback of de3c6a6fa722000a48e9ac319c1db7ba187c493a
+    
+    * Update copyright year
+    
+    Co-Authored-By: lindner <lindner@inuus.com>
