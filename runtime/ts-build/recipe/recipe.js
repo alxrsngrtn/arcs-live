@@ -19,6 +19,7 @@ export class Recipe {
         this._handles = [];
         this._slots = [];
         this._localName = undefined;
+        this.annotation = undefined;
         // TODO: Recipes should be collections of records that are tagged
         // with a type. Strategies should register the record types they
         // can handle. ConnectionConstraints should be a different record
@@ -319,7 +320,7 @@ export class Recipe {
         Object.freeze(this);
         return true;
     }
-    clone(cloneMap) {
+    clone(cloneMap = undefined) {
         // for now, just copy everything
         const recipe = new Recipe(this.name);
         if (cloneMap == undefined) {

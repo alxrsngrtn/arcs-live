@@ -62951,7 +62951,7 @@ class ArcDebugHandler {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcPlannerInvoker", function() { return ArcPlannerInvoker; });
 /* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../planner.js */ "./runtime/planner.js");
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/manifest.js */ "./runtime/ts-build/manifest.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -62988,7 +62988,7 @@ class ArcPlannerInvoker {
 
     let manifest;
     try {
-      manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(msg.recipe, {loader: this.arc._loader, fileName: 'manifest.manifest'});
+      manifest = await _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(msg.recipe, {loader: this.arc._loader, fileName: 'manifest.manifest'});
     } catch (error) {
       return {error: error.message};
     }
@@ -63056,7 +63056,7 @@ class ArcStoresFetcher {
 
   async _listStores() {
     const find = manifest => {
-      let tags = [...manifest._storeTags];
+      let tags = [...manifest.storeTags];
       if (manifest.imports) {
         manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
       }
@@ -64948,1190 +64948,6 @@ const local_fetch = fetch;
 
 /***/ }),
 
-/***/ "./runtime/manifest.js":
-/*!*****************************!*\
-  !*** ./runtime/manifest.js ***!
-  \*****************************/
-/*! exports provided: Manifest */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Manifest", function() { return Manifest; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../platform/digest-web.js */ "./platform/digest-web.js");
-/* harmony import */ var _build_manifest_parser_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./build/manifest-parser.js */ "./runtime/build/manifest-parser.js");
-/* harmony import */ var _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ts-build/recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
-/* harmony import */ var _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
-/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./particle-spec.js */ "./runtime/particle-spec.js");
-/* harmony import */ var _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ts-build/schema.js */ "./runtime/ts-build/schema.js");
-/* harmony import */ var _ts_build_recipe_search_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ts-build/recipe/search.js */ "./runtime/ts-build/recipe/search.js");
-/* harmony import */ var _ts_build_shape_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ts-build/shape.js */ "./runtime/ts-build/shape.js");
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _ts_build_recipe_util_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./ts-build/recipe/util.js */ "./runtime/ts-build/recipe/util.js");
-/* harmony import */ var _ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./ts-build/storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
-/* harmony import */ var _ts_build_manifest_meta_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./ts-build/manifest-meta.js */ "./runtime/ts-build/manifest-meta.js");
-/* harmony import */ var _ts_build_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./ts-build/recipe/type-checker.js */ "./runtime/ts-build/recipe/type-checker.js");
-/* harmony import */ var _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./ts-build/recipe/connection-constraint.js */ "./runtime/ts-build/recipe/connection-constraint.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class ManifestError extends Error {
-  constructor(location, message) {
-    super(message);
-    this.location = location;
-  }
-}
-
-class StorageStub {
-  constructor(type, id, name, storageKey, storageProviderFactory, originalId) {
-    this.type = type;
-    this.id = id;
-    this.originalId = originalId;
-    this.name = name;
-    this.storageKey = storageKey;
-    this.storageProviderFactory = storageProviderFactory;
-  }
-
-  async inflate() {
-    let store = await this.storageProviderFactory.connect(this.id, this.type, this.storageKey);
-    store.originalId = this.originalId;
-    return store;
-  }
-}
-
-/**
- * Calls `this.visit()` for each node in a manfest AST, parents before children.
- */
-class ManifestVisitor {
-  traverse(ast) {
-    if (['string', 'number', 'boolean'].includes(typeof ast) || ast === null) {
-      return;
-    }
-    if (Array.isArray(ast)) {
-      for (let item of ast) {
-        this.traverse(item);
-      }
-      return;
-    }
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(ast.location, 'expected manifest node to have `location`');
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(ast.kind, 'expected manifest node to have `kind`');
-    let childrenVisited = false;
-    let visitChildren = () => {
-      if (childrenVisited) {
-        return;
-      }
-      childrenVisited = true;
-      for (let key of Object.keys(ast)) {
-        if (['location', 'kind', 'model'].includes(key)) {
-          continue;
-        }
-        this.traverse(ast[key]);
-      }
-    };
-    this.visit(ast, visitChildren);
-    visitChildren();
-  }
-
-  // Parents are visited before children, but an implementation can force
-  // children to be visted by calling `visitChildren()`.
-  visit(node, visitChildren) {
-  }
-}
-
-let globalWarningKeys = new Set();
-
-class Manifest {
-  constructor({id}) {
-    this._recipes = [];
-    this._imports = [];
-    // TODO: These should be lists, possibly with a separate flattened map.
-    this._particles = {};
-    this._schemas = {};
-    this._stores = [];
-    this._shapes = [];
-    this._storeTags = new Map();
-    this._fileName = null;
-    this._nextLocalID = 0;
-    this._id = id;
-    this._storageProviderFactory = undefined;
-    this._meta = new _ts_build_manifest_meta_js__WEBPACK_IMPORTED_MODULE_12__["ManifestMeta"]();
-    this._resources = {};
-    this._storeManifestUrls = new Map();
-    this._warnings = [];
-  }
-  get id() {
-    if (this._meta.name) {
-      return this._meta.name;
-    }
-    return this._id;
-  }
-  get storageProviderFactory() {
-    if (this._storageProviderFactory == undefined) {
-      this._storageProviderFactory = new _ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_11__["StorageProviderFactory"](this.id);
-    }
-    return this._storageProviderFactory;
-  }
-  get recipes() {
-    return [...new Set(this._findAll(manifest => manifest._recipes))];
-  }
-
-  get activeRecipe() {
-    return this._recipes.find(recipe => recipe.annotation == 'active');
-  }
-
-  get particles() {
-    return [...new Set(this._findAll(manifest => Object.values(manifest._particles)))];
-  }
-  get imports() {
-    return this._imports;
-  }
-  get schemas() {
-    return this._schemas;
-  }
-  get fileName() {
-    return this._fileName;
-  }
-  get stores() {
-    return this._stores;
-  }
-  get allStores() {
-    return [...this._findAll(manifest => manifest._stores)];
-  }
-  get shapes() {
-    return this._shapes;
-  }
-  get meta() {
-    return this._meta;
-  }
-  get resources() {
-    return this._resources;
-  }
-  applyMeta(section) {
-    if (this._storageProviderFactory !== undefined) {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(
-          section.name == this._meta.name || section.name == undefined,
-          `can't change manifest ID after storage is constructed`);
-    }
-    this._meta.apply(section);
-  }
-  // TODO: newParticle, Schema, etc.
-  // TODO: simplify() / isValid().
-  async createStore(type, name, id, tags, storageKey) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!type.hasVariableReference, `stores can't have variable references`);
-    let store = await this.storageProviderFactory.construct(id, type, storageKey || `volatile://${this.id}`);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store._version !== null);
-    store.name = name;
-    this._storeManifestUrls.set(store.id, this.fileName);
-    return this._addStore(store, tags);
-  }
-
-  _addStore(store, tags) {
-    this._stores.push(store);
-    this._storeTags.set(store, tags ? tags : []);
-    return store;
-  }
-
-  newStorageStub(type, name, id, storageKey, tags, originalId) {
-    return this._addStore(new StorageStub(type, id, name, storageKey, this.storageProviderFactory, originalId), tags);
-  }
-
-  _find(manifestFinder) {
-    let result = manifestFinder(this);
-    if (!result) {
-      for (let importedManifest of this._imports) {
-        result = importedManifest._find(manifestFinder);
-        if (result) {
-          break;
-        }
-      }
-    }
-    return result;
-  }
-  * _findAll(manifestFinder) {
-    yield* manifestFinder(this);
-    for (let importedManifest of this._imports) {
-      yield* importedManifest._findAll(manifestFinder);
-    }
-  }
-  findSchemaByName(name) {
-    return this._find(manifest => manifest._schemas[name]);
-  }
-  findTypeByName(name) {
-    let schema = this.findSchemaByName(name);
-    if (schema) {
-      return _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newEntity(schema);
-    }
-    let shape = this.findShapeByName(name);
-    if (shape) {
-      return _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newInterface(shape);
-    }
-    return null;
-  }
-  findParticleByName(name) {
-    return this._find(manifest => manifest._particles[name]);
-  }
-  findParticlesByVerb(verb) {
-    return [...this._findAll(manifest => Object.values(manifest._particles).filter(particle => particle.primaryVerb == verb))];
-  }
-  findStoreByName(name) {
-    return this._find(manifest => manifest._stores.find(store => store.name == name));
-  }
-  findStoreById(id) {
-    return this._find(manifest => manifest._stores.find(store => store.id == id));
-  }
-  findStoreTags(store) {
-    return this._find(manifest => manifest._storeTags.get(store));
-  }
-  findManifestUrlForHandleId(id) {
-    return this._find(manifest => manifest._storeManifestUrls.get(id));
-  }
-  findStoreByType(type, options={}) {
-    let tags = options.tags || [];
-    let subtype = options.subtype || false;
-    function typePredicate(store) {
-      let resolvedType = type.resolvedType();
-      if (!resolvedType.isResolved()) {
-        return type.isCollection == store.type.isCollection && type.isBigCollection == store.type.isBigCollection;
-      }
-
-      if (subtype) {
-        let [left, right] = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].unwrapPair(store.type, resolvedType);
-        if (left.isEntity && right.isEntity) {
-          return left.entitySchema.isMoreSpecificThan(right.entitySchema);
-        }
-        return false;
-      }
-
-      return store.type.equals(type);
-    }
-    function tagPredicate(manifest, handle) {
-      return tags.filter(tag => !manifest._storeTags.get(handle).includes(tag)).length == 0;
-    }
-
-    let stores = [...this._findAll(manifest => manifest._stores.filter(store => typePredicate(store) && tagPredicate(manifest, store)))];
-
-    // Quick check that a new handle can fulfill the type contract.
-    // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
-    return stores.filter(s => !!_ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__["Handle"].effectiveType(
-      type, [{type: s.type, direction: s.type.isInterface ? 'host' : 'inout'}]));
-  }
-  findShapeByName(name) {
-    return this._find(manifest => manifest._shapes.find(shape => shape.name == name));
-  }
-  findRecipesByVerb(verb) {
-    return [...this._findAll(manifest => manifest._recipes.filter(recipe => recipe.verbs.includes(verb)))];
-  }
-  generateID() {
-    return `${this.id}:${this._nextLocalID++}`;
-  }
-  static async load(fileName, loader, options) {
-    options = options || {};
-    let {registry, id} = options;
-    registry = registry || {};
-    if (registry && registry[fileName]) {
-      return await registry[fileName];
-    }
-    registry[fileName] = (async () => {
-      let content = await loader.loadResource(fileName);
-      // TODO: When does this happen? The loader should probably throw an exception here.
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(content !== undefined, `${fileName} unable to be loaded by Manifest parser`);
-      return await Manifest.parse(content, {
-        id,
-        fileName,
-        loader,
-        registry,
-        position: {line: 1, column: 0}
-      });
-    })();
-    return await registry[fileName];
-  }
-
-  static async parse(content, options) {
-    options = options || {};
-    // TODO(sjmiles): allow `context` for including an existing manifest in the import list
-    let {id, fileName, position, loader, registry, context} = options;
-    registry = registry || {};
-    position = position || {line: 1, column: 0};
-    id = `manifest:${fileName}:`;
-
-    function dumpWarnings(manifest) {
-      for (let warning of manifest._warnings) {
-        // TODO: make a decision as to whether we should be logging these here, or if it should
-        //       be a responsibility of the caller.
-        // TODO: figure out how to have node print the correct message and stack trace
-        if (warning.key) {
-          if (globalWarningKeys.has(warning.key)) {
-            continue;
-          }
-          globalWarningKeys.add(warning.key);
-        }
-        console.warn(processError(warning).message);
-      }
-    }
-
-    function processError(e, parseError) {
-      if (!((e instanceof ManifestError) || e.location)) {
-        return e;
-      }
-      let lines = content.split('\n');
-      let line = lines[e.location.start.line - 1];
-      let span = 1;
-      if (e.location.end.line == e.location.start.line) {
-        span = e.location.end.column - e.location.start.column;
-      } else {
-        span = line.length - e.location.start.column;
-      }
-      span = Math.max(1, span);
-      let highlight = '';
-      for (let i = 0; i < e.location.start.column - 1; i++) {
-        highlight += ' ';
-      }
-      for (let i = 0; i < span; i++) {
-        highlight += '^';
-      }
-      let preamble;
-      if (parseError) {
-        preamble = 'Parse error in';
-      } else {
-        preamble = 'Post-parse processing error caused by';
-      }
-      let message = `${preamble} '${fileName}' line ${e.location.start.line}.
-${e.message}
-  ${line}
-  ${highlight}`;
-      let err = new Error(message);
-      if (!parseError) {
-        err.stack = e.stack;
-      }
-      return err;
-    }
-
-    let items = [];
-    try {
-      items = _build_manifest_parser_js__WEBPACK_IMPORTED_MODULE_2__["parser"].parse(content);
-    } catch (e) {
-      throw processError(e, true);
-    }
-    let manifest = new Manifest({id});
-    manifest._fileName = fileName;
-
-    // TODO(sjmiles): optionally include pre-existing context
-    context && manifest._imports.push(context);
-
-    try {
-      // Loading of imported manifests is triggered in parallel to avoid a serial loading
-      // of resources over the network.
-      await Promise.all(items.filter(item => item.kind == 'import').map(async item => {
-        let path = loader.path(manifest.fileName);
-        let target = loader.join(path, item.path);
-        try {
-          manifest._imports.push(await Manifest.load(target, loader, {registry}));
-        } catch (e) {
-          manifest._warnings.push(e);
-          manifest._warnings.push(new ManifestError(item.location, `Error importing '${target}'`));
-        }
-      }));
-
-      let processItems = async (kind, f) => {
-        for (let item of items) {
-          if (item.kind == kind) {
-            Manifest._augmentAstWithTypes(manifest, item);
-            await f(item);
-          }
-        }
-      };
-
-      // processing meta sections should come first as this contains identifying
-      // information that might need to be used in other sections. For example,
-      // the meta.name, if present, becomes the manifest id which is relevant
-      // when constructing manifest stores.
-      await processItems('meta', meta => manifest.applyMeta(meta.items));
-      // similarly, resources may be referenced from other parts of the manifest.
-      await processItems('resource', item => this._processResource(manifest, item));
-      await processItems('schema', item => this._processSchema(manifest, item));
-      await processItems('shape', item => this._processShape(manifest, item));
-      await processItems('particle', item => this._processParticle(manifest, item, loader));
-      await processItems('store', item => this._processStore(manifest, item, loader));
-      await processItems('recipe', item => this._processRecipe(manifest, item, loader));
-    } catch (e) {
-      dumpWarnings(manifest);
-      throw processError(e, false);
-    }
-    dumpWarnings(manifest);
-    return manifest;
-  }
-  static _augmentAstWithTypes(manifest, items) {
-    let visitor = new class extends ManifestVisitor {
-      constructor() {
-        super();
-      }
-      visit(node, visitChildren) {
-        // TODO(dstockwell): set up a scope and merge type variables here, so that
-        //     errors relating to failed merges can reference the manifest source.
-        visitChildren();
-
-        switch (node.kind) {
-        case 'schema-inline': {
-          let schemas = [];
-          let aliases = [];
-          let names = [];
-          for (let name of node.names) {
-            let resolved = manifest.resolveTypeName(name);
-            if (resolved && resolved.schema && resolved.schema.isAlias) {
-              aliases.push(resolved.schema);
-            } else {
-              names.push(name);
-            }
-            if (resolved && resolved.schema) {
-              schemas.push(resolved.schema);
-            }
-          }
-          let fields = {};
-          for (let {name, type} of node.fields) {
-            for (let schema of schemas) {
-              if (!type) {
-                // If we don't have a type, try to infer one from the schema.
-                type = schema.fields[name];
-              } else {
-                // Validate that the specified or inferred type matches the schema.
-                let externalType = schema.fields[name];
-                if (externalType && !_ts_build_schema_js__WEBPACK_IMPORTED_MODULE_6__["Schema"].typesEqual(externalType, type)) {
-                  throw new ManifestError(node.location, `Type of '${name}' does not match schema (${type} vs ${externalType})`);
-                }
-              }
-            }
-            if (!type) {
-              throw new ManifestError(node.location, `Could not infer type of '${name}' field`);
-            }
-            fields[name] = type;
-          }
-          let schema = new _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_6__["Schema"]({
-            names,
-            fields,
-          });
-          for (let alias of aliases) {
-            schema = _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_6__["Schema"].union(alias, schema);
-            if (!schema) {
-              throw new ManifestError(node.location, `Could not merge schema aliases`);
-            }
-          }
-          node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newEntity(schema);
-          return;
-        }
-        case 'variable-type': {
-          let constraint = node.constraint && node.constraint.model;
-          node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newVariable({name: node.name, constraint});
-          return;
-        }
-        case 'slot-type': {
-          let slotInfo = {};
-          for (let field of node.fields) {
-            slotInfo[field.name] = field.value;
-          }
-          node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newSlot(slotInfo);
-          return;
-        }
-        case 'type-name': {
-          let resolved = manifest.resolveTypeName(node.name);
-          if (!resolved) {
-            throw new ManifestError(
-                node.location,
-                `Could not resolve type reference to type name '${node.name}'`);
-          }
-          if (resolved.schema) {
-            node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newEntity(resolved.schema);
-          } else if (resolved.shape) {
-            node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newInterface(resolved.shape);
-          } else {
-            throw new Error('Expected {shape} or {schema}');
-          }
-          return;
-        }
-        case 'collection-type':
-          node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newCollection(node.type.model);
-          return;
-        case 'big-collection-type':
-          node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newBigCollection(node.type.model);
-          return;
-        case 'reference-type':
-          node.model = _ts_build_type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newReference(node.type.model);
-          return;
-        default:
-          return;
-        }
-      }
-    }();
-    visitor.traverse(items);
-  }
-  static _processSchema(manifest, schemaItem) {
-    let description;
-    let fields = {};
-    let names = [...schemaItem.names];
-    for (let item of schemaItem.items) {
-      switch (item.kind) {
-        case 'schema-field': {
-          let field = item;
-          if (fields[field.name]) {
-            throw new ManifestError(field.location, `Duplicate definition of field '${field.name}'`);
-          }
-          fields[field.name] = field.type;
-          break;
-        }
-        case 'schema-section': {
-          let section = item;
-          manifest._warnings.push(new ManifestError(section.location, `Schema sections are deprecated`));
-          for (let field of section.fields) {
-            if (fields[field.name]) {
-              throw new ManifestError(field.location, `Duplicate definition of field '${field.name}'`);
-            }
-            fields[field.name] = field.type;
-          }
-          break;
-        }
-        case 'description': {
-          if (description) {
-            throw new ManifestError(item.location, `Duplicate schema description`);
-          }
-          description = item;
-        }
-      }
-    }
-
-    for (let parent of schemaItem.parents) {
-      let result = manifest.findSchemaByName(parent);
-      if (!result) {
-        throw new ManifestError(
-            schemaItem.location,
-            `Could not find parent schema '${parent}'`);
-      }
-      for (let [name, type] of Object.entries(result.fields)) {
-        if (fields[name] && !_ts_build_schema_js__WEBPACK_IMPORTED_MODULE_6__["Schema"].typesEqual(fields[name], type)) {
-          throw new ManifestError(schemaItem.location,
-              `'${parent}' defines incompatible type for field '${name}'`);
-        }
-      }
-      Object.assign(fields, result.fields);
-      names.push(...result.names);
-    }
-    names = [names[0], ...names.filter(name => name != names[0])];
-    let name = schemaItem.alias || names[0];
-    if (!name) {
-      throw new ManifestError(
-          schemaItem.location,
-          `Schema defined without name or alias`);
-    }
-    let model = {names, fields};
-    if (description) model.description = description;
-    let schema = new _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_6__["Schema"](model);
-    if (schemaItem.alias) {
-      schema.isAlias = true;
-    }
-    manifest._schemas[name] = schema;
-  }
-  static _processResource(manifest, schemaItem) {
-    manifest._resources[schemaItem.name] = schemaItem.data;
-  }
-  static _processParticle(manifest, particleItem, loader) {
-    // TODO: we should be producing a new particleSpec, not mutating
-    //       particleItem directly.
-    // TODO: we should require both of these and update failing tests...
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particleItem.implFile == null || particleItem.args !== null, 'no valid body defined for this particle');
-    if (!particleItem.args) {
-      particleItem.args = [];
-    }
-
-    if (particleItem.hasParticleArgument) {
-      let warning = new ManifestError(particleItem.location, `Particle uses deprecated argument body`);
-      warning.key = 'hasParticleArgument';
-      manifest._warnings.push(warning);
-
-    }
-
-    // TODO: loader should not be optional.
-    if (particleItem.implFile && loader) {
-      particleItem.implFile = loader.join(manifest.fileName, particleItem.implFile);
-    }
-
-    let processArgTypes = args => {
-      for (let arg of args) {
-        arg.type = arg.type.model;
-        processArgTypes(arg.dependentConnections);
-      }
-    };
-    processArgTypes(particleItem.args);
-
-    let particleSpec = new _particle_spec_js__WEBPACK_IMPORTED_MODULE_5__["ParticleSpec"](particleItem);
-    manifest._particles[particleItem.name] = particleSpec;
-  }
-  // TODO: Move this to a generic pass over the AST and merge with resolveTypeName.
-  static _processShape(manifest, shapeItem) {
-    if (shapeItem.interface) {
-      let warning = new ManifestError(shapeItem.location, `Shape uses deprecated argument body`);
-      warning.key = 'hasShapeArgument';
-      manifest._warnings.push(warning);
-    }
-    let inHandles = shapeItem.interface ? shapeItem.interface.args : shapeItem.args;
-    let handles = [];
-
-    for (let arg of inHandles) {
-      let handle = {};
-      handle.name = arg.name == '*' ? undefined : arg.name;
-      handle.type = arg.type ? arg.type.model : undefined;
-      handle.direction = arg.direction;
-      handles.push(handle);
-    }
-    let slots = [];
-    for (let slotItem of shapeItem.slots) {
-      slots.push({
-        direction: slotItem.direction,
-        name: slotItem.name,
-        isRequired: slotItem.isRequired,
-        isSet: slotItem.isSet
-      });
-    }
-    // TODO: move shape to recipe/ and add shape builder?
-    let shape = new _ts_build_shape_js__WEBPACK_IMPORTED_MODULE_8__["Shape"](shapeItem.name, handles, slots);
-    manifest._shapes.push(shape);
-  }
-  static async _processRecipe(manifest, recipeItem, loader) {
-    // TODO: annotate other things too
-    let recipe = manifest._newRecipe(recipeItem.name);
-    recipe.annotation = recipeItem.annotation;
-    recipe.verbs = recipeItem.verbs;
-    let items = {
-      handles: recipeItem.items.filter(item => item.kind == 'handle'),
-      byHandle: new Map(),
-      particles: recipeItem.items.filter(item => item.kind == 'particle'),
-      byParticle: new Map(),
-      slots: recipeItem.items.filter(item => item.kind == 'slot'),
-      bySlot: new Map(),
-      byName: new Map(),
-      connections: recipeItem.items.filter(item => item.kind == 'connection'),
-      search: recipeItem.items.find(item => item.kind == 'search'),
-      description: recipeItem.items.find(item => item.kind == 'description')
-    };
-
-    for (let item of items.handles) {
-      let handle = recipe.newHandle();
-      let ref = item.ref || {tags: []};
-      if (ref.id) {
-        handle.id = ref.id;
-        let targetStore = manifest.findStoreById(handle.id);
-        if (targetStore) {
-          handle.mapToStorage(targetStore);
-        }
-      } else if (ref.name) {
-        let targetStore = manifest.findStoreByName(ref.name);
-        // TODO: Error handling.
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targetStore, `Could not find handle ${ref.name}`);
-        handle.mapToStorage(targetStore);
-      }
-      handle.tags = ref.tags;
-      if (item.name) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!items.byName.has(item.name));
-        handle.localName = item.name;
-        items.byName.set(item.name, {item, handle});
-      }
-      handle.fate = item.fate;
-      items.byHandle.set(handle, item);
-    }
-
-    let prepareEndpoint = (connection, info) => {
-      switch (info.targetType) {
-        case 'particle': {
-          let particle = manifest.findParticleByName(info.particle);
-          if (!particle) {
-            throw new ManifestError(
-                connection.location,
-                `could not find particle '${info.particle}'`);
-          }
-          if (info.param !== null && !particle.connectionMap.has(info.param)) {
-            throw new ManifestError(
-                connection.location,
-                `param '${info.param}' is not defined by '${info.particle}'`);
-          }
-          return new _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__["ParticleEndPoint"](particle, info.param);
-        }
-        case 'localName': {
-          if (!items.byName.has(info.name)) {
-            throw new ManifestError(
-                connection.location,
-                `local name '${info.name}' does not exist in recipe`);
-          }
-          if (info.param == null && info.tags.length == 0 &&
-              items.byName.get(info.name).handle) {
-            return new _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__["HandleEndPoint"](items.byName.get(info.name).handle);
-          }
-          throw new ManifestError(connection.location, `references to particles by local name not yet supported`);
-        }
-        case 'tag': {
-          return new _ts_build_recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_14__["TagEndPoint"](info.tags);
-        }
-        default:
-          throw new Error(`endpoint ${info.targetType} not supported`);
-      }
-    };
-
-    for (let connection of items.connections) {
-      let from = prepareEndpoint(connection, connection.from);
-      let to = prepareEndpoint(connection, connection.to);
-      recipe.newConnectionConstraint(from, to, connection.direction);
-    }
-
-    if (items.search) {
-      recipe.search = new _ts_build_recipe_search_js__WEBPACK_IMPORTED_MODULE_7__["Search"](items.search.phrase, items.search.tokens);
-    }
-
-    for (let item of items.slots) {
-      let slot = recipe.newSlot();
-      item.ref = item.ref || {};
-      if (item.ref.id) {
-        slot.id = item.ref.id;
-      }
-      if (item.ref.tags) {
-        slot.tags = item.ref.tags;
-      }
-      if (item.name) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!items.byName.has(item.name), `Duplicate slot local name ${item.name}`);
-        slot.localName = item.name;
-        items.byName.set(item.name, slot);
-      }
-      items.bySlot.set(slot, item);
-    }
-
-    // TODO: disambiguate.
-    for (let item of items.particles) {
-      let particle = recipe.newParticle(item.ref.name);
-      particle.tags = item.ref.tags;
-      particle.verbs = item.ref.verbs;
-      if (item.ref.name) {
-        let spec = manifest.findParticleByName(item.ref.name);
-        if (!spec) {
-          throw new ManifestError(item.location, `could not find particle ${item.ref.name}`);
-        }
-        particle.spec = spec.clone();
-      }
-      if (item.name) {
-        // TODO: errors.
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!items.byName.has(item.name));
-        particle.localName = item.name;
-        items.byName.set(item.name, {item, particle});
-      }
-      items.byParticle.set(particle, item);
-
-      for (let slotConnectionItem of item.slotConnections) {
-        let slotConn = particle.consumedSlotConnections[slotConnectionItem.param];
-        if (!slotConn) {
-          slotConn = particle.addSlotConnection(slotConnectionItem.param);
-        }
-        slotConn.tags = slotConnectionItem.tags || [];
-        slotConnectionItem.providedSlots.forEach(ps => {
-          let providedSlot = slotConn.providedSlots[ps.param];
-          if (providedSlot) {
-            if (ps.name) {
-              if (items.byName.has(ps.name)) {
-                // The slot was added to the recipe twice - once as part of the
-                // slots in the manifest, then as part of particle spec.
-                // Unifying both slots, updating name and source slot connection.
-                let theSlot = items.byName.get(ps.name);
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(theSlot !== providedSlot);
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!theSlot.name && providedSlot);
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!theSlot.sourceConnection && providedSlot.sourceConnection);
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(theSlot.handleConnections.length == 0);
-                theSlot.name = providedSlot.name;
-                theSlot.sourceConnection = providedSlot.sourceConnection;
-                theSlot.sourceConnection.providedSlots[theSlot.name] = theSlot;
-                theSlot._handleConnections = providedSlot.handleConnections.slice();
-                theSlot.recipe.removeSlot(providedSlot);
-              } else {
-                items.byName.set(ps.name, providedSlot);
-              }
-            }
-            items.bySlot.set(providedSlot, ps);
-          } else {
-            providedSlot = items.byName.get(ps.name);
-          }
-          if (!providedSlot) {
-            providedSlot = recipe.newSlot(ps.param);
-            providedSlot.localName = ps.name;
-            providedSlot.sourceConnection = slotConn;
-            if (ps.name) {
-              Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!items.byName.has(ps.name));
-              items.byName.set(ps.name, providedSlot);
-            }
-            items.bySlot.set(providedSlot, ps);
-          }
-          if (!slotConn.providedSlots[ps.param]) {
-            slotConn.providedSlots[ps.param] = providedSlot;
-          }
-        });
-      }
-    }
-
-    for (let [particle, item] of items.byParticle) {
-      for (let connectionItem of item.connections) {
-        let connection;
-        if (connectionItem.param == '*') {
-          connection = particle.addUnnamedConnection();
-        } else {
-          connection = particle.connections[connectionItem.param];
-          if (!connection) {
-            connection = particle.addConnectionName(connectionItem.param);
-          }
-          // TODO: else, merge tags? merge directions?
-        }
-        connection.tags = connectionItem.target ? connectionItem.target.tags : [];
-        let direction = {'->': 'out', '<-': 'in', '=': 'inout', 'consume': '`consume', 'provide': '`provide'}[connectionItem.dir];
-        if (connection.direction) {
-          if (connection.direction != direction &&
-              direction != 'inout' &&
-              !(connection.direction == 'host' && direction == 'in') &&
-              !(connection.direction == '`consume' && direction == 'in') &&
-              !(connection.direction == '`provide' && direction == 'out')
-            ) {
-            throw new ManifestError(
-                connectionItem.location,
-                `'${connectionItem.dir}' not compatible with '${connection.direction}' param of '${particle.name}'`);
-          }
-        } else {
-          if (connectionItem.param != '*' && particle.spec !== undefined) {
-            throw new ManifestError(
-                connectionItem.location,
-                `param '${connectionItem.param}' is not defined by '${particle.name}'`);
-          }
-          connection.direction = direction;
-        }
-
-        let targetHandle;
-        let targetParticle;
-
-        if (connectionItem.target && connectionItem.target.name) {
-          let entry = items.byName.get(connectionItem.target.name);
-          if (!entry) {
-            let handle = recipe.newHandle();
-            handle.tags = [];
-            handle.localName = connectionItem.target.name;
-            handle.fate = 'create';
-            handle.item = {kind: 'handle'};
-            entry = {item: handle.item, handle};
-            items.byName.set(handle.localName, entry);
-            items.byHandle.set(handle, handle.item);
-          } else if (!entry.item) {
-            throw new Error(`did not expect ${entry} expected handle or particle`);
-          }
-
-          if (entry.item.kind == 'handle') {
-            targetHandle = entry.handle;
-          } else if (entry.item.kind == 'particle') {
-            targetParticle = entry.particle;
-          } else {
-            throw new Error(`did not expect ${entry.item.kind}`);
-          }
-        }
-
-        // Handle implicit handle connections in the form `param = SomeParticle`
-        if (connectionItem.target && connectionItem.target.particle) {
-          let hostedParticle = manifest.findParticleByName(connectionItem.target.particle);
-          if (!hostedParticle) {
-            throw new ManifestError(
-                connectionItem.target.location,
-                `Could not find hosted particle '${connectionItem.target.particle}'`);
-          }
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!connection.type.hasVariableReference);
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(connection.type.isInterface);
-          if (!connection.type.interfaceShape.restrictType(hostedParticle)) {
-            throw new ManifestError(
-                connectionItem.target.location,
-                `Hosted particle '${hostedParticle.name}' does not match shape '${connection.name}'`);
-          }
-          // TODO: loader should not be optional.
-          if (hostedParticle.implFile && loader) {
-            hostedParticle.implFile = loader.join(manifest.fileName, hostedParticle.implFile);
-          }
-          const hostedParticleLiteral = hostedParticle.clone().toLiteral();
-          let particleSpecHash = await Object(_platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__["digest"])(JSON.stringify(hostedParticleLiteral));
-          let id = `${manifest.generateID()}:${particleSpecHash}:${hostedParticle.name}`;
-          hostedParticleLiteral.id = id;
-          targetHandle = recipe.newHandle();
-          targetHandle.fate = 'copy';
-          let store = await manifest.createStore(connection.type, null, id, []);
-          // TODO(shans): Work out a better way to turn off reference mode for these stores.
-          // Maybe a different function call in the storageEngine? Alternatively another
-          // param to the connect/construct functions?
-          store.referenceMode = false;
-          await store.set(hostedParticleLiteral);
-          targetHandle.mapToStorage(store);
-        }
-
-        if (targetParticle) {
-          let targetConnection;
-          if (connectionItem.target.param) {
-            targetConnection = targetParticle.connections[connectionItem.target.param];
-            if (!targetConnection) {
-              targetConnection = targetParticle.addConnectionName(connectionItem.target.param);
-              // TODO: direction?
-            }
-          } else {
-            targetConnection = targetParticle.addUnnamedConnection();
-            // TODO: direction?
-          }
-
-          targetHandle = targetConnection.handle;
-          if (!targetHandle) {
-            // TODO: tags?
-            targetHandle = recipe.newHandle();
-            targetConnection.connectToHandle(targetHandle);
-          }
-        }
-
-        if (targetHandle) {
-          connection.connectToHandle(targetHandle);
-        }
-      }
-
-      for (let slotConnectionItem of item.slotConnections) {
-        // particles that reference verbs should store slot connection information as constraints to be used
-        // during verb matching. However, if there's a spec then the slots need to be validated against it
-        // instead.
-        if (particle.spec !== undefined) {
-          // Validate consumed and provided slots names are according to spec.
-          if (!particle.spec.slots.has(slotConnectionItem.param)) {
-            throw new ManifestError(
-                slotConnectionItem.location,
-                `Consumed slot '${slotConnectionItem.param}' is not defined by '${particle.name}'`);
-          }
-          slotConnectionItem.providedSlots.forEach(ps => {
-            if (!particle.spec.slots.get(slotConnectionItem.param).getProvidedSlotSpec(ps.param)) {
-              throw new ManifestError(
-                  ps.location,
-                  `Provided slot '${ps.param}' is not defined by '${particle.name}'`);
-            }
-          });
-        }
-
-        let targetSlot = items.byName.get(slotConnectionItem.name);
-        if (targetSlot) {
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(items.bySlot.has(targetSlot));
-          if (!targetSlot.name) {
-            targetSlot.name = slotConnectionItem.param;
-          }
-          Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targetSlot == items.byName.get(slotConnectionItem.name),
-                 `Target slot ${targetSlot.name} doesn't match slot connection ${slotConnectionItem.param}`);
-        } else if (slotConnectionItem.name) {
-          targetSlot = recipe.newSlot(slotConnectionItem.param);
-          targetSlot.localName = slotConnectionItem.name;
-          if (slotConnectionItem.name) {
-            items.byName.set(slotConnectionItem.name, targetSlot);
-          }
-          items.bySlot.set(targetSlot, slotConnectionItem);
-        }
-        if (targetSlot) {
-          particle.consumedSlotConnections[slotConnectionItem.param].connectToSlot(targetSlot);
-        }
-      }
-    }
-
-    if (items.description && items.description.description) {
-      recipe.description = items.description.description;
-    }
-  }
-  resolveTypeName(name) {
-    let schema = this.findSchemaByName(name);
-    if (schema) {
-      return {schema};
-    }
-    let shape = this.findShapeByName(name);
-    if (shape) {
-      return {shape};
-    }
-    return null;
-  }
-  static async _processStore(manifest, item, loader) {
-    let name = item.name;
-    let id = item.id;
-    const originalId = item.originalId;
-    let type = item.type.model;
-    if (id == null) {
-      id = `${manifest._id}store${manifest._stores.length}`;
-    }
-    let tags = item.tags;
-    if (tags == null) {
-      tags = [];
-    }
-
-
-    // Instead of creating links to remote firebase during manifest parsing,
-    // we generate storage stubs that contain the relevant information.
-    if (item.origin == 'storage') {
-      manifest.newStorageStub(type, name, id, item.source, tags, originalId);
-      return;
-    }
-
-    let json;
-    let source;
-    if (item.origin == 'file') {
-      source = loader.join(manifest.fileName, item.source);
-      // TODO: json5?
-      json = await loader.loadResource(source);
-    } else if (item.origin == 'resource') {
-      source = item.source;
-      json = manifest.resources[source];
-      if (json == undefined) {
-        throw new Error(`Resource '${source}' referenced by store '${id}' is not defined in this manifest`);
-      }
-    }
-    let entities;
-    try {
-      entities = JSON.parse(json);
-    } catch (e) {
-      throw new ManifestError(item.location, `Error parsing JSON from '${source}' (${e.message})'`);
-    }
-
-    // TODO: clean this up
-    let unitType;
-    if (type.isCollection) {
-      unitType = type.collectionType;
-    } else if (type.isBigCollection) {
-      unitType = type.bigCollectionType;
-    } else {
-      if (entities.length == 0) {
-        await Manifest._createStore(manifest, type, name, id, tags, item, originalId);
-        return;
-      }
-      entities = entities.slice(entities.length - 1);
-      unitType = type;
-    }
-
-    if (unitType.isEntity) {
-      let hasSerializedId = false;
-      entities = entities.map(entity => {
-        if (entity == null) {
-          // FIXME: perhaps this happens when we have an empty variable?
-          // we should just generate an empty list in that case.
-          return null;
-        }
-        hasSerializedId = hasSerializedId || entity.$id;
-        let id = entity.$id || manifest.generateID();
-        delete entity.$id;
-        return {id, rawData: entity};
-      });
-      // TODO(wkorman): Efficiency improvement opportunities: (1) We could build
-      // array of entities in above map rather than mapping again below, (2) we
-      // could hash the object tree data directly rather than stringifying.
-      if (!item.id && !hasSerializedId) {
-        let entityHash = await Object(_platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__["digest"])(JSON.stringify(entities.map(entity => entity.rawData)));
-        id = `${id}:${entityHash}`;
-      }
-    }
-
-    let version = item.version || 0;
-    let store = await Manifest._createStore(manifest, type, name, id, tags, item, originalId);
-
-    // While the referenceMode hack exists, we need to look at the entities being stored to
-    // determine whether this store should be in referenceMode or not.
-    // TODO(shans): Eventually the actual type will need to be part of the determination too.
-    // TODO(shans): Need to take into account the possibility of multiple storage key mappings
-    // at some point.
-    if (entities.length > 0 && entities[0].rawData && entities[0].rawData.storageKey) {
-      let storageKey = entities[0].rawData.storageKey;
-      storageKey = manifest.findStoreByName(storageKey).storageKey;
-      entities = entities.map(({id, rawData}) => ({id, storageKey}));
-    } else if (entities.length > 0) {
-      store.referenceMode = false;
-    }
-
-    // For this store to be able to be treated as a CRDT, each item needs a key.
-    // Using id as key seems safe, nothing else should do this.
-    let model;
-    if (type.isCollection) {
-      model = entities.map(value => ({id: value.id, value, keys: new Set([value.id])}));
-    } else if (type.isBigCollection) {
-      model = entities.map(value => {
-        let index = value.rawData.$index;
-        delete value.rawData.$index;
-        return {id: value.id, index, value, keys: new Set([value.id])};
-      });
-    } else {
-      model = entities.map(value => ({id: value.id, value}));
-    }
-    store.fromLiteral({version, model});
-  }
-  static async _createStore(manifest, type, name, id, tags, item, originalId) {
-    let store = await manifest.createStore(type, name, id, tags);
-    store.source = item.source;
-    store.description = item.description;
-    store.originalId = originalId;
-    return store;
-  }
-  _newRecipe(name) {
-    let recipe = new _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_3__["Recipe"](name);
-    this._recipes.push(recipe);
-    return recipe;
-  }
-
-  toString(options) {
-    // TODO: sort?
-    options = options || {};
-    let results = [];
-
-    this._imports.forEach(i => {
-      if (options.recursive) {
-        results.push(`// import '${i.fileName}'`);
-        let importStr = i.toString(options);
-        results.push(`${i.toString(options)}`);
-      } else {
-        results.push(`import '${i.fileName}'`);
-      }
-    });
-
-    Object.values(this._schemas).forEach(s => {
-      results.push(s.toManifestString());
-    });
-
-    Object.values(this._particles).forEach(p => {
-      results.push(p.toString());
-    });
-
-    this._recipes.forEach(r => {
-      results.push(r.toString(options));
-    });
-
-    let stores = [...this.stores].sort(_ts_build_recipe_util_js__WEBPACK_IMPORTED_MODULE_10__["compareComparables"]);
-    stores.forEach(store => {
-      results.push(store.toString(this._storeTags.get(store).map(a => `#${a}`)));
-    });
-
-    return results.join('\n');
-  }
-}
-
-
-/***/ }),
-
 /***/ "./runtime/multiplexer-dom-particle.js":
 /*!*********************************************!*\
   !*** ./runtime/multiplexer-dom-particle.js ***!
@@ -66669,7 +65485,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleExecutionHost", function() { return ParticleExecutionHost; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api-channel.js */ "./runtime/api-channel.js");
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/manifest.js */ "./runtime/ts-build/manifest.js");
 /* harmony import */ var _ts_build_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ts-build/recipe/recipe-resolver.js */ "./runtime/ts-build/recipe/recipe-resolver.js");
 /* harmony import */ var _ts_build_arc_exceptions_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/arc-exceptions.js */ "./runtime/ts-build/arc-exceptions.js");
 /**
@@ -66801,7 +65617,7 @@ class ParticleExecutionHost {
     };
 
     this._apiPort.onArcLoadRecipe = async ({arc, recipe, callback}) => {
-      let manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_2__["Manifest"].parse(recipe, {loader: this._arc._loader, fileName: ''});
+      let manifest = await _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_2__["Manifest"].parse(recipe, {loader: this._arc._loader, fileName: ''});
       let error = undefined;
       // TODO(wkorman): Consider reporting an error or at least warning if
       // there's more than one recipe since currently we silently ignore them.
@@ -68135,7 +66951,7 @@ Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.Resoluti
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeIndex", function() { return RecipeIndex; });
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/manifest.js */ "./runtime/ts-build/manifest.js");
 /* harmony import */ var _ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/arc.js */ "./runtime/ts-build/arc.js");
 /* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./slot-composer.js */ "./runtime/slot-composer.js");
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../strategizer/strategizer.js */ "./strategizer/strategizer.js");
@@ -68230,7 +67046,7 @@ class RecipeIndex {
     let trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__["Tracing"].start({cat: 'indexing', name: 'RecipeIndex::constructor', overview: true});
     let arcStub = new _ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"]({
       id: 'index-stub',
-      context: new _manifest_js__WEBPACK_IMPORTED_MODULE_0__["Manifest"]({id: 'empty-context'}),
+      context: new _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_0__["Manifest"]({id: 'empty-context'}),
       loader,
       slotComposer: affordance ? new _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"]({affordance, noRoot: true}) : null,
       recipeIndex: {},
@@ -71761,7 +70577,7 @@ class SuggestionComposer {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestionStorage", function() { return SuggestionStorage; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/manifest.js */ "./runtime/ts-build/manifest.js");
 /* harmony import */ var _ts_build_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/recipe/recipe-resolver.js */ "./runtime/ts-build/recipe/recipe-resolver.js");
 /* harmony import */ var _ts_build_schema_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ts-build/schema.js */ "./runtime/ts-build/schema.js");
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
@@ -71783,11 +70599,11 @@ __webpack_require__.r(__webpack_exports__);
 class SuggestionStorage {
   constructor(arc, userid) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, `Arc must not be null`);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc._storageKey, `Arc must has a storage key`);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc.storageKey, `Arc must has a storage key`);
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, `User id must not be null`);
 
     this._arc = arc;
-    let storageKeyTokens = this._arc._storageKey.split('/');
+    let storageKeyTokens = this._arc.storageKey.split('/');
     this._arcKey = storageKeyTokens.slice(-1)[0];
     this._storageKey = 
       `${storageKeyTokens.slice(0, -2).join('/')}/users/${userid}/suggestions/${this._arcKey}`;
@@ -71877,7 +70693,7 @@ class SuggestionStorage {
   }
 
   async _planFromString(planString) {
-    let manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(
+    let manifest = await _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(
         planString, {loader: this._arc.loader, context: this._arc._context, fileName: ''});
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest._recipes.length == 1);
     let plan = manifest._recipes[0];
@@ -72295,7 +71111,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _particle_execution_host_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../particle-execution-host.js */ "./runtime/particle-execution-host.js");
 /* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./manifest.js */ "./runtime/ts-build/manifest.js");
 /* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../description.js */ "./runtime/description.js");
 /* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./recipe/util.js */ "./runtime/ts-build/recipe/util.js");
 /* harmony import */ var _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../fake-pec-factory.js */ "./runtime/fake-pec-factory.js");
@@ -72494,7 +71310,7 @@ class Arc {
         let id = 0;
         const importSet = new Set();
         const handleSet = new Set();
-        const contextSet = new Set(this.context._stores.map(store => store.id));
+        const contextSet = new Set(this.context.stores.map(store => store.id));
         for (const handle of this._activeRecipe.handles) {
             if (handle.fate === 'map') {
                 importSet.add(this.context.findManifestUrlForHandleId(handle.id));
@@ -72545,12 +71361,12 @@ ${this.activeRecipe.toString()}`;
             slotComposer,
             pecFactory,
             loader,
-            storageProviderFactory: manifest._storageProviderFactory,
+            storageProviderFactory: manifest.storageProviderFactory,
             context
         });
         await Promise.all(manifest.stores.map(async (store) => {
-            const tags = manifest._storeTags.get(store);
-            if (store.constructor.name === 'StorageStub') {
+            const tags = manifest.storeTags.get(store);
+            if (store instanceof _manifest_js__WEBPACK_IMPORTED_MODULE_5__["StorageStub"]) {
                 store = await store.inflate();
             }
             arc._registerStore(store, tags);
@@ -74350,6 +73166,1130 @@ class ManifestMeta {
 
 /***/ }),
 
+/***/ "./runtime/ts-build/manifest.js":
+/*!**************************************!*\
+  !*** ./runtime/ts-build/manifest.js ***!
+  \**************************************/
+/*! exports provided: StorageStub, Manifest */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageStub", function() { return StorageStub; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Manifest", function() { return Manifest; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/digest-web.js */ "./platform/digest-web.js");
+/* harmony import */ var _build_manifest_parser_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../build/manifest-parser.js */ "./runtime/build/manifest-parser.js");
+/* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
+/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
+/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../particle-spec.js */ "./runtime/particle-spec.js");
+/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./schema.js */ "./runtime/ts-build/schema.js");
+/* harmony import */ var _recipe_search_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./recipe/search.js */ "./runtime/ts-build/recipe/search.js");
+/* harmony import */ var _shape_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./shape.js */ "./runtime/ts-build/shape.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./recipe/util.js */ "./runtime/ts-build/recipe/util.js");
+/* harmony import */ var _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
+/* harmony import */ var _manifest_meta_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./manifest-meta.js */ "./runtime/ts-build/manifest-meta.js");
+/* harmony import */ var _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./recipe/connection-constraint.js */ "./runtime/ts-build/recipe/connection-constraint.js");
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./id.js */ "./runtime/ts-build/id.js");
+/* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./type-variable.js */ "./runtime/ts-build/type-variable.js");
+/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./slot-info.js */ "./runtime/ts-build/slot-info.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class ManifestError extends Error {
+    constructor(location, message) {
+        super(message);
+        this.location = location;
+    }
+}
+class StorageStub {
+    constructor(type, id, name, storageKey, storageProviderFactory, originalId) {
+        this.type = type;
+        this.id = id;
+        this.originalId = originalId;
+        this.name = name;
+        this.storageKey = storageKey;
+        this.storageProviderFactory = storageProviderFactory;
+    }
+    async inflate() {
+        const store = await this.storageProviderFactory.connect(this.id, this.type, this.storageKey);
+        store.originalId = this.originalId;
+        return store;
+    }
+}
+/**
+ * Calls `this.visit()` for each node in a manfest AST, parents before children.
+ */
+class ManifestVisitor {
+    traverse(ast) {
+        if (['string', 'number', 'boolean'].includes(typeof ast) || ast === null) {
+            return;
+        }
+        if (Array.isArray(ast)) {
+            for (const item of ast) {
+                this.traverse(item);
+            }
+            return;
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(ast.location, 'expected manifest node to have `location`');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(ast.kind, 'expected manifest node to have `kind`');
+        let childrenVisited = false;
+        const visitChildren = () => {
+            if (childrenVisited) {
+                return;
+            }
+            childrenVisited = true;
+            for (const key of Object.keys(ast)) {
+                if (['location', 'kind', 'model'].includes(key)) {
+                    continue;
+                }
+                this.traverse(ast[key]);
+            }
+        };
+        this.visit(ast, visitChildren);
+        visitChildren();
+    }
+    // Parents are visited before children, but an implementation can force
+    // children to be visted by calling `visitChildren()`.
+    visit(node, visitChildren) {
+    }
+}
+const globalWarningKeys = new Set();
+class Manifest {
+    constructor({ id }) {
+        this._recipes = [];
+        this._imports = [];
+        // TODO: These should be lists, possibly with a separate flattened map.
+        this._particles = {};
+        this._schemas = {};
+        this._stores = [];
+        this._shapes = [];
+        this.storeTags = new Map();
+        this._fileName = null;
+        this.nextLocalID = 0;
+        this._storageProviderFactory = undefined;
+        this._meta = new _manifest_meta_js__WEBPACK_IMPORTED_MODULE_12__["ManifestMeta"]();
+        this._resources = {};
+        this.storeManifestUrls = new Map();
+        this.warnings = [];
+        this._id = id;
+    }
+    get id() {
+        if (this._meta.name) {
+            return _id_js__WEBPACK_IMPORTED_MODULE_14__["Id"].newSessionId().fromString(this._meta.name);
+        }
+        return this._id;
+    }
+    get storageProviderFactory() {
+        if (this._storageProviderFactory == undefined) {
+            this._storageProviderFactory = new _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_11__["StorageProviderFactory"](this.id);
+        }
+        return this._storageProviderFactory;
+    }
+    get recipes() {
+        return [...new Set(this._findAll(manifest => manifest._recipes))];
+    }
+    get activeRecipe() {
+        return this._recipes.find(recipe => recipe.annotation === 'active');
+    }
+    get particles() {
+        return [...new Set(this._findAll(manifest => Object.values(manifest._particles)))];
+    }
+    get imports() {
+        return this._imports;
+    }
+    get schemas() {
+        return this._schemas;
+    }
+    get fileName() {
+        return this._fileName;
+    }
+    get stores() {
+        return this._stores;
+    }
+    get allStores() {
+        return [...this._findAll(manifest => manifest._stores)];
+    }
+    get shapes() {
+        return this._shapes;
+    }
+    get meta() {
+        return this._meta;
+    }
+    get resources() {
+        return this._resources;
+    }
+    applyMeta(section) {
+        if (this._storageProviderFactory !== undefined) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(section.name === this._meta.name || section.name == undefined, `can't change manifest ID after storage is constructed`);
+        }
+        this._meta.apply(section);
+    }
+    // TODO: newParticle, Schema, etc.
+    // TODO: simplify() / isValid().
+    async createStore(type, name, id, tags, storageKey) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!type.hasVariableReference, `stores can't have variable references`);
+        const store = await this.storageProviderFactory.construct(id, type, storageKey || `volatile://${this.id}`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store.version !== null);
+        store.name = name;
+        this.storeManifestUrls.set(store.id, this.fileName);
+        return this._addStore(store, tags);
+    }
+    _addStore(store, tags) {
+        this._stores.push(store);
+        this.storeTags.set(store, tags ? tags : []);
+        return store;
+    }
+    newStorageStub(type, name, id, storageKey, tags, originalId) {
+        return this._addStore(new StorageStub(type, id, name, storageKey, this.storageProviderFactory, originalId), tags);
+    }
+    _find(manifestFinder) {
+        let result = manifestFinder(this);
+        if (!result) {
+            for (const importedManifest of this._imports) {
+                result = importedManifest._find(manifestFinder);
+                if (result) {
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+    *_findAll(manifestFinder) {
+        yield* manifestFinder(this);
+        for (const importedManifest of this._imports) {
+            yield* importedManifest._findAll(manifestFinder);
+        }
+    }
+    findSchemaByName(name) {
+        return this._find(manifest => manifest._schemas[name]);
+    }
+    findTypeByName(name) {
+        const schema = this.findSchemaByName(name);
+        if (schema) {
+            return _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newEntity(schema);
+        }
+        const shape = this.findShapeByName(name);
+        if (shape) {
+            return _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newInterface(shape);
+        }
+        return null;
+    }
+    findParticleByName(name) {
+        return this._find(manifest => manifest._particles[name]);
+    }
+    findParticlesByVerb(verb) {
+        return [...this._findAll(manifest => Object.values(manifest._particles).filter(particle => particle.primaryVerb === verb))];
+    }
+    findStoreByName(name) {
+        return this._find(manifest => manifest._stores.find(store => store.name === name));
+    }
+    findStoreById(id) {
+        return this._find(manifest => manifest._stores.find(store => store.id === id));
+    }
+    findStoreTags(store) {
+        return this._find(manifest => manifest.storeTags.get(store));
+    }
+    findManifestUrlForHandleId(id) {
+        return this._find(manifest => manifest.storeManifestUrls.get(id));
+    }
+    findStoreByType(type, options = { tags: [], subtype: false }) {
+        const tags = options.tags || [];
+        const subtype = options.subtype || false;
+        function typePredicate(store) {
+            const resolvedType = type.resolvedType();
+            if (!resolvedType.isResolved()) {
+                return type.isCollection === store.type.isCollection && type.isBigCollection === store.type.isBigCollection;
+            }
+            if (subtype) {
+                const [left, right] = _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].unwrapPair(store.type, resolvedType);
+                if (left.isEntity && right.isEntity) {
+                    return left.entitySchema.isMoreSpecificThan(right.entitySchema);
+                }
+                return false;
+            }
+            return store.type.equals(type);
+        }
+        function tagPredicate(manifest, handle) {
+            return tags.filter(tag => !manifest.storeTags.get(handle).includes(tag)).length === 0;
+        }
+        const stores = [...this._findAll(manifest => manifest._stores.filter(store => typePredicate(store) && tagPredicate(manifest, store)))];
+        // Quick check that a new handle can fulfill the type contract.
+        // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
+        return stores.filter(s => !!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__["Handle"].effectiveType(type, [{ type: s.type, direction: s.type.isInterface ? 'host' : 'inout' }]));
+    }
+    findShapeByName(name) {
+        return this._find(manifest => manifest._shapes.find(shape => shape.name === name));
+    }
+    findRecipesByVerb(verb) {
+        return [...this._findAll(manifest => manifest._recipes.filter(recipe => recipe.verbs.includes(verb)))];
+    }
+    generateID() {
+        return `${this.id}:${this.nextLocalID++}`;
+    }
+    static async load(fileName, loader, options) {
+        options = options || {};
+        let { registry, id } = options;
+        registry = registry || {};
+        if (registry && registry[fileName]) {
+            return await registry[fileName];
+        }
+        registry[fileName] = (async () => {
+            const content = await loader.loadResource(fileName);
+            // TODO: When does this happen? The loader should probably throw an exception here.
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(content !== undefined, `${fileName} unable to be loaded by Manifest parser`);
+            return await Manifest.parse(content, {
+                id,
+                fileName,
+                loader,
+                registry,
+                position: { line: 1, column: 0 }
+            });
+        })();
+        return await registry[fileName];
+    }
+    static async parse(content, options) {
+        options = options || {};
+        // TODO(sjmiles): allow `context` for including an existing manifest in the import list
+        let { id, fileName, position, loader, registry, context } = options;
+        registry = registry || {};
+        position = position || { line: 1, column: 0 };
+        id = `manifest:${fileName}:`;
+        function dumpWarnings(manifest) {
+            for (const warning of manifest.warnings) {
+                // TODO: make a decision as to whether we should be logging these here, or if it should
+                //       be a responsibility of the caller.
+                // TODO: figure out how to have node print the correct message and stack trace
+                if (warning.key) {
+                    if (globalWarningKeys.has(warning.key)) {
+                        continue;
+                    }
+                    globalWarningKeys.add(warning.key);
+                }
+                console.warn(processError(warning).message);
+            }
+        }
+        function processError(e, parseError = undefined) {
+            if (!((e instanceof ManifestError) || e.location)) {
+                return e;
+            }
+            const lines = content.split('\n');
+            const line = lines[e.location.start.line - 1];
+            let span = 1;
+            if (e.location.end.line === e.location.start.line) {
+                span = e.location.end.column - e.location.start.column;
+            }
+            else {
+                span = line.length - e.location.start.column;
+            }
+            span = Math.max(1, span);
+            let highlight = '';
+            for (let i = 0; i < e.location.start.column - 1; i++) {
+                highlight += ' ';
+            }
+            for (let i = 0; i < span; i++) {
+                highlight += '^';
+            }
+            let preamble;
+            if (parseError) {
+                preamble = 'Parse error in';
+            }
+            else {
+                preamble = 'Post-parse processing error caused by';
+            }
+            const message = `${preamble} '${fileName}' line ${e.location.start.line}.
+${e.message}
+  ${line}
+  ${highlight}`;
+            const err = new Error(message);
+            if (!parseError) {
+                err.stack = e.stack;
+            }
+            return err;
+        }
+        let items = [];
+        try {
+            items = _build_manifest_parser_js__WEBPACK_IMPORTED_MODULE_2__["parser"].parse(content);
+        }
+        catch (e) {
+            throw processError(e, true);
+        }
+        const manifest = new Manifest({ id });
+        manifest._fileName = fileName;
+        // TODO(sjmiles): optionally include pre-existing context
+        if (context) {
+            manifest._imports.push(context);
+        }
+        try {
+            // Loading of imported manifests is triggered in parallel to avoid a serial loading
+            // of resources over the network.
+            await Promise.all(items.filter(item => item.kind === 'import').map(async (item) => {
+                const path = loader.path(manifest.fileName);
+                const target = loader.join(path, item.path);
+                try {
+                    manifest._imports.push(await Manifest.load(target, loader, { registry }));
+                }
+                catch (e) {
+                    manifest.warnings.push(e);
+                    manifest.warnings.push(new ManifestError(item.location, `Error importing '${target}'`));
+                }
+            }));
+            const processItems = async (kind, f) => {
+                for (const item of items) {
+                    if (item.kind === kind) {
+                        Manifest._augmentAstWithTypes(manifest, item);
+                        await f(item);
+                    }
+                }
+            };
+            // processing meta sections should come first as this contains identifying
+            // information that might need to be used in other sections. For example,
+            // the meta.name, if present, becomes the manifest id which is relevant
+            // when constructing manifest stores.
+            await processItems('meta', meta => manifest.applyMeta(meta.items));
+            // similarly, resources may be referenced from other parts of the manifest.
+            await processItems('resource', item => this._processResource(manifest, item));
+            await processItems('schema', item => this._processSchema(manifest, item));
+            await processItems('shape', item => this._processShape(manifest, item));
+            await processItems('particle', item => this._processParticle(manifest, item, loader));
+            await processItems('store', item => this._processStore(manifest, item, loader));
+            await processItems('recipe', item => this._processRecipe(manifest, item, loader));
+        }
+        catch (e) {
+            dumpWarnings(manifest);
+            throw processError(e, false);
+        }
+        dumpWarnings(manifest);
+        return manifest;
+    }
+    static _augmentAstWithTypes(manifest, items) {
+        const visitor = new class extends ManifestVisitor {
+            constructor() {
+                super();
+            }
+            visit(node, visitChildren) {
+                // TODO(dstockwell): set up a scope and merge type variables here, so that
+                //     errors relating to failed merges can reference the manifest source.
+                visitChildren();
+                switch (node.kind) {
+                    case 'schema-inline': {
+                        const schemas = [];
+                        const aliases = [];
+                        const names = [];
+                        for (const name of node.names) {
+                            const resolved = manifest.resolveTypeName(name);
+                            if (resolved && resolved.schema && resolved.schema.isAlias) {
+                                aliases.push(resolved.schema);
+                            }
+                            else {
+                                names.push(name);
+                            }
+                            if (resolved && resolved.schema) {
+                                schemas.push(resolved.schema);
+                            }
+                        }
+                        const fields = {};
+                        for (let { name, type } of node.fields) {
+                            for (const schema of schemas) {
+                                if (!type) {
+                                    // If we don't have a type, try to infer one from the schema.
+                                    type = schema.fields[name];
+                                }
+                                else {
+                                    // Validate that the specified or inferred type matches the schema.
+                                    const externalType = schema.fields[name];
+                                    if (externalType && !_schema_js__WEBPACK_IMPORTED_MODULE_6__["Schema"].typesEqual(externalType, type)) {
+                                        throw new ManifestError(node.location, `Type of '${name}' does not match schema (${type} vs ${externalType})`);
+                                    }
+                                }
+                            }
+                            if (!type) {
+                                throw new ManifestError(node.location, `Could not infer type of '${name}' field`);
+                            }
+                            fields[name] = type;
+                        }
+                        let schema = new _schema_js__WEBPACK_IMPORTED_MODULE_6__["Schema"]({
+                            names,
+                            fields,
+                        });
+                        for (const alias of aliases) {
+                            schema = _schema_js__WEBPACK_IMPORTED_MODULE_6__["Schema"].union(alias, schema);
+                            if (!schema) {
+                                throw new ManifestError(node.location, `Could not merge schema aliases`);
+                            }
+                        }
+                        node.model = _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newEntity(schema);
+                        return;
+                    }
+                    case 'variable-type': {
+                        const constraint = node.constraint && node.constraint.model;
+                        node.model = _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newVariable(new _type_variable_js__WEBPACK_IMPORTED_MODULE_15__["TypeVariable"](node.name, constraint, null));
+                        return;
+                    }
+                    case 'slot-type': {
+                        const slotInfo = { formFactor: node.fields.formFactor, handle: node.fields.handle };
+                        node.model = _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newSlot(new _slot_info_js__WEBPACK_IMPORTED_MODULE_16__["SlotInfo"](slotInfo));
+                        return;
+                    }
+                    case 'type-name': {
+                        const resolved = manifest.resolveTypeName(node.name);
+                        if (!resolved) {
+                            throw new ManifestError(node.location, `Could not resolve type reference to type name '${node.name}'`);
+                        }
+                        if (resolved.schema) {
+                            node.model = _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newEntity(resolved.schema);
+                        }
+                        else if (resolved.shape) {
+                            node.model = _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newInterface(resolved.shape);
+                        }
+                        else {
+                            throw new Error('Expected {shape} or {schema}');
+                        }
+                        return;
+                    }
+                    case 'collection-type':
+                        node.model = _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newCollection(node.type.model);
+                        return;
+                    case 'big-collection-type':
+                        node.model = _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newBigCollection(node.type.model);
+                        return;
+                    case 'reference-type':
+                        node.model = _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newReference(node.type.model);
+                        return;
+                    default:
+                        return;
+                }
+            }
+        }();
+        visitor.traverse(items);
+    }
+    static _processSchema(manifest, schemaItem) {
+        let description;
+        const fields = {};
+        let names = [...schemaItem.names];
+        for (const item of schemaItem.items) {
+            switch (item.kind) {
+                case 'schema-field': {
+                    const field = item;
+                    if (fields[field.name]) {
+                        throw new ManifestError(field.location, `Duplicate definition of field '${field.name}'`);
+                    }
+                    fields[field.name] = field.type;
+                    break;
+                }
+                case 'schema-section': {
+                    const section = item;
+                    manifest._warnings.push(new ManifestError(section.location, `Schema sections are deprecated`));
+                    for (const field of section.fields) {
+                        if (fields[field.name]) {
+                            throw new ManifestError(field.location, `Duplicate definition of field '${field.name}'`);
+                        }
+                        fields[field.name] = field.type;
+                    }
+                    break;
+                }
+                case 'description': {
+                    if (description) {
+                        throw new ManifestError(item.location, `Duplicate schema description`);
+                    }
+                    description = item;
+                    break;
+                }
+                default:
+                    throw new ManifestError(item.location, `unknown parser artifact ${item.kind} while processing schema`);
+            }
+        }
+        for (const parent of schemaItem.parents) {
+            const result = manifest.findSchemaByName(parent);
+            if (!result) {
+                throw new ManifestError(schemaItem.location, `Could not find parent schema '${parent}'`);
+            }
+            for (const [name, type] of Object.entries(result.fields)) {
+                if (fields[name] && !_schema_js__WEBPACK_IMPORTED_MODULE_6__["Schema"].typesEqual(fields[name], type)) {
+                    throw new ManifestError(schemaItem.location, `'${parent}' defines incompatible type for field '${name}'`);
+                }
+            }
+            Object.assign(fields, result.fields);
+            names.push(...result.names);
+        }
+        names = [names[0], ...names.filter(name => name !== names[0])];
+        const name = schemaItem.alias || names[0];
+        if (!name) {
+            throw new ManifestError(schemaItem.location, `Schema defined without name or alias`);
+        }
+        const model = { names, fields, description };
+        const schema = new _schema_js__WEBPACK_IMPORTED_MODULE_6__["Schema"](model);
+        if (schemaItem.alias) {
+            schema.isAlias = true;
+        }
+        manifest._schemas[name] = schema;
+    }
+    static _processResource(manifest, schemaItem) {
+        manifest._resources[schemaItem.name] = schemaItem.data;
+    }
+    static _processParticle(manifest, particleItem, loader) {
+        // TODO: we should be producing a new particleSpec, not mutating
+        //       particleItem directly.
+        // TODO: we should require both of these and update failing tests...
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particleItem.implFile == null || particleItem.args !== null, 'no valid body defined for this particle');
+        if (!particleItem.args) {
+            particleItem.args = [];
+        }
+        if (particleItem.hasParticleArgument) {
+            const warning = new ManifestError(particleItem.location, `Particle uses deprecated argument body`);
+            warning.key = 'hasParticleArgument';
+            manifest._warnings.push(warning);
+        }
+        // TODO: loader should not be optional.
+        if (particleItem.implFile && loader) {
+            particleItem.implFile = loader.join(manifest.fileName, particleItem.implFile);
+        }
+        const processArgTypes = args => {
+            for (const arg of args) {
+                arg.type = arg.type.model;
+                processArgTypes(arg.dependentConnections);
+            }
+        };
+        processArgTypes(particleItem.args);
+        const particleSpec = new _particle_spec_js__WEBPACK_IMPORTED_MODULE_5__["ParticleSpec"](particleItem);
+        manifest._particles[particleItem.name] = particleSpec;
+    }
+    // TODO: Move this to a generic pass over the AST and merge with resolveTypeName.
+    static _processShape(manifest, shapeItem) {
+        if (shapeItem.interface) {
+            const warning = new ManifestError(shapeItem.location, `Shape uses deprecated argument body`);
+            warning.key = 'hasShapeArgument';
+            manifest._warnings.push(warning);
+        }
+        const inHandles = shapeItem.interface ? shapeItem.interface.args : shapeItem.args;
+        const handles = [];
+        for (const arg of inHandles) {
+            const handle = { name: undefined, type: undefined, direction: arg.direction };
+            if (arg.name !== '*') {
+                handle.name = arg.name;
+            }
+            if (arg.type) {
+                handle.type = arg.type.model;
+            }
+            handles.push(handle);
+        }
+        const slots = [];
+        for (const slotItem of shapeItem.slots) {
+            slots.push({
+                direction: slotItem.direction,
+                name: slotItem.name,
+                isRequired: slotItem.isRequired,
+                isSet: slotItem.isSet
+            });
+        }
+        // TODO: move shape to recipe/ and add shape builder?
+        const shape = new _shape_js__WEBPACK_IMPORTED_MODULE_8__["Shape"](shapeItem.name, handles, slots);
+        manifest._shapes.push(shape);
+    }
+    static async _processRecipe(manifest, recipeItem, loader) {
+        // TODO: annotate other things too
+        const recipe = manifest._newRecipe(recipeItem.name);
+        recipe.annotation = recipeItem.annotation;
+        recipe.verbs = recipeItem.verbs;
+        const items = {
+            handles: recipeItem.items.filter(item => item.kind === 'handle'),
+            byHandle: new Map(),
+            particles: recipeItem.items.filter(item => item.kind === 'particle'),
+            byParticle: new Map(),
+            slots: recipeItem.items.filter(item => item.kind === 'slot'),
+            bySlot: new Map(),
+            byName: new Map(),
+            connections: recipeItem.items.filter(item => item.kind === 'connection'),
+            search: recipeItem.items.find(item => item.kind === 'search'),
+            description: recipeItem.items.find(item => item.kind === 'description')
+        };
+        for (const item of items.handles) {
+            const handle = recipe.newHandle();
+            const ref = item.ref || { tags: [] };
+            if (ref.id) {
+                handle.id = ref.id;
+                const targetStore = manifest.findStoreById(handle.id);
+                if (targetStore) {
+                    handle.mapToStorage(targetStore);
+                }
+            }
+            else if (ref.name) {
+                const targetStore = manifest.findStoreByName(ref.name);
+                // TODO: Error handling.
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targetStore, `Could not find handle ${ref.name}`);
+                handle.mapToStorage(targetStore);
+            }
+            handle.tags = ref.tags;
+            if (item.name) {
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!items.byName.has(item.name));
+                handle.localName = item.name;
+                items.byName.set(item.name, { item, handle });
+            }
+            handle.fate = item.fate;
+            items.byHandle.set(handle, item);
+        }
+        const prepareEndpoint = (connection, info) => {
+            switch (info.targetType) {
+                case 'particle': {
+                    const particle = manifest.findParticleByName(info.particle);
+                    if (!particle) {
+                        throw new ManifestError(connection.location, `could not find particle '${info.particle}'`);
+                    }
+                    if (info.param !== null && !particle.connectionMap.has(info.param)) {
+                        throw new ManifestError(connection.location, `param '${info.param}' is not defined by '${info.particle}'`);
+                    }
+                    return new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_13__["ParticleEndPoint"](particle, info.param);
+                }
+                case 'localName': {
+                    if (!items.byName.has(info.name)) {
+                        throw new ManifestError(connection.location, `local name '${info.name}' does not exist in recipe`);
+                    }
+                    if (info.param == null && info.tags.length === 0 &&
+                        items.byName.get(info.name).handle) {
+                        return new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_13__["HandleEndPoint"](items.byName.get(info.name).handle);
+                    }
+                    throw new ManifestError(connection.location, `references to particles by local name not yet supported`);
+                }
+                case 'tag': {
+                    return new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_13__["TagEndPoint"](info.tags);
+                }
+                default:
+                    throw new Error(`endpoint ${info.targetType} not supported`);
+            }
+        };
+        for (const connection of items.connections) {
+            const from = prepareEndpoint(connection, connection.from);
+            const to = prepareEndpoint(connection, connection.to);
+            recipe.newConnectionConstraint(from, to, connection.direction);
+        }
+        if (items.search) {
+            recipe.search = new _recipe_search_js__WEBPACK_IMPORTED_MODULE_7__["Search"](items.search.phrase, items.search.tokens);
+        }
+        for (const item of items.slots) {
+            const slot = recipe.newSlot();
+            item.ref = item.ref || {};
+            if (item.ref.id) {
+                slot.id = item.ref.id;
+            }
+            if (item.ref.tags) {
+                slot.tags = item.ref.tags;
+            }
+            if (item.name) {
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!items.byName.has(item.name), `Duplicate slot local name ${item.name}`);
+                slot.localName = item.name;
+                items.byName.set(item.name, slot);
+            }
+            items.bySlot.set(slot, item);
+        }
+        // TODO: disambiguate.
+        for (const item of items.particles) {
+            const particle = recipe.newParticle(item.ref.name);
+            particle.tags = item.ref.tags;
+            particle.verbs = item.ref.verbs;
+            if (item.ref.name) {
+                const spec = manifest.findParticleByName(item.ref.name);
+                if (!spec) {
+                    throw new ManifestError(item.location, `could not find particle ${item.ref.name}`);
+                }
+                particle.spec = spec.clone();
+            }
+            if (item.name) {
+                // TODO: errors.
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!items.byName.has(item.name));
+                particle.localName = item.name;
+                items.byName.set(item.name, { item, particle });
+            }
+            items.byParticle.set(particle, item);
+            for (const slotConnectionItem of item.slotConnections) {
+                let slotConn = particle.consumedSlotConnections[slotConnectionItem.param];
+                if (!slotConn) {
+                    slotConn = particle.addSlotConnection(slotConnectionItem.param);
+                }
+                slotConn.tags = slotConnectionItem.tags || [];
+                slotConnectionItem.providedSlots.forEach(ps => {
+                    let providedSlot = slotConn.providedSlots[ps.param];
+                    if (providedSlot) {
+                        if (ps.name) {
+                            if (items.byName.has(ps.name)) {
+                                // The slot was added to the recipe twice - once as part of the
+                                // slots in the manifest, then as part of particle spec.
+                                // Unifying both slots, updating name and source slot connection.
+                                const theSlot = items.byName.get(ps.name);
+                                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(theSlot !== providedSlot);
+                                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!theSlot.name && providedSlot);
+                                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!theSlot.sourceConnection && providedSlot.sourceConnection);
+                                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(theSlot.handleConnections.length === 0);
+                                theSlot.name = providedSlot.name;
+                                theSlot.sourceConnection = providedSlot.sourceConnection;
+                                theSlot.sourceConnection.providedSlots[theSlot.name] = theSlot;
+                                theSlot._handleConnections = providedSlot.handleConnections.slice();
+                                theSlot.recipe.removeSlot(providedSlot);
+                            }
+                            else {
+                                items.byName.set(ps.name, providedSlot);
+                            }
+                        }
+                        items.bySlot.set(providedSlot, ps);
+                    }
+                    else {
+                        providedSlot = items.byName.get(ps.name);
+                    }
+                    if (!providedSlot) {
+                        providedSlot = recipe.newSlot(ps.param);
+                        providedSlot.localName = ps.name;
+                        providedSlot.sourceConnection = slotConn;
+                        if (ps.name) {
+                            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!items.byName.has(ps.name));
+                            items.byName.set(ps.name, providedSlot);
+                        }
+                        items.bySlot.set(providedSlot, ps);
+                    }
+                    if (!slotConn.providedSlots[ps.param]) {
+                        slotConn.providedSlots[ps.param] = providedSlot;
+                    }
+                });
+            }
+        }
+        for (const [particle, item] of items.byParticle) {
+            for (const connectionItem of item.connections) {
+                let connection;
+                if (connectionItem.param === '*') {
+                    connection = particle.addUnnamedConnection();
+                }
+                else {
+                    connection = particle.connections[connectionItem.param];
+                    if (!connection) {
+                        connection = particle.addConnectionName(connectionItem.param);
+                    }
+                    // TODO: else, merge tags? merge directions?
+                }
+                connection.tags = connectionItem.target ? connectionItem.target.tags : [];
+                const direction = { '->': 'out', '<-': 'in', '=': 'inout', 'consume': '`consume', 'provide': '`provide' }[connectionItem.dir];
+                if (connection.direction) {
+                    if (connection.direction !== direction &&
+                        direction !== 'inout' &&
+                        !(connection.direction === 'host' && direction === 'in') &&
+                        !(connection.direction === '`consume' && direction === 'in') &&
+                        !(connection.direction === '`provide' && direction === 'out')) {
+                        throw new ManifestError(connectionItem.location, `'${connectionItem.dir}' not compatible with '${connection.direction}' param of '${particle.name}'`);
+                    }
+                }
+                else {
+                    if (connectionItem.param !== '*' && particle.spec !== undefined) {
+                        throw new ManifestError(connectionItem.location, `param '${connectionItem.param}' is not defined by '${particle.name}'`);
+                    }
+                    connection.direction = direction;
+                }
+                let targetHandle;
+                let targetParticle;
+                if (connectionItem.target && connectionItem.target.name) {
+                    let entry = items.byName.get(connectionItem.target.name);
+                    if (!entry) {
+                        const handle = recipe.newHandle();
+                        handle.tags = [];
+                        handle.localName = connectionItem.target.name;
+                        handle.fate = 'create';
+                        handle.item = { kind: 'handle' };
+                        entry = { item: handle.item, handle };
+                        items.byName.set(handle.localName, entry);
+                        items.byHandle.set(handle, handle.item);
+                    }
+                    else if (!entry.item) {
+                        throw new Error(`did not expect ${entry} expected handle or particle`);
+                    }
+                    if (entry.item.kind === 'handle') {
+                        targetHandle = entry.handle;
+                    }
+                    else if (entry.item.kind === 'particle') {
+                        targetParticle = entry.particle;
+                    }
+                    else {
+                        throw new Error(`did not expect ${entry.item.kind}`);
+                    }
+                }
+                // Handle implicit handle connections in the form `param = SomeParticle`
+                if (connectionItem.target && connectionItem.target.particle) {
+                    const hostedParticle = manifest.findParticleByName(connectionItem.target.particle);
+                    if (!hostedParticle) {
+                        throw new ManifestError(connectionItem.target.location, `Could not find hosted particle '${connectionItem.target.particle}'`);
+                    }
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!connection.type.hasVariableReference);
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(connection.type.isInterface);
+                    if (!connection.type.interfaceShape.restrictType(hostedParticle)) {
+                        throw new ManifestError(connectionItem.target.location, `Hosted particle '${hostedParticle.name}' does not match shape '${connection.name}'`);
+                    }
+                    // TODO: loader should not be optional.
+                    if (hostedParticle.implFile && loader) {
+                        hostedParticle.implFile = loader.join(manifest.fileName, hostedParticle.implFile);
+                    }
+                    const hostedParticleLiteral = hostedParticle.clone().toLiteral();
+                    const particleSpecHash = await Object(_platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__["digest"])(JSON.stringify(hostedParticleLiteral));
+                    const id = `${manifest.generateID()}:${particleSpecHash}:${hostedParticle.name}`;
+                    hostedParticleLiteral.id = id;
+                    targetHandle = recipe.newHandle();
+                    targetHandle.fate = 'copy';
+                    const store = await manifest.createStore(connection.type, null, id, []);
+                    // TODO(shans): Work out a better way to turn off reference mode for these stores.
+                    // Maybe a different function call in the storageEngine? Alternatively another
+                    // param to the connect/construct functions?
+                    store.referenceMode = false;
+                    await store.set(hostedParticleLiteral);
+                    targetHandle.mapToStorage(store);
+                }
+                if (targetParticle) {
+                    let targetConnection;
+                    if (connectionItem.target.param) {
+                        targetConnection = targetParticle.connections[connectionItem.target.param];
+                        if (!targetConnection) {
+                            targetConnection = targetParticle.addConnectionName(connectionItem.target.param);
+                            // TODO: direction?
+                        }
+                    }
+                    else {
+                        targetConnection = targetParticle.addUnnamedConnection();
+                        // TODO: direction?
+                    }
+                    targetHandle = targetConnection.handle;
+                    if (!targetHandle) {
+                        // TODO: tags?
+                        targetHandle = recipe.newHandle();
+                        targetConnection.connectToHandle(targetHandle);
+                    }
+                }
+                if (targetHandle) {
+                    connection.connectToHandle(targetHandle);
+                }
+            }
+            for (const slotConnectionItem of item.slotConnections) {
+                // particles that reference verbs should store slot connection information as constraints to be used
+                // during verb matching. However, if there's a spec then the slots need to be validated against it
+                // instead.
+                if (particle.spec !== undefined) {
+                    // Validate consumed and provided slots names are according to spec.
+                    if (!particle.spec.slots.has(slotConnectionItem.param)) {
+                        throw new ManifestError(slotConnectionItem.location, `Consumed slot '${slotConnectionItem.param}' is not defined by '${particle.name}'`);
+                    }
+                    slotConnectionItem.providedSlots.forEach(ps => {
+                        if (!particle.spec.slots.get(slotConnectionItem.param).getProvidedSlotSpec(ps.param)) {
+                            throw new ManifestError(ps.location, `Provided slot '${ps.param}' is not defined by '${particle.name}'`);
+                        }
+                    });
+                }
+                let targetSlot = items.byName.get(slotConnectionItem.name);
+                if (targetSlot) {
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(items.bySlot.has(targetSlot));
+                    if (!targetSlot.name) {
+                        targetSlot.name = slotConnectionItem.param;
+                    }
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targetSlot === items.byName.get(slotConnectionItem.name), `Target slot ${targetSlot.name} doesn't match slot connection ${slotConnectionItem.param}`);
+                }
+                else if (slotConnectionItem.name) {
+                    targetSlot = recipe.newSlot(slotConnectionItem.param);
+                    targetSlot.localName = slotConnectionItem.name;
+                    if (slotConnectionItem.name) {
+                        items.byName.set(slotConnectionItem.name, targetSlot);
+                    }
+                    items.bySlot.set(targetSlot, slotConnectionItem);
+                }
+                if (targetSlot) {
+                    particle.consumedSlotConnections[slotConnectionItem.param].connectToSlot(targetSlot);
+                }
+            }
+        }
+        if (items.description && items.description.description) {
+            recipe.description = items.description.description;
+        }
+    }
+    resolveTypeName(name) {
+        const schema = this.findSchemaByName(name);
+        if (schema) {
+            return { schema };
+        }
+        const shape = this.findShapeByName(name);
+        if (shape) {
+            return { shape };
+        }
+        return null;
+    }
+    static async _processStore(manifest, item, loader) {
+        const name = item.name;
+        let id = item.id;
+        const originalId = item.originalId;
+        const type = item.type.model;
+        if (id == null) {
+            id = `${manifest._id}store${manifest._stores.length}`;
+        }
+        let tags = item.tags;
+        if (tags == null) {
+            tags = [];
+        }
+        // Instead of creating links to remote firebase during manifest parsing,
+        // we generate storage stubs that contain the relevant information.
+        if (item.origin === 'storage') {
+            manifest.newStorageStub(type, name, id, item.source, tags, originalId);
+            return;
+        }
+        let json;
+        let source;
+        if (item.origin === 'file') {
+            source = loader.join(manifest.fileName, item.source);
+            // TODO: json5?
+            json = await loader.loadResource(source);
+        }
+        else if (item.origin === 'resource') {
+            source = item.source;
+            json = manifest.resources[source];
+            if (json == undefined) {
+                throw new Error(`Resource '${source}' referenced by store '${id}' is not defined in this manifest`);
+            }
+        }
+        let entities;
+        try {
+            entities = JSON.parse(json);
+        }
+        catch (e) {
+            throw new ManifestError(item.location, `Error parsing JSON from '${source}' (${e.message})'`);
+        }
+        // TODO: clean this up
+        let unitType;
+        if (type.isCollection) {
+            unitType = type.collectionType;
+        }
+        else if (type.isBigCollection) {
+            unitType = type.bigCollectionType;
+        }
+        else {
+            if (entities.length === 0) {
+                await Manifest._createStore(manifest, type, name, id, tags, item, originalId);
+                return;
+            }
+            entities = entities.slice(entities.length - 1);
+            unitType = type;
+        }
+        if (unitType.isEntity) {
+            let hasSerializedId = false;
+            entities = entities.map(entity => {
+                if (entity == null) {
+                    // FIXME: perhaps this happens when we have an empty variable?
+                    // we should just generate an empty list in that case.
+                    return null;
+                }
+                hasSerializedId = hasSerializedId || entity.$id;
+                const id = entity.$id || manifest.generateID();
+                delete entity.$id;
+                return { id, rawData: entity };
+            });
+            // TODO(wkorman): Efficiency improvement opportunities: (1) We could build
+            // array of entities in above map rather than mapping again below, (2) we
+            // could hash the object tree data directly rather than stringifying.
+            if (!item.id && !hasSerializedId) {
+                const entityHash = await Object(_platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__["digest"])(JSON.stringify(entities.map(entity => entity.rawData)));
+                id = `${id}:${entityHash}`;
+            }
+        }
+        const version = item.version || 0;
+        const store = await Manifest._createStore(manifest, type, name, id, tags, item, originalId);
+        // While the referenceMode hack exists, we need to look at the entities being stored to
+        // determine whether this store should be in referenceMode or not.
+        // TODO(shans): Eventually the actual type will need to be part of the determination too.
+        // TODO(shans): Need to take into account the possibility of multiple storage key mappings
+        // at some point.
+        if (entities.length > 0 && entities[0].rawData && entities[0].rawData.storageKey) {
+            let storageKey = entities[0].rawData.storageKey;
+            storageKey = manifest.findStoreByName(storageKey).storageKey;
+            entities = entities.map(({ id, rawData }) => ({ id, storageKey }));
+        }
+        else if (entities.length > 0) {
+            store.referenceMode = false;
+        }
+        // For this store to be able to be treated as a CRDT, each item needs a key.
+        // Using id as key seems safe, nothing else should do this.
+        let model;
+        if (type.isCollection) {
+            model = entities.map(value => ({ id: value.id, value, keys: new Set([value.id]) }));
+        }
+        else if (type.isBigCollection) {
+            model = entities.map(value => {
+                const index = value.rawData.$index;
+                delete value.rawData.$index;
+                return { id: value.id, index, value, keys: new Set([value.id]) };
+            });
+        }
+        else {
+            model = entities.map(value => ({ id: value.id, value }));
+        }
+        store.fromLiteral({ version, model });
+    }
+    static async _createStore(manifest, type, name, id, tags, item, originalId) {
+        const store = await manifest.createStore(type, name, id, tags);
+        store.source = item.source;
+        store.description = item.description;
+        store.originalId = originalId;
+        return store;
+    }
+    _newRecipe(name) {
+        const recipe = new _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_3__["Recipe"](name);
+        this._recipes.push(recipe);
+        return recipe;
+    }
+    toString(options) {
+        // TODO: sort?
+        options = options || {};
+        const results = [];
+        this._imports.forEach(i => {
+            if (options.recursive) {
+                results.push(`// import '${i.fileName}'`);
+                const importStr = i.toString(options);
+                results.push(`${i.toString(options)}`);
+            }
+            else {
+                results.push(`import '${i.fileName}'`);
+            }
+        });
+        Object.values(this._schemas).forEach(s => {
+            results.push(s.toManifestString());
+        });
+        Object.values(this._particles).forEach(p => {
+            results.push(p.toString());
+        });
+        this._recipes.forEach(r => {
+            results.push(r.toString(options));
+        });
+        const stores = [...this.stores].sort(_recipe_util_js__WEBPACK_IMPORTED_MODULE_10__["compareComparables"]);
+        stores.forEach(store => {
+            results.push(store.toString(this.storeTags.get(store).map(a => `#${a}`)));
+        });
+        return results.join('\n');
+    }
+}
+//# sourceMappingURL=manifest.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/message-channel.js":
 /*!*********************************************!*\
   !*** ./runtime/ts-build/message-channel.js ***!
@@ -75796,6 +75736,7 @@ class Recipe {
         this._handles = [];
         this._slots = [];
         this._localName = undefined;
+        this.annotation = undefined;
         // TODO: Recipes should be collections of records that are tagged
         // with a type. Strategies should register the record types they
         // can handle. ConnectionConstraints should be a different record
@@ -76096,7 +76037,7 @@ class Recipe {
         Object.freeze(this);
         return true;
     }
-    clone(cloneMap) {
+    clone(cloneMap = undefined) {
         // for now, just copy everything
         const recipe = new Recipe(this.name);
         if (cloneMap == undefined) {
@@ -77477,7 +77418,7 @@ class Relevance {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Runtime", function() { return Runtime; });
 /* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../description.js */ "./runtime/description.js");
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./manifest.js */ "./runtime/ts-build/manifest.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -78886,6 +78827,33 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
     }
 }
 //# sourceMappingURL=slot-dom-consumer.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/slot-info.js":
+/*!***************************************!*\
+  !*** ./runtime/ts-build/slot-info.js ***!
+  \***************************************/
+/*! exports provided: SlotInfo */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotInfo", function() { return SlotInfo; });
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+class SlotInfo {
+    constructor({ formFactor, handle }) {
+        this.formFactor = formFactor;
+        this.handle = handle;
+    }
+}
+//# sourceMappingURL=slot-info.js.map
 
 /***/ }),
 
@@ -81761,7 +81729,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./storage-provider-base.js */ "./runtime/ts-build/storage/storage-provider-base.js");
 /* harmony import */ var _key_base_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./key-base.js */ "./runtime/ts-build/storage/key-base.js");
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../manifest.js */ "./runtime/ts-build/manifest.js");
 /* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../util.js */ "./runtime/ts-build/util.js");
 // @
 // Copyright (c) 2018 Google Inc. All rights reserved.
@@ -81858,7 +81826,7 @@ class SyntheticCollection extends _storage_provider_base_js__WEBPACK_IMPORTED_MO
             if (snapshot.exists() && snapshot.val()) {
                 // TODO: remove the import-removal hack when import statements no longer appear in
                 // serialised manifests, or deal with them correctly if they end up staying
-                const manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_4__["Manifest"].parse(snapshot.val().replace(/\bimport .*\n/g, ''));
+                const manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_4__["Manifest"].parse(snapshot.val().replace(/\bimport .*\n/g, ''), {});
                 handles = manifest.activeRecipe && manifest.activeRecipe.handles;
             }
         }
@@ -83938,7 +83906,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../runtime/planificator.js */ "./runtime/planificator.js");
 /* harmony import */ var _runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../runtime/slot-composer.js */ "./runtime/slot-composer.js");
 /* harmony import */ var _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../runtime/ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _runtime_manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../runtime/manifest.js */ "./runtime/manifest.js");
+/* harmony import */ var _runtime_ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../runtime/ts-build/manifest.js */ "./runtime/ts-build/manifest.js");
 /* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./browser-loader.js */ "./shell/source/browser-loader.js");
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
 /* harmony import */ var _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../runtime/particle-execution-context.js */ "./runtime/particle-execution-context.js");
@@ -83984,7 +83952,7 @@ const Arcs = {
   version: '0.5',
   Tracing: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_7__["Tracing"],
   Arc: _runtime_ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"],
-  Manifest: _runtime_manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"],
+  Manifest: _runtime_ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"],
   Runtime: _runtime_ts_build_runtime_js__WEBPACK_IMPORTED_MODULE_0__["Runtime"],
   Planificator: _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_2__["Planificator"],
   SlotComposer: _runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_3__["SlotComposer"],

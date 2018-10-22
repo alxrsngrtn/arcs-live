@@ -1,5 +1,14 @@
-commit d83a075c057e36c8b95e47607dd071ea1e52f3bd
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Fri Oct 19 11:27:50 2018 -0700
+commit ad86a81bac16154d6625888b3463416a13850849
+Author: shans <shane.stephens@gmail.com>
+Date:   Mon Oct 22 11:38:33 2018 +1100
 
-    constify non runtime/shell directories (#2125)
+    Convert manifest.js to typeScript (#2124)
+    
+    Modified tslint.configs:
+    prefer-const: [true] -> prefer-const: [true, {"destructuring": "all"}]
+    prevents warnings when destructuring multiple fields, unless they should all be const.
+    e.g.
+    ```
+    let {foo, bar} = far;
+    bar += 1;
+    ```
