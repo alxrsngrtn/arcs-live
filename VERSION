@@ -1,9 +1,5 @@
-commit be46574fd9c0d4e1748cf494c77bae84229bbab6
+commit f73582af1c7667a33e081e806f39ecb3686e3f77
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Oct 24 10:57:44 2018 -0700
+Date:   Wed Oct 24 11:41:08 2018 -0700
 
-    Convert slot-composer.js to typescript (#2136)
-    
-    * Convert slot-composer.js to typescript
-    
-    Addresses #1765
+    constify shell (#2126)
