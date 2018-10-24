@@ -67000,7 +67000,7 @@ class RelevantContextRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORT
   constructor(context, affordance) {
     super();
     this._recipes = [];
-    for (let recipe of context.recipes) {
+    for (let recipe of context.allRecipes) {
       if (affordance && recipe.particles.find(p => p.spec && !p.spec.matchAffordance(affordance)) !== undefined) {
         continue;
       }
@@ -70252,7 +70252,7 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
     const thingByToken = {};
     const thingByPhrase = {};
     for (const [thing, packaged] of [...arc.context.particles.map(p => [p, {spec: p}]),
-                                   ...arc.context.recipes.map(r => [r, {innerRecipe: r}])]) {
+                                   ...arc.context.allRecipes.map(r => [r, {innerRecipe: r}])]) {
       this._addThing(thing.name, packaged, thingByToken, thingByPhrase);
       thing.verbs.forEach(verb => this._addThing(verb, packaged, thingByToken, thingByPhrase));
     }
@@ -73311,6 +73311,9 @@ class Manifest {
         return this._storageProviderFactory;
     }
     get recipes() {
+        return this._recipes;
+    }
+    get allRecipes() {
         return [...new Set(this._findAll(manifest => manifest._recipes))];
     }
     get activeRecipe() {

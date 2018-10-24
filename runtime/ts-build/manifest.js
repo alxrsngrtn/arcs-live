@@ -115,6 +115,9 @@ export class Manifest {
         return this._storageProviderFactory;
     }
     get recipes() {
+        return this._recipes;
+    }
+    get allRecipes() {
         return [...new Set(this._findAll(manifest => manifest._recipes))];
     }
     get activeRecipe() {
