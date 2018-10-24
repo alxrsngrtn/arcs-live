@@ -1,5 +1,9 @@
-commit 82108bf6e6cafb0937c242519c884ed64c852526
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Oct 23 20:58:51 2018 -0700
+commit be46574fd9c0d4e1748cf494c77bae84229bbab6
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Oct 24 10:57:44 2018 -0700
 
-    `recipes` and `allRecipes` getters in manifest (#2134)
+    Convert slot-composer.js to typescript (#2136)
+    
+    * Convert slot-composer.js to typescript
+    
+    Addresses #1765

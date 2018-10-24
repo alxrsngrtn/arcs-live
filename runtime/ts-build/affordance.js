@@ -14,26 +14,21 @@ import { MockSlotDomConsumer } from '../testing/mock-slot-dom-consumer.js';
 import { MockSuggestDomConsumer } from '../testing/mock-suggest-dom-consumer.js';
 import { DescriptionDomFormatter } from '../description-dom-formatter.js';
 export class Affordance {
-    constructor(options) {
-        Object.keys(options).forEach(key => {
-            this[`_${key}`] = options[key];
-            Object.defineProperty(this, key, {
-                get() {
-                    return this[`_${key}`];
-                }
-            });
-        });
+    constructor(name, slotConsumerClass, suggestionConsumerClass, descriptionFormatter) {
+        this.name = name;
+        this.slotConsumerClass = slotConsumerClass;
+        this.suggestionConsumerClass = suggestionConsumerClass;
+        this.descriptionFormatter = descriptionFormatter;
     }
     static forName(name) {
-        assert(_affordances[name], `Unsupported affordance ${name}`);
-        return _affordances[name];
+        assert(Affordance._affordances[name], `Unsupported affordance ${name}`);
+        return Affordance._affordances[name];
     }
 }
-const _affordances = {};
-[
-    { name: 'dom', slotConsumerClass: SlotDomConsumer, suggestionConsumerClass: SuggestDomConsumer, descriptionFormatter: DescriptionDomFormatter },
-    { name: 'dom-touch', slotConsumerClass: SlotDomConsumer, suggestionConsumerClass: SuggestDomConsumer, descriptionFormatter: DescriptionDomFormatter },
-    { name: 'vr', slotConsumerClass: SlotDomConsumer, suggestionConsumerClass: SuggestDomConsumer, descriptionFormatter: DescriptionDomFormatter },
-    { name: 'mock', slotConsumerClass: MockSlotDomConsumer, suggestionConsumerClass: MockSuggestDomConsumer }
-].forEach(options => _affordances[options.name] = new Affordance(options));
+Affordance._affordances = {
+    'dom': new Affordance('dom', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
+    'dom-touch': new Affordance('dom-touch', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
+    'vr': new Affordance('vr', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
+    'mock': new Affordance('mock', MockSlotDomConsumer, MockSuggestDomConsumer)
+};
 //# sourceMappingURL=affordance.js.map

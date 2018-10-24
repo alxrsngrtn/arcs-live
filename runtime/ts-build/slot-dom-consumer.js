@@ -7,7 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-'use strict';
 import { assert } from '../../platform/assert-web.js';
 import { SlotConsumer } from './slot-consumer.js';
 import Template from '../../shell/components/xen/xen-template.js';
