@@ -1,5 +1,5 @@
-commit a1231d9898b881f2d43e02f142c1098eec1e3d26
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Oct 24 12:57:42 2018 -0700
+commit 392a762bf6b1258692454644fced4c49445f9b7e
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Oct 24 13:33:43 2018 -0700
 
-    replace x-list with sub-template, remove host qualifiers (#2139)
+    Remove const check override, fix remaining usages (#2138)
