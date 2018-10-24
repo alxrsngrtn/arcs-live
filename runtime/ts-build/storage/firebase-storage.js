@@ -294,8 +294,8 @@ class FirebaseStorageProvider extends StorageProviderBase {
 class FirebaseVariable extends FirebaseStorageProvider {
     constructor(type, storageEngine, id, reference, firebaseKey, shouldExist) {
         super(type, storageEngine, id, reference, firebaseKey);
-        // TODO(sjmiles): localId collisions occur when using device-client-pipe,
-        // so I'll randomize localId a bit
+        // TODO(sjmiles): localKeyId collisions occur when using device-client-pipe,
+        // so I'll randomize localKeyId a bit
         this.localKeyId = Date.now();
         this.pendingWrites = [];
         this.wasConnect = shouldExist;
@@ -534,7 +534,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
     constructor(type, storageEngine, id, reference, firebaseKey) {
         super(type, storageEngine, id, reference, firebaseKey);
         this.pendingWrites = [];
-        this.localId = 0;
+        this.localKeyId = Date.now();
         // Lists mapped by id containing membership keys that have been
         // added or removed by local modifications. Entries in this
         // structure are still pending persistance remotely. Empty
@@ -794,8 +794,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             // that can be removed once entity mutation is distinct from collection updates.
             // Once entity mutation exists, it shouldn't ever be possible to write
             // different values with the same id.
-            await Promise.all(pendingWrites.map(pendingItem => this.backingStore.store(pendingItem.value, [this.storageKey + this.localId++])));
-            //await Promise.all(pendingWrites.map(pendingItem => this.backingStore.store(pendingItem.value, [this.storageKey + Date.now()])));
+            await Promise.all(pendingWrites.map(pendingItem => this.backingStore.store(pendingItem.value, [this.storageKey + this.localKeyId++])));
             // TODO(shans): Returning here prevents us from writing localChanges while there
             // are pendingWrites. This in turn prevents change events for being generated for
             // localChanges that have outstanding pendingWrites.

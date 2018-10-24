@@ -1,5 +1,5 @@
-commit f73582af1c7667a33e081e806f39ecb3686e3f77
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Oct 24 11:41:08 2018 -0700
+commit c9ccee7061ad7da5e58f871885543a8eff2111b8
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Oct 25 05:46:21 2018 +1100
 
-    constify shell (#2126)
+    'Randomize' local ids in FirebaseCollection to avoid key collisions. (#2135)
