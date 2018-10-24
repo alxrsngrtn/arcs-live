@@ -1,5 +1,5 @@
-commit c9ccee7061ad7da5e58f871885543a8eff2111b8
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Oct 25 05:46:21 2018 +1100
+commit b1bee5d3c2c45bac9b6dadc93f10369ffce095f3
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Oct 24 11:53:16 2018 -0700
 
-    'Randomize' local ids in FirebaseCollection to avoid key collisions. (#2135)
+    remove extraneous 'use strict' from converted typescript files (#2137)

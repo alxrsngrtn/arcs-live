@@ -3525,7 +3525,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 // TODO: This won't be needed once runtime is transferred between contexts.
 function cloneData(data) {
     return data;
@@ -5450,7 +5449,6 @@ __webpack_require__.r(__webpack_exports__);
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 
 

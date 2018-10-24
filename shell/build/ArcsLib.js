@@ -70950,7 +70950,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, recipeIndex }) {
         this.nextLocalID = 0;
@@ -71667,7 +71666,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -78267,7 +78265,6 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-
 class SlotConsumer {
     constructor(consumeConn, containerKind) {
         this.providedSlotContexts = [];
@@ -82471,7 +82468,6 @@ __webpack_require__.r(__webpack_exports__);
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 
 
