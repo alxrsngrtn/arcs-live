@@ -1,5 +1,5 @@
-commit b1bee5d3c2c45bac9b6dadc93f10369ffce095f3
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Oct 24 11:53:16 2018 -0700
+commit a1231d9898b881f2d43e02f142c1098eec1e3d26
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Oct 24 12:57:42 2018 -0700
 
-    remove extraneous 'use strict' from converted typescript files (#2137)
+    replace x-list with sub-template, remove host qualifiers (#2139)
