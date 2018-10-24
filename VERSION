@@ -1,5 +1,5 @@
-commit 392a762bf6b1258692454644fced4c49445f9b7e
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Oct 24 13:33:43 2018 -0700
+commit b0e49a3d6115624692794559a5a3a54d39fe6a22
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Oct 25 09:12:15 2018 +1100
 
-    Remove const check override, fix remaining usages (#2138)
+    Notify DevTools of selecting an Arc in the shell (#2132)
