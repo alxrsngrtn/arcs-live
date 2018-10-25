@@ -66126,6 +66126,9 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
+// Deprecated.
+// TODO: Replace by ts/planificator.ts
+
 
 
 
@@ -70323,6 +70326,10 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 
+// Deprecated.
+// TODO: Delete, once shell fully migrated to ts/planificator.ts
+
+
 
 
 
@@ -70427,8 +70434,8 @@ class SuggestionStorage {
   async _planFromString(planString) {
     const manifest = await _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(
         planString, {loader: this._arc.loader, context: this._arc._context, fileName: ''});
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest._recipes.length == 1);
-    let plan = manifest._recipes[0];
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest.recipes.length == 1);
+    let plan = manifest.recipes[0];
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan.normalize(), `can't normalize deserialized suggestion: ${plan.toString()}`);
     if (!plan.isResolved()) {
       const resolvedPlan = await this._recipeResolver.resolve(plan);
@@ -74149,6 +74156,537 @@ class MessageChannel {
     }
 }
 //# sourceMappingURL=message-channel.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/plan/plan-consumer.js":
+/*!************************************************!*\
+  !*** ./runtime/ts-build/plan/plan-consumer.js ***!
+  \************************************************/
+/*! exports provided: PlanConsumer */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanConsumer", function() { return PlanConsumer; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _planning_result__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./planning-result */ "./runtime/ts-build/plan/planning-result.js");
+/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../suggestion-composer.js */ "./runtime/suggestion-composer.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class PlanConsumer {
+    constructor(arc, store) {
+        this.plansChangeCallbacks = [];
+        this.suggestionsChangeCallbacks = [];
+        this.suggestionComposer = null;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'store cannot be null');
+        this.arc = arc;
+        this.result = new _planning_result__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"](arc);
+        this.store = store;
+        this.suggestFilter = { showAll: false };
+        this.plansChangeCallbacks = [];
+        this.suggestionsChangeCallbacks = [];
+        this.storeCallback = () => this.loadPlans();
+        this.store.on('change', this.storeCallback, this);
+        this.suggestionComposer = this._initSuggestionComposer();
+    }
+    registerPlansChangedCallback(callback) { this.plansChangeCallbacks.push(callback); }
+    registerSuggestChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
+    setSuggestFilter(showAll, search) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!showAll || !search);
+        if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
+            return;
+        }
+        const previousSuggestions = this.getCurrentSuggestions();
+        this.suggestFilter = { showAll, search };
+        this._onMaybeSuggestionsChanged(previousSuggestions);
+    }
+    async loadPlans() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.store['get'], 'Unsupported getter in suggestion storage');
+        const value = await this.store['get']() || {};
+        if (!value.plans) {
+            return;
+        }
+        const previousSuggestions = this.getCurrentSuggestions();
+        if (await this.result.deserialize(value)) {
+            this._onPlansChanged();
+            this._onMaybeSuggestionsChanged(previousSuggestions);
+        }
+    }
+    getCurrentSuggestions() {
+        const suggestions = this.result.plans.filter(suggestion => suggestion['plan'].slots.length > 0);
+        // `showAll`: returns all plans that render into slots.
+        if (this.suggestFilter['showAll']) {
+            return suggestions;
+        }
+        // search filter non empty: match plan search phrase or description text.
+        if (this.suggestFilter['search']) {
+            return suggestions.filter(suggestion => suggestion['descriptionText'].toLowerCase().includes(this.suggestFilter['search']) ||
+                (suggestion['plan'].search &&
+                    suggestion['plan'].search.phrase.includes(this.suggestFilter['search'])));
+        }
+        return suggestions.filter(suggestion => {
+            const usesHandlesFromActiveRecipe = suggestion['plan'].handles.find(handle => {
+                // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
+                // either by tagging or by exploring connection directions etc.
+                return !!handle.id &&
+                    this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
+            });
+            const usesRemoteNonRootSlots = suggestion['plan'].slots.find(slot => {
+                return !slot.name.includes('root') && !slot.tags.includes('root') &&
+                    slot.id && !slot.id.includes('root');
+            });
+            const onlyUsesNonRootSlots = !suggestion['plan'].slots.find(s => s.name.includes('root') || s.tags.includes('root'));
+            return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
+        });
+    }
+    dispose() {
+        this.store.off('change', this.storeCallback);
+        this.plansChangeCallbacks = [];
+        this.suggestionsChangeCallbacks = [];
+        this.suggestionComposer.clear();
+    }
+    _onPlansChanged() {
+        this.plansChangeCallbacks.forEach(callback => callback({ plans: this.result.plans }));
+    }
+    _onMaybeSuggestionsChanged(previousSuggestions) {
+        const suggestions = this.getCurrentSuggestions();
+        if (!_planning_result__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"].isEquivalent(previousSuggestions, suggestions)) {
+            this.suggestionsChangeCallbacks.forEach(callback => callback(suggestions));
+        }
+    }
+    _initSuggestionComposer() {
+        const composer = this.arc.pec.slotComposer;
+        if (composer) {
+            if (composer.findContextById('rootslotid-suggestions')) {
+                this.suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestionComposer"](composer);
+                this.registerSuggestChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
+            }
+        }
+    }
+}
+//# sourceMappingURL=plan-consumer.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/plan/plan-producer.js":
+/*!************************************************!*\
+  !*** ./runtime/ts-build/plan/plan-producer.js ***!
+  \************************************************/
+/*! exports provided: PlanProducer */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanProducer", function() { return PlanProducer; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../platform/date-web.js */ "./platform/date-web.js");
+/* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../planner.js */ "./runtime/planner.js");
+/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./planning-result.js */ "./runtime/ts-build/plan/planning-result.js");
+/* harmony import */ var _speculator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../speculator */ "./runtime/ts-build/speculator.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+const defaultTimeoutMs = 5000;
+class PlanProducer {
+    constructor(arc, store) {
+        this.planner = null;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'store cannot be null');
+        this.arc = arc;
+        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"](arc);
+        this.store = store;
+        this.speculator = new _speculator__WEBPACK_IMPORTED_MODULE_4__["Speculator"]();
+    }
+    async producePlans(options = {}) {
+        if (options['cancelOngoingPlanning'] && this.isPlanning) {
+            this._cancelPlanning();
+        }
+        this.needReplan = true;
+        if (this.isPlanning) {
+            return;
+        }
+        this.isPlanning = true;
+        let time = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_1__["now"])();
+        let plans = [];
+        let generations = [];
+        while (this.needReplan) {
+            this.needReplan = false;
+            generations = [];
+            plans = await this.runPlanner(options, generations);
+        }
+        time = ((Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_1__["now"])() - time) / 1000).toFixed(2);
+        // Plans are null, if planning was cancelled.
+        if (plans) {
+            console.log(`Produced ${plans.length}${options['append'] ? ' additional' : ''} plans [elapsed=${time}s].`);
+            this.isPlanning = false;
+            await this._updateResult({ plans, generations }, options);
+        }
+    }
+    async runPlanner(options, generations) {
+        let plans = [];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.planner, 'Planner must be null');
+        this.planner = new _planner_js__WEBPACK_IMPORTED_MODULE_2__["Planner"]();
+        this.planner.init(this.arc, {
+            strategies: options['strategies']
+            // TODO: add `search` and `contextual` params.
+        });
+        plans = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations, this.speculator);
+        if (this.planner) {
+            this.planner = null;
+            return plans;
+        }
+        // Planning was cancelled.
+        return null;
+    }
+    _cancelPlanning() {
+        if (this.planner) {
+            this.planner.dispose();
+            this.planner = null;
+        }
+        this.needReplan = false;
+        this.isPlanning = false; // using the setter method to trigger callbacks.
+        console.log(`Cancel planning`);
+    }
+    async _updateResult({ plans, generations }, options) {
+        if (options.append) {
+            if (!this.result.append({ plans, generations })) {
+                return;
+            }
+        }
+        else {
+            if (!this.result.set({ plans, generations })) {
+                return;
+            }
+        }
+        // Store plans to store.
+        try {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.store['set'], 'Unsupported setter in suggestion storage');
+            await this.store['set'](this.result.serialize());
+        }
+        catch (e) {
+            console.error('Failed storing suggestions: ', e);
+            throw e;
+        }
+    }
+}
+//# sourceMappingURL=plan-producer.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/plan/planificator.js":
+/*!***********************************************!*\
+  !*** ./runtime/ts-build/plan/planificator.js ***!
+  \***********************************************/
+/*! exports provided: Planificator */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planificator", function() { return Planificator; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _plan_consumer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./plan-consumer */ "./runtime/ts-build/plan/plan-consumer.js");
+/* harmony import */ var _plan_producer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./plan-producer */ "./runtime/ts-build/plan/plan-producer.js");
+/* harmony import */ var _schema__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../schema */ "./runtime/ts-build/schema.js");
+/* harmony import */ var _type__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../type */ "./runtime/ts-build/type.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+class Planificator {
+    constructor(arc, userid, store) {
+        this.search = null;
+        this.arc = arc;
+        this.userid = userid;
+        this.producer = new _plan_producer__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](arc, store);
+        this.consumer = new _plan_consumer__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](arc, store);
+        this.lastActivatedPlan = null;
+        this.arcCallback = this._onPlanInstantiated.bind(this);
+        this.arc.registerInstantiatePlanCallback(this.arcCallback);
+    }
+    static async create(arc, { userid, protocol }) {
+        const store = await Planificator._initStore(arc, { userid, protocol, arcKey: null });
+        const planificator = new Planificator(arc, userid, store);
+        planificator.requestPlanning();
+        return planificator;
+    }
+    async requestPlanning(options = {}) {
+        await this.producer.producePlans(options);
+    }
+    async loadPlans() {
+        return this.consumer.loadPlans();
+    }
+    setSearch(search) {
+        search = search ? search.toLowerCase().trim() : null;
+        search = (search !== '') ? search : null;
+        if (this.search !== search) {
+            this.search = search;
+            const showAll = this.search === '*';
+            const filter = showAll ? null : this.search;
+            this.consumer.setSuggestFilter(showAll, filter);
+        }
+    }
+    registerPlansChangedCallback(callback) {
+        this.consumer.registerPlansChangedCallback(callback);
+    }
+    registerSuggestChangedCallback(callback) {
+        this.consumer.registerSuggestChangedCallback(callback);
+    }
+    dispose() {
+        this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
+        this.consumer.dispose();
+    }
+    getLastActivatedPlan() {
+        return { plan: this.lastActivatedPlan };
+    }
+    _onPlanInstantiated(plan) {
+        this.lastActivatedPlan = plan;
+        this.requestPlanning();
+    }
+    static async _initStore(arc, { userid, protocol, arcKey }) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'Missing user id.');
+        let storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
+        const storageKey = storage.parseStringAsKey(arc.storageKey);
+        if (protocol) {
+            storageKey.protocol = protocol;
+        }
+        storageKey.location = storageKey.location
+            .replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/${arcKey || '$1'}`);
+        const storageKeyStr = storageKey.toString();
+        storage = arc.storageProviderFactory._storageForKey(storageKeyStr);
+        const schema = new _schema__WEBPACK_IMPORTED_MODULE_3__["Schema"]({ names: ['Suggestions'], fields: { current: 'Object' } });
+        const type = _type__WEBPACK_IMPORTED_MODULE_4__["Type"].newEntity(schema);
+        // TODO: unify initialization of suggestions storage.
+        const id = 'suggestions-id';
+        let store = null;
+        switch (storageKey.protocol) {
+            case 'firebase':
+                return storage._join(id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
+            case 'volatile':
+                try {
+                    store = await storage.construct(id, type, storageKeyStr);
+                }
+                catch (e) {
+                    store = await storage.connect(id, type, storageKeyStr);
+                }
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${protocol}' store.`);
+                store.referenceMode = false;
+                return store;
+            case 'pouchdb':
+                store = storage.construct(id, type, storageKeyStr);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${protocol}' store.`);
+                store.referenceMode = false;
+                return store;
+            default:
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, `Unsupported protocol '${protocol}'`);
+        }
+    }
+    isArcPopulated() {
+        if (this.arc.recipes.length === 0)
+            return false;
+        if (this.arc.recipes.length === 1) {
+            const [recipe] = this.arc.recipes;
+            if (recipe.particles.length === 0 ||
+                (recipe.particles.length === 1 && recipe.particles[0].name === 'Launcher')) {
+                // TODO: Check for Launcher is hacky, find a better way.
+                return false;
+            }
+        }
+        return true;
+    }
+}
+//# sourceMappingURL=planificator.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/plan/planning-result.js":
+/*!**************************************************!*\
+  !*** ./runtime/ts-build/plan/planning-result.js ***!
+  \**************************************************/
+/*! exports provided: PlanningResult */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanningResult", function() { return PlanningResult; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../manifest */ "./runtime/ts-build/manifest.js");
+/* harmony import */ var _recipe_recipe_resolver__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/recipe-resolver */ "./runtime/ts-build/recipe/recipe-resolver.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class PlanningResult {
+    constructor(arc, result = {}) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null');
+        this.arc = arc;
+        this.recipeResolver = new _recipe_recipe_resolver__WEBPACK_IMPORTED_MODULE_2__["RecipeResolver"](this.arc);
+        this.plans = result['plans'] || [];
+        this.lastUpdated = result['lastUpdated'] || new Date(null);
+        this.generations = result['generations'] || [];
+    }
+    set({ plans, lastUpdated = new Date(), generations = [] }) {
+        if (this.isEquivalent(plans)) {
+            return false;
+        }
+        this.plans = plans;
+        this.generations = generations;
+        this.lastUpdated = lastUpdated;
+        return true;
+    }
+    append({ plans, lastUpdated = new Date(), generations = [] }) {
+        const newPlans = plans.filter(newPlan => !this.plans.find(plan => PlanningResult.isEquivalentPlan(plan, newPlan.hash)));
+        if (newPlans.length === 0) {
+            return false;
+        }
+        this.plans.push(...newPlans);
+        // TODO: filter out generations of other plans.
+        this.generations.push(...generations);
+        this.lastUpdated = lastUpdated;
+        return true;
+    }
+    olderThan(other) {
+        return this.lastUpdated < other.lastUpdated;
+    }
+    isEquivalent(plans) {
+        return PlanningResult.isEquivalent(this.plans, plans);
+    }
+    static isEquivalent(oldPlans, newPlans) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(newPlans, `New plans cannot be null.`);
+        return oldPlans &&
+            oldPlans.length === newPlans.length &&
+            oldPlans.every(plan => newPlans.find(newPlan => PlanningResult.isEquivalentPlan(plan, newPlan)));
+    }
+    static isEquivalentPlan(plan1, plan2) {
+        return (plan1.hash === plan2.hash) && (plan1.descriptionText === plan2.descriptionText);
+    }
+    async deserialize({ plans, lastUpdated }) {
+        const deserializedPlans = [];
+        for (const { descriptionText, recipe, hash, rank, suggestionContent } of plans) {
+            try {
+                deserializedPlans.push({
+                    plan: await this._planFromString(recipe),
+                    descriptionText,
+                    hash,
+                    rank,
+                    suggestionContent
+                });
+            }
+            catch (e) {
+                console.error(`Failed to parse plan ${e}.`);
+            }
+        }
+        return this.set({ plans: deserializedPlans, lastUpdated: new Date(lastUpdated) });
+    }
+    async _planFromString(planString) {
+        const manifest = await _manifest__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(planString, { loader: this.arc.loader, context: this.arc.context, fileName: '' });
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest.recipes.length === 1);
+        let plan = manifest.recipes[0];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
+        if (!plan.isResolved()) {
+            const resolvedPlan = await this.recipeResolver.resolve(plan);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(resolvedPlan, `can't resolve plan: ${plan.toString({ showUnresolved: true })}`);
+            if (resolvedPlan) {
+                plan = resolvedPlan;
+            }
+        }
+        for (const store of manifest.stores) {
+            // If recipe has hosted particles, manifest will have stores with hosted
+            // particle specs. Moving these stores into the current arc's context.
+            // TODO: This is a hack, find a proper way of doing this.
+            this.arc.context._addStore(store, []);
+        }
+        return plan;
+    }
+    serialize() {
+        const serializedPlans = [];
+        for (const plan of this.plans) {
+            serializedPlans.push({
+                recipe: this._planToString(plan['plan']),
+                hash: plan['hash'],
+                rank: plan['rank'],
+                // TODO: handle description
+                descriptionText: plan['descriptionText'],
+                suggestionContent: { template: plan['descriptionText'], model: {} }
+            });
+        }
+        return { plans: serializedPlans, lastUpdated: this.lastUpdated.toString() };
+    }
+    _planToString(plan) {
+        // Special handling is only needed for plans (1) with hosted particles or
+        // (2) local slot (ie missing slot IDs).
+        if (!plan.handles.some(h => h.id && h.id.includes('particle-literal')) &&
+            plan.slots.every(slot => Boolean(slot.id))) {
+            return plan.toString();
+        }
+        // TODO: This is a transformation particle hack for plans resolved by
+        // FindHostedParticle strategy. Find a proper way to do this.
+        // Update hosted particle handles and connections.
+        const planClone = plan.clone();
+        planClone.slots.forEach(slot => slot.id = slot.id || `slotid-${this.arc.generateID()}`);
+        const hostedParticleSpecs = [];
+        for (let i = 0; i < planClone.handles.length; ++i) {
+            const handle = planClone.handles[i];
+            if (handle.id && handle.id.includes('particle-literal')) {
+                const hostedParticleName = handle.id.substr(handle.id.lastIndexOf(':') + 1);
+                // Add particle spec to the list.
+                const hostedParticleSpec = this.arc.context.findParticleByName(hostedParticleName);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(hostedParticleSpec, `Cannot find spec for particle '${hostedParticleName}'.`);
+                hostedParticleSpecs.push(hostedParticleSpec.toString());
+                // Override handle conenctions with particle name as local name.
+                Object.values(handle.connections).forEach(conn => {
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(conn['type'].isInterface);
+                    conn['_handle'] = { localName: hostedParticleName };
+                });
+                // Remove the handle.
+                planClone.handles.splice(i, 1);
+                --i;
+            }
+        }
+        return `${hostedParticleSpecs.join('\n')}\n${planClone.toString()}`;
+    }
+}
+//# sourceMappingURL=planning-result.js.map
 
 /***/ }),
 
@@ -83866,19 +84404,20 @@ const createTemplate = innerHTML => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _runtime_ts_build_runtime_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/ts-build/runtime.js */ "./runtime/ts-build/runtime.js");
 /* harmony import */ var _runtime_ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../runtime/ts-build/arc.js */ "./runtime/ts-build/arc.js");
-/* harmony import */ var _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../runtime/planificator.js */ "./runtime/planificator.js");
-/* harmony import */ var _runtime_ts_build_slot_composer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../runtime/ts-build/slot-composer.js */ "./runtime/ts-build/slot-composer.js");
-/* harmony import */ var _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../runtime/ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _runtime_ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../runtime/ts-build/manifest.js */ "./runtime/ts-build/manifest.js");
-/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./browser-loader.js */ "./shell/source/browser-loader.js");
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../runtime/particle-execution-context.js */ "./runtime/particle-execution-context.js");
-/* harmony import */ var _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../runtime/ts-build/storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var firebase_database__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! firebase/database */ "./node_modules/firebase/database/dist/index.esm.js");
-/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! firebase/storage */ "./node_modules/firebase/storage/dist/index.esm.js");
-/* harmony import */ var _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../runtime/ts-build/keymgmt/manager.js */ "./runtime/ts-build/keymgmt/manager.js");
+/* harmony import */ var _runtime_ts_build_plan_planificator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../runtime/ts-build/plan/planificator.js */ "./runtime/ts-build/plan/planificator.js");
+/* harmony import */ var _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../runtime/planificator.js */ "./runtime/planificator.js");
+/* harmony import */ var _runtime_ts_build_slot_composer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../runtime/ts-build/slot-composer.js */ "./runtime/ts-build/slot-composer.js");
+/* harmony import */ var _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../runtime/ts-build/type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _runtime_ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../runtime/ts-build/manifest.js */ "./runtime/ts-build/manifest.js");
+/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./browser-loader.js */ "./shell/source/browser-loader.js");
+/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
+/* harmony import */ var _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../runtime/particle-execution-context.js */ "./runtime/particle-execution-context.js");
+/* harmony import */ var _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../runtime/ts-build/storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var firebase_database__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! firebase/database */ "./node_modules/firebase/database/dist/index.esm.js");
+/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! firebase/storage */ "./node_modules/firebase/storage/dist/index.esm.js");
+/* harmony import */ var _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../runtime/ts-build/keymgmt/manager.js */ "./runtime/ts-build/keymgmt/manager.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -83904,6 +84443,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 // Keep in sync with runtime/ts/storage/firebase-storage.ts
 
 
@@ -83913,18 +84453,19 @@ __webpack_require__.r(__webpack_exports__);
 
 const Arcs = {
   version: '0.5',
-  Tracing: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_7__["Tracing"],
+  Tracing: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_8__["Tracing"],
   Arc: _runtime_ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"],
-  Manifest: _runtime_ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"],
+  Manifest: _runtime_ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_6__["Manifest"],
   Runtime: _runtime_ts_build_runtime_js__WEBPACK_IMPORTED_MODULE_0__["Runtime"],
-  Planificator: _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_2__["Planificator"],
-  SlotComposer: _runtime_ts_build_slot_composer_js__WEBPACK_IMPORTED_MODULE_3__["SlotComposer"],
-  Type: _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__["Type"],
-  BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_6__["BrowserLoader"],
-  StorageProviderFactory: _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__["StorageProviderFactory"],
-  ParticleExecutionContext: _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_8__["ParticleExecutionContext"],
-  KeyManager: _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_13__["KeyManager"],
-  firebase: (firebase_app__WEBPACK_IMPORTED_MODULE_10___default())
+  Planificator: _runtime_planificator_js__WEBPACK_IMPORTED_MODULE_3__["Planificator"],
+  PlanificatorNew: _runtime_ts_build_plan_planificator_js__WEBPACK_IMPORTED_MODULE_2__["Planificator"],
+  SlotComposer: _runtime_ts_build_slot_composer_js__WEBPACK_IMPORTED_MODULE_4__["SlotComposer"],
+  Type: _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_5__["Type"],
+  BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_7__["BrowserLoader"],
+  StorageProviderFactory: _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_10__["StorageProviderFactory"],
+  ParticleExecutionContext: _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_9__["ParticleExecutionContext"],
+  KeyManager: _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_14__["KeyManager"],
+  firebase: (firebase_app__WEBPACK_IMPORTED_MODULE_11___default())
 };
 
 // TODO(sjmiles): can't export because WebPack won't make a built version with a module export
