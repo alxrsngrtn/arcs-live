@@ -1,5 +1,7 @@
-commit b0e49a3d6115624692794559a5a3a54d39fe6a22
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Oct 25 09:12:15 2018 +1100
+commit d2e38f4bfbe2bf7d08919e9c1d0000b3aa97a634
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Oct 24 17:41:31 2018 -0700
 
-    Notify DevTools of selecting an Arc in the shell (#2132)
+    migrate entity.js to typescript (#2102)
+    
+    Addresses #1765

@@ -5,7 +5,7 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Entity } from '../entity.js';
+import { Entity } from './entity.js';
 import { Type } from './type.js';
 import { Symbols } from './symbols.js';
 // TODO: Should relations normalized by another layer, or here?

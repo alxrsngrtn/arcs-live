@@ -64802,86 +64802,6 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
 
 /***/ }),
 
-/***/ "./runtime/entity.js":
-/*!***************************!*\
-  !*** ./runtime/entity.js ***!
-  \***************************/
-/*! exports provided: Entity */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Entity", function() { return Entity; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/symbols.js */ "./runtime/ts-build/symbols.js");
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-class Entity {
-  constructor(userIDComponent) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!userIDComponent || userIDComponent.indexOf(':') == -1, 'user IDs must not contain the \':\' character');
-    this[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = undefined;
-    this._userIDComponent = userIDComponent;
-  }
-  get data() {
-    return undefined;
-  }
-
-  getUserID() {
-    return this._userIDComponent;
-  }
-
-  isIdentified() {
-    return this[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] !== undefined;
-  }
-  // TODO: entity should not be exposing its IDs.
-  get id() {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!!this.isIdentified());
-    return this[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier];
-  }
-  identify(identifier) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified());
-    this[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = identifier;
-    const components = identifier.split(':');
-    if (components[components.length - 2] == 'uid') {
-      this._userIDComponent = components[components.length - 1];
-    }
-  }
-  createIdentity(components) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified());
-    let id;
-    if (this._userIDComponent) {
-      id = `${components.base}:uid:${this._userIDComponent}`;
-    } else {
-      id = `${components.base}:${components.component()}`;
-    }
-    this[_ts_build_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = id;
-  }
-  toLiteral() {
-    return this.rawData;
-  }
-
-  static get type() {
-    // TODO: should the entity's key just be its type?
-    // Should it just be called type in that case?
-    return _ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].newEntity(this.key.schema);
-  }
-}
-
-
-/***/ }),
-
 /***/ "./runtime/fake-pec-factory.js":
 /*!*************************************!*\
   !*** ./runtime/fake-pec-factory.js ***!
@@ -71643,6 +71563,74 @@ class JsonldToManifest {
 
 /***/ }),
 
+/***/ "./runtime/ts-build/entity.js":
+/*!************************************!*\
+  !*** ./runtime/ts-build/entity.js ***!
+  \************************************/
+/*! exports provided: Entity */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Entity", function() { return Entity; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./symbols.js */ "./runtime/ts-build/symbols.js");
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+class Entity {
+    constructor(userIDComponent) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!userIDComponent || userIDComponent.indexOf(':') === -1, 'user IDs must not contain the \':\' character');
+        this[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = undefined;
+        this.userIDComponent = userIDComponent;
+    }
+    get data() {
+        return undefined;
+    }
+    getUserID() {
+        return this.userIDComponent;
+    }
+    isIdentified() {
+        return this[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] !== undefined;
+    }
+    // TODO: entity should not be exposing its IDs.
+    get id() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!!this.isIdentified());
+        return this[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier];
+    }
+    identify(identifier) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified());
+        this[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = identifier;
+        const components = identifier.split(':');
+        if (components[components.length - 2] === 'uid') {
+            this.userIDComponent = components[components.length - 1];
+        }
+    }
+    createIdentity(components) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.isIdentified());
+        let id;
+        if (this.userIDComponent) {
+            id = `${components.base}:uid:${this.userIDComponent}`;
+        }
+        else {
+            id = `${components.base}:${components.component()}`;
+        }
+        this[_symbols_js__WEBPACK_IMPORTED_MODULE_1__["Symbols"].identifier] = id;
+    }
+    toLiteral() {
+        return this.rawData;
+    }
+}
+//# sourceMappingURL=entity.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/handle.js":
 /*!************************************!*\
   !*** ./runtime/ts-build/handle.js ***!
@@ -77288,7 +77276,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./recipe/type-checker.js */ "./runtime/ts-build/recipe/type-checker.js");
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../entity.js */ "./runtime/entity.js");
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./entity.js */ "./runtime/ts-build/entity.js");
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./reference.js */ "./runtime/ts-build/reference.js");
 /**
  * @license
@@ -77654,10 +77642,15 @@ class Schema {
                 }
                 return clone;
             }
+            static get type() {
+                // TODO: should the entity's key just be its type?
+                // Should it just be called type in that case?
+                return _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newEntity(this.key.schema);
+            }
             static get key() {
                 return {
                     tag: 'entity',
-                    schema: schema.toLiteral(),
+                    schema,
                 };
             }
         };

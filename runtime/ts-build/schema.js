@@ -10,7 +10,7 @@
 import { assert } from '../../platform/assert-web.js';
 import { Type } from './type.js';
 import { TypeChecker } from './recipe/type-checker.js';
-import { Entity } from '../entity.js';
+import { Entity } from './entity.js';
 import { Reference } from './reference.js';
 export class Schema {
     constructor(model) {
@@ -362,10 +362,15 @@ export class Schema {
                 }
                 return clone;
             }
+            static get type() {
+                // TODO: should the entity's key just be its type?
+                // Should it just be called type in that case?
+                return Type.newEntity(this.key.schema);
+            }
             static get key() {
                 return {
                     tag: 'entity',
-                    schema: schema.toLiteral(),
+                    schema,
                 };
             }
         };
