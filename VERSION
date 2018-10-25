@@ -1,21 +1,5 @@
-commit 8ff9c13dc13be30150c4433d9f27982c4f028c52
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Oct 24 18:34:11 2018 -0700
+commit ceb6eba05808f3f44726dbe4869831fc18ac053d
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Oct 25 14:13:29 2018 +1100
 
-    Planificator refactoring (#2128)
-    
-    * Refactor planificator and use the new version in remote-planning.
-    
-    * use new planificator in shell + fixes, cleanups & tests
-    
-    * small fixes
-    
-    * add types and private
-    
-    * remove `only` from tests and fix them
-    
-    * use manifest's new recipes getter
-    
-    * address comments
-    
-    * const-ify tests
+    Add SLANDLES test for 'parses local slots with IDs' (#2143)
