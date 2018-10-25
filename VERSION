@@ -1,5 +1,5 @@
-commit 5d32233ab5c869dcbd5cc485a5153f66e1adeeef
+commit d3377175c6033487713b346b8a522d4c77e6689e
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Oct 25 16:52:29 2018 +1100
+Date:   Fri Oct 26 07:03:52 2018 +1100
 
-    Create SLANDLES version of 'errors when the manifest references a missing consumed slot' (#2146)
+    Add SLANDLES version of 'recipe provided slot with no local name' test (#2147)
