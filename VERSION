@@ -1,5 +1,5 @@
-commit ceb6eba05808f3f44726dbe4869831fc18ac053d
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Oct 25 14:13:29 2018 +1100
+commit 28beffefe0f47bc3ee6ff9474e8e5671770394b0
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Oct 25 15:38:23 2018 +1100
 
-    Add SLANDLES test for 'parses local slots with IDs' (#2143)
+    Ability to consume a SetSlot as a SingletonSlot (#2142)

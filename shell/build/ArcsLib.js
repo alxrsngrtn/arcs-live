@@ -78820,7 +78820,7 @@ class SlotConsumer {
         }
         if (newContainer !== originalContainer) {
             const contextContainerBySubId = new Map();
-            if (this.consumeConn && this.consumeConn.slotSpec.isSet) {
+            if (this.slotContext && this.slotContext.spec.isSet) {
                 Object.keys(this.slotContext.container || {}).forEach(subId => contextContainerBySubId.set(subId, this.slotContext.container[subId]));
             }
             else {
@@ -78923,7 +78923,7 @@ class SlotConsumer {
     deleteContainer(container) { }
     clearContainer(rendering) { }
     setContainerContent(rendering, content, subId) { }
-    formatContent(content, subId) { }
+    formatContent(content, subId) { return null; }
     formatHostedContent(hostedSlot, content) { return null; }
     static clear(container) { }
 }
@@ -79100,20 +79100,20 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         // Format model.
         if (Object.keys(content).indexOf('model') >= 0) {
             if (content.model) {
-                // Merge descriptions into model.
-                newContent.model = Object.assign({}, content.model, content.descriptions);
-                // Replace items list by an single item corresponding to the given subId.
-                if (subId && content.model.items) {
-                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.consumeConn.slotSpec.isSet);
-                    const item = content.model.items.find(item => item.subId === subId);
-                    if (item) {
-                        newContent.model = Object.assign({}, newContent.model, item);
-                        delete newContent.model['items'];
-                    }
-                    else {
-                        newContent.model = undefined;
-                    }
+                let formattedModel;
+                if (this.slotContext.spec.isSet && this.consumeConn.slotSpec.isSet) {
+                    formattedModel = this._modelForSetSlotConsumedAsSetSlot(content.model, subId);
                 }
+                else if (this.slotContext.spec.isSet && !this.consumeConn.slotSpec.isSet) {
+                    formattedModel = this._modelForSetSlotConsumedAsSingletonSlot(content.model, subId);
+                }
+                else {
+                    formattedModel = this._modelForSingletonSlot(content.model, subId);
+                }
+                if (!formattedModel)
+                    return null;
+                // Merge descriptions into model.
+                newContent.model = Object.assign({}, formattedModel, content.descriptions);
             }
             else {
                 newContent.model = undefined;
@@ -79128,12 +79128,25 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         }
         return newContent;
     }
+    _modelForSingletonSlot(model, subId) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!subId, 'subId should be absent for a Singleton Slot');
+        return model;
+    }
+    _modelForSetSlotConsumedAsSetSlot(model, subId) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(model.items && model.items.every(item => item.subId), 'model for a Set Slot consumed as a Set Slot needs to have items array, with every element having subId');
+        return model.items.find(item => item.subId === subId);
+    }
+    _modelForSetSlotConsumedAsSingletonSlot(model, subId) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(model.subId, 'model for a Set Slot consumed as a Singleton Slot needs to have subId');
+        return subId === model.subId ? model : null;
+    }
     setContainerContent(rendering, content, subId) {
         if (!rendering.container) {
             return;
         }
-        if (Object.keys(content).length === 0) {
+        if (!content || Object.keys(content).length === 0) {
             this.clearContainer(rendering);
+            rendering.model = null;
             return;
         }
         this._setTemplate(rendering, this.templatePrefix, content.templateName, content.template);
