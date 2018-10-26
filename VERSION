@@ -1,5 +1,17 @@
-commit d3377175c6033487713b346b8a522d4c77e6689e
+commit 3490f2834412e098ff4ec4a9c4739c1a1f900203
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Oct 26 07:03:52 2018 +1100
+Date:   Fri Oct 26 17:31:43 2018 +1100
 
-    Add SLANDLES version of 'recipe provided slot with no local name' test (#2147)
+    Add SLANDLES test for 'can parse a recipe with slot constraints on verbs' (#2148)
+    
+    * Add SLANDLES can parse a recipe with slot constraints on verbs test
+    
+    * Convert to slandles
+    
+    * Remove logs
+    
+    * Remove unnecessary assertion
+    
+    * Update runtime/test/manifest-test.js
+    
+    Co-Authored-By: Cypher1 <jp10010101010000@gmail.com>
