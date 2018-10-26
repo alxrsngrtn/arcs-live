@@ -62,6 +62,7 @@ export class Planificator {
     dispose() {
         this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
         this._unlistenToArcStores();
+        this.producer.store.dispose();
         this.consumer.dispose();
     }
     getLastActivatedPlan() {

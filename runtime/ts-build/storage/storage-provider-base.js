@@ -137,6 +137,8 @@ export class StorageProviderBase {
     get apiChannelMappingId() {
         return this.id;
     }
+    // TODO: make abstract?
+    dispose() { }
     /** TODO */
     modelForSynchronization() {
         return this.toLiteral();

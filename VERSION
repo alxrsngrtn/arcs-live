@@ -1,10 +1,5 @@
-commit 63a10b8e9324f67988c4a17053665befbe89dac2
+commit 5f64e185705ee129e40430c1a32d935590612f1a
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Oct 26 11:39:08 2018 -0700
+Date:   Fri Oct 26 11:56:33 2018 -0700
 
-    Updates in arc or context stores trigger replanning. (#2145)
-    
-    * Enable new planificator by default (with volatile storage)
-    Updates in arc or context stores trigger replanning.
-    
-    * address comments
+    dispose and delete DB suggestions storage, when arc is deleted (#2150)

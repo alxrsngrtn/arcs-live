@@ -317,7 +317,11 @@ class FirebaseVariable extends FirebaseStorageProvider {
         // * the initial value is supplied via firebase `reference.on`
         // * a value is written to the variable by a call to `set`.
         this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
-        this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
+        this.valueChangeCallback =
+            this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
+    }
+    dispose() {
+        this.reference.off('value', this.valueChangeCallback);
     }
     backingType() {
         return this.type;
@@ -561,7 +565,11 @@ class FirebaseCollection extends FirebaseStorageProvider {
         // Whether our model has been initialized after receiving the first
         // copy of state from firebase.
         this.initialized = new Promise(resolve => this.resolveInitialized = resolve);
-        this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
+        this.valueChangeCallback =
+            this.reference.on('value', dataSnapshot => this.remoteStateChanged(dataSnapshot));
+    }
+    dispose() {
+        this.reference.off('value', this.valueChangeCallback);
     }
     backingType() {
         return this.type.primitiveType();
