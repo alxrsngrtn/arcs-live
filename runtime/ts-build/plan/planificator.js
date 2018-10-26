@@ -10,18 +10,26 @@
 import { assert } from '../../../platform/assert-web.js';
 import { PlanConsumer } from './plan-consumer';
 import { PlanProducer } from './plan-producer';
+import { ReplanQueue } from './replan-queue';
 import { Schema } from '../schema';
 import { Type } from '../type';
 export class Planificator {
     constructor(arc, userid, store) {
         this.search = null;
+        this.dataChangeCallback = () => this.replanQueue.addChange();
+        // In <0.6 shell, this is needed to backward compatibility, in order to (1)
+        // (1) trigger replanning with a local producer and (2) notify shell of the
+        // last activated plan, to allow serialization.
+        // TODO(mmandlis): Is this really needed in the >0.6 shell?
+        this.arcCallback = this._onPlanInstantiated.bind(this);
         this.arc = arc;
         this.userid = userid;
         this.producer = new PlanProducer(arc, store);
+        this.replanQueue = new ReplanQueue(this.producer);
         this.consumer = new PlanConsumer(arc, store);
         this.lastActivatedPlan = null;
-        this.arcCallback = this._onPlanInstantiated.bind(this);
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
+        this._listenToArcStores();
     }
     static async create(arc, { userid, protocol }) {
         const store = await Planificator._initStore(arc, { userid, protocol, arcKey: null });
@@ -53,6 +61,7 @@ export class Planificator {
     }
     dispose() {
         this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
+        this._unlistenToArcStores();
         this.consumer.dispose();
     }
     getLastActivatedPlan() {
@@ -61,6 +70,22 @@ export class Planificator {
     _onPlanInstantiated(plan) {
         this.lastActivatedPlan = plan;
         this.requestPlanning();
+    }
+    _listenToArcStores() {
+        this.arc.onDataChange(this.dataChangeCallback, this);
+        this.arc.context.allStores.forEach(store => {
+            if (store.on) { // #2141: some are StorageStubs.
+                store.on('change', this.dataChangeCallback, this);
+            }
+        });
+    }
+    _unlistenToArcStores() {
+        this.arc.clearDataChange(this);
+        this.arc.context.allStores.forEach(store => {
+            if (store.off) { // #2141: some are StorageStubs.
+                store.off('change', this.dataChangeCallback);
+            }
+        });
     }
     static async _initStore(arc, { userid, protocol, arcKey }) {
         assert(userid, 'Missing user id.');

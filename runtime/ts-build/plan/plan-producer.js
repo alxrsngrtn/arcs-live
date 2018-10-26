@@ -16,12 +16,24 @@ const defaultTimeoutMs = 5000;
 export class PlanProducer {
     constructor(arc, store) {
         this.planner = null;
+        this.stateChangedCallbacks = [];
         assert(arc, 'arc cannot be null');
         assert(store, 'store cannot be null');
         this.arc = arc;
         this.result = new PlanningResult(arc);
         this.store = store;
         this.speculator = new Speculator();
+    }
+    get isPlanning() { return this._isPlanning; }
+    set isPlanning(isPlanning) {
+        if (this.isPlanning === isPlanning) {
+            return;
+        }
+        this._isPlanning = isPlanning;
+        this.stateChangedCallbacks.forEach(callback => callback(this.isPlanning));
+    }
+    registerStateChangedCallback(callback) {
+        this.stateChangedCallbacks.push(callback);
     }
     async producePlans(options = {}) {
         if (options['cancelOngoingPlanning'] && this.isPlanning) {

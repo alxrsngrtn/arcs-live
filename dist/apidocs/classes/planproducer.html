@@ -87,13 +87,20 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planproducer.html#_isplanning" class="tsd-kind-icon">_is<wbr>Planning</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planproducer.html#arc" class="tsd-kind-icon">arc</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planproducer.html#isplanning" class="tsd-kind-icon">is<wbr>Planning</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planproducer.html#needreplan" class="tsd-kind-icon">need<wbr>Replan</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planproducer.html#planner" class="tsd-kind-icon">planner</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planproducer.html#result" class="tsd-kind-icon">result</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planproducer.html#speculator" class="tsd-kind-icon">speculator</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planproducer.html#statechangedcallbacks" class="tsd-kind-icon">state<wbr>Changed<wbr>Callbacks</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planproducer.html#store" class="tsd-kind-icon">store</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="planproducer.html#isplanning" class="tsd-kind-icon">is<wbr>Planning</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -102,6 +109,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="planproducer.html#_cancelplanning" class="tsd-kind-icon">_cancel<wbr>Planning</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="planproducer.html#_updateresult" class="tsd-kind-icon">_update<wbr>Result</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="planproducer.html#produceplans" class="tsd-kind-icon">produce<wbr>Plans</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="planproducer.html#registerstatechangedcallback" class="tsd-kind-icon">register<wbr>State<wbr>Changed<wbr>Callback</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="planproducer.html#runplanner" class="tsd-kind-icon">run<wbr>Planner</a></li>
 							</ul>
 						</section>
@@ -120,7 +128,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3490f28/runtime/ts/plan/plan-producer.ts#L28">plan/plan-producer.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L29">plan/plan-producer.ts:29</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -140,22 +148,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_isplanning" class="tsd-anchor"></a>
+					<h3>_is<wbr>Planning</h3>
+					<div class="tsd-signature tsd-kind-icon">_is<wbr>Planning<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L28">plan/plan-producer.ts:28</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="arc" class="tsd-anchor"></a>
 					<h3>arc</h3>
 					<div class="tsd-signature tsd-kind-icon">arc<span class="tsd-signature-symbol">:</span> <a href="arc.html" class="tsd-signature-type">Arc</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3490f28/runtime/ts/plan/plan-producer.ts#L22">plan/plan-producer.ts:22</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="isplanning" class="tsd-anchor"></a>
-					<h3>is<wbr>Planning</h3>
-					<div class="tsd-signature tsd-kind-icon">is<wbr>Planning<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3490f28/runtime/ts/plan/plan-producer.ts#L28">plan/plan-producer.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L22">plan/plan-producer.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -165,7 +173,7 @@
 					<div class="tsd-signature tsd-kind-icon">need<wbr>Replan<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3490f28/runtime/ts/plan/plan-producer.ts#L27">plan/plan-producer.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L27">plan/plan-producer.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -175,7 +183,7 @@
 					<div class="tsd-signature tsd-kind-icon">planner<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Planner</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3490f28/runtime/ts/plan/plan-producer.ts#L25">plan/plan-producer.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L25">plan/plan-producer.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -185,7 +193,7 @@
 					<div class="tsd-signature tsd-kind-icon">result<span class="tsd-signature-symbol">:</span> <a href="planningresult.html" class="tsd-signature-type">PlanningResult</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3490f28/runtime/ts/plan/plan-producer.ts#L23">plan/plan-producer.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L23">plan/plan-producer.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -195,7 +203,17 @@
 					<div class="tsd-signature tsd-kind-icon">speculator<span class="tsd-signature-symbol">:</span> <a href="speculator.html" class="tsd-signature-type">Speculator</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3490f28/runtime/ts/plan/plan-producer.ts#L26">plan/plan-producer.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L26">plan/plan-producer.ts:26</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="statechangedcallbacks" class="tsd-anchor"></a>
+					<h3>state<wbr>Changed<wbr>Callbacks</h3>
+					<div class="tsd-signature tsd-kind-icon">state<wbr>Changed<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L29">plan/plan-producer.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -205,9 +223,44 @@
 					<div class="tsd-signature tsd-kind-icon">store<span class="tsd-signature-symbol">:</span> <a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3490f28/runtime/ts/plan/plan-producer.ts#L24">plan/plan-producer.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L24">plan/plan-producer.ts:24</a></li>
 						</ul>
 					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="isplanning" class="tsd-anchor"></a>
+					<h3>is<wbr>Planning</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> isPlanning<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> isPlanning<span class="tsd-signature-symbol">(</span>isPlanning<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L40">plan/plan-producer.ts:40</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L41">plan/plan-producer.ts:41</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>isPlanning: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -222,7 +275,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3490f28/runtime/ts/plan/plan-producer.ts#L87">plan/plan-producer.ts:87</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L101">plan/plan-producer.ts:101</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -239,7 +292,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3490f28/runtime/ts/plan/plan-producer.ts#L97">plan/plan-producer.ts:97</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L111">plan/plan-producer.ts:111</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -273,7 +326,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3490f28/runtime/ts/plan/plan-producer.ts#L39">plan/plan-producer.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L53">plan/plan-producer.ts:53</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -289,6 +342,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="registerstatechangedcallback" class="tsd-anchor"></a>
+					<h3>register<wbr>State<wbr>Changed<wbr>Callback</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">register<wbr>State<wbr>Changed<wbr>Callback<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L49">plan/plan-producer.ts:49</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>callback: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="runplanner" class="tsd-anchor"></a>
 					<h3>run<wbr>Planner</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -298,7 +374,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3490f28/runtime/ts/plan/plan-producer.ts#L69">plan/plan-producer.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/63a10b8/runtime/ts/plan/plan-producer.ts#L83">plan/plan-producer.ts:83</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -335,10 +411,10 @@
 								<a href="planproducer.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="planproducer.html#arc" class="tsd-kind-icon">arc</a>
+								<a href="planproducer.html#_isplanning" class="tsd-kind-icon">_is<wbr>Planning</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="planproducer.html#isplanning" class="tsd-kind-icon">is<wbr>Planning</a>
+								<a href="planproducer.html#arc" class="tsd-kind-icon">arc</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="planproducer.html#needreplan" class="tsd-kind-icon">need<wbr>Replan</a>
@@ -353,7 +429,13 @@
 								<a href="planproducer.html#speculator" class="tsd-kind-icon">speculator</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="planproducer.html#statechangedcallbacks" class="tsd-kind-icon">state<wbr>Changed<wbr>Callbacks</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="planproducer.html#store" class="tsd-kind-icon">store</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="planproducer.html#isplanning" class="tsd-kind-icon">is<wbr>Planning</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="planproducer.html#_cancelplanning" class="tsd-kind-icon">_cancel<wbr>Planning</a>
@@ -363,6 +445,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="planproducer.html#produceplans" class="tsd-kind-icon">produce<wbr>Plans</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="planproducer.html#registerstatechangedcallback" class="tsd-kind-icon">register<wbr>State<wbr>Changed<wbr>Callback</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="planproducer.html#runplanner" class="tsd-kind-icon">run<wbr>Planner</a>

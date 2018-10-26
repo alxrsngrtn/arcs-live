@@ -74199,7 +74199,7 @@ class PlanConsumer {
         this.suggestionsChangeCallbacks = [];
         this.storeCallback = () => this.loadPlans();
         this.store.on('change', this.storeCallback, this);
-        this.suggestionComposer = this._initSuggestionComposer();
+        this._initSuggestionComposer();
     }
     registerPlansChangedCallback(callback) { this.plansChangeCallbacks.push(callback); }
     registerSuggestChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
@@ -74255,7 +74255,9 @@ class PlanConsumer {
         this.store.off('change', this.storeCallback);
         this.plansChangeCallbacks = [];
         this.suggestionsChangeCallbacks = [];
-        this.suggestionComposer.clear();
+        if (this.suggestionComposer) {
+            this.suggestionComposer.clear();
+        }
     }
     _onPlansChanged() {
         this.plansChangeCallbacks.forEach(callback => callback({ plans: this.result.plans }));
@@ -74268,11 +74270,9 @@ class PlanConsumer {
     }
     _initSuggestionComposer() {
         const composer = this.arc.pec.slotComposer;
-        if (composer) {
-            if (composer.findContextById('rootslotid-suggestions')) {
-                this.suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestionComposer"](composer);
-                this.registerSuggestChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
-            }
+        if (composer && composer.findContextById('rootslotid-suggestions')) {
+            this.suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestionComposer"](composer);
+            this.registerSuggestChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
         }
     }
 }
@@ -74313,12 +74313,24 @@ const defaultTimeoutMs = 5000;
 class PlanProducer {
     constructor(arc, store) {
         this.planner = null;
+        this.stateChangedCallbacks = [];
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'store cannot be null');
         this.arc = arc;
         this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"](arc);
         this.store = store;
         this.speculator = new _speculator__WEBPACK_IMPORTED_MODULE_4__["Speculator"]();
+    }
+    get isPlanning() { return this._isPlanning; }
+    set isPlanning(isPlanning) {
+        if (this.isPlanning === isPlanning) {
+            return;
+        }
+        this._isPlanning = isPlanning;
+        this.stateChangedCallbacks.forEach(callback => callback(this.isPlanning));
+    }
+    registerStateChangedCallback(callback) {
+        this.stateChangedCallbacks.push(callback);
     }
     async producePlans(options = {}) {
         if (options['cancelOngoingPlanning'] && this.isPlanning) {
@@ -74409,8 +74421,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _plan_consumer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./plan-consumer */ "./runtime/ts-build/plan/plan-consumer.js");
 /* harmony import */ var _plan_producer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./plan-producer */ "./runtime/ts-build/plan/plan-producer.js");
-/* harmony import */ var _schema__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../schema */ "./runtime/ts-build/schema.js");
-/* harmony import */ var _type__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../type */ "./runtime/ts-build/type.js");
+/* harmony import */ var _replan_queue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./replan-queue */ "./runtime/ts-build/plan/replan-queue.js");
+/* harmony import */ var _schema__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../schema */ "./runtime/ts-build/schema.js");
+/* harmony import */ var _type__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../type */ "./runtime/ts-build/type.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -74425,16 +74438,24 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 class Planificator {
     constructor(arc, userid, store) {
         this.search = null;
+        this.dataChangeCallback = () => this.replanQueue.addChange();
+        // In <0.6 shell, this is needed to backward compatibility, in order to (1)
+        // (1) trigger replanning with a local producer and (2) notify shell of the
+        // last activated plan, to allow serialization.
+        // TODO(mmandlis): Is this really needed in the >0.6 shell?
+        this.arcCallback = this._onPlanInstantiated.bind(this);
         this.arc = arc;
         this.userid = userid;
         this.producer = new _plan_producer__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](arc, store);
+        this.replanQueue = new _replan_queue__WEBPACK_IMPORTED_MODULE_3__["ReplanQueue"](this.producer);
         this.consumer = new _plan_consumer__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](arc, store);
         this.lastActivatedPlan = null;
-        this.arcCallback = this._onPlanInstantiated.bind(this);
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
+        this._listenToArcStores();
     }
     static async create(arc, { userid, protocol }) {
         const store = await Planificator._initStore(arc, { userid, protocol, arcKey: null });
@@ -74466,6 +74487,7 @@ class Planificator {
     }
     dispose() {
         this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
+        this._unlistenToArcStores();
         this.consumer.dispose();
     }
     getLastActivatedPlan() {
@@ -74474,6 +74496,22 @@ class Planificator {
     _onPlanInstantiated(plan) {
         this.lastActivatedPlan = plan;
         this.requestPlanning();
+    }
+    _listenToArcStores() {
+        this.arc.onDataChange(this.dataChangeCallback, this);
+        this.arc.context.allStores.forEach(store => {
+            if (store.on) { // #2141: some are StorageStubs.
+                store.on('change', this.dataChangeCallback, this);
+            }
+        });
+    }
+    _unlistenToArcStores() {
+        this.arc.clearDataChange(this);
+        this.arc.context.allStores.forEach(store => {
+            if (store.off) { // #2141: some are StorageStubs.
+                store.off('change', this.dataChangeCallback);
+            }
+        });
     }
     static async _initStore(arc, { userid, protocol, arcKey }) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'Missing user id.');
@@ -74486,8 +74524,8 @@ class Planificator {
             .replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/${arcKey || '$1'}`);
         const storageKeyStr = storageKey.toString();
         storage = arc.storageProviderFactory._storageForKey(storageKeyStr);
-        const schema = new _schema__WEBPACK_IMPORTED_MODULE_3__["Schema"]({ names: ['Suggestions'], fields: { current: 'Object' } });
-        const type = _type__WEBPACK_IMPORTED_MODULE_4__["Type"].newEntity(schema);
+        const schema = new _schema__WEBPACK_IMPORTED_MODULE_4__["Schema"]({ names: ['Suggestions'], fields: { current: 'Object' } });
+        const type = _type__WEBPACK_IMPORTED_MODULE_5__["Type"].newEntity(schema);
         // TODO: unify initialization of suggestions storage.
         const id = 'suggestions-id';
         let store = null;
@@ -74687,6 +74725,97 @@ class PlanningResult {
     }
 }
 //# sourceMappingURL=planning-result.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/plan/replan-queue.js":
+/*!***********************************************!*\
+  !*** ./runtime/ts-build/plan/replan-queue.js ***!
+  \***********************************************/
+/*! exports provided: ReplanQueue */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReplanQueue", function() { return ReplanQueue; });
+/* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/date-web.js */ "./platform/date-web.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+const defaultDefaultReplanDelayMs = 3000;
+class ReplanQueue {
+    constructor(planProducer, options = {}) {
+        this.options = {};
+        this.planProducer = planProducer;
+        this.options = options;
+        this.options.defaultReplanDelayMs =
+            this.options.defaultReplanDelayMs || defaultDefaultReplanDelayMs;
+        this.changes = [];
+        this.replanTimer = null;
+        this.planProducer.registerStateChangedCallback(this._onPlanningStateChanged.bind(this));
+    }
+    addChange() {
+        this.changes.push(Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__["now"])());
+        if (this._isReplanningScheduled()) {
+            this._postponeReplan();
+        }
+        else if (!this.planProducer.isPlanning) {
+            this._scheduleReplan(this.options.defaultReplanDelayMs);
+        }
+    }
+    _onPlanningStateChanged(isPlanning) {
+        if (isPlanning) {
+            // Cancel scheduled planning.
+            this._cancelReplanIfScheduled();
+            this.changes = [];
+        }
+        else if (this.changes.length > 0) {
+            // Schedule delayed planning.
+            const timeNow = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__["now"])();
+            this.changes.forEach((ch, i) => this.changes[i] = timeNow);
+            this._scheduleReplan(this.options.defaultReplanDelayMs);
+        }
+    }
+    _isReplanningScheduled() {
+        return Boolean(this.replanTimer);
+    }
+    _scheduleReplan(intervalMs) {
+        this._cancelReplanIfScheduled();
+        this.replanTimer = setTimeout(() => this.planProducer.producePlans(), intervalMs);
+    }
+    _cancelReplanIfScheduled() {
+        if (this._isReplanningScheduled()) {
+            clearTimeout(this.replanTimer);
+            this.replanTimer = null;
+        }
+    }
+    _postponeReplan() {
+        if (this.changes.length <= 1) {
+            return;
+        }
+        const now = this.changes[this.changes.length - 1];
+        const sinceFirstChangeMs = now - this.changes[0];
+        if (this._canPostponeReplan(sinceFirstChangeMs)) {
+            this._cancelReplanIfScheduled();
+            let nextReplanDelayMs = this.options.defaultReplanDelayMs;
+            if (this.options.maxNoReplanMs) {
+                nextReplanDelayMs = Math.min(nextReplanDelayMs, this.options.maxNoReplanMs - sinceFirstChangeMs);
+            }
+            this._scheduleReplan(nextReplanDelayMs);
+        }
+    }
+    _canPostponeReplan(changesInterval) {
+        return !this.options.maxNoReplanMs || changesInterval < this.options.maxNoReplanMs;
+    }
+}
+//# sourceMappingURL=replan-queue.js.map
 
 /***/ }),
 

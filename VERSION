@@ -1,17 +1,10 @@
-commit 3490f2834412e098ff4ec4a9c4739c1a1f900203
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Oct 26 17:31:43 2018 +1100
+commit 63a10b8e9324f67988c4a17053665befbe89dac2
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Oct 26 11:39:08 2018 -0700
 
-    Add SLANDLES test for 'can parse a recipe with slot constraints on verbs' (#2148)
+    Updates in arc or context stores trigger replanning. (#2145)
     
-    * Add SLANDLES can parse a recipe with slot constraints on verbs test
+    * Enable new planificator by default (with volatile storage)
+    Updates in arc or context stores trigger replanning.
     
-    * Convert to slandles
-    
-    * Remove logs
-    
-    * Remove unnecessary assertion
-    
-    * Update runtime/test/manifest-test.js
-    
-    Co-Authored-By: Cypher1 <jp10010101010000@gmail.com>
+    * address comments
