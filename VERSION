@@ -1,5 +1,9 @@
-commit 5f64e185705ee129e40430c1a32d935590612f1a
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Oct 26 11:56:33 2018 -0700
+commit c45bb2f957c24b71bf15efc5a8832d47b9a41967
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Oct 29 09:54:21 2018 +1100
 
-    dispose and delete DB suggestions storage, when arc is deleted (#2150)
+    Add stack frame info to API channel calls. (#2151)
+    
+    * Add stack frame info to API channel calls.
+    
+    * Fix lint

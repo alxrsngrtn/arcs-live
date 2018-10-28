@@ -54292,7 +54292,7 @@ class APIPort {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this[handlerName], `no handler named ${handlerName}`);
     if (this._debugAttachment) {
       if (this._debugAttachment[handlerName]) this._debugAttachment[handlerName](args);
-      this._debugAttachment.handlePecMessage(handlerName, e.data.messageBody);
+      this._debugAttachment.handlePecMessage(handlerName, e.data.messageBody, true /* isReceiver */);
     }
     const result = this[handlerName](args);
     if (handler.isInitializer) {
@@ -54324,7 +54324,7 @@ class APIPort {
       this._port.postMessage(call);
       if (this._debugAttachment) {
         if (this._debugAttachment[name]) this._debugAttachment[name](args);
-        this._debugAttachment.handlePecMessage(name, call.messageBody);
+        this._debugAttachment.handlePecMessage(name, call.messageBody, false /* isReceiver */);
       }
     };
   }
@@ -54355,7 +54355,7 @@ class APIPort {
       this._port.postMessage(call);
       if (this._debugAttachment) {
         if (this._debugAttachment[name]) this._debugAttachment[name](thing, args);
-        this._debugAttachment.handlePecMessage(name, call.messageBody);
+        this._debugAttachment.handlePecMessage(name, call.messageBody, false /* isReceiver */);
       }
     };
   }
@@ -63202,12 +63202,32 @@ class OuterPortAttachment {
     this._particleRegistry = {};
   }
 
-  handlePecMessage(name, pecMsgBody) {
+  handlePecMessage(name, pecMsgBody, isReceiver) {
     // Skip speculative and pipes arcs for now.
     if (this._arcIdString.endsWith('-pipes') || this._speculative) return;
+
+    let stack = [];
+    if (!isReceiver) {
+      // The slice discards the 'Error' string and the 2 stack frames
+      // corresponding to this function and the API channel function,
+      // which is already being displayed in the log entry.
+      stack = new Error().stack.split('\n    at ').slice(3).map(f => {
+        // Convert 'foo.bar (http://some/url/arcs/shell/sub/Source.js:240:35)'
+        // to {method: 'foo.bar', location: 'shell/sub/Source.js:240'}.
+        // Note that some frames may look like 'Array.forEach (<anonymous>)',
+        // which should still work.
+        const m = f.match(/^(.*) \((.*)\)$/);
+        if (m === null) return {method: f, location: ''};
+        return {
+          method: m[1],
+          location: m[2].replace(/^http.*\/arcs\//, '').replace(/:[0-9]+$/, '')
+        };
+      });
+    }
+
     this._devtoolsChannel.send({
       messageType: 'PecLog',
-      messageBody: {name, pecMsgBody, timestamp: Date.now()},
+      messageBody: {name, isReceiver, pecMsgBody, timestamp: Date.now(), stack},
     });
   }
 
