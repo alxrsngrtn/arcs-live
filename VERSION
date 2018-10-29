@@ -1,5 +1,11 @@
-commit 4e1f274f99909c7c4f301401d0af15c1347e0feb
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Mon Oct 29 21:49:10 2018 +1100
+commit 0d6a2309b4649a8cc4f95175355ade20f2805a52
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Oct 29 05:58:03 2018 -0700
 
-    Add slandles version of 'errors when the manifest references a missing provided slot' test (#2154)
+    Update outdated dependencies - week 43, 2018 (#2152)
+    
+    - polymer 3.0.5 -> 3.1.0
+    - eslint 5.7.0 -> 5.8.0
+    - webdriverio 4.13.2 -> 4.14.0
+    - webpack 4.12.0 -> 4.23.1
+    - firebase 5.5.4 -> 5.5.6

@@ -46167,7 +46167,7 @@ process.umask = function() { return 0; };
   !*** ./node_modules/prr/prr.js ***!
   \*********************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 /*!
   * prr
@@ -46177,7 +46177,7 @@ process.umask = function() { return 0; };
   */
 
 (function (name, context, definition) {
-  if (typeof module != 'undefined' && module.exports)
+  if ( true && module.exports)
     module.exports = definition()
   else
     context[name] = definition()
