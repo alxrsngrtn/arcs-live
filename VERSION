@@ -1,11 +1,9 @@
-commit 0d6a2309b4649a8cc4f95175355ade20f2805a52
+commit 82b75dc940f9edeb5c80e7bc756f3bd86d6f120e
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Oct 29 05:58:03 2018 -0700
+Date:   Mon Oct 29 14:27:34 2018 -0700
 
-    Update outdated dependencies - week 43, 2018 (#2152)
+    Node 10 LTS is coming.  Switch build to use it and update docs. (#2153)
     
-    - polymer 3.0.5 -> 3.1.0
-    - eslint 5.7.0 -> 5.8.0
-    - webdriverio 4.13.2 -> 4.14.0
-    - webpack 4.12.0 -> 4.23.1
-    - firebase 5.5.4 -> 5.5.6
+    Addresses #2093
+    
+    Background: https://medium.com/@nodejs/october-brings-node-js-10-x-to-lts-and-node-js-11-to-current-ae19f8f12b51
