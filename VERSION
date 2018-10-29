@@ -1,9 +1,5 @@
-commit c45bb2f957c24b71bf15efc5a8832d47b9a41967
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Oct 29 09:54:21 2018 +1100
+commit 4e1f274f99909c7c4f301401d0af15c1347e0feb
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Mon Oct 29 21:49:10 2018 +1100
 
-    Add stack frame info to API channel calls. (#2151)
-    
-    * Add stack frame info to API channel calls.
-    
-    * Fix lint
+    Add slandles version of 'errors when the manifest references a missing provided slot' test (#2154)
