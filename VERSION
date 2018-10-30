@@ -1,9 +1,5 @@
-commit 9144aa5f069d1f1c881b6ad5c00b9d7ce5c84eba
+commit 69ccb351821a44ad1fe23d60f802caa7d3cb13b7
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Oct 30 12:14:49 2018 -0700
+Date:   Tue Oct 30 12:15:44 2018 -0700
 
-    Update npm dependencies for server (#2159)
-    
-    - Update kubernetes to 0.7.1
-    - Add explicit changes for node 10
-    - regen package-lock.json
+    Remove the ts-build directory when running tools/sigh clean (#2158)
