@@ -482,7 +482,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PECOuterPort", function() { return PECOuterPort; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PECInnerPort", function() { return PECInnerPort; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./particle-spec.js */ "./runtime/particle-spec.js");
+/* harmony import */ var _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/particle-spec.js */ "./runtime/ts-build/particle-spec.js");
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
 /* harmony import */ var _debug_outer_port_attachment_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./debug/outer-port-attachment.js */ "./runtime/debug/outer-port-attachment.js");
 /* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
@@ -738,7 +738,7 @@ class PECOuterPort extends APIPort {
     this.registerCall('Stop', {});
     this.registerRedundantInitializer('DefineHandle', {type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct});
     this.registerInitializer('InstantiateParticle',
-      {id: this.Direct, spec: this.ByLiteral(_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"]), handles: this.Map(this.Direct, this.Mapped)}, 'id');
+      {id: this.Direct, spec: this.ByLiteral(_ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"]), handles: this.Map(this.Direct, this.Mapped)}, 'id');
 
     this.registerCall('UIEvent', {particle: this.Mapped, slotName: this.Direct, event: this.Direct});
     this.registerCall('SimpleCallback', {callback: this.Direct, data: this.Direct});
@@ -793,7 +793,7 @@ class PECInnerPort extends APIPort {
     this.registerHandler('Stop', {});
     this.registerInitializerHandler('DefineHandle', {type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct});
     this.registerInitializerHandler('InstantiateParticle',
-      {id: this.Direct, spec: this.ByLiteral(_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"]), handles: this.Map(this.Direct, this.Mapped)});
+      {id: this.Direct, spec: this.ByLiteral(_ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"]), handles: this.Map(this.Direct, this.Mapped)});
 
     this.registerHandler('UIEvent', {particle: this.Mapped, slotName: this.Direct, event: this.Direct});
     this.registerHandler('SimpleCallback', {callback: this.LocalMapped, data: this.Direct});
@@ -1661,7 +1661,7 @@ const local_fetch = fetch;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./particle-spec.js */ "./runtime/particle-spec.js");
+/* harmony import */ var _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/particle-spec.js */ "./runtime/ts-build/particle-spec.js");
 /* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./transformation-dom-particle.js */ "./runtime/transformation-dom-particle.js");
 /**
  * @license
@@ -1774,7 +1774,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
           continue;
         }
         resolvedHostedParticle =
-            _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"].fromLiteral(JSON.parse(item.renderParticleSpec));
+            _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"].fromLiteral(JSON.parse(item.renderParticleSpec));
         // Re-map compatible handles and compute the connections specific
         // to this item's render particle.
         const listHandleName = 'list';
@@ -2172,288 +2172,6 @@ class ParticleExecutionContext {
 }
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
-
-/***/ }),
-
-/***/ "./runtime/particle-spec.js":
-/*!**********************************!*\
-  !*** ./runtime/particle-spec.js ***!
-  \**********************************/
-/*! exports provided: SlotSpec, ProvidedSlotSpec, ParticleSpec */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotSpec", function() { return SlotSpec; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProvidedSlotSpec", function() { return ProvidedSlotSpec; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleSpec", function() { return ParticleSpec; });
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _ts_build_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/recipe/type-checker.js */ "./runtime/ts-build/recipe/type-checker.js");
-/* harmony import */ var _ts_build_shape_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/shape.js */ "./runtime/ts-build/shape.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-class ConnectionSpec {
-  constructor(rawData, typeVarMap) {
-    this.rawData = rawData;
-    this.direction = rawData.direction;
-    this.name = rawData.name;
-    this.type = rawData.type.mergeTypeVariablesByName(typeVarMap);
-    this.isOptional = rawData.isOptional;
-    this.tags = rawData.tags || [];
-    this.dependentConnections = [];
-  }
-
-  instantiateDependentConnections(particle, typeVarMap) {
-    for (const dependentArg of this.rawData.dependentConnections) {
-      const dependentConnection = particle.createConnection(dependentArg, typeVarMap);
-      dependentConnection.parentConnection = this;
-      this.dependentConnections.push(dependentConnection);
-    }
-
-  }
-
-  get isInput() {
-    // TODO: we probably don't really want host to be here.
-    return this.direction == 'in' || this.direction == 'inout' || this.direction == 'host';
-  }
-
-  get isOutput() {
-    return this.direction == 'out' || this.direction == 'inout';
-  }
-
-  isCompatibleType(type) {
-    return _ts_build_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({type}, {type: this.type, direction: this.direction});
-  }
-}
-
-class SlotSpec {
-  constructor(slotModel) {
-    this.name = slotModel.name;
-    this.isRequired = slotModel.isRequired;
-    this.isSet = slotModel.isSet;
-    this.tags = slotModel.tags || [];
-    this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
-    this.providedSlots = [];
-    if (!slotModel.providedSlots) {
-      return;
-    }
-    slotModel.providedSlots.forEach(ps => {
-      this.providedSlots.push(new ProvidedSlotSpec(ps));
-    });
-  }
-
-  getProvidedSlotSpec(name) {
-    return this.providedSlots.find(ps => ps.name == name);
-  }
-}
-
-class ProvidedSlotSpec {
-  constructor(slotModel) {
-    this.name = slotModel.name;
-    this.isRequired = slotModel.isRequired || false;
-    this.isSet = slotModel.isSet || false;
-    this.tags = slotModel.tags || [];
-    this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
-    this.handles = slotModel.handles || [];
-  }
-}
-
-class ParticleSpec {
-  constructor(model) {
-    this._model = model;
-    this.name = model.name;
-    this.verbs = model.verbs;
-    const typeVarMap = new Map();
-    this.connections = [];
-    model.args.forEach(arg => this.createConnection(arg, typeVarMap));
-    this.connectionMap = new Map();
-    this.connections.forEach(a => this.connectionMap.set(a.name, a));
-    this.inputs = this.connections.filter(a => a.isInput);
-    this.outputs = this.connections.filter(a => a.isOutput);
-
-    // initialize descriptions patterns.
-    model.description = model.description || {};
-    this.validateDescription(model.description);
-    this.pattern = model.description['pattern'];
-    this.connections.forEach(connectionSpec => {
-      connectionSpec.pattern = model.description[connectionSpec.name];
-    });
-
-    this.implFile = model.implFile;
-    this.affordance = model.affordance;
-    this.slots = new Map();
-    if (model.slots) {
-      model.slots.forEach(s => this.slots.set(s.name, new SlotSpec(s)));
-    }
-    // Verify provided slots use valid handle connection names.
-    this.slots.forEach(slot => {
-      slot.providedSlots.forEach(ps => {
-        ps.handles.forEach(v => Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ', v));
-      });
-    });
-  }
-
-  createConnection(arg, typeVarMap) {
-    const connection = new ConnectionSpec(arg, typeVarMap);
-    this.connections.push(connection);
-    connection.instantiateDependentConnections(this, typeVarMap);
-    return connection;
-  }
-
-  isInput(param) {
-    for (const input of this.inputs) if (input.name == param) return true;
-  }
-
-  isOutput(param) {
-    for (const outputs of this.outputs) if (outputs.name == param) return true;
-  }
-
-  getSlotSpec(slotName) {
-    return this.slots.get(slotName);
-  }
-
-  get primaryVerb() {
-    return (this.verbs.length > 0) ? this.verbs[0] : undefined;
-  }
-
-  matchAffordance(affordance) {
-    return this.slots.size <= 0 || this.affordance.includes(affordance);
-  }
-
-  toLiteral() {
-    let {args, name, verbs, description, implFile, affordance, slots} = this._model;
-    const connectionToLiteral = ({type, direction, name, isOptional, dependentConnections}) => ({type: type.toLiteral(), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral)});
-    args = args.map(a => connectionToLiteral(a));
-    return {args, name, verbs, description, implFile, affordance, slots};
-  }
-
-  static fromLiteral(literal) {
-    let {args, name, verbs, description, implFile, affordance, slots} = literal;
-    const connectionFromLiteral = ({type, direction, name, isOptional, dependentConnections}) =>
-      ({type: _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : []});
-    args = args.map(connectionFromLiteral);
-    return new ParticleSpec({args, name, verbs: verbs || [], description, implFile, affordance, slots});
-  }
-
-  clone() {
-    return ParticleSpec.fromLiteral(this.toLiteral());
-  }
-
-  equals(other) {
-    return JSON.stringify(this.toLiteral()) === JSON.stringify(other.toLiteral());
-  }
-
-  validateDescription(description) {
-    Object.keys(description || []).forEach(d => {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
-    });
-  }
-
-  toInterface() {
-    return _ts_build_type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newInterface(this._toShape());
-  }
-
-  _toShape() {
-    const handles = this._model.args;
-    // TODO: wat do?
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(!this.slots.length, 'please implement slots toShape');
-    const slots = [];
-    return new _ts_build_shape_js__WEBPACK_IMPORTED_MODULE_2__["Shape"](handles, slots);
-  }
-
-  toString() {
-    const results = [];
-    let verbs = '';
-    if (this.verbs.length > 0) {
-      verbs = ' ' + this.verbs.map(verb => `&${verb}`).join(' ');
-    }
-    results.push(`particle ${this.name}${verbs} in '${this.implFile}'`.trim());
-    const indent = '  ';
-    const writeConnection = (connection, indent) => {
-      results.push(`${indent}${connection.direction} ${connection.type.toString()}${connection.isOptional ? '?' : ''} ${connection.name}`);
-      for (const dependent of connection.dependentConnections) {
-        writeConnection(dependent, indent + '  ');
-      }
-    };
-
-    for (const connection of this.connections) {
-      if (connection.parentConnection) {
-        continue;
-      }
-      writeConnection(connection, indent);
-    }
-
-    this.affordance.filter(a => a != 'mock').forEach(a => results.push(`  affordance ${a}`));
-    this.slots.forEach(s => {
-      // Consume slot.
-      const consume = [];
-      if (s.isRequired) {
-        consume.push('must');
-      }
-      consume.push('consume');
-      if (s.isSet) {
-        consume.push('set of');
-      }
-      consume.push(s.name);
-      if (s.tags.length > 0) {
-        consume.push(s.tags.map(a => `#${a}`).join(' '));
-      }
-      results.push(`  ${consume.join(' ')}`);
-      if (s.formFactor) {
-        results.push(`    formFactor ${s.formFactor}`);
-      }
-      // Provided slots.
-      s.providedSlots.forEach(ps => {
-        const provide = [];
-        if (ps.isRequired) {
-          provide.push('must');
-        }
-        provide.push('provide');
-        if (ps.isSet) {
-          provide.push('set of');
-        }
-        provide.push(ps.name);
-        if (ps.tags.length > 0) {
-          provide.push(ps.tags.map(a => `#${a}`).join(' '));
-        }
-        results.push(`    ${provide.join(' ')}`);
-        if (ps.formFactor) {
-          results.push(`      formFactor ${ps.formFactor}`);
-        }
-        ps.handles.forEach(handle => results.push(`      handle ${handle}`));
-      });
-    });
-    // Description
-    if (this.pattern) {
-      results.push(`  description \`${this.pattern}\``);
-      this.connections.forEach(cs => {
-        if (cs.pattern) {
-          results.push(`    ${cs.name} \`${cs.pattern}\``);
-        }
-      });
-    }
-    return results.join('\n');
-  }
-
-  toManifestString() {
-    return this.toString();
-  }
-}
-
 
 /***/ }),
 
@@ -3520,7 +3238,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./reference.js */ "./runtime/ts-build/reference.js");
 /* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./symbols.js */ "./runtime/ts-build/symbols.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../particle-spec.js */ "./runtime/particle-spec.js");
+/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./particle-spec.js */ "./runtime/ts-build/particle-spec.js");
 /** @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -4053,6 +3771,264 @@ class Loader {
     }
 }
 //# sourceMappingURL=loader.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/particle-spec.js":
+/*!*******************************************!*\
+  !*** ./runtime/ts-build/particle-spec.js ***!
+  \*******************************************/
+/*! exports provided: SlotSpec, ProvidedSlotSpec, ParticleSpec */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotSpec", function() { return SlotSpec; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProvidedSlotSpec", function() { return ProvidedSlotSpec; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleSpec", function() { return ParticleSpec; });
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./recipe/type-checker.js */ "./runtime/ts-build/recipe/type-checker.js");
+/* harmony import */ var _shape_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shape.js */ "./runtime/ts-build/shape.js");
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+class ConnectionSpec {
+    constructor(rawData, typeVarMap) {
+        this.parentConnection = null;
+        this.rawData = rawData;
+        this.direction = rawData.direction;
+        this.name = rawData.name;
+        this.type = rawData.type.mergeTypeVariablesByName(typeVarMap);
+        this.isOptional = rawData.isOptional;
+        this.tags = rawData.tags || [];
+        this.dependentConnections = [];
+    }
+    instantiateDependentConnections(particle, typeVarMap) {
+        for (const dependentArg of this.rawData.dependentConnections) {
+            const dependentConnection = particle.createConnection(dependentArg, typeVarMap);
+            dependentConnection.parentConnection = this;
+            this.dependentConnections.push(dependentConnection);
+        }
+    }
+    get isInput() {
+        // TODO: we probably don't really want host to be here.
+        return this.direction === 'in' || this.direction === 'inout' || this.direction === 'host';
+    }
+    get isOutput() {
+        return this.direction === 'out' || this.direction === 'inout';
+    }
+    isCompatibleType(type) {
+        return _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({ type }, { type: this.type, direction: this.direction });
+    }
+}
+class SlotSpec {
+    constructor(slotModel) {
+        this.name = slotModel.name;
+        this.isRequired = slotModel.isRequired;
+        this.isSet = slotModel.isSet;
+        this.tags = slotModel.tags || [];
+        this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
+        this.providedSlots = [];
+        if (!slotModel.providedSlots) {
+            return;
+        }
+        slotModel.providedSlots.forEach(ps => {
+            this.providedSlots.push(new ProvidedSlotSpec(ps));
+        });
+    }
+    getProvidedSlotSpec(name) {
+        return this.providedSlots.find(ps => ps.name === name);
+    }
+}
+class ProvidedSlotSpec {
+    constructor(slotModel) {
+        this.name = slotModel.name;
+        this.isRequired = slotModel.isRequired || false;
+        this.isSet = slotModel.isSet || false;
+        this.tags = slotModel.tags || [];
+        this.formFactor = slotModel.formFactor; // TODO: deprecate form factors?
+        this.handles = slotModel.handles || [];
+    }
+}
+class ParticleSpec {
+    constructor(model) {
+        this._model = model;
+        this.name = model.name;
+        this.verbs = model.verbs;
+        const typeVarMap = new Map();
+        this.connections = [];
+        model.args.forEach(arg => this.createConnection(arg, typeVarMap));
+        this.connectionMap = new Map();
+        this.connections.forEach(a => this.connectionMap.set(a.name, a));
+        this.inputs = this.connections.filter(a => a.isInput);
+        this.outputs = this.connections.filter(a => a.isOutput);
+        // initialize descriptions patterns.
+        model.description = model.description || {};
+        this.validateDescription(model.description);
+        this.pattern = model.description['pattern'];
+        this.connections.forEach(connectionSpec => {
+            connectionSpec.pattern = model.description[connectionSpec.name];
+        });
+        this.implFile = model.implFile;
+        this.affordance = model.affordance;
+        this.slots = new Map();
+        if (model.slots) {
+            model.slots.forEach(s => this.slots.set(s.name, new SlotSpec(s)));
+        }
+        // Verify provided slots use valid handle connection names.
+        this.slots.forEach(slot => {
+            slot.providedSlots.forEach(ps => {
+                ps.handles.forEach(v => Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(this.connectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ', v));
+            });
+        });
+    }
+    createConnection(arg, typeVarMap) {
+        const connection = new ConnectionSpec(arg, typeVarMap);
+        this.connections.push(connection);
+        connection.instantiateDependentConnections(this, typeVarMap);
+        return connection;
+    }
+    isInput(param) {
+        for (const input of this.inputs)
+            if (input.name === param)
+                return true;
+        return false;
+    }
+    isOutput(param) {
+        for (const outputs of this.outputs)
+            if (outputs.name === param)
+                return true;
+        return false;
+    }
+    getSlotSpec(slotName) {
+        return this.slots.get(slotName);
+    }
+    get primaryVerb() {
+        return (this.verbs.length > 0) ? this.verbs[0] : undefined;
+    }
+    matchAffordance(affordance) {
+        return this.slots.size <= 0 || this.affordance.includes(affordance);
+    }
+    toLiteral() {
+        const { args, name, verbs, description, implFile, affordance, slots } = this._model;
+        const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: type.toLiteral(), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
+        const argsLiteral = args.map(a => connectionToLiteral(a));
+        return { args: argsLiteral, name, verbs, description, implFile, affordance, slots };
+    }
+    static fromLiteral(literal) {
+        let { args, name, verbs, description, implFile, affordance, slots } = literal;
+        const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
+        args = args.map(connectionFromLiteral);
+        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, affordance, slots });
+    }
+    clone() {
+        return ParticleSpec.fromLiteral(this.toLiteral());
+    }
+    equals(other) {
+        return JSON.stringify(this.toLiteral()) === JSON.stringify(other.toLiteral());
+    }
+    validateDescription(description) {
+        Object.keys(description || []).forEach(d => {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
+        });
+    }
+    toInterface() {
+        return _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newInterface(this._toShape());
+    }
+    _toShape() {
+        const handles = this._model.args;
+        // TODO: wat do?
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(!this.slots.size, 'please implement slots toShape');
+        const slots = [];
+        return new _shape_js__WEBPACK_IMPORTED_MODULE_2__["Shape"](this.name, handles, slots);
+    }
+    toString() {
+        const results = [];
+        let verbs = '';
+        if (this.verbs.length > 0) {
+            verbs = ' ' + this.verbs.map(verb => `&${verb}`).join(' ');
+        }
+        results.push(`particle ${this.name}${verbs} in '${this.implFile}'`.trim());
+        const indent = '  ';
+        const writeConnection = (connection, indent) => {
+            results.push(`${indent}${connection.direction} ${connection.type.toString()}${connection.isOptional ? '?' : ''} ${connection.name}`);
+            for (const dependent of connection.dependentConnections) {
+                writeConnection(dependent, indent + '  ');
+            }
+        };
+        for (const connection of this.connections) {
+            if (connection.parentConnection) {
+                continue;
+            }
+            writeConnection(connection, indent);
+        }
+        this.affordance.filter(a => a !== 'mock').forEach(a => results.push(`  affordance ${a}`));
+        this.slots.forEach(s => {
+            // Consume slot.
+            const consume = [];
+            if (s.isRequired) {
+                consume.push('must');
+            }
+            consume.push('consume');
+            if (s.isSet) {
+                consume.push('set of');
+            }
+            consume.push(s.name);
+            if (s.tags.length > 0) {
+                consume.push(s.tags.map(a => `#${a}`).join(' '));
+            }
+            results.push(`  ${consume.join(' ')}`);
+            if (s.formFactor) {
+                results.push(`    formFactor ${s.formFactor}`);
+            }
+            // Provided slots.
+            s.providedSlots.forEach(ps => {
+                const provide = [];
+                if (ps.isRequired) {
+                    provide.push('must');
+                }
+                provide.push('provide');
+                if (ps.isSet) {
+                    provide.push('set of');
+                }
+                provide.push(ps.name);
+                if (ps.tags.length > 0) {
+                    provide.push(ps.tags.map(a => `#${a}`).join(' '));
+                }
+                results.push(`    ${provide.join(' ')}`);
+                if (ps.formFactor) {
+                    results.push(`      formFactor ${ps.formFactor}`);
+                }
+                ps.handles.forEach(handle => results.push(`      handle ${handle}`));
+            });
+        });
+        // Description
+        if (this.pattern) {
+            results.push(`  description \`${this.pattern}\``);
+            this.connections.forEach(cs => {
+                if (cs.pattern) {
+                    results.push(`    ${cs.name} \`${cs.pattern}\``);
+                }
+            });
+        }
+        return results.join('\n');
+    }
+    toManifestString() {
+        return this.toString();
+    }
+}
+//# sourceMappingURL=particle-spec.js.map
 
 /***/ }),
 

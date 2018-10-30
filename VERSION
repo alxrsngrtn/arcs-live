@@ -1,9 +1,9 @@
-commit 82b75dc940f9edeb5c80e7bc756f3bd86d6f120e
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Oct 29 14:27:34 2018 -0700
+commit 9b2423f6c2ffd2d858d2390c1e45d865c37ad1b9
+Author: shans <shane.stephens@gmail.com>
+Date:   Tue Oct 30 17:25:13 2018 +1100
 
-    Node 10 LTS is coming.  Switch build to use it and update docs. (#2153)
+    convert particle-spec to typescript (#2155)
     
-    Addresses #2093
+    * convert particle-spec to typescript
     
-    Background: https://medium.com/@nodejs/october-brings-node-js-10-x-to-lts-and-node-js-11-to-current-ae19f8f12b51
+    * extra type info

@@ -7,12 +7,14 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { assert } from '../../platform/assert-web.js';
 import { Relevance } from './relevance.js';
 export class Speculator {
     constructor() {
         this._relevanceByHash = new Map();
     }
     async speculate(arc, plan, hash) {
+        assert(plan.isResolved(), `Cannot speculate on an unresolved plan: ${plan.toString({ showUnresolved: true })}`);
         if (this._relevanceByHash.has(hash)) {
             const arcStoreVersionById = arc.getStoresState({ includeContext: true });
             const relevance = this._relevanceByHash.get(hash);

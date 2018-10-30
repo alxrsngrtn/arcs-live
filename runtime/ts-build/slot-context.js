@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
-import { ProvidedSlotSpec } from '../particle-spec.js';
+import { ProvidedSlotSpec } from './particle-spec.js';
 /**
  * Holds container (eg div element) and its additional info.
  * Must be initialized either with a container (for root slots provided by the shell) or
@@ -27,7 +27,7 @@ export class SlotContext {
         this._container = container;
         // The context's accompanying ProvidedSlotSpec (see particle-spec.js).
         // Initialized to a default spec, if the container is one of the shell provided top root-contexts.
-        this.spec = spec || new ProvidedSlotSpec(name);
+        this.spec = spec || new ProvidedSlotSpec({ name });
         // The slot consumer providing this container (eg div)
         this.sourceSlotConsumer = sourceSlotConsumer;
         if (this.sourceSlotConsumer) {
