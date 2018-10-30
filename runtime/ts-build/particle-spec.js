@@ -71,7 +71,7 @@ export class ProvidedSlotSpec {
 }
 export class ParticleSpec {
     constructor(model) {
-        this._model = model;
+        this.model = model;
         this.name = model.name;
         this.verbs = model.verbs;
         const typeVarMap = new Map();
@@ -129,7 +129,7 @@ export class ParticleSpec {
         return this.slots.size <= 0 || this.affordance.includes(affordance);
     }
     toLiteral() {
-        const { args, name, verbs, description, implFile, affordance, slots } = this._model;
+        const { args, name, verbs, description, implFile, affordance, slots } = this.model;
         const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: type.toLiteral(), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
         const argsLiteral = args.map(a => connectionToLiteral(a));
         return { args: argsLiteral, name, verbs, description, implFile, affordance, slots };
@@ -155,7 +155,7 @@ export class ParticleSpec {
         return Type.newInterface(this._toShape());
     }
     _toShape() {
-        const handles = this._model.args;
+        const handles = this.model.args;
         // TODO: wat do?
         assert(!this.slots.size, 'please implement slots toShape');
         const slots = [];

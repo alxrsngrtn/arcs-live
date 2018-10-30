@@ -1,5 +1,9 @@
-commit 69ccb351821a44ad1fe23d60f802caa7d3cb13b7
+commit a2e4f1f4d6fec549adc0b3f920a1dc303ed3654c
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Oct 30 12:15:44 2018 -0700
+Date:   Tue Oct 30 14:46:08 2018 -0700
 
-    Remove the ts-build directory when running tools/sigh clean (#2158)
+    Minor typescript cleanups (#2160)
+    
+    - Use readonly where available
+    - Add component as an optional initializer for id.ts
+    - mark some classes protected

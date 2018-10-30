@@ -71936,27 +71936,28 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 class Id {
-    constructor(currentSession) {
+    constructor(currentSession, components = []) {
         this.nextIdComponent = 0;
         this.components = [];
         this.session = currentSession;
         this.currentSession = currentSession;
+        this.components = components;
     }
     static newSessionId() {
         const session = Math.floor(_random_js__WEBPACK_IMPORTED_MODULE_0__["Random"].next() * Math.pow(2, 50)) + '';
         return new Id(session);
     }
     fromString(str) {
-        const components = str.split(':');
-        const id = new Id(this.currentSession);
+        let components = str.split(':');
+        let session = this.currentSession;
         if (components[0][0] === '!') {
-            id.session = components[0].slice(1);
-            id.components = components.slice(1);
+            session = components[0].slice(1);
+            components = components.slice(1);
         }
         else {
-            id.components = components;
+            components = components;
         }
-        return id;
+        return new Id(session, components);
     }
     toString() {
         return `!${this.session}:${this.components.join(':')}`;
@@ -71966,8 +71967,7 @@ class Id {
         return this.components.join(':');
     }
     createId(component = '') {
-        const id = new Id(this.currentSession);
-        id.components = this.components.slice();
+        const id = new Id(this.currentSession, this.components.slice());
         id.components.push(component + this.nextIdComponent++);
         return id;
     }
@@ -73986,7 +73986,7 @@ class ProvidedSlotSpec {
 }
 class ParticleSpec {
     constructor(model) {
-        this._model = model;
+        this.model = model;
         this.name = model.name;
         this.verbs = model.verbs;
         const typeVarMap = new Map();
@@ -74044,7 +74044,7 @@ class ParticleSpec {
         return this.slots.size <= 0 || this.affordance.includes(affordance);
     }
     toLiteral() {
-        const { args, name, verbs, description, implFile, affordance, slots } = this._model;
+        const { args, name, verbs, description, implFile, affordance, slots } = this.model;
         const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: type.toLiteral(), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
         const argsLiteral = args.map(a => connectionToLiteral(a));
         return { args: argsLiteral, name, verbs, description, implFile, affordance, slots };
@@ -74070,7 +74070,7 @@ class ParticleSpec {
         return _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newInterface(this._toShape());
     }
     _toShape() {
-        const handles = this._model.args;
+        const handles = this.model.args;
         // TODO: wat do?
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(!this.slots.size, 'please implement slots toShape');
         const slots = [];
