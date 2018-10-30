@@ -1,9 +1,9 @@
-commit 9b2423f6c2ffd2d858d2390c1e45d865c37ad1b9
-Author: shans <shane.stephens@gmail.com>
-Date:   Tue Oct 30 17:25:13 2018 +1100
+commit 9144aa5f069d1f1c881b6ad5c00b9d7ce5c84eba
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Oct 30 12:14:49 2018 -0700
 
-    convert particle-spec to typescript (#2155)
+    Update npm dependencies for server (#2159)
     
-    * convert particle-spec to typescript
-    
-    * extra type info
+    - Update kubernetes to 0.7.1
+    - Add explicit changes for node 10
+    - regen package-lock.json
