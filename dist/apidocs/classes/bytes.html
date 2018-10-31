@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>InstanceEndPoint | arcs</title>
+	<title>Bytes | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,21 +56,32 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="instanceendpoint.html">InstanceEndPoint</a>
+					<a href="bytes.html">Bytes</a>
 				</li>
 			</ul>
-			<h1>Class InstanceEndPoint</h1>
+			<h1>Class Bytes</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A wrapper around a set of Bytes that roughly mimics the browser
+							Blob type as used in the File API.  This is a separate
+						implementation that works across Node and the Browser.</p>
+					</div>
+					<p>here&#39;s a way to construct a Blob from a Bytes object:</p>
+					<pre><code>  const blob = <span class="hljs-keyword">new</span> <span class="hljs-constructor">Blob([<span class="hljs-params">bytes</span>.<span class="hljs-params">content</span>()</span>]);</code></pre>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">InstanceEndPoint</span>
+						<span class="target">Bytes</span>
 					</li>
 				</ul>
 			</section>
@@ -81,23 +92,22 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="instanceendpoint.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="bytes.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="instanceendpoint.html#connection" class="tsd-kind-icon">connection</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="instanceendpoint.html#instance" class="tsd-kind-icon">instance</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="instanceendpoint.html#recipe" class="tsd-kind-icon">recipe</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="bytes.html#blob" class="tsd-kind-icon">blob</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="instanceendpoint.html#_clone" class="tsd-kind-icon">_clone</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="instanceendpoint.html#_compareto" class="tsd-kind-icon">_compare<wbr>To</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="instanceendpoint.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="bytes.html#content" class="tsd-kind-icon">content</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="bytes.html#range" class="tsd-kind-icon">range</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="bytes.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="bytes.html#url" class="tsd-kind-icon">url</a></li>
 							</ul>
 						</section>
 					</div>
@@ -109,58 +119,40 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Instance<wbr>End<wbr>Point<span class="tsd-signature-symbol">(</span>instance<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, connection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="instanceendpoint.html" class="tsd-signature-type">InstanceEndPoint</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Bytes<span class="tsd-signature-symbol">(</span>base64bytes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="bytes.html" class="tsd-signature-type">Bytes</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/recipe/connection-constraint.ts#L45">recipe/connection-constraint.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/bytes.ts#L27">bytes.ts:27</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Constructs a Bytes object from a base64 string.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>instance: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>connection: <span class="tsd-signature-type">any</span></h5>
+									<h5>base64bytes: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="instanceendpoint.html" class="tsd-signature-type">InstanceEndPoint</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="bytes.html" class="tsd-signature-type">Bytes</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="connection" class="tsd-anchor"></a>
-					<h3>connection</h3>
-					<div class="tsd-signature tsd-kind-icon">connection<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="blob" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> blob</h3>
+					<div class="tsd-signature tsd-kind-icon">blob<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/recipe/connection-constraint.ts#L45">recipe/connection-constraint.ts:45</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="instance" class="tsd-anchor"></a>
-					<h3>instance</h3>
-					<div class="tsd-signature tsd-kind-icon">instance<span class="tsd-signature-symbol">:</span> <a href="../globals.html#comparable" class="tsd-signature-type">Comparable</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/recipe/connection-constraint.ts#L44">recipe/connection-constraint.ts:44</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="recipe" class="tsd-anchor"></a>
-					<h3>recipe</h3>
-					<div class="tsd-signature tsd-kind-icon">recipe<span class="tsd-signature-symbol">:</span> <a href="recipe.html" class="tsd-signature-type">Recipe</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/recipe/connection-constraint.ts#L43">recipe/connection-constraint.ts:43</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/bytes.ts#L27">bytes.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -168,48 +160,55 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_clone" class="tsd-anchor"></a>
-					<h3>_clone</h3>
+					<a name="content" class="tsd-anchor"></a>
+					<h3>content</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_clone<span class="tsd-signature-symbol">(</span>cloneMap<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="instanceendpoint.html" class="tsd-signature-type">InstanceEndPoint</a></li>
+						<li class="tsd-signature tsd-kind-icon">content<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/recipe/connection-constraint.ts#L53">recipe/connection-constraint.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/bytes.ts#L39">bytes.ts:39</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>cloneMap: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="instanceendpoint.html" class="tsd-signature-type">InstanceEndPoint</a></h4>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a Promise with the Blob.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_compareto" class="tsd-anchor"></a>
-					<h3>_compare<wbr>To</h3>
+					<a name="range" class="tsd-anchor"></a>
+					<h3>range</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_compare<wbr>To<span class="tsd-signature-symbol">(</span>other<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">range<span class="tsd-signature-symbol">(</span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, length<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/recipe/connection-constraint.ts#L57">recipe/connection-constraint.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/bytes.ts#L46">bytes.ts:46</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a Promise with the bytes for the specified range of data.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>other: <span class="tsd-signature-type">any</span></h5>
+									<h5>offset: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>length: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -217,22 +216,39 @@
 					<a name="tostring" class="tsd-anchor"></a>
 					<h3>to<wbr>String</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">(</span>nameMap<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/recipe/connection-constraint.ts#L64">recipe/connection-constraint.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/bytes.ts#L61">bytes.ts:61</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>nameMap: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="url" class="tsd-anchor"></a>
+					<h3>url</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">url<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/30abdff/runtime/ts/bytes.ts#L55">bytes.ts:55</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a Promise with the String for a URL that can fetch the contents
+									of the stored Blob.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -251,28 +267,25 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="instanceendpoint.html" class="tsd-kind-icon">Instance<wbr>End<wbr>Point</a>
+						<a href="bytes.html" class="tsd-kind-icon">Bytes</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="instanceendpoint.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="bytes.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="instanceendpoint.html#connection" class="tsd-kind-icon">connection</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="instanceendpoint.html#instance" class="tsd-kind-icon">instance</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="instanceendpoint.html#recipe" class="tsd-kind-icon">recipe</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="bytes.html#blob" class="tsd-kind-icon">blob</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="instanceendpoint.html#_clone" class="tsd-kind-icon">_clone</a>
+								<a href="bytes.html#content" class="tsd-kind-icon">content</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="instanceendpoint.html#_compareto" class="tsd-kind-icon">_compare<wbr>To</a>
+								<a href="bytes.html#range" class="tsd-kind-icon">range</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="instanceendpoint.html#tostring" class="tsd-kind-icon">to<wbr>String</a>
+								<a href="bytes.html#tostring" class="tsd-kind-icon">to<wbr>String</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="bytes.html#url" class="tsd-kind-icon">url</a>
 							</li>
 						</ul>
 					</li>
