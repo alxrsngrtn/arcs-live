@@ -1,9 +1,9 @@
-commit a2e4f1f4d6fec549adc0b3f920a1dc303ed3654c
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Oct 30 14:46:08 2018 -0700
+commit fcb9950354ceec11bfacc3d51ddb97259e6dda82
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Tue Oct 30 17:45:43 2018 -0700
 
-    Minor typescript cleanups (#2160)
+    Initial GKE setup scripts (#2156)
     
-    - Use readonly where available
-    - Add component as an optional initializer for id.ts
-    - mark some classes protected
+    * Initial GKE setup scripts
+    
+    * Fix typo, add label for distinguish master vs user nodes easier.
