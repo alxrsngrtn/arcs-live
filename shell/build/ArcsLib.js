@@ -54943,7 +54943,7 @@ const parser = /*
         peg$c113 = function(fields) {
           fields = optional(fields, fields => {
             let data = fields[2];
-            return [data[0], data[1].map(tail => tail[2])];
+            return [data[0]].concat(data[1].map(tail => tail[2]));
           }, []);
 
           return {
@@ -73192,7 +73192,13 @@ ${e.message}
                         return;
                     }
                     case 'slot-type': {
-                        const slotInfo = { formFactor: node.fields.formFactor, handle: node.fields.handle };
+                        const fields = {};
+                        for (const fieldIndex of Object.keys(node.fields)) {
+                            const field = node.fields[fieldIndex];
+                            fields[field.name] = field.value;
+                        }
+                        const slotInfo = { formFactor: fields['formFactor'],
+                            handle: fields['handle'] };
                         node.model = _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].newSlot(new _slot_info_js__WEBPACK_IMPORTED_MODULE_16__["SlotInfo"](slotInfo));
                         return;
                     }
@@ -83782,7 +83788,17 @@ class Type {
             return `~${this.variable.name}`;
         }
         if (this.isSlot) {
-            return 'Slot';
+            const fields = [];
+            for (const key of Object.keys(this.data)) {
+                if (this.data[key] !== undefined) {
+                    fields.push(`${key}:${this.data[key]}`);
+                }
+            }
+            let fieldsString = '';
+            if (fields.length !== 0) {
+                fieldsString = ` {${fields.join(', ')}}`;
+            }
+            return `Slot${fieldsString}`;
         }
         if (this.isReference) {
             return 'Reference<' + this.referenceReferredType.toString() + '>';
@@ -83827,6 +83843,19 @@ class Type {
         }
         if (this.isVariable) {
             return this.variable.isResolved() ? this.resolvedType().toPrettyString() : `[~${this.variable.name}]`;
+        }
+        if (this.isSlot) {
+            const fields = [];
+            for (const key of Object.keys(this.data)) {
+                if (this.data[key] !== undefined) {
+                    fields.push(`${key}:${this.data[key]}`);
+                }
+            }
+            let fieldsString = '';
+            if (fields.length !== 0) {
+                fieldsString = ` {${fields.join(', ')}}`;
+            }
+            return `Slot${fieldsString}`;
         }
         if (this.isEntity) {
             // Spit MyTypeFOO to My Type FOO

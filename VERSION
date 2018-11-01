@@ -1,9 +1,8 @@
-commit f26314ad62c71209a42dbd6d4c41c68eabc3e2b3
+commit e7f975b7895c3f04fc8c966f36c5a0146fe21175
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Nov 1 13:04:20 2018 +1100
+Date:   Thu Nov 1 18:50:40 2018 +1100
 
-    Add SLANDLES test for 'incomplete aliasing' (#2144)
+    Ensure that Slot types fields are handled correctly (#2164)
     
-    * Convert assertions to use handles
-    * Remove logging
-    * Fix strings use of " rather than '
+    * Add round trip test for particles with fields
+    * Ensure that Slot types receive their fields and pass them back when converting toString
