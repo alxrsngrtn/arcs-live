@@ -1,8 +1,12 @@
-commit e7f975b7895c3f04fc8c966f36c5a0146fe21175
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Nov 1 18:50:40 2018 +1100
+commit 39557bff1aae2ad1c5a0e0ed249584715bd53fd1
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Nov 2 08:58:44 2018 +1100
 
-    Ensure that Slot types fields are handled correctly (#2164)
+    Improvements to devtools PEC log stack traces. (#2163)
     
-    * Add round trip test for particles with fields
-    * Ensure that Slot types receive their fields and pass them back when converting toString
+    * Improvements to devtools PEC log stack traces.
+    
+    - Use the sourcemap to 'fix' the stack trace location entries.
+    - Add links to the Sources panel for each stack frame.
+    
+    * Underline link on hover
