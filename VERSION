@@ -1,13 +1,5 @@
-commit 30abdff43f51bf1ce6985bb3137d474cf99de7dc
+commit 7a65cb1a4881b17902f856c75096af69103c2707
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Oct 31 11:13:55 2018 -0700
+Date:   Wed Oct 31 16:59:09 2018 -0700
 
-    Convert bytes.js to typescript (#2157)
-    
-    * reimplement bytes class (#2066)
-    
-    * - Introduce @types/node to be complete
-    - Switch to Uint8Array now
-    - Use typescript base64 from keymgmt for simplicity.
-    
-    * add comments
+    Add --exit for mocha tests so they don't hang on latest versions (#2162)
