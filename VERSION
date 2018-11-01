@@ -1,5 +1,9 @@
-commit 7a65cb1a4881b17902f856c75096af69103c2707
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Oct 31 16:59:09 2018 -0700
+commit f26314ad62c71209a42dbd6d4c41c68eabc3e2b3
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Nov 1 13:04:20 2018 +1100
 
-    Add --exit for mocha tests so they don't hang on latest versions (#2162)
+    Add SLANDLES test for 'incomplete aliasing' (#2144)
+    
+    * Convert assertions to use handles
+    * Remove logging
+    * Fix strings use of " rather than '
