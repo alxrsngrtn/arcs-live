@@ -82084,7 +82084,7 @@ class CrdtCollectionModel {
                 item.keys.add(key);
             }
             if (!this._equals(item.value, value)) {
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(newKeys, 'cannot add without new keys');
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(newKeys, 'cannot add without new keys. incoming=' + keys.join(',') + ' existing=' + [...item.keys].join(','));
                 item.value = value;
                 effective = true;
             }

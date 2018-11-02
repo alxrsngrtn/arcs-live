@@ -1,5 +1,5 @@
-commit 0fc05841f755116cae1265a022f6f0893c216640
-Author: greenkeeper[bot] <greenkeeper[bot]@users.noreply.github.com>
-Date:   Fri Nov 2 04:34:48 2018 -0700
+commit 4418d7cd07576fb046819ddfec732a8153752e47
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Fri Nov 2 14:11:22 2018 -0700
 
-    Update dependencies to enable Greenkeeper 🌴 (#2170)
+    Log duplicate keys for CRDTs (#2169)

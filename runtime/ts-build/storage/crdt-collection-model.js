@@ -44,7 +44,7 @@ export class CrdtCollectionModel {
                 item.keys.add(key);
             }
             if (!this._equals(item.value, value)) {
-                assert(newKeys, 'cannot add without new keys');
+                assert(newKeys, 'cannot add without new keys. incoming=' + keys.join(',') + ' existing=' + [...item.keys].join(','));
                 item.value = value;
                 effective = true;
             }
