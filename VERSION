@@ -1,12 +1,10 @@
-commit 39557bff1aae2ad1c5a0e0ed249584715bd53fd1
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Nov 2 08:58:44 2018 +1100
+commit 7ed966e796b30e744d6d90a2f9729a5641c93723
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Nov 2 14:17:26 2018 +1100
 
-    Improvements to devtools PEC log stack traces. (#2163)
+    Ensure slots show tags (#2165)
     
-    * Improvements to devtools PEC log stack traces.
-    
-    - Use the sourcemap to 'fix' the stack trace location entries.
-    - Add links to the Sources panel for each stack frame.
-    
-    * Underline link on hover
+    * Ensure that slots show their tags in toString
+    * Fix linting errors (naming, let, var)
+    * Added test for round tripping tags in slots
+    * Cleanup for loop
