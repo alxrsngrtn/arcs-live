@@ -1,8 +1,5 @@
-commit 977ca53eb805827af82bcae6ad41dc2eded50672
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Nov 2 14:37:23 2018 +1100
+commit 0fc05841f755116cae1265a022f6f0893c216640
+Author: greenkeeper[bot] <greenkeeper[bot]@users.noreply.github.com>
+Date:   Fri Nov 2 04:34:48 2018 -0700
 
-    Slandles can parse a manifest containing a particle specification (#2166)
-    
-    * Create SLANDLES copy of 'can parse a manifest containing a particle specification' test
-    * Convert slandles test from using slot syntax to use handle slot syntax
+    Update dependencies to enable Greenkeeper 🌴 (#2170)
