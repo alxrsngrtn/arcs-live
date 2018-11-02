@@ -1,10 +1,13 @@
-commit 7ed966e796b30e744d6d90a2f9729a5641c93723
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Nov 2 14:17:26 2018 +1100
+commit 97898aae0d508db8abf0556c8c24f883bf49e4c1
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Nov 2 14:24:05 2018 +1100
 
-    Ensure slots show tags (#2165)
+    DevTools: wire in context-side stack traces in the PEC log (#2171)
     
-    * Ensure that slots show their tags in toString
-    * Fix linting errors (naming, let, var)
-    * Added test for round tripping tags in slots
-    * Cleanup for loop
+    * DevTools: wire in context-side stack traces in the PEC log
+    
+    * Add comment
+    
+    * Remove obsolete code
+    
+    * Only need to discard 1 stack frame

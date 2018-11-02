@@ -56629,6 +56629,7 @@ class APIPort {
     this._messageMap = new Map();
     this._port.onmessage = async e => this._processMessage(e);
     this._debugAttachment = null;
+    this._attachStack = false;
     this.messageCount = 0;
 
     this.Direct = {
@@ -56714,7 +56715,7 @@ class APIPort {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this[handlerName], `no handler named ${handlerName}`);
     if (this._debugAttachment) {
       if (this._debugAttachment[handlerName]) this._debugAttachment[handlerName](args);
-      this._debugAttachment.handlePecMessage(handlerName, e.data.messageBody, true /* isReceiver */);
+      this._debugAttachment.handlePecMessage(handlerName, e.data.messageBody, e.data.stack);
     }
     const result = this[handlerName](args);
     if (handler.isInitializer) {
@@ -56742,11 +56743,12 @@ class APIPort {
   registerCall(name, argumentTypes) {
     this[name] = args => {
       const call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
+      if (this._attachStack) call.stack = new Error().stack;
       this.messageCount++;
       this._port.postMessage(call);
       if (this._debugAttachment) {
         if (this._debugAttachment[name]) this._debugAttachment[name](args);
-        this._debugAttachment.handlePecMessage(name, call.messageBody, false /* isReceiver */);
+        this._debugAttachment.handlePecMessage(name, call.messageBody, new Error().stack);
       }
     };
   }
@@ -56771,13 +56773,14 @@ class APIPort {
     this[name] = (thing, args) => {
       if (redundant && this._mapper.hasMappingForThing(thing)) return;
       const call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
+      if (this._attachStack) call.stack = new Error().stack;
       const requestedId = mappingIdArg && args[mappingIdArg];
       call.messageBody.identifier = this._mapper.createMappingForThing(thing, requestedId);
       this.messageCount++;
       this._port.postMessage(call);
       if (this._debugAttachment) {
         if (this._debugAttachment[name]) this._debugAttachment[name](thing, args);
-        this._debugAttachment.handlePecMessage(name, call.messageBody, false /* isReceiver */);
+        this._debugAttachment.handlePecMessage(name, call.messageBody, new Error().stack);
       }
     };
   }
@@ -56833,8 +56836,16 @@ class PECOuterPort extends APIPort {
 
     this.registerHandler('RaiseSystemException', {exception: this.Direct, methodName: this.Direct, particleId: this.Direct});
 
-    _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_4__["DevtoolsConnection"].onceConnected.then(
-      devtoolsChannel => this._debugAttachment = new _debug_outer_port_attachment_js__WEBPACK_IMPORTED_MODULE_3__["OuterPortAttachment"](arc, devtoolsChannel));
+    // We need an API call to tell the context side that DevTools has been connected, so it can start sending
+    // stack traces attached to the API calls made from that side.
+    this.registerCall('DevToolsConnected', {});
+    _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_4__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => {
+      // The unit test for this class intefere with registerCall, which means the function is not actually present.
+      if (this.DevToolsConnected) {
+        this.DevToolsConnected();
+      }
+      this._debugAttachment = new _debug_outer_port_attachment_js__WEBPACK_IMPORTED_MODULE_3__["OuterPortAttachment"](arc, devtoolsChannel);
+    });
   }
 }
 
@@ -56887,6 +56898,12 @@ class PECInnerPort extends APIPort {
     this.registerCall('ArcLoadRecipe', {arc: this.Direct, recipe: this.Direct, callback: this.LocalMapped});
 
     this.registerCall('RaiseSystemException', {exception: this.Direct, methodName: this.Direct, particleId: this.Direct});
+
+    // To show stack traces for calls made inside the context, we need to capture the trace at the call point and
+    // send it along with the message. We only want to do this after a DevTools connection has been detected, which
+    // we can't directly detect inside a worker context, so the PECOuterPort will send an API message instead.
+    this.registerHandler('DevToolsConnected', {});
+    this.onDevToolsConnected = () => this._attachStack = true;
   }
 }
 
@@ -65627,16 +65644,15 @@ class OuterPortAttachment {
     this._particleRegistry = {};
   }
 
-  handlePecMessage(name, pecMsgBody, isReceiver) {
+  handlePecMessage(name, pecMsgBody, stackString) {
     // Skip speculative and pipes arcs for now.
     if (this._arcIdString.endsWith('-pipes') || this._speculative) return;
 
     const stack = [];
-    if (!isReceiver) {
-      // The slice discards the first two stack frames corresponding to this
-      // function and the API channel function, which is already being displayed
-      // in the log entry.
-      Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__["mapStackTrace"])(new Error().stack, mapped => mapped.slice(2).map(f => {
+    if (stackString) {
+      // The slice discards the stack frame corresponding to the API channel
+      // function, which is already being displayed in the log entry.
+      Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__["mapStackTrace"])(stackString, mapped => mapped.slice(1).map(f => {
         // Each frame has the form '    at function (source:line:column)'.
         // Extract the function name and source:line:column text, then set up
         // a frame object with the following fields:
@@ -65672,7 +65688,7 @@ class OuterPortAttachment {
 
     this._devtoolsChannel.send({
       messageType: 'PecLog',
-      messageBody: {name, isReceiver, pecMsgBody, timestamp: Date.now(), stack},
+      messageBody: {name, pecMsgBody, timestamp: Date.now(), stack},
     });
   }
 
