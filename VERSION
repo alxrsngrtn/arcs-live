@@ -1,5 +1,5 @@
-commit 49476fd1eb982291117b1683fd7118ad13c3209e
+commit d2b8584f836d8ffc20e559e2316a7bdb7a2811ae
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Fri Nov 2 14:33:11 2018 -0700
+Date:   Sat Nov 3 16:37:51 2018 -0700
 
-    Remove some useless code from previous refactor (#2167)
+    Easier server building and Update docs for using pouchdb (#2174)
