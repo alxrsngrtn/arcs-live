@@ -1,5 +1,10 @@
-commit d2b8584f836d8ffc20e559e2316a7bdb7a2811ae
+commit c4e250197232fe8fa808ec7d0e3640fe3bfebd81
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Sat Nov 3 16:37:51 2018 -0700
+Date:   Sat Nov 3 23:41:08 2018 -0700
 
-    Easier server building and Update docs for using pouchdb (#2174)
+    Improve continuous integration and docker build performance (#2175)
+    
+    - Use npm ci instead of npm install so we get reproducable builds from package-lock.json
+    - Explicitly install node_modules using npm ci as the first step in the Docker build.
+      This allows for that step to be cached leading to much, much faster builds.
+    - Introduce cloudbuild.yaml that enables cached builds and tags 'latest'
