@@ -42712,7 +42712,7 @@ class SlotDomConsumer extends SlotConsumer {
                 return;
             }
             const subId = this.getNodeValue(innerContainer, 'subid');
-            this._validateSubId(providedSlotSpec, subId);
+            assert(Boolean(subId) === providedSlotSpec.isSet, `Sub-id ${subId} for slot ${providedSlotSpec.name} doesn't match set spec: ${providedSlotSpec.isSet}`);
             this._initInnerSlotContainer(slotId, subId, innerContainer);
         });
     }
@@ -42720,10 +42720,6 @@ class SlotDomConsumer extends SlotConsumer {
     getNodeValue(node, name) {
         // TODO(sjmiles): remember that attribute names from HTML are lower-case
         return node[name] || node.getAttribute(name);
-    }
-    _validateSubId(providedSlotSpec, subId) {
-        assert(!this.subId || !subId || this.subId === subId, `Unexpected sub-id ${subId}, expecting ${this.subId}`);
-        assert(Boolean(this.subId || subId) === providedSlotSpec.isSet, `Sub-id ${subId} for provided slot ${providedSlotSpec.name} doesn't match set spec: ${providedSlotSpec.isSet}`);
     }
     isDirectInnerSlot(container, innerContainer) {
         if (innerContainer === container) {

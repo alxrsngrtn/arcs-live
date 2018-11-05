@@ -1,5 +1,5 @@
-commit 52fc06f3758220b028eddbe61de9f29d5c2f8d8f
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Nov 5 16:30:16 2018 -0500
+commit 1367451ccc4c28b015e4561dae22c81f27d2158a
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Nov 6 08:46:25 2018 +1100
 
-    Convert description and description-dom-formatter to typeScript (#2176)
+    Removes some dead code from SlotDomConsumer (#2178)
