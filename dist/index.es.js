@@ -45807,6 +45807,7 @@ class Planificator {
             case 'firebase':
                 return storage._join(id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
             case 'volatile':
+            case 'pouchdb':
                 try {
                     store = await storage.construct(id, type, storageKeyStr);
                 }
@@ -45816,13 +45817,8 @@ class Planificator {
                 assert(store, `Failed initializing '${protocol}' store.`);
                 store.referenceMode = false;
                 return store;
-            case 'pouchdb':
-                store = storage.construct(id, type, storageKeyStr);
-                assert(store, `Failed initializing '${protocol}' store.`);
-                store.referenceMode = false;
-                return store;
             default:
-                assert(false, `Unsupported protocol '${protocol}'`);
+                throw new Error(`Unsupported protocol '${protocol}'`);
         }
     }
     isArcPopulated() {

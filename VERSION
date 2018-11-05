@@ -1,5 +1,7 @@
-commit d20e6b7cdb4152800c4b2885146e4c84f9041d7d
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Nov 5 17:33:25 2018 -0500
+commit 1bc3d5bfe2999ec449cbfbe2e8d9d298e07a0c6d
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Nov 5 15:41:36 2018 -0800
 
-    Convert particle-execution-context and particle-execution-host to typeScript (#2186)
+    Planificator fixes for Pouchdb (#2187)
+    
+    - Also add more typescript types
