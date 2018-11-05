@@ -9,7 +9,7 @@
  */
 import { assert } from '../../platform/assert-web.js';
 import { Type } from './type.js';
-import { ParticleExecutionHost } from '../particle-execution-host.js';
+import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
 import { Manifest, StorageStub } from './manifest.js';
@@ -50,7 +50,7 @@ export class Arc {
         this.storageKey = storageKey;
         const pecId = this.generateID();
         const innerPecPort = this.pecFactory(pecId);
-        this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this, `${pecId}:outer`);
+        this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
         if (slotComposer) {
             slotComposer.arc = this;
         }

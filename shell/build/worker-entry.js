@@ -3792,14 +3792,14 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
     // Set this to support multiple slots consumed by a particle, without needing
     // to pass slotName to particle's render method, where it useless in most cases.
     this.currentSlotName = slotName;
-    contentTypes.forEach(ct => slot._requestedContentTypes.add(ct));
+    contentTypes.forEach(ct => slot.requestedContentTypes.add(ct));
     // TODO(sjmiles): redundant, same answer for every slot
     if (this.shouldRender(...stateArgs)) {
       const content = {};
-      if (slot._requestedContentTypes.has('template')) {
+      if (slot.requestedContentTypes.has('template')) {
         content.template = this.getTemplate(slot.slotName);
       }
-      if (slot._requestedContentTypes.has('model')) {
+      if (slot.requestedContentTypes.has('model')) {
         content.model = this.render(...stateArgs);
       }
       content.templateName = this.getTemplateName(slot.slotName);
@@ -3816,7 +3816,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
   forceRenderTemplate(slotName) {
     this._slotByName.forEach((slot, name) => {
       if (!slotName || (name == slotName)) {
-        slot._requestedContentTypes.add('template');
+        slot.requestedContentTypes.add('template');
       }
     });
   }
@@ -4360,305 +4360,6 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
   }
 }
 
-
-/***/ }),
-
-/***/ "./runtime/particle-execution-context.js":
-/*!***********************************************!*\
-  !*** ./runtime/particle-execution-context.js ***!
-  \***********************************************/
-/*! exports provided: ParticleExecutionContext */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleExecutionContext", function() { return ParticleExecutionContext; });
-/* harmony import */ var _ts_build_handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/handle.js */ "./runtime/ts-build/handle.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./api-channel.js */ "./runtime/api-channel.js");
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./storage-proxy.js */ "./runtime/storage-proxy.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-class ParticleExecutionContext {
-  constructor(port, idBase, loader) {
-    this._apiPort = new _api_channel_js__WEBPACK_IMPORTED_MODULE_2__["PECInnerPort"](port);
-    this._particles = [];
-    this._idBase = idBase;
-    this._nextLocalID = 0;
-    this._loader = loader;
-    loader.setParticleExecutionContext(this);
-    this._pendingLoads = [];
-    this._scheduler = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxyScheduler"]();
-    this._keyedProxies = {};
-
-    /*
-     * This code ensures that the relevant types are known
-     * in the scope object, because otherwise we can't do
-     * particleSpec resolution, which is currently a necessary
-     * part of particle construction.
-     *
-     * Possibly we should eventually consider having particle
-     * specifications separated from particle classes - and
-     * only keeping type information on the arc side.
-     */
-    this._apiPort.onDefineHandle = ({type, identifier, name}) => {
-      return new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](identifier, type, this._apiPort, this, this._scheduler, name);
-    };
-
-    this._apiPort.onGetBackingStoreCallback = ({type, id, name, callback, storageKey}) => {
-      const proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
-      proxy.storageKey = storageKey;
-      return [proxy, () => callback(proxy, storageKey)];
-    };
-
-
-    this._apiPort.onCreateHandleCallback = ({type, id, name, callback}) => {
-      const proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this._apiPort, this, this._scheduler, name);
-      return [proxy, () => callback(proxy)];
-    };
-
-    this._apiPort.onMapHandleCallback = ({id, callback}) => {
-      return [id, () => callback(id)];
-    };
-
-    this._apiPort.onCreateSlotCallback = ({hostedSlotId, callback}) => {
-      return [hostedSlotId, () => callback(hostedSlotId)];
-    };
-
-    this._apiPort.onInnerArcRender = ({transformationParticle, transformationSlotName, hostedSlotId, content}) => {
-      transformationParticle.renderHostedSlot(transformationSlotName, hostedSlotId, content);
-    };
-
-    this._apiPort.onStop = () => {
-      if (global.close) {
-        global.close();
-      }
-    };
-
-    this._apiPort.onInstantiateParticle =
-      ({id, spec, handles}) => this._instantiateParticle(id, spec, handles);
-
-    this._apiPort.onSimpleCallback = ({callback, data}) => callback(data);
-
-    this._apiPort.onConstructArcCallback = ({callback, arc}) => callback(arc);
-
-    this._apiPort.onAwaitIdle = ({version}) =>
-      this.idle.then(a => {
-        // TODO: dom-particles update is async, this is a workaround to allow dom-particles to
-        // update relevance, after handles are updated. Needs better idle signal.
-        setTimeout(() => { this._apiPort.Idle({version, relevance: this.relevance}); }, 0);
-      });
-
-    this._apiPort.onUIEvent = ({particle, slotName, event}) => particle.fireEvent(slotName, event);
-
-    this._apiPort.onStartRender = ({particle, slotName, contentTypes}) => {
-      /** @class Slot
-       * A representation of a consumed slot. Retrieved from a particle using
-       * particle.getSlot(name)
-       */
-      class Slotlet {
-        constructor(pec, particle, slotName) {
-          this._slotName = slotName;
-          this._particle = particle;
-          this._handlers = new Map();
-          this._pec = pec;
-          this._requestedContentTypes = new Set();
-        }
-        get particle() { return this._particle; }
-        get slotName() { return this._slotName; }
-        get isRendered() { return this._isRendered; }
-        /** @method render(content)
-         * renders content to the slot.
-         */
-        render(content) {
-          this._pec._apiPort.Render({particle, slotName, content});
-
-          Object.keys(content).forEach(key => { this._requestedContentTypes.delete(key); });
-          // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
-          this._isRendered = this._requestedContentTypes.size == 0 && (Object.keys(content).length > 0);
-        }
-        /** @method registerEventHandler(name, f)
-         * registers a callback to be invoked when 'name' event happens.
-         */
-        registerEventHandler(name, f) {
-          if (!this._handlers.has(name)) {
-            this._handlers.set(name, []);
-          }
-          this._handlers.get(name).push(f);
-        }
-        clearEventHandlers(name) {
-          this._handlers.set(name, []);
-        }
-        fireEvent(event) {
-          for (const handler of this._handlers.get(event.handler) || []) {
-            handler(event);
-          }
-        }
-      }
-
-      particle._slotByName.set(slotName, new Slotlet(this, particle, slotName));
-      particle.renderSlot(slotName, contentTypes);
-    };
-
-    this._apiPort.onStopRender = ({particle, slotName}) => {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(particle._slotByName.has(slotName),
-        `Stop render called for particle ${particle.name} slot ${slotName} without start render being called.`);
-      particle._slotByName.delete(slotName);
-    };
-  }
-
-  generateIDComponents() {
-    return {base: this._idBase, component: () => this._nextLocalID++};
-  }
-
-  generateID() {
-    return `${this._idBase}:${this._nextLocalID++}`;
-  }
-
-  innerArcHandle(arcId, particleId) {
-    const pec = this;
-    return {
-      createHandle: function(type, name, hostParticle) {
-        return new Promise((resolve, reject) =>
-          pec._apiPort.ArcCreateHandle({arc: arcId, type, name, callback: proxy => {
-            const handle = Object(_ts_build_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, particleId);
-            resolve(handle);
-            if (hostParticle) {
-              proxy.register(hostParticle, handle);
-            }
-          }}));
-      },
-      mapHandle: function(handle) {
-        return new Promise((resolve, reject) =>
-          pec._apiPort.ArcMapHandle({arc: arcId, handle, callback: id => {
-            resolve(id);
-          }}));
-      },
-      createSlot: function(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) {
-        // handleId: the ID of a handle (returned by `createHandle` above) this slot is rendering; null - if not applicable.
-        // TODO: support multiple handle IDs.
-        return new Promise((resolve, reject) =>
-          pec._apiPort.ArcCreateSlot({arc: arcId, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId, callback: hostedSlotId => {
-            resolve(hostedSlotId);
-          }}));
-      },
-      loadRecipe: function(recipe) {
-        // TODO: do we want to return a promise on completion?
-        return new Promise((resolve, reject) => pec._apiPort.ArcLoadRecipe({
-          arc: arcId,
-          recipe,
-          callback: a => {
-            if (a == undefined) {
-              resolve();
-            } else {
-              reject(a);
-            }
-          }
-        }));
-      }
-    };
-  }
-
-  getStorageProxy(storageKey, type) {
-    if (!this._keyedProxies[storageKey]) {      
-      this._keyedProxies[storageKey] = new Promise((resolve, reject) => {
-        this._apiPort.GetBackingStore({storageKey, type, callback: (proxy, storageKey) => {
-          this._keyedProxies[storageKey] = proxy;
-          resolve(proxy);
-        }});
-      });
-    }
-    return this._keyedProxies[storageKey];
-  }
-
-  defaultCapabilitySet() {
-    return {
-      constructInnerArc: particle => {
-        return new Promise((resolve, reject) =>
-          this._apiPort.ConstructInnerArc({callback: arcId => {resolve(this.innerArcHandle(arcId, particle.id));}, particle}));
-      }
-    };
-  }
-
-  async _instantiateParticle(id, spec, proxies) {
-    const name = spec.name;
-    let resolve = null;
-    const p = new Promise(res => resolve = res);
-    this._pendingLoads.push(p);
-    const clazz = await this._loader.loadParticleClass(spec);
-    const capabilities = this.defaultCapabilitySet();
-    const particle = new clazz(); // TODO: how can i add an argument to DomParticle ctor?
-    particle.id = id;
-    particle.capabilities = capabilities;
-    this._particles.push(particle);
-
-    const handleMap = new Map();
-    const registerList = [];
-    proxies.forEach((proxy, name) => {
-      const connSpec = spec.connectionMap.get(name);
-      const handle = Object(_ts_build_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, id, connSpec.isInput, connSpec.isOutput);
-      handleMap.set(name, handle);
-
-      // Defer registration of handles with proxies until after particles have a chance to
-      // configure them in setHandles.
-      registerList.push({proxy, particle, handle});
-    });
-
-    return [particle, async () => {
-      await particle.setHandles(handleMap);
-      registerList.forEach(({proxy, particle, handle}) => proxy.register(particle, handle));
-      const idx = this._pendingLoads.indexOf(p);
-      this._pendingLoads.splice(idx, 1);
-      resolve();
-    }];
-  }
-
-  get relevance() {
-    const rMap = new Map();
-    this._particles.forEach(p => {
-      if (p.relevances.length == 0) {
-        return;
-      }
-      rMap.set(p, p.relevances);
-      p.relevances = [];
-    });
-    return rMap;
-  }
-
-  get busy() {
-    if (this._pendingLoads.length > 0 || this._scheduler.busy) {
-      return true;
-    }
-    if (this._particles.filter(particle => particle.busy).length > 0) {
-      return true;
-    }
-    return false;
-  }
-
-  get idle() {
-    if (!this.busy) {
-      return Promise.resolve();
-    }
-    const busyParticlePromises = this._particles.filter(particle => particle.busy).map(particle => particle.idle);
-    return Promise.all([this._scheduler.idle, ...this._pendingLoads, ...busyParticlePromises]).then(() => this.idle);
-  }
-}
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
 
 /***/ }),
 
@@ -6258,6 +5959,268 @@ class Loader {
     }
 }
 //# sourceMappingURL=loader.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/particle-execution-context.js":
+/*!********************************************************!*\
+  !*** ./runtime/ts-build/particle-execution-context.js ***!
+  \********************************************************/
+/*! exports provided: ParticleExecutionContext */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleExecutionContext", function() { return ParticleExecutionContext; });
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./handle.js */ "./runtime/ts-build/handle.js");
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../api-channel.js */ "./runtime/api-channel.js");
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../storage-proxy.js */ "./runtime/storage-proxy.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+class ParticleExecutionContext {
+    constructor(port, idBase, loader) {
+        this.particles = [];
+        this._nextLocalID = 0;
+        this.pendingLoads = [];
+        this.scheduler = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxyScheduler"]();
+        this.keyedProxies = {};
+        this.apiPort = new _api_channel_js__WEBPACK_IMPORTED_MODULE_2__["PECInnerPort"](port);
+        this.idBase = idBase;
+        this.loader = loader;
+        loader.setParticleExecutionContext(this);
+        /*
+         * This code ensures that the relevant types are known
+         * in the scope object, because otherwise we can't do
+         * particleSpec resolution, which is currently a necessary
+         * part of particle construction.
+         *
+         * Possibly we should eventually consider having particle
+         * specifications separated from particle classes - and
+         * only keeping type information on the arc side.
+         */
+        this.apiPort.onDefineHandle = ({ type, identifier, name }) => {
+            return new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](identifier, type, this.apiPort, this, this.scheduler, name);
+        };
+        this.apiPort.onGetBackingStoreCallback = ({ type, id, name, callback, storageKey }) => {
+            const proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this.apiPort, this, this.scheduler, name);
+            proxy.storageKey = storageKey;
+            return [proxy, () => callback(proxy, storageKey)];
+        };
+        this.apiPort.onCreateHandleCallback = ({ type, id, name, callback }) => {
+            const proxy = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"](id, type, this.apiPort, this, this.scheduler, name);
+            return [proxy, () => callback(proxy)];
+        };
+        this.apiPort.onMapHandleCallback = ({ id, callback }) => {
+            return [id, () => callback(id)];
+        };
+        this.apiPort.onCreateSlotCallback = ({ hostedSlotId, callback }) => {
+            return [hostedSlotId, () => callback(hostedSlotId)];
+        };
+        this.apiPort.onInnerArcRender = ({ transformationParticle, transformationSlotName, hostedSlotId, content }) => {
+            transformationParticle.renderHostedSlot(transformationSlotName, hostedSlotId, content);
+        };
+        this.apiPort.onStop = () => {
+            if (global['close']) {
+                global['close']();
+            }
+        };
+        this.apiPort.onInstantiateParticle =
+            ({ id, spec, handles }) => this._instantiateParticle(id, spec, handles);
+        this.apiPort.onSimpleCallback = ({ callback, data }) => callback(data);
+        this.apiPort.onConstructArcCallback = ({ callback, arc }) => callback(arc);
+        this.apiPort.onAwaitIdle = ({ version }) => this.idle.then(a => {
+            // TODO: dom-particles update is async, this is a workaround to allow dom-particles to
+            // update relevance, after handles are updated. Needs better idle signal.
+            setTimeout(() => { this.apiPort.Idle({ version, relevance: this.relevance }); }, 0);
+        });
+        this.apiPort.onUIEvent = ({ particle, slotName, event }) => particle.fireEvent(slotName, event);
+        this.apiPort.onStartRender = ({ particle, slotName, contentTypes }) => {
+            /** @class Slot
+             * A representation of a consumed slot. Retrieved from a particle using
+             * particle.getSlot(name)
+             */
+            class Slotlet {
+                constructor(pec, particle, slotName) {
+                    this.handlers = new Map();
+                    this.requestedContentTypes = new Set();
+                    this._isRendered = false;
+                    this.slotName = slotName;
+                    this.particle = particle;
+                    this.pec = pec;
+                }
+                get isRendered() { return this._isRendered; }
+                /** @method render(content)
+                 * renders content to the slot.
+                 */
+                render(content) {
+                    this.pec.apiPort.Render({ particle, slotName, content });
+                    Object.keys(content).forEach(key => { this.requestedContentTypes.delete(key); });
+                    // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
+                    this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
+                }
+                /** @method registerEventHandler(name, f)
+                 * registers a callback to be invoked when 'name' event happens.
+                 */
+                registerEventHandler(name, f) {
+                    if (!this.handlers.has(name)) {
+                        this.handlers.set(name, []);
+                    }
+                    this.handlers.get(name).push(f);
+                }
+                clearEventHandlers(name) {
+                    this.handlers.set(name, []);
+                }
+                fireEvent(event) {
+                    for (const handler of this.handlers.get(event.handler) || []) {
+                        handler(event);
+                    }
+                }
+            }
+            particle._slotByName.set(slotName, new Slotlet(this, particle, slotName));
+            particle.renderSlot(slotName, contentTypes);
+        };
+        this.apiPort.onStopRender = ({ particle, slotName }) => {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(particle._slotByName.has(slotName), `Stop render called for particle ${particle.name} slot ${slotName} without start render being called.`);
+            particle._slotByName.delete(slotName);
+        };
+    }
+    generateIDComponents() {
+        return { base: this.idBase, component: () => this._nextLocalID++ };
+    }
+    generateID() {
+        return `${this.idBase}:${this._nextLocalID++}`;
+    }
+    innerArcHandle(arcId, particleId) {
+        const pec = this;
+        return {
+            createHandle(type, name, hostParticle) {
+                return new Promise((resolve, reject) => pec.apiPort.ArcCreateHandle({ arc: arcId, type, name, callback: proxy => {
+                        const handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, particleId);
+                        resolve(handle);
+                        if (hostParticle) {
+                            proxy.register(hostParticle, handle);
+                        }
+                    } }));
+            },
+            mapHandle(handle) {
+                return new Promise((resolve, reject) => pec.apiPort.ArcMapHandle({ arc: arcId, handle, callback: id => {
+                        resolve(id);
+                    } }));
+            },
+            createSlot(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) {
+                // handleId: the ID of a handle (returned by `createHandle` above) this slot is rendering; null - if not applicable.
+                // TODO: support multiple handle IDs.
+                return new Promise((resolve, reject) => pec.apiPort.ArcCreateSlot({ arc: arcId, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId, callback: hostedSlotId => {
+                        resolve(hostedSlotId);
+                    } }));
+            },
+            loadRecipe(recipe) {
+                // TODO: do we want to return a promise on completion?
+                return new Promise((resolve, reject) => pec.apiPort.ArcLoadRecipe({
+                    arc: arcId,
+                    recipe,
+                    callback: a => {
+                        if (a == undefined) {
+                            resolve();
+                        }
+                        else {
+                            reject(a);
+                        }
+                    }
+                }));
+            }
+        };
+    }
+    getStorageProxy(storageKey, type) {
+        if (!this.keyedProxies[storageKey]) {
+            this.keyedProxies[storageKey] = new Promise((resolve, reject) => {
+                this.apiPort.GetBackingStore({ storageKey, type, callback: (proxy, storageKey) => {
+                        this.keyedProxies[storageKey] = proxy;
+                        resolve(proxy);
+                    } });
+            });
+        }
+        return this.keyedProxies[storageKey];
+    }
+    defaultCapabilitySet() {
+        return {
+            constructInnerArc: particle => {
+                return new Promise((resolve, reject) => this.apiPort.ConstructInnerArc({ callback: arcId => { resolve(this.innerArcHandle(arcId, particle.id)); }, particle }));
+            }
+        };
+    }
+    async _instantiateParticle(id, spec, proxies) {
+        const name = spec.name;
+        let resolve = null;
+        const p = new Promise(res => resolve = res);
+        this.pendingLoads.push(p);
+        const clazz = await this.loader.loadParticleClass(spec);
+        const capabilities = this.defaultCapabilitySet();
+        const particle = new clazz(); // TODO: how can i add an argument to DomParticle ctor?
+        particle.id = id;
+        particle.capabilities = capabilities;
+        this.particles.push(particle);
+        const handleMap = new Map();
+        const registerList = [];
+        proxies.forEach((proxy, name) => {
+            const connSpec = spec.connectionMap.get(name);
+            const handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, id, connSpec.isInput, connSpec.isOutput);
+            handleMap.set(name, handle);
+            // Defer registration of handles with proxies until after particles have a chance to
+            // configure them in setHandles.
+            registerList.push({ proxy, particle, handle });
+        });
+        return [particle, async () => {
+                await particle.setHandles(handleMap);
+                registerList.forEach(({ proxy, particle, handle }) => proxy.register(particle, handle));
+                const idx = this.pendingLoads.indexOf(p);
+                this.pendingLoads.splice(idx, 1);
+                resolve();
+            }];
+    }
+    get relevance() {
+        const rMap = new Map();
+        this.particles.forEach(p => {
+            if (p.relevances.length === 0) {
+                return;
+            }
+            rMap.set(p, p.relevances);
+            p.relevances = [];
+        });
+        return rMap;
+    }
+    get busy() {
+        if (this.pendingLoads.length > 0 || this.scheduler.busy) {
+            return true;
+        }
+        if (this.particles.filter(particle => particle.busy).length > 0) {
+            return true;
+        }
+        return false;
+    }
+    get idle() {
+        if (!this.busy) {
+            return Promise.resolve();
+        }
+        const busyParticlePromises = this.particles.filter(particle => particle.busy).map(particle => particle.idle);
+        return Promise.all([this.scheduler.idle, ...this.pendingLoads, ...busyParticlePromises]).then(() => this.idle);
+    }
+}
+//# sourceMappingURL=particle-execution-context.js.map
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../node_modules/webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
 
 /***/ }),
 
@@ -8957,7 +8920,7 @@ class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/particle-execution-context.js */ "./runtime/particle-execution-context.js");
+/* harmony import */ var _runtime_ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/ts-build/particle-execution-context.js */ "./runtime/ts-build/particle-execution-context.js");
 /* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./browser-loader.js */ "./shell/source/browser-loader.js");
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8976,7 +8939,7 @@ self.onmessage = function(e) {
   self.onmessage = null;
   const {id, base} = e.data;
   //log('starting worker', id);
-  new _runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](e.ports[0], id, new _browser_loader_js__WEBPACK_IMPORTED_MODULE_1__["BrowserLoader"](base));
+  new _runtime_ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](e.ports[0], id, new _browser_loader_js__WEBPACK_IMPORTED_MODULE_1__["BrowserLoader"](base));
 };
 
 

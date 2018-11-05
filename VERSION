@@ -1,5 +1,5 @@
-commit 1367451ccc4c28b015e4561dae22c81f27d2158a
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Nov 6 08:46:25 2018 +1100
+commit d20e6b7cdb4152800c4b2885146e4c84f9041d7d
+Author: shans <shane.stephens@gmail.com>
+Date:   Mon Nov 5 17:33:25 2018 -0500
 
-    Removes some dead code from SlotDomConsumer (#2178)
+    Convert particle-execution-context and particle-execution-host to typeScript (#2186)
