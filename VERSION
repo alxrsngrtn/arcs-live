@@ -1,10 +1,5 @@
-commit c4e250197232fe8fa808ec7d0e3640fe3bfebd81
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Sat Nov 3 23:41:08 2018 -0700
+commit f6a6e0a497652c033d5219e9cdb6605d385739d7
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Nov 5 16:20:48 2018 +1100
 
-    Improve continuous integration and docker build performance (#2175)
-    
-    - Use npm ci instead of npm install so we get reproducable builds from package-lock.json
-    - Explicitly install node_modules using npm ci as the first step in the Docker build.
-      This allows for that step to be cached leading to much, much faster builds.
-    - Introduce cloudbuild.yaml that enables cached builds and tags 'latest'
+    Handle test side effects in the test code, not prod (#2177)
