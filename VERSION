@@ -1,9 +1,5 @@
-commit f559533f196517de3fef26826bd95aea34bc5238
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Nov 5 12:17:33 2018 -0800
+commit 52fc06f3758220b028eddbe61de9f29d5c2f8d8f
+Author: shans <shane.stephens@gmail.com>
+Date:   Mon Nov 5 16:30:16 2018 -0500
 
-    Improve CI testing, fix and add server tests (#2182)
-    
-    - Enable cached builds for travis which removes the slow npm install step
-    - Use --prefix=server syntax in Docker/travis
-    - Add missing images config to store completed builds for cloudbuild
+    Convert description and description-dom-formatter to typeScript (#2176)

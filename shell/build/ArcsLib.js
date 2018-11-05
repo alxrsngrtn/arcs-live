@@ -66059,864 +66059,6 @@ function enableTracingAdapter(devtoolsChannel) {
 
 /***/ }),
 
-/***/ "./runtime/description-dom-formatter.js":
-/*!**********************************************!*\
-  !*** ./runtime/description-dom-formatter.js ***!
-  \**********************************************/
-/*! exports provided: DescriptionDomFormatter */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DescriptionDomFormatter", function() { return DescriptionDomFormatter; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./description.js */ "./runtime/description.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1__["DescriptionFormatter"] {
-  constructor(description) {
-    super(description);
-    this._nextID = 0;
-  }
-
-  _isSelectedDescription(desc) {
-    return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
-  }
-
-  _populateParticleDescription(particle, descriptionByName) {
-    let result = super._populateParticleDescription(particle, descriptionByName);
-
-    if (descriptionByName['_template_']) {
-      result = Object.assign(result, {
-        template: descriptionByName['_template_'],
-        model: JSON.parse(descriptionByName['_model_'])
-      });
-    }
-
-    return result;
-  }
-
-  async _combineSelectedDescriptions(selectedDescriptions, options) {
-    const suggestionByParticleDesc = new Map();
-    for (const particleDesc of selectedDescriptions) {
-      if (this.seenParticles.has(particleDesc._particle)) {
-        continue;
-      }
-
-      let {template, model} = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
-
-      const success = await Promise.all(Object.keys(model).map(async tokenKey => {
-        const tokens = this._initSubTokens(model[tokenKey], particleDesc);
-        return (await Promise.all(tokens.map(async token => {
-          const tokenValue = await this.tokenToString(token);
-          if (tokenValue == undefined) {
-            return false;
-          } else if (tokenValue && tokenValue.template && tokenValue.model) {
-            // Dom token.
-            template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
-            delete model[tokenKey];
-            model = Object.assign(model, tokenValue.model);
-          } else { // Text token.
-            // Replace tokenKey, in case multiple selected suggestions use the same key.
-            const newTokenKey = `${tokenKey}${++this._nextID}`;
-            template = template.replace(`{{${tokenKey}}}`, `{{${newTokenKey}}}`);
-            delete model[tokenKey];
-            model[newTokenKey] = tokenValue;
-          }
-          return true;
-        }))).every(t => !!t);
-      }));
-
-      if (success.every(s => !!s)) {
-        suggestionByParticleDesc.set(particleDesc, {template, model});
-      }
-    }
-
-    // Populate suggestions list while maintaining original particles order.
-    const suggestions = [];
-    selectedDescriptions.forEach(desc => {
-      if (suggestionByParticleDesc.has(desc)) {
-        suggestions.push(suggestionByParticleDesc.get(desc));
-      }
-    });
-
-    if (suggestions.length > 0) {
-      const result = this._joinDescriptions(suggestions);
-      if (!options || !options.skipFormatting) {
-        result.template += '.';
-      }
-      return result;
-    }
-  }
-
-  _retrieveTemplateAndModel(particleDesc, index, options) {
-    if (particleDesc.template && particleDesc.model) {
-      return {template: particleDesc.template, model: particleDesc.model};
-    }
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particleDesc.pattern, 'Description must contain template and model, or pattern');
-    let template = '';
-    const model = {};
-    const tokens = this._initTokens(particleDesc.pattern, particleDesc);
-
-    tokens.forEach((token, i) => {
-      if (token.text) {
-        template = template.concat(
-            `${(index == 0 && i == 0 && !options.skipFormatting) ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
-      } else { // handle or slot handle.
-        const sanitizedFullName = token.fullName.replace(/[.{}_$]/g, '');
-        let attribute = '';
-        // TODO(mmandlis): capitalize the data in the model instead.
-        if (i == 0 && !options.skipFormatting) {
-          // Capitalize the first letter in the token.
-          template = template.concat(`<style>
-            [firstletter]::first-letter { text-transform: capitalize; }
-            [firstletter] {display: inline-block}
-            </style>`);
-          attribute = ' firstletter';
-        }
-        template = template.concat(`<span${attribute}>{{${sanitizedFullName}}}</span>`);
-        model[sanitizedFullName] = token.fullName;
-      }
-    });
-
-    return {template, model};
-  }
-
-  _capitalizeAndPunctuate(sentence) {
-    if (typeof sentence === 'string') {
-      return {template: super._capitalizeAndPunctuate(sentence), model: {}};
-    }
-
-    // Capitalize the first element in the DOM template.
-    const tokens = sentence.template.match(/<[a-zA-Z0-9]+>{{([a-zA-Z0-9]*)}}<\/[a-zA-Z0-9]+>/);
-    if (tokens && tokens.length > 1 && sentence.model[tokens[1]]) {
-      const modelToken = sentence.model[tokens[1]];
-      if (modelToken.length > 0) {
-        sentence.model[tokens[1]] = `${modelToken[0].toUpperCase()}${modelToken.substr(1)}`;
-      }
-    }
-    sentence.template += '.';
-    return sentence;
-  }
-
-  _joinDescriptions(descs) {
-    // // If all tokens are strings, just join them.
-    if (descs.every(desc => typeof desc === 'string')) {
-      return super._joinDescriptions(descs);
-    }
-
-    const result = {template: '', model: {}};
-    const count = descs.length;
-    descs.forEach((desc, i) => {
-      if (typeof desc === 'string') {
-        desc = Object.assign({}, {template: desc, model: {}});
-      }
-
-      result.template += desc.template;
-      result.model = Object.assign(result.model, desc.model);
-      let delim;
-      if (i < count - 2) {
-        delim = ', ';
-      } else if (i == count - 2) {
-        delim = ['', '', ' and ', ', and '][Math.min(3, count)];
-      }
-      if (delim) {
-        result.template += delim;
-      }
-    });
-    return result;
-  }
-
-  _joinTokens(tokens) {
-    // If all tokens are strings, just join them.
-    if (tokens.every(token => typeof token === 'string')) {
-      return super._joinTokens(tokens);
-    }
-
-    tokens = tokens.map(token => {
-      if (typeof token !== 'object') {
-        return {
-          template: `<span>{{text${++this._nextID}}}</span>`,
-          model: {[`text${this._nextID}`]: token}
-        };
-      }
-      return token;
-    });
-
-    const nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
-    return {
-      template: nonEmptyTokens.map(token => token.template).join(''),
-      model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => Object.assign(prev, curr), {})
-    };
-  }
-
-  _combineDescriptionAndValue(token, description, storeValue) {
-    if (!!description.template && !!description.model) {
-      return {
-        template: `${description.template} (${storeValue.template})`,
-        model: Object.assign(description.model, storeValue.model)
-      };
-    }
-    const descKey = `${token.handleName}Description${++this._nextID}`;
-    return {
-      template: `<span>{{${descKey}}}</span> (${storeValue.template})`,
-      model: Object.assign({[descKey]: description}, storeValue.model)
-    };
-  }
-
-  _formatEntityProperty(handleName, properties, value) {
-    const key = `${handleName}${properties.join('')}Value${++this._nextID}`;
-    return {
-      template: `<b>{{${key}}}</b>`,
-      model: {[`${key}`]: value}
-    };
-  }
-
-  _formatCollection(handleName, values) {
-    const handleKey = `${handleName}${++this._nextID}`;
-    if (values[0].rawData.name) {
-      if (values.length > 2) {
-        return {
-          template: `<b>{{${handleKey}FirstName}}</b> plus <b>{{${handleKey}OtherCount}}</b> other items`,
-          model: {[`${handleKey}FirstName`]: values[0].rawData.name, [`${handleKey}OtherCount`]: values.length - 1}
-        };
-      }
-      return {
-        template: values.map((v, i) => `<b>{{${handleKey}${i}}}</b>`).join(', '),
-        model: Object.assign(...values.map((v, i) => ({[`${handleKey}${i}`]: v.rawData.name} )))
-      };
-    }
-    return {
-      template: `<b>{{${handleKey}Length}}</b> items`,
-      model: {[`${handleKey}Length`]: values.length}
-    };
-  }
-
-  _formatBigCollection(handleName, firstValue) {
-    return {
-      template: `collection of items like {{${handleName}FirstName}}`,
-      model: {[`${handleName}FirstName`]: firstValue.rawData.name}
-    };
-  }
-
-  _formatSingleton(handleName, value, handleDescription) {
-    const formattedValue = super._formatSingleton(handleName, value, handleDescription);
-    if (formattedValue) {
-      return {
-        template: `<b>{{${handleName}Var}}</b>`,
-        model: {[`${handleName}Var`]: formattedValue}
-      };
-    }
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/description.js":
-/*!********************************!*\
-  !*** ./runtime/description.js ***!
-  \********************************/
-/*! exports provided: Description, DescriptionFormatter */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Description", function() { return Description; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DescriptionFormatter", function() { return DescriptionFormatter; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/particle-spec.js */ "./runtime/ts-build/particle-spec.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class Description {
-  constructor(arc) {
-    this._arc = arc;
-    this._relevance = null;
-  }
-
-  get arc() { return this._arc; }
-  get relevance() { return this._relevance; }
-  set relevance(relevance) { this._relevance = relevance; }
-
-  async getArcDescription(formatterClass) {
-    const desc = await new (formatterClass || DescriptionFormatter)(this).getDescription(this._arc.activeRecipe);
-    if (desc) {
-      return desc;
-    }
-  }
-
-  async getRecipeSuggestion(formatterClass) {
-    const formatter = await new (formatterClass || DescriptionFormatter)(this);
-    const desc = await formatter.getDescription(this._arc.recipes[this._arc.recipes.length - 1]);
-    if (desc) {
-      return desc;
-    }
-
-    return formatter._capitalizeAndPunctuate(this._arc.activeRecipe.name || Description.defaultDescription);
-  }
-
-  async getHandleDescription(recipeHandle) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipeHandle.connections.length > 0, 'handle has no connections?');
-
-    const formatter = new DescriptionFormatter(this);
-    formatter.excludeValues = true;
-    return await formatter.getHandleDescription(recipeHandle);
-  }
-}
-
-Description.defaultDescription = 'i\'m feeling lucky';
-
-class DescriptionFormatter {
-  constructor(description) {
-    this._description = description;
-    this._arc = description._arc;
-    this._particleDescriptions = [];
-
-    this.seenHandles = new Set();
-    this.seenParticles = new Set();
-    this.excludeValues = false;
-  }
-
-  async getDescription(recipe) {
-    await this._updateDescriptionHandles(this._description);
-
-    if (recipe.patterns.length > 0) {
-      let recipePatterns = [];
-      for (const pattern of recipe.patterns) {
-        recipePatterns.push(await this.patternToSuggestion(pattern, {_recipe: recipe}));
-      }
-      recipePatterns = recipePatterns.filter(pattern => Boolean(pattern));
-      if (recipePatterns.length > 0) {
-        // TODO(mmandlis): Sort the descriptions.
-        return this._capitalizeAndPunctuate(this._joinDescriptions(recipePatterns));
-      }
-    }
-
-    // Choose particles, sort them by rank and generate suggestions.
-    const particlesSet = new Set(recipe.particles);
-    let selectedDescriptions = this._particleDescriptions
-      .filter(desc => (particlesSet.has(desc._particle) && this._isSelectedDescription(desc)));
-    // Prefer particles that render UI, if any.
-    if (selectedDescriptions.find(desc => (desc._particle.spec.slots.size > 0))) {
-      selectedDescriptions = selectedDescriptions.filter(desc => (desc._particle.spec.slots.size > 0));
-    }
-    selectedDescriptions = selectedDescriptions.sort(DescriptionFormatter.sort);
-
-    if (selectedDescriptions.length > 0) {
-      return this._combineSelectedDescriptions(selectedDescriptions);
-    }
-  }
-
-  _isSelectedDescription(desc) {
-    return !!desc.pattern;
-  }
-
-  async getHandleDescription(recipeHandle) {
-    await this._updateDescriptionHandles(this._description);
-
-    const handleConnection = this._selectHandleConnection(recipeHandle) || recipeHandle.connections[0];
-    const store = this._arc.findStoreById(recipeHandle.id);
-    return this._formatDescription(handleConnection, store);
-  }
-
-  async _updateDescriptionHandles(description) {
-    this._particleDescriptions = [];
-
-    // Combine all particles from direct and inner arcs.
-    const innerParticlesByName = {};
-    description._arc.recipes.forEach(recipe => {
-      const innerArcs = [...recipe.innerArcs.values()];
-      innerArcs.forEach(innerArc => {
-        innerArc.recipes.forEach(innerRecipe => {
-          innerRecipe.particles.forEach(innerParticle => {
-            if (!innerParticlesByName[innerParticle.name]) {
-              innerParticlesByName[innerParticle.name] = innerParticle;
-            }
-          });
-        });
-      });
-    });
-    const allParticles = description.arc.activeRecipe.particles.concat(Object.values(innerParticlesByName));
-
-    await Promise.all(allParticles.map(async particle => {
-      this._particleDescriptions.push(await this._createParticleDescription(particle, description.relevance));
-    }));
-  }
-
-  async _createParticleDescription(particle, relevance) {
-    let pDesc = {
-      _particle: particle,
-      _connections: {}
-    };
-    if (relevance) {
-      pDesc._rank = relevance.calcParticleRelevance(particle);
-    }
-
-    const descByName = await this._getPatternByNameFromDescriptionHandle(particle) || {};
-    pDesc = Object.assign(pDesc, this._populateParticleDescription(particle, descByName));
-    Object.values(particle.connections).forEach(handleConn => {
-      const specConn = particle.spec.connectionMap.get(handleConn.name);
-      const pattern = descByName[handleConn.name] || specConn.pattern;
-      if (pattern) {
-        const handleDescription = {pattern: pattern, _handleConn: handleConn, _store: this._arc.findStoreById(handleConn.handle.id)};
-        pDesc._connections[handleConn.name] = handleDescription;
-      }
-    });
-    return pDesc;
-  }
-
-  async _getPatternByNameFromDescriptionHandle(particle) {
-    const descriptionConn = particle.connections['descriptions'];
-    if (descriptionConn && descriptionConn.handle && descriptionConn.handle.id) {
-      const descHandle = this._arc.findStoreById(descriptionConn.handle.id);
-      if (descHandle) {
-        const descList = await descHandle.toList();
-        const descByName = {};
-        descList.forEach(d => descByName[d.rawData.key] = d.rawData.value);
-        return descByName;
-      }
-    }
-  }
-
-  _populateParticleDescription(particle, descriptionByName) {
-    const pattern = descriptionByName['pattern'] || particle.spec.pattern;
-    return pattern ? {pattern} : {};
-  }
-
-  async _combineSelectedDescriptions(selectedDescriptions, options) {
-    const suggestions = [];
-    await Promise.all(selectedDescriptions.map(async particle => {
-      if (!this.seenParticles.has(particle._particle)) {
-        suggestions.push(await this.patternToSuggestion(particle.pattern, particle));
-      }
-    }));
-    const jointDescription = this._joinDescriptions(suggestions);
-    if (jointDescription) {
-      if ((options || {}).skipFormatting) {
-        return jointDescription;
-      } else {
-        return this._capitalizeAndPunctuate(jointDescription);
-      }
-    }
-  }
-
-  _joinDescriptions(strings) {
-    const nonEmptyStrings = strings.filter(str => str);
-    const count = nonEmptyStrings.length;
-    if (count > 0) {
-      // Combine descriptions into a sentence:
-      // "A."
-      // "A and b."
-      // "A, b, ..., and z." (Oxford comma ftw)
-      const delim = ['', '', ' and ', ', and '][Math.min(3, count)];
-      const lastString = nonEmptyStrings.pop();
-      return `${nonEmptyStrings.join(', ')}${delim}${lastString}`;
-    }
-  }
-
-  _joinTokens(tokens) {
-    return tokens.join('');
-  }
-
-  _capitalizeAndPunctuate(sentence) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(sentence);
-    // "Capitalize, punctuate." (if the sentence doesn't end with a punctuation character).
-    const last = sentence.length - 1;
-    return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9()'>\]]/i) ? '.' : ''}`;
-  }
-
-  async patternToSuggestion(pattern, particleDescription) {
-    const tokens = this._initTokens(pattern, particleDescription);
-    const tokenPromises = tokens.map(async token => await this.tokenToString(token));
-    const tokenResults = await Promise.all(tokenPromises);
-    if (tokenResults.filter(res => res == undefined).length == 0) {
-      return this._joinTokens(tokenResults);
-    }
-  }
-
-  _initTokens(pattern, particleDescription) {
-    pattern = pattern.replace(/</g, '&lt;');
-    let results = [];
-    while (pattern.length > 0) {
-      const tokens = pattern.match(/\${[a-zA-Z0-9.]+}(?:\.[_a-zA-Z]+)?/g);
-      let firstToken;
-      let tokenIndex;
-      if (tokens) {
-        firstToken = tokens[0];
-        tokenIndex = pattern.indexOf(firstToken);
-      } else {
-        firstToken = '';
-        tokenIndex = pattern.length;
-      }
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(tokenIndex >= 0);
-      const nextToken = pattern.substring(0, tokenIndex);
-      if (nextToken.length > 0) {
-        results.push({text: nextToken});
-      }
-      if (firstToken.length > 0) {
-        results = results.concat(this._initSubTokens(firstToken, particleDescription));
-      }
-      pattern = pattern.substring(tokenIndex + firstToken.length);
-    }
-    return results;
-  }
-
-  //async
-  _initSubTokens(pattern, particleDescription) {
-    const valueTokens = pattern.match(/\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/);
-    const handleNames = valueTokens[1].split('.');
-    const extra = valueTokens.length == 3 ? valueTokens[2] : undefined;
-    let valueToken;
-
-    // Fetch the particle description by name from the value token - if it wasn't passed, this is a recipe description.
-    if (!particleDescription._particle) {
-      const particleName = handleNames.shift();
-      if (particleName[0] !== particleName[0].toUpperCase()) {
-        console.warn(`Invalid particle name '${particleName}' - must start with a capital letter.`);
-        return [];
-      }
-      const particleDescriptions = this._particleDescriptions.filter(desc => {
-        return desc._particle.name == particleName
-            // The particle description is from the current recipe.
-            && particleDescription._recipe.particles.find(p => p == desc._particle);
-      });
-
-      if (particleDescriptions.length == 0) {
-        console.warn(`Cannot find particles with name ${particleName}.`);
-        return [];
-      }
-      // Note: when an arc's active recipes contains several recipes, the last recipe's description
-      // is used as the arc's description. If this last recipe's description has a description pattern
-      // that references a particle that is also used in one of the previous recipes,
-      // there will be a duplicate particle-description.
-      particleDescription = particleDescriptions[particleDescriptions.length - 1];
-    }
-    const particle = particleDescription._particle;
-
-    if (handleNames.length == 0) {
-      // return a  particle token
-      return {
-        particleName: particle.spec.name,
-        particleDescription
-      };
-    }
-
-    const handleConn = particle.connections[handleNames[0]];
-    if (handleConn) { // handle connection
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleConn.handle && handleConn.handle.id, 'Missing id???');
-      return [{
-        fullName: valueTokens[0],
-        handleName: handleConn.name,
-        properties: handleNames.splice(1),
-        extra,
-        _handleConn: handleConn,
-        _store: this._arc.findStoreById(handleConn.handle.id)}];
-    }
-
-    // slot connection
-    if (handleNames.length != 2) {
-      if (handleNames.length == 1) {
-        console.warn(`Unknown handle connection name '${handleNames[0]}'`);
-      } else {
-        console.warn(`Slot connections tokens must have exactly 2 names, found ${handleNames.length} in '${handleNames.join('.')}'`);
-      }
-      return [];
-    }
-
-    const providedSlotConn = particle.consumedSlotConnections[handleNames[0]].providedSlots[handleNames[1]];
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(providedSlotConn, `Could not find handle ${handleNames.join('.')}`);
-    return [{
-      fullName: valueTokens[0],
-      consumeSlotName: handleNames[0],
-      provideSlotName: handleNames[1],
-      extra,
-      _providedSlotConn: providedSlotConn
-    }];
-  }
-
-  async tokenToString(token) {
-    if (token.text) {
-      return token.text;
-    }
-    if (token.particleName) {
-      return this._particleTokenToString(token);
-    }
-    if (token.handleName) {
-      return this._handleTokenToString(token);
-    } else if (token.consumeSlotName && token.provideSlotName) {
-      return this._slotTokenToString(token);
-    }
-    throw new Error('no handle or slot name');
-  }
-
-  async _particleTokenToString(token) {
-    return this._combineSelectedDescriptions([token.particleDescription], {skipFormatting: true}); //debug;
-  }
-
-  async _handleTokenToString(token) {
-    switch (token.extra) {
-      case '_type_':
-        return token._handleConn.type.toPrettyString().toLowerCase();
-      case '_values_':
-        return this._formatStoreValue(token.handleName, token._store);
-      case '_name_':
-        return this._formatDescription(token._handleConn, token._store);
-      default: {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!token.extra, `Unrecognized extra ${token.extra}`);
-
-        // Transformation's hosted particle.
-        if (token._handleConn.type.isInterface) {
-          const particleSpec = _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"].fromLiteral(await token._store.get());
-          // TODO: call this.patternToSuggestion(...) to resolved expressions in the pattern template.
-          return particleSpec.pattern;
-        }
-
-        // singleton handle property.
-        if (token.properties && token.properties.length > 0) {
-          return this._propertyTokenToString(token.handleName, token._store, token.properties);
-        }
-
-        // full handle description
-        let description = (await this._formatDescriptionPattern(token._handleConn)) ||
-                          this._formatStoreDescription(token._handleConn, token._store);
-        const storeValue = await this._formatStoreValue(token.handleName, token._store);
-        if (!description) {
-          // For singleton handle, if there is no real description (the type was used), use the plain value for description.
-          // TODO: should this look at type.getContainedType() (which includes references), or maybe just type.isEntity?
-          if (storeValue && !this.excludeValues && !token._store.type.isCollection && !token._store.type.isBigCollection) {
-            return storeValue;
-          }
-        }
-
-        description = description || this._formatHandleType(token._handleConn);
-        if (storeValue && !this.excludeValues && !this.seenHandles.has(token._store.id)) {
-          this.seenHandles.add(token._store.id);
-          return this._combineDescriptionAndValue(token, description, storeValue);
-        }
-        return description;
-      }
-    }
-  }
-
-  _combineDescriptionAndValue(token, description, storeValue) {
-    if (description == storeValue) {
-      return description;
-    }
-    return `${description} (${storeValue})`;
-  }
-
-  async _slotTokenToString(token) {
-    switch (token.extra) {
-      case '_empty_':
-        // TODO: also return false, if the consuming particles generate an empty description.
-        return token._providedSlotConn.consumeConnections.length == 0;
-      default:
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!token.extra, `Unrecognized slot extra ${token.extra}`);
-    }
-
-    const results = (await Promise.all(token._providedSlotConn.consumeConnections.map(async consumeConn => {
-      const particle = consumeConn.particle;
-      const particleDescription = this._particleDescriptions.find(desc => desc._particle == particle);
-      this.seenParticles.add(particle);
-      return this.patternToSuggestion(particle.spec.pattern, particleDescription);
-    })));
-
-    return this._joinDescriptions(results);
-  }
-
-  async _propertyTokenToString(handleName, store, properties) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!store.type.isCollection && !store.type.isBigCollection,
-           `Cannot return property ${properties.join(',')} for Collection or BigCollection`);
-    // Use singleton value's property (eg. "09/15" for person's birthday)
-    const valueVar = await store.get();
-    if (valueVar) {
-      let value = valueVar.rawData;
-      properties.forEach(p => {
-        if (value) {
-          value = value[p];
-        }
-      });
-      if (value) {
-        return this._formatEntityProperty(handleName, properties, value);
-      }
-    }
-  }
-
-  _formatEntityProperty(handleName, properties, value) {
-    return value;
-  }
-
-  async _formatStoreValue(handleName, store) {
-    if (!store) {
-      return;
-    }
-    if (store.type.isCollection) {
-      const values = await store.toList();
-      if (values && values.length > 0) {
-        return this._formatCollection(handleName, values);
-      }
-    } else if (store.type.isBigCollection) {
-      const cursorId = await store.stream(1);
-      const {value, done} = await store.cursorNext(cursorId);
-      store.cursorClose(cursorId);
-      if (!done && value[0].rawData.name) {
-        return await this._formatBigCollection(handleName, value[0]);
-      }
-    } else {
-      const value = await store.get();
-      if (value) {
-        return this._formatSingleton(handleName, value, store.type.data.description.value);
-      }
-    }
-  }
-
-  _formatCollection(handleName, values) {
-    if (values[0].rawData.name) {
-      if (values.length > 2) {
-        return `${values[0].rawData.name} plus ${values.length-1} other items`;
-      }
-      return values.map(v => v.rawData.name).join(', ');
-    } else {
-      return `${values.length} items`;
-    }
-  }
-
-  _formatBigCollection(handleName, firstValue) {
-    return `collection of items like ${firstValue.rawData.name}`;
-  }
-
-  _formatSingleton(handleName, value, handleDescription) {
-    if (handleDescription) {
-      let valueDescription = handleDescription;
-      let matches;
-      while (matches = valueDescription.match(/\${([a-zA-Z0-9.]+)}/)) {
-        valueDescription = valueDescription.replace(matches[0], value.rawData[matches[1]]);
-      }
-      return valueDescription;
-    }
-    if (value.rawData.name) {
-      return value.rawData.name;
-    }
-  }
-
-  async _formatDescription(handleConnection, store) {
-    return (await this._formatDescriptionPattern(handleConnection)) ||
-           this._formatStoreDescription(handleConnection, store) ||
-           this._formatHandleType(handleConnection);
-  }
-
-  async _formatDescriptionPattern(handleConnection) {
-    let chosenConnection = handleConnection;
-
-    // For "out" connection, use its own description
-    // For "in" connection, use description of the highest ranked out connection with description.
-    if (!chosenConnection.spec.isOutput) {
-      const otherConnection = this._selectHandleConnection(handleConnection.handle);
-      if (otherConnection) {
-        chosenConnection = otherConnection;
-      }
-    }
-
-    const chosenParticleDescription = this._particleDescriptions.find(desc => desc._particle == chosenConnection.particle);
-    const handleDescription = chosenParticleDescription ? chosenParticleDescription._connections[chosenConnection.name] : null;
-    // Add description to result array.
-    if (handleDescription) {
-      // Add the connection spec's description pattern.
-      return await this.patternToSuggestion(handleDescription.pattern, chosenParticleDescription);
-    }
-  }
-  _formatStoreDescription(handleConn, store) {
-    if (store) {
-      const storeDescription = this._arc.getStoreDescription(store);
-      const handleType = this._formatHandleType(handleConn);
-      // Use the handle description available in the arc (if it is different than type name).
-      if (!!storeDescription && storeDescription != handleType) {
-        return storeDescription;
-      }
-    }
-  }
-  _formatHandleType(handleConnection) {
-    const type = handleConnection.handle && handleConnection.handle.type.isResolved() ? handleConnection.handle.type : handleConnection.type;
-    return type.toPrettyString().toLowerCase();
-  }
-
-  _selectHandleConnection(recipeHandle) {
-    const possibleConnections = recipeHandle.connections.filter(connection => {
-      // Choose connections with patterns (manifest-based or dynamic).
-      const connectionSpec = connection.spec;
-      const particleDescription = this._particleDescriptions.find(desc => desc._particle == connection.particle);
-      return !!connectionSpec.pattern || !!particleDescription._connections[connection.name];
-    });
-
-    possibleConnections.sort((c1, c2) => {
-      const isOutput1 = c1.spec.isOutput;
-      const isOutput2 = c2.spec.isOutput;
-      if (isOutput1 != isOutput2) {
-        // Prefer output connections
-        return isOutput1 ? -1 : 1;
-      }
-
-      const d1 = this._particleDescriptions.find(desc => desc._particle == c1.particle);
-      const d2 = this._particleDescriptions.find(desc => desc._particle == c2.particle);
-      // Sort by particle's rank in descending order.
-      return d2._rank - d1._rank;
-    });
-
-    if (possibleConnections.length > 0) {
-      return possibleConnections[0];
-    }
-  }
-
-  static sort(p1, p2) {
-    const isRoot = (slotSpec) => slotSpec.name == 'root' || slotSpec.tags.includes('root');
-    // Root slot comes first.
-    const hasRoot1 = Boolean([...p1._particle.spec.slots.values()].find(slotSpec => isRoot(slotSpec)));
-    const hasRoot2 = Boolean([...p2._particle.spec.slots.values()].find(slotSpec => isRoot(slotSpec)));
-    if (hasRoot1 != hasRoot2) {
-      return hasRoot1 ? -1 : 1;
-    }
-
-    // Sort by rank
-    if (p1._rank != p2._rank) {
-      return p2._rank - p1._rank;
-    }
-
-    // Sort by number of singleton slots.
-    let p1Slots = 0;
-    let p2Slots = 0;
-    p1._particle.spec.slots.forEach((slotSpec) => { if (!slotSpec.isSet) ++p1Slots; });
-    p2._particle.spec.slots.forEach((slotSpec) => { if (!slotSpec.isSet) ++p2Slots; });
-    return p2Slots - p1Slots;
-  }
-}
-
-
-/***/ }),
-
 /***/ "./runtime/dom-particle-base.js":
 /*!**************************************!*\
   !*** ./runtime/dom-particle-base.js ***!
@@ -72971,7 +72113,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../suggest-dom-consumer.js */ "./runtime/suggest-dom-consumer.js");
 /* harmony import */ var _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../testing/mock-slot-dom-consumer.js */ "./runtime/testing/mock-slot-dom-consumer.js");
 /* harmony import */ var _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../testing/mock-suggest-dom-consumer.js */ "./runtime/testing/mock-suggest-dom-consumer.js");
-/* harmony import */ var _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../description-dom-formatter.js */ "./runtime/description-dom-formatter.js");
+/* harmony import */ var _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./description-dom-formatter.js */ "./runtime/ts-build/description-dom-formatter.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -73071,7 +72213,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./manifest.js */ "./runtime/ts-build/manifest.js");
-/* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../description.js */ "./runtime/description.js");
+/* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./description.js */ "./runtime/ts-build/description.js");
 /* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./recipe/util.js */ "./runtime/ts-build/recipe/util.js");
 /* harmony import */ var _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../fake-pec-factory.js */ "./runtime/fake-pec-factory.js");
 /* harmony import */ var _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
@@ -73792,6 +72934,801 @@ class JsonldToManifest {
     }
 }
 //# sourceMappingURL=jsonldToManifest.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/description-dom-formatter.js":
+/*!*******************************************************!*\
+  !*** ./runtime/ts-build/description-dom-formatter.js ***!
+  \*******************************************************/
+/*! exports provided: DescriptionDomFormatter */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DescriptionDomFormatter", function() { return DescriptionDomFormatter; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./description.js */ "./runtime/ts-build/description.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1__["DescriptionFormatter"] {
+    constructor() {
+        super(...arguments);
+        this.nextID = 0;
+    }
+    _isSelectedDescription(desc) {
+        return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
+    }
+    _populateParticleDescription(particle, descriptionByName) {
+        let result = super._populateParticleDescription(particle, descriptionByName);
+        if (descriptionByName['_template_']) {
+            result = Object.assign(result, {
+                template: descriptionByName['_template_'],
+                model: JSON.parse(descriptionByName['_model_'])
+            });
+        }
+        return result;
+    }
+    async _combineSelectedDescriptions(selectedDescriptions, options) {
+        const suggestionByParticleDesc = new Map();
+        for (const particleDesc of selectedDescriptions) {
+            if (this.seenParticles.has(particleDesc._particle)) {
+                continue;
+            }
+            let { template, model } = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
+            const success = await Promise.all(Object.keys(model).map(async (tokenKey) => {
+                // TODO(mmandlis): this cast is invalid, as _initSubTokens can sometimes
+                // return a single element
+                const tokens = this._initSubTokens(model[tokenKey], particleDesc);
+                return (await Promise.all(tokens.map(async (token) => {
+                    const tokenValue = await this.tokenToString(token);
+                    if (tokenValue == undefined) {
+                        return false;
+                    }
+                    else if (tokenValue && tokenValue.template && tokenValue.model) {
+                        // Dom token.
+                        template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
+                        delete model[tokenKey];
+                        model = Object.assign(model, tokenValue.model);
+                    }
+                    else { // Text token.
+                        // Replace tokenKey, in case multiple selected suggestions use the same key.
+                        const newTokenKey = `${tokenKey}${++this.nextID}`;
+                        template = template.replace(`{{${tokenKey}}}`, `{{${newTokenKey}}}`);
+                        delete model[tokenKey];
+                        model[newTokenKey] = tokenValue;
+                    }
+                    return true;
+                }))).every(t => !!t);
+            }));
+            if (success.every(s => !!s)) {
+                suggestionByParticleDesc.set(particleDesc, { template, model });
+            }
+        }
+        // Populate suggestions list while maintaining original particles order.
+        const suggestions = [];
+        selectedDescriptions.forEach(desc => {
+            if (suggestionByParticleDesc.has(desc)) {
+                suggestions.push(suggestionByParticleDesc.get(desc));
+            }
+        });
+        if (suggestions.length > 0) {
+            const result = this._joinDescriptions(suggestions);
+            if (!options || !options.skipFormatting) {
+                result.template += '.';
+            }
+            return result;
+        }
+    }
+    _retrieveTemplateAndModel(particleDesc, index, options) {
+        if (particleDesc.template && particleDesc.model) {
+            return { template: particleDesc.template, model: particleDesc.model };
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particleDesc.pattern, 'Description must contain template and model, or pattern');
+        let template = '';
+        const model = {};
+        const tokens = this._initTokens(particleDesc.pattern, particleDesc);
+        tokens.forEach((token, i) => {
+            if (token.text) {
+                template = template.concat(`${(index === 0 && i === 0 && !options.skipFormatting) ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
+            }
+            else { // handle or slot handle.
+                const sanitizedFullName = token.fullName.replace(/[.{}_$]/g, '');
+                let attribute = '';
+                // TODO(mmandlis): capitalize the data in the model instead.
+                if (i === 0 && !options.skipFormatting) {
+                    // Capitalize the first letter in the token.
+                    template = template.concat(`<style>
+            [firstletter]::first-letter { text-transform: capitalize; }
+            [firstletter] {display: inline-block}
+            </style>`);
+                    attribute = ' firstletter';
+                }
+                template = template.concat(`<span${attribute}>{{${sanitizedFullName}}}</span>`);
+                model[sanitizedFullName] = token.fullName;
+            }
+        });
+        return { template, model };
+    }
+    _capitalizeAndPunctuate(sentence) {
+        if (typeof sentence === 'string') {
+            return { template: super._capitalizeAndPunctuate(sentence), model: {} };
+        }
+        // Capitalize the first element in the DOM template.
+        const tokens = sentence.template.match(/<[a-zA-Z0-9]+>{{([a-zA-Z0-9]*)}}<\/[a-zA-Z0-9]+>/);
+        if (tokens && tokens.length > 1 && sentence.model[tokens[1]]) {
+            const modelToken = sentence.model[tokens[1]];
+            if (modelToken.length > 0) {
+                sentence.model[tokens[1]] = `${modelToken[0].toUpperCase()}${modelToken.substr(1)}`;
+            }
+        }
+        sentence.template += '.';
+        return sentence;
+    }
+    _joinDescriptions(descs) {
+        // // If all tokens are strings, just join them.
+        if (descs.every(desc => typeof desc === 'string')) {
+            return super._joinDescriptions(descs);
+        }
+        const result = { template: '', model: {} };
+        const count = descs.length;
+        descs.forEach((desc, i) => {
+            if (typeof desc === 'string') {
+                desc = Object.assign({}, { template: desc, model: {} });
+            }
+            result.template += desc.template;
+            result.model = Object.assign(result.model, desc.model);
+            let delim;
+            if (i < count - 2) {
+                delim = ', ';
+            }
+            else if (i === count - 2) {
+                delim = ['', '', ' and ', ', and '][Math.min(3, count)];
+            }
+            if (delim) {
+                result.template += delim;
+            }
+        });
+        return result;
+    }
+    _joinTokens(tokens) {
+        // If all tokens are strings, just join them.
+        if (tokens.every(token => typeof token === 'string')) {
+            return super._joinTokens(tokens);
+        }
+        tokens = tokens.map(token => {
+            if (typeof token !== 'object') {
+                return {
+                    template: `<span>{{text${++this.nextID}}}</span>`,
+                    model: { [`text${this.nextID}`]: token }
+                };
+            }
+            return token;
+        });
+        const nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
+        return {
+            template: nonEmptyTokens.map(token => token.template).join(''),
+            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => Object.assign(prev, curr), {})
+        };
+    }
+    _combineDescriptionAndValue(token, description, storeValue) {
+        if (!!description.template && !!description.model) {
+            return {
+                template: `${description.template} (${storeValue.template})`,
+                model: Object.assign(description.model, storeValue.model)
+            };
+        }
+        const descKey = `${token.handleName}Description${++this.nextID}`;
+        return {
+            template: `<span>{{${descKey}}}</span> (${storeValue.template})`,
+            model: Object.assign({ [descKey]: description }, storeValue.model)
+        };
+    }
+    _formatEntityProperty(handleName, properties, value) {
+        const key = `${handleName}${properties.join('')}Value${++this.nextID}`;
+        return {
+            template: `<b>{{${key}}}</b>`,
+            model: { [`${key}`]: value }
+        };
+    }
+    _formatCollection(handleName, values) {
+        const handleKey = `${handleName}${++this.nextID}`;
+        if (values[0].rawData.name) {
+            if (values.length > 2) {
+                return {
+                    template: `<b>{{${handleKey}FirstName}}</b> plus <b>{{${handleKey}OtherCount}}</b> other items`,
+                    model: { [`${handleKey}FirstName`]: values[0].rawData.name, [`${handleKey}OtherCount`]: values.length - 1 }
+                };
+            }
+            return {
+                template: values.map((v, i) => `<b>{{${handleKey}${i}}}</b>`).join(', '),
+                model: Object.assign({}, ...values.map((v, i) => ({ [`${handleKey}${i}`]: v.rawData.name })))
+            };
+        }
+        return {
+            template: `<b>{{${handleKey}Length}}</b> items`,
+            model: { [`${handleKey}Length`]: values.length }
+        };
+    }
+    _formatBigCollection(handleName, firstValue) {
+        return {
+            template: `collection of items like {{${handleName}FirstName}}`,
+            model: { [`${handleName}FirstName`]: firstValue.rawData.name }
+        };
+    }
+    _formatSingleton(handleName, value, handleDescription) {
+        const formattedValue = super._formatSingleton(handleName, value, handleDescription);
+        if (formattedValue) {
+            return {
+                template: `<b>{{${handleName}Var}}</b>`,
+                model: { [`${handleName}Var`]: formattedValue }
+            };
+        }
+        return undefined;
+    }
+}
+//# sourceMappingURL=description-dom-formatter.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/description.js":
+/*!*****************************************!*\
+  !*** ./runtime/ts-build/description.js ***!
+  \*****************************************/
+/*! exports provided: Description, DescriptionFormatter */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Description", function() { return Description; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DescriptionFormatter", function() { return DescriptionFormatter; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./particle-spec.js */ "./runtime/ts-build/particle-spec.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class Description {
+    constructor(arc) {
+        this.relevance = null;
+        this._particle = undefined;
+        this.arc = arc;
+    }
+    async getArcDescription(formatterClass = DescriptionFormatter) {
+        const desc = await new (formatterClass)(this).getDescription(this.arc.activeRecipe);
+        if (desc) {
+            return desc;
+        }
+        return undefined;
+    }
+    async getRecipeSuggestion(formatterClass) {
+        const formatter = await new (formatterClass || DescriptionFormatter)(this);
+        const desc = await formatter.getDescription(this.arc.recipes[this.arc.recipes.length - 1]);
+        if (desc) {
+            return desc;
+        }
+        return formatter._capitalizeAndPunctuate(this.arc.activeRecipe.name || Description.defaultDescription);
+    }
+    async getHandleDescription(recipeHandle) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipeHandle.connections.length > 0, 'handle has no connections?');
+        const formatter = new DescriptionFormatter(this);
+        formatter.excludeValues = true;
+        return await formatter.getHandleDescription(recipeHandle);
+    }
+}
+Description.defaultDescription = 'i\'m feeling lucky';
+class DescriptionFormatter {
+    constructor(description) {
+        this.particleDescriptions = [];
+        this.seenHandles = new Set();
+        this.seenParticles = new Set();
+        this.excludeValues = false;
+        this.description = description;
+        this.arc = description.arc;
+    }
+    async getDescription(recipe) {
+        await this._updateDescriptionHandles(this.description);
+        if (recipe.patterns.length > 0) {
+            let recipePatterns = [];
+            for (const pattern of recipe.patterns) {
+                recipePatterns.push(await this.patternToSuggestion(pattern, { _recipe: recipe }));
+            }
+            recipePatterns = recipePatterns.filter(pattern => Boolean(pattern));
+            if (recipePatterns.length > 0) {
+                // TODO(mmandlis): Sort the descriptions.
+                return this._capitalizeAndPunctuate(this._joinDescriptions(recipePatterns));
+            }
+        }
+        // Choose particles, sort them by rank and generate suggestions.
+        const particlesSet = new Set(recipe.particles);
+        let selectedDescriptions = this.particleDescriptions
+            .filter(desc => (particlesSet.has(desc._particle) && this._isSelectedDescription(desc)));
+        // Prefer particles that render UI, if any.
+        if (selectedDescriptions.find(desc => (desc._particle.spec.slots.size > 0))) {
+            selectedDescriptions = selectedDescriptions.filter(desc => (desc._particle.spec.slots.size > 0));
+        }
+        selectedDescriptions = selectedDescriptions.sort(DescriptionFormatter.sort);
+        if (selectedDescriptions.length > 0) {
+            return this._combineSelectedDescriptions(selectedDescriptions);
+        }
+        return undefined;
+    }
+    _isSelectedDescription(desc) {
+        return !!desc.pattern;
+    }
+    async getHandleDescription(recipeHandle) {
+        await this._updateDescriptionHandles(this.description);
+        const handleConnection = this._selectHandleConnection(recipeHandle) || recipeHandle.connections[0];
+        const store = this.arc.findStoreById(recipeHandle.id);
+        return this._formatDescription(handleConnection, store);
+    }
+    async _updateDescriptionHandles(description) {
+        this.particleDescriptions = [];
+        // Combine all particles from direct and inner arcs.
+        const innerParticlesByName = {};
+        description.arc.recipes.forEach(recipe => {
+            const innerArcs = [...recipe.innerArcs.values()];
+            innerArcs.forEach(innerArc => {
+                innerArc.recipes.forEach(innerRecipe => {
+                    innerRecipe.particles.forEach(innerParticle => {
+                        if (!innerParticlesByName[innerParticle.name]) {
+                            innerParticlesByName[innerParticle.name] = innerParticle;
+                        }
+                    });
+                });
+            });
+        });
+        const allParticles = description.arc.activeRecipe.particles.concat(Object.values(innerParticlesByName));
+        await Promise.all(allParticles.map(async (particle) => {
+            this.particleDescriptions.push(await this._createParticleDescription(particle, description.relevance));
+        }));
+    }
+    async _createParticleDescription(particle, relevance) {
+        let pDesc = {
+            _particle: particle,
+            _connections: {}
+        };
+        if (relevance) {
+            pDesc._rank = relevance.calcParticleRelevance(particle);
+        }
+        const descByName = await this._getPatternByNameFromDescriptionHandle(particle) || {};
+        pDesc = Object.assign(pDesc, this._populateParticleDescription(particle, descByName));
+        Object.values(particle.connections).forEach(handleConn => {
+            const specConn = particle.spec.connectionMap.get(handleConn.name);
+            const pattern = descByName[handleConn.name] || specConn.pattern;
+            if (pattern) {
+                const handleDescription = { pattern, _handleConn: handleConn, _store: this.arc.findStoreById(handleConn.handle.id) };
+                pDesc._connections[handleConn.name] = handleDescription;
+            }
+        });
+        return pDesc;
+    }
+    async _getPatternByNameFromDescriptionHandle(particle) {
+        const descriptionConn = particle.connections['descriptions'];
+        if (descriptionConn && descriptionConn.handle && descriptionConn.handle.id) {
+            const descHandle = this.arc.findStoreById(descriptionConn.handle.id);
+            if (descHandle) {
+                // TODO(shans): fix this mess when there's a unified Collection class or interface.
+                const descList = await descHandle.toList();
+                const descByName = {};
+                descList.forEach(d => descByName[d.rawData.key] = d.rawData.value);
+                return descByName;
+            }
+        }
+        return undefined;
+    }
+    _populateParticleDescription(particle, descriptionByName) {
+        const pattern = descriptionByName['pattern'] || particle.spec.pattern;
+        return pattern ? { pattern } : {};
+    }
+    // TODO(mmandlis): the override of this function in subclasses also overrides the output. We'll need to unify
+    // this into an output type hierarchy before we can assign a useful type to the output of this function.
+    // tslint:disable-next-line: no-any 
+    async _combineSelectedDescriptions(selectedDescriptions, options = {}) {
+        const suggestions = [];
+        await Promise.all(selectedDescriptions.map(async (particle) => {
+            if (!this.seenParticles.has(particle._particle)) {
+                suggestions.push(await this.patternToSuggestion(particle.pattern, particle));
+            }
+        }));
+        const jointDescription = this._joinDescriptions(suggestions);
+        if (jointDescription) {
+            if (options.skipFormatting) {
+                return jointDescription;
+            }
+            else {
+                return this._capitalizeAndPunctuate(jointDescription);
+            }
+        }
+        return undefined;
+    }
+    // TODO(mmandlis): the override of this function in subclasses also overrides the output. We'll need to unify
+    // this into an output type hierarchy before we can assign a useful type to the output of this function.
+    // tslint:disable-next-line: no-any 
+    _joinDescriptions(strings) {
+        const nonEmptyStrings = strings.filter(str => str);
+        const count = nonEmptyStrings.length;
+        if (count > 0) {
+            // Combine descriptions into a sentence:
+            // "A."
+            // "A and b."
+            // "A, b, ..., and z." (Oxford comma ftw)
+            const delim = ['', '', ' and ', ', and '][Math.min(3, count)];
+            const lastString = nonEmptyStrings.pop();
+            return `${nonEmptyStrings.join(', ')}${delim}${lastString}`;
+        }
+        return undefined;
+    }
+    _joinTokens(tokens) {
+        return tokens.join('');
+    }
+    _capitalizeAndPunctuate(sentence) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(sentence);
+        // "Capitalize, punctuate." (if the sentence doesn't end with a punctuation character).
+        const last = sentence.length - 1;
+        return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9()'>\]]/i) ? '.' : ''}`;
+    }
+    async patternToSuggestion(pattern, particleDescription) {
+        const tokens = this._initTokens(pattern, particleDescription);
+        const tokenPromises = tokens.map(async (token) => await this.tokenToString(token));
+        const tokenResults = await Promise.all(tokenPromises);
+        if (tokenResults.filter(res => res == undefined).length === 0) {
+            return this._joinTokens(tokenResults);
+        }
+        return undefined;
+    }
+    _initTokens(pattern, particleDescription) {
+        pattern = pattern.replace(/</g, '&lt;');
+        let results = [];
+        while (pattern.length > 0) {
+            const tokens = pattern.match(/\${[a-zA-Z0-9.]+}(?:\.[_a-zA-Z]+)?/g);
+            let firstToken;
+            let tokenIndex;
+            if (tokens) {
+                firstToken = tokens[0];
+                tokenIndex = pattern.indexOf(firstToken);
+            }
+            else {
+                firstToken = '';
+                tokenIndex = pattern.length;
+            }
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(tokenIndex >= 0);
+            const nextToken = pattern.substring(0, tokenIndex);
+            if (nextToken.length > 0) {
+                results.push({ text: nextToken });
+            }
+            if (firstToken.length > 0) {
+                results = results.concat(this._initSubTokens(firstToken, particleDescription));
+            }
+            pattern = pattern.substring(tokenIndex + firstToken.length);
+        }
+        return results;
+    }
+    //async
+    _initSubTokens(pattern, particleDescription) {
+        const valueTokens = pattern.match(/\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/);
+        const handleNames = valueTokens[1].split('.');
+        const extra = valueTokens.length === 3 ? valueTokens[2] : undefined;
+        // Fetch the particle description by name from the value token - if it wasn't passed, this is a recipe description.
+        if (!particleDescription._particle) {
+            const particleName = handleNames.shift();
+            if (particleName[0] !== particleName[0].toUpperCase()) {
+                console.warn(`Invalid particle name '${particleName}' - must start with a capital letter.`);
+                return [];
+            }
+            const particleDescriptions = this.particleDescriptions.filter(desc => {
+                return desc._particle.name === particleName
+                    // The particle description is from the current recipe.
+                    && particleDescription._recipe.particles.find(p => p === desc._particle);
+            });
+            if (particleDescriptions.length === 0) {
+                console.warn(`Cannot find particles with name ${particleName}.`);
+                return [];
+            }
+            // Note: when an arc's active recipes contains several recipes, the last recipe's description
+            // is used as the arc's description. If this last recipe's description has a description pattern
+            // that references a particle that is also used in one of the previous recipes,
+            // there will be a duplicate particle-description.
+            particleDescription = particleDescriptions[particleDescriptions.length - 1];
+        }
+        const particle = particleDescription._particle;
+        if (handleNames.length === 0) {
+            // return a particle token
+            // TODO(mmandlis): this is inconsistent with the rest of the function, which returns
+            // lists.
+            return {
+                particleName: particle.spec.name,
+                particleDescription
+            };
+        }
+        const handleConn = particle.connections[handleNames[0]];
+        if (handleConn) { // handle connection
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleConn.handle && handleConn.handle.id, 'Missing id???');
+            return [{
+                    fullName: valueTokens[0],
+                    handleName: handleConn.name,
+                    properties: handleNames.splice(1),
+                    extra,
+                    _handleConn: handleConn,
+                    _store: this.arc.findStoreById(handleConn.handle.id)
+                }];
+        }
+        // slot connection
+        if (handleNames.length !== 2) {
+            if (handleNames.length === 1) {
+                console.warn(`Unknown handle connection name '${handleNames[0]}'`);
+            }
+            else {
+                console.warn(`Slot connections tokens must have exactly 2 names, found ${handleNames.length} in '${handleNames.join('.')}'`);
+            }
+            return [];
+        }
+        const providedSlotConn = particle.consumedSlotConnections[handleNames[0]].providedSlots[handleNames[1]];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(providedSlotConn, `Could not find handle ${handleNames.join('.')}`);
+        return [{
+                fullName: valueTokens[0],
+                consumeSlotName: handleNames[0],
+                provideSlotName: handleNames[1],
+                extra,
+                _providedSlotConn: providedSlotConn
+            }];
+    }
+    async tokenToString(token) {
+        if (token.text) {
+            return token.text;
+        }
+        if (token.particleName) {
+            return this._particleTokenToString(token);
+        }
+        if (token.handleName) {
+            return this._handleTokenToString(token);
+        }
+        else if (token.consumeSlotName && token.provideSlotName) {
+            return this._slotTokenToString(token);
+        }
+        throw new Error('no handle or slot name');
+    }
+    async _particleTokenToString(token) {
+        return this._combineSelectedDescriptions([token.particleDescription], { skipFormatting: true }); //debug;
+    }
+    async _handleTokenToString(token) {
+        switch (token.extra) {
+            case '_type_':
+                return token._handleConn.type.toPrettyString().toLowerCase();
+            case '_values_':
+                return this._formatStoreValue(token.handleName, token._store);
+            case '_name_':
+                return this._formatDescription(token._handleConn, token._store);
+            default: {
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!token.extra, `Unrecognized extra ${token.extra}`);
+                // Transformation's hosted particle.
+                if (token._handleConn.type.isInterface) {
+                    const particleSpec = _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"].fromLiteral(await token._store.get());
+                    // TODO: call this.patternToSuggestion(...) to resolved expressions in the pattern template.
+                    return particleSpec.pattern;
+                }
+                // singleton handle property.
+                if (token.properties && token.properties.length > 0) {
+                    return this._propertyTokenToString(token.handleName, token._store, token.properties);
+                }
+                // full handle description
+                let description = (await this._formatDescriptionPattern(token._handleConn)) ||
+                    this._formatStoreDescription(token._handleConn, token._store);
+                const storeValue = await this._formatStoreValue(token.handleName, token._store);
+                if (!description) {
+                    // For singleton handle, if there is no real description (the type was used), use the plain value for description.
+                    // TODO: should this look at type.getContainedType() (which includes references), or maybe just type.isEntity?
+                    if (storeValue && !this.excludeValues && !token._store.type.isCollection && !token._store.type.isBigCollection) {
+                        return storeValue;
+                    }
+                }
+                description = description || this._formatHandleType(token._handleConn);
+                if (storeValue && !this.excludeValues && !this.seenHandles.has(token._store.id)) {
+                    this.seenHandles.add(token._store.id);
+                    return this._combineDescriptionAndValue(token, description, storeValue);
+                }
+                return description;
+            }
+        }
+    }
+    _combineDescriptionAndValue(token, description, storeValue) {
+        if (description === storeValue) {
+            return description;
+        }
+        return `${description} (${storeValue})`;
+    }
+    async _slotTokenToString(token) {
+        switch (token.extra) {
+            case '_empty_':
+                // TODO: also return false, if the consuming particles generate an empty description.
+                return token._providedSlotConn.consumeConnections.length === 0;
+            default:
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!token.extra, `Unrecognized slot extra ${token.extra}`);
+        }
+        const results = (await Promise.all(token._providedSlotConn.consumeConnections.map(async (consumeConn) => {
+            const particle = consumeConn.particle;
+            const particleDescription = this.particleDescriptions.find(desc => desc._particle === particle);
+            this.seenParticles.add(particle);
+            return this.patternToSuggestion(particle.spec.pattern, particleDescription);
+        })));
+        return this._joinDescriptions(results);
+    }
+    async _propertyTokenToString(handleName, store, properties) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!store.type.isCollection && !store.type.isBigCollection, `Cannot return property ${properties.join(',')} for Collection or BigCollection`);
+        // Use singleton value's property (eg. "09/15" for person's birthday)
+        const valueVar = await store.get();
+        if (valueVar) {
+            let value = valueVar.rawData;
+            properties.forEach(p => {
+                if (value) {
+                    value = value[p];
+                }
+            });
+            if (value) {
+                return this._formatEntityProperty(handleName, properties, value);
+            }
+        }
+    }
+    _formatEntityProperty(handleName, properties, value) {
+        return value;
+    }
+    async _formatStoreValue(handleName, store) {
+        if (!store) {
+            return;
+        }
+        if (store.type.isCollection) {
+            const values = await store.toList();
+            if (values && values.length > 0) {
+                return this._formatCollection(handleName, values);
+            }
+        }
+        else if (store.type.isBigCollection) {
+            const cursorId = await store.stream(1);
+            const { value, done } = await store.cursorNext(cursorId);
+            store.cursorClose(cursorId);
+            if (!done && value[0].rawData.name) {
+                return await this._formatBigCollection(handleName, value[0]);
+            }
+        }
+        else {
+            const value = await store.get();
+            if (value) {
+                return this._formatSingleton(handleName, value, store.type.data.description.value);
+            }
+        }
+    }
+    _formatCollection(handleName, values) {
+        if (values[0].rawData.name) {
+            if (values.length > 2) {
+                return `${values[0].rawData.name} plus ${values.length - 1} other items`;
+            }
+            return values.map(v => v.rawData.name).join(', ');
+        }
+        else {
+            return `${values.length} items`;
+        }
+    }
+    // TODO(mmandlis): the override of this function in subclasses also overrides the output. We'll need to unify
+    // this into an output type hierarchy before we can assign a useful type to the output of this function.
+    // tslint:disable-next-line: no-any 
+    _formatBigCollection(handleName, firstValue) {
+        return `collection of items like ${firstValue.rawData.name}`;
+    }
+    _formatSingleton(handleName, value, handleDescription) {
+        if (handleDescription) {
+            let valueDescription = handleDescription;
+            let matches;
+            while (matches = valueDescription.match(/\${([a-zA-Z0-9.]+)}/)) {
+                valueDescription = valueDescription.replace(matches[0], value.rawData[matches[1]]);
+            }
+            return valueDescription;
+        }
+        if (value.rawData.name) {
+            return value.rawData.name;
+        }
+    }
+    async _formatDescription(handleConnection, store) {
+        return (await this._formatDescriptionPattern(handleConnection)) ||
+            this._formatStoreDescription(handleConnection, store) ||
+            this._formatHandleType(handleConnection);
+    }
+    async _formatDescriptionPattern(handleConnection) {
+        let chosenConnection = handleConnection;
+        // For "out" connection, use its own description
+        // For "in" connection, use description of the highest ranked out connection with description.
+        if (!chosenConnection.spec.isOutput) {
+            const otherConnection = this._selectHandleConnection(handleConnection.handle);
+            if (otherConnection) {
+                chosenConnection = otherConnection;
+            }
+        }
+        const chosenParticleDescription = this.particleDescriptions.find(desc => desc._particle === chosenConnection.particle);
+        const handleDescription = chosenParticleDescription ? chosenParticleDescription._connections[chosenConnection.name] : null;
+        // Add description to result array.
+        if (handleDescription) {
+            // Add the connection spec's description pattern.
+            return await this.patternToSuggestion(handleDescription.pattern, chosenParticleDescription);
+        }
+        return undefined;
+    }
+    _formatStoreDescription(handleConn, store) {
+        if (store) {
+            const storeDescription = this.arc.getStoreDescription(store);
+            const handleType = this._formatHandleType(handleConn);
+            // Use the handle description available in the arc (if it is different than type name).
+            if (!!storeDescription && storeDescription !== handleType) {
+                return storeDescription;
+            }
+        }
+    }
+    _formatHandleType(handleConnection) {
+        const type = handleConnection.handle && handleConnection.handle.type.isResolved() ? handleConnection.handle.type : handleConnection.type;
+        return type.toPrettyString().toLowerCase();
+    }
+    _selectHandleConnection(recipeHandle) {
+        const possibleConnections = recipeHandle.connections.filter(connection => {
+            // Choose connections with patterns (manifest-based or dynamic).
+            const connectionSpec = connection.spec;
+            const particleDescription = this.particleDescriptions.find(desc => desc._particle === connection.particle);
+            return !!connectionSpec.pattern || !!particleDescription._connections[connection.name];
+        });
+        possibleConnections.sort((c1, c2) => {
+            const isOutput1 = c1.spec.isOutput;
+            const isOutput2 = c2.spec.isOutput;
+            if (isOutput1 !== isOutput2) {
+                // Prefer output connections
+                return isOutput1 ? -1 : 1;
+            }
+            const d1 = this.particleDescriptions.find(desc => desc._particle === c1.particle);
+            const d2 = this.particleDescriptions.find(desc => desc._particle === c2.particle);
+            // Sort by particle's rank in descending order.
+            return d2._rank - d1._rank;
+        });
+        if (possibleConnections.length > 0) {
+            return possibleConnections[0];
+        }
+    }
+    static sort(p1, p2) {
+        const isRoot = (slotSpec) => slotSpec.name === 'root' || slotSpec.tags.includes('root');
+        // Root slot comes first.
+        const hasRoot1 = Boolean([...p1._particle.spec.slots.values()].find(slotSpec => isRoot(slotSpec)));
+        const hasRoot2 = Boolean([...p2._particle.spec.slots.values()].find(slotSpec => isRoot(slotSpec)));
+        if (hasRoot1 !== hasRoot2) {
+            return hasRoot1 ? -1 : 1;
+        }
+        // Sort by rank
+        if (p1._rank !== p2._rank) {
+            return p2._rank - p1._rank;
+        }
+        // Sort by number of singleton slots.
+        let p1Slots = 0;
+        let p2Slots = 0;
+        p1._particle.spec.slots.forEach((slotSpec) => { if (!slotSpec.isSet)
+            ++p1Slots; });
+        p2._particle.spec.slots.forEach((slotSpec) => { if (!slotSpec.isSet)
+            ++p2Slots; });
+        return p2Slots - p1Slots;
+    }
+}
+//# sourceMappingURL=description.js.map
 
 /***/ }),
 
@@ -80368,7 +80305,7 @@ class Relevance {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Runtime", function() { return Runtime; });
-/* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../description.js */ "./runtime/description.js");
+/* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./description.js */ "./runtime/ts-build/description.js");
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./manifest.js */ "./runtime/ts-build/manifest.js");
 /**
  * @license
