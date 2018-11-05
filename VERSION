@@ -1,5 +1,7 @@
-commit f6a6e0a497652c033d5219e9cdb6605d385739d7
+commit 3d08fae43645f89866e0ac3be4019b42c9107a80
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Nov 5 16:20:48 2018 +1100
+Date:   Mon Nov 5 16:51:13 2018 +1100
 
-    Handle test side effects in the test code, not prod (#2177)
+    DevTools PEC log: handle stack frames in tests (#2181)
+    
+    This also adds better handling of frames without function names in the prod version
