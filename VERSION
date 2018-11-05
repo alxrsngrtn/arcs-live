@@ -1,8 +1,9 @@
-commit 7278094ea01a5a81cef4da4796e99325411d636d
+commit f559533f196517de3fef26826bd95aea34bc5238
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Sun Nov 4 22:15:52 2018 -0800
+Date:   Mon Nov 5 12:17:33 2018 -0800
 
-    Add support for StorageKeyBase for server directory (#2173)
+    Improve CI testing, fix and add server tests (#2182)
     
-    - allows for consistent storage or suggestions and other data
-    - also catch errors in planificator that were being ignored
+    - Enable cached builds for travis which removes the slow npm install step
+    - Use --prefix=server syntax in Docker/travis
+    - Add missing images config to store completed builds for cloudbuild
