@@ -51158,3 +51158,4 @@ ShellPlanningInterface.USER_ID_CLETUS = '-LMtek9LSN6eSMg97nXV';
 ShellPlanningInterface.USER_ID_BERNI = '-LMtek9Mdy1iAc3MAkNw';
 
 export { Runtime, ShellPlanningInterface };
+//# sourceMappingURL=index.es.js.map

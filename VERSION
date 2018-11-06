@@ -1,8 +1,5 @@
-commit df68ca864c78c7115bc65218b489f15bb3da105d
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Tue Nov 6 01:21:11 2018 -0800
+commit e3f0def3b0b4d5a72f5456127da0f6ddd19f49d0
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Nov 6 12:09:02 2018 -0800
 
-    Arcs personal cloud (#2161)
-    
-    * Added support for ingress prefix mapping, multi-node gcp disk mounting
-    * Address reviewer commits, fix some deployment scripts
+    generate rollup source maps (#2172)
