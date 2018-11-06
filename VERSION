@@ -1,7 +1,9 @@
-commit 1bc3d5bfe2999ec449cbfbe2e8d9d298e07a0c6d
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Nov 5 15:41:36 2018 -0800
+commit e12efa028a9d6a84ce488a1926aa1c6ca8381dc1
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Nov 5 16:28:53 2018 -0800
 
-    Planificator fixes for Pouchdb (#2187)
+    Pipe plan fix (#2188)
     
-    - Also add more typescript types
+    * only poke planificator if it exists (legacy mode)
+    
+    * only poke planificator if it exists (legacy mode)
