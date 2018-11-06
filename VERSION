@@ -1,5 +1,14 @@
-commit e3f0def3b0b4d5a72f5456127da0f6ddd19f49d0
+commit ad415a13b688ad0dbea8c7c9d2d9c9cc21cb9146
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Nov 6 12:09:02 2018 -0800
+Date:   Tue Nov 6 12:09:19 2018 -0800
 
-    generate rollup source maps (#2172)
+    Updated outdated dependencies (#2194)
+    
+    - firebase to 5.5.7
+    - typescript to 3.1.6
+    - rollup to 0.67.0
+    - webpack to 4.25.1
+    - @types/node to 10.12.2
+    - @types/chai to 4.1.7
+    - ts-loader to 5.3.0
+    - @vaadin/vaadin-grid to 5.2.2
