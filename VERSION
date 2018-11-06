@@ -1,14 +1,5 @@
-commit ad415a13b688ad0dbea8c7c9d2d9c9cc21cb9146
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Nov 6 12:09:19 2018 -0800
+commit 8fb8f4805232fa33676889b4f6968bc75d6de490
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Nov 6 13:07:25 2018 -0800
 
-    Updated outdated dependencies (#2194)
-    
-    - firebase to 5.5.7
-    - typescript to 3.1.6
-    - rollup to 0.67.0
-    - webpack to 4.25.1
-    - @types/node to 10.12.2
-    - @types/chai to 4.1.7
-    - ts-loader to 5.3.0
-    - @vaadin/vaadin-grid to 5.2.2
+    shadow-dom compatibility, general wdio wrestling (#2189)
