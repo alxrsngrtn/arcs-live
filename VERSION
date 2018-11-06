@@ -1,9 +1,5 @@
-commit e12efa028a9d6a84ce488a1926aa1c6ca8381dc1
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Nov 5 16:28:53 2018 -0800
+commit 0a6d5cafad1b5428ebd2073187afbfc95f4ea8ac
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Nov 6 16:02:54 2018 +1100
 
-    Pipe plan fix (#2188)
-    
-    * only poke planificator if it exists (legacy mode)
-    
-    * only poke planificator if it exists (legacy mode)
+    Cache sourcemaps (#2192)
