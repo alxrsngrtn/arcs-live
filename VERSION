@@ -1,5 +1,7 @@
-commit 8fb8f4805232fa33676889b4f6968bc75d6de490
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Nov 6 13:07:25 2018 -0800
+commit 381e11c20bdf938e38f7ae211def8dfd35db74ca
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Nov 6 15:42:06 2018 -0800
 
-    shadow-dom compatibility, general wdio wrestling (#2189)
+    Add cache support for npm (#2196)
+    
+    - Details: https://docs.travis-ci.com/user/caching
