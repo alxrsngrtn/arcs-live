@@ -104,6 +104,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="webcryptosessionkey.html#decrypt" class="tsd-kind-icon">decrypt</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="webcryptosessionkey.html#disposetowrappedkeyusing" class="tsd-kind-icon">dispose<wbr>ToWrapped<wbr>Key<wbr>Using</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="webcryptosessionkey.html#encrypt" class="tsd-kind-icon">encrypt</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="webcryptosessionkey.html#export" class="tsd-kind-icon">export</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="webcryptosessionkey.html#isdisposed" class="tsd-kind-icon">is<wbr>Disposed</a></li>
 							</ul>
 						</section>
@@ -122,7 +123,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0a6d5ca/runtime/ts/keymgmt/webcrypto.ts#L187">keymgmt/webcrypto.ts:187</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/df68ca8/runtime/ts/keymgmt/webcrypto.ts#L187">keymgmt/webcrypto.ts:187</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -144,7 +145,7 @@
 					<div class="tsd-signature tsd-kind-icon">session<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CryptoKey</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0a6d5ca/runtime/ts/keymgmt/webcrypto.ts#L187">keymgmt/webcrypto.ts:187</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/df68ca8/runtime/ts/keymgmt/webcrypto.ts#L187">keymgmt/webcrypto.ts:187</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -162,7 +163,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/sessionkey.html">SessionKey</a>.<a href="../interfaces/sessionkey.html#algorithm">algorithm</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0a6d5ca/runtime/ts/keymgmt/webcrypto.ts#L194">keymgmt/webcrypto.ts:194</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/df68ca8/runtime/ts/keymgmt/webcrypto.ts#L208">keymgmt/webcrypto.ts:208</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -180,7 +181,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/testablekey.html">TestableKey</a>.<a href="../interfaces/testablekey.html#decrypt">decrypt</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0a6d5ca/runtime/ts/keymgmt/webcrypto.ts#L171">keymgmt/webcrypto.ts:171</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/df68ca8/runtime/ts/keymgmt/webcrypto.ts#L171">keymgmt/webcrypto.ts:171</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -207,7 +208,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/sessionkey.html">SessionKey</a>.<a href="../interfaces/sessionkey.html#disposetowrappedkeyusing">disposeToWrappedKeyUsing</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0a6d5ca/runtime/ts/keymgmt/webcrypto.ts#L203">keymgmt/webcrypto.ts:203</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/df68ca8/runtime/ts/keymgmt/webcrypto.ts#L217">keymgmt/webcrypto.ts:217</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -239,7 +240,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/testablekey.html">TestableKey</a>.<a href="../interfaces/testablekey.html#encrypt">encrypt</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0a6d5ca/runtime/ts/keymgmt/webcrypto.ts#L179">keymgmt/webcrypto.ts:179</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/df68ca8/runtime/ts/keymgmt/webcrypto.ts#L179">keymgmt/webcrypto.ts:179</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -256,6 +257,30 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="export" class="tsd-anchor"></a>
+					<h3>export</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">export<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">PromiseLike</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/df68ca8/runtime/ts/keymgmt/webcrypto.ts#L199">keymgmt/webcrypto.ts:199</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This encodes the session key as a hexadecimal string.
+										TODO: this is a temporary hack for the provisioning App&#39;s QR-scanning procedure which will be
+									removed once the the key-blessing algorithm is implemented.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">PromiseLike</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 					<a name="isdisposed" class="tsd-anchor"></a>
 					<h3>is<wbr>Disposed</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
@@ -266,7 +291,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/sessionkey.html">SessionKey</a>.<a href="../interfaces/sessionkey.html#isdisposed">isDisposed</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0a6d5ca/runtime/ts/keymgmt/webcrypto.ts#L221">keymgmt/webcrypto.ts:221</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/df68ca8/runtime/ts/keymgmt/webcrypto.ts#L235">keymgmt/webcrypto.ts:235</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -307,6 +332,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="webcryptosessionkey.html#encrypt" class="tsd-kind-icon">encrypt</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="webcryptosessionkey.html#export" class="tsd-kind-icon">export</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="webcryptosessionkey.html#isdisposed" class="tsd-kind-icon">is<wbr>Disposed</a>

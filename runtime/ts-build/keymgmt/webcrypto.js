@@ -139,6 +139,19 @@ class WebCryptoSessionKey {
     constructor(sessionKey) {
         this.sessionKey = sessionKey;
     }
+    /**
+     * This encodes the session key as a hexadecimal string.
+     * TODO: this is a temporary hack for the provisioning App's QR-scanning procedure which will be
+     * removed once the the key-blessing algorithm is implemented.
+     */
+    export() {
+        return crypto.subtle.exportKey("raw", this.sessionKey).then((raw) => {
+            const buf = new Uint8Array(raw);
+            let res = "";
+            buf.forEach((x) => res += (x < 16 ? '0' : '') + x.toString(16));
+            return res;
+        });
+    }
     algorithm() {
         return this.sessionKey.algorithm.name;
     }
@@ -258,7 +271,6 @@ export class WebCryptoKeyIndexedDBStorage {
         if (!result) {
             return Promise.resolve(null);
         }
-        // CryptoKeyPair in WebIDL is an interface, not a ctor so use structural check
         if (result.key && result.key['privateKey'] && result.key['publicKey']) {
             return Promise.resolve(new WebCryptoDeviceKey(result.key));
         }
