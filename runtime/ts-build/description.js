@@ -114,7 +114,7 @@ export class DescriptionFormatter {
             pDesc._rank = relevance.calcParticleRelevance(particle);
         }
         const descByName = await this._getPatternByNameFromDescriptionHandle(particle) || {};
-        pDesc = Object.assign(pDesc, this._populateParticleDescription(particle, descByName));
+        pDesc = Object.assign({}, pDesc, this._populateParticleDescription(particle, descByName));
         Object.values(particle.connections).forEach(handleConn => {
             const specConn = particle.spec.connectionMap.get(handleConn.name);
             const pattern = descByName[handleConn.name] || specConn.pattern;

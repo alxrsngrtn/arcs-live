@@ -1,5 +1,5 @@
-commit adb362c074ac060efda6fc694a52ad0df653e512
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Nov 7 13:15:50 2018 +1100
+commit 77b97b7b4916f7543910f61999ac8214510c1d86
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Nov 7 09:34:24 2018 -0800
 
-    Allow for non-intercepted rendering inside transformations (#2191)
+    Enable tslint support for prefer-object-spread (#2201)

@@ -19,12 +19,9 @@ export class DescriptionDomFormatter extends DescriptionFormatter {
         return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
     }
     _populateParticleDescription(particle, descriptionByName) {
-        let result = super._populateParticleDescription(particle, descriptionByName);
+        const result = super._populateParticleDescription(particle, descriptionByName);
         if (descriptionByName['_template_']) {
-            result = Object.assign(result, {
-                template: descriptionByName['_template_'],
-                model: JSON.parse(descriptionByName['_model_'])
-            });
+            return Object.assign({}, result, { template: descriptionByName['_template_'], model: JSON.parse(descriptionByName['_model_']) });
         }
         return result;
     }
@@ -48,7 +45,7 @@ export class DescriptionDomFormatter extends DescriptionFormatter {
                         // Dom token.
                         template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
                         delete model[tokenKey];
-                        model = Object.assign(model, tokenValue.model);
+                        model = Object.assign({}, model, tokenValue.model);
                     }
                     else { // Text token.
                         // Replace tokenKey, in case multiple selected suggestions use the same key.
@@ -133,10 +130,10 @@ export class DescriptionDomFormatter extends DescriptionFormatter {
         const count = descs.length;
         descs.forEach((desc, i) => {
             if (typeof desc === 'string') {
-                desc = Object.assign({}, { template: desc, model: {} });
+                desc = { template: desc, model: {} };
             }
             result.template += desc.template;
-            result.model = Object.assign(result.model, desc.model);
+            result.model = Object.assign({}, result.model, desc.model);
             let delim;
             if (i < count - 2) {
                 delim = ', ';
@@ -167,14 +164,14 @@ export class DescriptionDomFormatter extends DescriptionFormatter {
         const nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
         return {
             template: nonEmptyTokens.map(token => token.template).join(''),
-            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => Object.assign(prev, curr), {})
+            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => (Object.assign({}, prev, curr)), {})
         };
     }
     _combineDescriptionAndValue(token, description, storeValue) {
         if (!!description.template && !!description.model) {
             return {
                 template: `${description.template} (${storeValue.template})`,
-                model: Object.assign(description.model, storeValue.model)
+                model: Object.assign({}, description.model, storeValue.model)
             };
         }
         const descKey = `${token.handleName}Description${++this.nextID}`;
