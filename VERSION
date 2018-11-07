@@ -1,7 +1,5 @@
-commit 705af733d8cca6b8744e210933d358908d619c8b
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Nov 7 10:30:38 2018 -0800
+commit 8ee5a0e6b13709b6513a772c04b0e00d1f42f456
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Nov 8 08:14:42 2018 +1100
 
-    Migrate fake-pec-factory to typescript, add additional types (#2206)
-    
-    Addresses #1765
+    Handle Firebase dropping literals of empty schemas (#2205)
