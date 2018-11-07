@@ -76805,9 +76805,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Planificator {
-    constructor(arc, userid, store) {
+    constructor(arc, userid, store, onlyConsumer) {
         this.search = null;
-        this.dataChangeCallback = () => this.replanQueue.addChange();
         // In <0.6 shell, this is needed to backward compatibility, in order to (1)
         // (1) trigger replanning with a local producer and (2) notify shell of the
         // last activated plan, to allow serialization.
@@ -76815,22 +76814,28 @@ class Planificator {
         this.arcCallback = this._onPlanInstantiated.bind(this);
         this.arc = arc;
         this.userid = userid;
-        this.producer = new _plan_producer__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](arc, store);
-        this.replanQueue = new _replan_queue__WEBPACK_IMPORTED_MODULE_3__["ReplanQueue"](this.producer);
+        if (!onlyConsumer) {
+            this.producer = new _plan_producer__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](arc, store);
+            this.replanQueue = new _replan_queue__WEBPACK_IMPORTED_MODULE_3__["ReplanQueue"](this.producer);
+            this.dataChangeCallback = () => this.replanQueue.addChange();
+            this._listenToArcStores();
+        }
         this.consumer = new _plan_consumer__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](arc, store);
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
-        this._listenToArcStores();
     }
-    static async create(arc, { userid, protocol }) {
+    static async create(arc, { userid, protocol, onlyConsumer }) {
         const store = await Planificator._initStore(arc, { userid, protocol, arcKey: null });
-        const planificator = new Planificator(arc, userid, store);
+        const planificator = new Planificator(arc, userid, store, onlyConsumer);
         planificator.requestPlanning();
         return planificator;
     }
     async requestPlanning(options = {}) {
-        await this.producer.producePlans(options);
+        if (!this.consumerOnly) {
+            await this.producer.producePlans(options);
+        }
     }
+    get consumerOnly() { return !Boolean(this.producer); }
     async loadPlans() {
         return this.consumer.loadPlans();
     }
@@ -76852,8 +76857,10 @@ class Planificator {
     }
     dispose() {
         this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
-        this._unlistenToArcStores();
-        this.producer.store.dispose();
+        if (!this.consumerOnly) {
+            this._unlistenToArcStores();
+        }
+        this.consumer.store.dispose();
         this.consumer.dispose();
     }
     getLastActivatedPlan() {

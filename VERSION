@@ -1,5 +1,9 @@
-commit 933aeaffd317c7525ff9a9d613f67137c6047dc2
+commit c138587b9fb336fa8decc28817b67dead2723373
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Nov 7 10:05:20 2018 -0800
+Date:   Wed Nov 7 10:29:41 2018 -0800
 
-    clean up some TODOs description (post ts conversion) (#2197)
+    planificator with no producer (#2195)
+    
+    * planificator with no producer
+    
+    * address comment
