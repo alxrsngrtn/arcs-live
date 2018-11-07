@@ -66070,7 +66070,7 @@ function enableTracingAdapter(devtoolsChannel) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./particle.js */ "./runtime/particle.js");
+/* harmony import */ var _ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/particle.js */ "./runtime/ts-build/particle.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -66088,7 +66088,7 @@ __webpack_require__.r(__webpack_exports__);
 /** @class DomParticleBase
  * Particle that interoperates with DOM.
  */
-class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"] {
+class DomParticleBase extends _ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"] {
   constructor() {
     super();
   }
@@ -66699,190 +66699,6 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
   // created and contents are rendered.
   getListEntries(list) {
     return list.entries();
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/particle.js":
-/*!*****************************!*\
-  !*** ./runtime/particle.js ***!
-  \*****************************/
-/*! exports provided: Particle */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Particle", function() { return Particle; });
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-/** @class Particle
- * A basic particle. For particles that provide UI, you may like to
- * instead use DOMParticle.
- */
-class Particle {
-  constructor(capabilities) {
-    this.spec = this.constructor.spec;
-    if (this.spec.inputs.length == 0) {
-      this.extraData = true;
-    }
-    this.relevances = [];
-    this._idle = Promise.resolve();
-    this._busy = 0;
-    this._slotByName = new Map();
-    this.capabilities = capabilities || {};
-  }
-
-  /** @method setHandles(handles)
-   * This method is invoked with a handle for each store this particle
-   * is registered to interact with, once those handles are ready for
-   * interaction. Override the method to register for events from
-   * the handles.
-   *
-   * Handles is a map from handle names to store handles.
-   */
-  setHandles(handles) {
-  }
-  
-  /** @method setViews(views)
-   * This method is deprecated. Use setHandles instead.
-   */
-  setViews(views) {
-  }
-
-  /** @method onHandleSync(handle, model)
-   * Called for handles that are configured with both keepSynced and notifySync, when they are
-   * updated with the full model of their data. This will occur once after setHandles() and any time
-   * thereafter if the handle is resynchronized.
-   *
-   * handle: The Handle instance that was updated.
-   * model: For Variable-backed Handles, the Entity data or null if the Variable is not set.
-   *        For Collection-backed Handles, the Array of Entities, which may be empty.
-   */
-  onHandleSync(handle, model) {
-  }
-
-  /** @method onHandleUpdate(handle, update)
-   * Called for handles that are configued with notifyUpdate, when change events are received from
-   * the backing store. For handles also configured with keepSynced these events will be correctly
-   * ordered, with some potential skips if a desync occurs. For handles not configured with
-   * keepSynced, all change events will be passed through as they are received.
-   *
-   * handle: The Handle instance that was updated.
-   * update: An object containing one of the following fields:
-   *    data: The full Entity for a Variable-backed Handle.
-   *    added: An Array of Entities added to a Collection-backed Handle.
-   *    removed: An Array of Entities removed from a Collection-backed Handle.
-   */
-  onHandleUpdate(handle, update) {
-  }
-
-  /** @method onHandleDesync(handle)
-   * Called for handles that are configured with both keepSynced and notifyDesync, when they are
-   * detected as being out-of-date against the backing store. For Variables, the event that triggers
-   * this will also resync the data and thus this call may usually be ignored. For Collections, the
-   * underlying proxy will automatically request a full copy of the stored data to resynchronize.
-   * onHandleSync will be invoked when that is received.
-   *
-   * handle: The Handle instance that was desynchronized.
-   */
-  onHandleDesync(handle) {
-  }
-
-  constructInnerArc() {
-    if (!this.capabilities.constructInnerArc) {
-      throw new Error('This particle is not allowed to construct inner arcs');
-    }
-    return this.capabilities.constructInnerArc(this);
-  }
-
-  get busy() {
-    return this._busy > 0;
-  }
-
-  get idle() {
-    return this._idle;
-  }
-
-  set relevance(r) {
-    this.relevances.push(r);
-  }
-
-  startBusy() {
-    if (this._busy == 0) {
-      this._idle = new Promise(resolve => this._idleResolver = resolve);
-    }
-    this._busy++;
-  }
-  
-  doneBusy() {
-    this._busy--;
-    if (this._busy == 0) {
-      this._idleResolver();
-    }
-  }
-
-  inputs() {
-    return this.spec.inputs;
-  }
-
-  outputs() {
-    return this.spec.outputs;
-  }
-
-  /** @method getSlot(name)
-   * Returns the slot with provided name.
-   */
-  getSlot(name) {
-    return this._slotByName.get(name);
-  }
-
-  static buildManifest(strings, ...bits) {
-    const output = [];
-    for (let i = 0; i < bits.length; i++) {
-        const str = strings[i];
-        const indent = / *$/.exec(str)[0];
-        let bitStr;
-        if (typeof bits[i] == 'string') {
-          bitStr = bits[i];
-        } else {
-          bitStr = bits[i].toManifestString();
-        }
-        bitStr = bitStr.replace(/(\n)/g, '$1' + indent);
-        output.push(str);
-        output.push(bitStr);
-    }
-    if (strings.length > bits.length) {
-      output.push(strings[strings.length - 1]);
-    }
-    return output.join('');
-  }
-
-  setParticleDescription(pattern) {
-    return this.setDescriptionPattern('pattern', pattern);
-  }
-  setDescriptionPattern(connectionName, pattern) {
-    const descriptions = this.handles.get('descriptions');
-    if (descriptions) {
-      descriptions.store(new descriptions.entityClass({key: connectionName, value: pattern}, this.spec.name + '-' + connectionName));
-      return true;
-    }
-    throw new Error('A particle needs a description handle to set a decription pattern');
   }
 }
 
@@ -73297,6 +73113,7 @@ function restore(entry, entityClass) {
  * Base class for Collections and Variables.
  */
 class Handle {
+    // TODO type particleId, marked as string, but called with number
     constructor(proxy, name, particleId, canRead, canWrite) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(!(proxy instanceof Handle));
         this._proxy = proxy;
@@ -73351,6 +73168,9 @@ class Handle {
     }
     get _id() {
         return this._proxy._id;
+    }
+    async store(entity) {
+        throw new Error('unimplemented');
     }
     toManifestString() {
         return `'${this._id}'`;
@@ -74429,7 +74249,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/vm-web.js */ "./platform/vm-web.js");
 /* harmony import */ var _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../fetch-web.js */ "./runtime/fetch-web.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../particle.js */ "./runtime/particle.js");
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./particle.js */ "./runtime/ts-build/particle.js");
 /* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../dom-particle.js */ "./runtime/dom-particle.js");
 /* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../multiplexer-dom-particle.js */ "./runtime/multiplexer-dom-particle.js");
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./reference.js */ "./runtime/ts-build/reference.js");
@@ -76519,6 +76339,176 @@ class ParticleSpec {
     }
 }
 //# sourceMappingURL=particle-spec.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/particle.js":
+/*!**************************************!*\
+  !*** ./runtime/ts-build/particle.js ***!
+  \**************************************/
+/*! exports provided: Particle */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Particle", function() { return Particle; });
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/** @class Particle
+ * A basic particle. For particles that provide UI, you may like to
+ * instead use DOMParticle.
+ */
+class Particle {
+    constructor(capabilities) {
+        this.relevances = [];
+        this._idle = Promise.resolve();
+        this._busy = 0;
+        // Only used by a Slotlet class in particle-execution-context
+        // tslint:disable-next-line: no-any
+        this._slotByName = new Map();
+        // Typescript only sees this.constructor as a Function type.
+        // TODO(shans): move spec off the constructor
+        this.spec = this.constructor['spec'];
+        if (this.spec.inputs.length === 0) {
+            this.extraData = true;
+        }
+        this.capabilities = capabilities || {};
+    }
+    /** @method setHandles(handles)
+     * This method is invoked with a handle for each store this particle
+     * is registered to interact with, once those handles are ready for
+     * interaction. Override the method to register for events from
+     * the handles.
+     *
+     * Handles is a map from handle names to store handles.
+     */
+    setHandles(handles) {
+    }
+    /**
+     * This method is deprecated. Use setHandles instead.
+     */
+    setViews(views) {
+    }
+    /**
+     * Called for handles that are configured with both keepSynced and notifySync, when they are
+     * updated with the full model of their data. This will occur once after setHandles() and any time
+     * thereafter if the handle is resynchronized.
+     *
+     * @param handle The Handle instance that was updated.
+     * @param model For Variable-backed Handles, the Entity data or null if the Variable is not set.
+     *        For Collection-backed Handles, the Array of Entities, which may be empty.
+     */
+    onHandleSync(handle, model) {
+    }
+    /**
+     * Called for handles that are configued with notifyUpdate, when change events are received from
+     * the backing store. For handles also configured with keepSynced these events will be correctly
+     * ordered, with some potential skips if a desync occurs. For handles not configured with
+     * keepSynced, all change events will be passed through as they are received.
+     *
+     * @param handle The Handle instance that was updated.
+     * @param update An object containing one of the following fields:
+     *  - data: The full Entity for a Variable-backed Handle.
+     *  - added: An Array of Entities added to a Collection-backed Handle.
+     *  - removed: An Array of Entities removed from a Collection-backed Handle.
+     */
+    // tslint:disable-next-line: no-any
+    onHandleUpdate(handle, update) {
+    }
+    /**
+     * Called for handles that are configured with both keepSynced and notifyDesync, when they are
+     * detected as being out-of-date against the backing store. For Variables, the event that triggers
+     * this will also resync the data and thus this call may usually be ignored. For Collections, the
+     * underlying proxy will automatically request a full copy of the stored data to resynchronize.
+     * onHandleSync will be invoked when that is received.
+     *
+     * @param handle The Handle instance that was desynchronized.
+     */
+    onHandleDesync(handle) {
+    }
+    constructInnerArc() {
+        if (!this.capabilities.constructInnerArc) {
+            throw new Error('This particle is not allowed to construct inner arcs');
+        }
+        return this.capabilities.constructInnerArc(this);
+    }
+    get busy() {
+        return this._busy > 0;
+    }
+    get idle() {
+        return this._idle;
+    }
+    set relevance(r) {
+        this.relevances.push(r);
+    }
+    startBusy() {
+        if (this._busy === 0) {
+            this._idle = new Promise(resolve => this._idleResolver = resolve);
+        }
+        this._busy++;
+    }
+    doneBusy() {
+        this._busy--;
+        if (this._busy === 0) {
+            this._idleResolver();
+        }
+    }
+    inputs() {
+        return this.spec.inputs;
+    }
+    outputs() {
+        return this.spec.outputs;
+    }
+    /** @method getSlot(name)
+     * Returns the slot with provided name.
+     */
+    getSlot(name) {
+        return this._slotByName.get(name);
+    }
+    static buildManifest(strings, ...bits) {
+        const output = [];
+        for (let i = 0; i < bits.length; i++) {
+            const str = strings[i];
+            const indent = / *$/.exec(str)[0];
+            let bitStr;
+            if (typeof bits[i] === 'string') {
+                bitStr = bits[i];
+            }
+            else {
+                bitStr = bits[i].toManifestString();
+            }
+            bitStr = bitStr.replace(/(\n)/g, '$1' + indent);
+            output.push(str);
+            output.push(bitStr);
+        }
+        if (strings.length > bits.length) {
+            output.push(strings[strings.length - 1]);
+        }
+        return output.join('');
+    }
+    setParticleDescription(pattern) {
+        return this.setDescriptionPattern('pattern', pattern);
+    }
+    setDescriptionPattern(connectionName, pattern) {
+        const descriptions = this.handles.get('descriptions');
+        if (descriptions) {
+            // Typescript can't infer the type here and fails with TS2351
+            // tslint:disable-next-line: no-any
+            const entityClass = descriptions.entityClass;
+            descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
+            return true;
+        }
+        throw new Error('A particle needs a description handle to set a decription pattern');
+    }
+}
+//# sourceMappingURL=particle.js.map
 
 /***/ }),
 
@@ -87053,7 +87043,7 @@ window.Arcs = window.Arcs ? Object.assign(window.Arcs, Arcs) : Arcs;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrowserLoader", function() { return BrowserLoader; });
 /* harmony import */ var _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/ts-build/loader.js */ "./runtime/ts-build/loader.js");
-/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../runtime/particle.js */ "./runtime/particle.js");
+/* harmony import */ var _runtime_ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../runtime/ts-build/particle.js */ "./runtime/ts-build/particle.js");
 /* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../runtime/dom-particle.js */ "./runtime/dom-particle.js");
 /* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../runtime/multiplexer-dom-particle.js */ "./runtime/multiplexer-dom-particle.js");
 /* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../runtime/transformation-dom-particle.js */ "./runtime/transformation-dom-particle.js");
@@ -87143,7 +87133,7 @@ class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE
     // TODO(sjmiles): hack to plumb `fetch` into Particle space under node
     const _fetch = BrowserLoader.fetch || fetch;
     return particleWrapper({
-      Particle: _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
+      Particle: _runtime_ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
       DomParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
       MultiplexerDomParticle: _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__["MultiplexerDomParticle"],
       SimpleParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],

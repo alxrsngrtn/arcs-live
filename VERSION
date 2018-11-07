@@ -1,5 +1,7 @@
-commit 1079c00c2c6bb29f1ef8a7b66c301ff3ef569855
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Nov 8 09:09:45 2018 +1100
+commit 539c8bd076f6dbb3f3a7ff0685f87ddcad545717
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Nov 7 15:46:10 2018 -0800
 
-    Introduces TestSlotComposer (#2202)
+    Migrate particle.js to typescript (#2208)
+    
+    Addresses #1765

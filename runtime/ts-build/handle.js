@@ -29,6 +29,7 @@ function restore(entry, entityClass) {
  * Base class for Collections and Variables.
  */
 export class Handle {
+    // TODO type particleId, marked as string, but called with number
     constructor(proxy, name, particleId, canRead, canWrite) {
         assert(!(proxy instanceof Handle));
         this._proxy = proxy;
@@ -83,6 +84,9 @@ export class Handle {
     }
     get _id() {
         return this._proxy._id;
+    }
+    async store(entity) {
+        throw new Error('unimplemented');
     }
     toManifestString() {
         return `'${this._id}'`;

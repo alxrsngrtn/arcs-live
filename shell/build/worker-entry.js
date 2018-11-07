@@ -134,201 +134,6 @@ class DevtoolsBroker {
 
 /***/ }),
 
-/***/ "./node_modules/process/browser.js":
-/*!*****************************************!*\
-  !*** ./node_modules/process/browser.js ***!
-  \*****************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-
 /***/ "./node_modules/sourcemapped-stacktrace/node_modules/source-map/lib/array-set.js":
 /*!***************************************************************************************!*\
   !*** ./node_modules/sourcemapped-stacktrace/node_modules/source-map/lib/array-set.js ***!
@@ -3728,7 +3533,7 @@ class DevtoolsChannelStub {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./particle.js */ "./runtime/particle.js");
+/* harmony import */ var _ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/particle.js */ "./runtime/ts-build/particle.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3746,7 +3551,7 @@ __webpack_require__.r(__webpack_exports__);
 /** @class DomParticleBase
  * Particle that interoperates with DOM.
  */
-class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"] {
+class DomParticleBase extends _ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"] {
   constructor() {
     super();
   }
@@ -4357,190 +4162,6 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
   // created and contents are rendered.
   getListEntries(list) {
     return list.entries();
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/particle.js":
-/*!*****************************!*\
-  !*** ./runtime/particle.js ***!
-  \*****************************/
-/*! exports provided: Particle */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Particle", function() { return Particle; });
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-/** @class Particle
- * A basic particle. For particles that provide UI, you may like to
- * instead use DOMParticle.
- */
-class Particle {
-  constructor(capabilities) {
-    this.spec = this.constructor.spec;
-    if (this.spec.inputs.length == 0) {
-      this.extraData = true;
-    }
-    this.relevances = [];
-    this._idle = Promise.resolve();
-    this._busy = 0;
-    this._slotByName = new Map();
-    this.capabilities = capabilities || {};
-  }
-
-  /** @method setHandles(handles)
-   * This method is invoked with a handle for each store this particle
-   * is registered to interact with, once those handles are ready for
-   * interaction. Override the method to register for events from
-   * the handles.
-   *
-   * Handles is a map from handle names to store handles.
-   */
-  setHandles(handles) {
-  }
-  
-  /** @method setViews(views)
-   * This method is deprecated. Use setHandles instead.
-   */
-  setViews(views) {
-  }
-
-  /** @method onHandleSync(handle, model)
-   * Called for handles that are configured with both keepSynced and notifySync, when they are
-   * updated with the full model of their data. This will occur once after setHandles() and any time
-   * thereafter if the handle is resynchronized.
-   *
-   * handle: The Handle instance that was updated.
-   * model: For Variable-backed Handles, the Entity data or null if the Variable is not set.
-   *        For Collection-backed Handles, the Array of Entities, which may be empty.
-   */
-  onHandleSync(handle, model) {
-  }
-
-  /** @method onHandleUpdate(handle, update)
-   * Called for handles that are configued with notifyUpdate, when change events are received from
-   * the backing store. For handles also configured with keepSynced these events will be correctly
-   * ordered, with some potential skips if a desync occurs. For handles not configured with
-   * keepSynced, all change events will be passed through as they are received.
-   *
-   * handle: The Handle instance that was updated.
-   * update: An object containing one of the following fields:
-   *    data: The full Entity for a Variable-backed Handle.
-   *    added: An Array of Entities added to a Collection-backed Handle.
-   *    removed: An Array of Entities removed from a Collection-backed Handle.
-   */
-  onHandleUpdate(handle, update) {
-  }
-
-  /** @method onHandleDesync(handle)
-   * Called for handles that are configured with both keepSynced and notifyDesync, when they are
-   * detected as being out-of-date against the backing store. For Variables, the event that triggers
-   * this will also resync the data and thus this call may usually be ignored. For Collections, the
-   * underlying proxy will automatically request a full copy of the stored data to resynchronize.
-   * onHandleSync will be invoked when that is received.
-   *
-   * handle: The Handle instance that was desynchronized.
-   */
-  onHandleDesync(handle) {
-  }
-
-  constructInnerArc() {
-    if (!this.capabilities.constructInnerArc) {
-      throw new Error('This particle is not allowed to construct inner arcs');
-    }
-    return this.capabilities.constructInnerArc(this);
-  }
-
-  get busy() {
-    return this._busy > 0;
-  }
-
-  get idle() {
-    return this._idle;
-  }
-
-  set relevance(r) {
-    this.relevances.push(r);
-  }
-
-  startBusy() {
-    if (this._busy == 0) {
-      this._idle = new Promise(resolve => this._idleResolver = resolve);
-    }
-    this._busy++;
-  }
-  
-  doneBusy() {
-    this._busy--;
-    if (this._busy == 0) {
-      this._idleResolver();
-    }
-  }
-
-  inputs() {
-    return this.spec.inputs;
-  }
-
-  outputs() {
-    return this.spec.outputs;
-  }
-
-  /** @method getSlot(name)
-   * Returns the slot with provided name.
-   */
-  getSlot(name) {
-    return this._slotByName.get(name);
-  }
-
-  static buildManifest(strings, ...bits) {
-    const output = [];
-    for (let i = 0; i < bits.length; i++) {
-        const str = strings[i];
-        const indent = / *$/.exec(str)[0];
-        let bitStr;
-        if (typeof bits[i] == 'string') {
-          bitStr = bits[i];
-        } else {
-          bitStr = bits[i].toManifestString();
-        }
-        bitStr = bitStr.replace(/(\n)/g, '$1' + indent);
-        output.push(str);
-        output.push(bitStr);
-    }
-    if (strings.length > bits.length) {
-      output.push(strings[strings.length - 1]);
-    }
-    return output.join('');
-  }
-
-  setParticleDescription(pattern) {
-    return this.setDescriptionPattern('pattern', pattern);
-  }
-  setDescriptionPattern(connectionName, pattern) {
-    const descriptions = this.handles.get('descriptions');
-    if (descriptions) {
-      descriptions.store(new descriptions.entityClass({key: connectionName, value: pattern}, this.spec.name + '-' + connectionName));
-      return true;
-    }
-    throw new Error('A particle needs a description handle to set a decription pattern');
   }
 }
 
@@ -5458,6 +5079,7 @@ function restore(entry, entityClass) {
  * Base class for Collections and Variables.
  */
 class Handle {
+    // TODO type particleId, marked as string, but called with number
     constructor(proxy, name, particleId, canRead, canWrite) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(!(proxy instanceof Handle));
         this._proxy = proxy;
@@ -5512,6 +5134,9 @@ class Handle {
     }
     get _id() {
         return this._proxy._id;
+    }
+    async store(entity) {
+        throw new Error('unimplemented');
     }
     toManifestString() {
         return `'${this._id}'`;
@@ -5840,7 +5465,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/vm-web.js */ "./platform/vm-web.js");
 /* harmony import */ var _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../fetch-web.js */ "./runtime/fetch-web.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../particle.js */ "./runtime/particle.js");
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./particle.js */ "./runtime/ts-build/particle.js");
 /* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../dom-particle.js */ "./runtime/dom-particle.js");
 /* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../multiplexer-dom-particle.js */ "./runtime/multiplexer-dom-particle.js");
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./reference.js */ "./runtime/ts-build/reference.js");
@@ -6481,6 +6106,176 @@ class ParticleSpec {
     }
 }
 //# sourceMappingURL=particle-spec.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/particle.js":
+/*!**************************************!*\
+  !*** ./runtime/ts-build/particle.js ***!
+  \**************************************/
+/*! exports provided: Particle */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Particle", function() { return Particle; });
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/** @class Particle
+ * A basic particle. For particles that provide UI, you may like to
+ * instead use DOMParticle.
+ */
+class Particle {
+    constructor(capabilities) {
+        this.relevances = [];
+        this._idle = Promise.resolve();
+        this._busy = 0;
+        // Only used by a Slotlet class in particle-execution-context
+        // tslint:disable-next-line: no-any
+        this._slotByName = new Map();
+        // Typescript only sees this.constructor as a Function type.
+        // TODO(shans): move spec off the constructor
+        this.spec = this.constructor['spec'];
+        if (this.spec.inputs.length === 0) {
+            this.extraData = true;
+        }
+        this.capabilities = capabilities || {};
+    }
+    /** @method setHandles(handles)
+     * This method is invoked with a handle for each store this particle
+     * is registered to interact with, once those handles are ready for
+     * interaction. Override the method to register for events from
+     * the handles.
+     *
+     * Handles is a map from handle names to store handles.
+     */
+    setHandles(handles) {
+    }
+    /**
+     * This method is deprecated. Use setHandles instead.
+     */
+    setViews(views) {
+    }
+    /**
+     * Called for handles that are configured with both keepSynced and notifySync, when they are
+     * updated with the full model of their data. This will occur once after setHandles() and any time
+     * thereafter if the handle is resynchronized.
+     *
+     * @param handle The Handle instance that was updated.
+     * @param model For Variable-backed Handles, the Entity data or null if the Variable is not set.
+     *        For Collection-backed Handles, the Array of Entities, which may be empty.
+     */
+    onHandleSync(handle, model) {
+    }
+    /**
+     * Called for handles that are configued with notifyUpdate, when change events are received from
+     * the backing store. For handles also configured with keepSynced these events will be correctly
+     * ordered, with some potential skips if a desync occurs. For handles not configured with
+     * keepSynced, all change events will be passed through as they are received.
+     *
+     * @param handle The Handle instance that was updated.
+     * @param update An object containing one of the following fields:
+     *  - data: The full Entity for a Variable-backed Handle.
+     *  - added: An Array of Entities added to a Collection-backed Handle.
+     *  - removed: An Array of Entities removed from a Collection-backed Handle.
+     */
+    // tslint:disable-next-line: no-any
+    onHandleUpdate(handle, update) {
+    }
+    /**
+     * Called for handles that are configured with both keepSynced and notifyDesync, when they are
+     * detected as being out-of-date against the backing store. For Variables, the event that triggers
+     * this will also resync the data and thus this call may usually be ignored. For Collections, the
+     * underlying proxy will automatically request a full copy of the stored data to resynchronize.
+     * onHandleSync will be invoked when that is received.
+     *
+     * @param handle The Handle instance that was desynchronized.
+     */
+    onHandleDesync(handle) {
+    }
+    constructInnerArc() {
+        if (!this.capabilities.constructInnerArc) {
+            throw new Error('This particle is not allowed to construct inner arcs');
+        }
+        return this.capabilities.constructInnerArc(this);
+    }
+    get busy() {
+        return this._busy > 0;
+    }
+    get idle() {
+        return this._idle;
+    }
+    set relevance(r) {
+        this.relevances.push(r);
+    }
+    startBusy() {
+        if (this._busy === 0) {
+            this._idle = new Promise(resolve => this._idleResolver = resolve);
+        }
+        this._busy++;
+    }
+    doneBusy() {
+        this._busy--;
+        if (this._busy === 0) {
+            this._idleResolver();
+        }
+    }
+    inputs() {
+        return this.spec.inputs;
+    }
+    outputs() {
+        return this.spec.outputs;
+    }
+    /** @method getSlot(name)
+     * Returns the slot with provided name.
+     */
+    getSlot(name) {
+        return this._slotByName.get(name);
+    }
+    static buildManifest(strings, ...bits) {
+        const output = [];
+        for (let i = 0; i < bits.length; i++) {
+            const str = strings[i];
+            const indent = / *$/.exec(str)[0];
+            let bitStr;
+            if (typeof bits[i] === 'string') {
+                bitStr = bits[i];
+            }
+            else {
+                bitStr = bits[i].toManifestString();
+            }
+            bitStr = bitStr.replace(/(\n)/g, '$1' + indent);
+            output.push(str);
+            output.push(bitStr);
+        }
+        if (strings.length > bits.length) {
+            output.push(strings[strings.length - 1]);
+        }
+        return output.join('');
+    }
+    setParticleDescription(pattern) {
+        return this.setDescriptionPattern('pattern', pattern);
+    }
+    setDescriptionPattern(connectionName, pattern) {
+        const descriptions = this.handles.get('descriptions');
+        if (descriptions) {
+            // Typescript can't infer the type here and fails with TS2351
+            // tslint:disable-next-line: no-any
+            const entityClass = descriptions.entityClass;
+            descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
+            return true;
+        }
+        throw new Error('A particle needs a description handle to set a decription pattern');
+    }
+}
+//# sourceMappingURL=particle.js.map
 
 /***/ }),
 
@@ -8806,7 +8601,7 @@ const XenStateMixin = Base => class extends Base {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrowserLoader", function() { return BrowserLoader; });
 /* harmony import */ var _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../runtime/ts-build/loader.js */ "./runtime/ts-build/loader.js");
-/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../runtime/particle.js */ "./runtime/particle.js");
+/* harmony import */ var _runtime_ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../runtime/ts-build/particle.js */ "./runtime/ts-build/particle.js");
 /* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../runtime/dom-particle.js */ "./runtime/dom-particle.js");
 /* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../runtime/multiplexer-dom-particle.js */ "./runtime/multiplexer-dom-particle.js");
 /* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../runtime/transformation-dom-particle.js */ "./runtime/transformation-dom-particle.js");
@@ -8896,7 +8691,7 @@ class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE
     // TODO(sjmiles): hack to plumb `fetch` into Particle space under node
     const _fetch = BrowserLoader.fetch || fetch;
     return particleWrapper({
-      Particle: _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
+      Particle: _runtime_ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
       DomParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
       MultiplexerDomParticle: _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__["MultiplexerDomParticle"],
       SimpleParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
@@ -8943,300 +8738,6 @@ self.onmessage = function(e) {
   new _runtime_ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](e.ports[0], id, new _browser_loader_js__WEBPACK_IMPORTED_MODULE_1__["BrowserLoader"](base));
 };
 
-
-/***/ }),
-
-/***/ "./tracelib/trace.js":
-/*!***************************!*\
-  !*** ./tracelib/trace.js ***!
-  \***************************/
-/*! exports provided: Tracing */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(process) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Tracing", function() { return Tracing; });
-/*
-  Copyright 2015 Google Inc. All Rights Reserved.
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-      http://www.apache.org/licenses/LICENSE-2.0
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-*/
-
-const events = [];
-let pid;
-let now;
-if (typeof document == 'object') {
-  pid = 42;
-  now = function() {
-    return performance.now() * 1000;
-  };
-} else {
-  pid = process.pid;
-  now = function() {
-    const t = process.hrtime();
-    return t[0] * 1000000 + t[1] / 1000;
-  };
-}
-
-let flowId = 0;
-
-function parseInfo(info) {
-  if (!info) {
-    return {};
-  }
-  if (typeof info == 'function') {
-    return parseInfo(info());
-  }
-  if (info.toTraceInfo) {
-    return parseInfo(info.toTraceInfo());
-  }
-  return info;
-}
-
-const streamingCallbacks = [];
-function pushEvent(event) {
-    event.pid = pid;
-    event.tid = 0;
-    if (!event.args) {
-      delete event.args;
-    }
-    if (!event.ov) {
-      delete event.ov;
-    }
-    if (!event.cat) {
-      event.cat = '';
-    }
-    // Only keep events in memory if we're not streaming them.
-    if (streamingCallbacks.length === 0) events.push(event);
-    Promise.resolve().then(() => {
-      for (const {callback, predicate} of streamingCallbacks) {
-          if (!predicate || predicate(event)) callback(event);
-      }
-    });
-}
-
-const module = {exports: {}};
-const Tracing = module.exports;
-module.exports.enabled = false;
-module.exports.enable = function() {
-  module.exports.enabled = true;
-  init();
-};
-
-// TODO: Add back support for options.
-//module.exports.options = options;
-//var enabled = Boolean(options.traceFile);
-
-function init() {
-  const result = {
-    wait: async function(v) {
-      return v;
-    },
-    start: function() {
-      return this;
-    },
-    end: function() {
-      return this;
-    },
-    step: function() {
-      return this;
-    },
-    addArgs: function() {
-    },
-    endWith: async function(v) {
-      return v;
-    },
-  };
-  module.exports.wrap = function(info, fn) {
-    return fn;
-  };
-  module.exports.start = function(info, fn) {
-    return result;
-  };
-  module.exports.flow = function(info, fn) {
-    return result;
-  };
-
-  if (!module.exports.enabled) {
-    return;
-  }
-
-  module.exports.wrap = function(info, fn) {
-    return function(...args) {
-      const t = module.exports.start(info);
-      try {
-        return fn(...args);
-      } finally {
-        t.end();
-      }
-    };
-  };
-
-  function startSyncTrace(info) {
-    info = parseInfo(info);
-    let args = info.args;
-    const begin = now();
-    return {
-      addArgs: function(extraArgs) {
-        args = Object.assign(args || {}, extraArgs);
-      },
-      end: function(endInfo = {}, flow) {
-        endInfo = parseInfo(endInfo);
-        if (endInfo.args) {
-          args = Object.assign(args || {}, endInfo.args);
-        }
-        endInfo = Object.assign({}, info, endInfo);
-        this.endTs = now();
-        pushEvent({
-          ph: 'X',
-          ts: begin,
-          dur: this.endTs - begin,
-          cat: endInfo.cat,
-          name: endInfo.name,
-          ov: endInfo.overview,
-          args: args,
-          // Arcs Devtools Specific:
-          flowId: flow && flow.id(),
-          seq: endInfo.sequence
-        });
-      },
-      beginTs: begin
-    };
-  }
-  module.exports.start = function(info) {
-    let trace = startSyncTrace(info);
-    let flow;
-    const baseInfo = {cat: info.cat, name: info.name + ' (async)', overview: info.overview, sequence: info.sequence};
-    return {
-      async wait(v, info) {
-        const flowExisted = !!flow;
-        if (!flowExisted) {
-          flow = module.exports.flow(baseInfo);
-        }
-        trace.end(info, flow);
-        if (flowExisted) {
-          flow.step(Object.assign({ts: trace.beginTs}, baseInfo));
-        } else {
-          flow.start({ts: trace.endTs});
-        }
-        trace = null;
-        try {
-          return await v;
-        } finally {
-          trace = startSyncTrace(baseInfo);
-        }
-      },
-      addArgs(extraArgs) {
-        trace.addArgs(extraArgs);
-      },
-      end(endInfo) {
-        trace.end(endInfo, flow);
-        if (flow) {
-          flow.end({ts: trace.beginTs});
-        }
-      },
-      async endWith(v, endInfo) {
-        if (Promise.resolve(v) === v) { // If v is a promise.
-          v = this.wait(v);
-          try {
-            return await v;
-          } finally {
-            this.end(endInfo);
-          }
-        } else { // If v is not a promise.
-          this.end(endInfo);
-          return v;
-        }
-      }
-    };
-  };
-  module.exports.flow = function(info) {
-    info = parseInfo(info);
-    const id = flowId++;
-    let started = false;
-    return {
-      start: function(startInfo) {
-        const ts = (startInfo && startInfo.ts) || now();
-        started = true;
-        pushEvent({
-          ph: 's',
-          ts,
-          cat: info.cat,
-          name: info.name,
-          ov: info.overview,
-          args: info.args,
-          id: id,
-          seq: info.sequence
-        });
-        return this;
-      },
-      end: function(endInfo) {
-        if (!started) return;
-        const ts = (endInfo && endInfo.ts) || now();
-        endInfo = parseInfo(endInfo);
-        pushEvent({
-          ph: 'f',
-          bp: 'e', // binding point is enclosing slice.
-          ts,
-          cat: info.cat,
-          name: info.name,
-          ov: info.overview,
-          args: endInfo && endInfo.args,
-          id: id,
-          seq: info.sequence
-        });
-        return this;
-      },
-      step: function(stepInfo) {
-        if (!started) return;
-        const ts = (stepInfo && stepInfo.ts) || now();
-        stepInfo = parseInfo(stepInfo);
-        pushEvent({
-          ph: 't',
-          ts,
-          cat: info.cat,
-          name: info.name,
-          ov: info.overview,
-          args: stepInfo && stepInfo.args,
-          id: id,
-          seq: info.sequence
-        });
-        return this;
-      },
-      id: () => id
-    };
-  };
-  module.exports.save = function() {
-    return {traceEvents: events};
-  };
-  module.exports.download = function() {
-    const a = document.createElement('a');
-    a.download = 'trace.json';
-    a.href = 'data:text/plain;base64,' + btoa(JSON.stringify(module.exports.save()));
-    a.click();
-  };
-  module.exports.now = now;
-  module.exports.stream = function(callback, predicate) {
-    // Once we start streaming we no longer keep events in memory.
-    events.length = 0;
-    streamingCallbacks.push({callback, predicate});
-  };
-  module.exports.__clearForTests = function() {
-    events.length = 0;
-    streamingCallbacks.length = 0;
-  };
-}
-
-init();
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
 
 /***/ })
 
