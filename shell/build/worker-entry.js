@@ -6228,11 +6228,12 @@ class ParticleExecutionContext {
 /*!*******************************************!*\
   !*** ./runtime/ts-build/particle-spec.js ***!
   \*******************************************/
-/*! exports provided: SlotSpec, ProvidedSlotSpec, ParticleSpec */
+/*! exports provided: ConnectionSpec, SlotSpec, ProvidedSlotSpec, ParticleSpec */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConnectionSpec", function() { return ConnectionSpec; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotSpec", function() { return SlotSpec; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProvidedSlotSpec", function() { return ProvidedSlotSpec; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleSpec", function() { return ParticleSpec; });

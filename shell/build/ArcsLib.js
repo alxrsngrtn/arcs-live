@@ -66451,44 +66451,6 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
 
 /***/ }),
 
-/***/ "./runtime/fake-pec-factory.js":
-/*!*************************************!*\
-  !*** ./runtime/fake-pec-factory.js ***!
-  \*************************************/
-/*! exports provided: FakePecFactory */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FakePecFactory", function() { return FakePecFactory; });
-/* harmony import */ var _ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/particle-execution-context.js */ "./runtime/ts-build/particle-execution-context.js");
-/* harmony import */ var _ts_build_message_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/message-channel.js */ "./runtime/ts-build/message-channel.js");
-/* harmony import */ var _ts_build_loader_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/loader.js */ "./runtime/ts-build/loader.js");
-// @license
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-
-// TODO: Make this generic so that it can also be used in-browser, or add a
-// separate in-process browser pec-factory.
-function FakePecFactory(id) {
-  const channel = new _ts_build_message_channel_js__WEBPACK_IMPORTED_MODULE_1__["MessageChannel"]();
-  new _ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](channel.port1, `${id}:inner`, new _ts_build_loader_js__WEBPACK_IMPORTED_MODULE_2__["Loader"]());
-  return channel.port2;
-}
-
-
-/***/ }),
-
 /***/ "./runtime/fetch-web.js":
 /*!******************************!*\
   !*** ./runtime/fetch-web.js ***!
@@ -71677,7 +71639,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./manifest.js */ "./runtime/ts-build/manifest.js");
 /* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./description.js */ "./runtime/ts-build/description.js");
 /* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./recipe/util.js */ "./runtime/ts-build/recipe/util.js");
-/* harmony import */ var _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../fake-pec-factory.js */ "./runtime/fake-pec-factory.js");
+/* harmony import */ var _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./fake-pec-factory.js */ "./runtime/ts-build/fake-pec-factory.js");
 /* harmony import */ var _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
 /* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
 /* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./id.js */ "./runtime/ts-build/id.js");
@@ -73251,6 +73213,41 @@ class Entity {
     }
 }
 //# sourceMappingURL=entity.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/fake-pec-factory.js":
+/*!**********************************************!*\
+  !*** ./runtime/ts-build/fake-pec-factory.js ***!
+  \**********************************************/
+/*! exports provided: FakePecFactory */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FakePecFactory", function() { return FakePecFactory; });
+/* harmony import */ var _particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./particle-execution-context.js */ "./runtime/ts-build/particle-execution-context.js");
+/* harmony import */ var _message_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./message-channel.js */ "./runtime/ts-build/message-channel.js");
+/* harmony import */ var _loader_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./loader.js */ "./runtime/ts-build/loader.js");
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+// TODO: Make this generic so that it can also be used in-browser, or add a
+// separate in-process browser pec-factory.
+function FakePecFactory(id) {
+    const channel = new _message_channel_js__WEBPACK_IMPORTED_MODULE_1__["MessageChannel"]();
+    const pec = new _particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](channel.port1, `${id}:inner`, new _loader_js__WEBPACK_IMPORTED_MODULE_2__["Loader"]());
+    return channel.port2;
+}
+//# sourceMappingURL=fake-pec-factory.js.map
 
 /***/ }),
 
@@ -76269,11 +76266,12 @@ class ParticleExecutionHost {
 /*!*******************************************!*\
   !*** ./runtime/ts-build/particle-spec.js ***!
   \*******************************************/
-/*! exports provided: SlotSpec, ProvidedSlotSpec, ParticleSpec */
+/*! exports provided: ConnectionSpec, SlotSpec, ProvidedSlotSpec, ParticleSpec */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConnectionSpec", function() { return ConnectionSpec; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotSpec", function() { return SlotSpec; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProvidedSlotSpec", function() { return ProvidedSlotSpec; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleSpec", function() { return ParticleSpec; });

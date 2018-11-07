@@ -49453,13 +49453,12 @@ class Loader {
 }
 
 // @license
-
 // TODO: Make this generic so that it can also be used in-browser, or add a
 // separate in-process browser pec-factory.
 function FakePecFactory(id) {
-  const channel = new MessageChannel();
-  new ParticleExecutionContext(channel.port1, `${id}:inner`, new Loader());
-  return channel.port2;
+    const channel = new MessageChannel();
+    const pec = new ParticleExecutionContext(channel.port1, `${id}:inner`, new Loader());
+    return channel.port2;
 }
 
 /**

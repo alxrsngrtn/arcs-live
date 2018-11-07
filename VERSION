@@ -1,9 +1,7 @@
-commit c138587b9fb336fa8decc28817b67dead2723373
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Nov 7 10:29:41 2018 -0800
+commit 705af733d8cca6b8744e210933d358908d619c8b
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Nov 7 10:30:38 2018 -0800
 
-    planificator with no producer (#2195)
+    Migrate fake-pec-factory to typescript, add additional types (#2206)
     
-    * planificator with no producer
-    
-    * address comment
+    Addresses #1765

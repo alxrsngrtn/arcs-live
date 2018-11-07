@@ -15,7 +15,7 @@ import { Recipe } from './recipe/recipe.js';
 import { Manifest, StorageStub } from './manifest.js';
 import { Description } from './description.js';
 import { compareComparables } from './recipe/util.js';
-import { FakePecFactory } from '../fake-pec-factory.js';
+import { FakePecFactory } from './fake-pec-factory.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { DevtoolsConnection } from '../debug/devtools-connection.js';
 import { Id } from './id.js';
