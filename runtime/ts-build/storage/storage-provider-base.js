@@ -28,7 +28,7 @@ export class StorageProviderBase {
         this.referenceMode = false;
         assert(id, 'id must be provided when constructing StorageProviders');
         assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
-        const trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::constructor', args: { type: type.key, name } });
+        const trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::constructor', args: { type: type.toString(), name } });
         this._type = type;
         this.listeners = new Map();
         this.name = name;
@@ -123,7 +123,7 @@ export class StorageProviderBase {
             handleStr.push(`'${this.id}'`);
         }
         if (handleTags && handleTags.length) {
-            handleStr.push(`${[...handleTags].join(' ')}`);
+            handleStr.push(`${handleTags.join(' ')}`);
         }
         if (this.source) {
             handleStr.push(`in '${this.source}'`);

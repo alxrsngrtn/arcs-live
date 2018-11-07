@@ -1,5 +1,8 @@
-commit 77b97b7b4916f7543910f61999ac8214510c1d86
+commit 83325fab85e86777b45fc02dae6241949784abc0
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Nov 7 09:34:24 2018 -0800
+Date:   Wed Nov 7 09:50:52 2018 -0800
 
-    Enable tslint support for prefer-object-spread (#2201)
+    Additional Typescript cleanups for Pouch (#2204)
+    
+    - Add explicit types in many more places
+    - Fix a bad usage of a Set instead of a string array in Arc class

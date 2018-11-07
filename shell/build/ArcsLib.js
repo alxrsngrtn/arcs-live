@@ -72266,7 +72266,7 @@ ${this.activeRecipe.toString()}`;
         const results = [];
         const stores = [...this.storesById.values()].sort(_recipe_util_js__WEBPACK_IMPORTED_MODULE_7__["compareComparables"]);
         stores.forEach(store => {
-            results.push(store.toString(this.storeTags.get(store)));
+            results.push(store.toString([...this.storeTags.get(store)]));
         });
         // TODO: include stores entities
         // TODO: include (remote) slots?
@@ -83851,13 +83851,17 @@ __webpack_require__.r(__webpack_exports__);
 class PouchDbKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_1__["KeyBase"] {
     constructor(key) {
         super();
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(key.startsWith('pouchdb://'), `can't construct pouchdb key for input key ${key}`);
+        if (!key.startsWith('pouchdb://')) {
+            throw new Error(`can't construct pouchdb key for input key ${key}`);
+        }
         const parts = key.replace(/^pouchdb:\/\//, '').split('/');
         this.protocol = 'pouchdb';
         this.dbLocation = parts[0] || 'memory';
         this.dbName = parts[1] || 'user';
         this.location = parts.slice(2).join('/') || '';
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.toString() === key, 'PouchDb keys must match ' + this.toString() + ' vs ' + key);
+        if (this.toString() !== key) {
+            throw new Error('PouchDb keys must match ' + this.toString() + ' vs ' + key);
+        }
     }
     /**
      * Creates a new child PouchDbKey relative to the current key, based on the value of id.
@@ -84566,7 +84570,7 @@ class StorageProviderBase {
         this.referenceMode = false;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(id, 'id must be provided when constructing StorageProviders');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!type.hasUnresolvedVariable, 'Storage types must be concrete');
-        const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__["Tracing"].start({ cat: 'handle', name: 'StorageProviderBase::constructor', args: { type: type.key, name } });
+        const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__["Tracing"].start({ cat: 'handle', name: 'StorageProviderBase::constructor', args: { type: type.toString(), name } });
         this._type = type;
         this.listeners = new Map();
         this.name = name;
@@ -84661,7 +84665,7 @@ class StorageProviderBase {
             handleStr.push(`'${this.id}'`);
         }
         if (handleTags && handleTags.length) {
-            handleStr.push(`${[...handleTags].join(' ')}`);
+            handleStr.push(`${handleTags.join(' ')}`);
         }
         if (this.source) {
             handleStr.push(`in '${this.source}'`);
