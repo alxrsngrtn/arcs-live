@@ -226,7 +226,6 @@ export class DescriptionFormatter {
         }
         return results;
     }
-    //async
     _initSubTokens(pattern, particleDescription) {
         const valueTokens = pattern.match(/\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/);
         const handleNames = valueTokens[1].split('.');
@@ -256,12 +255,10 @@ export class DescriptionFormatter {
         const particle = particleDescription._particle;
         if (handleNames.length === 0) {
             // return a particle token
-            // TODO(mmandlis): this is inconsistent with the rest of the function, which returns
-            // lists.
-            return {
-                particleName: particle.spec.name,
-                particleDescription
-            };
+            return [{
+                    particleName: particle.spec.name,
+                    particleDescription
+                }];
         }
         const handleConn = particle.connections[handleNames[0]];
         if (handleConn) { // handle connection

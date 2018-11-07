@@ -72446,8 +72446,6 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
             }
             let { template, model } = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
             const success = await Promise.all(Object.keys(model).map(async (tokenKey) => {
-                // TODO(mmandlis): this cast is invalid, as _initSubTokens can sometimes
-                // return a single element
                 const tokens = this._initSubTokens(model[tokenKey], particleDesc);
                 return (await Promise.all(tokens.map(async (token) => {
                     const tokenValue = await this.tokenToString(token);
@@ -72881,7 +72879,6 @@ class DescriptionFormatter {
         }
         return results;
     }
-    //async
     _initSubTokens(pattern, particleDescription) {
         const valueTokens = pattern.match(/\${([a-zA-Z0-9.]+)}(?:\.([_a-zA-Z]+))?/);
         const handleNames = valueTokens[1].split('.');
@@ -72911,12 +72908,10 @@ class DescriptionFormatter {
         const particle = particleDescription._particle;
         if (handleNames.length === 0) {
             // return a particle token
-            // TODO(mmandlis): this is inconsistent with the rest of the function, which returns
-            // lists.
-            return {
-                particleName: particle.spec.name,
-                particleDescription
-            };
+            return [{
+                    particleName: particle.spec.name,
+                    particleDescription
+                }];
         }
         const handleConn = particle.connections[handleNames[0]];
         if (handleConn) { // handle connection
