@@ -206,7 +206,7 @@ export class SlotDomConsumer extends SlotConsumer {
                 return;
             }
             const slotId = this.getNodeValue(innerContainer, 'slotid');
-            const providedSlotSpec = this.consumeConn.slotSpec.getProvidedSlotSpec(slotId);
+            const providedSlotSpec = this._findProvidedSlotSpec(slotId);
             if (!providedSlotSpec) { // Skip non-declared slots
                 console.warn(`Slot ${this.consumeConn.slotSpec.name} has unexpected inner slot ${slotId}`);
                 return;
@@ -215,6 +215,13 @@ export class SlotDomConsumer extends SlotConsumer {
             assert(Boolean(subId) === providedSlotSpec.isSet, `Sub-id ${subId} for slot ${providedSlotSpec.name} doesn't match set spec: ${providedSlotSpec.isSet}`);
             this._initInnerSlotContainer(slotId, subId, innerContainer);
         });
+    }
+    // TODO: Implement better way of distinguishing slots between different hosted consumers.
+    //       E.g. 'particle-id::slot-name'
+    _findProvidedSlotSpec(slotName) {
+        return [this, ...this.hostedConsumers]
+            .map(consumer => consumer.consumeConn.slotSpec.getProvidedSlotSpec(slotName))
+            .find(spec => Boolean(spec));
     }
     // get a value from node that could be an attribute, if not a property
     getNodeValue(node, name) {

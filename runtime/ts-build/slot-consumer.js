@@ -129,6 +129,12 @@ export class SlotConsumer {
         });
     }
     isSameContainer(container, contextContainer) { return container === contextContainer; }
+    get hostedConsumers() {
+        return this.providedSlotContexts
+            .filter(context => context.constructor.name === 'HostedSlotContext')
+            .map(context => context.sourceSlotConsumer)
+            .filter(consumer => consumer !== this);
+    }
     // abstract
     constructRenderRequest(hostedSlotConsumer = null) { return []; }
     dispose() { }

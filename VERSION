@@ -1,7 +1,5 @@
-commit 381e11c20bdf938e38f7ae211def8dfd35db74ca
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Nov 6 15:42:06 2018 -0800
+commit adb362c074ac060efda6fc694a52ad0df653e512
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Nov 7 13:15:50 2018 +1100
 
-    Add cache support for npm (#2196)
-    
-    - Details: https://docs.travis-ci.com/user/caching
+    Allow for non-intercepted rendering inside transformations (#2191)

@@ -42079,6 +42079,12 @@ class SlotConsumer {
         });
     }
     isSameContainer(container, contextContainer) { return container === contextContainer; }
+    get hostedConsumers() {
+        return this.providedSlotContexts
+            .filter(context => context.constructor.name === 'HostedSlotContext')
+            .map(context => context.sourceSlotConsumer)
+            .filter(consumer => consumer !== this);
+    }
     // abstract
     constructRenderRequest(hostedSlotConsumer = null) { return []; }
     dispose() { }
@@ -42706,7 +42712,7 @@ class SlotDomConsumer extends SlotConsumer {
                 return;
             }
             const slotId = this.getNodeValue(innerContainer, 'slotid');
-            const providedSlotSpec = this.consumeConn.slotSpec.getProvidedSlotSpec(slotId);
+            const providedSlotSpec = this._findProvidedSlotSpec(slotId);
             if (!providedSlotSpec) { // Skip non-declared slots
                 console.warn(`Slot ${this.consumeConn.slotSpec.name} has unexpected inner slot ${slotId}`);
                 return;
@@ -42715,6 +42721,13 @@ class SlotDomConsumer extends SlotConsumer {
             assert(Boolean(subId) === providedSlotSpec.isSet, `Sub-id ${subId} for slot ${providedSlotSpec.name} doesn't match set spec: ${providedSlotSpec.isSet}`);
             this._initInnerSlotContainer(slotId, subId, innerContainer);
         });
+    }
+    // TODO: Implement better way of distinguishing slots between different hosted consumers.
+    //       E.g. 'particle-id::slot-name'
+    _findProvidedSlotSpec(slotName) {
+        return [this, ...this.hostedConsumers]
+            .map(consumer => consumer.consumeConn.slotSpec.getProvidedSlotSpec(slotName))
+            .find(spec => Boolean(spec));
     }
     // get a value from node that could be an attribute, if not a property
     getNodeValue(node, name) {
@@ -42863,6 +42876,7 @@ class MockSlotDomConsumer extends SlotDomConsumer {
   constructor(consumeConn) {
     super(consumeConn);
     this._content = {};
+    this.contentAvailable = new Promise(resolve => this._contentAvailableResolve = resolve);
   }
 
   async setContent(content, handler) {
@@ -42876,10 +42890,12 @@ class MockSlotDomConsumer extends SlotDomConsumer {
         this._content.template = content.template;
       }
       this._content.model = content.model;
+      this._contentAvailableResolve();
     } else {
       this._content = {};
     }
-  }  
+  }
+
   createNewContainer(container, subId) {
     return container;
   }
@@ -42890,7 +42906,7 @@ class MockSlotDomConsumer extends SlotDomConsumer {
 
   getInnerContainer(innerSlotName) {
     const model = this.renderings.map(([subId, {model}]) => model)[0];
-    const providedSlotSpec = this.consumeConn.slotSpec.getProvidedSlotSpec(innerSlotName);
+    const providedSlotSpec = this._findProvidedSlotSpec(innerSlotName);
     if (!providedSlotSpec) {
       console.warn(`Cannot find provided spec for ${innerSlotName} in ${this.consumeConn.getQualifiedName()}`);
       return;
@@ -49658,9 +49674,6 @@ class HostedSlotContext extends SlotContext {
             this.handles = [{ id: hostedSourceSlotConsumer.storeId }];
         }
     }
-    get container() {
-        return this.sourceSlotConsumer.getInnerContainer(this.name) || null;
-    }
 }
 
 /**
@@ -49715,9 +49728,7 @@ class HostedSlotConsumer extends SlotConsumer {
     }
     createProvidedContexts() {
         assert(this.consumeConn, `Cannot create provided context without consume connection for hosted slot ${this.hostedSlotId}`);
-        return this.consumeConn.slotSpec.providedSlots.map(providedSpec => {
-            return new HostedSlotContext(this.arc.generateID(), providedSpec, this);
-        });
+        return this.consumeConn.slotSpec.providedSlots.map(providedSpec => new HostedSlotContext(this.consumeConn.providedSlots[providedSpec.name].id, providedSpec, this));
     }
     updateProvidedContexts() {
         // The hosted context provided by hosted slots is updated as part of the transformation.
@@ -49811,15 +49822,21 @@ class SlotComposer {
                     return;
                 }
                 let slotConsumer = this.consumers.find(slot => slot instanceof HostedSlotConsumer && slot.hostedSlotId === cs.targetSlot.id);
+                let transformationSlotConsumer = null;
                 if (slotConsumer && slotConsumer instanceof HostedSlotConsumer) {
                     assert(!slotConsumer.consumeConn);
                     slotConsumer.consumeConn = cs;
+                    transformationSlotConsumer = slotConsumer.transformationSlotConsumer;
                 }
                 else {
                     slotConsumer = new this._affordance.slotConsumerClass(cs, this._containerKind);
                     newConsumers.push(slotConsumer);
                 }
-                this._contexts = this._contexts.concat(slotConsumer.createProvidedContexts());
+                const providedContexts = slotConsumer.createProvidedContexts();
+                this._contexts = this._contexts.concat(providedContexts);
+                // Slot contexts provided by the HostedSlotConsumer are managed by the transformation.
+                if (transformationSlotConsumer)
+                    transformationSlotConsumer.providedSlotContexts.push(...providedContexts);
             });
         });
         // Set context for each of the slots.
