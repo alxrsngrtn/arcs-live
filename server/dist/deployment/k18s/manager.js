@@ -131,6 +131,7 @@ export class K18sContainerManager {
         path.backend.servicePort = EXTERNAL_PORT;
         rule.http.paths = ingress.spec.rules[0].http.paths;
         rule.http.paths.push(path);
+        rule.host = ingress.spec.rules[0].host;
         newIngress.spec = spec;
         const oldHeaders = this.k8sBetaApi['defaultHeaders'];
         this.k8sBetaApi['defaultHeaders'] = Object.assign({ 'Content-Type': 'application/strategic-merge-patch+json' }, oldHeaders);

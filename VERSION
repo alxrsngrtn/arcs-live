@@ -1,7 +1,5 @@
-commit 539c8bd076f6dbb3f3a7ff0685f87ddcad545717
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Nov 7 15:46:10 2018 -0800
+commit 2aba92e98382d47b20e0de595719768705529a9c
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Wed Nov 7 17:18:52 2018 -0800
 
-    Migrate particle.js to typescript (#2208)
-    
-    Addresses #1765
+    Fix issue with host being erased from Ingress when updated (#2211)
