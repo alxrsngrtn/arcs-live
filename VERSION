@@ -1,5 +1,5 @@
-commit 2aba92e98382d47b20e0de595719768705529a9c
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Wed Nov 7 17:18:52 2018 -0800
+commit 0067f4f5705f10d9d47da086d12432de9146c481
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Nov 8 17:12:32 2018 +1100
 
-    Fix issue with host being erased from Ingress when updated (#2211)
+    Update readme with correct node version to install (#2216)
