@@ -1,7 +1,5 @@
-commit e8a2a5f765e2352527607b327329403628bda7fc
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Nov 12 16:34:06 2018 -0800
+commit 93add95fa33fcef73265f91667740b2180357e4e
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Nov 13 12:05:12 2018 +1100
 
-    Migrate planner to typescript (#2230)
-    
-    Addresses #1765
+    Stub toString for synthesized type (#2232)
