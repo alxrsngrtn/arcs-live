@@ -65386,7 +65386,7 @@ class ArcDebugHandler {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcPlannerInvoker", function() { return ArcPlannerInvoker; });
-/* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../planner.js */ "./runtime/planner.js");
+/* harmony import */ var _ts_build_planner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ts-build/planner.js */ "./runtime/ts-build/planner.js");
 /* harmony import */ var _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/manifest.js */ "./runtime/ts-build/manifest.js");
 /**
  * @license
@@ -65404,7 +65404,7 @@ __webpack_require__.r(__webpack_exports__);
 class ArcPlannerInvoker {
   constructor(arc, devtoolsChannel) {
     this.arc = arc;
-    this.planner = new _planner_js__WEBPACK_IMPORTED_MODULE_0__["Planner"]();
+    this.planner = new _ts_build_planner_js__WEBPACK_IMPORTED_MODULE_0__["Planner"]();
     this.planner.init(arc);
 
     devtoolsChannel.listen(arc, 'fetch-strategies', () => devtoolsChannel.send({
@@ -66719,7 +66719,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../platform/date-web.js */ "./platform/date-web.js");
 /* harmony import */ var _strategies_init_search_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./strategies/init-search.js */ "./runtime/strategies/init-search.js");
 /* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../platform/log-web.js */ "./platform/log-web.js");
-/* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./planner.js */ "./runtime/planner.js");
+/* harmony import */ var _ts_build_planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/planner.js */ "./runtime/ts-build/planner.js");
 /* harmony import */ var _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ts-build/speculator.js */ "./runtime/ts-build/speculator.js");
 /* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./suggestion-composer.js */ "./runtime/suggestion-composer.js");
 /* harmony import */ var _suggestion_storage_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./suggestion-storage.js */ "./runtime/suggestion-storage.js");
@@ -66976,7 +66976,7 @@ class Planificator {
       // with a new search phrase.
       this._requestPlanning({
         cancelOngoingPlanning: this._current.plans.length > 0,
-        strategies: [_strategies_init_search_js__WEBPACK_IMPORTED_MODULE_2__["InitSearch"]].concat(_planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"].ResolutionStrategies),
+        strategies: [_strategies_init_search_js__WEBPACK_IMPORTED_MODULE_2__["InitSearch"]].concat(_ts_build_planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"].ResolutionStrategies),
         append: true
       });
     } else if (this._current.contextual) {
@@ -67130,7 +67130,7 @@ class Planificator {
   }
 
   async _doNextPlans({strategies, strategyArgs, timeout = defaultTimeoutMs}) {
-    this._planner = new _planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"]();
+    this._planner = new _ts_build_planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"]();
     this._planner.init(this._arc, {strategies, strategyArgs});
     this._next.plans = await this._planner.suggest(timeout, this._next.generations, this._speculator);
     this._planner = null;
@@ -67189,281 +67189,6 @@ class Planificator {
     return true;
   }
 }
-
-
-/***/ }),
-
-/***/ "./runtime/planner.js":
-/*!****************************!*\
-  !*** ./runtime/planner.js ***!
-  \****************************/
-/*! exports provided: Planner */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planner", function() { return Planner; });
-/* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/date-web.js */ "./platform/date-web.js");
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../strategizer/strategizer.js */ "./strategizer/strategizer.js");
-/* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./strategies/rulesets.js */ "./runtime/strategies/rulesets.js");
-/* harmony import */ var _platform_deviceinfo_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../platform/deviceinfo-web.js */ "./platform/deviceinfo-web.js");
-/* harmony import */ var _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
-/* harmony import */ var _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./strategies/convert-constraints-to-connections.js */ "./runtime/strategies/convert-constraints-to-connections.js");
-/* harmony import */ var _strategies_assign_handles_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./strategies/assign-handles.js */ "./runtime/strategies/assign-handles.js");
-/* harmony import */ var _strategies_init_population_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./strategies/init-population.js */ "./runtime/strategies/init-population.js");
-/* harmony import */ var _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./strategies/map-slots.js */ "./runtime/strategies/map-slots.js");
-/* harmony import */ var _strategies_match_particle_by_verb_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./strategies/match-particle-by-verb.js */ "./runtime/strategies/match-particle-by-verb.js");
-/* harmony import */ var _strategies_match_recipe_by_verb_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./strategies/match-recipe-by-verb.js */ "./runtime/strategies/match-recipe-by-verb.js");
-/* harmony import */ var _strategies_name_unnamed_connections_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./strategies/name-unnamed-connections.js */ "./runtime/strategies/name-unnamed-connections.js");
-/* harmony import */ var _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./strategies/add-missing-handles.js */ "./runtime/strategies/add-missing-handles.js");
-/* harmony import */ var _strategies_create_description_handle_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./strategies/create-description-handle.js */ "./runtime/strategies/create-description-handle.js");
-/* harmony import */ var _strategies_init_search_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./strategies/init-search.js */ "./runtime/strategies/init-search.js");
-/* harmony import */ var _strategies_search_tokens_to_handles_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./strategies/search-tokens-to-handles.js */ "./runtime/strategies/search-tokens-to-handles.js");
-/* harmony import */ var _strategies_search_tokens_to_particles_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./strategies/search-tokens-to-particles.js */ "./runtime/strategies/search-tokens-to-particles.js");
-/* harmony import */ var _strategies_group_handle_connections_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./strategies/group-handle-connections.js */ "./runtime/strategies/group-handle-connections.js");
-/* harmony import */ var _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./strategies/match-free-handles-to-connections.js */ "./runtime/strategies/match-free-handles-to-connections.js");
-/* harmony import */ var _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./strategies/create-handle-group.js */ "./runtime/strategies/create-handle-group.js");
-/* harmony import */ var _strategies_find_hosted_particle_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./strategies/find-hosted-particle.js */ "./runtime/strategies/find-hosted-particle.js");
-/* harmony import */ var _strategies_coalesce_recipes_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./strategies/coalesce-recipes.js */ "./runtime/strategies/coalesce-recipes.js");
-/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./strategies/resolve-recipe.js */ "./runtime/strategies/resolve-recipe.js");
-/* harmony import */ var _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./ts-build/speculator.js */ "./runtime/ts-build/speculator.js");
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class Planner {
-  constructor() {
-    this._relevances = [];
-  }
-
-  // TODO: Use context.arc instead of arc
-  init(arc, {strategies, ruleset, strategyArgs = {}} = {}) {
-    strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
-    this._arc = arc;
-    strategies = (strategies || Planner.AllStrategies).map(strategy => new strategy(arc, strategyArgs));
-    this.strategizer = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategizer"](strategies, [], ruleset || _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_2__["Empty"]);
-  }
-
-  // Specify a timeout value less than zero to disable timeouts.
-  async plan(timeout, generations) {
-    const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({cat: 'planning', name: 'Planner::plan', overview: true, args: {timeout}});
-    timeout = timeout || -1;
-    const allResolved = [];
-    const start = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__["now"])();
-    do {
-      const record = await trace.wait(this.strategizer.generate());
-      const generated = this.strategizer.generated;
-      trace.addArgs({
-        generated: generated.length,
-        generation: this.strategizer.generation
-      });
-      if (generations) {
-        generations.push({generated, record});
-      }
-
-      const resolved = this.strategizer.generated
-          .map(individual => individual.result)
-          .filter(recipe => recipe.isResolved());
-
-      allResolved.push(...resolved);
-      const elapsed = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__["now"])() - start;
-      if (timeout >= 0 && elapsed > timeout) {
-        console.warn(`Planner.plan timed out [elapsed=${Math.floor(elapsed)}ms, timeout=${timeout}ms].`);
-        break;
-      }
-    } while (this.strategizer.generated.length + this.strategizer.terminal.length > 0);
-    trace.end();
-    return allResolved;
-  }
-
-  _speculativeThreadCount() {
-    // TODO(wkorman): We'll obviously have to rework the below when we do
-    // speculation in the cloud.
-    const cores = _platform_deviceinfo_web_js__WEBPACK_IMPORTED_MODULE_3__["DeviceInfo"].hardwareConcurrency();
-    const memory = _platform_deviceinfo_web_js__WEBPACK_IMPORTED_MODULE_3__["DeviceInfo"].deviceMemory();
-    // For now, allow occupying half of the available cores while constraining
-    // total memory used to at most a quarter of what's available. In the
-    // absence of resource information we just run two in parallel as a
-    // perhaps-low-end-device-oriented balancing act.
-    const minCores = 2;
-    if (!cores || !memory) {
-      return minCores;
-    }
-
-    // A rough estimate of memory used per thread in gigabytes.
-    const memoryPerThread = 0.125;
-    const quarterMemory = memory / 4;
-    const maxThreadsByMemory = quarterMemory / memoryPerThread;
-    const maxThreadsByCores = cores / 2;
-    return Math.max(minCores, Math.min(maxThreadsByMemory, maxThreadsByCores));
-  }
-  _splitToGroups(items, groupCount) {
-    const groups = [];
-    if (!items || items.length == 0) return groups;
-    const groupItemSize = Math.max(1, Math.floor(items.length / groupCount));
-    let startIndex = 0;
-    for (let i = 0; i < groupCount && startIndex < items.length; i++) {
-      groups.push(items.slice(startIndex, startIndex + groupItemSize));
-      startIndex += groupItemSize;
-    }
-    // Add any remaining items to the end of the last group.
-    if (startIndex < items.length) {
-      groups[groups.length - 1].push(...items.slice(startIndex, items.length));
-    }
-    return groups;
-  }
-  async suggest(timeout, generations, speculator) {
-    const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({cat: 'planning', name: 'Planner::suggest', overview: true, args: {timeout}});
-    if (!generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__["DevtoolsConnection"].isConnected) generations = [];
-    const plans = await trace.wait(this.plan(timeout, generations));
-    const suggestions = [];
-    speculator = speculator || new _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_23__["Speculator"]();
-    // We don't actually know how many threads the VM will decide to use to
-    // handle the parallel speculation, but at least we know we won't kick off
-    // more than this number and so can somewhat limit resource utilization.
-    // TODO(wkorman): Rework this to use a fixed size 'thread' pool for more
-    // efficient work distribution.
-    const threadCount = this._speculativeThreadCount();
-    const planGroups = this._splitToGroups(plans, threadCount);
-    let results = await trace.wait(Promise.all(planGroups.map(async (group, groupIndex) => {
-      const results = [];
-      for (const plan of group) {
-        const hash = ((hash) => { return hash.substring(hash.length - 4);})(await plan.digest());
-
-        if (_ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_4__["RecipeUtil"].matchesRecipe(this._arc._activeRecipe, plan)) {
-          this._updateGeneration(generations, hash, (g) => g.active = true);
-          continue;
-        }
-
-        const planTrace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({
-          cat: 'speculating',
-          sequence: `speculator_${groupIndex}`,
-          overview: true,
-          args: {groupIndex}
-        });
-
-        // TODO(wkorman): Look at restoring trace.wait() here, and whether we
-        // should do similar for the async getRecipeSuggestion() below as well?
-        const relevance = await speculator.speculate(this._arc, plan, hash);
-        this._relevances.push(relevance);
-        if (!relevance.isRelevant(plan)) {
-          this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
-          planTrace.end({name: '[Irrelevant suggestion]', hash, groupIndex});
-          continue;
-        }
-        const rank = relevance.calcRelevanceScore();
-
-        relevance.newArc.description.relevance = relevance;
-        const description = await relevance.newArc.description.getRecipeSuggestion();
-
-        this._updateGeneration(generations, hash, (g) => g.description = description);
-
-        // TODO: Move this logic inside speculate, so that it can stop the arc
-        // before returning.
-        relevance.newArc.stop();
-
-        results.push({
-          plan,
-          rank,
-          description: relevance.newArc.description,
-          descriptionText: description, // TODO(mmandlis): exclude the text description from returned results.
-          hash,
-          groupIndex
-        });
-
-        planTrace.end({name: description, args: {rank, hash, groupIndex}});
-      }
-      return results;
-    })));
-    results = [].concat(...results);
-
-    this._relevances = [];
-
-    if (generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__["DevtoolsConnection"].isConnected) {
-      _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_25__["StrategyExplorerAdapter"].processGenerations(generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__["DevtoolsConnection"].get());
-    }
-
-    return trace.endWith(results);
-  }
-  _updateGeneration(generations, hash, handler) {
-    if (generations) {
-      generations.forEach(g => {
-        g.generated.forEach(gg => {
-          if (gg.hash.endsWith(hash)) {
-            handler(gg);
-          }
-        });
-      });
-    }
-  }
-  dispose() {
-    // The speculative arc particle execution contexts are are worklets,
-    // so they need to be cleanly shut down, otherwise they would persist,
-    // as an idle eventLoop in a process waiting for messages.
-    this._relevances.forEach(relevance => relevance.newArc.dispose());
-    this._relevances = [];
-  }
-}
-
-Planner.InitializationStrategies = [
-  _strategies_init_population_js__WEBPACK_IMPORTED_MODULE_7__["InitPopulation"],
-  _strategies_init_search_js__WEBPACK_IMPORTED_MODULE_14__["InitSearch"]
-];
-
-Planner.ResolutionStrategies = [
-  _strategies_search_tokens_to_particles_js__WEBPACK_IMPORTED_MODULE_16__["SearchTokensToParticles"],
-  _strategies_search_tokens_to_handles_js__WEBPACK_IMPORTED_MODULE_15__["SearchTokensToHandles"],
-  _strategies_group_handle_connections_js__WEBPACK_IMPORTED_MODULE_17__["GroupHandleConnections"],
-  _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_19__["CreateHandleGroup"],
-  _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_5__["ConvertConstraintsToConnections"],
-  _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_8__["MapSlots"],
-  _strategies_assign_handles_js__WEBPACK_IMPORTED_MODULE_6__["AssignHandles"],
-  _strategies_match_particle_by_verb_js__WEBPACK_IMPORTED_MODULE_9__["MatchParticleByVerb"],
-  _strategies_match_recipe_by_verb_js__WEBPACK_IMPORTED_MODULE_10__["MatchRecipeByVerb"],
-  _strategies_name_unnamed_connections_js__WEBPACK_IMPORTED_MODULE_11__["NameUnnamedConnections"],
-  _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_12__["AddMissingHandles"],
-  _strategies_create_description_handle_js__WEBPACK_IMPORTED_MODULE_13__["CreateDescriptionHandle"],
-  _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_18__["MatchFreeHandlesToConnections"],
-  _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_22__["ResolveRecipe"],
-  _strategies_find_hosted_particle_js__WEBPACK_IMPORTED_MODULE_20__["FindHostedParticle"],
-  _strategies_coalesce_recipes_js__WEBPACK_IMPORTED_MODULE_21__["CoalesceRecipes"]
-];
-
-Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.ResolutionStrategies);
 
 
 /***/ }),
@@ -72453,8 +72178,8 @@ class Description {
         }
         return undefined;
     }
-    async getRecipeSuggestion(formatterClass) {
-        const formatter = await new (formatterClass || DescriptionFormatter)(this);
+    async getRecipeSuggestion(formatterClass = DescriptionFormatter) {
+        const formatter = await new (formatterClass)(this);
         const desc = await formatter.getDescription(this.arc.recipes[this.arc.recipes.length - 1]);
         if (desc) {
             return desc;
@@ -76662,7 +76387,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanProducer", function() { return PlanProducer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../platform/date-web.js */ "./platform/date-web.js");
-/* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../planner.js */ "./runtime/planner.js");
+/* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../planner.js */ "./runtime/ts-build/planner.js");
 /* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./planning-result.js */ "./runtime/ts-build/plan/planning-result.js");
 /* harmony import */ var _speculator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../speculator */ "./runtime/ts-build/speculator.js");
 /**
@@ -77218,6 +76943,264 @@ class ReplanQueue {
     }
 }
 //# sourceMappingURL=replan-queue.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/planner.js":
+/*!*************************************!*\
+  !*** ./runtime/ts-build/planner.js ***!
+  \*************************************/
+/*! exports provided: Planner */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planner", function() { return Planner; });
+/* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/date-web.js */ "./platform/date-web.js");
+/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../strategizer/strategizer.js */ "./strategizer/strategizer.js");
+/* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../strategies/rulesets.js */ "./runtime/strategies/rulesets.js");
+/* harmony import */ var _platform_deviceinfo_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../platform/deviceinfo-web.js */ "./platform/deviceinfo-web.js");
+/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
+/* harmony import */ var _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../strategies/convert-constraints-to-connections.js */ "./runtime/strategies/convert-constraints-to-connections.js");
+/* harmony import */ var _strategies_assign_handles_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../strategies/assign-handles.js */ "./runtime/strategies/assign-handles.js");
+/* harmony import */ var _strategies_init_population_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../strategies/init-population.js */ "./runtime/strategies/init-population.js");
+/* harmony import */ var _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../strategies/map-slots.js */ "./runtime/strategies/map-slots.js");
+/* harmony import */ var _strategies_match_particle_by_verb_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../strategies/match-particle-by-verb.js */ "./runtime/strategies/match-particle-by-verb.js");
+/* harmony import */ var _strategies_match_recipe_by_verb_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../strategies/match-recipe-by-verb.js */ "./runtime/strategies/match-recipe-by-verb.js");
+/* harmony import */ var _strategies_name_unnamed_connections_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../strategies/name-unnamed-connections.js */ "./runtime/strategies/name-unnamed-connections.js");
+/* harmony import */ var _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../strategies/add-missing-handles.js */ "./runtime/strategies/add-missing-handles.js");
+/* harmony import */ var _strategies_create_description_handle_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../strategies/create-description-handle.js */ "./runtime/strategies/create-description-handle.js");
+/* harmony import */ var _strategies_init_search_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../strategies/init-search.js */ "./runtime/strategies/init-search.js");
+/* harmony import */ var _strategies_search_tokens_to_handles_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../strategies/search-tokens-to-handles.js */ "./runtime/strategies/search-tokens-to-handles.js");
+/* harmony import */ var _strategies_search_tokens_to_particles_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../strategies/search-tokens-to-particles.js */ "./runtime/strategies/search-tokens-to-particles.js");
+/* harmony import */ var _strategies_group_handle_connections_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../strategies/group-handle-connections.js */ "./runtime/strategies/group-handle-connections.js");
+/* harmony import */ var _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../strategies/match-free-handles-to-connections.js */ "./runtime/strategies/match-free-handles-to-connections.js");
+/* harmony import */ var _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../strategies/create-handle-group.js */ "./runtime/strategies/create-handle-group.js");
+/* harmony import */ var _strategies_find_hosted_particle_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../strategies/find-hosted-particle.js */ "./runtime/strategies/find-hosted-particle.js");
+/* harmony import */ var _strategies_coalesce_recipes_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../strategies/coalesce-recipes.js */ "./runtime/strategies/coalesce-recipes.js");
+/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../strategies/resolve-recipe.js */ "./runtime/strategies/resolve-recipe.js");
+/* harmony import */ var _speculator_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./speculator.js */ "./runtime/ts-build/speculator.js");
+/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
+/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ../debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ../debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Planner {
+    constructor() {
+        this._relevances = [];
+    }
+    // TODO: Use context.arc instead of arc
+    init(arc, { strategies = Planner.AllStrategies, ruleset = _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_2__["Empty"], strategyArgs = {} } = {}) {
+        strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
+        this._arc = arc;
+        strategies = strategies.map(strategy => new strategy(arc, strategyArgs));
+        this.strategizer = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategizer"](strategies, [], ruleset);
+    }
+    // Specify a timeout value less than zero to disable timeouts.
+    async plan(timeout, generations) {
+        const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({ cat: 'planning', name: 'Planner::plan', overview: true, args: { timeout } });
+        timeout = timeout || -1;
+        const allResolved = [];
+        const start = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__["now"])();
+        do {
+            const record = await trace.wait(this.strategizer.generate());
+            const generated = this.strategizer.generated;
+            trace.addArgs({
+                generated: generated.length,
+                generation: this.strategizer.generation
+            });
+            if (generations) {
+                generations.push({ generated, record });
+            }
+            const resolved = this.strategizer.generated
+                .map(individual => individual.result)
+                .filter(recipe => recipe.isResolved());
+            allResolved.push(...resolved);
+            const elapsed = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__["now"])() - start;
+            if (timeout >= 0 && elapsed > timeout) {
+                console.warn(`Planner.plan timed out [elapsed=${Math.floor(elapsed)}ms, timeout=${timeout}ms].`);
+                break;
+            }
+        } while (this.strategizer.generated.length + this.strategizer.terminal.length > 0);
+        trace.end();
+        return allResolved;
+    }
+    _speculativeThreadCount() {
+        // TODO(wkorman): We'll obviously have to rework the below when we do
+        // speculation in the cloud.
+        const cores = _platform_deviceinfo_web_js__WEBPACK_IMPORTED_MODULE_3__["DeviceInfo"].hardwareConcurrency();
+        const memory = _platform_deviceinfo_web_js__WEBPACK_IMPORTED_MODULE_3__["DeviceInfo"].deviceMemory();
+        // For now, allow occupying half of the available cores while constraining
+        // total memory used to at most a quarter of what's available. In the
+        // absence of resource information we just run two in parallel as a
+        // perhaps-low-end-device-oriented balancing act.
+        const minCores = 2;
+        if (!cores || !memory) {
+            return minCores;
+        }
+        // A rough estimate of memory used per thread in gigabytes.
+        const memoryPerThread = 0.125;
+        const quarterMemory = memory / 4;
+        const maxThreadsByMemory = quarterMemory / memoryPerThread;
+        const maxThreadsByCores = cores / 2;
+        return Math.max(minCores, Math.min(maxThreadsByMemory, maxThreadsByCores));
+    }
+    _splitToGroups(items, groupCount) {
+        const groups = [];
+        if (!items || items.length === 0)
+            return groups;
+        const groupItemSize = Math.max(1, Math.floor(items.length / groupCount));
+        let startIndex = 0;
+        for (let i = 0; i < groupCount && startIndex < items.length; i++) {
+            groups.push(items.slice(startIndex, startIndex + groupItemSize));
+            startIndex += groupItemSize;
+        }
+        // Add any remaining items to the end of the last group.
+        if (startIndex < items.length) {
+            groups[groups.length - 1].push(...items.slice(startIndex, items.length));
+        }
+        return groups;
+    }
+    async suggest(timeout, generations, speculator) {
+        const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({ cat: 'planning', name: 'Planner::suggest', overview: true, args: { timeout } });
+        if (!generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__["DevtoolsConnection"].isConnected)
+            generations = [];
+        const plans = await trace.wait(this.plan(timeout, generations));
+        const suggestions = [];
+        speculator = speculator || new _speculator_js__WEBPACK_IMPORTED_MODULE_23__["Speculator"]();
+        // We don't actually know how many threads the VM will decide to use to
+        // handle the parallel speculation, but at least we know we won't kick off
+        // more than this number and so can somewhat limit resource utilization.
+        // TODO(wkorman): Rework this to use a fixed size 'thread' pool for more
+        // efficient work distribution.
+        const threadCount = this._speculativeThreadCount();
+        const planGroups = this._splitToGroups(plans, threadCount);
+        let results = await trace.wait(Promise.all(planGroups.map(async (group, groupIndex) => {
+            const results = [];
+            for (const plan of group) {
+                const hash = ((hash) => hash.substring(hash.length - 4))(await plan.digest());
+                if (_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_4__["RecipeUtil"].matchesRecipe(this._arc.activeRecipe, plan)) {
+                    this._updateGeneration(generations, hash, (g) => g.active = true);
+                    continue;
+                }
+                const planTrace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_24__["Tracing"].start({
+                    cat: 'speculating',
+                    sequence: `speculator_${groupIndex}`,
+                    overview: true,
+                    args: { groupIndex }
+                });
+                // TODO(wkorman): Look at restoring trace.wait() here, and whether we
+                // should do similar for the async getRecipeSuggestion() below as well?
+                const relevance = await speculator.speculate(this._arc, plan, hash);
+                this._relevances.push(relevance);
+                if (!relevance.isRelevant(plan)) {
+                    this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
+                    planTrace.end({ name: '[Irrelevant suggestion]', hash, groupIndex });
+                    continue;
+                }
+                const rank = relevance.calcRelevanceScore();
+                relevance.newArc.description.relevance = relevance;
+                const description = await relevance.newArc.description.getRecipeSuggestion();
+                this._updateGeneration(generations, hash, (g) => g.description = description);
+                // TODO: Move this logic inside speculate, so that it can stop the arc
+                // before returning.
+                relevance.newArc.stop();
+                results.push({
+                    plan,
+                    rank,
+                    description: relevance.newArc.description,
+                    descriptionText: description,
+                    hash,
+                    groupIndex
+                });
+                planTrace.end({ name: description, args: { rank, hash, groupIndex } });
+            }
+            return results;
+        })));
+        results = [].concat(...results);
+        this._relevances = [];
+        if (generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__["DevtoolsConnection"].isConnected) {
+            _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_25__["StrategyExplorerAdapter"].processGenerations(generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__["DevtoolsConnection"].get());
+        }
+        return trace.endWith(results);
+    }
+    _updateGeneration(generations, hash, handler) {
+        if (generations) {
+            generations.forEach(g => {
+                g.generated.forEach(gg => {
+                    if (gg.hash.endsWith(hash)) {
+                        handler(gg);
+                    }
+                });
+            });
+        }
+    }
+    dispose() {
+        // The speculative arc particle execution contexts are are worklets,
+        // so they need to be cleanly shut down, otherwise they would persist,
+        // as an idle eventLoop in a process waiting for messages.
+        this._relevances.forEach(relevance => relevance.newArc.dispose());
+        this._relevances = [];
+    }
+}
+// tslint:disable-next-line: variable-name
+Planner.InitializationStrategies = [
+    _strategies_init_population_js__WEBPACK_IMPORTED_MODULE_7__["InitPopulation"],
+    _strategies_init_search_js__WEBPACK_IMPORTED_MODULE_14__["InitSearch"]
+];
+// tslint:disable-next-line: variable-name
+Planner.ResolutionStrategies = [
+    _strategies_search_tokens_to_particles_js__WEBPACK_IMPORTED_MODULE_16__["SearchTokensToParticles"],
+    _strategies_search_tokens_to_handles_js__WEBPACK_IMPORTED_MODULE_15__["SearchTokensToHandles"],
+    _strategies_group_handle_connections_js__WEBPACK_IMPORTED_MODULE_17__["GroupHandleConnections"],
+    _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_19__["CreateHandleGroup"],
+    _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_5__["ConvertConstraintsToConnections"],
+    _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_8__["MapSlots"],
+    _strategies_assign_handles_js__WEBPACK_IMPORTED_MODULE_6__["AssignHandles"],
+    _strategies_match_particle_by_verb_js__WEBPACK_IMPORTED_MODULE_9__["MatchParticleByVerb"],
+    _strategies_match_recipe_by_verb_js__WEBPACK_IMPORTED_MODULE_10__["MatchRecipeByVerb"],
+    _strategies_name_unnamed_connections_js__WEBPACK_IMPORTED_MODULE_11__["NameUnnamedConnections"],
+    _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_12__["AddMissingHandles"],
+    _strategies_create_description_handle_js__WEBPACK_IMPORTED_MODULE_13__["CreateDescriptionHandle"],
+    _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_18__["MatchFreeHandlesToConnections"],
+    _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_22__["ResolveRecipe"],
+    _strategies_find_hosted_particle_js__WEBPACK_IMPORTED_MODULE_20__["FindHostedParticle"],
+    _strategies_coalesce_recipes_js__WEBPACK_IMPORTED_MODULE_21__["CoalesceRecipes"]
+];
+// tslint:disable-next-line: variable-name
+Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.ResolutionStrategies);
+//# sourceMappingURL=planner.js.map
 
 /***/ }),
 

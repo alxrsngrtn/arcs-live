@@ -2546,8 +2546,8 @@ class Description {
         }
         return undefined;
     }
-    async getRecipeSuggestion(formatterClass) {
-        const formatter = await new (formatterClass || DescriptionFormatter)(this);
+    async getRecipeSuggestion(formatterClass = DescriptionFormatter) {
+        const formatter = await new (formatterClass)(this);
         const desc = await formatter.getDescription(this.arc.recipes[this.arc.recipes.length - 1]);
         if (desc) {
             return desc;
@@ -45333,204 +45333,188 @@ class DevtoolsConnection {
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-
 class Planner {
-  constructor() {
-    this._relevances = [];
-  }
-
-  // TODO: Use context.arc instead of arc
-  init(arc, {strategies, ruleset, strategyArgs = {}} = {}) {
-    strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
-    this._arc = arc;
-    strategies = (strategies || Planner.AllStrategies).map(strategy => new strategy(arc, strategyArgs));
-    this.strategizer = new Strategizer(strategies, [], ruleset || Empty$1);
-  }
-
-  // Specify a timeout value less than zero to disable timeouts.
-  async plan(timeout, generations) {
-    const trace = Tracing.start({cat: 'planning', name: 'Planner::plan', overview: true, args: {timeout}});
-    timeout = timeout || -1;
-    const allResolved = [];
-    const start = now$1();
-    do {
-      const record = await trace.wait(this.strategizer.generate());
-      const generated = this.strategizer.generated;
-      trace.addArgs({
-        generated: generated.length,
-        generation: this.strategizer.generation
-      });
-      if (generations) {
-        generations.push({generated, record});
-      }
-
-      const resolved = this.strategizer.generated
-          .map(individual => individual.result)
-          .filter(recipe => recipe.isResolved());
-
-      allResolved.push(...resolved);
-      const elapsed = now$1() - start;
-      if (timeout >= 0 && elapsed > timeout) {
-        console.warn(`Planner.plan timed out [elapsed=${Math.floor(elapsed)}ms, timeout=${timeout}ms].`);
-        break;
-      }
-    } while (this.strategizer.generated.length + this.strategizer.terminal.length > 0);
-    trace.end();
-    return allResolved;
-  }
-
-  _speculativeThreadCount() {
-    // TODO(wkorman): We'll obviously have to rework the below when we do
-    // speculation in the cloud.
-    const cores = DeviceInfo.hardwareConcurrency();
-    const memory = DeviceInfo.deviceMemory();
-    // For now, allow occupying half of the available cores while constraining
-    // total memory used to at most a quarter of what's available. In the
-    // absence of resource information we just run two in parallel as a
-    // perhaps-low-end-device-oriented balancing act.
-    const minCores = 2;
-    if (!cores || !memory) {
-      return minCores;
+    constructor() {
+        this._relevances = [];
     }
-
-    // A rough estimate of memory used per thread in gigabytes.
-    const memoryPerThread = 0.125;
-    const quarterMemory = memory / 4;
-    const maxThreadsByMemory = quarterMemory / memoryPerThread;
-    const maxThreadsByCores = cores / 2;
-    return Math.max(minCores, Math.min(maxThreadsByMemory, maxThreadsByCores));
-  }
-  _splitToGroups(items, groupCount) {
-    const groups = [];
-    if (!items || items.length == 0) return groups;
-    const groupItemSize = Math.max(1, Math.floor(items.length / groupCount));
-    let startIndex = 0;
-    for (let i = 0; i < groupCount && startIndex < items.length; i++) {
-      groups.push(items.slice(startIndex, startIndex + groupItemSize));
-      startIndex += groupItemSize;
+    // TODO: Use context.arc instead of arc
+    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty$1, strategyArgs = {} } = {}) {
+        strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
+        this._arc = arc;
+        strategies = strategies.map(strategy => new strategy(arc, strategyArgs));
+        this.strategizer = new Strategizer(strategies, [], ruleset);
     }
-    // Add any remaining items to the end of the last group.
-    if (startIndex < items.length) {
-      groups[groups.length - 1].push(...items.slice(startIndex, items.length));
+    // Specify a timeout value less than zero to disable timeouts.
+    async plan(timeout, generations) {
+        const trace = Tracing.start({ cat: 'planning', name: 'Planner::plan', overview: true, args: { timeout } });
+        timeout = timeout || -1;
+        const allResolved = [];
+        const start = now$1();
+        do {
+            const record = await trace.wait(this.strategizer.generate());
+            const generated = this.strategizer.generated;
+            trace.addArgs({
+                generated: generated.length,
+                generation: this.strategizer.generation
+            });
+            if (generations) {
+                generations.push({ generated, record });
+            }
+            const resolved = this.strategizer.generated
+                .map(individual => individual.result)
+                .filter(recipe => recipe.isResolved());
+            allResolved.push(...resolved);
+            const elapsed = now$1() - start;
+            if (timeout >= 0 && elapsed > timeout) {
+                console.warn(`Planner.plan timed out [elapsed=${Math.floor(elapsed)}ms, timeout=${timeout}ms].`);
+                break;
+            }
+        } while (this.strategizer.generated.length + this.strategizer.terminal.length > 0);
+        trace.end();
+        return allResolved;
     }
-    return groups;
-  }
-  async suggest(timeout, generations, speculator) {
-    const trace = Tracing.start({cat: 'planning', name: 'Planner::suggest', overview: true, args: {timeout}});
-    if (!generations && DevtoolsConnection.isConnected) generations = [];
-    const plans = await trace.wait(this.plan(timeout, generations));
-    speculator = speculator || new Speculator();
-    // We don't actually know how many threads the VM will decide to use to
-    // handle the parallel speculation, but at least we know we won't kick off
-    // more than this number and so can somewhat limit resource utilization.
-    // TODO(wkorman): Rework this to use a fixed size 'thread' pool for more
-    // efficient work distribution.
-    const threadCount = this._speculativeThreadCount();
-    const planGroups = this._splitToGroups(plans, threadCount);
-    let results = await trace.wait(Promise.all(planGroups.map(async (group, groupIndex) => {
-      const results = [];
-      for (const plan of group) {
-        const hash = ((hash) => { return hash.substring(hash.length - 4);})(await plan.digest());
-
-        if (RecipeUtil.matchesRecipe(this._arc._activeRecipe, plan)) {
-          this._updateGeneration(generations, hash, (g) => g.active = true);
-          continue;
+    _speculativeThreadCount() {
+        // TODO(wkorman): We'll obviously have to rework the below when we do
+        // speculation in the cloud.
+        const cores = DeviceInfo.hardwareConcurrency();
+        const memory = DeviceInfo.deviceMemory();
+        // For now, allow occupying half of the available cores while constraining
+        // total memory used to at most a quarter of what's available. In the
+        // absence of resource information we just run two in parallel as a
+        // perhaps-low-end-device-oriented balancing act.
+        const minCores = 2;
+        if (!cores || !memory) {
+            return minCores;
         }
-
-        const planTrace = Tracing.start({
-          cat: 'speculating',
-          sequence: `speculator_${groupIndex}`,
-          overview: true,
-          args: {groupIndex}
-        });
-
-        // TODO(wkorman): Look at restoring trace.wait() here, and whether we
-        // should do similar for the async getRecipeSuggestion() below as well?
-        const relevance = await speculator.speculate(this._arc, plan, hash);
-        this._relevances.push(relevance);
-        if (!relevance.isRelevant(plan)) {
-          this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
-          planTrace.end({name: '[Irrelevant suggestion]', hash, groupIndex});
-          continue;
+        // A rough estimate of memory used per thread in gigabytes.
+        const memoryPerThread = 0.125;
+        const quarterMemory = memory / 4;
+        const maxThreadsByMemory = quarterMemory / memoryPerThread;
+        const maxThreadsByCores = cores / 2;
+        return Math.max(minCores, Math.min(maxThreadsByMemory, maxThreadsByCores));
+    }
+    _splitToGroups(items, groupCount) {
+        const groups = [];
+        if (!items || items.length === 0)
+            return groups;
+        const groupItemSize = Math.max(1, Math.floor(items.length / groupCount));
+        let startIndex = 0;
+        for (let i = 0; i < groupCount && startIndex < items.length; i++) {
+            groups.push(items.slice(startIndex, startIndex + groupItemSize));
+            startIndex += groupItemSize;
         }
-        const rank = relevance.calcRelevanceScore();
-
-        relevance.newArc.description.relevance = relevance;
-        const description = await relevance.newArc.description.getRecipeSuggestion();
-
-        this._updateGeneration(generations, hash, (g) => g.description = description);
-
-        // TODO: Move this logic inside speculate, so that it can stop the arc
-        // before returning.
-        relevance.newArc.stop();
-
-        results.push({
-          plan,
-          rank,
-          description: relevance.newArc.description,
-          descriptionText: description, // TODO(mmandlis): exclude the text description from returned results.
-          hash,
-          groupIndex
-        });
-
-        planTrace.end({name: description, args: {rank, hash, groupIndex}});
-      }
-      return results;
-    })));
-    results = [].concat(...results);
-
-    this._relevances = [];
-
-    if (generations && DevtoolsConnection.isConnected) {
-      StrategyExplorerAdapter.processGenerations(generations, DevtoolsConnection.get());
+        // Add any remaining items to the end of the last group.
+        if (startIndex < items.length) {
+            groups[groups.length - 1].push(...items.slice(startIndex, items.length));
+        }
+        return groups;
     }
-
-    return trace.endWith(results);
-  }
-  _updateGeneration(generations, hash, handler) {
-    if (generations) {
-      generations.forEach(g => {
-        g.generated.forEach(gg => {
-          if (gg.hash.endsWith(hash)) {
-            handler(gg);
-          }
-        });
-      });
+    async suggest(timeout, generations, speculator) {
+        const trace = Tracing.start({ cat: 'planning', name: 'Planner::suggest', overview: true, args: { timeout } });
+        if (!generations && DevtoolsConnection.isConnected)
+            generations = [];
+        const plans = await trace.wait(this.plan(timeout, generations));
+        speculator = speculator || new Speculator();
+        // We don't actually know how many threads the VM will decide to use to
+        // handle the parallel speculation, but at least we know we won't kick off
+        // more than this number and so can somewhat limit resource utilization.
+        // TODO(wkorman): Rework this to use a fixed size 'thread' pool for more
+        // efficient work distribution.
+        const threadCount = this._speculativeThreadCount();
+        const planGroups = this._splitToGroups(plans, threadCount);
+        let results = await trace.wait(Promise.all(planGroups.map(async (group, groupIndex) => {
+            const results = [];
+            for (const plan of group) {
+                const hash = ((hash) => hash.substring(hash.length - 4))(await plan.digest());
+                if (RecipeUtil.matchesRecipe(this._arc.activeRecipe, plan)) {
+                    this._updateGeneration(generations, hash, (g) => g.active = true);
+                    continue;
+                }
+                const planTrace = Tracing.start({
+                    cat: 'speculating',
+                    sequence: `speculator_${groupIndex}`,
+                    overview: true,
+                    args: { groupIndex }
+                });
+                // TODO(wkorman): Look at restoring trace.wait() here, and whether we
+                // should do similar for the async getRecipeSuggestion() below as well?
+                const relevance = await speculator.speculate(this._arc, plan, hash);
+                this._relevances.push(relevance);
+                if (!relevance.isRelevant(plan)) {
+                    this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
+                    planTrace.end({ name: '[Irrelevant suggestion]', hash, groupIndex });
+                    continue;
+                }
+                const rank = relevance.calcRelevanceScore();
+                relevance.newArc.description.relevance = relevance;
+                const description = await relevance.newArc.description.getRecipeSuggestion();
+                this._updateGeneration(generations, hash, (g) => g.description = description);
+                // TODO: Move this logic inside speculate, so that it can stop the arc
+                // before returning.
+                relevance.newArc.stop();
+                results.push({
+                    plan,
+                    rank,
+                    description: relevance.newArc.description,
+                    descriptionText: description,
+                    hash,
+                    groupIndex
+                });
+                planTrace.end({ name: description, args: { rank, hash, groupIndex } });
+            }
+            return results;
+        })));
+        results = [].concat(...results);
+        this._relevances = [];
+        if (generations && DevtoolsConnection.isConnected) {
+            StrategyExplorerAdapter.processGenerations(generations, DevtoolsConnection.get());
+        }
+        return trace.endWith(results);
     }
-  }
-  dispose() {
-    // The speculative arc particle execution contexts are are worklets,
-    // so they need to be cleanly shut down, otherwise they would persist,
-    // as an idle eventLoop in a process waiting for messages.
-    this._relevances.forEach(relevance => relevance.newArc.dispose());
-    this._relevances = [];
-  }
+    _updateGeneration(generations, hash, handler) {
+        if (generations) {
+            generations.forEach(g => {
+                g.generated.forEach(gg => {
+                    if (gg.hash.endsWith(hash)) {
+                        handler(gg);
+                    }
+                });
+            });
+        }
+    }
+    dispose() {
+        // The speculative arc particle execution contexts are are worklets,
+        // so they need to be cleanly shut down, otherwise they would persist,
+        // as an idle eventLoop in a process waiting for messages.
+        this._relevances.forEach(relevance => relevance.newArc.dispose());
+        this._relevances = [];
+    }
 }
-
+// tslint:disable-next-line: variable-name
 Planner.InitializationStrategies = [
-  InitPopulation,
-  InitSearch
+    InitPopulation,
+    InitSearch
 ];
-
+// tslint:disable-next-line: variable-name
 Planner.ResolutionStrategies = [
-  SearchTokensToParticles,
-  SearchTokensToHandles,
-  GroupHandleConnections,
-  CreateHandleGroup,
-  ConvertConstraintsToConnections,
-  MapSlots,
-  AssignHandles,
-  MatchParticleByVerb,
-  MatchRecipeByVerb,
-  NameUnnamedConnections,
-  AddMissingHandles,
-  CreateDescriptionHandle,
-  MatchFreeHandlesToConnections,
-  ResolveRecipe,
-  FindHostedParticle,
-  CoalesceRecipes
+    SearchTokensToParticles,
+    SearchTokensToHandles,
+    GroupHandleConnections,
+    CreateHandleGroup,
+    ConvertConstraintsToConnections,
+    MapSlots,
+    AssignHandles,
+    MatchParticleByVerb,
+    MatchRecipeByVerb,
+    NameUnnamedConnections,
+    AddMissingHandles,
+    CreateDescriptionHandle,
+    MatchFreeHandlesToConnections,
+    ResolveRecipe,
+    FindHostedParticle,
+    CoalesceRecipes
 ];
-
+// tslint:disable-next-line: variable-name
 Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.ResolutionStrategies);
 
 /**

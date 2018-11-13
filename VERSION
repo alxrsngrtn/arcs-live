@@ -1,8 +1,7 @@
-commit d700ae47bc90c2021c9819733e031609a8a0c265
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Tue Nov 13 11:33:00 2018 +1100
+commit e8a2a5f765e2352527607b327329403628bda7fc
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Nov 12 16:34:06 2018 -0800
 
-    Revert "add tests for ShellApi (pipes) (#2198)" (#2227)
+    Migrate planner to typescript (#2230)
     
-    This reverts commit 1164e5f1bc9f156c0ba87af243f98eeec7b98294.
-    Should fix #2220 where 'Pipes receives' test failing on Travis
+    Addresses #1765

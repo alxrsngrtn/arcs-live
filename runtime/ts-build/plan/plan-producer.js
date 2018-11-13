@@ -9,7 +9,7 @@
  */
 import { assert } from '../../../platform/assert-web.js';
 import { now } from '../../../platform/date-web.js';
-import { Planner } from '../../planner.js';
+import { Planner } from '../planner.js';
 import { PlanningResult } from './planning-result.js';
 import { Speculator } from '../speculator';
 const defaultTimeoutMs = 5000;
