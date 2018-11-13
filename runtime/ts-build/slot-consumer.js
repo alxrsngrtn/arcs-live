@@ -15,7 +15,7 @@ export class SlotConsumer {
         // Contains `container` and other affordance specific rendering information
         // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
         this._renderingBySubId = new Map();
-        this._innerContainerBySlotName = {};
+        this.innerContainerBySlotId = {};
         this._consumeConn = consumeConn;
         this.containerKind = containerKind;
     }
@@ -65,7 +65,7 @@ export class SlotConsumer {
     }
     updateProvidedContexts() {
         this.providedSlotContexts.forEach(providedContext => {
-            providedContext.container = this.getInnerContainer(providedContext.name);
+            providedContext.container = this.getInnerContainer(providedContext.id);
         });
     }
     startRender() {
@@ -73,6 +73,7 @@ export class SlotConsumer {
             this.startRenderCallback({
                 particle: this.consumeConn.particle,
                 slotName: this.consumeConn.name,
+                providedSlots: new Map(this.providedSlotContexts.map(context => [context.name, context.id])),
                 contentTypes: this.constructRenderRequest()
             });
         }
@@ -103,28 +104,28 @@ export class SlotConsumer {
         }));
         return descriptions;
     }
-    getInnerContainer(providedSlotName) {
-        return this._innerContainerBySlotName[providedSlotName];
+    getInnerContainer(slotId) {
+        return this.innerContainerBySlotId[slotId];
     }
     _initInnerSlotContainer(slotId, subId, container) {
         if (subId) {
-            if (!this._innerContainerBySlotName[slotId]) {
-                this._innerContainerBySlotName[slotId] = {};
+            if (!this.innerContainerBySlotId[slotId]) {
+                this.innerContainerBySlotId[slotId] = {};
             }
-            assert(!this._innerContainerBySlotName[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
-            this._innerContainerBySlotName[slotId][subId] = container;
+            assert(!this.innerContainerBySlotId[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
+            this.innerContainerBySlotId[slotId][subId] = container;
         }
         else {
-            this._innerContainerBySlotName[slotId] = container;
+            this.innerContainerBySlotId[slotId] = container;
         }
     }
     _clearInnerSlotContainers(subIds) {
         subIds.forEach(subId => {
             if (subId) {
-                Object.values(this._innerContainerBySlotName).forEach(inner => delete inner[subId]);
+                Object.values(this.innerContainerBySlotId).forEach(inner => delete inner[subId]);
             }
             else {
-                this._innerContainerBySlotName = {};
+                this.innerContainerBySlotId = {};
             }
         });
     }

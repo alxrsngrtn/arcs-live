@@ -69,29 +69,50 @@ export class ParticleExecutionContext {
             setTimeout(() => { this.apiPort.Idle({ version, relevance: this.relevance }); }, 0);
         });
         this.apiPort.onUIEvent = ({ particle, slotName, event }) => particle.fireEvent(slotName, event);
-        this.apiPort.onStartRender = ({ particle, slotName, contentTypes }) => {
+        this.apiPort.onStartRender = ({ particle, slotName, providedSlots, contentTypes }) => {
             /** @class Slot
              * A representation of a consumed slot. Retrieved from a particle using
              * particle.getSlot(name)
              */
             class Slotlet {
-                constructor(pec, particle, slotName) {
+                constructor(pec, particle, slotName, providedSlots) {
                     this.handlers = new Map();
                     this.requestedContentTypes = new Set();
                     this._isRendered = false;
                     this.slotName = slotName;
                     this.particle = particle;
                     this.pec = pec;
+                    this.providedSlots = providedSlots;
                 }
                 get isRendered() { return this._isRendered; }
                 /** @method render(content)
                  * renders content to the slot.
                  */
                 render(content) {
+                    if (content.template && this.providedSlots.size > 0) {
+                        content = Object.assign({}, content);
+                        if (typeof content.template === 'string') {
+                            content.template = this.substituteSlotNamesForIds(content.template);
+                        }
+                        else {
+                            content.template = Object.entries(content.template).reduce((templateDictionary, [templateName, templateValue]) => {
+                                templateDictionary[templateName] = this.substituteSlotNamesForIds(templateValue);
+                                return templateDictionary;
+                            }, {});
+                        }
+                    }
                     this.pec.apiPort.Render({ particle, slotName, content });
                     Object.keys(content).forEach(key => { this.requestedContentTypes.delete(key); });
                     // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
                     this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
+                }
+                substituteSlotNamesForIds(template) {
+                    this.providedSlots.forEach((slotId, slotName) => {
+                        // TODO: This is a simple string replacement right now,
+                        // ensuring that 'slotid' is an attribute on an HTML element would be an improvement.
+                        template = template.replace(new RegExp(`slotid=\"${slotName}\"`, 'gi'), `slotid="${slotId}"`);
+                    });
+                    return template;
                 }
                 /** @method registerEventHandler(name, f)
                  * registers a callback to be invoked when 'name' event happens.
@@ -111,7 +132,7 @@ export class ParticleExecutionContext {
                     }
                 }
             }
-            particle._slotByName.set(slotName, new Slotlet(this, particle, slotName));
+            particle._slotByName.set(slotName, new Slotlet(this, particle, slotName, providedSlots));
             particle.renderSlot(slotName, contentTypes);
         };
         this.apiPort.onStopRender = ({ particle, slotName }) => {

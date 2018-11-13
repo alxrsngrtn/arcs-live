@@ -56798,7 +56798,7 @@ class PECOuterPort extends APIPort {
     this.registerCall('UIEvent', {particle: this.Mapped, slotName: this.Direct, event: this.Direct});
     this.registerCall('SimpleCallback', {callback: this.Direct, data: this.Direct});
     this.registerCall('AwaitIdle', {version: this.Direct});
-    this.registerCall('StartRender', {particle: this.Mapped, slotName: this.Direct, contentTypes: this.List(this.Direct)});
+    this.registerCall('StartRender', {particle: this.Mapped, slotName: this.Direct, providedSlots: this.Map(this.Direct, this.Direct), contentTypes: this.List(this.Direct)});
     this.registerCall('StopRender', {particle: this.Mapped, slotName: this.Direct});
 
     this.registerHandler('Render', {particle: this.Mapped, slotName: this.Direct, content: this.Direct});
@@ -56858,7 +56858,7 @@ class PECInnerPort extends APIPort {
     this.registerHandler('UIEvent', {particle: this.Mapped, slotName: this.Direct, event: this.Direct});
     this.registerHandler('SimpleCallback', {callback: this.LocalMapped, data: this.Direct});
     this.registerHandler('AwaitIdle', {version: this.Direct});
-    this.registerHandler('StartRender', {particle: this.Mapped, slotName: this.Direct, contentTypes: this.List(this.Direct)});
+    this.registerHandler('StartRender', {particle: this.Mapped, slotName: this.Direct, providedSlots: this.Map(this.Direct, this.Direct), contentTypes: this.List(this.Direct)});
     this.registerHandler('StopRender', {particle: this.Mapped, slotName: this.Direct});
 
     this.registerCall('Render', {particle: this.Mapped, slotName: this.Direct, content: this.Direct});
@@ -71185,14 +71185,14 @@ class MockSlotDomConsumer extends _ts_build_slot_dom_consumer_js__WEBPACK_IMPORT
     return container == contextContainer;
   }
 
-  getInnerContainer(innerSlotName) {
+  getInnerContainer(slotId) {
     const model = this.renderings.map(([subId, {model}]) => model)[0];
-    const providedSlotSpec = this._findProvidedSlotSpec(innerSlotName);
-    if (!providedSlotSpec) {
-      console.warn(`Cannot find provided spec for ${innerSlotName} in ${this.consumeConn.getQualifiedName()}`);
+    const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
+    if (!providedContext) {
+      console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);
       return;
     }
-    if (providedSlotSpec.isSet && model && model.items && model.items.models) {
+    if (providedContext.spec.isSet && model && model.items && model.items.models) {
       const innerContainers = {};
       for (const itemModel of model.items.models) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(itemModel.id);
@@ -71200,7 +71200,7 @@ class MockSlotDomConsumer extends _ts_build_slot_dom_consumer_js__WEBPACK_IMPORT
       }
       return innerContainers;
     }
-    return innerSlotName;
+    return slotId;
   }
 
   createTemplateElement(template) {
@@ -71726,9 +71726,9 @@ ${this.activeRecipe.toString()}`;
         return [...this.particleHandleMaps.values()].map(({ spec }) => spec);
     }
     _instantiateParticle(recipeParticle) {
-        const id = this.generateID('particle');
+        recipeParticle.id = this.generateID('particle');
         const handleMap = { spec: recipeParticle.spec, handles: new Map() };
-        this.particleHandleMaps.set(id, handleMap);
+        this.particleHandleMaps.set(recipeParticle.id, handleMap);
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
             if (!connection.handle) {
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(connection.isOptional);
@@ -71736,12 +71736,11 @@ ${this.activeRecipe.toString()}`;
             }
             const handle = this.findStoreById(connection.handle.id);
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handle, `can't find handle of id ${connection.handle.id}`);
-            this._connectParticleToHandle(id, recipeParticle, name, handle);
+            this._connectParticleToHandle(recipeParticle, name, handle);
         }
         // At least all non-optional connections must be resolved
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleMap.handles.size >= handleMap.spec.connections.filter(c => !c.isOptional).length, `Not all mandatory connections are resolved for {$particle}`);
-        this.pec.instantiate(recipeParticle, id, handleMap.spec, handleMap.handles);
-        return id;
+        this.pec.instantiate(recipeParticle, handleMap.spec, handleMap.handles);
     }
     generateID(component = '') {
         return this.id.createId(component).toString();
@@ -71898,9 +71897,9 @@ ${this.activeRecipe.toString()}`;
             this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
         }
     }
-    _connectParticleToHandle(particleId, particle, name, targetHandle) {
+    _connectParticleToHandle(particle, name, targetHandle) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targetHandle, 'no target handle provided');
-        const handleMap = this.particleHandleMaps.get(particleId);
+        const handleMap = this.particleHandleMaps.get(particle.id);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleMap.spec.connectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
         handleMap.handles.set(name, targetHandle);
     }
@@ -73524,13 +73523,11 @@ class HostedSlotConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__[
     get arc() { return this._arc; }
     get consumeConn() { return this._consumeConn; }
     set consumeConn(consumeConn) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._consumeConn, 'Consume connection can be set only once');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedSlotId === consumeConn.targetSlot.id, `Expected target slot ${this.hostedSlotId}, but got ${consumeConn.targetSlot.id}`);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedParticleName === consumeConn.particle.name, `Expected particle ${this.hostedParticleName} for slot ${this.hostedSlotId}, but got ${consumeConn.particle.name}`);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedSlotName === consumeConn.name, `Expected slot ${this.hostedSlotName} for slot ${this.hostedSlotId}, but got ${consumeConn.name}`);
         this._consumeConn = consumeConn;
-        if (this.transformationSlotConsumer.slotContext.container) {
-            this.startRender();
-        }
     }
     async setContent(content, handler, arc) {
         if (this.renderCallback) {
@@ -75687,29 +75684,50 @@ class ParticleExecutionContext {
             setTimeout(() => { this.apiPort.Idle({ version, relevance: this.relevance }); }, 0);
         });
         this.apiPort.onUIEvent = ({ particle, slotName, event }) => particle.fireEvent(slotName, event);
-        this.apiPort.onStartRender = ({ particle, slotName, contentTypes }) => {
+        this.apiPort.onStartRender = ({ particle, slotName, providedSlots, contentTypes }) => {
             /** @class Slot
              * A representation of a consumed slot. Retrieved from a particle using
              * particle.getSlot(name)
              */
             class Slotlet {
-                constructor(pec, particle, slotName) {
+                constructor(pec, particle, slotName, providedSlots) {
                     this.handlers = new Map();
                     this.requestedContentTypes = new Set();
                     this._isRendered = false;
                     this.slotName = slotName;
                     this.particle = particle;
                     this.pec = pec;
+                    this.providedSlots = providedSlots;
                 }
                 get isRendered() { return this._isRendered; }
                 /** @method render(content)
                  * renders content to the slot.
                  */
                 render(content) {
+                    if (content.template && this.providedSlots.size > 0) {
+                        content = Object.assign({}, content);
+                        if (typeof content.template === 'string') {
+                            content.template = this.substituteSlotNamesForIds(content.template);
+                        }
+                        else {
+                            content.template = Object.entries(content.template).reduce((templateDictionary, [templateName, templateValue]) => {
+                                templateDictionary[templateName] = this.substituteSlotNamesForIds(templateValue);
+                                return templateDictionary;
+                            }, {});
+                        }
+                    }
                     this.pec.apiPort.Render({ particle, slotName, content });
                     Object.keys(content).forEach(key => { this.requestedContentTypes.delete(key); });
                     // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
                     this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
+                }
+                substituteSlotNamesForIds(template) {
+                    this.providedSlots.forEach((slotId, slotName) => {
+                        // TODO: This is a simple string replacement right now,
+                        // ensuring that 'slotid' is an attribute on an HTML element would be an improvement.
+                        template = template.replace(new RegExp(`slotid=\"${slotName}\"`, 'gi'), `slotid="${slotId}"`);
+                    });
+                    return template;
                 }
                 /** @method registerEventHandler(name, f)
                  * registers a callback to be invoked when 'name' event happens.
@@ -75729,7 +75747,7 @@ class ParticleExecutionContext {
                     }
                 }
             }
-            particle._slotByName.set(slotName, new Slotlet(this, particle, slotName));
+            particle._slotByName.set(slotName, new Slotlet(this, particle, slotName, providedSlots));
             particle.renderSlot(slotName, contentTypes);
         };
         this.apiPort.onStopRender = ({ particle, slotName }) => {
@@ -76060,16 +76078,15 @@ class ParticleExecutionHost {
     sendEvent(particle, slotName, event) {
         this._apiPort.UIEvent({ particle, slotName, event });
     }
-    instantiate(particleSpec, id, spec, handles) {
+    instantiate(particle, spec, handles) {
         handles.forEach(handle => {
             this._apiPort.DefineHandle(handle, { type: handle.type.resolvedType(), name: handle.name });
         });
-        // TODO: rename this concept to something like instantiatedParticle, handle or registration.
-        this._apiPort.InstantiateParticle(particleSpec, { id, spec, handles });
-        return particleSpec;
+        this._apiPort.InstantiateParticle(particle, { id: particle.id, spec, handles });
+        return particle;
     }
-    startRender({ particle, slotName, contentTypes }) {
-        this._apiPort.StartRender({ particle, slotName, contentTypes });
+    startRender({ particle, slotName, providedSlots, contentTypes }) {
+        this._apiPort.StartRender({ particle, slotName, providedSlots, contentTypes });
     }
     stopRender({ particle, slotName }) {
         this._apiPort.StopRender({ particle, slotName });
@@ -76793,7 +76810,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Planificator {
-    constructor(arc, userid, store, onlyConsumer) {
+    constructor(arc, userid, store, searchStore, onlyConsumer) {
         this.search = null;
         // In <0.6 shell, this is needed to backward compatibility, in order to (1)
         // (1) trigger replanning with a local producer and (2) notify shell of the
@@ -76802,6 +76819,7 @@ class Planificator {
         this.arcCallback = this._onPlanInstantiated.bind(this);
         this.arc = arc;
         this.userid = userid;
+        this.searchStore = searchStore;
         if (!onlyConsumer) {
             this.producer = new _plan_producer__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](arc, store);
             this.replanQueue = new _replan_queue__WEBPACK_IMPORTED_MODULE_3__["ReplanQueue"](this.producer);
@@ -76813,8 +76831,9 @@ class Planificator {
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
     static async create(arc, { userid, protocol, onlyConsumer }) {
-        const store = await Planificator._initStore(arc, { userid, protocol, arcKey: null });
-        const planificator = new Planificator(arc, userid, store, onlyConsumer);
+        const store = await Planificator._initSuggestStore(arc, { userid, protocol, arcKey: null });
+        const searchStore = await Planificator._initSearchStore(arc, { userid });
+        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer);
         planificator.requestPlanning();
         return planificator;
     }
@@ -76827,15 +76846,19 @@ class Planificator {
     async loadPlans() {
         return this.consumer.loadPlans();
     }
-    setSearch(search) {
+    async setSearch(search) {
         search = search ? search.toLowerCase().trim() : null;
         search = (search !== '') ? search : null;
         if (this.search !== search) {
             this.search = search;
+            await this._storeSearch(this.arcKey, this.search);
             const showAll = this.search === '*';
             const filter = showAll ? null : this.search;
             this.consumer.setSuggestFilter(showAll, filter);
         }
+    }
+    get arcKey() {
+        return this.arc.storageKey.substring(this.arc.storageKey.lastIndexOf('/') + 1);
     }
     registerPlansChangedCallback(callback) {
         this.consumer.registerPlansChangedCallback(callback);
@@ -76874,25 +76897,36 @@ class Planificator {
             }
         });
     }
-    static async _initStore(arc, { userid, protocol, arcKey }) {
+    static async _initSuggestStore(arc, { userid, protocol, arcKey }) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'Missing user id.');
-        let storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
+        const storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
         const storageKey = storage.parseStringAsKey(arc.storageKey);
         if (protocol) {
             storageKey.protocol = protocol;
         }
-        storageKey.location = storageKey.location
+        storageKey['location'] = storageKey['location']
             .replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/${arcKey || '$1'}`);
-        const storageKeyStr = storageKey.toString();
-        storage = arc.storageProviderFactory._storageForKey(storageKeyStr);
         const schema = new _schema__WEBPACK_IMPORTED_MODULE_4__["Schema"]({ names: ['Suggestions'], fields: { current: 'Object' } });
         const type = _type__WEBPACK_IMPORTED_MODULE_5__["Type"].newEntity(schema);
+        return Planificator._initStore(arc, 'suggestions-id', type, storageKey);
+    }
+    static async _initSearchStore(arc, { userid }) {
+        const storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
+        const storageKey = storage.parseStringAsKey(arc.storageKey);
+        storageKey['location'] = storageKey['location']
+            .replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/search`);
+        const schema = new _schema__WEBPACK_IMPORTED_MODULE_4__["Schema"]({ names: ['Search'], fields: { current: 'Object' } });
+        const type = _type__WEBPACK_IMPORTED_MODULE_5__["Type"].newEntity(schema);
+        return Planificator._initStore(arc, 'search-id', type, storageKey);
+    }
+    static async _initStore(arc, id, type, storageKey) {
         // TODO: unify initialization of suggestions storage.
-        const id = 'suggestions-id';
+        const storageKeyStr = storageKey.toString();
+        const storage = arc.storageProviderFactory._storageForKey(storageKeyStr);
         let store = null;
         switch (storageKey.protocol) {
             case 'firebase':
-                return storage._join(id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
+                return storage['_join'](id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
             case 'volatile':
             case 'pouchdb':
                 try {
@@ -76901,12 +76935,23 @@ class Planificator {
                 catch (e) {
                     store = await storage.connect(id, type, storageKeyStr);
                 }
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${protocol}' store.`);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${storageKey.protocol}' store.`);
                 store.referenceMode = false;
                 return store;
             default:
-                throw new Error(`Unsupported protocol '${protocol}'`);
+                throw new Error(`Unsupported protocol '${storageKey.protocol}'`);
         }
+    }
+    async _storeSearch(arcKey, search) {
+        const values = await this.searchStore['get']() || [];
+        const newValues = [];
+        for (const { arc, search } of values) {
+            if (arc !== arcKey) {
+                newValues.push({ arc, search });
+            }
+        }
+        newValues.push({ search: this.search, arc: this.arcKey });
+        return this.searchStore['set'](newValues);
     }
     isArcPopulated() {
         if (this.arc.recipes.length === 0)
@@ -78022,6 +78067,7 @@ class Particle {
     get localName() { return this._localName; }
     set localName(name) { this._localName = name; }
     get id() { return this._id; } // Not resolved until we have an ID.
+    set id(id) { Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._id, 'Particle ID can only be set once.'); this._id = id; }
     get name() { return this._name; }
     set name(name) { this._name = name; }
     get spec() { return this._spec; }
@@ -81200,7 +81246,6 @@ class SlotComposer {
                 let slotConsumer = this.consumers.find(slot => slot instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__["HostedSlotConsumer"] && slot.hostedSlotId === cs.targetSlot.id);
                 let transformationSlotConsumer = null;
                 if (slotConsumer && slotConsumer instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__["HostedSlotConsumer"]) {
-                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!slotConsumer.consumeConn);
                     slotConsumer.consumeConn = cs;
                     transformationSlotConsumer = slotConsumer.transformationSlotConsumer;
                 }
@@ -81211,8 +81256,12 @@ class SlotComposer {
                 const providedContexts = slotConsumer.createProvidedContexts();
                 this._contexts = this._contexts.concat(providedContexts);
                 // Slot contexts provided by the HostedSlotConsumer are managed by the transformation.
-                if (transformationSlotConsumer)
+                if (transformationSlotConsumer) {
                     transformationSlotConsumer.providedSlotContexts.push(...providedContexts);
+                    if (transformationSlotConsumer.slotContext.container) {
+                        slotConsumer.startRender();
+                    }
+                }
             });
         });
         // Set context for each of the slots.
@@ -81294,7 +81343,7 @@ class SlotConsumer {
         // Contains `container` and other affordance specific rendering information
         // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
         this._renderingBySubId = new Map();
-        this._innerContainerBySlotName = {};
+        this.innerContainerBySlotId = {};
         this._consumeConn = consumeConn;
         this.containerKind = containerKind;
     }
@@ -81344,7 +81393,7 @@ class SlotConsumer {
     }
     updateProvidedContexts() {
         this.providedSlotContexts.forEach(providedContext => {
-            providedContext.container = this.getInnerContainer(providedContext.name);
+            providedContext.container = this.getInnerContainer(providedContext.id);
         });
     }
     startRender() {
@@ -81352,6 +81401,7 @@ class SlotConsumer {
             this.startRenderCallback({
                 particle: this.consumeConn.particle,
                 slotName: this.consumeConn.name,
+                providedSlots: new Map(this.providedSlotContexts.map(context => [context.name, context.id])),
                 contentTypes: this.constructRenderRequest()
             });
         }
@@ -81382,28 +81432,28 @@ class SlotConsumer {
         }));
         return descriptions;
     }
-    getInnerContainer(providedSlotName) {
-        return this._innerContainerBySlotName[providedSlotName];
+    getInnerContainer(slotId) {
+        return this.innerContainerBySlotId[slotId];
     }
     _initInnerSlotContainer(slotId, subId, container) {
         if (subId) {
-            if (!this._innerContainerBySlotName[slotId]) {
-                this._innerContainerBySlotName[slotId] = {};
+            if (!this.innerContainerBySlotId[slotId]) {
+                this.innerContainerBySlotId[slotId] = {};
             }
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._innerContainerBySlotName[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
-            this._innerContainerBySlotName[slotId][subId] = container;
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.innerContainerBySlotId[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
+            this.innerContainerBySlotId[slotId][subId] = container;
         }
         else {
-            this._innerContainerBySlotName[slotId] = container;
+            this.innerContainerBySlotId[slotId] = container;
         }
     }
     _clearInnerSlotContainers(subIds) {
         subIds.forEach(subId => {
             if (subId) {
-                Object.values(this._innerContainerBySlotName).forEach(inner => delete inner[subId]);
+                Object.values(this.innerContainerBySlotId).forEach(inner => delete inner[subId]);
             }
             else {
-                this._innerContainerBySlotName = {};
+                this.innerContainerBySlotId = {};
             }
         });
     }
@@ -81745,22 +81795,15 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
                 return;
             }
             const slotId = this.getNodeValue(innerContainer, 'slotid');
-            const providedSlotSpec = this._findProvidedSlotSpec(slotId);
-            if (!providedSlotSpec) { // Skip non-declared slots
+            const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
+            if (!providedContext) {
                 console.warn(`Slot ${this.consumeConn.slotSpec.name} has unexpected inner slot ${slotId}`);
                 return;
             }
             const subId = this.getNodeValue(innerContainer, 'subid');
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(subId) === providedSlotSpec.isSet, `Sub-id ${subId} for slot ${providedSlotSpec.name} doesn't match set spec: ${providedSlotSpec.isSet}`);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(subId) === providedContext.spec.isSet, `Sub-id ${subId} for slot ${providedContext.name} doesn't match set spec: ${providedContext.spec.isSet}`);
             this._initInnerSlotContainer(slotId, subId, innerContainer);
         });
-    }
-    // TODO: Implement better way of distinguishing slots between different hosted consumers.
-    //       E.g. 'particle-id::slot-name'
-    _findProvidedSlotSpec(slotName) {
-        return [this, ...this.hostedConsumers]
-            .map(consumer => consumer.consumeConn.slotSpec.getProvidedSlotSpec(slotName))
-            .find(spec => Boolean(spec));
     }
     // get a value from node that could be an attribute, if not a property
     getNodeValue(node, name) {

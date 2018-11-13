@@ -7,6 +7,7 @@
 // http://polymer.github.io/PATENTS.txt
 import { AppBase } from "./app";
 import { CloudManager } from "./deployment/cloud";
+import { DeploymentStatus } from "./deployment/containers";
 import express from "express";
 import cors from "cors";
 import fetch from 'node-fetch';
@@ -93,26 +94,31 @@ class ArcsMasterApp extends AppBase {
             const cloud = CloudManager.forGCP();
             const disk = await cloud.disks().find(fingerprint);
             if (!disk) {
-                res.send('{"id": "' + fingerprint + '", "status": "disk not found"}');
+                const deployment = { id: fingerprint, status: DeploymentStatus.NONEXISTENT };
+                res.send(deployment);
                 return;
             }
             const attached = await disk.isAttached();
             const wrappedKey = await disk.wrappedKeyFor(fingerprint);
             if (!attached) {
-                res.send('{"id": "' + fingerprint + '", "status": "detached", "key": "' + wrappedKey + '"}');
+                const deployment = { id: fingerprint, status: DeploymentStatus.DETACHED, key: wrappedKey };
+                res.send(deployment);
                 return;
             }
             const container = await cloud.containers().find(fingerprint);
             if (container == null) {
-                res.send('{"id": "' + fingerprint + '", "status": "container not found"}');
+                const deployment = { id: fingerprint, status: DeploymentStatus.NONEXISTENT };
+                res.send(deployment);
                 return;
             }
             const status = container.status();
-            if (status !== 'Running') {
-                res.send('{"id": "' + fingerprint + '", "status": "pending"}');
+            if (status !== DeploymentStatus.ATTACHED) {
+                const deployment = { id: fingerprint, status: DeploymentStatus.PENDING };
+                res.send(deployment);
             }
             else {
-                res.send('{"id": "' + fingerprint + '", "status": "attached", "url" : "' + container.url() + '"}');
+                const deployment = { id: fingerprint, status: DeploymentStatus.ATTACHED, url: container.url() };
+                res.send(deployment);
             }
         }
         catch (e) {

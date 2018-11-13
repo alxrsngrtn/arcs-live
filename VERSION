@@ -1,5 +1,8 @@
-commit 0067f4f5705f10d9d47da086d12432de9146c481
+commit d700ae47bc90c2021c9819733e031609a8a0c265
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Nov 8 17:12:32 2018 +1100
+Date:   Tue Nov 13 11:33:00 2018 +1100
 
-    Update readme with correct node version to install (#2216)
+    Revert "add tests for ShellApi (pipes) (#2198)" (#2227)
+    
+    This reverts commit 1164e5f1bc9f156c0ba87af243f98eeec7b98294.
+    Should fix #2220 where 'Pipes receives' test failing on Travis

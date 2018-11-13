@@ -211,17 +211,16 @@ export class ParticleExecutionHost {
     this._apiPort.UIEvent({particle, slotName, event});
   }
 
-  instantiate(particleSpec, id, spec, handles) {
+  instantiate(particle, spec, handles) {
     handles.forEach(handle => {
       this._apiPort.DefineHandle(handle, {type: handle.type.resolvedType(), name: handle.name});
     });
 
-    // TODO: rename this concept to something like instantiatedParticle, handle or registration.
-    this._apiPort.InstantiateParticle(particleSpec, {id, spec, handles});
-    return particleSpec;
+    this._apiPort.InstantiateParticle(particle, {id: particle.id, spec, handles});
+    return particle;
   }
-  startRender({particle, slotName, contentTypes}) {
-    this._apiPort.StartRender({particle, slotName, contentTypes});
+  startRender({particle, slotName, providedSlots, contentTypes}) {
+    this._apiPort.StartRender({particle, slotName, providedSlots, contentTypes});
   }
   stopRender({particle, slotName}) {
     this._apiPort.StopRender({particle, slotName});

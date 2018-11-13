@@ -91,7 +91,6 @@ export class SlotComposer {
                 let slotConsumer = this.consumers.find(slot => slot instanceof HostedSlotConsumer && slot.hostedSlotId === cs.targetSlot.id);
                 let transformationSlotConsumer = null;
                 if (slotConsumer && slotConsumer instanceof HostedSlotConsumer) {
-                    assert(!slotConsumer.consumeConn);
                     slotConsumer.consumeConn = cs;
                     transformationSlotConsumer = slotConsumer.transformationSlotConsumer;
                 }
@@ -102,8 +101,12 @@ export class SlotComposer {
                 const providedContexts = slotConsumer.createProvidedContexts();
                 this._contexts = this._contexts.concat(providedContexts);
                 // Slot contexts provided by the HostedSlotConsumer are managed by the transformation.
-                if (transformationSlotConsumer)
+                if (transformationSlotConsumer) {
                     transformationSlotConsumer.providedSlotContexts.push(...providedContexts);
+                    if (transformationSlotConsumer.slotContext.container) {
+                        slotConsumer.startRender();
+                    }
+                }
             });
         });
         // Set context for each of the slots.

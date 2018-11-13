@@ -14,7 +14,7 @@ import { ReplanQueue } from './replan-queue';
 import { Schema } from '../schema';
 import { Type } from '../type';
 export class Planificator {
-    constructor(arc, userid, store, onlyConsumer) {
+    constructor(arc, userid, store, searchStore, onlyConsumer) {
         this.search = null;
         // In <0.6 shell, this is needed to backward compatibility, in order to (1)
         // (1) trigger replanning with a local producer and (2) notify shell of the
@@ -23,6 +23,7 @@ export class Planificator {
         this.arcCallback = this._onPlanInstantiated.bind(this);
         this.arc = arc;
         this.userid = userid;
+        this.searchStore = searchStore;
         if (!onlyConsumer) {
             this.producer = new PlanProducer(arc, store);
             this.replanQueue = new ReplanQueue(this.producer);
@@ -34,8 +35,9 @@ export class Planificator {
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
     static async create(arc, { userid, protocol, onlyConsumer }) {
-        const store = await Planificator._initStore(arc, { userid, protocol, arcKey: null });
-        const planificator = new Planificator(arc, userid, store, onlyConsumer);
+        const store = await Planificator._initSuggestStore(arc, { userid, protocol, arcKey: null });
+        const searchStore = await Planificator._initSearchStore(arc, { userid });
+        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer);
         planificator.requestPlanning();
         return planificator;
     }
@@ -48,15 +50,19 @@ export class Planificator {
     async loadPlans() {
         return this.consumer.loadPlans();
     }
-    setSearch(search) {
+    async setSearch(search) {
         search = search ? search.toLowerCase().trim() : null;
         search = (search !== '') ? search : null;
         if (this.search !== search) {
             this.search = search;
+            await this._storeSearch(this.arcKey, this.search);
             const showAll = this.search === '*';
             const filter = showAll ? null : this.search;
             this.consumer.setSuggestFilter(showAll, filter);
         }
+    }
+    get arcKey() {
+        return this.arc.storageKey.substring(this.arc.storageKey.lastIndexOf('/') + 1);
     }
     registerPlansChangedCallback(callback) {
         this.consumer.registerPlansChangedCallback(callback);
@@ -95,25 +101,36 @@ export class Planificator {
             }
         });
     }
-    static async _initStore(arc, { userid, protocol, arcKey }) {
+    static async _initSuggestStore(arc, { userid, protocol, arcKey }) {
         assert(userid, 'Missing user id.');
-        let storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
+        const storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
         const storageKey = storage.parseStringAsKey(arc.storageKey);
         if (protocol) {
             storageKey.protocol = protocol;
         }
-        storageKey.location = storageKey.location
+        storageKey['location'] = storageKey['location']
             .replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/${arcKey || '$1'}`);
-        const storageKeyStr = storageKey.toString();
-        storage = arc.storageProviderFactory._storageForKey(storageKeyStr);
         const schema = new Schema({ names: ['Suggestions'], fields: { current: 'Object' } });
         const type = Type.newEntity(schema);
+        return Planificator._initStore(arc, 'suggestions-id', type, storageKey);
+    }
+    static async _initSearchStore(arc, { userid }) {
+        const storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
+        const storageKey = storage.parseStringAsKey(arc.storageKey);
+        storageKey['location'] = storageKey['location']
+            .replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/search`);
+        const schema = new Schema({ names: ['Search'], fields: { current: 'Object' } });
+        const type = Type.newEntity(schema);
+        return Planificator._initStore(arc, 'search-id', type, storageKey);
+    }
+    static async _initStore(arc, id, type, storageKey) {
         // TODO: unify initialization of suggestions storage.
-        const id = 'suggestions-id';
+        const storageKeyStr = storageKey.toString();
+        const storage = arc.storageProviderFactory._storageForKey(storageKeyStr);
         let store = null;
         switch (storageKey.protocol) {
             case 'firebase':
-                return storage._join(id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
+                return storage['_join'](id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
             case 'volatile':
             case 'pouchdb':
                 try {
@@ -122,12 +139,23 @@ export class Planificator {
                 catch (e) {
                     store = await storage.connect(id, type, storageKeyStr);
                 }
-                assert(store, `Failed initializing '${protocol}' store.`);
+                assert(store, `Failed initializing '${storageKey.protocol}' store.`);
                 store.referenceMode = false;
                 return store;
             default:
-                throw new Error(`Unsupported protocol '${protocol}'`);
+                throw new Error(`Unsupported protocol '${storageKey.protocol}'`);
         }
+    }
+    async _storeSearch(arcKey, search) {
+        const values = await this.searchStore['get']() || [];
+        const newValues = [];
+        for (const { arc, search } of values) {
+            if (arc !== arcKey) {
+                newValues.push({ arc, search });
+            }
+        }
+        newValues.push({ search: this.search, arc: this.arcKey });
+        return this.searchStore['set'](newValues);
     }
     isArcPopulated() {
         if (this.arc.recipes.length === 0)

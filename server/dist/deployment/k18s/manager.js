@@ -1,3 +1,13 @@
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+import { DeploymentStatus } from "../containers";
 import { Core_v1Api, Extensions_v1beta1Api, ExtensionsV1beta1DeploymentSpec, KubeConfig, V1beta1HTTPIngressPath, V1beta1HTTPIngressRuleValue, V1beta1Ingress, V1beta1IngressBackend, V1beta1IngressRule, V1beta1IngressSpec, V1Container, V1ContainerPort, V1EnvVar, V1GCEPersistentDiskVolumeSource, V1ObjectMeta, V1PersistentVolume, V1PersistentVolumeSpec, V1PodSpec, V1PodTemplateSpec, V1Service, V1ServicePort, V1ServiceSpec, V1Volume, V1VolumeMount } from "@kubernetes/client-node";
 import { ARCS_KEY_PREFIX, arcsKeyFor, DISK_MOUNT_PATH, ON_DISK_DB, VM_URL_PREFIX } from "../utils";
 import { ARCS_DOCKER_IMAGE, ARCS_INGRESS_PREFIX, CONTAINER_PORT, EXTERNAL_PORT, K18S_NAMESPACE } from "./k18s-constants";
@@ -21,7 +31,7 @@ class K18sDeployment {
         if (USE_PREFIX_MAPPING) {
             const path = this.ingress.spec.rules[0].http.paths
                 .filter(x => x.backend.serviceName === this.v1Service.metadata.name);
-            return 'https://' + this.ingress.spec.tls[0].hosts[0] + path[0].path;
+            return 'https://' + this.ingress.spec.tls[0].hosts[0] + path[0].path.replace('/*', '');
         }
         else {
             const lb = this.v1Service.status.loadBalancer;
@@ -34,7 +44,7 @@ class K18sDeployment {
         }
     }
     status() {
-        return this.v1Deployment.status.readyReplicas > 0 ? 'Running' : 'Pending';
+        return this.v1Deployment.status.readyReplicas > 0 ? DeploymentStatus.ATTACHED : DeploymentStatus.PENDING;
     }
     async disk() {
         const diskManager = CloudManager.forGCP().disks();
