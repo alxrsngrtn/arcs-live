@@ -1,5 +1,5 @@
-commit 93add95fa33fcef73265f91667740b2180357e4e
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Nov 13 12:05:12 2018 +1100
+commit 2d53aaeb90202d8238289421440af235f69f49e3
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Nov 13 12:42:22 2018 +1100
 
-    Stub toString for synthesized type (#2232)
+    Keep redrawing particles graph only if page is shown (#2229)
