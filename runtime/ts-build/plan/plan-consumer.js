@@ -9,7 +9,7 @@
  */
 import { assert } from '../../../platform/assert-web.js';
 import { PlanningResult } from './planning-result';
-import { SuggestionComposer } from '../../suggestion-composer.js';
+import { SuggestionComposer } from '../suggestion-composer.js';
 export class PlanConsumer {
     constructor(arc, store) {
         this.plansChangeCallbacks = [];

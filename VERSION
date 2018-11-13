@@ -1,5 +1,7 @@
-commit 2d53aaeb90202d8238289421440af235f69f49e3
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Nov 13 12:42:22 2018 +1100
+commit 8f491a2674a846c10afbeb06e3e77558ed927495
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Nov 12 22:01:42 2018 -0800
 
-    Keep redrawing particles graph only if page is shown (#2229)
+    Convert suggestion-composer to typescript (#2233)
+    
+    Addresses #1765

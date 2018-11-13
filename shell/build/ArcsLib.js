@@ -66721,7 +66721,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../platform/log-web.js */ "./platform/log-web.js");
 /* harmony import */ var _ts_build_planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/planner.js */ "./runtime/ts-build/planner.js");
 /* harmony import */ var _ts_build_speculator_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ts-build/speculator.js */ "./runtime/ts-build/speculator.js");
-/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./suggestion-composer.js */ "./runtime/suggestion-composer.js");
+/* harmony import */ var _ts_build_suggestion_composer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ts-build/suggestion-composer.js */ "./runtime/ts-build/suggestion-composer.js");
 /* harmony import */ var _suggestion_storage_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./suggestion-storage.js */ "./runtime/suggestion-storage.js");
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -66884,7 +66884,7 @@ class Planificator {
     const composer = this._arc.pec.slotComposer;
     if (composer) {
       if (composer.findContextById('rootslotid-suggestions')) {
-        const suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_6__["SuggestionComposer"](composer);
+        const suggestionComposer = new _ts_build_suggestion_composer_js__WEBPACK_IMPORTED_MODULE_6__["SuggestionComposer"](composer);
         this.registerSuggestChangedCallback((suggestions) => suggestionComposer.setSuggestions(suggestions));
       }
     }
@@ -70495,135 +70495,6 @@ class SuggestDomConsumer extends _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTE
     consumer._stampTemplate(rendering, consumer.createTemplateElement(content.template));
     consumer._onUpdate(rendering);
     return consumer;
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/suggestion-composer.js":
-/*!****************************************!*\
-  !*** ./runtime/suggestion-composer.js ***!
-  \****************************************/
-/*! exports provided: SuggestionComposer */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestionComposer", function() { return SuggestionComposer; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _ts_build_affordance_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/affordance.js */ "./runtime/ts-build/affordance.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-class SuggestionComposer {
-  constructor(slotComposer) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slotComposer);
-    this._affordance = _ts_build_affordance_js__WEBPACK_IMPORTED_MODULE_1__["Affordance"].forName(slotComposer.affordance);
-    this._container = slotComposer.findContainerByName('suggestions');
-
-    this._suggestions = [];
-    this._suggestionsQueue = [];
-    this._updateComplete = null;
-
-    this._slotComposer = slotComposer;
-    this._suggestConsumers = [];
-  }
-
-  async setSuggestions(suggestions) {
-    this._suggestionsQueue.push(suggestions);
-    Promise.resolve().then(async () => {
-      if (this._updateComplete) {
-        await this._updateComplete;
-      }
-      if (this._suggestionsQueue.length > 0) {
-        this._suggestions = this._suggestionsQueue.pop();
-        this._suggestionsQueue = [];
-        this._updateComplete = this._updateSuggestions(this._suggestions);
-      }
-    });
-  }
-
-  clear() {
-    if (this._container) {
-      this._affordance.slotConsumerClass.clear(this._container);
-    }
-    this._suggestConsumers.forEach(consumer => consumer.dispose());
-    this._suggestConsumers = [];
-  }
-
-  async _updateSuggestions(suggestions) {
-    this.clear();
-
-    const sortedSuggestions = suggestions.sort((s1, s2) => s2.rank - s1.rank);
-    for (const suggestion of sortedSuggestions) {
-      // TODO(mmandlis): This hack is needed for deserialized suggestions to work. Should
-      // instead serialize the description object and generation suggestion content here.
-      const suggestionContent = suggestion.suggestionContent ? suggestion.suggestionContent :
-        await suggestion.description.getRecipeSuggestion(this._affordance.descriptionFormatter);
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(suggestionContent, 'No suggestion content available');
-
-      if (this._container) {
-        this._affordance.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
-      }
-
-      this._addInlineSuggestion(suggestion, suggestionContent);
-    }
-  }
-
-  _addInlineSuggestion(suggestion, suggestionContent) {
-    const remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
-    if (remoteSlots.length != 1) {
-      return;
-    }
-    const remoteSlot = remoteSlots[0];
-
-    const context = this._slotComposer.findContextById(remoteSlot.id);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(context);
-
-    if (context.spec.isSet) {
-      // TODO: Inline suggestion in a set slot is not supported yet. Implement!
-      return;
-    }
-
-    // Don't put suggestions in context that either (1) is a root context, (2) doesn't have
-    // an actual container or (3) is not restricted to specific handles.
-    if (!context.sourceSlotConsumer) {
-      return;
-    }
-    if (context.spec.handles.length == 0) {
-      return;
-    }
-
-    const handleIds = context.spec.handles.map(
-      handleName => context.sourceSlotConsumer.consumeConn.particle.connections[handleName].handle.id);
-    if (!handleIds.find(handleId => suggestion.plan.handles.find(handle => handle.id == handleId))) {
-      // the suggestion doesn't use any of the handles that the context is restricted to.
-      return;
-    }
-
-    const suggestConsumer = new this._affordance.suggestionConsumerClass(this._slotComposer._containerKind, suggestion, suggestionContent, (eventlet) => {
-      const suggestion = this._suggestions.find(s => s.hash == eventlet.data.key);
-      suggestConsumer.dispose();
-      if (suggestion) {
-        const index = this._suggestConsumers.findIndex(consumer => consumer == suggestConsumer);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(index >= 0, 'cannot find suggest slot context');
-        this._suggestConsumers.splice(index, 1);
-
-        this._slotComposer.arc.instantiate(suggestion.plan);
-      }
-    });
-    context.addSlotConsumer(suggestConsumer);
-    this._suggestConsumers.push(suggestConsumer);
   }
 }
 
@@ -76266,7 +76137,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanConsumer", function() { return PlanConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _planning_result__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./planning-result */ "./runtime/ts-build/plan/planning-result.js");
-/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../suggestion-composer.js */ "./runtime/suggestion-composer.js");
+/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../suggestion-composer.js */ "./runtime/ts-build/suggestion-composer.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -81183,6 +81054,7 @@ class SlotComposer {
     }
     get affordance() { return this._affordance.name; }
     get consumers() { return this._consumers; }
+    get containerKind() { return this._containerKind; }
     getSlotConsumer(particle, slotName) {
         return this.consumers.find(s => s.consumeConn.particle === particle && s.consumeConn.name === slotName);
     }
@@ -85460,6 +85332,121 @@ class VolatileBigCollection extends VolatileStorageProvider {
     }
 }
 //# sourceMappingURL=volatile-storage.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/suggestion-composer.js":
+/*!*************************************************!*\
+  !*** ./runtime/ts-build/suggestion-composer.js ***!
+  \*************************************************/
+/*! exports provided: SuggestionComposer */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestionComposer", function() { return SuggestionComposer; });
+/* harmony import */ var _affordance_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./affordance.js */ "./runtime/ts-build/affordance.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class SuggestionComposer {
+    constructor(slotComposer) {
+        this._suggestions = [];
+        this._suggestionsQueue = [];
+        this._updateComplete = null;
+        this._suggestConsumers = [];
+        this._affordance = _affordance_js__WEBPACK_IMPORTED_MODULE_0__["Affordance"].forName(slotComposer.affordance);
+        this._container = slotComposer.findContainerByName('suggestions');
+        this._slotComposer = slotComposer;
+    }
+    async setSuggestions(suggestions) {
+        this._suggestionsQueue.push(suggestions);
+        Promise.resolve().then(async () => {
+            if (this._updateComplete) {
+                await this._updateComplete;
+            }
+            if (this._suggestionsQueue.length > 0) {
+                this._suggestions = this._suggestionsQueue.pop();
+                this._suggestionsQueue = [];
+                this._updateComplete = this._updateSuggestions(this._suggestions);
+            }
+        });
+    }
+    clear() {
+        if (this._container) {
+            this._affordance.slotConsumerClass.clear(this._container);
+        }
+        this._suggestConsumers.forEach(consumer => consumer.dispose());
+        this._suggestConsumers = [];
+    }
+    async _updateSuggestions(suggestions) {
+        this.clear();
+        const sortedSuggestions = suggestions.sort((s1, s2) => s2.rank - s1.rank);
+        for (const suggestion of sortedSuggestions) {
+            // TODO(mmandlis): This hack is needed for deserialized suggestions to work. Should
+            // instead serialize the description object and generation suggestion content here.
+            const suggestionContent = suggestion.suggestionContent ? suggestion.suggestionContent :
+                await suggestion.description.getRecipeSuggestion(this._affordance.descriptionFormatter);
+            if (!suggestionContent) {
+                throw new Error('No suggestion content available');
+            }
+            if (this._container) {
+                this._affordance.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
+            }
+            this._addInlineSuggestion(suggestion, suggestionContent);
+        }
+    }
+    _addInlineSuggestion(suggestion, suggestionContent) {
+        const remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
+        if (remoteSlots.length !== 1) {
+            return;
+        }
+        const remoteSlot = remoteSlots[0];
+        const context = this._slotComposer.findContextById(remoteSlot.id);
+        if (!context) {
+            throw new Error('Missing context for ' + remoteSlot.id);
+        }
+        if (context.spec.isSet) {
+            // TODO: Inline suggestion in a set slot is not supported yet. Implement!
+            return;
+        }
+        // Don't put suggestions in context that either (1) is a root context, (2) doesn't have
+        // an actual container or (3) is not restricted to specific handles.
+        if (!context.sourceSlotConsumer) {
+            return;
+        }
+        if (context.spec.handles.length === 0) {
+            return;
+        }
+        const handleIds = context.spec.handles.map(handleName => context.sourceSlotConsumer.consumeConn.particle.connections[handleName].handle.id);
+        if (!handleIds.find(handleId => suggestion.plan.handles.find(handle => handle.id === handleId))) {
+            // the suggestion doesn't use any of the handles that the context is restricted to.
+            return;
+        }
+        const suggestConsumer = new this._affordance.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
+            const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
+            suggestConsumer.dispose();
+            if (suggestion) {
+                const index = this._suggestConsumers.findIndex(consumer => consumer === suggestConsumer);
+                if (index < 0) {
+                    throw new Error('cannot find suggest slot context');
+                }
+                this._suggestConsumers.splice(index, 1);
+                this._slotComposer.arc.instantiate(suggestion.plan);
+            }
+        });
+        context.addSlotConsumer(suggestConsumer);
+        this._suggestConsumers.push(suggestConsumer);
+    }
+}
+//# sourceMappingURL=suggestion-composer.js.map
 
 /***/ }),
 

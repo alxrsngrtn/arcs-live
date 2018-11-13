@@ -45,6 +45,7 @@ export class SlotComposer {
     }
     get affordance() { return this._affordance.name; }
     get consumers() { return this._consumers; }
+    get containerKind() { return this._containerKind; }
     getSlotConsumer(particle, slotName) {
         return this.consumers.find(s => s.consumeConn.particle === particle && s.consumeConn.name === slotName);
     }
