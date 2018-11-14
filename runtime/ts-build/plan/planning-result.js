@@ -12,20 +12,27 @@ import { Manifest } from '../manifest';
 import { RecipeResolver } from '../recipe/recipe-resolver';
 export class PlanningResult {
     constructor(arc, result = {}) {
+        this.contextual = true;
         assert(arc, 'Arc cannot be null');
         this.arc = arc;
         this.recipeResolver = new RecipeResolver(this.arc);
-        this.plans = result['plans'] || [];
+        this._plans = result['plans'];
         this.lastUpdated = result['lastUpdated'] || new Date(null);
         this.generations = result['generations'] || [];
     }
-    set({ plans, lastUpdated = new Date(), generations = [] }) {
+    get plans() { return this._plans || []; }
+    set plans(plans) {
+        assert(Boolean(plans), `Cannot set uninitialized plans`);
+        this._plans = plans;
+    }
+    set({ plans, lastUpdated = new Date(), generations = [], contextual = true }) {
         if (this.isEquivalent(plans)) {
             return false;
         }
         this.plans = plans;
         this.generations = generations;
         this.lastUpdated = lastUpdated;
+        this.contextual = contextual;
         return true;
     }
     append({ plans, lastUpdated = new Date(), generations = [] }) {
@@ -43,7 +50,7 @@ export class PlanningResult {
         return this.lastUpdated < other.lastUpdated;
     }
     isEquivalent(plans) {
-        return PlanningResult.isEquivalent(this.plans, plans);
+        return PlanningResult.isEquivalent(this._plans, plans);
     }
     static isEquivalent(oldPlans, newPlans) {
         assert(newPlans, `New plans cannot be null.`);
@@ -70,7 +77,11 @@ export class PlanningResult {
                 console.error(`Failed to parse plan ${e}.`);
             }
         }
-        return this.set({ plans: deserializedPlans, lastUpdated: new Date(lastUpdated) });
+        return this.set({
+            plans: deserializedPlans,
+            lastUpdated: new Date(lastUpdated),
+            contextual: plans.contextual
+        });
     }
     async _planFromString(planString) {
         const manifest = await Manifest.parse(planString, { loader: this.arc.loader, context: this.arc.context, fileName: '' });
@@ -104,7 +115,11 @@ export class PlanningResult {
                 suggestionContent: { template: plan['descriptionText'], model: {} }
             });
         }
-        return { plans: serializedPlans, lastUpdated: this.lastUpdated.toString() };
+        return {
+            plans: serializedPlans,
+            lastUpdated: this.lastUpdated.toString(),
+            contextual: this.contextual
+        };
     }
     _planToString(plan) {
         // Special handling is only needed for plans (1) with hosted particles or

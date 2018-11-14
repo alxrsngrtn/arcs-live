@@ -1,8 +1,11 @@
-commit e437b3cb94a7d3119570fbe2f8b7c41fe8d9b752
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Nov 13 17:10:41 2018 -0800
+commit d0727460f0f0e230b2bbea435e3f02b1b5d0d753
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Nov 14 11:51:45 2018 -0800
 
-    Upgrade outdated node-fetch dependency from 1.7.2 to 2.2.1 (#1808)
+    maintain `contextual` status of planning results and trigger search based planning (#2234)
     
-    - Upgrade Guide: https://github.com/bitinn/node-fetch/blob/master/UPGRADE-GUIDE.md
-    - Changelog: https://github.com/bitinn/node-fetch/blob/master/CHANGELOG.md
+    * maintain `contextual` status of planning results and trigger search based planning
+    
+    * remove duplicate assignment
+    
+    * use correct replanning options on subsequent requests (fixes tests)

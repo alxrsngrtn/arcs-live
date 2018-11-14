@@ -41753,20 +41753,27 @@ class RecipeResolver {
  */
 class PlanningResult {
     constructor(arc, result = {}) {
+        this.contextual = true;
         assert(arc, 'Arc cannot be null');
         this.arc = arc;
         this.recipeResolver = new RecipeResolver(this.arc);
-        this.plans = result['plans'] || [];
+        this._plans = result['plans'];
         this.lastUpdated = result['lastUpdated'] || new Date(null);
         this.generations = result['generations'] || [];
     }
-    set({ plans, lastUpdated = new Date(), generations = [] }) {
+    get plans() { return this._plans || []; }
+    set plans(plans) {
+        assert(Boolean(plans), `Cannot set uninitialized plans`);
+        this._plans = plans;
+    }
+    set({ plans, lastUpdated = new Date(), generations = [], contextual = true }) {
         if (this.isEquivalent(plans)) {
             return false;
         }
         this.plans = plans;
         this.generations = generations;
         this.lastUpdated = lastUpdated;
+        this.contextual = contextual;
         return true;
     }
     append({ plans, lastUpdated = new Date(), generations = [] }) {
@@ -41784,7 +41791,7 @@ class PlanningResult {
         return this.lastUpdated < other.lastUpdated;
     }
     isEquivalent(plans) {
-        return PlanningResult.isEquivalent(this.plans, plans);
+        return PlanningResult.isEquivalent(this._plans, plans);
     }
     static isEquivalent(oldPlans, newPlans) {
         assert(newPlans, `New plans cannot be null.`);
@@ -41811,7 +41818,11 @@ class PlanningResult {
                 console.error(`Failed to parse plan ${e}.`);
             }
         }
-        return this.set({ plans: deserializedPlans, lastUpdated: new Date(lastUpdated) });
+        return this.set({
+            plans: deserializedPlans,
+            lastUpdated: new Date(lastUpdated),
+            contextual: plans.contextual
+        });
     }
     async _planFromString(planString) {
         const manifest = await Manifest.parse(planString, { loader: this.arc.loader, context: this.arc.context, fileName: '' });
@@ -41845,7 +41856,11 @@ class PlanningResult {
                 suggestionContent: { template: plan['descriptionText'], model: {} }
             });
         }
-        return { plans: serializedPlans, lastUpdated: this.lastUpdated.toString() };
+        return {
+            plans: serializedPlans,
+            lastUpdated: this.lastUpdated.toString(),
+            contextual: this.contextual
+        };
     }
     _planToString(plan) {
         // Special handling is only needed for plans (1) with hosted particles or
@@ -43426,6 +43441,32 @@ class PlanConsumer {
     }
 }
 
+// Copyright (c) 2017 Google Inc. All rights reserved.
+
+class InitSearch extends Strategy {
+  constructor(arc, {search}) {
+    super();
+    this._search = search;
+  }
+  async generate({generation}) {
+    if (this._search == null || generation != 0) {
+      return [];
+    }
+
+    const recipe = new Recipe();
+    recipe.setSearchPhrase(this._search);
+    assert(recipe.normalize());
+    assert(!recipe.isResolved());
+
+    return [{
+      result: recipe,
+      score: 0,
+      derivation: [{strategy: this, parent: undefined}],
+      hash: recipe.digest(),
+    }];
+  }
+}
+
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -44152,32 +44193,6 @@ class CreateDescriptionHandle extends Strategy {
         };
       }
     }(Walker$1.Permuted), this);
-  }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-
-class InitSearch extends Strategy {
-  constructor(arc, {search}) {
-    super();
-    this._search = search;
-  }
-  async generate({generation}) {
-    if (this._search == null || generation != 0) {
-      return [];
-    }
-
-    const recipe = new Recipe();
-    recipe.setSearchPhrase(this._search);
-    assert(recipe.normalize());
-    assert(!recipe.isResolved());
-
-    return [{
-      result: recipe,
-      score: 0,
-      derivation: [{strategy: this, parent: undefined}],
-      hash: recipe.digest(),
-    }];
   }
 }
 
@@ -45519,7 +45534,7 @@ Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.Resoluti
  */
 const defaultTimeoutMs = 5000;
 class PlanProducer {
-    constructor(arc, store) {
+    constructor(arc, store, searchStore) {
         this.planner = null;
         this.stateChangedCallbacks = [];
         assert(arc, 'arc cannot be null');
@@ -45528,6 +45543,11 @@ class PlanProducer {
         this.result = new PlanningResult(arc);
         this.store = store;
         this.speculator = new Speculator();
+        this.searchStore = searchStore;
+        if (this.searchStore) {
+            this.searchStoreCallback = () => this.onSearchChanged();
+            this.searchStore.on('change', this.searchStoreCallback, this);
+        }
     }
     get isPlanning() { return this._isPlanning; }
     set isPlanning(isPlanning) {
@@ -45540,11 +45560,60 @@ class PlanProducer {
     registerStateChangedCallback(callback) {
         this.stateChangedCallbacks.push(callback);
     }
+    async onSearchChanged() {
+        const values = await this.searchStore['get']() || [];
+        const value = values.find(value => value.arc === this.arcKey);
+        if (!value) {
+            return;
+        }
+        if (value.search === this.search) {
+            return;
+        }
+        this.search = value.search;
+        if (!this.search) {
+            // search string turned empty, no need to replan, going back to contextual plans.
+            return;
+        }
+        if (this.search === '*') { // Search for ALL (including non-contextual) plans.
+            if (this.result.contextual) {
+                this.producePlans({ contextual: false });
+            }
+        }
+        else { // Search by search term.
+            const options = {
+                cancelOngoingPlanning: this.result.plans.length > 0,
+                search: this.search
+            };
+            if (this.result.contextual) {
+                // If we're searching but currently only have contextual plans,
+                // we need get non-contextual plans as well.
+                Object.assign(options, { contextual: false });
+            }
+            else {
+                // If search changed and we already how all plans (i.e. including
+                // non-contextual ones) then it's enough to initialize with InitSearch
+                // with a new search phrase.
+                Object.assign(options, {
+                    strategies: [InitSearch].concat(Planner.ResolutionStrategies),
+                    append: true
+                });
+            }
+            this.producePlans(options);
+        }
+    }
+    get arcKey() {
+        // TODO: this is a duplicate method of one in planificator.ts, refactor?
+        return this.arc.storageKey.substring(this.arc.storageKey.lastIndexOf('/') + 1);
+    }
+    dispose() {
+        this.searchStore.off('change', this.searchStoreCallback);
+    }
     async producePlans(options = {}) {
         if (options['cancelOngoingPlanning'] && this.isPlanning) {
             this._cancelPlanning();
         }
         this.needReplan = true;
+        this.replanOptions = options;
         if (this.isPlanning) {
             return;
         }
@@ -45555,14 +45624,14 @@ class PlanProducer {
         while (this.needReplan) {
             this.needReplan = false;
             generations = [];
-            plans = await this.runPlanner(options, generations);
+            plans = await this.runPlanner(this.replanOptions, generations);
         }
         time = ((now$1() - time) / 1000).toFixed(2);
         // Plans are null, if planning was cancelled.
         if (plans) {
-            console.log(`Produced ${plans.length}${options['append'] ? ' additional' : ''} plans [elapsed=${time}s].`);
+            console.log(`Produced ${plans.length}${this.replanOptions['append'] ? ' additional' : ''} plans [elapsed=${time}s].`);
             this.isPlanning = false;
-            await this._updateResult({ plans, generations }, options);
+            await this._updateResult({ plans, generations }, this.replanOptions);
         }
     }
     async runPlanner(options, generations) {
@@ -45570,8 +45639,11 @@ class PlanProducer {
         assert(!this.planner, 'Planner must be null');
         this.planner = new Planner();
         this.planner.init(this.arc, {
-            strategies: options['strategies']
-            // TODO: add `search` and `contextual` params.
+            strategies: options['strategies'],
+            strategyArgs: {
+                contextual: options['contextual'],
+                search: options['search']
+            }
         });
         plans = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations, this.speculator);
         if (this.planner) {
@@ -45592,12 +45664,13 @@ class PlanProducer {
     }
     async _updateResult({ plans, generations }, options) {
         if (options.append) {
+            assert(!options['contextual'], `Cannot append to contextual options`);
             if (!this.result.append({ plans, generations })) {
                 return;
             }
         }
         else {
-            if (!this.result.set({ plans, generations })) {
+            if (!this.result.set({ plans, generations, contextual: options['contextual'] })) {
                 return;
             }
         }
@@ -45661,7 +45734,7 @@ class ReplanQueue {
     }
     _scheduleReplan(intervalMs) {
         this._cancelReplanIfScheduled();
-        this.replanTimer = setTimeout(() => this.planProducer.producePlans(), intervalMs);
+        this.replanTimer = setTimeout(() => this.planProducer.producePlans({ contextual: this.planProducer.result.contextual }), intervalMs);
     }
     _cancelReplanIfScheduled() {
         if (this._isReplanningScheduled()) {
@@ -45710,7 +45783,7 @@ class Planificator {
         this.userid = userid;
         this.searchStore = searchStore;
         if (!onlyConsumer) {
-            this.producer = new PlanProducer(arc, store);
+            this.producer = new PlanProducer(arc, store, searchStore);
             this.replanQueue = new ReplanQueue(this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
@@ -45723,7 +45796,9 @@ class Planificator {
         const store = await Planificator._initSuggestStore(arc, { userid, protocol, arcKey: null });
         const searchStore = await Planificator._initSearchStore(arc, { userid });
         const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer);
-        planificator.requestPlanning();
+        // TODO(mmandlis): Switch to always use `contextual: true` once new arc doesn't need
+        // to produce a plan in order to instantiate it.
+        planificator.requestPlanning({ contextual: planificator.isArcPopulated() });
         return planificator;
     }
     async requestPlanning(options = {}) {
@@ -45759,6 +45834,7 @@ class Planificator {
         this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
         if (!this.consumerOnly) {
             this._unlistenToArcStores();
+            this.producer.dispose();
         }
         this.consumer.store.dispose();
         this.consumer.dispose();
