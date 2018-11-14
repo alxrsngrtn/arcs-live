@@ -1,7 +1,5 @@
-commit 8f491a2674a846c10afbeb06e3e77558ed927495
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Nov 12 22:01:42 2018 -0800
+commit 44fe7c4ccf013d1f00840c1daba896a857abcfbf
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Wed Nov 14 12:09:27 2018 +1100
 
-    Convert suggestion-composer to typescript (#2233)
-    
-    Addresses #1765
+    Rename particles to not use directions as handle names (#2224)
