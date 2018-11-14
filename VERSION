@@ -1,5 +1,8 @@
-commit 44fe7c4ccf013d1f00840c1daba896a857abcfbf
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Wed Nov 14 12:09:27 2018 +1100
+commit e437b3cb94a7d3119570fbe2f8b7c41fe8d9b752
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Nov 13 17:10:41 2018 -0800
 
-    Rename particles to not use directions as handle names (#2224)
+    Upgrade outdated node-fetch dependency from 1.7.2 to 2.2.1 (#1808)
+    
+    - Upgrade Guide: https://github.com/bitinn/node-fetch/blob/master/UPGRADE-GUIDE.md
+    - Changelog: https://github.com/bitinn/node-fetch/blob/master/CHANGELOG.md
