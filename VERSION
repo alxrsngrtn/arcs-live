@@ -1,11 +1,5 @@
-commit d0727460f0f0e230b2bbea435e3f02b1b5d0d753
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Nov 14 11:51:45 2018 -0800
+commit 9603dc4494286fdec9e200cc8170f1fd7bf4165e
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Nov 14 13:14:13 2018 -0800
 
-    maintain `contextual` status of planning results and trigger search based planning (#2234)
-    
-    * maintain `contextual` status of planning results and trigger search based planning
-    
-    * remove duplicate assignment
-    
-    * use correct replanning options on subsequent requests (fixes tests)
+    Remove early asylo exploration. (#2242)
