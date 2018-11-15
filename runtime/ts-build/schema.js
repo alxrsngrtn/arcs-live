@@ -14,34 +14,6 @@ import { Entity } from './entity.js';
 import { Reference } from './reference.js';
 export class Schema {
     constructor(model) {
-        const legacy = [];
-        // TODO: remove this (remnants of normative/optional)
-        if (model.sections) {
-            legacy.push('sections');
-            assert(!model.fields);
-            model.fields = {};
-            for (const section of model.sections) {
-                Object.assign(model.fields, section.fields);
-            }
-            delete model.sections;
-        }
-        if (model.name) {
-            legacy.push('name');
-            model.names = [model.name];
-            delete model.name;
-        }
-        if (model.parents) {
-            legacy.push('parents');
-            for (const parent of model.parents) {
-                const parentSchema = new Schema(parent);
-                model.names.push(...parent.names);
-                Object.assign(model.fields, parent.fields);
-            }
-            model.names = [...new Set(model.names)];
-        }
-        if (legacy.length > 0) {
-            console.warn(`Schema ${model.names[0] || '*'} was serialized with legacy format (${legacy.join(', ')})`, new Error());
-        }
         assert(model.fields);
         this._model = model;
         this.description = {};

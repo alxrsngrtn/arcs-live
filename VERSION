@@ -1,7 +1,5 @@
-commit 2c013b6cf8f6b8d17cab7427cff9541805b2d3be
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Nov 16 10:46:51 2018 +1100
+commit 473cb0bf07c9b05333466cdc9ce795a381291a4b
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Nov 16 10:48:36 2018 +1100
 
-    Add ParticleArgumentDirections to the ReservedWord list (#2225)
-    
-    * Ensure that identifiers do not have names that are reserved words (including ParticleArgumentDirections)
+    Remove obsolete normative/optional handling in schemas (#2241)
