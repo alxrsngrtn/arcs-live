@@ -1,5 +1,5 @@
-commit 203e40f697553678396d4ecf1afd0b2c93a81033
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Nov 14 16:13:17 2018 -0800
+commit e165b2713c483f8d55f8ae498f8521c6826e794a
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Nov 15 17:25:38 2018 +1100
 
-    typescript doc fixes (#2244)
+    Change colors and directions of slot arrows in the devtools graph (#2251)
