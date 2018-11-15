@@ -1,13 +1,7 @@
-commit a830b4da2702c32d4dbd8cdf827d64b394d37e12
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Nov 15 14:34:36 2018 -0800
+commit 2c013b6cf8f6b8d17cab7427cff9541805b2d3be
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Nov 16 10:46:51 2018 +1100
 
-    Upgrade packages week 46 / 2018 (#2253)
+    Add ParticleArgumentDirections to the ReservedWord list (#2225)
     
-    - @types/node 10.12.9 -> 10.12.9
-    - eslint  5.9.0 -> 5.9.0
-    - firebase 5.5.8 -> 5.5.8
-    - node-fetch 2.3.0 -> 2.3.0
-    - prettier 1.15.2 -> 1.15.2
-    - rollup  0.67.1-> 0.67.1
-    - @vaadin/vaadin-grid 5.2.2 -> 5.2.3
+    * Ensure that identifiers do not have names that are reserved words (including ParticleArgumentDirections)

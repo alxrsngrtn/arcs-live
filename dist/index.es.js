@@ -10801,6 +10801,17 @@ const parser = /*
       return s0;
     }
 
+    function peg$parseReservedWord() {
+      var s0;
+
+      s0 = peg$parseDirection();
+      if (s0 === peg$FAILED) {
+        s0 = peg$parseParticleArgumentDirection();
+      }
+
+      return s0;
+    }
+
     function peg$parsebackquotedString() {
       var s0, s1, s2, s3;
 
@@ -10984,7 +10995,7 @@ const parser = /*
       s2 = peg$currPos;
       peg$silentFails++;
       s3 = peg$currPos;
-      s4 = peg$parseDirection();
+      s4 = peg$parseReservedWord();
       if (s4 !== peg$FAILED) {
         s5 = peg$parsewhiteSpace();
         if (s5 === peg$FAILED) {
