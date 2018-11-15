@@ -76232,7 +76232,7 @@ class PlanConsumer {
             });
             const usesRemoteNonRootSlots = suggestion['plan'].slots.find(slot => {
                 return !slot.name.includes('root') && !slot.tags.includes('root') &&
-                    slot.id && !slot.id.includes('root');
+                    slot.id && !slot.id.includes('root') && this.arc.pec.slotComposer.findContextById(slot.id);
             });
             const onlyUsesNonRootSlots = !suggestion['plan'].slots.find(s => s.name.includes('root') || s.tags.includes('root'));
             return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
@@ -76279,10 +76279,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanProducer", function() { return PlanProducer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _strategies_init_search_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../strategies/init-search.js */ "./runtime/strategies/init-search.js");
-/* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../platform/date-web.js */ "./platform/date-web.js");
-/* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../planner.js */ "./runtime/ts-build/planner.js");
-/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./planning-result.js */ "./runtime/ts-build/plan/planning-result.js");
-/* harmony import */ var _speculator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../speculator */ "./runtime/ts-build/speculator.js");
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../platform/log-web.js */ "./platform/log-web.js");
+/* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../platform/date-web.js */ "./platform/date-web.js");
+/* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../planner.js */ "./runtime/ts-build/planner.js");
+/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./planning-result.js */ "./runtime/ts-build/plan/planning-result.js");
+/* harmony import */ var _speculator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../speculator */ "./runtime/ts-build/speculator.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -76298,7 +76299,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 const defaultTimeoutMs = 5000;
+const log = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'log');
+const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'error');
 class PlanProducer {
     constructor(arc, store, searchStore) {
         this.planner = null;
@@ -76306,9 +76310,9 @@ class PlanProducer {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'store cannot be null');
         this.arc = arc;
-        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_4__["PlanningResult"](arc);
+        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_5__["PlanningResult"](arc);
         this.store = store;
-        this.speculator = new _speculator__WEBPACK_IMPORTED_MODULE_5__["Speculator"]();
+        this.speculator = new _speculator__WEBPACK_IMPORTED_MODULE_6__["Speculator"]();
         this.searchStore = searchStore;
         if (this.searchStore) {
             this.searchStoreCallback = () => this.onSearchChanged();
@@ -76360,7 +76364,7 @@ class PlanProducer {
                 // non-contextual ones) then it's enough to initialize with InitSearch
                 // with a new search phrase.
                 Object.assign(options, {
-                    strategies: [_strategies_init_search_js__WEBPACK_IMPORTED_MODULE_1__["InitSearch"]].concat(_planner_js__WEBPACK_IMPORTED_MODULE_3__["Planner"].ResolutionStrategies),
+                    strategies: [_strategies_init_search_js__WEBPACK_IMPORTED_MODULE_1__["InitSearch"]].concat(_planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"].ResolutionStrategies),
                     append: true
                 });
             }
@@ -76384,7 +76388,7 @@ class PlanProducer {
             return;
         }
         this.isPlanning = true;
-        let time = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_2__["now"])();
+        let time = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__["now"])();
         let plans = [];
         let generations = [];
         while (this.needReplan) {
@@ -76392,10 +76396,10 @@ class PlanProducer {
             generations = [];
             plans = await this.runPlanner(this.replanOptions, generations);
         }
-        time = ((Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_2__["now"])() - time) / 1000).toFixed(2);
+        time = ((Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__["now"])() - time) / 1000).toFixed(2);
         // Plans are null, if planning was cancelled.
         if (plans) {
-            console.log(`Produced ${plans.length}${this.replanOptions['append'] ? ' additional' : ''} plans [elapsed=${time}s].`);
+            log(`Produced ${plans.length}${this.replanOptions['append'] ? ' additional' : ''} plans [elapsed=${time}s].`);
             this.isPlanning = false;
             await this._updateResult({ plans, generations }, this.replanOptions);
         }
@@ -76403,7 +76407,7 @@ class PlanProducer {
     async runPlanner(options, generations) {
         let plans = [];
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.planner, 'Planner must be null');
-        this.planner = new _planner_js__WEBPACK_IMPORTED_MODULE_3__["Planner"]();
+        this.planner = new _planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"]();
         this.planner.init(this.arc, {
             strategies: options['strategies'],
             strategyArgs: {
@@ -76426,7 +76430,7 @@ class PlanProducer {
         }
         this.needReplan = false;
         this.isPlanning = false; // using the setter method to trigger callbacks.
-        console.log(`Cancel planning`);
+        log(`Cancel planning`);
     }
     async _updateResult({ plans, generations }, options) {
         if (options.append) {
@@ -76446,7 +76450,7 @@ class PlanProducer {
             await this.store['set'](this.result.serialize());
         }
         catch (e) {
-            console.error('Failed storing suggestions: ', e);
+            error('Failed storing suggestions: ', e);
             throw e;
         }
     }

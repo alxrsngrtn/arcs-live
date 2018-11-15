@@ -1,5 +1,7 @@
-commit e165b2713c483f8d55f8ae498f8521c6826e794a
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Nov 15 17:25:38 2018 +1100
+commit ad7baf88c5291c1da8b34e56a28ba0640ae0530d
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Nov 15 10:11:57 2018 -0800
 
-    Change colors and directions of slot arrows in the devtools graph (#2251)
+    Only show truly contextual suggestions when search is empty (#2252)
+    
+    and use log factory in plan-producer.

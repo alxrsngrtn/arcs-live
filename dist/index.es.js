@@ -43409,7 +43409,7 @@ class PlanConsumer {
             });
             const usesRemoteNonRootSlots = suggestion['plan'].slots.find(slot => {
                 return !slot.name.includes('root') && !slot.tags.includes('root') &&
-                    slot.id && !slot.id.includes('root');
+                    slot.id && !slot.id.includes('root') && this.arc.pec.slotComposer.findContextById(slot.id);
             });
             const onlyUsesNonRootSlots = !suggestion['plan'].slots.find(s => s.name.includes('root') || s.tags.includes('root'));
             return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
@@ -43466,6 +43466,20 @@ class InitSearch extends Strategy {
     }];
   }
 }
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+// TODO(wkorman): Incorporate debug levels. Consider outputting
+// preamble in the specified color via ANSI escape codes. Consider
+// sharing with similar log factory logic in `xen.js`.
+const logFactory = (preamble, color, log='log') => {
+  return console[log].bind(console, `(${preamble})`);
+};
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -45533,6 +45547,8 @@ Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.Resoluti
  * http://polymer.github.io/PATENTS.txt
  */
 const defaultTimeoutMs = 5000;
+const log$1 = logFactory('PlanProducer', '#ff0090', 'log');
+const error$2 = logFactory('PlanProducer', '#ff0090', 'error');
 class PlanProducer {
     constructor(arc, store, searchStore) {
         this.planner = null;
@@ -45629,7 +45645,7 @@ class PlanProducer {
         time = ((now$1() - time) / 1000).toFixed(2);
         // Plans are null, if planning was cancelled.
         if (plans) {
-            console.log(`Produced ${plans.length}${this.replanOptions['append'] ? ' additional' : ''} plans [elapsed=${time}s].`);
+            log$1(`Produced ${plans.length}${this.replanOptions['append'] ? ' additional' : ''} plans [elapsed=${time}s].`);
             this.isPlanning = false;
             await this._updateResult({ plans, generations }, this.replanOptions);
         }
@@ -45660,7 +45676,7 @@ class PlanProducer {
         }
         this.needReplan = false;
         this.isPlanning = false; // using the setter method to trigger callbacks.
-        console.log(`Cancel planning`);
+        log$1(`Cancel planning`);
     }
     async _updateResult({ plans, generations }, options) {
         if (options.append) {
@@ -45680,7 +45696,7 @@ class PlanProducer {
             await this.store['set'](this.result.serialize());
         }
         catch (e) {
-            console.error('Failed storing suggestions: ', e);
+            error$2('Failed storing suggestions: ', e);
             throw e;
         }
     }
@@ -46392,7 +46408,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 //const log = Xen.logFactory('SingleUserContext', '#6f2453');
-const log$1 = () => {}; //console.log.bind(console);
+const log$2 = () => {}; //console.log.bind(console);
 
 const storage$1 = new StorageProviderFactory('shell');
 //
@@ -46461,7 +46477,7 @@ const SingleUserContext = class {
     }
     if (meta.share > 1) {
       if (!share.disposed) {
-        log$1(`found shared arc [${arcid}] from [${userid}] (share level: ${meta.share})`);
+        log$2(`found shared arc [${arcid}] from [${userid}] (share level: ${meta.share})`);
         this._addArc(arcid);
       }
     }
@@ -46653,14 +46669,14 @@ const SingleUserContext = class {
     await Promise.all(jobs);
   }
   async _removeUserStoreEntities(userid, store, isProfile) {
-    log$1(`scanning [${userid}] [${store.id}] (${store.toList ? 'collection' : 'variable'})`);
+    log$2(`scanning [${userid}] [${store.id}] (${store.toList ? 'collection' : 'variable'})`);
     //const tags = context.findStoreTags(store);
     if (store.toList) {
       const entities = await store.toList();
       entities.forEach(entity => {
         const uid = entity.id.split('uid:').pop().split('|').shift();
         if (isProfile || uid === userid) {
-          log$1(`  REMOVE `, entity.id);
+          log$2(`  REMOVE `, entity.id);
           // TODO(sjmiles): _removeUserStoreEntities is strangely re-entering
           //  (1) `remove` fires synchronous change events
           //  (2) looks like there are double `remove` events in the queue. Bug?

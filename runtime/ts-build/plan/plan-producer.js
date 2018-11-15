@@ -9,11 +9,14 @@
  */
 import { assert } from '../../../platform/assert-web.js';
 import { InitSearch } from '../../strategies/init-search.js';
+import { logFactory } from '../../../platform/log-web.js';
 import { now } from '../../../platform/date-web.js';
 import { Planner } from '../planner.js';
 import { PlanningResult } from './planning-result.js';
 import { Speculator } from '../speculator';
 const defaultTimeoutMs = 5000;
+const log = logFactory('PlanProducer', '#ff0090', 'log');
+const error = logFactory('PlanProducer', '#ff0090', 'error');
 export class PlanProducer {
     constructor(arc, store, searchStore) {
         this.planner = null;
@@ -110,7 +113,7 @@ export class PlanProducer {
         time = ((now() - time) / 1000).toFixed(2);
         // Plans are null, if planning was cancelled.
         if (plans) {
-            console.log(`Produced ${plans.length}${this.replanOptions['append'] ? ' additional' : ''} plans [elapsed=${time}s].`);
+            log(`Produced ${plans.length}${this.replanOptions['append'] ? ' additional' : ''} plans [elapsed=${time}s].`);
             this.isPlanning = false;
             await this._updateResult({ plans, generations }, this.replanOptions);
         }
@@ -141,7 +144,7 @@ export class PlanProducer {
         }
         this.needReplan = false;
         this.isPlanning = false; // using the setter method to trigger callbacks.
-        console.log(`Cancel planning`);
+        log(`Cancel planning`);
     }
     async _updateResult({ plans, generations }, options) {
         if (options.append) {
@@ -161,7 +164,7 @@ export class PlanProducer {
             await this.store['set'](this.result.serialize());
         }
         catch (e) {
-            console.error('Failed storing suggestions: ', e);
+            error('Failed storing suggestions: ', e);
             throw e;
         }
     }
