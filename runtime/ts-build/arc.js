@@ -17,7 +17,6 @@ import { Description } from './description.js';
 import { compareComparables } from './recipe/util.js';
 import { FakePecFactory } from './fake-pec-factory.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
-import { DevtoolsConnection } from '../debug/devtools-connection.js';
 import { Id } from './id.js';
 import { ArcDebugHandler } from '../debug/arc-debug-handler.js';
 import { RecipeIndex } from '../recipe-index.js';
@@ -57,7 +56,7 @@ export class Arc {
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
         this._description = new Description(this);
         this._recipeIndex = recipeIndex || new RecipeIndex(this._context, loader, slotComposer && slotComposer.affordance);
-        DevtoolsConnection.onceConnected.then(devtoolsChannel => new ArcDebugHandler(this, devtoolsChannel));
+        this.debugHandler = new ArcDebugHandler(this);
     }
     get loader() {
         return this._loader;
@@ -433,6 +432,7 @@ ${this.activeRecipe.toString()}`;
             // Note: callbacks not triggered for inner-arc recipe instantiation or speculative arcs.
             this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
         }
+        this.debugHandler.recipeInstantiated({ handles, particles, slots });
     }
     _connectParticleToHandle(particle, name, targetHandle) {
         assert(targetHandle, 'no target handle provided');

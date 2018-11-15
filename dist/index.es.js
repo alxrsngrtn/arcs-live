@@ -49726,22 +49726,45 @@ DevtoolsConnection.onceConnected.then(devtoolsChannel => {
 });
 
 class ArcDebugHandler {
-  constructor(arc, devtoolsChannel) {
+  constructor(arc) {
+    this._devtoolsChannel = null;
+    this._arcId = arc.id.toString();
+    this._isSpeculative = arc.isSpeculative;
 
-    // Message handles go here.
-    if (!arc.isSpeculative) {
-      new ArcPlannerInvoker(arc, devtoolsChannel);
-      new ArcStoresFetcher(arc, devtoolsChannel);
-    }
-
-    // TODO: Disconnect when arc is disposed?
-
-    devtoolsChannel.send({
-      messageType: 'arc-available',
-      messageBody: {
-        id: arc.id.toString(),
-        isSpeculative: arc.isSpeculative
+    DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+      this._devtoolsChannel = devtoolsChannel;
+      if (!arc.isSpeculative) {
+        // Message handles go here.
+        new ArcPlannerInvoker(arc, devtoolsChannel);
+        new ArcStoresFetcher(arc, devtoolsChannel);
       }
+
+      devtoolsChannel.send({
+        messageType: 'arc-available',
+        messageBody: {
+          id: arc.id.toString(),
+          isSpeculative: arc.isSpeculative
+        }
+      });
+    });
+  }
+
+  recipeInstantiated({particles}) {
+    if (!this._devtoolsChannel || this._isSpeculative) return;
+
+    const truncate = ({id, name}) => ({id, name});
+    const slotConnections = [];
+    particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
+      slotConnections.push({
+        arcId: this._arcId,
+        particleId: cs.particle.id,
+        consumed: truncate(cs.targetSlot),
+        provided: Object.values(cs.providedSlots).map(slot  => truncate(slot)),
+      });
+    }));
+    this._devtoolsChannel.send({
+      messageType: 'recipe-instantiated',
+      messageBody: {slotConnections}
     });
   }
 }
@@ -50323,7 +50346,7 @@ class Arc {
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
         this._description = new Description(this);
         this._recipeIndex = recipeIndex || new RecipeIndex(this._context, loader, slotComposer && slotComposer.affordance);
-        DevtoolsConnection.onceConnected.then(devtoolsChannel => new ArcDebugHandler(this, devtoolsChannel));
+        this.debugHandler = new ArcDebugHandler(this);
     }
     get loader() {
         return this._loader;
@@ -50699,6 +50722,7 @@ ${this.activeRecipe.toString()}`;
             // Note: callbacks not triggered for inner-arc recipe instantiation or speculative arcs.
             this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
         }
+        this.debugHandler.recipeInstantiated({ handles, particles, slots });
     }
     _connectParticleToHandle(particle, name, targetHandle) {
         assert(targetHandle, 'no target handle provided');

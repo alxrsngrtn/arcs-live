@@ -65353,22 +65353,45 @@ _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].onceC
 });
 
 class ArcDebugHandler {
-  constructor(arc, devtoolsChannel) {
+  constructor(arc) {
+    this._devtoolsChannel = null;
+    this._arcId = arc.id.toString();
+    this._isSpeculative = arc.isSpeculative;
 
-    // Message handles go here.
-    if (!arc.isSpeculative) {
-      new _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__["ArcPlannerInvoker"](arc, devtoolsChannel);
-      new _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__["ArcStoresFetcher"](arc, devtoolsChannel);
-    }
-
-    // TODO: Disconnect when arc is disposed?
-
-    devtoolsChannel.send({
-      messageType: 'arc-available',
-      messageBody: {
-        id: arc.id.toString(),
-        isSpeculative: arc.isSpeculative
+    _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => {
+      this._devtoolsChannel = devtoolsChannel;
+      if (!arc.isSpeculative) {
+        // Message handles go here.
+        new _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__["ArcPlannerInvoker"](arc, devtoolsChannel);
+        new _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__["ArcStoresFetcher"](arc, devtoolsChannel);
       }
+
+      devtoolsChannel.send({
+        messageType: 'arc-available',
+        messageBody: {
+          id: arc.id.toString(),
+          isSpeculative: arc.isSpeculative
+        }
+      });
+    });
+  }
+
+  recipeInstantiated({particles}) {
+    if (!this._devtoolsChannel || this._isSpeculative) return;
+
+    const truncate = ({id, name}) => ({id, name});
+    const slotConnections = [];
+    particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
+      slotConnections.push({
+        arcId: this._arcId,
+        particleId: cs.particle.id,
+        consumed: truncate(cs.targetSlot),
+        provided: Object.values(cs.providedSlots).map(slot  => truncate(slot)),
+      });
+    }));
+    this._devtoolsChannel.send({
+      messageType: 'recipe-instantiated',
+      messageBody: {slotConnections}
     });
   }
 }
@@ -71053,10 +71076,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./recipe/util.js */ "./runtime/ts-build/recipe/util.js");
 /* harmony import */ var _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./fake-pec-factory.js */ "./runtime/ts-build/fake-pec-factory.js");
 /* harmony import */ var _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./id.js */ "./runtime/ts-build/id.js");
-/* harmony import */ var _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../debug/arc-debug-handler.js */ "./runtime/debug/arc-debug-handler.js");
-/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../recipe-index.js */ "./runtime/recipe-index.js");
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./id.js */ "./runtime/ts-build/id.js");
+/* harmony import */ var _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../debug/arc-debug-handler.js */ "./runtime/debug/arc-debug-handler.js");
+/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../recipe-index.js */ "./runtime/recipe-index.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -71066,7 +71088,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -71095,7 +71116,7 @@ class Arc {
         // Map from each store to its description (originating in the manifest).
         this.storeDescriptions = new Map();
         this.instantiatePlanCallbacks = [];
-        this.sessionId = _id_js__WEBPACK_IMPORTED_MODULE_11__["Id"].newSessionId();
+        this.sessionId = _id_js__WEBPACK_IMPORTED_MODULE_10__["Id"].newSessionId();
         this.particleHandleMaps = new Map();
         // TODO: context should not be optional.
         this._context = context || new _manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"]({ id });
@@ -71115,8 +71136,8 @@ class Arc {
         }
         this.storageProviderFactory = storageProviderFactory || new _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__["StorageProviderFactory"](this.id);
         this._description = new _description_js__WEBPACK_IMPORTED_MODULE_6__["Description"](this);
-        this._recipeIndex = recipeIndex || new _recipe_index_js__WEBPACK_IMPORTED_MODULE_13__["RecipeIndex"](this._context, loader, slotComposer && slotComposer.affordance);
-        _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_10__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => new _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_12__["ArcDebugHandler"](this, devtoolsChannel));
+        this._recipeIndex = recipeIndex || new _recipe_index_js__WEBPACK_IMPORTED_MODULE_12__["RecipeIndex"](this._context, loader, slotComposer && slotComposer.affordance);
+        this.debugHandler = new _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_11__["ArcDebugHandler"](this);
     }
     get loader() {
         return this._loader;
@@ -71492,6 +71513,7 @@ ${this.activeRecipe.toString()}`;
             // Note: callbacks not triggered for inner-arc recipe instantiation or speculative arcs.
             this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
         }
+        this.debugHandler.recipeInstantiated({ handles, particles, slots });
     }
     _connectParticleToHandle(particle, name, targetHandle) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targetHandle, 'no target handle provided');

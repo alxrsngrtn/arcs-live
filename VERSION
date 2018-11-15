@@ -1,5 +1,5 @@
-commit 9603dc4494286fdec9e200cc8170f1fd7bf4165e
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Nov 14 13:14:13 2018 -0800
+commit 9a00134b424fdbd9085a4083e272c5601541b7d2
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Nov 15 10:58:28 2018 +1100
 
-    Remove early asylo exploration. (#2242)
+    Add nodes for slots in the overview graph (#2245)
