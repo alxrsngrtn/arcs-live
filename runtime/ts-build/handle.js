@@ -25,7 +25,7 @@ function restore(entry, entityClass) {
     // TODO some relation magic, somewhere, at some point.
     return entity;
 }
-/** @class Handle
+/**
  * Base class for Collections and Variables.
  */
 export class Handle {
@@ -92,7 +92,7 @@ export class Handle {
         return `'${this._id}'`;
     }
 }
-/** @class Collection
+/**
  * A handle on a set of Entity data. Note that, as a set, a Collection can only
  * contain a single version of an Entity for each given ID. Further, no order is
  * implied by the set. A particle's manifest dictates the types of handles that
@@ -127,10 +127,10 @@ class Collection extends Handle {
                 throw new Error('unsupported');
         }
     }
-    /** @method async get(id)
+    /**
      * Returns the Entity specified by id contained by the handle, or null if this id is not
      * contained by the handle.
-     * throws: Error if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
+     * @throws {Error} if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
     async get(id) {
@@ -139,9 +139,9 @@ class Collection extends Handle {
         }
         return this._restore([await this._proxy.get(id, this._particleId)])[0];
     }
-    /** @method async toList()
-     * Returns a list of the Entities contained by the handle.
-     * throws: Error if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
+    /**
+     * @returns a list of the Entities contained by the handle.
+     * @throws {Error} if this handle is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
     async toList() {
@@ -153,9 +153,9 @@ class Collection extends Handle {
     _restore(list) {
         return (list !== null) ? list.map(a => restore(a, this.entityClass)) : null;
     }
-    /** @method store(entity)
+    /**
      * Stores a new entity into the Handle.
-     * throws: Error if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
     async store(entity) {
@@ -166,9 +166,9 @@ class Collection extends Handle {
         const keys = [this._proxy.generateID() + 'key'];
         return this._proxy.store(serialization, keys, this._particleId);
     }
-    /** @method clear()
+    /**
      * Removes all known entities from the Handle.
-     * throws: Error if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
     async clear() {
@@ -177,9 +177,9 @@ class Collection extends Handle {
         }
         return this._proxy.clear();
     }
-    /** @method remove(entity)
+    /**
      * Removes an entity from the Handle.
-     * throws: Error if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
     async remove(entity) {
@@ -192,7 +192,7 @@ class Collection extends Handle {
         return this._proxy.remove(serialization.id, keys, this._particleId);
     }
 }
-/** @class Variable
+/**
  * A handle on a single entity. A particle's manifest dictates
  * the types of handles that need to be connected to that particle, and
  * the current recipe identifies which handles are connected.
@@ -231,10 +231,10 @@ class Variable extends Handle {
                 throw new Error('unsupported');
         }
     }
-    /** @method async get()
-     * Returns the Entity contained by the Variable, or undefined if the Variable
+    /**
+     * @returns the Entity contained by the Variable, or undefined if the Variable
      * is cleared.
-     * throws: Error if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
+     * @throws {Error} if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
     async get() {
@@ -259,9 +259,9 @@ class Variable extends Handle {
         }
         assert(false, `Don't know how to deliver handle data of type ${this.type}`);
     }
-    /** @method set(entity)
+    /**
      * Stores a new entity into the Variable, replacing any existing entity.
-     * throws: Error if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
     async set(entity) {
@@ -276,9 +276,9 @@ class Variable extends Handle {
             throw e;
         }
     }
-    /** @method clear()
+    /**
      * Clears any entity currently in the Variable.
-     * throws: Error if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * @throws {Error} if this variable is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
     async clear() {
@@ -288,7 +288,7 @@ class Variable extends Handle {
         return this._proxy.clear(this._particleId);
     }
 }
-/** @class Cursor
+/**
  * Provides paginated read access to a BigCollection. Conforms to the javascript iterator protocol
  * but is not marked as iterable because next() is async, which is currently not supported by
  * implicit iteration in Javascript.
@@ -298,7 +298,7 @@ class Cursor {
         this._parent = parent;
         this._cursorId = cursorId;
     }
-    /** @method next()
+    /**
      * Returns {value: [items], done: false} while there are items still available, or {done: true}
      * when the cursor has completed reading the collection.
      */
@@ -309,7 +309,7 @@ class Cursor {
         }
         return data;
     }
-    /** @method close()
+    /**
      * Terminates the streamed read. This must be called if a cursor is no longer needed but has not
      * yet completed streaming (i.e. next() hasn't returned {done: true}).
      */
@@ -317,7 +317,7 @@ class Cursor {
         this._parent._proxy.cursorClose(this._cursorId);
     }
 }
-/** @class BigCollection
+/**
  * A handle on a large set of Entity data. Similar to Collection, except the complete set of
  * entities is not available directly; use stream() to read the full set. Particles wanting to
  * operate on BigCollections should do so in the setHandles() call, since BigCollections do not
@@ -332,9 +332,9 @@ class BigCollection extends Handle {
         assert(kind === 'sync', 'BigCollection._notify only supports sync events');
         await particle.onHandleSync(this, []);
     }
-    /** @method store(entity)
+    /**
      * Stores a new entity into the Handle.
-     * throws: Error if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
     async store(entity) {
@@ -345,9 +345,9 @@ class BigCollection extends Handle {
         const keys = [this._proxy.generateID() + 'key'];
         return this._proxy.store(serialization, keys, this._particleId);
     }
-    /** @method remove(entity)
+    /**
      * Removes an entity from the Handle.
-     * throws: Error if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
+     * @throws {Error} if this handle is not configured as a writeable handle (i.e. 'out' or 'inout')
      * in the particle's manifest.
      */
     async remove(entity) {
@@ -357,8 +357,8 @@ class BigCollection extends Handle {
         const serialization = this._serialize(entity);
         return this._proxy.remove(serialization.id, [], this._particleId);
     }
-    /** @method stream({pageSize, forward})
-     * Returns a Cursor instance that iterates over the full set of entities, reading `pageSize`
+    /**
+     * @returns a Cursor instance that iterates over the full set of entities, reading `pageSize`
      * entities at a time. The cursor views a snapshot of the collection, locked to the version
      * at which the cursor is created.
      *
@@ -366,7 +366,7 @@ class BigCollection extends Handle {
      * caveat that items removed during a streamed read may be returned at the end). Set `forward`
      * to false to return items in reverse insertion order.
      *
-     * throws: Error if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
+     * @throws {Error} if this variable is not configured as a readable handle (i.e. 'in' or 'inout')
      * in the particle's manifest.
      */
     async stream({ pageSize, forward = true }) {

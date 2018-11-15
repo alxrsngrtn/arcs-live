@@ -1,5 +1,5 @@
-commit 9a00134b424fdbd9085a4083e272c5601541b7d2
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Nov 15 10:58:28 2018 +1100
+commit 203e40f697553678396d4ecf1afd0b2c93a81033
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Nov 14 16:13:17 2018 -0800
 
-    Add nodes for slots in the overview graph (#2245)
+    typescript doc fixes (#2244)

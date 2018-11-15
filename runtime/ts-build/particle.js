@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-/** @class Particle
+/**
  * A basic particle. For particles that provide UI, you may like to
  * instead use DOMParticle.
  */
@@ -27,13 +27,13 @@ export class Particle {
         }
         this.capabilities = capabilities || {};
     }
-    /** @method setHandles(handles)
+    /**
      * This method is invoked with a handle for each store this particle
      * is registered to interact with, once those handles are ready for
      * interaction. Override the method to register for events from
      * the handles.
      *
-     * Handles is a map from handle names to store handles.
+     * @param handles a map from handle names to store handles.
      */
     setHandles(handles) {
     }
@@ -112,7 +112,7 @@ export class Particle {
     outputs() {
         return this.spec.outputs;
     }
-    /** @method getSlot(name)
+    /**
      * Returns the slot with provided name.
      */
     getSlot(name) {
