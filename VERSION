@@ -1,5 +1,7 @@
-commit 473cb0bf07c9b05333466cdc9ce795a381291a4b
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Nov 16 10:48:36 2018 +1100
+commit fd6cb67a1166cd89a2917cbb9cfa1443c59cc3b5
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Nov 16 10:51:20 2018 +1100
 
-    Remove obsolete normative/optional handling in schemas (#2241)
+    Require names for all ShapeArguments (#2250)
+    
+    * Require names for all ShapeArguments
