@@ -1,7 +1,7 @@
-commit fd6cb67a1166cd89a2917cbb9cfa1443c59cc3b5
+commit 35e714f192a55922b361e51f9a4eba3c12a33e9b
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Nov 16 10:51:20 2018 +1100
+Date:   Fri Nov 16 11:49:36 2018 +1100
 
-    Require names for all ShapeArguments (#2250)
+    Add fates to keyword list (#2226)
     
-    * Require names for all ShapeArguments
+    * Create an list of Fates and add to reserved words list
