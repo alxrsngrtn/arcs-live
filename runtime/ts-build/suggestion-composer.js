@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Affordance } from './affordance.js';
+import { Suggestion } from './plan/suggestion';
 export class SuggestionComposer {
     constructor(slotComposer) {
         this._suggestions = [];
@@ -40,11 +41,11 @@ export class SuggestionComposer {
     }
     async _updateSuggestions(suggestions) {
         this.clear();
-        const sortedSuggestions = suggestions.sort((s1, s2) => s2.rank - s1.rank);
+        const sortedSuggestions = suggestions.sort(Suggestion.compare);
         for (const suggestion of sortedSuggestions) {
             // TODO(mmandlis): This hack is needed for deserialized suggestions to work. Should
             // instead serialize the description object and generation suggestion content here.
-            const suggestionContent = suggestion.suggestionContent ? suggestion.suggestionContent :
+            const suggestionContent = suggestion.descriptionDom ? suggestion.descriptionDom :
                 await suggestion.description.getRecipeSuggestion(this._affordance.descriptionFormatter);
             if (!suggestionContent) {
                 throw new Error('No suggestion content available');

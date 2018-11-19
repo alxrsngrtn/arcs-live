@@ -41576,116 +41576,41 @@ class RecipeResolver {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class PlanningResult {
-    constructor(arc, result = {}) {
-        this.contextual = true;
-        assert(arc, 'Arc cannot be null');
+class Suggestion {
+    constructor(plan, hash, rank, arc) {
+        this.plan = plan;
+        this.hash = hash;
+        this.rank = rank;
         this.arc = arc;
-        this.recipeResolver = new RecipeResolver(this.arc);
-        this._plans = result['plans'];
-        this.lastUpdated = result['lastUpdated'] || new Date(null);
-        this.generations = result['generations'] || [];
     }
-    get plans() { return this._plans || []; }
-    set plans(plans) {
-        assert(Boolean(plans), `Cannot set uninitialized plans`);
-        this._plans = plans;
+    isEquivalent(other) {
+        return (this.hash === other.hash) && (this.descriptionText === other.descriptionText);
     }
-    set({ plans, lastUpdated = new Date(), generations = [], contextual = true }) {
-        if (this.isEquivalent(plans)) {
-            return false;
-        }
-        this.plans = plans;
-        this.generations = generations;
-        this.lastUpdated = lastUpdated;
-        this.contextual = contextual;
-        return true;
-    }
-    append({ plans, lastUpdated = new Date(), generations = [] }) {
-        const newPlans = plans.filter(newPlan => !this.plans.find(plan => PlanningResult.isEquivalentPlan(plan, newPlan.hash)));
-        if (newPlans.length === 0) {
-            return false;
-        }
-        this.plans.push(...newPlans);
-        // TODO: filter out generations of other plans.
-        this.generations.push(...generations);
-        this.lastUpdated = lastUpdated;
-        return true;
-    }
-    olderThan(other) {
-        return this.lastUpdated < other.lastUpdated;
-    }
-    isEquivalent(plans) {
-        return PlanningResult.isEquivalent(this._plans, plans);
-    }
-    static isEquivalent(oldPlans, newPlans) {
-        assert(newPlans, `New plans cannot be null.`);
-        return oldPlans &&
-            oldPlans.length === newPlans.length &&
-            oldPlans.every(plan => newPlans.find(newPlan => PlanningResult.isEquivalentPlan(plan, newPlan)));
-    }
-    static isEquivalentPlan(plan1, plan2) {
-        return (plan1.hash === plan2.hash) && (plan1.descriptionText === plan2.descriptionText);
-    }
-    async deserialize({ plans, lastUpdated }) {
-        const deserializedPlans = [];
-        for (const { descriptionText, recipe, hash, rank, suggestionContent } of plans) {
-            try {
-                deserializedPlans.push({
-                    plan: await this._planFromString(recipe),
-                    descriptionText,
-                    hash,
-                    rank,
-                    suggestionContent
-                });
-            }
-            catch (e) {
-                console.error(`Failed to parse plan ${e}.`);
-            }
-        }
-        return this.set({
-            plans: deserializedPlans,
-            lastUpdated: new Date(lastUpdated),
-            contextual: plans.contextual
-        });
-    }
-    async _planFromString(planString) {
-        const manifest = await Manifest.parse(planString, { loader: this.arc.loader, context: this.arc.context, fileName: '' });
-        assert(manifest.recipes.length === 1);
-        let plan = manifest.recipes[0];
-        assert(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
-        if (!plan.isResolved()) {
-            const resolvedPlan = await this.recipeResolver.resolve(plan);
-            assert(resolvedPlan, `can't resolve plan: ${plan.toString({ showUnresolved: true })}`);
-            if (resolvedPlan) {
-                plan = resolvedPlan;
-            }
-        }
-        for (const store of manifest.stores) {
-            // If recipe has hosted particles, manifest will have stores with hosted
-            // particle specs. Moving these stores into the current arc's context.
-            // TODO: This is a hack, find a proper way of doing this.
-            this.arc.context._addStore(store, []);
-        }
-        return plan;
+    static compare(s1, s2) {
+        return s2.rank - s1.rank;
     }
     serialize() {
-        const serializedPlans = [];
-        for (const plan of this.plans) {
-            serializedPlans.push({
-                recipe: this._planToString(plan['plan']),
-                hash: plan['hash'],
-                rank: plan['rank'],
-                // TODO: handle description
-                descriptionText: plan['descriptionText'],
-                suggestionContent: { template: plan['descriptionText'], model: {} }
-            });
-        }
         return {
-            plans: serializedPlans,
-            lastUpdated: this.lastUpdated.toString(),
-            contextual: this.contextual
+            plan: this._planToString(this.plan),
+            hash: this.hash,
+            rank: this.rank,
+            descriptionText: this.descriptionText,
+            descriptionDom: { template: this.descriptionText, model: {} }
         };
+    }
+    static async deserialize({ plan, hash, rank, descriptionText, descriptionDom }, arc, recipeResolver) {
+        const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
+        const suggestion = new Suggestion(deserializedPlan, hash, rank, arc);
+        suggestion.descriptionText = descriptionText;
+        suggestion.descriptionDom = descriptionDom;
+        return suggestion;
+    }
+    async instantiate() {
+        // For now shell is responsible for creating and setting the new arc.
+        assert(this.arc, `Cannot instantiate suggestion without and arc`);
+        if (this.arc) {
+            return this.arc.instantiate(this.plan);
+        }
     }
     _planToString(plan) {
         // Special handling is only needed for plans (1) with hosted particles or
@@ -41719,6 +41644,105 @@ class PlanningResult {
             }
         }
         return `${hostedParticleSpecs.join('\n')}\n${planClone.toString()}`;
+    }
+    static async _planFromString(planString, arc, recipeResolver) {
+        try {
+            const manifest = await Manifest.parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
+            assert(manifest.recipes.length === 1);
+            let plan = manifest.recipes[0];
+            assert(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
+            if (!plan.isResolved()) {
+                const resolvedPlan = await recipeResolver.resolve(plan);
+                assert(resolvedPlan, `can't resolve plan: ${plan.toString({ showUnresolved: true })}`);
+                if (resolvedPlan) {
+                    plan = resolvedPlan;
+                }
+            }
+            for (const store of manifest.stores) {
+                // If recipe has hosted particles, manifest will have stores with hosted
+                // particle specs. Moving these stores into the current arc's context.
+                // TODO: This is a hack, find a proper way of doing this.
+                arc.context._addStore(store, []);
+            }
+            return plan;
+        }
+        catch (e) {
+            console.error(`Failed to parse suggestion ${e}.`);
+        }
+        return null;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class PlanningResult {
+    constructor(arc, result = {}) {
+        this.contextual = true;
+        assert(arc, 'Arc cannot be null');
+        this.arc = arc;
+        this._plans = result['plans'];
+        this.lastUpdated = result['lastUpdated'] || new Date(null);
+        this.generations = result['generations'] || [];
+    }
+    get plans() { return this._plans || []; }
+    set plans(plans) {
+        assert(Boolean(plans), `Cannot set uninitialized plans`);
+        this._plans = plans;
+    }
+    set({ plans, lastUpdated = new Date(), generations = [], contextual = true }) {
+        if (this.isEquivalent(plans)) {
+            return false;
+        }
+        this.plans = plans;
+        this.generations = generations;
+        this.lastUpdated = lastUpdated;
+        this.contextual = contextual;
+        return true;
+    }
+    append({ plans, lastUpdated = new Date(), generations = [] }) {
+        const newPlans = plans.filter(newPlan => !this.plans.find(plan => plan.isEquivalent(newPlan)));
+        if (newPlans.length === 0) {
+            return false;
+        }
+        this.plans.push(...newPlans);
+        // TODO: filter out generations of other plans.
+        this.generations.push(...generations);
+        this.lastUpdated = lastUpdated;
+        return true;
+    }
+    olderThan(other) {
+        return this.lastUpdated < other.lastUpdated;
+    }
+    isEquivalent(plans) {
+        return PlanningResult.isEquivalent(this._plans, plans);
+    }
+    static isEquivalent(oldPlans, newPlans) {
+        assert(newPlans, `New plans cannot be null.`);
+        return oldPlans &&
+            oldPlans.length === newPlans.length &&
+            oldPlans.every(plan => newPlans.find(newPlan => plan.isEquivalent(newPlan)));
+    }
+    async deserialize({ plans, lastUpdated }) {
+        const recipeResolver = new RecipeResolver(this.arc);
+        return this.set({
+            plans: await Promise.all(plans.map(plan => Suggestion.deserialize(plan, this.arc, recipeResolver))),
+            lastUpdated: new Date(lastUpdated),
+            contextual: plans.contextual
+        });
+    }
+    serialize() {
+        return {
+            plans: this.plans.map(plan => plan.serialize()),
+            lastUpdated: this.lastUpdated.toString(),
+            contextual: this.contextual
+        };
     }
 }
 
@@ -43105,11 +43129,11 @@ class SuggestionComposer {
     }
     async _updateSuggestions(suggestions) {
         this.clear();
-        const sortedSuggestions = suggestions.sort((s1, s2) => s2.rank - s1.rank);
+        const sortedSuggestions = suggestions.sort(Suggestion.compare);
         for (const suggestion of sortedSuggestions) {
             // TODO(mmandlis): This hack is needed for deserialized suggestions to work. Should
             // instead serialize the description object and generation suggestion content here.
-            const suggestionContent = suggestion.suggestionContent ? suggestion.suggestionContent :
+            const suggestionContent = suggestion.descriptionDom ? suggestion.descriptionDom :
                 await suggestion.description.getRecipeSuggestion(this._affordance.descriptionFormatter);
             if (!suggestionContent) {
                 throw new Error('No suggestion content available');
@@ -43175,7 +43199,9 @@ class SuggestionComposer {
  */
 class PlanConsumer {
     constructor(arc, store) {
+        // Plans change callback is triggered when planning results have changed.
         this.plansChangeCallbacks = [];
+        // Suggestions change callback is triggered when suggestions visible to the user have changed.
         this.suggestionsChangeCallbacks = [];
         this.suggestionComposer = null;
         assert(arc, 'arc cannot be null');
@@ -43214,29 +43240,30 @@ class PlanConsumer {
         }
     }
     getCurrentSuggestions() {
-        const suggestions = this.result.plans.filter(suggestion => suggestion['plan'].slots.length > 0);
+        const suggestions = this.result.plans.filter(suggestion => suggestion.plan.slots.length > 0);
         // `showAll`: returns all plans that render into slots.
         if (this.suggestFilter['showAll']) {
             return suggestions;
         }
         // search filter non empty: match plan search phrase or description text.
         if (this.suggestFilter['search']) {
-            return suggestions.filter(suggestion => suggestion['descriptionText'].toLowerCase().includes(this.suggestFilter['search']) ||
-                (suggestion['plan'].search &&
-                    suggestion['plan'].search.phrase.includes(this.suggestFilter['search'])));
+            return suggestions.filter(suggestion => suggestion.descriptionText.toLowerCase().includes(this.suggestFilter['search']) ||
+                (suggestion.plan.search &&
+                    suggestion.plan.search.phrase.includes(this.suggestFilter['search'])));
         }
         return suggestions.filter(suggestion => {
-            const usesHandlesFromActiveRecipe = suggestion['plan'].handles.find(handle => {
+            const usesHandlesFromActiveRecipe = suggestion.plan.handles.find(handle => {
                 // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
                 // either by tagging or by exploring connection directions etc.
                 return !!handle.id &&
-                    this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
+                    !!this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
             });
-            const usesRemoteNonRootSlots = suggestion['plan'].slots.find(slot => {
+            const usesRemoteNonRootSlots = suggestion.plan.slots.find(slot => {
                 return !slot.name.includes('root') && !slot.tags.includes('root') &&
-                    slot.id && !slot.id.includes('root') && this.arc.pec.slotComposer.findContextById(slot.id);
+                    slot.id && !slot.id.includes('root') &&
+                    Boolean(this.arc.pec.slotComposer.findContextById(slot.id));
             });
-            const onlyUsesNonRootSlots = !suggestion['plan'].slots.find(s => s.name.includes('root') || s.tags.includes('root'));
+            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
             return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
         });
     }
@@ -45297,14 +45324,12 @@ class Planner {
                 // TODO: Move this logic inside speculate, so that it can stop the arc
                 // before returning.
                 relevance.newArc.stop();
-                results.push({
-                    plan,
-                    rank,
-                    description: relevance.newArc.description,
-                    descriptionText: description,
-                    hash,
-                    groupIndex
-                });
+                const suggestion = new Suggestion(plan, hash, rank, this._arc);
+                suggestion.description = relevance.newArc.description;
+                // TODO(mmandlis): exclude the text description from returned results.
+                suggestion.descriptionText = description;
+                suggestion.groupIndex = groupIndex;
+                results.push(suggestion);
                 planTrace.end({ name: description, args: { rank, hash, groupIndex } });
             }
             return results;
@@ -45412,10 +45437,10 @@ class PlanProducer {
         }
         this.search = value.search;
         if (!this.search) {
-            // search string turned empty, no need to replan, going back to contextual plans.
+            // search string turned empty, no need to replan, going back to contextual suggestions.
             return;
         }
-        if (this.search === '*') { // Search for ALL (including non-contextual) plans.
+        if (this.search === '*') { // Search for ALL (including non-contextual) suggestions.
             if (this.result.contextual) {
                 this.producePlans({ contextual: false });
             }
@@ -45426,12 +45451,12 @@ class PlanProducer {
                 search: this.search
             };
             if (this.result.contextual) {
-                // If we're searching but currently only have contextual plans,
-                // we need get non-contextual plans as well.
+                // If we're searching but currently only have contextual suggestions,
+                // we need get non-contextual suggestions as well.
                 Object.assign(options, { contextual: false });
             }
             else {
-                // If search changed and we already how all plans (i.e. including
+                // If search changed and we already how all suggestions (i.e. including
                 // non-contextual ones) then it's enough to initialize with InitSearch
                 // with a new search phrase.
                 Object.assign(options, {
@@ -45468,15 +45493,15 @@ class PlanProducer {
             plans = await this.runPlanner(this.replanOptions, generations);
         }
         time = ((now$1() - time) / 1000).toFixed(2);
-        // Plans are null, if planning was cancelled.
+        // Suggestions are null, if planning was cancelled.
         if (plans) {
-            log$1(`Produced ${plans.length}${this.replanOptions['append'] ? ' additional' : ''} plans [elapsed=${time}s].`);
+            log$1(`Produced ${plans.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
             this.isPlanning = false;
             await this._updateResult({ plans, generations }, this.replanOptions);
         }
     }
     async runPlanner(options, generations) {
-        let plans = [];
+        let suggestions = [];
         assert(!this.planner, 'Planner must be null');
         this.planner = new Planner();
         this.planner.init(this.arc, {
@@ -45486,10 +45511,10 @@ class PlanProducer {
                 search: options['search']
             }
         });
-        plans = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations, this.speculator);
+        suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations, this.speculator);
         if (this.planner) {
             this.planner = null;
-            return plans;
+            return suggestions;
         }
         // Planning was cancelled.
         return null;
@@ -45515,7 +45540,7 @@ class PlanProducer {
                 return;
             }
         }
-        // Store plans to store.
+        // Store suggestions to store.
         try {
             assert(this.store['set'], 'Unsupported setter in suggestion storage');
             await this.store['set'](this.result.serialize());

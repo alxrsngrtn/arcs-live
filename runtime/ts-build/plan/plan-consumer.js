@@ -8,11 +8,13 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/assert-web.js';
-import { PlanningResult } from './planning-result';
+import { PlanningResult } from './planning-result.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
 export class PlanConsumer {
     constructor(arc, store) {
+        // Plans change callback is triggered when planning results have changed.
         this.plansChangeCallbacks = [];
+        // Suggestions change callback is triggered when suggestions visible to the user have changed.
         this.suggestionsChangeCallbacks = [];
         this.suggestionComposer = null;
         assert(arc, 'arc cannot be null');
@@ -51,29 +53,30 @@ export class PlanConsumer {
         }
     }
     getCurrentSuggestions() {
-        const suggestions = this.result.plans.filter(suggestion => suggestion['plan'].slots.length > 0);
+        const suggestions = this.result.plans.filter(suggestion => suggestion.plan.slots.length > 0);
         // `showAll`: returns all plans that render into slots.
         if (this.suggestFilter['showAll']) {
             return suggestions;
         }
         // search filter non empty: match plan search phrase or description text.
         if (this.suggestFilter['search']) {
-            return suggestions.filter(suggestion => suggestion['descriptionText'].toLowerCase().includes(this.suggestFilter['search']) ||
-                (suggestion['plan'].search &&
-                    suggestion['plan'].search.phrase.includes(this.suggestFilter['search'])));
+            return suggestions.filter(suggestion => suggestion.descriptionText.toLowerCase().includes(this.suggestFilter['search']) ||
+                (suggestion.plan.search &&
+                    suggestion.plan.search.phrase.includes(this.suggestFilter['search'])));
         }
         return suggestions.filter(suggestion => {
-            const usesHandlesFromActiveRecipe = suggestion['plan'].handles.find(handle => {
+            const usesHandlesFromActiveRecipe = suggestion.plan.handles.find(handle => {
                 // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
                 // either by tagging or by exploring connection directions etc.
                 return !!handle.id &&
-                    this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
+                    !!this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
             });
-            const usesRemoteNonRootSlots = suggestion['plan'].slots.find(slot => {
+            const usesRemoteNonRootSlots = suggestion.plan.slots.find(slot => {
                 return !slot.name.includes('root') && !slot.tags.includes('root') &&
-                    slot.id && !slot.id.includes('root') && this.arc.pec.slotComposer.findContextById(slot.id);
+                    slot.id && !slot.id.includes('root') &&
+                    Boolean(this.arc.pec.slotComposer.findContextById(slot.id));
             });
-            const onlyUsesNonRootSlots = !suggestion['plan'].slots.find(s => s.name.includes('root') || s.tags.includes('root'));
+            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
             return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
         });
     }

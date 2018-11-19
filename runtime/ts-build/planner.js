@@ -28,6 +28,7 @@ import { FindHostedParticle } from '../strategies/find-hosted-particle.js';
 import { CoalesceRecipes } from '../strategies/coalesce-recipes.js';
 import { ResolveRecipe } from '../strategies/resolve-recipe.js';
 import { Speculator } from './speculator.js';
+import { Suggestion } from './plan/suggestion';
 import { Tracing } from '../../tracelib/trace.js';
 import { StrategyExplorerAdapter } from '../debug/strategy-explorer-adapter.js';
 import { DevtoolsConnection } from '../debug/devtools-connection.js';
@@ -151,14 +152,12 @@ export class Planner {
                 // TODO: Move this logic inside speculate, so that it can stop the arc
                 // before returning.
                 relevance.newArc.stop();
-                results.push({
-                    plan,
-                    rank,
-                    description: relevance.newArc.description,
-                    descriptionText: description,
-                    hash,
-                    groupIndex
-                });
+                const suggestion = new Suggestion(plan, hash, rank, this._arc);
+                suggestion.description = relevance.newArc.description;
+                // TODO(mmandlis): exclude the text description from returned results.
+                suggestion.descriptionText = description;
+                suggestion.groupIndex = groupIndex;
+                results.push(suggestion);
                 planTrace.end({ name: description, args: { rank, hash, groupIndex } });
             }
             return results;

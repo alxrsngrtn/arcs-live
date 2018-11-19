@@ -1,7 +1,9 @@
-commit 104ff0e0a11cb8d4591cf55c1b7d3ea1b2e948b3
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Nov 19 07:00:04 2018 -0800
+commit 0dee87831546c97a5bc3eebe33cf8290863d908e
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Nov 19 11:36:27 2018 -0800
 
-    Convert testing/test-util.js to typescript (#2243)
+    declare and use class Suggestion (#2254)
     
-    Addresses #1765
+    * declare and use class Suggestion
+    
+    * address comments

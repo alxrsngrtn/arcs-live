@@ -8,11 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/assert-web.js';
-import { PlanConsumer } from './plan-consumer';
-import { PlanProducer } from './plan-producer';
-import { ReplanQueue } from './replan-queue';
-import { Schema } from '../schema';
-import { Type } from '../type';
+import { PlanConsumer } from './plan-consumer.js';
+import { PlanProducer } from './plan-producer.js';
+import { ReplanQueue } from './replan-queue.js';
+import { Schema } from '../schema.js';
+import { Type } from '../type.js';
 export class Planificator {
     constructor(arc, userid, store, searchStore, onlyConsumer) {
         this.search = null;
