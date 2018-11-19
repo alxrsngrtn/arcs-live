@@ -10,7 +10,7 @@
 import { handleFor } from './handle.js';
 import { assert } from '../../platform/assert-web.js';
 import { PECInnerPort } from '../api-channel.js';
-import { StorageProxy, StorageProxyScheduler } from '../storage-proxy.js';
+import { StorageProxy, StorageProxyScheduler } from './storage-proxy.js';
 export class ParticleExecutionContext {
     constructor(port, idBase, loader) {
         this.particles = [];
@@ -33,15 +33,15 @@ export class ParticleExecutionContext {
          * only keeping type information on the arc side.
          */
         this.apiPort.onDefineHandle = ({ type, identifier, name }) => {
-            return new StorageProxy(identifier, type, this.apiPort, this, this.scheduler, name);
+            return StorageProxy.newProxy(identifier, type, this.apiPort, this, this.scheduler, name);
         };
         this.apiPort.onGetBackingStoreCallback = ({ type, id, name, callback, storageKey }) => {
-            const proxy = new StorageProxy(id, type, this.apiPort, this, this.scheduler, name);
+            const proxy = StorageProxy.newProxy(id, type, this.apiPort, this, this.scheduler, name);
             proxy.storageKey = storageKey;
             return [proxy, () => callback(proxy, storageKey)];
         };
         this.apiPort.onCreateHandleCallback = ({ type, id, name, callback }) => {
-            const proxy = new StorageProxy(id, type, this.apiPort, this, this.scheduler, name);
+            const proxy = StorageProxy.newProxy(id, type, this.apiPort, this, this.scheduler, name);
             return [proxy, () => callback(proxy)];
         };
         this.apiPort.onMapHandleCallback = ({ id, callback }) => {

@@ -25,7 +25,7 @@ function restore(entry, entityClass) {
     // TODO some relation magic, somewhere, at some point.
     return entity;
 }
-/**
+/** @class Handle
  * Base class for Collections and Variables.
  */
 export class Handle {
@@ -80,10 +80,10 @@ export class Handle {
         };
     }
     get type() {
-        return this._proxy._type;
+        return this._proxy.type;
     }
     get _id() {
-        return this._proxy._id;
+        return this._proxy.id;
     }
     async store(entity) {
         throw new Error('unimplemented');
@@ -100,7 +100,6 @@ export class Handle {
  * which handles are connected.
  */
 class Collection extends Handle {
-    // Called by StorageProxy.
     _notify(kind, particle, details) {
         assert(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
@@ -175,7 +174,7 @@ class Collection extends Handle {
         if (!this.canWrite) {
             throw new Error('Handle not writeable');
         }
-        return this._proxy.clear();
+        return this._proxy.clear(this._particleId);
     }
     /**
      * Removes an entity from the Handle.
@@ -355,7 +354,7 @@ class BigCollection extends Handle {
             throw new Error('Handle not writeable');
         }
         const serialization = this._serialize(entity);
-        return this._proxy.remove(serialization.id, [], this._particleId);
+        return this._proxy.remove(serialization.id, this._particleId);
     }
     /**
      * @returns a Cursor instance that iterates over the full set of entities, reading `pageSize`
