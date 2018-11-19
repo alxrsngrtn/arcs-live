@@ -5444,7 +5444,7 @@ class ParticleSpec {
         const indent = '  ';
         const writeConnection = (connection, indent) => {
             const tags = connection.tags.map((tag) => ` #${tag}`).join('');
-            results.push(`${indent}${connection.direction} ${connection.type.toString()}${connection.isOptional ? '?' : ''} ${connection.name}${tags}`);
+            results.push(`${indent}${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()} ${connection.name}${tags}`);
             for (const dependent of connection.dependentConnections) {
                 writeConnection(dependent, indent + '  ');
             }

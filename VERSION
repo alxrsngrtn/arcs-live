@@ -1,11 +1,8 @@
-commit cbb499eb36f567df1fd075e08a5b9e7efd0a52c7
-Author: shans <shane.stephens@gmail.com>
-Date:   Mon Nov 19 11:38:36 2018 +1100
+commit b0e453e1bdbaeaba38a5d0c1bc775fe175228216
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Mon Nov 19 15:50:36 2018 +1100
 
-    Storage proxy ts (#2235)
+    Move isOptional ('?') to direction for ShapeArgument (#2255)
     
-    * Conversion completed, 1 test failing
-    
-    * All tests pass, lint lints
-    
-    * review comments
+    * Move isOptional next to the optional direction
+    * Use optional function in parser
