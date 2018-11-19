@@ -1,8 +1,7 @@
-commit b0e453e1bdbaeaba38a5d0c1bc775fe175228216
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Mon Nov 19 15:50:36 2018 +1100
+commit 104ff0e0a11cb8d4591cf55c1b7d3ea1b2e948b3
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Nov 19 07:00:04 2018 -0800
 
-    Move isOptional ('?') to direction for ShapeArgument (#2255)
+    Convert testing/test-util.js to typescript (#2243)
     
-    * Move isOptional next to the optional direction
-    * Use optional function in parser
+    Addresses #1765

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>PouchDbKey | arcs</title>
+	<title>ResultInspector | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="pouchdbkey.html">PouchDbKey</a>
+					<a href="resultinspector.html">ResultInspector</a>
 				</li>
 			</ul>
-			<h1>Class PouchDbKey</h1>
+			<h1>Class ResultInspector</h1>
 		</div>
 	</div>
 </header>
@@ -69,35 +69,46 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Keys for PouchDb entities.  A pouchdb key looks like a url. of the following form:</p>
+						<p>Helper class for testing a Collection-based store that collects messages from a particle.
+							This detects when too few or too many messages are sent in addition to matching the message
+						values, and can be used multiple times within the same unit test.</p>
 					</div>
-					<p>   pouchdb://{dblocation}/{dbname}/{location}</p>
-					<p>The scheme is pouchdb, followed by the database location which can be:</p>
-					<ul>
-						<li>memory (stores in local memory)</li>
-						<li>local (persistant stored in IDB (browser) or LevelDB (node)</li>
-						<li>a hostname (stores on the remote host)</li>
-					</ul>
-					<p>A slash separated database name and key location then follow.
-					The default for dblocation is &#39;memory&#39; and the default dbname is &#39;user&#39;.</p>
-					<p>Some sample keys</p>
-					<ul>
-						<li>pouchdb://memory/user/nice/long-storage-key</li>
-						<li>pouchdb://localhost:8080/user/storagekey123</li>
-						<li>pouchdb://local/user/storagekey123</li>
-					</ul>
+					<p>Example usage:</p>
+					<pre><code>  <span class="hljs-literal">[<span class="hljs-identifier">manifest</span>]</span>
+    schema Result
+      Text value
+    particle P
+      out <span class="hljs-literal">[R<span class="hljs-identifier">esult</span>]</span> res
+
+  <span class="hljs-literal">[<span class="hljs-identifier">particle</span> <span class="hljs-identifier">code</span>]</span>
+    set<span class="hljs-constructor">Handles(<span class="hljs-params">handles</span>)</span> {
+      this._resHandle = handles.get('res');
+    }
+    test<span class="hljs-constructor">Function(<span class="hljs-params">arg</span>)</span> {
+      await this.<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">_resHandle</span>.</span></span>store(<span class="hljs-keyword">new</span> this.<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">_resHandle</span>.</span></span>entity<span class="hljs-constructor">Class({<span class="hljs-params">value</span>: <span class="hljs-params">arg</span>})</span>);
+    }
+
+  <span class="hljs-literal">[<span class="hljs-identifier">test</span> <span class="hljs-identifier">code</span>]</span>
+    <span class="hljs-keyword">let</span> {manifest, arc} = set<span class="hljs-constructor">UpManifestAndArc()</span>;
+    <span class="hljs-keyword">let</span> Result = manifest.find<span class="hljs-constructor">SchemaByName('Result')</span>.entity<span class="hljs-constructor">Class()</span>;
+    <span class="hljs-keyword">let</span> resStore = await arc.create<span class="hljs-constructor">Store(Result.<span class="hljs-params">type</span>.<span class="hljs-params">collectionOf</span>()</span>, 'res');
+    <span class="hljs-keyword">let</span> recipe = set<span class="hljs-constructor">UpRecipeWithResHandleMapped(<span class="hljs-params">resStore</span>)</span>;
+
+    <span class="hljs-keyword">let</span> inspector = <span class="hljs-keyword">new</span> util.<span class="hljs-constructor">ResultInspector(<span class="hljs-params">arc</span>, <span class="hljs-params">resStore</span>, '<span class="hljs-params">value</span>')</span>;
+    await arc.instantiate(recipe);
+    trigger<span class="hljs-constructor">ParticleTestFunctionWith('<span class="hljs-params">one</span>')</span>;
+    trigger<span class="hljs-constructor">ParticleTestFunctionWith('<span class="hljs-params">two</span>')</span>;
+    await inspector.verify('one', 'two');
+
+    trigger<span class="hljs-constructor">ParticleTestFunctionWith('<span class="hljs-params">three</span>')</span>;
+    await inspector.verify('three');</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="keybase.html" class="tsd-signature-type">KeyBase</a>
-						<ul class="tsd-hierarchy">
-							<li>
-								<span class="target">PouchDbKey</span>
-							</li>
-						</ul>
+						<span class="target">ResultInspector</span>
 					</li>
 				</ul>
 			</section>
@@ -108,24 +119,21 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="pouchdbkey.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="resultinspector.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="pouchdbkey.html#dblocation" class="tsd-kind-icon">db<wbr>Location</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="pouchdbkey.html#dbname" class="tsd-kind-icon">db<wbr>Name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="pouchdbkey.html#location" class="tsd-kind-icon">location</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="pouchdbkey.html#protocol" class="tsd-kind-icon">protocol</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="resultinspector.html#_arc" class="tsd-kind-icon">_arc</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="resultinspector.html#_field" class="tsd-kind-icon">_field</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="resultinspector.html#_store" class="tsd-kind-icon">_store</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="pouchdbkey.html#childkeyforhandle" class="tsd-kind-icon">child<wbr>Key<wbr>For<wbr>Handle</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="pouchdbkey.html#dbcachekey" class="tsd-kind-icon">db<wbr>Cache<wbr>Key</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="pouchdbkey.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="resultinspector.html#verify" class="tsd-kind-icon">verify</a></li>
 							</ul>
 						</section>
 					</div>
@@ -137,22 +145,45 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Pouch<wbr>DbKey<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="pouchdbkey.html" class="tsd-signature-type">PouchDbKey</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Result<wbr>Inspector<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a>, store<span class="tsd-signature-symbol">: </span><a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a>, field<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="resultinspector.html" class="tsd-signature-type">ResultInspector</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/storage/pouchdb/pouch-db-key.ts#L35">storage/pouchdb/pouch-db-key.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/testing/test-util.ts#L56">testing/test-util.ts:56</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>key: <span class="tsd-signature-type">string</span></h5>
+									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>the arc being tested; used to detect when all messages have been processed</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5>store: <a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>a Collection-based store that should be connected as an output for the particle</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5>field: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>the field within store&#39;s contained Entity type that this inspector should observe</p>
+										</div>
+									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="pouchdbkey.html" class="tsd-signature-type">PouchDbKey</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="resultinspector.html" class="tsd-signature-type">ResultInspector</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -160,110 +191,65 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="dblocation" class="tsd-anchor"></a>
-					<h3>db<wbr>Location</h3>
-					<div class="tsd-signature tsd-kind-icon">db<wbr>Location<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="_arc" class="tsd-anchor"></a>
+					<h3>_arc</h3>
+					<div class="tsd-signature tsd-kind-icon">_arc<span class="tsd-signature-symbol">:</span> <a href="arc.html" class="tsd-signature-type">Arc</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/storage/pouchdb/pouch-db-key.ts#L33">storage/pouchdb/pouch-db-key.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/testing/test-util.ts#L54">testing/test-util.ts:54</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="dbname" class="tsd-anchor"></a>
-					<h3>db<wbr>Name</h3>
-					<div class="tsd-signature tsd-kind-icon">db<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="_field" class="tsd-anchor"></a>
+					<h3>_field</h3>
+					<div class="tsd-signature tsd-kind-icon">_field<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/storage/pouchdb/pouch-db-key.ts#L34">storage/pouchdb/pouch-db-key.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/testing/test-util.ts#L56">testing/test-util.ts:56</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="location" class="tsd-anchor"></a>
-					<h3>location</h3>
-					<div class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="_store" class="tsd-anchor"></a>
+					<h3>_store</h3>
+					<div class="tsd-signature tsd-kind-icon">_store<span class="tsd-signature-symbol">:</span> <a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/storage/pouchdb/pouch-db-key.ts#L35">storage/pouchdb/pouch-db-key.ts:35</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="protocol" class="tsd-anchor"></a>
-					<h3>protocol</h3>
-					<div class="tsd-signature tsd-kind-icon">protocol<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="keybase.html">KeyBase</a>.<a href="keybase.html#protocol">protocol</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/storage/key-base.ts#L10">storage/key-base.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/testing/test-util.ts#L55">testing/test-util.ts:55</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="childkeyforhandle" class="tsd-anchor"></a>
-					<h3>child<wbr>Key<wbr>For<wbr>Handle</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">child<wbr>Key<wbr>For<wbr>Handle<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="pouchdbkey.html" class="tsd-signature-type">PouchDbKey</a></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="verify" class="tsd-anchor"></a>
+					<h3>verify</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">verify<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>expectations<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Object</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="keybase.html">KeyBase</a>.<a href="keybase.html#childkeyforhandle">childKeyForHandle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/storage/pouchdb/pouch-db-key.ts#L58">storage/pouchdb/pouch-db-key.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/testing/test-util.ts#L75">testing/test-util.ts:75</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Creates a new child PouchDbKey relative to the current key, based on the value of id.</p>
+									<p>Wait for the arc to be idle then verify that exactly the expected messages have been received.
+										This clears the contents of the observed store after each call, allowing repeated independent
+									checks in the same test. The order of expectations is not significant.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>id: <span class="tsd-signature-type">string</span></h5>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>expectations: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="pouchdbkey.html" class="tsd-signature-type">PouchDbKey</a></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="dbcachekey" class="tsd-anchor"></a>
-					<h3>db<wbr>Cache<wbr>Key</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">db<wbr>Cache<wbr>Key<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/storage/pouchdb/pouch-db-key.ts#L77">storage/pouchdb/pouch-db-key.ts:77</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="tostring" class="tsd-anchor"></a>
-					<h3>to<wbr>String</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Overrides <a href="keybase.html">KeyBase</a>.<a href="keybase.html#tostring">toString</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/104ff0e/runtime/ts/storage/pouchdb/pouch-db-key.ts#L73">storage/pouchdb/pouch-db-key.ts:73</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Object</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -282,31 +268,22 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="pouchdbkey.html" class="tsd-kind-icon">Pouch<wbr>DbKey</a>
+						<a href="resultinspector.html" class="tsd-kind-icon">Result<wbr>Inspector</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="pouchdbkey.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="resultinspector.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="pouchdbkey.html#dblocation" class="tsd-kind-icon">db<wbr>Location</a>
+								<a href="resultinspector.html#_arc" class="tsd-kind-icon">_arc</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="pouchdbkey.html#dbname" class="tsd-kind-icon">db<wbr>Name</a>
+								<a href="resultinspector.html#_field" class="tsd-kind-icon">_field</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="pouchdbkey.html#location" class="tsd-kind-icon">location</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="pouchdbkey.html#protocol" class="tsd-kind-icon">protocol</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="pouchdbkey.html#childkeyforhandle" class="tsd-kind-icon">child<wbr>Key<wbr>For<wbr>Handle</a>
+								<a href="resultinspector.html#_store" class="tsd-kind-icon">_store</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="pouchdbkey.html#dbcachekey" class="tsd-kind-icon">db<wbr>Cache<wbr>Key</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="pouchdbkey.html#tostring" class="tsd-kind-icon">to<wbr>String</a>
+								<a href="resultinspector.html#verify" class="tsd-kind-icon">verify</a>
 							</li>
 						</ul>
 					</li>
