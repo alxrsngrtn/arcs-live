@@ -1,5 +1,5 @@
-commit bcf127aac658aebf7112ccef455123164377893d
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Nov 20 20:41:54 2018 +1100
+commit 724531463defc41e2a89faed8192070e95dfff47
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Nov 20 10:00:50 2018 -0800
 
-    Add message count from PEC to the log (#2261)
+    rename `plans` to `suggestions` in planificator and test-helper (#2260)

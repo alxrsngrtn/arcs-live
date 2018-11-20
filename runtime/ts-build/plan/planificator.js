@@ -45,12 +45,12 @@ export class Planificator {
     }
     async requestPlanning(options = {}) {
         if (!this.consumerOnly) {
-            await this.producer.producePlans(options);
+            await this.producer.produceSuggestions(options);
         }
     }
     get consumerOnly() { return !Boolean(this.producer); }
-    async loadPlans() {
-        return this.consumer.loadPlans();
+    async loadSuggestions() {
+        return this.consumer.loadSuggestions();
     }
     async setSearch(search) {
         search = search ? search.toLowerCase().trim() : null;
@@ -66,11 +66,11 @@ export class Planificator {
     get arcKey() {
         return this.arc.storageKey.substring(this.arc.storageKey.lastIndexOf('/') + 1);
     }
-    registerPlansChangedCallback(callback) {
-        this.consumer.registerPlansChangedCallback(callback);
+    registerSuggestionsChangedCallback(callback) {
+        this.consumer.registerSuggestionsChangedCallback(callback);
     }
-    registerSuggestChangedCallback(callback) {
-        this.consumer.registerSuggestChangedCallback(callback);
+    registerVisibleSuggestionsChangedCallback(callback) {
+        this.consumer.registerVisibleSuggestionsChangedCallback(callback);
     }
     dispose() {
         this.arc.unregisterInstantiatePlanCallback(this.arcCallback);

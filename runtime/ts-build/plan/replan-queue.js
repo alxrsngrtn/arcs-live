@@ -47,7 +47,7 @@ export class ReplanQueue {
     }
     _scheduleReplan(intervalMs) {
         this._cancelReplanIfScheduled();
-        this.replanTimer = setTimeout(() => this.planProducer.producePlans({ contextual: this.planProducer.result.contextual }), intervalMs);
+        this.replanTimer = setTimeout(() => this.planProducer.produceSuggestions({ contextual: this.planProducer.result.contextual }), intervalMs);
     }
     _cancelReplanIfScheduled() {
         if (this._isReplanningScheduled()) {

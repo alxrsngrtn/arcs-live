@@ -66765,7 +66765,8 @@ class Planificator {
     if (composer) {
       if (composer.findContextById('rootslotid-suggestions')) {
         const suggestionComposer = new _ts_build_suggestion_composer_js__WEBPACK_IMPORTED_MODULE_6__["SuggestionComposer"](composer);
-        this.registerSuggestChangedCallback((suggestions) => suggestionComposer.setSuggestions(suggestions));
+        this.registerVisibleSuggestionsChangedCallback(
+            (suggestions) => suggestionComposer.setSuggestions(suggestions));
       }
     }
   }
@@ -66904,10 +66905,10 @@ class Planificator {
     return suggestions || [];
   }
 
-  registerPlansChangedCallback(callback) {
+  registerSuggestionsChangedCallback(callback) {
     this._plansChangedCallbacks.push(callback);
   }
-  registerSuggestChangedCallback(callback) {
+  registerVisibleSuggestionsChangedCallback(callback) {
     this._suggestChangedCallbacks.push(callback);
   }
   registerStateChangedCallback(callback) {
@@ -75404,10 +75405,10 @@ __webpack_require__.r(__webpack_exports__);
 
 class PlanConsumer {
     constructor(arc, store) {
-        // Plans change callback is triggered when planning results have changed.
-        this.plansChangeCallbacks = [];
-        // Suggestions change callback is triggered when suggestions visible to the user have changed.
+        // Callback is triggered when planning results have changed.
         this.suggestionsChangeCallbacks = [];
+        // Callback is triggered when suggestions visible to the user have changed.
+        this.visibleSuggestionsChangeCallbacks = [];
         this.suggestionComposer = null;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'store cannot be null');
@@ -75415,14 +75416,14 @@ class PlanConsumer {
         this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"](arc);
         this.store = store;
         this.suggestFilter = { showAll: false };
-        this.plansChangeCallbacks = [];
         this.suggestionsChangeCallbacks = [];
-        this.storeCallback = () => this.loadPlans();
+        this.visibleSuggestionsChangeCallbacks = [];
+        this.storeCallback = () => this.loadSuggestions();
         this.store.on('change', this.storeCallback, this);
         this._initSuggestionComposer();
     }
-    registerPlansChangedCallback(callback) { this.plansChangeCallbacks.push(callback); }
-    registerSuggestChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
+    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
+    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
     setSuggestFilter(showAll, search) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!showAll || !search);
         if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
@@ -75432,21 +75433,21 @@ class PlanConsumer {
         this.suggestFilter = { showAll, search };
         this._onMaybeSuggestionsChanged(previousSuggestions);
     }
-    async loadPlans() {
+    async loadSuggestions() {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.store['get'], 'Unsupported getter in suggestion storage');
         const value = await this.store['get']() || {};
-        if (!value.plans) {
+        if (!value.suggestions) {
             return;
         }
         const previousSuggestions = this.getCurrentSuggestions();
         if (await this.result.deserialize(value)) {
-            this._onPlansChanged();
+            this._onSuggestionsChanged();
             this._onMaybeSuggestionsChanged(previousSuggestions);
         }
     }
     getCurrentSuggestions() {
-        const suggestions = this.result.plans.filter(suggestion => suggestion.plan.slots.length > 0);
-        // `showAll`: returns all plans that render into slots.
+        const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0);
+        // `showAll`: returns all suggestions that render into slots.
         if (this.suggestFilter['showAll']) {
             return suggestions;
         }
@@ -75474,26 +75475,26 @@ class PlanConsumer {
     }
     dispose() {
         this.store.off('change', this.storeCallback);
-        this.plansChangeCallbacks = [];
         this.suggestionsChangeCallbacks = [];
+        this.visibleSuggestionsChangeCallbacks = [];
         if (this.suggestionComposer) {
             this.suggestionComposer.clear();
         }
     }
-    _onPlansChanged() {
-        this.plansChangeCallbacks.forEach(callback => callback({ plans: this.result.plans }));
+    _onSuggestionsChanged() {
+        this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
     }
     _onMaybeSuggestionsChanged(previousSuggestions) {
         const suggestions = this.getCurrentSuggestions();
         if (!_planning_result_js__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"].isEquivalent(previousSuggestions, suggestions)) {
-            this.suggestionsChangeCallbacks.forEach(callback => callback(suggestions));
+            this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
         }
     }
     _initSuggestionComposer() {
         const composer = this.arc.pec.slotComposer;
         if (composer && composer.findContextById('rootslotid-suggestions')) {
             this.suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestionComposer"](composer);
-            this.registerSuggestChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
+            this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
         }
     }
 }
@@ -75580,12 +75581,12 @@ class PlanProducer {
         }
         if (this.search === '*') { // Search for ALL (including non-contextual) suggestions.
             if (this.result.contextual) {
-                this.producePlans({ contextual: false });
+                this.produceSuggestions({ contextual: false });
             }
         }
         else { // Search by search term.
             const options = {
-                cancelOngoingPlanning: this.result.plans.length > 0,
+                cancelOngoingPlanning: this.result.suggestions.length > 0,
                 search: this.search
             };
             if (this.result.contextual) {
@@ -75602,7 +75603,7 @@ class PlanProducer {
                     append: true
                 });
             }
-            this.producePlans(options);
+            this.produceSuggestions(options);
         }
     }
     get arcKey() {
@@ -75612,7 +75613,7 @@ class PlanProducer {
     dispose() {
         this.searchStore.off('change', this.searchStoreCallback);
     }
-    async producePlans(options = {}) {
+    async produceSuggestions(options = {}) {
         if (options['cancelOngoingPlanning'] && this.isPlanning) {
             this._cancelPlanning();
         }
@@ -75623,19 +75624,19 @@ class PlanProducer {
         }
         this.isPlanning = true;
         let time = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__["now"])();
-        let plans = [];
+        let suggestions = [];
         let generations = [];
         while (this.needReplan) {
             this.needReplan = false;
             generations = [];
-            plans = await this.runPlanner(this.replanOptions, generations);
+            suggestions = await this.runPlanner(this.replanOptions, generations);
         }
         time = ((Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__["now"])() - time) / 1000).toFixed(2);
         // Suggestions are null, if planning was cancelled.
-        if (plans) {
-            log(`Produced ${plans.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
+        if (suggestions) {
+            log(`Produced ${suggestions.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
             this.isPlanning = false;
-            await this._updateResult({ plans, generations }, this.replanOptions);
+            await this._updateResult({ suggestions, generations }, this.replanOptions);
         }
     }
     async runPlanner(options, generations) {
@@ -75666,15 +75667,15 @@ class PlanProducer {
         this.isPlanning = false; // using the setter method to trigger callbacks.
         log(`Cancel planning`);
     }
-    async _updateResult({ plans, generations }, options) {
+    async _updateResult({ suggestions, generations }, options) {
         if (options.append) {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!options['contextual'], `Cannot append to contextual options`);
-            if (!this.result.append({ plans, generations })) {
+            if (!this.result.append({ suggestions, generations })) {
                 return;
             }
         }
         else {
-            if (!this.result.set({ plans, generations, contextual: options['contextual'] })) {
+            if (!this.result.set({ suggestions, generations, contextual: options['contextual'] })) {
                 return;
             }
         }
@@ -75756,12 +75757,12 @@ class Planificator {
     }
     async requestPlanning(options = {}) {
         if (!this.consumerOnly) {
-            await this.producer.producePlans(options);
+            await this.producer.produceSuggestions(options);
         }
     }
     get consumerOnly() { return !Boolean(this.producer); }
-    async loadPlans() {
-        return this.consumer.loadPlans();
+    async loadSuggestions() {
+        return this.consumer.loadSuggestions();
     }
     async setSearch(search) {
         search = search ? search.toLowerCase().trim() : null;
@@ -75777,11 +75778,11 @@ class Planificator {
     get arcKey() {
         return this.arc.storageKey.substring(this.arc.storageKey.lastIndexOf('/') + 1);
     }
-    registerPlansChangedCallback(callback) {
-        this.consumer.registerPlansChangedCallback(callback);
+    registerSuggestionsChangedCallback(callback) {
+        this.consumer.registerSuggestionsChangedCallback(callback);
     }
-    registerSuggestChangedCallback(callback) {
-        this.consumer.registerSuggestChangedCallback(callback);
+    registerVisibleSuggestionsChangedCallback(callback) {
+        this.consumer.registerVisibleSuggestionsChangedCallback(callback);
     }
     dispose() {
         this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
@@ -75919,32 +75920,32 @@ class PlanningResult {
         this.contextual = true;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null');
         this.arc = arc;
-        this._plans = result['plans'];
+        this._suggestions = result['suggestions'];
         this.lastUpdated = result['lastUpdated'] || new Date(null);
         this.generations = result['generations'] || [];
     }
-    get plans() { return this._plans || []; }
-    set plans(plans) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(plans), `Cannot set uninitialized plans`);
-        this._plans = plans;
+    get suggestions() { return this._suggestions || []; }
+    set suggestions(suggestions) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(suggestions), `Cannot set uninitialized suggestions`);
+        this._suggestions = suggestions;
     }
-    set({ plans, lastUpdated = new Date(), generations = [], contextual = true }) {
-        if (this.isEquivalent(plans)) {
+    set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
+        if (this.isEquivalent(suggestions)) {
             return false;
         }
-        this.plans = plans;
+        this.suggestions = suggestions;
         this.generations = generations;
         this.lastUpdated = lastUpdated;
         this.contextual = contextual;
         return true;
     }
-    append({ plans, lastUpdated = new Date(), generations = [] }) {
-        const newPlans = plans.filter(newPlan => !this.plans.find(plan => plan.isEquivalent(newPlan)));
-        if (newPlans.length === 0) {
+    append({ suggestions, lastUpdated = new Date(), generations = [] }) {
+        const newSuggestions = suggestions.filter(newSuggestion => !this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion)));
+        if (newSuggestions.length === 0) {
             return false;
         }
-        this.plans.push(...newPlans);
-        // TODO: filter out generations of other plans.
+        this.suggestions.push(...newSuggestions);
+        // TODO: filter out generations of other suggestions.
         this.generations.push(...generations);
         this.lastUpdated = lastUpdated;
         return true;
@@ -75952,26 +75953,26 @@ class PlanningResult {
     olderThan(other) {
         return this.lastUpdated < other.lastUpdated;
     }
-    isEquivalent(plans) {
-        return PlanningResult.isEquivalent(this._plans, plans);
+    isEquivalent(suggestions) {
+        return PlanningResult.isEquivalent(this._suggestions, suggestions);
     }
-    static isEquivalent(oldPlans, newPlans) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(newPlans, `New plans cannot be null.`);
-        return oldPlans &&
-            oldPlans.length === newPlans.length &&
-            oldPlans.every(plan => newPlans.find(newPlan => plan.isEquivalent(newPlan)));
+    static isEquivalent(oldSuggestions, newSuggestions) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(newSuggestions, `New suggestions cannot be null.`);
+        return oldSuggestions &&
+            oldSuggestions.length === newSuggestions.length &&
+            oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
     }
-    async deserialize({ plans, lastUpdated }) {
+    async deserialize({ suggestions, lastUpdated }) {
         const recipeResolver = new _recipe_recipe_resolver__WEBPACK_IMPORTED_MODULE_1__["RecipeResolver"](this.arc);
         return this.set({
-            plans: await Promise.all(plans.map(plan => _suggestion__WEBPACK_IMPORTED_MODULE_2__["Suggestion"].deserialize(plan, this.arc, recipeResolver))),
+            suggestions: await Promise.all(suggestions.map(suggestion => _suggestion__WEBPACK_IMPORTED_MODULE_2__["Suggestion"].deserialize(suggestion, this.arc, recipeResolver))),
             lastUpdated: new Date(lastUpdated),
-            contextual: plans.contextual
+            contextual: suggestions.contextual
         });
     }
     serialize() {
         return {
-            plans: this.plans.map(plan => plan.serialize()),
+            suggestions: this.suggestions.map(suggestion => suggestion.serialize()),
             lastUpdated: this.lastUpdated.toString(),
             contextual: this.contextual
         };
@@ -76041,7 +76042,7 @@ class ReplanQueue {
     }
     _scheduleReplan(intervalMs) {
         this._cancelReplanIfScheduled();
-        this.replanTimer = setTimeout(() => this.planProducer.producePlans({ contextual: this.planProducer.result.contextual }), intervalMs);
+        this.replanTimer = setTimeout(() => this.planProducer.produceSuggestions({ contextual: this.planProducer.result.contextual }), intervalMs);
     }
     _cancelReplanIfScheduled() {
         if (this._isReplanningScheduled()) {
