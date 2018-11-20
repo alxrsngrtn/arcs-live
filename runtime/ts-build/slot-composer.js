@@ -24,7 +24,7 @@ export class SlotComposer {
         this._contexts = [];
         assert(options.affordance, 'Affordance is mandatory');
         // TODO: Support rootContext for backward compatibility, remove when unused.
-        options.rootContainer = options.rootContainer || options.rootContext;
+        options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
         assert((options.rootContainer !== undefined)
             !==
                 (options.noRoot === true), 'Root container is mandatory unless it is explicitly skipped');
@@ -34,7 +34,7 @@ export class SlotComposer {
         if (options.noRoot) {
             return;
         }
-        const containerByName = this._affordance.slotConsumerClass.findRootContainers(options.rootContainer) || {};
+        const containerByName = options.containers || this._affordance.slotConsumerClass.findRootContainers(options.rootContainer) || {};
         if (Object.keys(containerByName).length === 0) {
             // fallback to single 'root' slot using the rootContainer.
             containerByName['root'] = options.rootContainer;

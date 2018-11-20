@@ -3642,6 +3642,8 @@ class DomParticleBase extends _ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__
    * Remove entities from named handle.
    */
   async clearHandle(handleName) {
+    await this.handles.get(handleName).clear();
+    /*
     const handle = this.handles.get(handleName);
     if (handle.clear) {
       handle.clear();
@@ -3651,6 +3653,7 @@ class DomParticleBase extends _ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__
         return Promise.all(entities.map(entity => handle.remove(entity)));
       }
     }
+    */
   }
   /** @method mergeEntitiesToHandle(handleName, entityArray)
    * Merge entities from Array into named handle.

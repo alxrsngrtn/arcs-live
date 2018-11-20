@@ -66059,6 +66059,8 @@ class DomParticleBase extends _ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__
    * Remove entities from named handle.
    */
   async clearHandle(handleName) {
+    await this.handles.get(handleName).clear();
+    /*
     const handle = this.handles.get(handleName);
     if (handle.clear) {
       handle.clear();
@@ -66068,6 +66070,7 @@ class DomParticleBase extends _ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__
         return Promise.all(entities.map(entity => handle.remove(entity)));
       }
     }
+    */
   }
   /** @method mergeEntitiesToHandle(handleName, entityArray)
    * Merge entities from Array into named handle.
@@ -66354,6 +66357,29 @@ __webpack_require__.r(__webpack_exports__);
 // So we need to use an expression to find the global fetch function then map that for export.
 
 const local_fetch = fetch;
+
+
+
+/***/ }),
+
+/***/ "./runtime/firebase.js":
+/*!*****************************!*\
+  !*** ./runtime/firebase.js ***!
+  \*****************************/
+/*! exports provided: firebase */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
+/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (default from non-harmony) */ __webpack_require__.d(__webpack_exports__, "firebase", function() { return firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a; });
+/* harmony import */ var firebase_database__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! firebase/database */ "./node_modules/firebase/database/dist/index.esm.js");
+/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! firebase/storage */ "./node_modules/firebase/storage/dist/index.esm.js");
+
+
+
+
 
 
 
@@ -80384,7 +80410,7 @@ class SlotComposer {
         this._contexts = [];
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(options.affordance, 'Affordance is mandatory');
         // TODO: Support rootContext for backward compatibility, remove when unused.
-        options.rootContainer = options.rootContainer || options.rootContext;
+        options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])((options.rootContainer !== undefined)
             !==
                 (options.noRoot === true), 'Root container is mandatory unless it is explicitly skipped');
@@ -80394,7 +80420,7 @@ class SlotComposer {
         if (options.noRoot) {
             return;
         }
-        const containerByName = this._affordance.slotConsumerClass.findRootContainers(options.rootContainer) || {};
+        const containerByName = options.containers || this._affordance.slotConsumerClass.findRootContainers(options.rootContainer) || {};
         if (Object.keys(containerByName).length === 0) {
             // fallback to single 'root' slot using the rootContainer.
             containerByName['root'] = options.rootContainer;
@@ -86725,8 +86751,8 @@ const _set = function(node, property, value, controller) {
     }
   } else if (modifier == '$') {
     const n = property.slice(0, -1);
-    if (typeof value === 'boolean') {
-      setBoolAttribute(node, n, value);
+    if (typeof value === 'boolean' || value === undefined) {
+      setBoolAttribute(node, n, Boolean(value));
     } else {
       node.setAttribute(n, value);
     }
@@ -86757,7 +86783,7 @@ const setBoolAttribute = function(node, attr, state) {
 };
 
 const _setSubTemplate = function(node, value, controller) {
-  // TODO(sjmiles): sub-template iteration ability specially implemented to support arcs (serialization boundary)
+  // TODO(sjmiles): subtemplate iteration ability specially implemented to support arcs (serialization boundary)
   // TODO(sjmiles): Aim to re-implement as a plugin.
   let {template, models} = value;
   if (!template) {
@@ -86901,11 +86927,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
 /* harmony import */ var _runtime_ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../runtime/ts-build/particle-execution-context.js */ "./runtime/ts-build/particle-execution-context.js");
 /* harmony import */ var _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../runtime/ts-build/storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/dist/index.cjs.js");
-/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var firebase_database__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! firebase/database */ "./node_modules/firebase/database/dist/index.esm.js");
-/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! firebase/storage */ "./node_modules/firebase/storage/dist/index.esm.js");
-/* harmony import */ var _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../runtime/ts-build/keymgmt/manager.js */ "./runtime/ts-build/keymgmt/manager.js");
+/* harmony import */ var _runtime_firebase_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../runtime/firebase.js */ "./runtime/firebase.js");
+/* harmony import */ var _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../runtime/ts-build/keymgmt/manager.js */ "./runtime/ts-build/keymgmt/manager.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -86932,13 +86955,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// Keep in sync with runtime/ts/storage/firebase-storage.ts
-
-
-
-
-
-
 const Arcs = {
   version: '0.5',
   Tracing: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_8__["Tracing"],
@@ -86952,8 +86968,8 @@ const Arcs = {
   BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_7__["BrowserLoader"],
   StorageProviderFactory: _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_10__["StorageProviderFactory"],
   ParticleExecutionContext: _runtime_ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_9__["ParticleExecutionContext"],
-  KeyManager: _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_14__["KeyManager"],
-  firebase: (firebase_app__WEBPACK_IMPORTED_MODULE_11___default())
+  KeyManager: _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_12__["KeyManager"],
+  firebase: _runtime_firebase_js__WEBPACK_IMPORTED_MODULE_11__["firebase"]
 };
 
 // TODO(sjmiles): can't export because WebPack won't make a built version with a module export

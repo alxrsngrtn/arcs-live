@@ -1,5 +1,83 @@
-commit 724531463defc41e2a89faed8192070e95dfff47
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Nov 20 10:00:50 2018 -0800
+commit 602ea5c20da87f1af6342a9ffce1f8eed5912257
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Nov 20 11:59:25 2018 -0800
 
-    rename `plans` to `suggestions` in planificator and test-helper (#2260)
+    More shell 0 6 0 (#2240)
+    
+    * copy in TVMaze artifacts and dependencies
+    
+    * more subtle TVMaze needs
+    
+    * take advantage of CSS scope
+    
+    * affordances for waiting on user-context
+    
+    * give single-shell a few more resources so we can taste more recipes
+    
+    * s/_storeTags/storeTags
+    
+    * +Demo
+    
+    * logging
+    
+    * mostly TVMazeDemo
+    
+    * begin porting Products
+    
+    * fix static user ids
+    
+    * remove old sharing experiments
+    
+    * require https via JavaScript
+    
+    * wip
+    
+    * more products demo
+    
+    * s/let/const
+    
+    * more wip
+    
+    * move Demo recipes to Demo folder
+    
+    * add flavors of AnnotationMuxer
+    
+    * remove sizing logic from Tiles
+    
+    * flesh out products demo
+    
+    * remove tags from share-stores (in favor of refering to them by id)
+    
+    * let tiles size themselves (unless overridden)
+    
+    * try building a store for serializations (#2065)
+    
+    * updates
+    
+    * pipes'n'planner
+    
+    * fix scrolling in system-panel
+    
+    * fix paths in app manifest
+    
+    * support both versions of planificator
+    
+    * disable hand-rolled suggestions
+    
+    * wip
+    
+    * plumb `search` text through
+    
+    * simplify css to avoid browser bug
+    
+    * slightly clearer (?) plan assignment
+    
+    * clean up arc reference during host disposal
+    
+    * better logging, improve arc-host logic
+    
+    * port test infrastructure to 0_6_0
+    
+    * remove forked test infra until originals are stable
+    
+    * undo change outside of 0_6_0

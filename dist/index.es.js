@@ -42205,8 +42205,8 @@ const _set = function(node, property, value, controller) {
     }
   } else if (modifier == '$') {
     const n = property.slice(0, -1);
-    if (typeof value === 'boolean') {
-      setBoolAttribute(node, n, value);
+    if (typeof value === 'boolean' || value === undefined) {
+      setBoolAttribute(node, n, Boolean(value));
     } else {
       node.setAttribute(n, value);
     }
@@ -42237,7 +42237,7 @@ const setBoolAttribute = function(node, attr, state) {
 };
 
 const _setSubTemplate = function(node, value, controller) {
-  // TODO(sjmiles): sub-template iteration ability specially implemented to support arcs (serialization boundary)
+  // TODO(sjmiles): subtemplate iteration ability specially implemented to support arcs (serialization boundary)
   // TODO(sjmiles): Aim to re-implement as a plugin.
   let {template, models} = value;
   if (!template) {
@@ -48644,6 +48644,8 @@ class DomParticleBase extends Particle$1 {
    * Remove entities from named handle.
    */
   async clearHandle(handleName) {
+    await this.handles.get(handleName).clear();
+    /*
     const handle = this.handles.get(handleName);
     if (handle.clear) {
       handle.clear();
@@ -48653,6 +48655,7 @@ class DomParticleBase extends Particle$1 {
         return Promise.all(entities.map(entity => handle.remove(entity)));
       }
     }
+    */
   }
   /** @method mergeEntitiesToHandle(handleName, entityArray)
    * Merge entities from Array into named handle.
@@ -49677,7 +49680,7 @@ class SlotComposer {
         this._contexts = [];
         assert(options.affordance, 'Affordance is mandatory');
         // TODO: Support rootContext for backward compatibility, remove when unused.
-        options.rootContainer = options.rootContainer || options.rootContext;
+        options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
         assert((options.rootContainer !== undefined)
             !==
                 (options.noRoot === true), 'Root container is mandatory unless it is explicitly skipped');
@@ -49687,7 +49690,7 @@ class SlotComposer {
         if (options.noRoot) {
             return;
         }
-        const containerByName = this._affordance.slotConsumerClass.findRootContainers(options.rootContainer) || {};
+        const containerByName = options.containers || this._affordance.slotConsumerClass.findRootContainers(options.rootContainer) || {};
         if (Object.keys(containerByName).length === 0) {
             // fallback to single 'root' slot using the rootContainer.
             containerByName['root'] = options.rootContainer;
