@@ -1,83 +1,19 @@
-commit 602ea5c20da87f1af6342a9ffce1f8eed5912257
+commit 5e97c4d4a61c9623fe96248a7bf2b83ae22c0ec1
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Nov 20 11:59:25 2018 -0800
+Date:   Tue Nov 20 13:20:51 2018 -0800
 
-    More shell 0 6 0 (#2240)
+    More test pipes [PR only to see Travis output] (#2238)
     
-    * copy in TVMaze artifacts and dependencies
+    * increase timeout, report timeout period on failure, wait for some notion of app load
     
-    * more subtle TVMaze needs
+    * use new test utils, implement pipes tests
     
-    * take advantage of CSS scope
+    * fix timeout reporting
     
-    * affordances for waiting on user-context
+    * force location fallback to ensure there are valid geocoords in the user
     
-    * give single-shell a few more resources so we can taste more recipes
+    * move geo watch to didMount (can't access state in getInitialState)
     
-    * s/_storeTags/storeTags
+    * logging should be disabled by default
     
-    * +Demo
-    
-    * logging
-    
-    * mostly TVMazeDemo
-    
-    * begin porting Products
-    
-    * fix static user ids
-    
-    * remove old sharing experiments
-    
-    * require https via JavaScript
-    
-    * wip
-    
-    * more products demo
-    
-    * s/let/const
-    
-    * more wip
-    
-    * move Demo recipes to Demo folder
-    
-    * add flavors of AnnotationMuxer
-    
-    * remove sizing logic from Tiles
-    
-    * flesh out products demo
-    
-    * remove tags from share-stores (in favor of refering to them by id)
-    
-    * let tiles size themselves (unless overridden)
-    
-    * try building a store for serializations (#2065)
-    
-    * updates
-    
-    * pipes'n'planner
-    
-    * fix scrolling in system-panel
-    
-    * fix paths in app manifest
-    
-    * support both versions of planificator
-    
-    * disable hand-rolled suggestions
-    
-    * wip
-    
-    * plumb `search` text through
-    
-    * simplify css to avoid browser bug
-    
-    * slightly clearer (?) plan assignment
-    
-    * clean up arc reference during host disposal
-    
-    * better logging, improve arc-host logic
-    
-    * port test infrastructure to 0_6_0
-    
-    * remove forked test infra until originals are stable
-    
-    * undo change outside of 0_6_0
+    * remove disabled require
