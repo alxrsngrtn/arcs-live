@@ -56693,7 +56693,7 @@ class APIPort {
   async _processMessage(e) {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._messageMap.has(e.data.messageType));
 
-    this.messageCount++;
+    const cnt = this.messageCount++;
 
     const handler = this._messageMap.get(e.data.messageType);
     let args;
@@ -56715,7 +56715,7 @@ class APIPort {
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this[handlerName], `no handler named ${handlerName}`);
     if (this._debugAttachment) {
       if (this._debugAttachment[handlerName]) this._debugAttachment[handlerName](args);
-      this._debugAttachment.handlePecMessage(handlerName, e.data.messageBody, e.data.stack);
+      this._debugAttachment.handlePecMessage(handlerName, e.data.messageBody, cnt, e.data.stack);
     }
     const result = this[handlerName](args);
     if (handler.isInitializer) {
@@ -56744,11 +56744,11 @@ class APIPort {
     this[name] = args => {
       const call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
       if (this._attachStack) call.stack = new Error().stack;
-      this.messageCount++;
+      const cnt = this.messageCount++;
       this._port.postMessage(call);
       if (this._debugAttachment) {
         if (this._debugAttachment[name]) this._debugAttachment[name](args);
-        this._debugAttachment.handlePecMessage(name, call.messageBody, new Error().stack);
+        this._debugAttachment.handlePecMessage(name, call.messageBody, cnt, new Error().stack);
       }
     };
   }
@@ -56776,11 +56776,11 @@ class APIPort {
       if (this._attachStack) call.stack = new Error().stack;
       const requestedId = mappingIdArg && args[mappingIdArg];
       call.messageBody.identifier = this._mapper.createMappingForThing(thing, requestedId);
-      this.messageCount++;
+      const cnt = this.messageCount++;
       this._port.postMessage(call);
       if (this._debugAttachment) {
         if (this._debugAttachment[name]) this._debugAttachment[name](thing, args);
-        this._debugAttachment.handlePecMessage(name, call.messageBody, new Error().stack);
+        this._debugAttachment.handlePecMessage(name, call.messageBody, cnt, new Error().stack);
       }
     };
   }
@@ -65521,14 +65521,14 @@ class OuterPortAttachment {
     this._particleRegistry = {};
   }
 
-  handlePecMessage(name, pecMsgBody, stackString) {
+  handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
     // Skip speculative and pipes arcs for now.
     if (this._arcIdString.endsWith('-pipes') || this._speculative) return;
 
     const stack = this._extractStackFrames(stackString);
     this._devtoolsChannel.send({
       messageType: 'PecLog',
-      messageBody: {name, pecMsgBody, timestamp: Date.now(), stack},
+      messageBody: {name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack},
     });
   }
 

@@ -1,7 +1,5 @@
-commit 4b30b9b7e25df023229f528beaa39d4ee85922d8
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Nov 19 18:01:35 2018 -0800
+commit bcf127aac658aebf7112ccef455123164377893d
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Nov 20 20:41:54 2018 +1100
 
-    Revert "Convert testing/test-util.js to typescript" (#2258)
-    
-    This reverts commit cb36ff9ab0472222562f0fcb371e34ab38d31f6b.
+    Add message count from PEC to the log (#2261)
