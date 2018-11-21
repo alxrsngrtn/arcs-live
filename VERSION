@@ -1,5 +1,25 @@
-commit 6ef8d192eedffadb153dfcf90770f66f48890c8e
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Nov 21 12:12:27 2018 -0800
+commit 45a63f53f501c93580b7d8aee3ed184b820a4d68
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Nov 21 12:32:49 2018 -0800
 
-    Fix typing for ParticleEndPoint and more misc typing (#2272)
+    Shell 6 with test (#2267)
+    
+    * install testing infrastructure for shell-6
+    
+    * fix test infrastructure for 0_6_0
+    
+    * more test cleanup
+    
+    * fix shadowRoot reference issue, add assert
+    
+    * fix path
+    
+    * warn on missing SyntheticStore
+    
+    * tweaks for 0_6_0
+    
+    * didn't intent to commit this change
+    
+    * fix source paths (case)
+    
+    * reduce test surface until wdio is happy

@@ -36,6 +36,7 @@ export class SlotDomConsumer extends SlotConsumer {
         return container.parentNode === contextContainer;
     }
     createNewContainer(contextContainer, subId) {
+        assert(contextContainer, 'contextContainer cannot be null');
         const newContainer = document.createElement(this.containerKind || 'div');
         if (this.consumeConn) {
             newContainer.setAttribute('particle-host', this.consumeConn.getQualifiedName());
@@ -50,6 +51,8 @@ export class SlotDomConsumer extends SlotConsumer {
         return newContainer.shadowRoot;
     }
     deleteContainer(container) {
+        // step out of shadowDOM if container is a shadowRoot
+        container = container.host || container;
         if (container.parentNode) {
             container.parentNode.removeChild(container);
         }

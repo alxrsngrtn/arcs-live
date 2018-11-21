@@ -80852,6 +80852,7 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         return container.parentNode === contextContainer;
     }
     createNewContainer(contextContainer, subId) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(contextContainer, 'contextContainer cannot be null');
         const newContainer = document.createElement(this.containerKind || 'div');
         if (this.consumeConn) {
             newContainer.setAttribute('particle-host', this.consumeConn.getQualifiedName());
@@ -80866,6 +80867,8 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         return newContainer.shadowRoot;
     }
     deleteContainer(container) {
+        // step out of shadowDOM if container is a shadowRoot
+        container = container.host || container;
         if (container.parentNode) {
             container.parentNode.removeChild(container);
         }
