@@ -11283,7 +11283,7 @@ class Strategizer {
       if (result.hash) {
         const existingResult = this.populationHash.get(result.hash);
         if (existingResult) {
-          if (result.derivation[0].parent == existingResult) {
+          if (result.derivation[0].parent === existingResult) {
             record.nullDerivations += 1;
             if (record.nullDerivationsByStrategy[strategy] == undefined) {
               record.nullDerivationsByStrategy[strategy] = 0;
@@ -41347,7 +41347,7 @@ class MapSlots extends Strategy {
       let clonedSlot = recipe.updateToClone({selectedSlot}).selectedSlot;
 
       if (!clonedSlot) {
-        clonedSlot = recipe.slots.find(s => selectedSlot.id && selectedSlot.id == s.id);
+        clonedSlot = recipe.slots.find(s => selectedSlot.id && selectedSlot.id === s.id);
         if (clonedSlot == undefined) {
           clonedSlot = recipe.newSlot(selectedSlot.name);
           clonedSlot.id = selectedSlot.id;
@@ -41356,7 +41356,7 @@ class MapSlots extends Strategy {
       slotConnection.connectToSlot(clonedSlot);
     }
 
-    assert(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id == slotConnection.targetSlot.id),
+    assert(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id === slotConnection.targetSlot.id),
            `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
     slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
 
@@ -41404,7 +41404,7 @@ class MapSlots extends Strategy {
 
   static specMatch(slotConnection, slot) {
     return slotConnection.slotSpec && // if there's no slotSpec, this is just a slot constraint on a verb
-          slotConnection.slotSpec.isSet == slot.spec.isSet;
+          slotConnection.slotSpec.isSet === slot.spec.isSet;
   }
 
   // Returns true, if the slot connection's tags intersection with slot's tags is nonempty.
@@ -41423,7 +41423,7 @@ class MapSlots extends Strategy {
   // Returns true, if the providing slot handle restrictions are satisfied by the consuming slot connection.
   // TODO: should we move some of this logic to the recipe? Or type matching?
   static handlesMatch(slotConnection, slot) {
-    if (slot.handles.length == 0) {
+    if (slot.handles.length === 0) {
       return true; // slot is not limited to specific handles
     }
     return Object.values(slotConnection.particle.connections).find(handleConn => {
@@ -41445,7 +41445,7 @@ class ResolveRecipe extends Strategy {
     const arc = this._arc;
     return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
       onHandle(recipe, handle) {
-        if (handle.connections.length == 0 ||
+        if (handle.connections.length === 0 ||
             (handle.id && handle.storageKey) || (!handle.type) ||
             (!handle.fate)) {
           return;
@@ -41458,7 +41458,7 @@ class ResolveRecipe extends Strategy {
           const counts = RecipeUtil.directionCounts(handle);
           switch (handle.fate) {
             case 'use':
-              mappable = arc.findStoresByType(handle.type, {tags: handle.tags, subtype: counts.out == 0});
+              mappable = arc.findStoresByType(handle.type, {tags: handle.tags, subtype: counts.out === 0});
               break;
             case 'map':
             case 'copy':
@@ -41493,7 +41493,7 @@ class ResolveRecipe extends Strategy {
 
         mappable = mappable.filter(incomingHandle => {
           for (const existingHandle of recipe.handles) {
-            if (incomingHandle.id == existingHandle.id &&
+            if (incomingHandle.id === existingHandle.id &&
                 existingHandle !== handle) {
               return false;
             }
@@ -41501,7 +41501,7 @@ class ResolveRecipe extends Strategy {
           return true;
         });
 
-        if (mappable.length == 1) {
+        if (mappable.length === 1) {
           return (recipe, handle) => {
             handle.mapToStorage(mappable[0]);
           };
@@ -41533,7 +41533,7 @@ class ResolveRecipe extends Strategy {
         const toParticle = obligation.to.instance;
         for (const fromConnection of Object.values(fromParticle.connections)) {
           for (const toConnection of Object.values(toParticle.connections)) {
-            if (fromConnection.handle && fromConnection.handle == toConnection.handle) {
+            if (fromConnection.handle && fromConnection.handle === toConnection.handle) {
               return (recipe, obligation) => {
                 recipe.removeObligation(obligation);
                 return 1;
@@ -43309,7 +43309,7 @@ class InitSearch extends Strategy {
     this._search = search;
   }
   async generate({generation}) {
-    if (this._search == null || generation != 0) {
+    if (this._search == null || generation !== 0) {
       return [];
     }
 
@@ -43375,7 +43375,7 @@ class ConvertConstraintsToConnections extends Strategy {
         const particlesByName = {};
         let handleCount = 0;
         const obligations = [];
-        if (recipe.connectionConstraints.length == 0) {
+        if (recipe.connectionConstraints.length === 0) {
           return;
         }
 
@@ -43449,10 +43449,10 @@ class ConvertConstraintsToConnections extends Strategy {
           }
 
           const unionDirections = (a, b) => {
-            if (a == '=') {
+            if (a === '=') {
               return '=';
             }
-            if (b == '=') {
+            if (b === '=') {
               return '=';
             }
             if (a !== b) {
@@ -43581,7 +43581,7 @@ class AssignHandles extends Strategy {
           return;
         }
 
-        if (handle.connections.length == 0) {
+        if (handle.connections.length === 0) {
           return;
         }
 
@@ -43603,11 +43603,11 @@ class AssignHandles extends Strategy {
 
         const score = this._getScore(counts, handle.tags);
 
-        if (counts.out > 0 && handle.fate == 'map') {
+        if (counts.out > 0 && handle.fate === 'map') {
           return;
         }
         const stores = self.getMappableStores(handle.fate, handle.type, handle.tags, counts);
-        if (handle.fate != '?' && stores.size < 2) {
+        if (handle.fate !== '?' && stores.size < 2) {
           // These handles are mapped by resolve-recipe strategy.
           return;
         }
@@ -43615,13 +43615,13 @@ class AssignHandles extends Strategy {
         const responses = [...stores.keys()].map(store =>
           ((recipe, clonedHandle) => {
             assert(store.id);
-            if (recipe.handles.find(handle => handle.id == store.id)) {
+            if (recipe.handles.find(handle => handle.id === store.id)) {
               // TODO: Why don't we link the handle connections to the existingHandle?
               return 0;
             }
 
             clonedHandle.mapToStorage(store);
-            if (clonedHandle.fate == '?') {
+            if (clonedHandle.fate === '?') {
               clonedHandle.fate = stores.get(store);
             } else {
               assert(clonedHandle.fate, stores.get.store);
@@ -43634,8 +43634,8 @@ class AssignHandles extends Strategy {
 
       _getScore(counts, tags) {
         let score = -1;
-        if (counts.in == 0 || counts.out == 0) {
-          if (counts.out == 0) {
+        if (counts.in === 0 || counts.out === 0) {
+          if (counts.out === 0) {
             score = 1;
           } else {
             score = 0;
@@ -43654,12 +43654,12 @@ class AssignHandles extends Strategy {
 
   getMappableStores(fate, type, tags, counts) {
     const stores = new Map();
-    if (fate == 'use' || fate == '?') {
+    if (fate === 'use' || fate === '?') {
       const subtype = counts.out == 0;
       // TODO: arc.findStoresByType doesn't use `subtype`. Shall it be removed?
       this.arc.findStoresByType(type, {tags, subtype}).forEach(store => stores.set(store, 'use'));
     }
-    if (fate == 'map' || fate == 'copy' || fate == '?') {
+    if (fate === 'map' || fate === 'copy' || fate === '?') {
       this.arc.context.findStoreByType(type, {tags, subtype: true}).forEach(
           store => stores.set(store, fate == '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));
     }
@@ -43678,7 +43678,7 @@ class InitPopulation extends Strategy {
   }
 
   async generate({generation}) {
-    if (generation != 0) {
+    if (generation !== 0) {
       return [];
     }
 
@@ -43861,7 +43861,8 @@ class MatchRecipeByVerb extends Strategy {
               }
               for (let i = 0; i < handle.connections.length; i++) {
                 const candidate = handle.connections[i];
-                if (candidate.particle == particleForReplacing && candidate.name == name) {
+                // TODO candidate.name === name triggers test failures
+                if (candidate.particle === particleForReplacing && candidate.name == name) {
                   connection._handle = handle;
                   handle.connections[i] = connection;
                   return true;
@@ -44019,7 +44020,7 @@ class AddMissingHandles extends Strategy {
           return;
         }
         // Don't add use handles to a recipe with free handles
-        const freeHandles = recipe.handles.filter(handle => handle.connections.length == 0);
+        const freeHandles = recipe.handles.filter(handle => handle.connections.length === 0);
         if (freeHandles.length > 0) {
           return;
         }
@@ -44027,8 +44028,8 @@ class AddMissingHandles extends Strategy {
         // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
         // not being properly supported in arc instantiation). For now just hardcode skiping them.
         const disconnectedConnections = recipe.handleConnections.filter(
-            hc => hc.handle == null && !hc.isOptional && hc.name != 'descriptions' && hc.direction !== 'host');
-        if (disconnectedConnections.length == 0) {
+            hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
+        if (disconnectedConnections.length === 0) {
           return;
         }
 
@@ -44055,7 +44056,7 @@ class CreateDescriptionHandle extends Strategy {
         if (handleConnection.handle) {
           return;
         }
-        if (handleConnection.name != 'descriptions') {
+        if (handleConnection.name !== 'descriptions') {
           return;
         }
 
@@ -44107,7 +44108,7 @@ class SearchTokensToParticles extends Strategy {
 
         for (const [phrase, things] of Object.entries(thingByPhrase)) {
           const tokens = phrase.split(' ');
-          if (tokens.every(token => recipe.search.unresolvedTokens.find(unresolved => unresolved == token)) &&
+          if (tokens.every(token => recipe.search.unresolvedTokens.find(unresolved => unresolved === token)) &&
               recipe.search.phrase.includes(phrase)) {
             _addThingsByToken(phrase, things);
           }
@@ -44121,7 +44122,7 @@ class SearchTokensToParticles extends Strategy {
           things && _addThingsByToken(token, things);
         }
 
-        if (resolvedTokens.size == 0) {
+        if (resolvedTokens.size === 0) {
           return;
         }
 
@@ -44173,14 +44174,14 @@ class SearchTokensToParticles extends Strategy {
 
     // split DoSomething into "do something" and add the phrase
     const phrase = token.replace(/([^A-Z])([A-Z])/g, '$1 $2').replace(/([A-Z][^A-Z])/g, ' $1').replace(/[\s]+/g, ' ').trim();
-    if (phrase != token) {
+    if (phrase !== token) {
       this._addThingByToken(phrase.toLowerCase(), thing, thingByPhrase);
     }
   }
   _addThingByToken(key, thing, thingByKey) {
-    assert(key == key.toLowerCase());
+    assert(key === key.toLowerCase());
     thingByKey[key] = thingByKey[key] || [];
-    if (!thingByKey[key].find(t => t == thing)) {
+    if (!thingByKey[key].find(t => t === thing)) {
       thingByKey[key].push(thing);
     }
   }
@@ -44227,7 +44228,7 @@ class GroupHandleConnections extends Strategy {
           const particleWithMostConnectionsOfType = sortedParticles[0];
           const groups = new Map();
           let allTypeHandleConnections = recipe.handleConnections.filter(c => {
-            return !c.isOptional && !c.handle && type.equals(c.type) && (c.particle != particleWithMostConnectionsOfType);
+            return !c.isOptional && !c.handle && type.equals(c.type) && (c.particle !== particleWithMostConnectionsOfType);
           });
 
           let iteration = 0;
@@ -44242,12 +44243,12 @@ class GroupHandleConnections extends Strategy {
               const group = groups.get(handleConnection);
 
               // filter all connections where this particle is already in a group.
-              const possibleConnections = allTypeHandleConnections.filter(c => !group.find(gc => gc.particle == c.particle));
-              let selectedConn = possibleConnections.find(c => handleConnection.isInput != c.isInput || handleConnection.isOutput != c.isOutput);
+              const possibleConnections = allTypeHandleConnections.filter(c => !group.find(gc => gc.particle === c.particle));
+              let selectedConn = possibleConnections.find(c => handleConnection.isInput !== c.isInput || handleConnection.isOutput !== c.isOutput);
               // TODO: consider tags.
               // TODO: Slots handle restrictions should also be accounted for when grouping.
               if (!selectedConn) {
-                if (possibleConnections.length == 0 || iteration == 0) {
+                if (possibleConnections.length === 0 || iteration === 0) {
                   // During first iteration only bind opposite direction connections ("in" with "out" and vice versa)
                   // to ensure each group has both direction connections as much as possible.
                   return;
@@ -44255,13 +44256,13 @@ class GroupHandleConnections extends Strategy {
                 selectedConn = possibleConnections[0];
               }
               group.push(selectedConn);
-              allTypeHandleConnections = allTypeHandleConnections.filter(c => c != selectedConn);
+              allTypeHandleConnections = allTypeHandleConnections.filter(c => c !== selectedConn);
             });
             iteration++;
           }
           // Remove groups where no connections were bound together.
           groups.forEach((otherConns, conn) => {
-            if (otherConns.length == 0) {
+            if (otherConns.length === 0) {
               groups.delete(conn);
             } else {
               otherConns.push(conn);
@@ -44432,22 +44433,22 @@ class SearchTokensToHandles extends Strategy {
     // which are not already mapped into the provided handle's recipe
     const findMatchingStores = (token, handle) => {
       const counts = RecipeUtil.directionCounts(handle);
-      let stores = arc.findStoresByType(handle.type, {tags: [`${token}`], subtype: counts.out == 0});
+      let stores = arc.findStoresByType(handle.type, {tags: [`${token}`], subtype: counts.out === 0});
       let fate = 'use';
-      if (stores.length == 0) {
-        stores = arc._context.findStoreByType(handle.type, {tags: [`${token}`], subtype: counts.out == 0});
-        fate = counts.out == 0 ? 'map' : 'copy';
+      if (stores.length === 0) {
+        stores = arc._context.findStoreByType(handle.type, {tags: [`${token}`], subtype: counts.out === 0});
+        fate = counts.out === 0 ? 'map' : 'copy';
       }
-      stores = stores.filter(store => !handle.recipe.handles.find(handle => handle.id == store.id));
+      stores = stores.filter(store => !handle.recipe.handles.find(handle => handle.id === store.id));
       return stores.map(store => { return {store, fate, token}; });
     };
 
     return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
       onHandle(recipe, handle) {
-        if (!recipe.search || recipe.search.unresolvedTokens.length == 0) {
+        if (!recipe.search || recipe.search.unresolvedTokens.length === 0) {
           return;
         }
-        if (handle.isResolved() || handle.connections.length == 0) {
+        if (handle.isResolved() || handle.connections.length === 0) {
           return;
         }
 
@@ -44455,7 +44456,7 @@ class SearchTokensToHandles extends Strategy {
         for (const token of recipe.search.unresolvedTokens) {
           possibleMatches.push(...findMatchingStores(token, handle));
         }
-        if (possibleMatches.length == 0) {
+        if (possibleMatches.length === 0) {
           return;
         }
         return possibleMatches.map(match => {
@@ -44618,7 +44619,7 @@ class CoalesceRecipes extends Strategy {
 
   getResults(inputParams) {
     // Coalescing for terminal recipes that are either unresolved recipes or have no UI.
-    return inputParams.terminal.filter(result => !result.result.isResolved() || result.result.slots.length == 0);
+    return inputParams.terminal.filter(result => !result.result.isResolved() || result.result.slots.length === 0);
   }
 
   async generate(inputParams) {
@@ -44712,8 +44713,8 @@ class CoalesceRecipes extends Strategy {
               // matchingConn in the mergedSlotConnection's recipe should be connected to `handle` in the slot's recipe.
               const mergedMatchingConn = cloneMap.get(matchingConn);
               const disconnectedHandle = mergedMatchingConn.handle;
-              const clonedHandle = slot.handleConnections.find(handleConn => handleConn.handle && handleConn.handle.id == handle.id).handle;
-              if (disconnectedHandle == clonedHandle) {
+              const clonedHandle = slot.handleConnections.find(handleConn => handleConn.handle && handleConn.handle.id === handle.id).handle;
+              if (disconnectedHandle === clonedHandle) {
                 continue; // this handle was already reconnected
               }
 
@@ -44825,7 +44826,7 @@ class CoalesceRecipes extends Strategy {
 
       // Returns true, if both handles have types that can be coalesced.
       _reverifyHandleTypes(handle, otherHandle) {
-        assert(handle.recipe == otherHandle.recipe);
+        assert(handle.recipe === otherHandle.recipe);
         const cloneMap = new Map();
         const recipeClone = handle.recipe.clone(cloneMap);
         recipeClone.normalize();

@@ -1,25 +1,5 @@
-commit 45a63f53f501c93580b7d8aee3ed184b820a4d68
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Nov 21 12:32:49 2018 -0800
+commit bd1db1289f889199dde16169a0f6b47b38ddddc1
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Nov 21 13:18:48 2018 -0800
 
-    Shell 6 with test (#2267)
-    
-    * install testing infrastructure for shell-6
-    
-    * fix test infrastructure for 0_6_0
-    
-    * more test cleanup
-    
-    * fix shadowRoot reference issue, add assert
-    
-    * fix path
-    
-    * warn on missing SyntheticStore
-    
-    * tweaks for 0_6_0
-    
-    * didn't intent to commit this change
-    
-    * fix source paths (case)
-    
-    * reduce test surface until wdio is happy
+    Fix triple-equal usage prior to conversion to typescript (#2276)
