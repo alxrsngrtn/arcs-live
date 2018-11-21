@@ -93,7 +93,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="syntheticstorage.html#arcid" class="tsd-kind-icon">arc<wbr>Id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="syntheticstorage.html#firebasestorage" class="tsd-kind-icon">firebase<wbr>Storage</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="syntheticstorage.html#storagefactory" class="tsd-kind-icon">storage<wbr>Factory</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -116,14 +116,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Synthetic<wbr>Storage<span class="tsd-signature-symbol">(</span>arcId<span class="tsd-signature-symbol">: </span><a href="id.html" class="tsd-signature-type">Id</a>, firebaseStorage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="syntheticstorage.html" class="tsd-signature-type">SyntheticStorage</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Synthetic<wbr>Storage<span class="tsd-signature-symbol">(</span>arcId<span class="tsd-signature-symbol">: </span><a href="id.html" class="tsd-signature-type">Id</a>, storageFactory<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="syntheticstorage.html" class="tsd-signature-type">SyntheticStorage</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storagebase.html">StorageBase</a>.<a href="storagebase.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5e97c4d/runtime/ts/storage/synthetic-storage.ts#L63">storage/synthetic-storage.ts:63</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1767450/runtime/ts/storage/synthetic-storage.ts#L85">storage/synthetic-storage.ts:85</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -132,7 +132,7 @@
 									<h5>arcId: <a href="id.html" class="tsd-signature-type">Id</a></h5>
 								</li>
 								<li>
-									<h5>firebaseStorage: <span class="tsd-signature-type">any</span></h5>
+									<h5>storageFactory: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="syntheticstorage.html" class="tsd-signature-type">SyntheticStorage</a></h4>
@@ -149,17 +149,17 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="storagebase.html">StorageBase</a>.<a href="storagebase.html#arcid">arcId</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5e97c4d/runtime/ts/storage/storage-provider-base.ts#L23">storage/storage-provider-base.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1767450/runtime/ts/storage/storage-provider-base.ts#L23">storage/storage-provider-base.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="firebasestorage" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> firebase<wbr>Storage</h3>
-					<div class="tsd-signature tsd-kind-icon">firebase<wbr>Storage<span class="tsd-signature-symbol">:</span> <a href="firebasestorage.html" class="tsd-signature-type">FirebaseStorage</a></div>
+					<a name="storagefactory" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> storage<wbr>Factory</h3>
+					<div class="tsd-signature tsd-kind-icon">storage<wbr>Factory<span class="tsd-signature-symbol">:</span> <a href="storageproviderfactory.html" class="tsd-signature-type">StorageProviderFactory</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5e97c4d/runtime/ts/storage/synthetic-storage.ts#L63">storage/synthetic-storage.ts:63</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1767450/runtime/ts/storage/synthetic-storage.ts#L85">storage/synthetic-storage.ts:85</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -170,14 +170,14 @@
 					<a name="basestoragefor" class="tsd-anchor"></a>
 					<h3>base<wbr>Storage<wbr>For</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">base<wbr>Storage<wbr>For<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">base<wbr>Storage<wbr>For<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="type.html" class="tsd-signature-type">Type</a>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storagebase.html">StorageBase</a>.<a href="storagebase.html#basestoragefor">baseStorageFor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5e97c4d/runtime/ts/storage/synthetic-storage.ts#L87">storage/synthetic-storage.ts:87</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1767450/runtime/ts/storage/synthetic-storage.ts#L106">storage/synthetic-storage.ts:106</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -189,7 +189,7 @@
 									<h5>key: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="storageproviderbase.html" class="tsd-signature-type">StorageProviderBase</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -204,7 +204,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storagebase.html">StorageBase</a>.<a href="storagebase.html#basestoragekey">baseStorageKey</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5e97c4d/runtime/ts/storage/synthetic-storage.ts#L92">storage/synthetic-storage.ts:92</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1767450/runtime/ts/storage/synthetic-storage.ts#L110">storage/synthetic-storage.ts:110</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -231,7 +231,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storagebase.html">StorageBase</a>.<a href="storagebase.html#connect">connect</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5e97c4d/runtime/ts/storage/synthetic-storage.ts#L74">storage/synthetic-storage.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1767450/runtime/ts/storage/synthetic-storage.ts#L96">storage/synthetic-storage.ts:96</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -261,7 +261,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storagebase.html">StorageBase</a>.<a href="storagebase.html#construct">construct</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5e97c4d/runtime/ts/storage/synthetic-storage.ts#L70">storage/synthetic-storage.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1767450/runtime/ts/storage/synthetic-storage.ts#L92">storage/synthetic-storage.ts:92</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -291,7 +291,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storagebase.html">StorageBase</a>.<a href="storagebase.html#parsestringaskey">parseStringAsKey</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5e97c4d/runtime/ts/storage/synthetic-storage.ts#L97">storage/synthetic-storage.ts:97</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1767450/runtime/ts/storage/synthetic-storage.ts#L114">storage/synthetic-storage.ts:114</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -315,7 +315,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storagebase.html">StorageBase</a>.<a href="storagebase.html#shutdown">shutdown</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5e97c4d/runtime/ts/storage/storage-provider-base.ts#L34">storage/storage-provider-base.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1767450/runtime/ts/storage/storage-provider-base.ts#L34">storage/storage-provider-base.ts:34</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -346,7 +346,7 @@
 								<a href="syntheticstorage.html#arcid" class="tsd-kind-icon">arc<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="syntheticstorage.html#firebasestorage" class="tsd-kind-icon">firebase<wbr>Storage</a>
+								<a href="syntheticstorage.html#storagefactory" class="tsd-kind-icon">storage<wbr>Factory</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="syntheticstorage.html#basestoragefor" class="tsd-kind-icon">base<wbr>Storage<wbr>For</a>

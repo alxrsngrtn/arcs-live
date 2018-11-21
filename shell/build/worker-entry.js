@@ -7853,7 +7853,6 @@ function addType(name, arg) {
 class Type {
     constructor(tag, data) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof tag === 'string');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data);
         if (tag === 'Entity') {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(data instanceof _schema_js__WEBPACK_IMPORTED_MODULE_2__["Schema"]);
         }
@@ -7896,9 +7895,11 @@ class Type {
     static newReference(reference) {
         return new Type('Reference', reference);
     }
-    // Provided only to get a Type object for SyntheticStorage; do not use otherwise.
-    static newSynthesized() {
-        return new Type('Synthesized', 1);
+    static newArcInfo() {
+        return new Type('ArcInfo', null);
+    }
+    static newHandleInfo() {
+        return new Type('HandleInfo', null);
     }
     mergeTypeVariablesByName(variableMap) {
         if (this.isVariable) {
@@ -8276,8 +8277,8 @@ class Type {
         if (this.isReference) {
             return 'Reference<' + this.referenceReferredType.toString() + '>';
         }
-        if (this.isSynthesized) {
-            return 'Synthesized';
+        if (this.isArcInfo || this.isHandleInfo) {
+            return this.tag;
         }
         throw new Error(`Add support to serializing type: ${JSON.stringify(this)}`);
     }
@@ -8353,8 +8354,8 @@ addType('Relation', 'entities');
 addType('Interface', 'shape');
 addType('Slot');
 addType('Reference', 'referredType');
-// Special case for SyntheticStorage, not a real Type in the usual sense.
-addType('Synthesized');
+addType('ArcInfo');
+addType('HandleInfo');
 
 
 

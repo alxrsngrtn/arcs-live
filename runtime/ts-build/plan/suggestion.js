@@ -11,6 +11,8 @@ import { assert } from '../../../platform/assert-web.js';
 import { Manifest } from '../manifest.js';
 export class Suggestion {
     constructor(plan, hash, rank, arc) {
+        assert(plan, `plan cannot be null`);
+        assert(hash, `hash cannot be null`);
         this.plan = plan;
         this.hash = hash;
         this.rank = rank;
@@ -33,10 +35,13 @@ export class Suggestion {
     }
     static async deserialize({ plan, hash, rank, descriptionText, descriptionDom }, arc, recipeResolver) {
         const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
-        const suggestion = new Suggestion(deserializedPlan, hash, rank, arc);
-        suggestion.descriptionText = descriptionText;
-        suggestion.descriptionDom = descriptionDom;
-        return suggestion;
+        if (deserializedPlan) {
+            const suggestion = new Suggestion(deserializedPlan, hash, rank, arc);
+            suggestion.descriptionText = descriptionText;
+            suggestion.descriptionDom = descriptionDom;
+            return suggestion;
+        }
+        return undefined;
     }
     async instantiate() {
         // For now shell is responsible for creating and setting the new arc.
