@@ -1,5 +1,8 @@
-commit 88c2a6b894f96614e6a1236336ad41de213503b2
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Nov 21 15:55:01 2018 +1100
+commit 1e1abb94e0ea23e11e8fd3128299a3edff6ccf89
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Nov 21 10:18:55 2018 -0800
 
-    Define ChangeEvent class to add strong typing to storage events (#2268)
+    Remove unused CombinedStrategy (#2265)
+    
+    This Strategy uses a different constructor signature and is incompatible with
+    other classes.
