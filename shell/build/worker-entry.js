@@ -4968,7 +4968,7 @@ class Loader {
     }
     unwrapParticle(particleWrapper) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(this.pec);
-        return particleWrapper({ Particle: _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"], DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"], TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__["TransformationDomParticle"], MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"], Reference: Object(_reference_js__WEBPACK_IMPORTED_MODULE_7__["newClientReference"])(this.pec), html });
+        return particleWrapper({ Particle: _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"], DomParticle: _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__["DomParticle"], TransformationDomParticle: _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__["TransformationDomParticle"], MultiplexerDomParticle: _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__["MultiplexerDomParticle"], Reference: _reference_js__WEBPACK_IMPORTED_MODULE_7__["Reference"].newClientReference(this.pec), html });
     }
 }
 //# sourceMappingURL=loader.js.map
@@ -5967,13 +5967,12 @@ class TypeChecker {
 /*!***************************************!*\
   !*** ./runtime/ts-build/reference.js ***!
   \***************************************/
-/*! exports provided: Reference, newClientReference */
+/*! exports provided: Reference */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Reference", function() { return Reference; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "newClientReference", function() { return newClientReference; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./handle.js */ "./runtime/ts-build/handle.js");
@@ -5988,6 +5987,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var ReferenceMode;
+(function (ReferenceMode) {
+    ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
+    ReferenceMode[ReferenceMode["Stored"] = 1] = "Stored";
+})(ReferenceMode || (ReferenceMode = {}));
 class Reference {
     constructor(data, type, context) {
         this.entity = null;
@@ -6023,39 +6027,34 @@ class Reference {
     dataClone() {
         return { storageKey: this.storageKey, id: this.id };
     }
-}
-var ReferenceMode;
-(function (ReferenceMode) {
-    ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
-    ReferenceMode[ReferenceMode["Stored"] = 1] = "Stored";
-})(ReferenceMode || (ReferenceMode = {}));
-function newClientReference(context) {
-    return class extends Reference {
-        constructor(entity) {
-            // TODO(shans): start carrying storageKey information around on Entity objects
-            super({ id: entity.id, storageKey: null }, _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newReference(entity.constructor.type), context);
-            this.mode = ReferenceMode.Unstored;
-            this.entity = entity;
-            this.stored = new Promise(async (resolve, reject) => {
-                await this.storeReference(entity);
-                resolve();
-            });
-        }
-        async storeReference(entity) {
-            await this.ensureStorageProxy();
-            await this.handle.store(entity);
-            this.mode = ReferenceMode.Stored;
-        }
-        async dereference() {
-            if (this.mode === ReferenceMode.Unstored) {
-                return null;
+    static newClientReference(context) {
+        return class extends Reference {
+            constructor(entity) {
+                // TODO(shans): start carrying storageKey information around on Entity objects
+                super({ id: entity.id, storageKey: null }, _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newReference(entity.constructor.type), context);
+                this.mode = ReferenceMode.Unstored;
+                this.entity = entity;
+                this.stored = new Promise(async (resolve, reject) => {
+                    await this.storeReference(entity);
+                    resolve();
+                });
             }
-            return super.dereference();
-        }
-        isIdentified() {
-            return this.entity.isIdentified();
-        }
-    };
+            async storeReference(entity) {
+                await this.ensureStorageProxy();
+                await this.handle.store(entity);
+                this.mode = ReferenceMode.Stored;
+            }
+            async dereference() {
+                if (this.mode === ReferenceMode.Unstored) {
+                    return null;
+                }
+                return super.dereference();
+            }
+            isIdentified() {
+                return this.entity.isIdentified();
+            }
+        };
+    }
 }
 //# sourceMappingURL=reference.js.map
 
@@ -6437,7 +6436,11 @@ class Schema {
                 }
             });
         }
-        return clazz;
+        // TODO: this type-erases the dynamically generated clazz so we
+        // can force it into an Entity type.
+        // tslint:disable-next-line: no-any
+        const c = clazz;
+        return c;
     }
     toInlineSchemaString(options) {
         const names = this.names.join(' ') || '*';

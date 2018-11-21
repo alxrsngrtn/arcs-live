@@ -1,5 +1,14 @@
-commit 631f505791072ebbbd6a4ee6b1075e48beef4ab5
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Nov 21 13:51:44 2018 -0800
+commit af6f16d18662247a35452e85949b7cf11ffad930
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Nov 21 13:54:27 2018 -0800
 
-    Git won't change file-case, so change the ref (#2277)
+    Support generating d.ts files for typescript (#2259)
+    
+    * Support generating d.ts files for typescript
+    
+    - Needed for Provisioning App build
+    - Add more types, and expose visibility
+    - Move newClientReference to a static method on Reference
+    - Do some type erasure in Schema generated Entity classes
+    
+    * Fix shell usage of newClientReference

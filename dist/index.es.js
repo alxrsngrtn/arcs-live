@@ -470,6 +470,11 @@ function handleFor(proxy, name = null, particleId = 0, canRead = true, canWrite 
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+var ReferenceMode;
+(function (ReferenceMode) {
+    ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
+    ReferenceMode[ReferenceMode["Stored"] = 1] = "Stored";
+})(ReferenceMode || (ReferenceMode = {}));
 class Reference {
     constructor(data, type, context) {
         this.entity = null;
@@ -505,39 +510,34 @@ class Reference {
     dataClone() {
         return { storageKey: this.storageKey, id: this.id };
     }
-}
-var ReferenceMode;
-(function (ReferenceMode) {
-    ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
-    ReferenceMode[ReferenceMode["Stored"] = 1] = "Stored";
-})(ReferenceMode || (ReferenceMode = {}));
-function newClientReference(context) {
-    return class extends Reference {
-        constructor(entity) {
-            // TODO(shans): start carrying storageKey information around on Entity objects
-            super({ id: entity.id, storageKey: null }, Type.newReference(entity.constructor.type), context);
-            this.mode = ReferenceMode.Unstored;
-            this.entity = entity;
-            this.stored = new Promise(async (resolve, reject) => {
-                await this.storeReference(entity);
-                resolve();
-            });
-        }
-        async storeReference(entity) {
-            await this.ensureStorageProxy();
-            await this.handle.store(entity);
-            this.mode = ReferenceMode.Stored;
-        }
-        async dereference() {
-            if (this.mode === ReferenceMode.Unstored) {
-                return null;
+    static newClientReference(context) {
+        return class extends Reference {
+            constructor(entity) {
+                // TODO(shans): start carrying storageKey information around on Entity objects
+                super({ id: entity.id, storageKey: null }, Type.newReference(entity.constructor.type), context);
+                this.mode = ReferenceMode.Unstored;
+                this.entity = entity;
+                this.stored = new Promise(async (resolve, reject) => {
+                    await this.storeReference(entity);
+                    resolve();
+                });
             }
-            return super.dereference();
-        }
-        isIdentified() {
-            return this.entity.isIdentified();
-        }
-    };
+            async storeReference(entity) {
+                await this.ensureStorageProxy();
+                await this.handle.store(entity);
+                this.mode = ReferenceMode.Stored;
+            }
+            async dereference() {
+                if (this.mode === ReferenceMode.Unstored) {
+                    return null;
+                }
+                return super.dereference();
+            }
+            isIdentified() {
+                return this.entity.isIdentified();
+            }
+        };
+    }
 }
 
 /**
@@ -896,7 +896,11 @@ class Schema {
                 }
             });
         }
-        return clazz;
+        // TODO: this type-erases the dynamically generated clazz so we
+        // can force it into an Entity type.
+        // tslint:disable-next-line: no-any
+        const c = clazz;
+        return c;
     }
     toInlineSchemaString(options) {
         const names = this.names.join(' ') || '*';
@@ -49351,7 +49355,7 @@ class Loader {
     }
     unwrapParticle(particleWrapper) {
         assert(this.pec);
-        return particleWrapper({ Particle: Particle$1, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: newClientReference(this.pec), html });
+        return particleWrapper({ Particle: Particle$1, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: Reference.newClientReference(this.pec), html });
     }
 }
 
@@ -50796,7 +50800,7 @@ class Loader$1 {
 
   unwrapParticle(particleWrapper) {
     assert(this._pec);
-    return particleWrapper({Particle: Particle$1, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: newClientReference(this._pec), html: html$1});
+    return particleWrapper({Particle: Particle$1, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: Reference.newClientReference(this._pec), html: html$1});
   }
 
 }

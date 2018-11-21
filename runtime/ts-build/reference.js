@@ -9,6 +9,11 @@
 import { assert } from '../../platform/assert-web.js';
 import { Type } from './type.js';
 import { handleFor } from './handle.js';
+var ReferenceMode;
+(function (ReferenceMode) {
+    ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
+    ReferenceMode[ReferenceMode["Stored"] = 1] = "Stored";
+})(ReferenceMode || (ReferenceMode = {}));
 export class Reference {
     constructor(data, type, context) {
         this.entity = null;
@@ -44,38 +49,33 @@ export class Reference {
     dataClone() {
         return { storageKey: this.storageKey, id: this.id };
     }
-}
-var ReferenceMode;
-(function (ReferenceMode) {
-    ReferenceMode[ReferenceMode["Unstored"] = 0] = "Unstored";
-    ReferenceMode[ReferenceMode["Stored"] = 1] = "Stored";
-})(ReferenceMode || (ReferenceMode = {}));
-export function newClientReference(context) {
-    return class extends Reference {
-        constructor(entity) {
-            // TODO(shans): start carrying storageKey information around on Entity objects
-            super({ id: entity.id, storageKey: null }, Type.newReference(entity.constructor.type), context);
-            this.mode = ReferenceMode.Unstored;
-            this.entity = entity;
-            this.stored = new Promise(async (resolve, reject) => {
-                await this.storeReference(entity);
-                resolve();
-            });
-        }
-        async storeReference(entity) {
-            await this.ensureStorageProxy();
-            await this.handle.store(entity);
-            this.mode = ReferenceMode.Stored;
-        }
-        async dereference() {
-            if (this.mode === ReferenceMode.Unstored) {
-                return null;
+    static newClientReference(context) {
+        return class extends Reference {
+            constructor(entity) {
+                // TODO(shans): start carrying storageKey information around on Entity objects
+                super({ id: entity.id, storageKey: null }, Type.newReference(entity.constructor.type), context);
+                this.mode = ReferenceMode.Unstored;
+                this.entity = entity;
+                this.stored = new Promise(async (resolve, reject) => {
+                    await this.storeReference(entity);
+                    resolve();
+                });
             }
-            return super.dereference();
-        }
-        isIdentified() {
-            return this.entity.isIdentified();
-        }
-    };
+            async storeReference(entity) {
+                await this.ensureStorageProxy();
+                await this.handle.store(entity);
+                this.mode = ReferenceMode.Stored;
+            }
+            async dereference() {
+                if (this.mode === ReferenceMode.Unstored) {
+                    return null;
+                }
+                return super.dereference();
+            }
+            isIdentified() {
+                return this.entity.isIdentified();
+            }
+        };
+    }
 }
 //# sourceMappingURL=reference.js.map

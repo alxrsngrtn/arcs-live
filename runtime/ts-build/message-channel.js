@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class MessagePort {
+export class MessagePort {
     constructor(channel, id, other) {
         this._channel = channel;
         this._id = id;
