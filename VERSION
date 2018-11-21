@@ -1,9 +1,5 @@
-commit 4cbe565d74038b51b5ab0eb2889f06c6c3ccba4f
+commit 6ef8d192eedffadb153dfcf90770f66f48890c8e
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Nov 21 11:34:40 2018 -0800
+Date:   Wed Nov 21 12:12:27 2018 -0800
 
-    Add additional typescript types in preparation of strategizer conversion (#2270)
-    
-    - isResolved takes an optional param
-    - introduce DirectionCounts type for return from RecipeUtil.directionCounts
-    - Add optional lifecycle event callback signatures to Walker
+    Fix typing for ParticleEndPoint and more misc typing (#2272)
