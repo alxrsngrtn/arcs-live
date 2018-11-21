@@ -1,5 +1,5 @@
-commit bd1db1289f889199dde16169a0f6b47b38ddddc1
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Nov 21 13:18:48 2018 -0800
+commit 631f505791072ebbbd6a4ee6b1075e48beef4ab5
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Nov 21 13:51:44 2018 -0800
 
-    Fix triple-equal usage prior to conversion to typescript (#2276)
+    Git won't change file-case, so change the ref (#2277)
