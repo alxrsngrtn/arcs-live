@@ -1,9 +1,5 @@
-commit 1767450f9417d6f5699c0242a0c985dee68bfc0c
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Nov 20 18:39:39 2018 -0800
+commit 88c2a6b894f96614e6a1236336ad41de213503b2
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Nov 21 15:55:01 2018 +1100
 
-    Again fix test (#2266)
-    
-    * make css-lint happy
-    
-    * skip flaky test, allow reservations test to match /(Y/y)ou are (busy|free)/
+    Define ChangeEvent class to add strong typing to storage events (#2268)

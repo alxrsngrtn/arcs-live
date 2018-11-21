@@ -1,6 +1,7 @@
 import { CrdtCollectionModel } from '../crdt-collection-model.js';
 import { assert } from '../../../../platform/assert-web.js';
 import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
+import { ChangeEvent } from '../storage-provider-base.js';
 export class PouchDbCollection extends PouchDbStorageProvider {
     /**
      * Create a new PouchDbCollection.
@@ -134,13 +135,13 @@ export class PouchDbCollection extends PouchDbStorageProvider {
     async store(value, keys, originatorId = null) {
         assert(keys != null && keys.length > 0, 'keys required');
         const id = value.id;
-        const changeEvent = { value, keys, effective: undefined };
+        const item = { value, keys, effective: undefined };
         if (this.referenceMode) {
             const referredType = this.type.primitiveType();
             const storageKey = this.storageEngine.baseStorageKey(referredType, this.storageKey);
             // Update the referred data
             await this.getModelAndUpdate(crdtmodel => {
-                changeEvent.effective = crdtmodel.add(value.id, { id: value.id, storageKey }, keys);
+                item.effective = crdtmodel.add(value.id, { id: value.id, storageKey }, keys);
                 return crdtmodel;
             });
             await this.ensureBackingStore();
@@ -149,13 +150,13 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         else {
             await this.getModelAndUpdate(crdtmodel => {
                 // check for existing keys?
-                changeEvent.effective = crdtmodel.add(value.id, value, keys);
+                item.effective = crdtmodel.add(value.id, value, keys);
                 return crdtmodel;
             });
         }
         this.version++;
         // Notify Listeners
-        this._fire('change', { add: [changeEvent], version: this.version, originatorId });
+        this._fire('change', new ChangeEvent({ add: [item], version: this.version, originatorId }));
     }
     async removeMultiple(items, originatorId = null) {
         await this.getModelAndUpdate(crdtmodel => {
@@ -173,7 +174,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             });
             return crdtmodel;
         }).then(() => {
-            this._fire('change', { remove: items, version: this.version, originatorId });
+            this._fire('change', new ChangeEvent({ remove: items, version: this.version, originatorId }));
         });
     }
     /**
@@ -192,7 +193,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
                 const effective = crdtmodel.remove(id, keys);
                 // TODO(lindner): isolate side effects...
                 this.version++;
-                this._fire('change', { remove: [{ value, keys, effective }], version: this.version, originatorId });
+                this._fire('change', new ChangeEvent({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
             }
             return crdtmodel;
         });
@@ -217,7 +218,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         // TODO(lindner): handle referenceMode
         // TODO(lindner): calculate added/removed keys from previousModel/model
         // TODO(lindner): fire change events here?
-        //   this._fire('change', {originatorId: null, version: this.version, add, remove});
+        //   this._fire('change', new ChangeEvent({add, remove, version: this.version}));
     }
     /**
      * Updates the local model cache from PouchDB and returns the CRDT

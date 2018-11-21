@@ -1,5 +1,6 @@
 import { assert } from '../../../../platform/assert-web.js';
 import { PouchDbStorageProvider } from './pouch-db-storage-provider';
+import { ChangeEvent } from '../storage-provider-base.js';
 /**
  * The PouchDB-based implementation of a Variable.
  */
@@ -163,12 +164,8 @@ export class PouchDbVariable extends PouchDbStorageProvider {
         }
         // Does anyone look at this?
         this.version++;
-        if (this.referenceMode) {
-            await this._fire('change', { data: value, version: this.version, originatorId, barrier });
-        }
-        else {
-            await this._fire('change', { data: this._stored, version: this.version, originatorId, barrier });
-        }
+        const data = this.referenceMode ? value : this._stored;
+        await this._fire('change', new ChangeEvent({ data, version: this.version, originatorId, barrier }));
     }
     /**
      * Clear a variable from storage.
@@ -202,12 +199,12 @@ export class PouchDbVariable extends PouchDbStorageProvider {
                     console.log('PouchDbVariable.onRemoteSynced: possible race condition for id=' + value.id);
                     return;
                 }
-                this._fire('change', { data, version: this.version });
+                this._fire('change', new ChangeEvent({ data, version: this.version }));
             });
         }
         else {
             if (value != null) {
-                this._fire('change', { data: value, version: this.version });
+                this._fire('change', new ChangeEvent({ data: value, version: this.version }));
             }
         }
     }

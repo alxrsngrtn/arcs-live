@@ -6,7 +6,7 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../../platform/assert-web.js';
-import { StorageBase, StorageProviderBase } from './storage-provider-base.js';
+import { StorageBase, StorageProviderBase, ChangeEvent } from './storage-provider-base.js';
 import { KeyBase } from './key-base.js';
 import { Type } from '../type.js';
 import { Manifest } from '../manifest.js';
@@ -125,7 +125,10 @@ class SyntheticCollection extends StorageProviderBase {
             }
         }
         if (fireEvent) {
-            this._fire('change', setDiffCustom(oldModel, this.model, JSON.stringify));
+            const diff = setDiffCustom(oldModel, this.model, JSON.stringify);
+            const add = diff.add.map(arcHandle => ({ value: arcHandle }));
+            const remove = diff.remove.map(arcHandle => ({ value: arcHandle }));
+            this._fire('change', new ChangeEvent({ add, remove }));
         }
     }
     async toList() {

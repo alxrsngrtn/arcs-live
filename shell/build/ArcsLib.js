@@ -82281,11 +82281,11 @@ class FirebaseVariable extends FirebaseStorageProvider {
             const version = this.version;
             this.ensureBackingStore().then(async (store) => {
                 const data = await store.get(this.value.id);
-                this._fire('change', { data, version });
+                this._fire('change', new _storage_provider_base__WEBPACK_IMPORTED_MODULE_0__["ChangeEvent"]({ data, version }));
             });
         }
         else {
-            this._fire('change', { data: data.value || null, version: this.version });
+            this._fire('change', new _storage_provider_base__WEBPACK_IMPORTED_MODULE_0__["ChangeEvent"]({ data: data.value || null, version: this.version }));
         }
     }
     get _hasLocalChanges() {
@@ -82376,7 +82376,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         }
         this.localModified = true;
         await this._persistChanges();
-        this._fire('change', { data: value, version, originatorId, barrier });
+        this._fire('change', new _storage_provider_base__WEBPACK_IMPORTED_MODULE_0__["ChangeEvent"]({ data: value, version, originatorId, barrier }));
     }
     async clear(originatorId = null, barrier = null) {
         return this.set(null, originatorId, barrier);
@@ -82395,12 +82395,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         this.localModified = true;
         this.resolveInitialized();
         // TODO: do we need to fire an event here?
-        if (this.referenceMode) {
-            this._fire('change', { data, version: this.version, originatorId: null, barrier: null });
-        }
-        else {
-            this._fire('change', { data: this.value, version: this.version, originatorId: null, barrier: null });
-        }
+        this._fire('change', new _storage_provider_base__WEBPACK_IMPORTED_MODULE_0__["ChangeEvent"]({ data: this.referenceMode ? data : this.value, version: this.version }));
         await this._persistChanges();
     }
     async modelForSynchronization() {
@@ -82608,11 +82603,11 @@ class FirebaseCollection extends FirebaseStorageProvider {
                 values.forEach(value => valueMap[value.id] = value);
                 const addPrimitives = add.map(({ value, keys, effective }) => ({ value: valueMap[value.id], keys, effective }));
                 const removePrimitives = remove.map(({ value, keys, effective }) => ({ value: valueMap[value.id], keys, effective }));
-                this._fire('change', { originatorId: null, version: this.version, add: addPrimitives, remove: removePrimitives });
+                this._fire('change', new _storage_provider_base__WEBPACK_IMPORTED_MODULE_0__["ChangeEvent"]({ add: addPrimitives, remove: removePrimitives, version: this.version }));
             });
         }
         else {
-            this._fire('change', { originatorId: null, version: this.version, add, remove });
+            this._fire('change', new _storage_provider_base__WEBPACK_IMPORTED_MODULE_0__["ChangeEvent"]({ add, remove, version: this.version }));
         }
     }
     get versionForTesting() {
@@ -82652,7 +82647,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         this.version++;
         // 2. Notify listeners.
         items = items.filter(item => item.value);
-        this._fire('change', { remove: items, version: this.version, originatorId });
+        this._fire('change', new _storage_provider_base__WEBPACK_IMPORTED_MODULE_0__["ChangeEvent"]({ remove: items, version: this.version, originatorId }));
         // 3. Add this modification to the set of local changes that need to be persisted.
         items.forEach(item => {
             if (!this.localChanges.has(item.id)) {
@@ -82681,7 +82676,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         const effective = this.model.remove(id, keys);
         this.version++;
         // 2. Notify listeners.
-        this._fire('change', { remove: [{ value, keys, effective }], version: this.version, originatorId });
+        this._fire('change', new _storage_provider_base__WEBPACK_IMPORTED_MODULE_0__["ChangeEvent"]({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
         // 3. Add this modification to the set of local changes that need to be persisted.
         if (!this.localChanges.has(id)) {
             this.localChanges.set(id, { add: [], remove: [] });
@@ -82711,7 +82706,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             this.version++;
         }
         // 2. Notify listeners.
-        this._fire('change', { add: [{ value, keys, effective }], version: this.version, originatorId });
+        this._fire('change', new _storage_provider_base__WEBPACK_IMPORTED_MODULE_0__["ChangeEvent"]({ add: [{ value, keys, effective }], version: this.version, originatorId }));
         // 3. Add this modification to the set of local changes that need to be persisted.
         if (!this.localChanges.has(id)) {
             this.localChanges.set(id, { add: [], remove: [] });
@@ -83290,6 +83285,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../crdt-collection-model.js */ "./runtime/ts-build/storage/crdt-collection-model.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _pouch_db_storage_provider_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pouch-db-storage-provider.js */ "./runtime/ts-build/storage/pouchdb/pouch-db-storage-provider.js");
+/* harmony import */ var _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../storage-provider-base.js */ "./runtime/ts-build/storage/storage-provider-base.js");
+
 
 
 
@@ -83426,13 +83423,13 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
     async store(value, keys, originatorId = null) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(keys != null && keys.length > 0, 'keys required');
         const id = value.id;
-        const changeEvent = { value, keys, effective: undefined };
+        const item = { value, keys, effective: undefined };
         if (this.referenceMode) {
             const referredType = this.type.primitiveType();
             const storageKey = this.storageEngine.baseStorageKey(referredType, this.storageKey);
             // Update the referred data
             await this.getModelAndUpdate(crdtmodel => {
-                changeEvent.effective = crdtmodel.add(value.id, { id: value.id, storageKey }, keys);
+                item.effective = crdtmodel.add(value.id, { id: value.id, storageKey }, keys);
                 return crdtmodel;
             });
             await this.ensureBackingStore();
@@ -83441,13 +83438,13 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
         else {
             await this.getModelAndUpdate(crdtmodel => {
                 // check for existing keys?
-                changeEvent.effective = crdtmodel.add(value.id, value, keys);
+                item.effective = crdtmodel.add(value.id, value, keys);
                 return crdtmodel;
             });
         }
         this.version++;
         // Notify Listeners
-        this._fire('change', { add: [changeEvent], version: this.version, originatorId });
+        this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_3__["ChangeEvent"]({ add: [item], version: this.version, originatorId }));
     }
     async removeMultiple(items, originatorId = null) {
         await this.getModelAndUpdate(crdtmodel => {
@@ -83465,7 +83462,7 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
             });
             return crdtmodel;
         }).then(() => {
-            this._fire('change', { remove: items, version: this.version, originatorId });
+            this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_3__["ChangeEvent"]({ remove: items, version: this.version, originatorId }));
         });
     }
     /**
@@ -83484,7 +83481,7 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
                 const effective = crdtmodel.remove(id, keys);
                 // TODO(lindner): isolate side effects...
                 this.version++;
-                this._fire('change', { remove: [{ value, keys, effective }], version: this.version, originatorId });
+                this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_3__["ChangeEvent"]({ remove: [{ value, keys, effective }], version: this.version, originatorId }));
             }
             return crdtmodel;
         });
@@ -83509,7 +83506,7 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
         // TODO(lindner): handle referenceMode
         // TODO(lindner): calculate added/removed keys from previousModel/model
         // TODO(lindner): fire change events here?
-        //   this._fire('change', {originatorId: null, version: this.version, add, remove});
+        //   this._fire('change', new ChangeEvent({add, remove, version: this.version}));
     }
     /**
      * Updates the local model cache from PouchDB and returns the CRDT
@@ -84035,6 +84032,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PouchDbVariable", function() { return PouchDbVariable; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _pouch_db_storage_provider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pouch-db-storage-provider */ "./runtime/ts-build/storage/pouchdb/pouch-db-storage-provider.js");
+/* harmony import */ var _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../storage-provider-base.js */ "./runtime/ts-build/storage/storage-provider-base.js");
+
 
 
 /**
@@ -84200,12 +84199,8 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
         }
         // Does anyone look at this?
         this.version++;
-        if (this.referenceMode) {
-            await this._fire('change', { data: value, version: this.version, originatorId, barrier });
-        }
-        else {
-            await this._fire('change', { data: this._stored, version: this.version, originatorId, barrier });
-        }
+        const data = this.referenceMode ? value : this._stored;
+        await this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["ChangeEvent"]({ data, version: this.version, originatorId, barrier }));
     }
     /**
      * Clear a variable from storage.
@@ -84239,12 +84234,12 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
                     console.log('PouchDbVariable.onRemoteSynced: possible race condition for id=' + value.id);
                     return;
                 }
-                this._fire('change', { data, version: this.version });
+                this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["ChangeEvent"]({ data, version: this.version }));
             });
         }
         else {
             if (value != null) {
-                this._fire('change', { data: value, version: this.version });
+                this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["ChangeEvent"]({ data: value, version: this.version }));
             }
         }
     }
@@ -84363,12 +84358,13 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
 /*!***********************************************************!*\
   !*** ./runtime/ts-build/storage/storage-provider-base.js ***!
   \***********************************************************/
-/*! exports provided: StorageBase, StorageProviderBase */
+/*! exports provided: StorageBase, ChangeEvent, StorageProviderBase */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageBase", function() { return StorageBase; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeEvent", function() { return ChangeEvent; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProviderBase", function() { return StorageProviderBase; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../tracelib/trace.js */ "./tracelib/trace.js");
@@ -84394,6 +84390,11 @@ class StorageBase {
     }
     // Provides graceful shutdown for tests.
     shutdown() { }
+}
+class ChangeEvent {
+    constructor(args) {
+        Object.assign(this, args);
+    }
 }
 /**
  * Docs TBD
@@ -84743,7 +84744,10 @@ class SyntheticCollection extends _storage_provider_base_js__WEBPACK_IMPORTED_MO
             }
         }
         if (fireEvent) {
-            this._fire('change', Object(_util_js__WEBPACK_IMPORTED_MODULE_5__["setDiffCustom"])(oldModel, this.model, JSON.stringify));
+            const diff = Object(_util_js__WEBPACK_IMPORTED_MODULE_5__["setDiffCustom"])(oldModel, this.model, JSON.stringify);
+            const add = diff.add.map(arcHandle => ({ value: arcHandle }));
+            const remove = diff.remove.map(arcHandle => ({ value: arcHandle }));
+            this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_1__["ChangeEvent"]({ add, remove }));
         }
     }
     async toList() {
@@ -85019,21 +85023,21 @@ class VolatileCollection extends VolatileStorageProvider {
     async store(value, keys, originatorId = null) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(keys != null && keys.length > 0, 'keys required');
         const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__["Tracing"].start({ cat: 'handle', name: 'VolatileCollection::store', args: { name: this.name } });
-        const changeEvent = { value, keys, effective: undefined };
+        const item = { value, keys, effective: undefined };
         if (this.referenceMode) {
             const referredType = this.type.primitiveType();
             const storageKey = this.backingStore ? this.backingStore.storageKey : this.storageEngine.baseStorageKey(referredType);
             // It's important to store locally first, as the upstream consumers
             // are set up to assume all writes are processed (at least locally) synchronously.
-            changeEvent.effective = this._model.add(value.id, { id: value.id, storageKey }, keys);
+            item.effective = this._model.add(value.id, { id: value.id, storageKey }, keys);
             await this.ensureBackingStore();
             await this.backingStore.store(value, keys);
         }
         else {
-            changeEvent.effective = this._model.add(value.id, value, keys);
+            item.effective = this._model.add(value.id, value, keys);
         }
         this.version++;
-        await trace.wait(this._fire('change', { add: [changeEvent], version: this.version, originatorId }));
+        await trace.wait(this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["ChangeEvent"]({ add: [item], version: this.version, originatorId })));
         trace.end({ args: { value } });
     }
     async removeMultiple(items, originatorId = null) {
@@ -85050,7 +85054,7 @@ class VolatileCollection extends VolatileStorageProvider {
             }
         });
         this.version++;
-        this._fire('change', { remove: items, version: this.version, originatorId });
+        this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["ChangeEvent"]({ remove: items, version: this.version, originatorId }));
     }
     async remove(id, keys = [], originatorId = null) {
         const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_1__["Tracing"].start({ cat: 'handle', name: 'VolatileCollection::remove', args: { name: this.name } });
@@ -85061,7 +85065,7 @@ class VolatileCollection extends VolatileStorageProvider {
         if (value !== null) {
             const effective = this._model.remove(id, keys);
             this.version++;
-            await trace.wait(this._fire('change', { remove: [{ value, keys, effective }], version: this.version, originatorId }));
+            await trace.wait(this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["ChangeEvent"]({ remove: [{ value, keys, effective }], version: this.version, originatorId })));
         }
         trace.end({ args: { entity: value } });
     }
@@ -85172,12 +85176,8 @@ class VolatileVariable extends VolatileStorageProvider {
             this._stored = value;
         }
         this.version++;
-        if (this.referenceMode) {
-            await this._fire('change', { data: value, version: this.version, originatorId, barrier });
-        }
-        else {
-            await this._fire('change', { data: this._stored, version: this.version, originatorId, barrier });
-        }
+        const data = this.referenceMode ? value : this._stored;
+        await this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["ChangeEvent"]({ data, version: this.version, originatorId, barrier }));
     }
     async clear(originatorId = null, barrier = null) {
         await this.set(null, originatorId, barrier);

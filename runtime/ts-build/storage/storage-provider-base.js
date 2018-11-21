@@ -20,6 +20,11 @@ export class StorageBase {
     // Provides graceful shutdown for tests.
     shutdown() { }
 }
+export class ChangeEvent {
+    constructor(args) {
+        Object.assign(this, args);
+    }
+}
 /**
  * Docs TBD
  */

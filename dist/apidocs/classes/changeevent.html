@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ArcHandle | arcs</title>
+	<title>ChangeEvent | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="archandle.html">ArcHandle</a>
+					<a href="changeevent.html">ChangeEvent</a>
 				</li>
 			</ul>
-			<h1>Class ArcHandle</h1>
+			<h1>Class ChangeEvent</h1>
 		</div>
 	</div>
 </header>
@@ -70,7 +70,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ArcHandle</span>
+						<span class="target">ChangeEvent</span>
 					</li>
 				</ul>
 			</section>
@@ -81,15 +81,18 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="archandle.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="changeevent.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="archandle.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="archandle.html#tags" class="tsd-kind-icon">tags</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="archandle.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="changeevent.html#add" class="tsd-kind-icon">add</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="changeevent.html#barrier" class="tsd-kind-icon">barrier</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="changeevent.html#data" class="tsd-kind-icon">data</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="changeevent.html#originatorid" class="tsd-kind-icon">originator<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="changeevent.html#remove" class="tsd-kind-icon">remove</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="changeevent.html#version" class="tsd-kind-icon">version</a></li>
 							</ul>
 						</section>
 					</div>
@@ -101,28 +104,42 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Arc<wbr>Handle<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, tags<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="archandle.html" class="tsd-signature-type">ArcHandle</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Change<wbr>Event<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="changeevent.html" class="tsd-signature-type">ChangeEvent</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/88c2a6b/runtime/ts/storage/synthetic-storage.ts#L22">storage/synthetic-storage.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/88c2a6b/runtime/ts/storage/storage-provider-base.ts#L47">storage/storage-provider-base.ts:47</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>storageKey: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>type: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>tags: <span class="tsd-signature-type">any</span></h5>
+									<h5>args: <span class="tsd-signature-type">object</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> add<span class="tsd-signature-symbol">?: </span><a href="../globals.html#deltaitems" class="tsd-signature-type">DeltaItems</a></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> barrier<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> originator<wbr>Id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> remove<span class="tsd-signature-symbol">?: </span><a href="../globals.html#deltaitems" class="tsd-signature-type">DeltaItems</a></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> version<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
+										</li>
+									</ul>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="archandle.html" class="tsd-signature-type">ArcHandle</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="changeevent.html" class="tsd-signature-type">ChangeEvent</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -130,32 +147,62 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="storagekey" class="tsd-anchor"></a>
-					<h3>storage<wbr>Key</h3>
-					<div class="tsd-signature tsd-kind-icon">storage<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="add" class="tsd-anchor"></a>
+					<h3>add</h3>
+					<div class="tsd-signature tsd-kind-icon">add<span class="tsd-signature-symbol">:</span> <a href="../globals.html#deltaitems" class="tsd-signature-type">DeltaItems</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/88c2a6b/runtime/ts/storage/synthetic-storage.ts#L20">storage/synthetic-storage.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/88c2a6b/runtime/ts/storage/storage-provider-base.ts#L41">storage/storage-provider-base.ts:41</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="tags" class="tsd-anchor"></a>
-					<h3>tags</h3>
-					<div class="tsd-signature tsd-kind-icon">tags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="barrier" class="tsd-anchor"></a>
+					<h3>barrier</h3>
+					<div class="tsd-signature tsd-kind-icon">barrier<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/88c2a6b/runtime/ts/storage/synthetic-storage.ts#L22">storage/synthetic-storage.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/88c2a6b/runtime/ts/storage/storage-provider-base.ts#L47">storage/storage-provider-base.ts:47</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="type" class="tsd-anchor"></a>
-					<h3>type</h3>
-					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="type.html" class="tsd-signature-type">Type</a></div>
+					<a name="data" class="tsd-anchor"></a>
+					<h3>data</h3>
+					<div class="tsd-signature tsd-kind-icon">data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/88c2a6b/runtime/ts/storage/synthetic-storage.ts#L21">storage/synthetic-storage.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/88c2a6b/runtime/ts/storage/storage-provider-base.ts#L44">storage/storage-provider-base.ts:44</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="originatorid" class="tsd-anchor"></a>
+					<h3>originator<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">originator<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/88c2a6b/runtime/ts/storage/storage-provider-base.ts#L46">storage/storage-provider-base.ts:46</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="remove" class="tsd-anchor"></a>
+					<h3>remove</h3>
+					<div class="tsd-signature tsd-kind-icon">remove<span class="tsd-signature-symbol">:</span> <a href="../globals.html#deltaitems" class="tsd-signature-type">DeltaItems</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/88c2a6b/runtime/ts/storage/storage-provider-base.ts#L42">storage/storage-provider-base.ts:42</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="version" class="tsd-anchor"></a>
+					<h3>version</h3>
+					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/88c2a6b/runtime/ts/storage/storage-provider-base.ts#L45">storage/storage-provider-base.ts:45</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -174,19 +221,28 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="archandle.html" class="tsd-kind-icon">Arc<wbr>Handle</a>
+						<a href="changeevent.html" class="tsd-kind-icon">Change<wbr>Event</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="archandle.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="changeevent.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="archandle.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a>
+								<a href="changeevent.html#add" class="tsd-kind-icon">add</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="archandle.html#tags" class="tsd-kind-icon">tags</a>
+								<a href="changeevent.html#barrier" class="tsd-kind-icon">barrier</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="archandle.html#type" class="tsd-kind-icon">type</a>
+								<a href="changeevent.html#data" class="tsd-kind-icon">data</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="changeevent.html#originatorid" class="tsd-kind-icon">originator<wbr>Id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="changeevent.html#remove" class="tsd-kind-icon">remove</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="changeevent.html#version" class="tsd-kind-icon">version</a>
 							</li>
 						</ul>
 					</li>
