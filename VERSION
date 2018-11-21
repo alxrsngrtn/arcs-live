@@ -1,8 +1,9 @@
-commit 1e1abb94e0ea23e11e8fd3128299a3edff6ccf89
+commit 4cbe565d74038b51b5ab0eb2889f06c6c3ccba4f
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Nov 21 10:18:55 2018 -0800
+Date:   Wed Nov 21 11:34:40 2018 -0800
 
-    Remove unused CombinedStrategy (#2265)
+    Add additional typescript types in preparation of strategizer conversion (#2270)
     
-    This Strategy uses a different constructor signature and is incompatible with
-    other classes.
+    - isResolved takes an optional param
+    - introduce DirectionCounts type for return from RecipeUtil.directionCounts
+    - Add optional lifecycle event callback signatures to Walker

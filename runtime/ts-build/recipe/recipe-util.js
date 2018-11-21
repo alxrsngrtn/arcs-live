@@ -309,7 +309,7 @@ export class RecipeUtil {
         });
     }
     static directionCounts(handle) {
-        const counts = { 'in': 0, 'out': 0, 'inout': 0, 'unknown': 0 };
+        const counts = { in: 0, out: 0, inout: 0, unknown: 0 };
         for (const connection of handle.connections) {
             let direction = connection.direction;
             if (counts[direction] === undefined) {
