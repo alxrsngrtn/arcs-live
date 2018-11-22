@@ -1,5 +1,5 @@
-commit 6c844896d48ae357b85fe971dd60b9eda70228c6
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Nov 22 14:14:29 2018 -0800
+commit 8a6050f7a75a1c82fff83fc39ee3337412024d5e
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Nov 23 09:28:00 2018 +1100
 
-    delete old planificator (#2294)
+    Make structure names generate a parse failure if used as identifiers (#2293)
