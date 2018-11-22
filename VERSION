@@ -1,8 +1,7 @@
-commit c70be4e7e16b5e5ac0f511e3fe747dc510f9f1fd
+commit 319acbeea37c993d75f8c8846474a798fce69867
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Nov 22 16:19:22 2018 +1100
+Date:   Thu Nov 22 16:38:59 2018 +1100
 
-    Small test fixes (#2290)
+    Simplify reserved words test (#2291)
     
-    * Re-indent string formatting to avoid constructing invalid Manifests
-    * Fix typo in test name
+    * Simplify reserved words test
