@@ -1,8 +1,8 @@
-commit 74e68163d26cfee1cbd55a59fd4d1e53d3bff516
+commit c70be4e7e16b5e5ac0f511e3fe747dc510f9f1fd
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Nov 22 14:40:33 2018 +1100
+Date:   Thu Nov 22 16:19:22 2018 +1100
 
-    Rename structures that use structure names (#2286)
+    Small test fixes (#2290)
     
-    * Rename particles named 'particle' to 'particle0' to allow improved parser error messages
-    * Fix shape-test.js usage of schema inside recipe (rather than top level)
+    * Re-indent string formatting to avoid constructing invalid Manifests
+    * Fix typo in test name
