@@ -79964,11 +79964,7 @@ class Schema {
                 }
             });
         }
-        // TODO: this type-erases the dynamically generated clazz so we
-        // can force it into an Entity type.
-        // tslint:disable-next-line: no-any
-        const c = clazz;
-        return c;
+        return clazz;
     }
     toInlineSchemaString(options) {
         const names = this.names.join(' ') || '*';

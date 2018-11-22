@@ -1,14 +1,5 @@
-commit af6f16d18662247a35452e85949b7cf11ffad930
+commit ec080478b08f7ba9d5ca23290200aa97556e2232
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Nov 21 13:54:27 2018 -0800
+Date:   Wed Nov 21 16:36:15 2018 -0800
 
-    Support generating d.ts files for typescript (#2259)
-    
-    * Support generating d.ts files for typescript
-    
-    - Needed for Provisioning App build
-    - Add more types, and expose visibility
-    - Move newClientReference to a static method on Reference
-    - Do some type erasure in Schema generated Entity classes
-    
-    * Fix shell usage of newClientReference
+    remove unnecessary type erasure (#2278)
