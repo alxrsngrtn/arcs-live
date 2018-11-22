@@ -3,6 +3,7 @@ import { Particle } from './particle.js';
 import { Search } from './search.js';
 import { Slot } from './slot.js';
 import { Handle } from './handle.js';
+import { HandleConnection } from './handle-connection.js';
 export declare class Recipe {
     private _particles;
     private _handles;
@@ -42,14 +43,14 @@ export declare class Recipe {
     search: Search;
     setSearchPhrase(phrase: any): void;
     readonly slotConnections: any[];
-    readonly handleConnections: any[];
+    readonly handleConnections: HandleConnection[];
     isEmpty(): boolean;
     findHandle(id: any): Handle;
     findSlot(id: any): Slot;
     patterns: string[];
     description: any;
     digest(): Promise<any>;
-    normalize(options: any): boolean;
+    normalize(options?: any): boolean;
     clone(cloneMap?: any): Recipe;
     mergeInto(recipe: any): {
         handles: any;

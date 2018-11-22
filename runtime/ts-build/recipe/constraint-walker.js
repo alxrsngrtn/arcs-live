@@ -10,7 +10,7 @@ export class ConstraintWalker extends WalkerBase {
         super.onResult(result);
         const recipe = result.result;
         const updateList = [];
-        recipe._connectionConstraints.forEach(constraint => {
+        recipe.connectionConstraints.forEach(constraint => {
             if (this.onConstraint) {
                 const result = this.onConstraint(recipe, constraint);
                 if (result) {

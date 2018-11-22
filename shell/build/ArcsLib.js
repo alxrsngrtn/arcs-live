@@ -67467,12 +67467,12 @@ class AddMissingHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
       onRecipe(recipe) {
         // Don't add use handles while there are outstanding constraints
         if (recipe.connectionConstraints.length > 0) {
-          return;
+          return undefined;
         }
         // Don't add use handles to a recipe with free handles
         const freeHandles = recipe.handles.filter(handle => handle.connections.length === 0);
         if (freeHandles.length > 0) {
-          return;
+          return undefined;
         }
 
         // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
@@ -67480,7 +67480,7 @@ class AddMissingHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
         const disconnectedConnections = recipe.handleConnections.filter(
             hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
         if (disconnectedConnections.length === 0) {
-          return;
+          return undefined;
         }
 
         return recipe => {
@@ -67542,19 +67542,19 @@ class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
       onHandle(recipe, handle) {
         if (!['?', 'use', 'copy', 'map'].includes(handle.fate)) {
-          return;
+          return undefined;
         }
 
         if (handle.connections.length === 0) {
-          return;
+          return undefined;
         }
 
         if (handle.id) {
-          return;
+          return undefined;
         }
 
         if (!handle.type) {
-          return;
+          return undefined;
         }
 
         // TODO: using the connection to retrieve type information is wrong.
@@ -67562,18 +67562,18 @@ class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
         // we should switch to using that instead.
         const counts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].directionCounts(handle);
         if (counts.unknown > 0) {
-          return;
+          return undefined;
         }
 
         const score = this._getScore(counts, handle.tags);
 
         if (counts.out > 0 && handle.fate === 'map') {
-          return;
+          return undefined;
         }
         const stores = self.getMappableStores(handle.fate, handle.type, handle.tags, counts);
         if (handle.fate !== '?' && stores.size < 2) {
           // These handles are mapped by resolve-recipe strategy.
-          return;
+          return undefined;
         }
 
         const responses = [...stores.keys()].map(store =>
@@ -67588,7 +67588,7 @@ class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
             if (clonedHandle.fate === '?') {
               clonedHandle.fate = stores.get(store);
             } else {
-              Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(clonedHandle.fate, stores.get.store);
+              Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(clonedHandle.fate, stores.get(store));
             }
             return score;
           }));
@@ -67619,13 +67619,13 @@ class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
   getMappableStores(fate, type, tags, counts) {
     const stores = new Map();
     if (fate === 'use' || fate === '?') {
-      const subtype = counts.out == 0;
+      const subtype = counts.out === 0;
       // TODO: arc.findStoresByType doesn't use `subtype`. Shall it be removed?
       this.arc.findStoresByType(type, {tags, subtype}).forEach(store => stores.set(store, 'use'));
     }
     if (fate === 'map' || fate === 'copy' || fate === '?') {
       this.arc.context.findStoreByType(type, {tags, subtype: true}).forEach(
-          store => stores.set(store, fate == '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));
+          store => stores.set(store, fate === '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));
     }
     return stores;
   }
@@ -67692,14 +67692,14 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
       // Find a provided slot for unfulfilled consume connection.
       onSlotConnection(recipe, slotConnection) {
         if (slotConnection.isResolved()) {
-          return;
+          return undefined;
         }
         if (!slotConnection.name || !slotConnection.particle) {
-          return;
+          return undefined;
         }
 
         if (slotConnection.targetSlot) {
-          return;
+          return undefined;
         }
 
         // TODO: also support a consume slot connection that is NOT required,
@@ -67741,10 +67741,10 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
       onSlot(recipe, slot) {
         // Find slots that according to their provided-spec must be consumed, but have no consume connection.
         if (slot.consumeConnections.length > 0) {
-          return; // slot has consume connections.
+          return undefined; // slot has consume connections.
         }
         if (!slot.sourceConnection || !slot.sourceConnection.slotSpec.getProvidedSlotSpec(slot.name).isRequired) {
-          return; // either a remote slot (no source connection), or a not required one.
+          return undefined; // either a remote slot (no source connection), or a not required one.
         }
 
         const results = [];
@@ -67803,13 +67803,14 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
         if (results.length > 0) {
           return results;
         }
+        return undefined;
       }
 
       onHandle(recipe, handle) {
         if (!index.coalescableFates.includes(handle.fate)
             || handle.id
             || handle.connections.length === 0
-            || handle.name === 'descriptions') return;
+            || handle.name === 'descriptions') return undefined;
         const results = [];
 
         for (const otherHandle of index.findHandleMatch(handle, index.coalescableFates)) {
@@ -67951,13 +67952,13 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
         let handleCount = 0;
         const obligations = [];
         if (recipe.connectionConstraints.length === 0) {
-          return;
+          return undefined;
         }
 
         for (const constraint of recipe.connectionConstraints) {
           // Don't process constraints if their listed particles don't match the current affordance.
           if (affordance && (!constraint.from.particle.matchAffordance(affordance) || !constraint.to.particle.matchAffordance(affordance))) {
-            return;
+            return undefined;
           }
 
           const reverse = {'->': '<-', '=': '=', '<-': '->'};
@@ -68044,7 +68045,7 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
               if (existingHandle) {
                 direction = unionDirections(direction, existingHandle.direction);
                 if (direction == null) {
-                  return;
+                  return undefined;
                 }
               }
               map[constraint.from.particle.name][connection] = {handle: handle.handle, direction, tags: handle.tags};
@@ -68059,7 +68060,7 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
               if (existingHandle) {
                 direction = unionDirections(direction, existingHandle.direction);
                 if (direction == null) {
-                  return;
+                  return undefined;
                 }
               }
               map[constraint.to.particle.name][connection] = {handle: handle.handle, direction, tags: handle.tags};
@@ -68067,15 +68068,14 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
           }
         }
         const shape = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].makeShape([...particles.values()], [...handles.values()], map);
+        const matches = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].find(recipe, shape);
 
-        let results = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].find(recipe, shape);
-
-        results = results.filter(match => {
+        const results = matches.filter(match => {
           // Ensure that every handle is either matched, or an input of at least one
           // connected particle in the constraints.
           const resolvedHandles = {};
-          for (const particle in map) {
-            for (const connection in map[particle]) {
+          for (const particle of Object.keys(map)) {
+            for (const connection of Object.keys(map[particle])) {
               const handle = map[particle][connection].handle;
               if (resolvedHandles[handle]) {
                 continue;
@@ -68094,7 +68094,7 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
             const score = recipe.connectionConstraints.length + match.score;
             const recipeMap = recipe.updateToClone(match.match);
             
-            for (const particle in map) {
+            for (const particle of Object.keys(map)) {
               let recipeParticle = recipeMap[particle];
               if (!recipeParticle) {
                 recipeParticle = recipe.newParticle(particle);
@@ -68102,7 +68102,7 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
                 recipeMap[particle] = recipeParticle;
               }
 
-              for (const connection in map[particle]) {
+              for (const connection of Object.keys(map[particle])) {
                 const handle = map[particle][connection];
                 let recipeHandleConnection = recipeParticle.connections[connection];
                 if (recipeHandleConnection == undefined) {
@@ -68169,10 +68169,10 @@ class CreateDescriptionHandle extends _strategizer_strategizer_js__WEBPACK_IMPOR
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onHandleConnection(recipe, handleConnection) {
         if (handleConnection.handle) {
-          return;
+          return undefined;
         }
         if (handleConnection.name !== 'descriptions') {
-          return;
+          return undefined;
         }
 
         return (recipe, handleConnection) => {
@@ -68221,7 +68221,7 @@ class CreateHandleGroup extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onRecipe(recipe) {
         // Resolve constraints before assuming connections are free.
-        if (recipe.connectionConstraints.length > 0) return;
+        if (recipe.connectionConstraints.length > 0) return undefined;
 
         const freeConnections = recipe.handleConnections.filter(hc => !hc.handle && !hc.isOptional);
         let maximalGroup = null;
@@ -68269,6 +68269,7 @@ class CreateHandleGroup extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
             }
           };
         }
+        return undefined;
       }
     }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Independent), this);
   }
@@ -68316,7 +68317,7 @@ class FindHostedParticle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_M
     const arc = this._arc;
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
       onHandleConnection(recipe, connection) {
-        if (connection.direction !== 'host' || connection.handle) return;
+        if (connection.direction !== 'host' || connection.handle) return undefined;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(connection.type.isInterface);
 
         const results = [];
@@ -68353,7 +68354,7 @@ class FindHostedParticle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_M
               if (handle.id === id && handle.fate === 'copy'
                   && handle._mappedType && handle._mappedType.equals(handleType)) {
                 hc.connectToHandle(handle);
-                return;
+                return undefined;
               }
             }
 
@@ -68411,7 +68412,7 @@ class GroupHandleConnections extends _strategizer_strategizer_js__WEBPACK_IMPORT
       onRecipe(recipe) {
         // Only apply this strategy if ALL handle connections are named and have types.
         if (recipe.handleConnections.find(hc => !hc.type || !hc.name || hc.isOptional)) {
-          return;
+          return undefined;
         }
         // Find all unique types used in the recipe that have unbound handle connections.
         const types = new Set();
@@ -68497,6 +68498,7 @@ class GroupHandleConnections extends _strategizer_strategizer_js__WEBPACK_IMPORT
             // TODO: score!
           };
         }
+        return undefined;
       }
     }(_ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"].Permuted);
   }
@@ -68682,18 +68684,18 @@ class MapSlots extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__[
         // TODO: is this right? Should constraints be connectible, in order to precompute the
         // recipe side once the verb is substituted?
         if (slotConnection.slotSpec == undefined) {
-          return;
+          return undefined;
         }
 
         if (slotConnection.isConnected()) {
-          return;
+          return undefined;
         }
 
         const {local, remote} = MapSlots.findAllSlotCandidates(slotConnection, arc);
 
         // ResolveRecipe handles one-slot case.
         if (local.length + remote.length < 2) {
-          return;
+          return undefined;
         }
 
         // If there are any local slots, prefer them over remote slots.
@@ -68833,8 +68835,6 @@ __webpack_require__.r(__webpack_exports__);
  */
 class MatchFreeHandlesToConnections extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
   async generate(inputParams) {
-    const self = this;
-
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
       onHandle(recipe, handle) {
         if (handle.connections.length > 0) {
@@ -68894,7 +68894,7 @@ class MatchParticleByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_
       onParticle(recipe, particle) {
         if (particle.name) {
           // Particle already has explicit name.
-          return;
+          return undefined;
         }
 
         const particleSpecs = arc.context.findParticlesByVerb(particle.primaryVerb)
@@ -68969,7 +68969,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
       onParticle(recipe, particle) {
         if (particle.name) {
           // Particle already has explicit name.
-          return;
+          return undefined;
         }
 
         let recipes = arc.context.findRecipesByVerb(particle.primaryVerb);
@@ -69296,7 +69296,7 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
         if (handle.connections.length === 0 ||
             (handle.id && handle.storageKey) || (!handle.type) ||
             (!handle.fate)) {
-          return;
+          return undefined;
         }
 
         let mappable;
@@ -69358,7 +69358,7 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
 
       onSlotConnection(recipe, slotConnection) {
         if (slotConnection.isConnected()) {
-          return;
+          return undefined;
         }
 
         const {local, remote} = _map_slots_js__WEBPACK_IMPORTED_MODULE_4__["MapSlots"].findAllSlotCandidates(slotConnection, arc);
@@ -69366,7 +69366,7 @@ class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
 
         // MapSlots handles a multi-slot case.
         if (allSlots.length !== 1) {
-          return;
+          return undefined;
         }
 
         const selectedSlot = allSlots[0];
@@ -69539,10 +69539,10 @@ class SearchTokensToHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTE
     return _ts_build_recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _ts_build_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"] {
       onHandle(recipe, handle) {
         if (!recipe.search || recipe.search.unresolvedTokens.length === 0) {
-          return;
+          return undefined;
         }
         if (handle.isResolved() || handle.connections.length === 0) {
-          return;
+          return undefined;
         }
 
         const possibleMatches = [];
@@ -69550,7 +69550,7 @@ class SearchTokensToHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTE
           possibleMatches.push(...findMatchingStores(token, handle));
         }
         if (possibleMatches.length === 0) {
-          return;
+          return undefined;
         }
         return possibleMatches.map(match => {
           return (recipe, handle) => {
@@ -69613,7 +69613,7 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
 
       onRecipe(recipe) {
         if (!recipe.search || !recipe.search.unresolvedTokens.length) {
-          return;
+          return undefined;
         }
 
         const byToken = {};
@@ -69643,7 +69643,7 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
         }
 
         if (resolvedTokens.size === 0) {
-          return;
+          return undefined;
         }
 
         const flatten = (arr) => [].concat(...arr);
@@ -87167,7 +87167,7 @@ class Strategizer {
   async generate() {
     // Generate
     const generation = this.generation + 1;
-    let generated = await Promise.all(this._strategies.map(strategy => {
+    const generatedResults = await Promise.all(this._strategies.map(strategy => {
       const recipeFilter = recipe => this._ruleset.isAllowed(strategy, recipe);
       return strategy.generate({
         generation: this.generation,
@@ -87182,14 +87182,16 @@ class Strategizer {
     record.sizeOfLastGeneration = this.generated.length;
     record.generatedDerivationsByStrategy = {};
     for (let i = 0; i < this._strategies.length; i++) {
-      record.generatedDerivationsByStrategy[this._strategies[i].constructor.name] = generated[i].length;
+      record.generatedDerivationsByStrategy[this._strategies[i].constructor.name] = generatedResults[i].length;
     }
 
-    generated = [].concat(...generated);
+    let generated = [].concat(...generatedResults);
 
     // TODO: get rid of this additional asynchrony
     generated = await Promise.all(generated.map(async result => {
-      if (result.hash) result.hash = await result.hash;
+      if (result.hash) {
+        result.hash = await result.hash;
+      }
       return result;
     }));
 
@@ -87214,7 +87216,7 @@ class Strategizer {
               record.nullDerivationsByStrategy[strategy] = 0;
             }
             record.nullDerivationsByStrategy[strategy]++;
-          } else if (existingResult.derivation.map(a => a.parent).indexOf(result.derivation[0].parent) != -1) {
+          } else if (existingResult.derivation.map(a => a.parent).indexOf(result.derivation[0].parent) !== -1) {
             record.duplicateSameParentDerivations += 1;
             if (record.duplicateSameParentDerivationsByStrategy[strategy] ==
                 undefined) {
@@ -87241,19 +87243,19 @@ class Strategizer {
       return true;
     });
 
-    let terminal = new Map();
+    const terminalMap = new Map();
     for (const candidate of this.generated) {
-      terminal.set(candidate.result, candidate);
+      terminalMap.set(candidate.result, candidate);
     }
     // TODO(piotrs): This is inefficient, improve at some point.
     for (const result of this.populationHash.values()) {
       for (const {parent} of result.derivation) {
-        if (parent && terminal.has(parent.result)) {
-          terminal.delete(parent.result);
+        if (parent && terminalMap.has(parent.result)) {
+          terminalMap.delete(parent.result);
         }
       }
     }
-    terminal = [...terminal.values()];
+    const terminal = [...terminalMap.values()];
 
     record.survivingDerivations = generated.length;
 
@@ -87267,13 +87269,12 @@ class Strategizer {
       return 0;
     });
 
-    // Evalute
     const evaluations = await Promise.all(this._evaluators.map(strategy => {
       return strategy.evaluate(this, generated);
     }));
     const fitness = Strategizer._mergeEvaluations(evaluations, generated);
 
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(fitness.length == generated.length);
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(fitness.length === generated.length);
     for (let i = 0; i < fitness.length; i++) {
       this._internalPopulation.push({
         fitness: fitness[i],

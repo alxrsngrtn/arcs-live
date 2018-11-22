@@ -1,5 +1,15 @@
-commit ec080478b08f7ba9d5ca23290200aa97556e2232
+commit 92be7fa42ad003e5fc73876cdf26735b2ed42d53
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Nov 21 16:36:15 2018 -0800
+Date:   Wed Nov 21 16:39:47 2018 -0800
 
-    remove unnecessary type erasure (#2278)
+    More pre-move cleanups for strategies (#2280)
+    
+    - Explicitly return values to comply with noImplicitReturns rule.
+    - More triple-equals cleanups
+    - Fix variable shadowing.  Remove uses where a variable is used for
+      two explicit types.
+    - Replace for..in loops with for..of Object.keys(...)
+    - Add the optional onConstraint signature to constraint-walker
+    - Use public vs private _connectionConstraints method
+    - Recipe normalize method has an optional argument
+    - misc spelling
