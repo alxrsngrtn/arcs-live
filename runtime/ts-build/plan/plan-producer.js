@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/assert-web.js';
-import { InitSearch } from '../../strategies/init-search.js';
+import { InitSearch } from '../strategies/init-search.js';
 import { logFactory } from '../../../platform/log-web.js';
 import { now } from '../../../platform/date-web.js';
 import { Planner } from '../planner.js';
@@ -71,16 +71,14 @@ export class PlanProducer {
             if (this.result.contextual) {
                 // If we're searching but currently only have contextual suggestions,
                 // we need get non-contextual suggestions as well.
-                Object.assign(options, { contextual: false });
+                options.contextual = false;
             }
             else {
                 // If search changed and we already how all suggestions (i.e. including
                 // non-contextual ones) then it's enough to initialize with InitSearch
                 // with a new search phrase.
-                Object.assign(options, {
-                    strategies: [InitSearch].concat(Planner.ResolutionStrategies),
-                    append: true
-                });
+                options.append = true;
+                options.strategies = [InitSearch, ...Planner.ResolutionStrategies];
             }
             this.produceSuggestions(options);
         }

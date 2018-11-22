@@ -6,8 +6,11 @@
 // http://polymer.github.io/PATENTS.txt
 import { compareArrays, compareStrings, compareComparables } from './util.js';
 import { assert } from '../../../platform/assert-web.js';
-export class ParticleEndPoint {
+export class EndPoint {
+}
+export class ParticleEndPoint extends EndPoint {
     constructor(particle, connection) {
+        super();
         this.particle = particle;
         this.connection = connection;
     }
@@ -29,10 +32,11 @@ export class ParticleEndPoint {
         return `${this.particle.name}.${this.connection}`;
     }
 }
-export class InstanceEndPoint {
+export class InstanceEndPoint extends EndPoint {
     constructor(instance, connection) {
+        super();
         assert(instance);
-        this.recipe = instance.recipe;
+        //this.recipe = instance.recipe;
         this.instance = instance;
         this.connection = connection;
     }
@@ -54,8 +58,9 @@ export class InstanceEndPoint {
         return `${nameMap.get(this.instance)}.${this.connection}`;
     }
 }
-export class HandleEndPoint {
+export class HandleEndPoint extends EndPoint {
     constructor(handle) {
+        super();
         this.handle = handle;
     }
     _clone(cloneMap = undefined) {
@@ -71,8 +76,9 @@ export class HandleEndPoint {
         return `${this.handle.localName}`;
     }
 }
-export class TagEndPoint {
+export class TagEndPoint extends EndPoint {
     constructor(tags) {
+        super();
         this.tags = tags;
     }
     _clone(cloneMap = undefined) {
@@ -88,6 +94,7 @@ export class TagEndPoint {
         return this.tags.map(a => `#${a}`).join(' ');
     }
 }
+//type EndPoint = ParticleEndPoint | InstanceEndPoint | HandleEndPoint | TagEndPoint;
 export class ConnectionConstraint {
     constructor(fromConnection, toConnection, direction, type) {
         assert(direction);

@@ -60,7 +60,7 @@ export declare class Recipe {
     };
     _copyInto(recipe: any, cloneMap: any): void;
     updateToClone(dict: any): {};
-    static over(results: any, walker: any, strategy: any): any;
+    static over(results: any, walker: any, strategy: any): import("../strategizer/strategizer.js").Descendant[];
     _makeLocalNameMap(): Map<any, any>;
     toString(options?: any): string;
 }

@@ -16,7 +16,7 @@ export declare class HandleConnection {
     constructor(name: any, particle: any);
     _clone(particle: any, cloneMap: any): any;
     _normalize(): void;
-    _compareTo(other: any): any;
+    _compareTo(other: any): number;
     readonly recipe: Recipe;
     readonly name: string;
     getQualifiedName(): string;

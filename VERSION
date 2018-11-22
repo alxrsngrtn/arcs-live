@@ -1,9 +1,17 @@
-commit d2b549c9dcae460a76f7e75834981217fb4c0679
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Nov 21 18:00:51 2018 -0800
+commit 65b23c45d8c051a1cb2aa1238aabd90909583885
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Nov 21 18:26:27 2018 -0800
 
-    rename Affordance to modality (#2285)
+    Convert strategizer and strategies to typescript (#2284)
     
-    * rename affordance to modality
+    * Convert strategizer and strategies to typescript
     
-    * update particle manifests
+    - Avoid use of Object.assign in plan-producer
+    - Introduce StrategyDerived Interface
+    - Introduce abstract base class EndPoint for connection-constraints
+    - Move arc/options to the Strategy abstract constructor
+    - Simplify constructor of SearchTokensToParticles to use ForEach
+    - Hoist Ruleset.Builder class to top-level RulesetBuilder
+    - Various cleanups and moar types
+    
+    * lint fix

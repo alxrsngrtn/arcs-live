@@ -1,3 +1,4 @@
+import { StrategizerWalker } from '../strategizer/strategizer.js';
 /**
  * Walkers traverse an object, calling methods based on the
  * features encountered on that object. For example, a RecipeWalker
@@ -27,12 +28,10 @@ export declare enum WalkerTactic {
     Permuted = "permuted",
     Independent = "independent"
 }
-declare const WalkerBase_base: any;
-export declare class WalkerBase extends WalkerBase_base {
+export declare abstract class WalkerBase extends StrategizerWalker {
     tactic: WalkerTactic;
     constructor(tactic: any);
     _runUpdateList(recipe: any, updateList: any): void;
     createDescendant(recipe: any, score: any): void;
     isEmptyResult(result: any): boolean;
 }
-export {};

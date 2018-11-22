@@ -68,7 +68,7 @@ export declare class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, recipeIndex }: ArcOptions);
     readonly loader: Loader;
     readonly description: Description;
-    readonly recipeIndex: any;
+    readonly recipeIndex: RecipeIndex;
     registerInstantiatePlanCallback(callback: PlanCallback): void;
     unregisterInstantiatePlanCallback(callback: PlanCallback): boolean;
     dispose(): void;

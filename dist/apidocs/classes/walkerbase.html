@@ -70,7 +70,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="tsd-signature-type">any</span>
+						<a href="strategizerwalker.html" class="tsd-signature-type">StrategizerWalker</a>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">WalkerBase</span>
@@ -94,12 +94,15 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="walkerbase.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="walkerbase.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="walkerbase.html#currentresult" class="tsd-kind-icon">current<wbr>Result</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="walkerbase.html#currentstrategy" class="tsd-kind-icon">current<wbr>Strategy</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="walkerbase.html#descendants" class="tsd-kind-icon">descendants</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="walkerbase.html#tactic" class="tsd-kind-icon">tactic</a></li>
 							</ul>
 						</section>
@@ -107,8 +110,12 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="walkerbase.html#_runupdatelist" class="tsd-kind-icon">_run<wbr>Update<wbr>List</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="walkerbase.html#createdescendant" class="tsd-kind-icon">create<wbr>Descendant</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="walkerbase.html#createdescendant" class="tsd-kind-icon">create<wbr>Descendant</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="walkerbase.html#isemptyresult" class="tsd-kind-icon">is<wbr>Empty<wbr>Result</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="walkerbase.html#onresult" class="tsd-kind-icon">on<wbr>Result</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="walkerbase.html#onresultdone" class="tsd-kind-icon">on<wbr>Result<wbr>Done</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="walkerbase.html#onstrategy" class="tsd-kind-icon">on<wbr>Strategy</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="walkerbase.html#onstrategydone" class="tsd-kind-icon">on<wbr>Strategy<wbr>Done</a></li>
 							</ul>
 						</section>
 					</div>
@@ -116,17 +123,18 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">new <wbr>Walker<wbr>Base<span class="tsd-signature-symbol">(</span>tactic<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="walkerbase.html" class="tsd-signature-type">WalkerBase</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="strategizerwalker.html">StrategizerWalker</a>.<a href="strategizerwalker.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d2b549c/runtime/ts/recipe/walker-base.ts#L42">recipe/walker-base.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/65b23c4/runtime/ts/recipe/walker-base.ts#L43">recipe/walker-base.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -142,13 +150,46 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="currentresult" class="tsd-anchor"></a>
+					<h3>current<wbr>Result</h3>
+					<div class="tsd-signature tsd-kind-icon">current<wbr>Result<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="strategizerwalker.html">StrategizerWalker</a>.<a href="strategizerwalker.html#currentresult">currentResult</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/65b23c4/runtime/ts/strategizer/strategizer.ts#L244">strategizer/strategizer.ts:244</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="currentstrategy" class="tsd-anchor"></a>
+					<h3>current<wbr>Strategy</h3>
+					<div class="tsd-signature tsd-kind-icon">current<wbr>Strategy<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="strategizerwalker.html">StrategizerWalker</a>.<a href="strategizerwalker.html#currentstrategy">currentStrategy</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/65b23c4/runtime/ts/strategizer/strategizer.ts#L243">strategizer/strategizer.ts:243</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="descendants" class="tsd-anchor"></a>
+					<h3>descendants</h3>
+					<div class="tsd-signature tsd-kind-icon">descendants<span class="tsd-signature-symbol">:</span> <a href="../interfaces/descendant.html" class="tsd-signature-type">Descendant</a><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="strategizerwalker.html">StrategizerWalker</a>.<a href="strategizerwalker.html#descendants">descendants</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/65b23c4/runtime/ts/strategizer/strategizer.ts#L242">strategizer/strategizer.ts:242</a></li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="tactic" class="tsd-anchor"></a>
 					<h3>tactic</h3>
 					<div class="tsd-signature tsd-kind-icon">tactic<span class="tsd-signature-symbol">:</span> <a href="../enums/walkertactic.html" class="tsd-signature-type">WalkerTactic</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d2b549c/runtime/ts/recipe/walker-base.ts#L42">recipe/walker-base.ts:42</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/65b23c4/runtime/ts/recipe/walker-base.ts#L43">recipe/walker-base.ts:43</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -165,7 +206,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d2b549c/runtime/ts/recipe/walker-base.ts#L50">recipe/walker-base.ts:50</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/65b23c4/runtime/ts/recipe/walker-base.ts#L51">recipe/walker-base.ts:51</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -181,17 +222,18 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="createdescendant" class="tsd-anchor"></a>
 					<h3>create<wbr>Descendant</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">create<wbr>Descendant<span class="tsd-signature-symbol">(</span>recipe<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, score<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="strategizerwalker.html">StrategizerWalker</a>.<a href="strategizerwalker.html#createdescendant">createDescendant</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d2b549c/runtime/ts/recipe/walker-base.ts#L115">recipe/walker-base.ts:115</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/65b23c4/runtime/ts/recipe/walker-base.ts#L116">recipe/walker-base.ts:116</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -217,7 +259,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d2b549c/runtime/ts/recipe/walker-base.ts#L122">recipe/walker-base.ts:122</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/65b23c4/runtime/ts/recipe/walker-base.ts#L123">recipe/walker-base.ts:123</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -227,6 +269,90 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="onresult" class="tsd-anchor"></a>
+					<h3>on<wbr>Result</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Result<span class="tsd-signature-symbol">(</span>result<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="strategizerwalker.html">StrategizerWalker</a>.<a href="strategizerwalker.html#onresult">onResult</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/65b23c4/runtime/ts/strategizer/strategizer.ts#L254">strategizer/strategizer.ts:254</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>result: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="onresultdone" class="tsd-anchor"></a>
+					<h3>on<wbr>Result<wbr>Done</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Result<wbr>Done<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="strategizerwalker.html">StrategizerWalker</a>.<a href="strategizerwalker.html#onresultdone">onResultDone</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/65b23c4/runtime/ts/strategizer/strategizer.ts#L273">strategizer/strategizer.ts:273</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="onstrategy" class="tsd-anchor"></a>
+					<h3>on<wbr>Strategy</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Strategy<span class="tsd-signature-symbol">(</span>strategy<span class="tsd-signature-symbol">: </span><a href="strategy.html" class="tsd-signature-type">Strategy</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="strategizerwalker.html">StrategizerWalker</a>.<a href="strategizerwalker.html#onstrategy">onStrategy</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/65b23c4/runtime/ts/strategizer/strategizer.ts#L250">strategizer/strategizer.ts:250</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>strategy: <a href="strategy.html" class="tsd-signature-type">Strategy</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="onstrategydone" class="tsd-anchor"></a>
+					<h3>on<wbr>Strategy<wbr>Done</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Strategy<wbr>Done<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="strategizerwalker.html">StrategizerWalker</a>.<a href="strategizerwalker.html#onstrategydone">onStrategyDone</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/65b23c4/runtime/ts/strategizer/strategizer.ts#L277">strategizer/strategizer.ts:277</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -247,8 +373,17 @@
 					<li class="current tsd-kind-class">
 						<a href="walkerbase.html" class="tsd-kind-icon">Walker<wbr>Base</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="walkerbase.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="walkerbase.html#currentresult" class="tsd-kind-icon">current<wbr>Result</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="walkerbase.html#currentstrategy" class="tsd-kind-icon">current<wbr>Strategy</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="walkerbase.html#descendants" class="tsd-kind-icon">descendants</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="walkerbase.html#tactic" class="tsd-kind-icon">tactic</a>
@@ -256,11 +391,23 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="walkerbase.html#_runupdatelist" class="tsd-kind-icon">_run<wbr>Update<wbr>List</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="walkerbase.html#createdescendant" class="tsd-kind-icon">create<wbr>Descendant</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="walkerbase.html#isemptyresult" class="tsd-kind-icon">is<wbr>Empty<wbr>Result</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="walkerbase.html#onresult" class="tsd-kind-icon">on<wbr>Result</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="walkerbase.html#onresultdone" class="tsd-kind-icon">on<wbr>Result<wbr>Done</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="walkerbase.html#onstrategy" class="tsd-kind-icon">on<wbr>Strategy</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="walkerbase.html#onstrategydone" class="tsd-kind-icon">on<wbr>Strategy<wbr>Done</a>
 							</li>
 						</ul>
 					</li>

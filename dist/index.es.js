@@ -11219,347 +11219,327 @@ const parser = /*
 })();
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-
 class Strategizer {
-  constructor(strategies, evaluators, ruleset) {
-    this._strategies = strategies;
-    this._evaluators = evaluators;
-    this._generation = 0;
-    this._internalPopulation = [];
-    this._population = [];
-    this._generated = [];
-    this._terminal = [];
-    this._ruleset = ruleset;
-    this.populationHash = new Map();
-  }
-  // Latest generation number.
-  get generation() {
-    return this._generation;
-  }
-  // All individuals in the current population.
-  get population() {
-    return this._population;
-  }
-  // Individuals of the latest generation.
-  get generated() {
-    return this._generated;
-  }
-  // Individuals from the previous generation that were not decended from in the
-  // current generation.
-  get terminal() {
-    assert(this._terminal);
-    return this._terminal;
-  }
-  async generate() {
-    // Generate
-    const generation = this.generation + 1;
-    const generatedResults = await Promise.all(this._strategies.map(strategy => {
-      const recipeFilter = recipe => this._ruleset.isAllowed(strategy, recipe);
-      return strategy.generate({
-        generation: this.generation,
-        generated: this.generated.filter(recipeFilter),
-        terminal: this.terminal.filter(recipeFilter),
-        population: this.population.filter(recipeFilter)
-      });
-    }));
-
-    const record = {};
-    record.generation = generation;
-    record.sizeOfLastGeneration = this.generated.length;
-    record.generatedDerivationsByStrategy = {};
-    for (let i = 0; i < this._strategies.length; i++) {
-      record.generatedDerivationsByStrategy[this._strategies[i].constructor.name] = generatedResults[i].length;
+    constructor(strategies, evaluators, ruleset) {
+        this._strategies = strategies;
+        this._evaluators = evaluators;
+        this._generation = 0;
+        this._internalPopulation = [];
+        this._population = [];
+        this._generated = [];
+        this._terminal = [];
+        this._ruleset = ruleset;
+        this.populationHash = new Map();
     }
-
-    let generated = [].concat(...generatedResults);
-
-    // TODO: get rid of this additional asynchrony
-    generated = await Promise.all(generated.map(async result => {
-      if (result.hash) {
-        result.hash = await result.hash;
-      }
-      return result;
-    }));
-
-    record.generatedDerivations = generated.length;
-    record.nullDerivations = 0;
-    record.invalidDerivations = 0;
-    record.duplicateDerivations = 0;
-    record.duplicateSameParentDerivations = 0;
-    record.nullDerivationsByStrategy = {};
-    record.invalidDerivationsByStrategy = {};
-    record.duplicateDerivationsByStrategy = {};
-    record.duplicateSameParentDerivationsByStrategy = {};
-
-    generated = generated.filter(result => {
-      const strategy = result.derivation[0].strategy.constructor.name;
-      if (result.hash) {
-        const existingResult = this.populationHash.get(result.hash);
-        if (existingResult) {
-          if (result.derivation[0].parent === existingResult) {
-            record.nullDerivations += 1;
-            if (record.nullDerivationsByStrategy[strategy] == undefined) {
-              record.nullDerivationsByStrategy[strategy] = 0;
+    // Latest generation number.
+    get generation() {
+        return this._generation;
+    }
+    // All individuals in the current population.
+    get population() {
+        return this._population;
+    }
+    // Individuals of the latest generation.
+    get generated() {
+        return this._generated;
+    }
+    /**
+     * @return   Individuals from the previous generation that were not descended from in the
+     * current generation.
+     */
+    get terminal() {
+        assert(this._terminal);
+        return this._terminal;
+    }
+    async generate() {
+        // Generate
+        const generation = this.generation + 1;
+        const generatedResults = await Promise.all(this._strategies.map(strategy => {
+            const recipeFilter = recipe => this._ruleset.isAllowed(strategy, recipe);
+            return strategy.generate({
+                generation: this.generation,
+                generated: this.generated.filter(recipeFilter),
+                terminal: this.terminal.filter(recipeFilter),
+                population: this.population.filter(recipeFilter)
+            });
+        }));
+        const record = {
+            generation,
+            sizeOfLastGeneration: this.generated.length,
+            generatedDerivationsByStrategy: {}
+        };
+        for (let i = 0; i < this._strategies.length; i++) {
+            record.generatedDerivationsByStrategy[this._strategies[i].constructor.name] = generatedResults[i].length;
+        }
+        let generated = [].concat(...generatedResults);
+        // TODO: get rid of this additional asynchrony
+        generated = await Promise.all(generated.map(async (result) => {
+            if (result.hash) {
+                result.hash = await result.hash;
             }
-            record.nullDerivationsByStrategy[strategy]++;
-          } else if (existingResult.derivation.map(a => a.parent).indexOf(result.derivation[0].parent) !== -1) {
-            record.duplicateSameParentDerivations += 1;
-            if (record.duplicateSameParentDerivationsByStrategy[strategy] ==
-                undefined) {
-              record.duplicateSameParentDerivationsByStrategy[strategy] = 0;
+            return result;
+        }));
+        record.generatedDerivations = generated.length;
+        record.nullDerivations = 0;
+        record.invalidDerivations = 0;
+        record.duplicateDerivations = 0;
+        record.duplicateSameParentDerivations = 0;
+        record.nullDerivationsByStrategy = {};
+        record.invalidDerivationsByStrategy = {};
+        record.duplicateDerivationsByStrategy = {};
+        record.duplicateSameParentDerivationsByStrategy = {};
+        generated = generated.filter(result => {
+            const strategy = result.derivation[0].strategy.constructor.name;
+            if (result.hash) {
+                const existingResult = this.populationHash.get(result.hash);
+                if (existingResult) {
+                    if (result.derivation[0].parent === existingResult) {
+                        record.nullDerivations += 1;
+                        if (record.nullDerivationsByStrategy[strategy] == undefined) {
+                            record.nullDerivationsByStrategy[strategy] = 0;
+                        }
+                        record.nullDerivationsByStrategy[strategy]++;
+                    }
+                    else if (existingResult.derivation.map(a => a.parent).indexOf(result.derivation[0].parent) !== -1) {
+                        record.duplicateSameParentDerivations += 1;
+                        if (record.duplicateSameParentDerivationsByStrategy[strategy] ==
+                            undefined) {
+                            record.duplicateSameParentDerivationsByStrategy[strategy] = 0;
+                        }
+                        record.duplicateSameParentDerivationsByStrategy[strategy]++;
+                    }
+                    else {
+                        record.duplicateDerivations += 1;
+                        if (record.duplicateDerivationsByStrategy[strategy] == undefined) {
+                            record.duplicateDerivationsByStrategy[strategy] = 0;
+                        }
+                        record.duplicateDerivationsByStrategy[strategy]++;
+                        this.populationHash.get(result.hash).derivation.push(result.derivation[0]);
+                    }
+                    return false;
+                }
+                this.populationHash.set(result.hash, result);
             }
-            record.duplicateSameParentDerivationsByStrategy[strategy]++;
-          } else {
-            record.duplicateDerivations += 1;
-            if (record.duplicateDerivationsByStrategy[strategy] == undefined) {
-              record.duplicateDerivationsByStrategy[strategy] = 0;
+            if (result.valid === false) {
+                record.invalidDerivations++;
+                record.invalidDerivationsByStrategy[strategy] = (record.invalidDerivationsByStrategy[strategy] || 0) + 1;
+                return false;
             }
-            record.duplicateDerivationsByStrategy[strategy]++;
-            this.populationHash.get(result.hash).derivation.push(result.derivation[0]);
-          }
-          return false;
+            return true;
+        });
+        const terminalMap = new Map();
+        for (const candidate of this.generated) {
+            terminalMap.set(candidate.result, candidate);
         }
-        this.populationHash.set(result.hash, result);
-      }
-      if (result.valid === false) {
-        record.invalidDerivations++;
-        record.invalidDerivationsByStrategy[strategy] = (record.invalidDerivationsByStrategy[strategy] || 0) + 1;
-        return false;
-      }
-      return true;
-    });
-
-    const terminalMap = new Map();
-    for (const candidate of this.generated) {
-      terminalMap.set(candidate.result, candidate);
-    }
-    // TODO(piotrs): This is inefficient, improve at some point.
-    for (const result of this.populationHash.values()) {
-      for (const {parent} of result.derivation) {
-        if (parent && terminalMap.has(parent.result)) {
-          terminalMap.delete(parent.result);
+        // TODO(piotrs): This is inefficient, improve at some point.
+        for (const result of this.populationHash.values()) {
+            for (const { parent } of result.derivation) {
+                if (parent && terminalMap.has(parent.result)) {
+                    terminalMap.delete(parent.result);
+                }
+            }
         }
-      }
-    }
-    const terminal = [...terminalMap.values()];
-
-    record.survivingDerivations = generated.length;
-
-    generated.sort((a, b) => {
-      if (a.score > b.score) {
-        return -1;
-      }
-      if (a.score < b.score) {
-        return 1;
-      }
-      return 0;
-    });
-
-    const evaluations = await Promise.all(this._evaluators.map(strategy => {
-      return strategy.evaluate(this, generated);
-    }));
-    const fitness = Strategizer._mergeEvaluations(evaluations, generated);
-
-    assert(fitness.length === generated.length);
-    for (let i = 0; i < fitness.length; i++) {
-      this._internalPopulation.push({
-        fitness: fitness[i],
-        individual: generated[i],
-      });
-    }
-
-    // TODO: Instead of push+sort, merge `internalPopulation` with `generated`.
-    this._internalPopulation.sort((x, y) => y.fitness - x.fitness);
-
-    // Publish
-    this._terminal = terminal;
-    this._generation = generation;
-    this._generated = generated;
-    this._population = this._internalPopulation.map(x => x.individual);
-
-    return record;
-  }
-
-  static _mergeEvaluations(evaluations, generated) {
-    const n = generated.length;
-    const mergedEvaluations = [];
-    for (let i = 0; i < n; i++) {
-      let merged = NaN;
-      for (const evaluation of evaluations) {
-        const fitness = evaluation[i];
-        if (isNaN(fitness)) {
-          continue;
+        const terminal = [...terminalMap.values()];
+        record.survivingDerivations = generated.length;
+        generated.sort((a, b) => {
+            if (a.score > b.score) {
+                return -1;
+            }
+            if (a.score < b.score) {
+                return 1;
+            }
+            return 0;
+        });
+        const evaluations = await Promise.all(this._evaluators.map(strategy => {
+            return strategy.evaluate(this, generated);
+        }));
+        const fitness = Strategizer._mergeEvaluations(evaluations, generated);
+        assert(fitness.length === generated.length);
+        for (let i = 0; i < fitness.length; i++) {
+            this._internalPopulation.push({
+                fitness: fitness[i],
+                individual: generated[i],
+            });
         }
-        if (isNaN(merged)) {
-          merged = fitness;
-        } else {
-          // TODO: how should evaluations be combined?
-          merged = (merged * i + fitness) / (i + 1);
-        }
-      }
-      if (isNaN(merged)) {
-        // TODO: What should happen when there was no evaluation?
-        merged = 0.5;
-      }
-      mergedEvaluations.push(merged);
+        // TODO: Instead of push+sort, merge `internalPopulation` with `generated`.
+        this._internalPopulation.sort((x, y) => y.fitness - x.fitness);
+        // Publish
+        this._terminal = terminal;
+        this._generation = generation;
+        this._generated = generated;
+        this._population = this._internalPopulation.map(x => x.individual);
+        return record;
     }
-    return mergedEvaluations;
-  }
-
-  static over(results, walker, strategy) {
-    walker.onStrategy(strategy);
-    results.forEach(result => {
-      walker.onResult(result);
-      walker.onResultDone();
-    });
-    walker.onStrategyDone();
-    return walker.descendants;
-  }
+    static _mergeEvaluations(evaluations, generated) {
+        const n = generated.length;
+        const mergedEvaluations = [];
+        for (let i = 0; i < n; i++) {
+            let merged = NaN;
+            for (const evaluation of evaluations) {
+                const fitness = evaluation[i];
+                if (isNaN(fitness)) {
+                    continue;
+                }
+                if (isNaN(merged)) {
+                    merged = fitness;
+                }
+                else {
+                    // TODO: how should evaluations be combined?
+                    merged = (merged * i + fitness) / (i + 1);
+                }
+            }
+            if (isNaN(merged)) {
+                // TODO: What should happen when there was no evaluation?
+                merged = 0.5;
+            }
+            mergedEvaluations.push(merged);
+        }
+        return mergedEvaluations;
+    }
+    static over(results, walker, strategy) {
+        walker.onStrategy(strategy);
+        results.forEach(result => {
+            walker.onResult(result);
+            walker.onResultDone();
+        });
+        walker.onStrategyDone();
+        return walker.descendants;
+    }
 }
-
-class Walker {
-  constructor() {
-    this.descendants = [];
-  }
-
-  onStrategy(strategy) {
-    this.currentStrategy = strategy;
-  }
-
-  onResult(result) {
-    this.currentResult = result;
-  }
-
-  createDescendant(result, score, hash, valid) {
-    assert(this.currentResult, 'no current result');
-    assert(this.currentStrategy, 'no current strategy');
-    if (this.currentResult.score) {
-      score += this.currentResult.score;
+class StrategizerWalker {
+    constructor() {
+        this.descendants = [];
     }
-    this.descendants.push({
-      result,
-      score,
-      derivation: [{parent: this.currentResult, strategy: this.currentStrategy}],
-      hash,
-      valid,
-    });
-  }
-
-  onResultDone() {
-    this.currentResult = undefined;
-  }
-
-  onStrategyDone() {
-    this.currentStrategy = undefined;
-  }
+    onStrategy(strategy) {
+        this.currentStrategy = strategy;
+    }
+    onResult(result) {
+        this.currentResult = result;
+    }
+    createDescendant(result, score, hash, valid) {
+        assert(this.currentResult, 'no current result');
+        assert(this.currentStrategy, 'no current strategy');
+        if (this.currentResult.score) {
+            score += this.currentResult.score;
+        }
+        this.descendants.push({
+            result,
+            score,
+            derivation: [{ parent: this.currentResult, strategy: this.currentStrategy }],
+            hash,
+            valid,
+        });
+    }
+    onResultDone() {
+        this.currentResult = undefined;
+    }
+    onStrategyDone() {
+        this.currentStrategy = undefined;
+    }
 }
-
-Strategizer.Walker = Walker;
-
 // TODO: Doc call convention, incl strategies are stateful.
 class Strategy {
-  async activate(strategizer) {
-    // Returns estimated ability to generate/evaluate.
-    // TODO: What do these numbers mean? Some sort of indication of the accuracy of the
-    // generated individuals and evaluations.
-    return {generate: 0, evaluate: 0};
-  }
-  getResults(inputParams) {
-    return inputParams.generated;
-  }
-  async generate(inputParams) {
-    return [];
-  }
-  async evaluate(strategizer, individuals) {
-    return individuals.map(() => NaN);
-  }
+    constructor(arc, args) {
+        this._arc = arc;
+        this._args = args;
+    }
+    get arc() { return this._arc; }
+    async activate(strategizer) {
+        // Returns estimated ability to generate/evaluate.
+        // TODO: What do these numbers mean? Some sort of indication of the accuracy of the
+        // generated individuals and evaluations.
+        return { generate: 0, evaluate: 0 };
+    }
+    getResults(inputParams) {
+        return inputParams.generated;
+    }
+    async generate(inputParams) {
+        return [];
+    }
+    async evaluate(strategizer, individuals) {
+        return individuals.map(() => NaN);
+    }
 }
-
+class RulesetBuilder {
+    constructor() {
+        // Strategy -> [Strategy*]
+        this._orderingRules = new Map();
+    }
+    /**
+     * When invoked for strategies (A, B), ensures that B will never follow A in
+     * the chain of derivations of all generated recipes.
+     *
+     * Following sequences are therefore valid: A, B, AB, AAABB, AC, DBC, CADCBCBD
+     * Following sequences are therefore invalid: BA, ABA, BCA, DBCA
+     *
+     * Transitive closure of the ordering is computed.
+     * I.e. For orderings (A, B) and (B, C), the ordering (A, C) is implied.
+     *
+     * Method can be called with multiple strategies at once.
+     * E.g. (A, B, C) implies (A, B), (B, C) and transitively (A, C).
+     *
+     * Method can be called with arrays of strategies, which represent groups.
+     * The ordering in the group is not enforced, but the ordering between them is.
+     * E.g. ([A, B], [C, D], E) is a shorthand for:
+     * (A, C), (A, D), (B, C), (B, D), (C, E), (D, E).
+     */
+    order(...strategiesOrGroups) {
+        for (let i = 0; i < strategiesOrGroups.length - 1; i++) {
+            const current = strategiesOrGroups[i];
+            const next = strategiesOrGroups[i + 1];
+            for (const strategy of Array.isArray(current) ? current : [current]) {
+                let set = this._orderingRules.get(strategy);
+                if (!set) {
+                    this._orderingRules.set(strategy, set = new Set());
+                }
+                for (const nextStrategy of Array.isArray(next) ? next : [next]) {
+                    set.add(nextStrategy);
+                }
+            }
+        }
+        return this;
+    }
+    build() {
+        // Making the ordering transitive.
+        const beingExpanded = new Set();
+        const alreadyExpanded = new Set();
+        for (const strategy of this._orderingRules.keys()) {
+            this._transitiveClosureFor(strategy, beingExpanded, alreadyExpanded);
+        }
+        return new Ruleset(this._orderingRules);
+    }
+    _transitiveClosureFor(strategy, beingExpanded, alreadyExpanded) {
+        assert(!beingExpanded.has(strategy), 'Detected a loop in the ordering rules');
+        const followingStrategies = this._orderingRules.get(strategy);
+        if (alreadyExpanded.has(strategy))
+            return followingStrategies || [];
+        if (followingStrategies) {
+            beingExpanded.add(strategy);
+            for (const following of followingStrategies) {
+                for (const expanded of this._transitiveClosureFor(following, beingExpanded, alreadyExpanded)) {
+                    followingStrategies.add(expanded);
+                }
+            }
+            beingExpanded.delete(strategy);
+        }
+        alreadyExpanded.add(strategy);
+        return followingStrategies || [];
+    }
+}
 class Ruleset {
-  constructor(orderingRules) {
-    this._orderingRules = orderingRules;
-  }
-
-  isAllowed(strategy, recipe) {
-    const forbiddenAncestors = this._orderingRules.get(strategy.constructor);
-    if (!forbiddenAncestors) return true;
-    // TODO: This can be sped up with AND-ing bitsets of derivation strategies and forbiddenAncestors.
-    return !recipe.derivation.some(d => forbiddenAncestors.has(d.strategy.constructor));
-  }
+    constructor(orderingRules) {
+        this._orderingRules = orderingRules;
+    }
+    isAllowed(strategy, recipe) {
+        const forbiddenAncestors = this._orderingRules.get(strategy.constructor);
+        if (!forbiddenAncestors)
+            return true;
+        // TODO: This can be sped up with AND-ing bitsets of derivation strategies and forbiddenAncestors.
+        return !recipe.derivation.some(d => forbiddenAncestors.has(d.strategy.constructor));
+    }
 }
-
-Ruleset.Builder = class {
-  constructor() {
-    // Strategy -> [Strategy*]
-    this._orderingRules = new Map();
-  }
-
-  /**
-   * When invoked for strategies (A, B), ensures that B will never follow A in
-   * the chain of derivations of all generated recipes.
-   *
-   * Following sequences are therefore valid: A, B, AB, AAABB, AC, DBC, CADCBCBD
-   * Following sequences are therefore invalid: BA, ABA, BCA, DBCA
-   *
-   * Transitive closure of the ordering is computed.
-   * I.e. For orderings (A, B) and (B, C), the ordering (A, C) is implied.
-   *
-   * Method can be called with multiple strategies at once.
-   * E.g. (A, B, C) implies (A, B), (B, C) and transitively (A, C).
-   *
-   * Method can be called with arrays of strategies, which represent groups.
-   * The ordering in the group is not enforced, but the ordering between them is.
-   * E.g. ([A, B], [C, D], E) is a shorthand for:
-   * (A, C), (A, D), (B, C), (B, D), (C, E), (D, E).
-   */
-  order(...strategiesOrGroups) {
-    for (let i = 0; i < strategiesOrGroups.length - 1; i++) {
-      const current = strategiesOrGroups[i];
-      const next = strategiesOrGroups[i + 1];
-      for (const strategy of Array.isArray(current) ? current : [current]) {
-        let set = this._orderingRules.get(strategy);
-        if (!set) {
-          this._orderingRules.set(strategy, set = new Set());
-        }
-        for (const nextStrategy of Array.isArray(next) ? next : [next]) {
-          set.add(nextStrategy);
-        }
-      }
-    }
-    return this;
-  }
-
-  build() {
-    // Making the ordering transitive.
-    const beingExpanded = new Set();
-    const alreadyExpanded = new Set();
-    for (const strategy of this._orderingRules.keys()) {
-      this._transitiveClosureFor(strategy, beingExpanded, alreadyExpanded);
-    }
-    return new Ruleset(this._orderingRules);
-  }
-
-  _transitiveClosureFor(strategy, beingExpanded, alreadyExpanded) {
-    assert(!beingExpanded.has(strategy), 'Detected a loop in the ordering rules');
-
-    const followingStrategies = this._orderingRules.get(strategy);
-    if (alreadyExpanded.has(strategy)) return followingStrategies || [];
-
-    if (followingStrategies) {
-      beingExpanded.add(strategy);
-      for (const following of followingStrategies) {
-        for (const expanded of this._transitiveClosureFor(
-            following, beingExpanded, alreadyExpanded)) {
-          followingStrategies.add(expanded);
-        }
-      }
-      beingExpanded.delete(strategy);
-    }
-    alreadyExpanded.add(strategy);
-
-    return followingStrategies || [];
-  }
-};
+// tslint:disable-next-line: variable-name
+Ruleset.Builder = RulesetBuilder;
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
 function compareNulls(o1, o2) {
@@ -11598,8 +11578,11 @@ function compareComparables(o1, o2) {
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-class ParticleEndPoint {
+class EndPoint {
+}
+class ParticleEndPoint extends EndPoint {
     constructor(particle, connection) {
+        super();
         this.particle = particle;
         this.connection = connection;
     }
@@ -11621,10 +11604,11 @@ class ParticleEndPoint {
         return `${this.particle.name}.${this.connection}`;
     }
 }
-class InstanceEndPoint {
+class InstanceEndPoint extends EndPoint {
     constructor(instance, connection) {
+        super();
         assert(instance);
-        this.recipe = instance.recipe;
+        //this.recipe = instance.recipe;
         this.instance = instance;
         this.connection = connection;
     }
@@ -11646,8 +11630,9 @@ class InstanceEndPoint {
         return `${nameMap.get(this.instance)}.${this.connection}`;
     }
 }
-class HandleEndPoint {
+class HandleEndPoint extends EndPoint {
     constructor(handle) {
+        super();
         this.handle = handle;
     }
     _clone(cloneMap = undefined) {
@@ -11663,8 +11648,9 @@ class HandleEndPoint {
         return `${this.handle.localName}`;
     }
 }
-class TagEndPoint {
+class TagEndPoint extends EndPoint {
     constructor(tags) {
+        super();
         this.tags = tags;
     }
     _clone(cloneMap = undefined) {
@@ -11680,6 +11666,7 @@ class TagEndPoint {
         return this.tags.map(a => `#${a}`).join(' ');
     }
 }
+//type EndPoint = ParticleEndPoint | InstanceEndPoint | HandleEndPoint | TagEndPoint;
 class ConnectionConstraint {
     constructor(fromConnection, toConnection, direction, type) {
         assert(direction);
@@ -40835,7 +40822,7 @@ var WalkerTactic;
     WalkerTactic["Permuted"] = "permuted";
     WalkerTactic["Independent"] = "independent";
 })(WalkerTactic || (WalkerTactic = {}));
-class WalkerBase extends Strategizer.Walker {
+class WalkerBase extends StrategizerWalker {
     constructor(tactic) {
         super();
         assert(tactic);
@@ -40920,7 +40907,7 @@ class WalkerBase extends Strategizer.Walker {
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-class Walker$1 extends WalkerBase {
+class Walker extends WalkerBase {
     onResult(result) {
         super.onResult(result);
         const recipe = result.result;
@@ -40984,8 +40971,8 @@ class Walker$1 extends WalkerBase {
         this._runUpdateList(recipe, updateList);
     }
 }
-Walker$1.Permuted = WalkerTactic.Permuted;
-Walker$1.Independent = WalkerTactic.Independent;
+Walker.Permuted = WalkerTactic.Permuted;
+Walker.Independent = WalkerTactic.Independent;
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class Shape$1 {
@@ -41312,250 +41299,217 @@ class RecipeUtil {
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-
 class MapSlots extends Strategy {
-  constructor(arc) {
-    super();
-    this._arc = arc;
-  }
-  async generate(inputParams) {
-    const arc = this._arc;
-
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onSlotConnection(recipe, slotConnection) {
-        // don't try to connect verb constraints
-        // TODO: is this right? Should constraints be connectible, in order to precompute the
-        // recipe side once the verb is substituted?
-        if (slotConnection.slotSpec == undefined) {
-          return undefined;
+    async generate(inputParams) {
+        const arc = this.arc;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onSlotConnection(recipe, slotConnection) {
+                // don't try to connect verb constraints
+                // TODO: is this right? Should constraints be connectible, in order to precompute the
+                // recipe side once the verb is substituted?
+                if (slotConnection.slotSpec == undefined) {
+                    return undefined;
+                }
+                if (slotConnection.isConnected()) {
+                    return undefined;
+                }
+                const { local, remote } = MapSlots.findAllSlotCandidates(slotConnection, arc);
+                // ResolveRecipe handles one-slot case.
+                if (local.length + remote.length < 2) {
+                    return undefined;
+                }
+                // If there are any local slots, prefer them over remote slots.
+                const slotList = local.length > 0 ? local : remote;
+                return slotList.map(slot => ((recipe, slotConnection) => {
+                    MapSlots.connectSlotConnection(slotConnection, slot);
+                    return 1;
+                }));
+            }
+        }(Walker.Permuted), this);
+    }
+    // Helper methods.
+    // Connect the given slot connection to the selectedSlot, create the slot, if needed.
+    static connectSlotConnection(slotConnection, selectedSlot) {
+        const recipe = slotConnection.recipe;
+        if (!slotConnection.targetSlot) {
+            let clonedSlot = recipe.updateToClone({ selectedSlot }).selectedSlot;
+            if (!clonedSlot) {
+                clonedSlot = recipe.slots.find(s => selectedSlot.id && selectedSlot.id === s.id);
+                if (clonedSlot == undefined) {
+                    clonedSlot = recipe.newSlot(selectedSlot.name);
+                    clonedSlot.id = selectedSlot.id;
+                }
+            }
+            slotConnection.connectToSlot(clonedSlot);
         }
-
-        if (slotConnection.isConnected()) {
-          return undefined;
+        assert(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id === slotConnection.targetSlot.id), `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
+        slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
+        // TODO: need to concat to existing tags and dedup?
+        slotConnection.targetSlot.tags = [...selectedSlot.tags];
+    }
+    // Returns all possible slot candidates, sorted by "quality"
+    static findAllSlotCandidates(slotConnection, arc) {
+        return {
+            // Note: during manfiest parsing, target slot is only set in slot connection, if the slot exists in the recipe.
+            // If this slot is internal to the recipe, it has the sourceConnection set to the providing connection
+            // (and hence the consuming connection is considered connected already). Otherwise, this may only be a remote slot.
+            local: !slotConnection.targetSlot ? MapSlots._findSlotCandidates(slotConnection, slotConnection.recipe.slots) : [],
+            remote: MapSlots._findSlotCandidates(slotConnection, arc.pec.slotComposer.getAvailableContexts())
+        };
+    }
+    // Returns the given slot candidates, sorted by "quality".
+    static _findSlotCandidates(slotConnection, slots) {
+        const possibleSlots = slots.filter(s => this.slotMatches(slotConnection, s));
+        possibleSlots.sort((slot1, slot2) => {
+            // TODO: implement.
+            return slot1.name < slot2.name;
+        });
+        return possibleSlots;
+    }
+    // Returns true, if the given slot is a viable candidate for the slotConnection.
+    static slotMatches(slotConnection, slot) {
+        if (!MapSlots.specMatch(slotConnection, slot)) {
+            return false;
         }
-
-        const {local, remote} = MapSlots.findAllSlotCandidates(slotConnection, arc);
-
-        // ResolveRecipe handles one-slot case.
-        if (local.length + remote.length < 2) {
-          return undefined;
+        if (!MapSlots.tagsOrNameMatch(slotConnection, slot)) {
+            return false;
         }
-
-        // If there are any local slots, prefer them over remote slots.
-        const slotList = local.length > 0 ? local : remote;
-        return slotList.map(slot => ((recipe, slotConnection) => {
-          MapSlots.connectSlotConnection(slotConnection, slot);
-          return 1;
-        }));
-      }
-    }(Walker$1.Permuted), this);
-  }
-
-  // Helper methods.
-  // Connect the given slot connection to the selectedSlot, create the slot, if needed.
-  static connectSlotConnection(slotConnection, selectedSlot) {
-    const recipe = slotConnection.recipe;
-    if (!slotConnection.targetSlot) {
-      let clonedSlot = recipe.updateToClone({selectedSlot}).selectedSlot;
-
-      if (!clonedSlot) {
-        clonedSlot = recipe.slots.find(s => selectedSlot.id && selectedSlot.id === s.id);
-        if (clonedSlot == undefined) {
-          clonedSlot = recipe.newSlot(selectedSlot.name);
-          clonedSlot.id = selectedSlot.id;
+        // Match handles of the provided slot with the slot-connection particle's handles.
+        if (!MapSlots.handlesMatch(slotConnection, slot)) {
+            return false;
         }
-      }
-      slotConnection.connectToSlot(clonedSlot);
+        return true;
     }
-
-    assert(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id === slotConnection.targetSlot.id),
-           `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
-    slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
-
-    // TODO: need to concat to existing tags and dedup?
-    slotConnection.targetSlot.tags = [...selectedSlot.tags];
-  }
-
-  // Returns all possible slot candidates, sorted by "quality"
-  static findAllSlotCandidates(slotConnection, arc) {
-    return {
-      // Note: during manfiest parsing, target slot is only set in slot connection, if the slot exists in the recipe.
-      // If this slot is internal to the recipe, it has the sourceConnection set to the providing connection
-      // (and hence the consuming connection is considered connected already). Otherwise, this may only be a remote slot.
-      local: !slotConnection.targetSlot ? MapSlots._findSlotCandidates(slotConnection, slotConnection.recipe.slots) : [],
-      remote: MapSlots._findSlotCandidates(slotConnection, arc.pec.slotComposer.getAvailableContexts())
-    };
-  }
-
-  // Returns the given slot candidates, sorted by "quality".
-  static _findSlotCandidates(slotConnection, slots) {
-    const possibleSlots = slots.filter(s => this.slotMatches(slotConnection, s));
-    possibleSlots.sort((slot1, slot2) => {
-        // TODO: implement.
-        return slot1.name < slot2.name;
-    });
-    return possibleSlots;
-  }
-
-  // Returns true, if the given slot is a viable candidate for the slotConnection.
-  static slotMatches(slotConnection, slot) {
-    if (!MapSlots.specMatch(slotConnection, slot)) {
-      return false;
+    static specMatch(slotConnection, slot) {
+        return slotConnection.slotSpec && // if there's no slotSpec, this is just a slot constraint on a verb
+            slotConnection.slotSpec.isSet === slot.spec.isSet;
     }
-
-    if (!MapSlots.tagsOrNameMatch(slotConnection, slot)) {
-      return false;
+    // Returns true, if the slot connection's tags intersection with slot's tags is nonempty.
+    // TODO: replace with generic tag matcher
+    static tagsOrNameMatch(slotConnection, slot) {
+        const consumeConnTags = [].concat(slotConnection.slotSpec.tags || [], slotConnection.tags, slotConnection.targetSlot ? slotConnection.targetSlot.tags : []);
+        const slotTags = new Set([].concat(slot.tags, slot.spec.tags || [], [slot.name]));
+        // Consume connection tags aren't empty and intersection with the slot isn't empty.
+        if (consumeConnTags.length > 0 && consumeConnTags.some(t => slotTags.has(t))) {
+            return true;
+        }
+        // For backward compatibility support explicit slot names matching.
+        return (slotConnection.name === slot.name);
     }
-
-    // Match handles of the provided slot with the slot-connection particle's handles.
-    if (!MapSlots.handlesMatch(slotConnection, slot)) {
-      return false;
+    // Returns true, if the providing slot handle restrictions are satisfied by the consuming slot connection.
+    // TODO: should we move some of this logic to the recipe? Or type matching?
+    static handlesMatch(slotConnection, slot) {
+        if (slot.handles.length === 0) {
+            return true; // slot is not limited to specific handles
+        }
+        return Object.values(slotConnection.particle.connections).find(handleConn => {
+            return slot.handles.includes(handleConn.handle) ||
+                (handleConn.handle && handleConn.handle.id && slot.handles.map(sh => sh.id).includes(handleConn.handle.id));
+        });
     }
-    return true;
-  }
-
-  static specMatch(slotConnection, slot) {
-    return slotConnection.slotSpec && // if there's no slotSpec, this is just a slot constraint on a verb
-          slotConnection.slotSpec.isSet === slot.spec.isSet;
-  }
-
-  // Returns true, if the slot connection's tags intersection with slot's tags is nonempty.
-  // TODO: replace with generic tag matcher
-  static tagsOrNameMatch(slotConnection, slot) {
-    const consumeConnTags = [].concat(slotConnection.slotSpec.tags || [], slotConnection.tags, slotConnection.targetSlot ? slotConnection.targetSlot.tags : []);
-    const slotTags = new Set([].concat(slot.tags, slot.spec.tags || [], [slot.name]));
-    // Consume connection tags aren't empty and intersection with the slot isn't empty.
-    if (consumeConnTags.length > 0 && consumeConnTags.some(t => slotTags.has(t))) {
-      return true;
-    }
-    // For backward compatibility support explicit slot names matching.
-    return (slotConnection.name === slot.name);
-  }
-
-  // Returns true, if the providing slot handle restrictions are satisfied by the consuming slot connection.
-  // TODO: should we move some of this logic to the recipe? Or type matching?
-  static handlesMatch(slotConnection, slot) {
-    if (slot.handles.length === 0) {
-      return true; // slot is not limited to specific handles
-    }
-    return Object.values(slotConnection.particle.connections).find(handleConn => {
-      return slot.handles.includes(handleConn.handle) ||
-              (handleConn.handle && handleConn.handle.id && slot.handles.map(sh => sh.id).includes(handleConn.handle.id));
-    });
-  }
 }
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
-
 class ResolveRecipe extends Strategy {
-  constructor(arc) {
-    super();
-    this._arc = arc;
-  }
-
-  async generate(inputParams) {
-    const arc = this._arc;
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onHandle(recipe, handle) {
-        if (handle.connections.length === 0 ||
-            (handle.id && handle.storageKey) || (!handle.type) ||
-            (!handle.fate)) {
-          return undefined;
-        }
-
-        let mappable;
-
-        if (!handle.id) {
-          // Handle doesn't have an ID, finding by type and tags.
-          const counts = RecipeUtil.directionCounts(handle);
-          switch (handle.fate) {
-            case 'use':
-              mappable = arc.findStoresByType(handle.type, {tags: handle.tags, subtype: counts.out === 0});
-              break;
-            case 'map':
-            case 'copy':
-              mappable = arc.context.findStoreByType(handle.type, {tags: handle.tags, subtype: true});
-              break;
-            case 'create':
-            case '?':
-              mappable = [];
-              break;
-            default:
-              throw new Error(`unexpected fate ${handle.fate}`);
-          }
-        } else if (!handle.storageKey) {
-          // Handle specified by the ID, but not yet mapped to storage.
-          let storeById;
-          switch (handle.fate) {
-            case 'use':
-              storeById = arc.findStoreById(handle.id);
-              break;
-            case 'map':
-            case 'copy':
-              storeById = arc.context.findStoreById(handle.id);
-              break;
-            case 'create':
-            case '?':
-              break;
-            default:
-              throw new Error(`unexpected fate ${handle.fate}`);
-          }
-          mappable = storeById ? [storeById] : [];
-        }
-
-        mappable = mappable.filter(incomingHandle => {
-          for (const existingHandle of recipe.handles) {
-            if (incomingHandle.id === existingHandle.id &&
-                existingHandle !== handle) {
-              return false;
+    async generate(inputParams) {
+        const arc = this.arc;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandle(recipe, handle) {
+                if (handle.connections.length === 0 ||
+                    (handle.id && handle.storageKey) || (!handle.type) ||
+                    (!handle.fate)) {
+                    return undefined;
+                }
+                let mappable;
+                if (!handle.id) {
+                    // Handle doesn't have an ID, finding by type and tags.
+                    const counts = RecipeUtil.directionCounts(handle);
+                    switch (handle.fate) {
+                        case 'use':
+                            mappable = arc.findStoresByType(handle.type, { tags: handle.tags, subtype: counts.out === 0 });
+                            break;
+                        case 'map':
+                        case 'copy':
+                            mappable = arc.context.findStoreByType(handle.type, { tags: handle.tags, subtype: true });
+                            break;
+                        case 'create':
+                        case '?':
+                            mappable = [];
+                            break;
+                        default:
+                            throw new Error(`unexpected fate ${handle.fate}`);
+                    }
+                }
+                else if (!handle.storageKey) {
+                    // Handle specified by the ID, but not yet mapped to storage.
+                    let storeById;
+                    switch (handle.fate) {
+                        case 'use':
+                            storeById = arc.findStoreById(handle.id);
+                            break;
+                        case 'map':
+                        case 'copy':
+                            storeById = arc.context.findStoreById(handle.id);
+                            break;
+                        case 'create':
+                        case '?':
+                            break;
+                        default:
+                            throw new Error(`unexpected fate ${handle.fate}`);
+                    }
+                    mappable = storeById ? [storeById] : [];
+                }
+                mappable = mappable.filter(incomingHandle => {
+                    for (const existingHandle of recipe.handles) {
+                        if (incomingHandle.id === existingHandle.id &&
+                            existingHandle !== handle) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+                if (mappable.length === 1) {
+                    return (recipe, handle) => {
+                        handle.mapToStorage(mappable[0]);
+                    };
+                }
+                return undefined;
             }
-          }
-          return true;
-        });
-
-        if (mappable.length === 1) {
-          return (recipe, handle) => {
-            handle.mapToStorage(mappable[0]);
-          };
-        }
-      }
-
-      onSlotConnection(recipe, slotConnection) {
-        if (slotConnection.isConnected()) {
-          return undefined;
-        }
-
-        const {local, remote} = MapSlots.findAllSlotCandidates(slotConnection, arc);
-        const allSlots = [...local, ...remote];
-
-        // MapSlots handles a multi-slot case.
-        if (allSlots.length !== 1) {
-          return undefined;
-        }
-
-        const selectedSlot = allSlots[0];
-        return (recipe, slotConnection) => {
-          MapSlots.connectSlotConnection(slotConnection, selectedSlot);
-          return 1;
-        };
-      }
-
-      onObligation(recipe, obligation) {
-        const fromParticle = obligation.from.instance;
-        const toParticle = obligation.to.instance;
-        for (const fromConnection of Object.values(fromParticle.connections)) {
-          for (const toConnection of Object.values(toParticle.connections)) {
-            if (fromConnection.handle && fromConnection.handle === toConnection.handle) {
-              return (recipe, obligation) => {
-                recipe.removeObligation(obligation);
-                return 1;
-              };
+            onSlotConnection(recipe, slotConnection) {
+                if (slotConnection.isConnected()) {
+                    return undefined;
+                }
+                const { local, remote } = MapSlots.findAllSlotCandidates(slotConnection, arc);
+                const allSlots = [...local, ...remote];
+                // MapSlots handles a multi-slot case.
+                if (allSlots.length !== 1) {
+                    return undefined;
+                }
+                const selectedSlot = allSlots[0];
+                return (recipe, slotConnection) => {
+                    MapSlots.connectSlotConnection(slotConnection, selectedSlot);
+                    return 1;
+                };
             }
-          }
-        }
-      }
-    }(Walker$1.Permuted), this);
-  }
+            // TODO(lindner): add typeof checks here and figure out where handle is coming from.
+            onObligation(recipe, obligation) {
+                const fromParticle = obligation.from.instance;
+                const toParticle = obligation.to.instance;
+                for (const fromConnection of Object.values(fromParticle.connections)) {
+                    for (const toConnection of Object.values(toParticle.connections)) {
+                        // @ts-ignore
+                        if (fromConnection.handle && fromConnection.handle === toConnection.handle) {
+                            return (recipe, obligation) => {
+                                recipe.removeObligation(obligation);
+                                return 1;
+                            };
+                        }
+                    }
+                }
+                return undefined;
+            }
+        }(Walker.Permuted), this);
+    }
 }
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
@@ -43314,29 +43268,27 @@ class PlanConsumer {
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-
 class InitSearch extends Strategy {
-  constructor(arc, {search}) {
-    super();
-    this._search = search;
-  }
-  async generate({generation}) {
-    if (this._search == null || generation !== 0) {
-      return [];
+    constructor(arc, { search }) {
+        super(arc, { search });
+        this._search = search;
     }
-
-    const recipe = new Recipe();
-    recipe.setSearchPhrase(this._search);
-    assert(recipe.normalize());
-    assert(!recipe.isResolved());
-
-    return [{
-      result: recipe,
-      score: 0,
-      derivation: [{strategy: this, parent: undefined}],
-      hash: recipe.digest(),
-    }];
-  }
+    async generate({ generation }) {
+        if (this._search == null || generation !== 0) {
+            return [];
+        }
+        const recipe = new Recipe();
+        recipe.setSearchPhrase(this._search);
+        assert(recipe.normalize());
+        assert(!recipe.isResolved());
+        return [{
+                result: recipe,
+                score: 0,
+                derivation: [{ strategy: this, parent: undefined }],
+                hash: recipe.digest(),
+                valid: true
+            }];
+    }
 }
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
@@ -43366,412 +43318,368 @@ function now$1() {
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-
 class ConvertConstraintsToConnections extends Strategy {
-  constructor(arc) {
-    super();
-    this.modality = arc.pec.slotComposer ? arc.pec.slotComposer.modality : null;
-  }
-  async generate(inputParams) {
-    const modality = this.modality;
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onRecipe(recipe) {
-        // The particles & handles Sets are used as input to RecipeUtil's shape functionality
-        // (this is the algorithm that "finds" the constraint set in the recipe).
-        // They track which particles/handles need to be found/created.
-        const particles = new Set();
-        const handles = new Set();
-        // The map object tracks the connections between particles that need to be found/created.
-        // It's another input to RecipeUtil.makeShape.
-        const map = {};
-        const particlesByName = {};
-        let handleCount = 0;
-        const obligations = [];
-        if (recipe.connectionConstraints.length === 0) {
-          return undefined;
-        }
-
-        for (const constraint of recipe.connectionConstraints) {
-          // Don't process constraints if their listed particles don't match the current modality.
-          if (modality && (!constraint.from.particle.matchModality(modality) || !constraint.to.particle.matchModality(modality))) {
-            return undefined;
-          }
-
-          const reverse = {'->': '<-', '=': '=', '<-': '->'};
-
-          // Set up initial mappings & input to RecipeUtil.
-          let handle;
-          let handleIsConcrete = false;
-          let createObligation = false;
-          if (constraint.from instanceof ParticleEndPoint) {
-            particles.add(constraint.from.particle.name);
-            if (map[constraint.from.particle.name] == undefined) {
-              map[constraint.from.particle.name] = {};
-              particlesByName[constraint.from.particle.name] = constraint.from.particle;
-            }
-            if (constraint.from.connection) {
-              handleIsConcrete = true;
-              handle = map[constraint.from.particle.name][constraint.from.connection];
-            } else {
-              createObligation = true;
-            }
-          }
-          if (constraint.from instanceof HandleEndPoint) {
-            handle = {handle: constraint.from.handle, direction: reverse[constraint.direction]};
-            handles.add(handle.handle);
-          }
-          if (constraint.to instanceof ParticleEndPoint) {
-            particles.add(constraint.to.particle.name);
-            if (map[constraint.to.particle.name] == undefined) {
-              map[constraint.to.particle.name] = {};
-              particlesByName[constraint.to.particle.name] = constraint.to.particle;
-            }
-            if (constraint.to.connection) {
-              handleIsConcrete = true;
-              if (!handle) {
-                handle =
-                    map[constraint.to.particle.name][constraint.to.connection];
-              }
-            } else {
-              createObligation = true;
-            }
-          }
-          if (constraint.to instanceof HandleEndPoint) {
-            handle = {handle: constraint.to.handle, direction: constraint.direction};
-            handles.add(handle.handle);
-          }
-          if (handle == undefined) {
-            handle = {handle: 'v' + handleCount++, direction: constraint.direction};
-            if (handleIsConcrete) {
-              handles.add(handle.handle);
-            }
-          }
-          if (constraint.from instanceof TagEndPoint) {
-            handle.tags = constraint.from.tags;
-          } else if (constraint.to instanceof TagEndPoint) {
-            handle.tags = constraint.to.tags;
-          }
-
-          if (createObligation) {
-            obligations.push({
-              from: constraint.from._clone(),
-              to: constraint.to._clone(),
-              direction: constraint.direction
-            });
-          }
-
-          const unionDirections = (a, b) => {
-            if (a === '=') {
-              return '=';
-            }
-            if (b === '=') {
-              return '=';
-            }
-            if (a !== b) {
-              return '=';
-            }
-            return a;
-          };
-
-          let direction = constraint.direction;
-          if (constraint.from instanceof ParticleEndPoint) {
-            const connection = constraint.from.connection;
-            if (connection) {
-              const existingHandle = map[constraint.from.particle.name][connection];
-              if (existingHandle) {
-                direction = unionDirections(direction, existingHandle.direction);
-                if (direction == null) {
-                  return undefined;
+    constructor(arc, args) {
+        super(arc, args);
+        this.modality = arc.pec.slotComposer ? arc.pec.slotComposer.modality : null;
+    }
+    async generate(inputParams) {
+        const modality = this.modality;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onRecipe(recipe) {
+                // The particles & handles Sets are used as input to RecipeUtil's shape functionality
+                // (this is the algorithm that "finds" the constraint set in the recipe).
+                // They track which particles/handles need to be found/created.
+                const particles = new Set();
+                const handles = new Set();
+                // The map object tracks the connections between particles that need to be found/created.
+                // It's another input to RecipeUtil.makeShape.
+                // tslint:disable-next-line: no-any
+                const map = {};
+                const particlesByName = {};
+                let handleCount = 0;
+                const obligations = [];
+                if (recipe.connectionConstraints.length === 0) {
+                    return undefined;
                 }
-              }
-              map[constraint.from.particle.name][connection] = {handle: handle.handle, direction, tags: handle.tags};
-            }
-          }
-
-          direction = reverse[constraint.direction];          
-          if (constraint.to instanceof ParticleEndPoint) {
-            const connection = constraint.to.connection;
-            if (connection) {
-              const existingHandle = map[constraint.to.particle.name][connection];
-              if (existingHandle) {
-                direction = unionDirections(direction, existingHandle.direction);
-                if (direction == null) {
-                  return undefined;
+                for (const constraint of recipe.connectionConstraints) {
+                    const from = constraint.from;
+                    const to = constraint.to;
+                    // Don't process constraints if their listed particles don't match the current modality.
+                    if (modality
+                        && from instanceof ParticleEndPoint
+                        && to instanceof ParticleEndPoint
+                        && (!from.particle.matchModality(modality) || !to.particle.matchModality(modality))) {
+                        return undefined;
+                    }
+                    const reverse = { '->': '<-', '=': '=', '<-': '->' };
+                    // Set up initial mappings & input to RecipeUtil.
+                    let handle;
+                    let handleIsConcrete = false;
+                    let createObligation = false;
+                    if (from instanceof ParticleEndPoint) {
+                        particles.add(from.particle.name);
+                        if (map[from.particle.name] == undefined) {
+                            map[from.particle.name] = {};
+                            particlesByName[from.particle.name] = from.particle;
+                        }
+                        if (from.connection) {
+                            handleIsConcrete = true;
+                            handle = map[from.particle.name][from.connection];
+                        }
+                        else {
+                            createObligation = true;
+                        }
+                    }
+                    if (from instanceof HandleEndPoint) {
+                        handle = { handle: from.handle, direction: reverse[constraint.direction] };
+                        handles.add(handle.handle);
+                    }
+                    if (to instanceof ParticleEndPoint) {
+                        particles.add(to.particle.name);
+                        if (map[to.particle.name] == undefined) {
+                            map[to.particle.name] = {};
+                            particlesByName[to.particle.name] = to.particle;
+                        }
+                        if (to.connection) {
+                            handleIsConcrete = true;
+                            if (!handle) {
+                                handle =
+                                    map[to.particle.name][to.connection];
+                            }
+                        }
+                        else {
+                            createObligation = true;
+                        }
+                    }
+                    if (to instanceof HandleEndPoint) {
+                        handle = { handle: to.handle, direction: constraint.direction };
+                        handles.add(handle.handle);
+                    }
+                    if (handle == undefined) {
+                        handle = { handle: 'v' + handleCount++, direction: constraint.direction };
+                        if (handleIsConcrete) {
+                            handles.add(handle.handle);
+                        }
+                    }
+                    if (from instanceof TagEndPoint) {
+                        handle.tags = from.tags;
+                    }
+                    else if (to instanceof TagEndPoint) {
+                        handle.tags = to.tags;
+                    }
+                    if (createObligation) {
+                        obligations.push({
+                            from: from._clone(),
+                            to: to._clone(),
+                            direction: constraint.direction
+                        });
+                    }
+                    const unionDirections = (a, b) => {
+                        if (a === '=') {
+                            return '=';
+                        }
+                        if (b === '=') {
+                            return '=';
+                        }
+                        if (a !== b) {
+                            return '=';
+                        }
+                        return a;
+                    };
+                    let direction = constraint.direction;
+                    if (from instanceof ParticleEndPoint) {
+                        const connection = from.connection;
+                        if (connection) {
+                            const existingHandle = map[from.particle.name][connection];
+                            if (existingHandle) {
+                                direction = unionDirections(direction, existingHandle.direction);
+                                if (direction == null) {
+                                    return undefined;
+                                }
+                            }
+                            map[from.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags };
+                        }
+                    }
+                    direction = reverse[constraint.direction];
+                    if (to instanceof ParticleEndPoint) {
+                        const connection = to.connection;
+                        if (connection) {
+                            const existingHandle = map[to.particle.name][connection];
+                            if (existingHandle) {
+                                direction = unionDirections(direction, existingHandle.direction);
+                                if (direction == null) {
+                                    return undefined;
+                                }
+                            }
+                            map[to.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags };
+                        }
+                    }
                 }
-              }
-              map[constraint.to.particle.name][connection] = {handle: handle.handle, direction, tags: handle.tags};
+                const shape = RecipeUtil.makeShape([...particles.values()], [...handles.values()], map);
+                const matches = RecipeUtil.find(recipe, shape);
+                const results = RecipeUtil.find(recipe, shape);
+                const processedResults = results.filter(match => {
+                    // Ensure that every handle is either matched, or an input of at least one
+                    // connected particle in the constraints.
+                    const resolvedHandles = {};
+                    for (const particle of Object.keys(map)) {
+                        for (const connection of Object.keys(map[particle])) {
+                            const handle = map[particle][connection].handle;
+                            if (resolvedHandles[handle]) {
+                                continue;
+                            }
+                            if (match.match[handle]) {
+                                resolvedHandles[handle] = true;
+                            }
+                            else {
+                                const spec = particlesByName[particle];
+                                resolvedHandles[handle] = spec.isOutput(connection);
+                            }
+                        }
+                    }
+                    return Object.values(resolvedHandles).every(value => value);
+                }).map(match => {
+                    return (recipe) => {
+                        const score = recipe.connectionConstraints.length + match.score;
+                        const recipeMap = recipe.updateToClone(match.match);
+                        for (const particle of Object.keys(map)) {
+                            let recipeParticle = recipeMap[particle];
+                            if (!recipeParticle) {
+                                recipeParticle = recipe.newParticle(particle);
+                                recipeParticle.spec = particlesByName[particle];
+                                recipeMap[particle] = recipeParticle;
+                            }
+                            for (const connection of Object.keys(map[particle])) {
+                                const handle = map[particle][connection];
+                                let recipeHandleConnection = recipeParticle.connections[connection];
+                                if (recipeHandleConnection == undefined) {
+                                    recipeHandleConnection =
+                                        recipeParticle.addConnectionName(connection);
+                                }
+                                let recipeHandle = recipeMap[handle.handle];
+                                if (recipeHandle == null && recipeHandleConnection.handle == null) {
+                                    recipeHandle = recipe.newHandle();
+                                    recipeHandle.fate = 'create';
+                                    recipeHandle.tags = handle.tags || [];
+                                    recipeMap[handle.handle] = recipeHandle;
+                                }
+                                if (recipeHandleConnection.handle == null) {
+                                    recipeHandleConnection.connectToHandle(recipeHandle);
+                                }
+                            }
+                        }
+                        recipe.clearConnectionConstraints();
+                        for (const obligation of obligations) {
+                            const from = new InstanceEndPoint(recipeMap[obligation.from.particle.name], obligation.from.connection);
+                            const to = new InstanceEndPoint(recipeMap[obligation.to.particle.name], obligation.to.connection);
+                            recipe.newObligation(from, to, obligation.direction);
+                        }
+                        return score;
+                    };
+                });
+                return processedResults;
             }
-          }
-        }
-        const shape = RecipeUtil.makeShape([...particles.values()], [...handles.values()], map);
-        const matches = RecipeUtil.find(recipe, shape);
-
-        const results = matches.filter(match => {
-          // Ensure that every handle is either matched, or an input of at least one
-          // connected particle in the constraints.
-          const resolvedHandles = {};
-          for (const particle of Object.keys(map)) {
-            for (const connection of Object.keys(map[particle])) {
-              const handle = map[particle][connection].handle;
-              if (resolvedHandles[handle]) {
-                continue;
-              }
-              if (match.match[handle]) {
-                resolvedHandles[handle] = true;
-              } else {
-                const spec = particlesByName[particle];
-                resolvedHandles[handle] = spec.isOutput(connection);
-              }
-            }
-          }
-          return Object.values(resolvedHandles).every(value => value);
-        }).map(match => {
-          return (recipe) => {
-            const score = recipe.connectionConstraints.length + match.score;
-            const recipeMap = recipe.updateToClone(match.match);
-            
-            for (const particle of Object.keys(map)) {
-              let recipeParticle = recipeMap[particle];
-              if (!recipeParticle) {
-                recipeParticle = recipe.newParticle(particle);
-                recipeParticle.spec = particlesByName[particle];
-                recipeMap[particle] = recipeParticle;
-              }
-
-              for (const connection of Object.keys(map[particle])) {
-                const handle = map[particle][connection];
-                let recipeHandleConnection = recipeParticle.connections[connection];
-                if (recipeHandleConnection == undefined) {
-                  recipeHandleConnection =
-                      recipeParticle.addConnectionName(connection);
-                }
-                let recipeHandle = recipeMap[handle.handle];
-                if (recipeHandle == null && recipeHandleConnection.handle == null) {
-                  recipeHandle = recipe.newHandle();
-                  recipeHandle.fate = 'create';
-                  recipeHandle.tags = handle.tags || [];
-                  recipeMap[handle.handle] = recipeHandle;
-                }
-                if (recipeHandleConnection.handle == null) {
-                  recipeHandleConnection.connectToHandle(recipeHandle);
-                }
-              }
-            }
-            recipe.clearConnectionConstraints();
-            for (const obligation of obligations) {
-              const from = new InstanceEndPoint(recipeMap[obligation.from.particle.name], obligation.from.connection);
-              const to = new InstanceEndPoint(recipeMap[obligation.to.particle.name], obligation.to.connection);
-              recipe.newObligation(from, to, obligation.direction);
-            }
-            return score;
-          };
-        });
-
-        return results;
-      }
-    }(Walker$1.Independent), this);
-  }
+        }(Walker.Independent), this);
+    }
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-
 class AssignHandles extends Strategy {
-  constructor(arc) {
-    super();
-    this._arc = arc;
-  }
-
-  get arc() { return this._arc; }
-
-  async generate(inputParams) {
-    const self = this;
-
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onHandle(recipe, handle) {
-        if (!['?', 'use', 'copy', 'map'].includes(handle.fate)) {
-          return undefined;
-        }
-
-        if (handle.connections.length === 0) {
-          return undefined;
-        }
-
-        if (handle.id) {
-          return undefined;
-        }
-
-        if (!handle.type) {
-          return undefined;
-        }
-
-        // TODO: using the connection to retrieve type information is wrong.
-        // Once validation of recipes generates type information on the handle
-        // we should switch to using that instead.
-        const counts = RecipeUtil.directionCounts(handle);
-        if (counts.unknown > 0) {
-          return undefined;
-        }
-
-        const score = this._getScore(counts, handle.tags);
-
-        if (counts.out > 0 && handle.fate === 'map') {
-          return undefined;
-        }
-        const stores = self.getMappableStores(handle.fate, handle.type, handle.tags, counts);
-        if (handle.fate !== '?' && stores.size < 2) {
-          // These handles are mapped by resolve-recipe strategy.
-          return undefined;
-        }
-
-        const responses = [...stores.keys()].map(store =>
-          ((recipe, clonedHandle) => {
-            assert(store.id);
-            if (recipe.handles.find(handle => handle.id === store.id)) {
-              // TODO: Why don't we link the handle connections to the existingHandle?
-              return 0;
+    async generate(inputParams) {
+        const self = this;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandle(recipe, handle) {
+                if (!['?', 'use', 'copy', 'map'].includes(handle.fate)) {
+                    return undefined;
+                }
+                if (handle.connections.length === 0) {
+                    return undefined;
+                }
+                if (handle.id) {
+                    return undefined;
+                }
+                if (!handle.type) {
+                    return undefined;
+                }
+                // TODO: using the connection to retrieve type information is wrong.
+                // Once validation of recipes generates type information on the handle
+                // we should switch to using that instead.
+                const counts = RecipeUtil.directionCounts(handle);
+                if (counts.unknown > 0) {
+                    return undefined;
+                }
+                const score = this._getScore(counts, handle.tags);
+                if (counts.out > 0 && handle.fate === 'map') {
+                    return undefined;
+                }
+                const stores = self.getMappableStores(handle.fate, handle.type, handle.tags, counts);
+                if (handle.fate !== '?' && stores.size < 2) {
+                    // These handles are mapped by resolve-recipe strategy.
+                    return undefined;
+                }
+                const responses = [...stores.keys()].map(store => ((recipe, clonedHandle) => {
+                    assert(store.id);
+                    if (recipe.handles.find(handle => handle.id === store.id)) {
+                        // TODO: Why don't we link the handle connections to the existingHandle?
+                        return 0;
+                    }
+                    clonedHandle.mapToStorage(store);
+                    if (clonedHandle.fate === '?') {
+                        clonedHandle.fate = stores.get(store);
+                    }
+                    else {
+                        assert(clonedHandle.fate, stores.get(store));
+                    }
+                    return score;
+                }));
+                return responses;
             }
-
-            clonedHandle.mapToStorage(store);
-            if (clonedHandle.fate === '?') {
-              clonedHandle.fate = stores.get(store);
-            } else {
-              assert(clonedHandle.fate, stores.get(store));
+            _getScore(counts, tags) {
+                let score = -1;
+                if (counts.in === 0 || counts.out === 0) {
+                    if (counts.out === 0) {
+                        score = 1;
+                    }
+                    else {
+                        score = 0;
+                    }
+                }
+                // TODO: Why is score negative, where there are both - in and out?
+                if (tags.length > 0) {
+                    score += 4;
+                }
+                return score;
             }
-            return score;
-          }));
-
-        return responses;
-      }
-
-      _getScore(counts, tags) {
-        let score = -1;
-        if (counts.in === 0 || counts.out === 0) {
-          if (counts.out === 0) {
-            score = 1;
-          } else {
-            score = 0;
-          }
-        }
-        // TODO: Why is score negative, where there are both - in and out?
-
-        if (tags.length > 0) {
-          score += 4;
-        }
-        return score;
-      }
-
-    }(Walker$1.Permuted), this);
-  }
-
-  getMappableStores(fate, type, tags, counts) {
-    const stores = new Map();
-    if (fate === 'use' || fate === '?') {
-      const subtype = counts.out === 0;
-      // TODO: arc.findStoresByType doesn't use `subtype`. Shall it be removed?
-      this.arc.findStoresByType(type, {tags, subtype}).forEach(store => stores.set(store, 'use'));
+        }(Walker.Permuted), this);
     }
-    if (fate === 'map' || fate === 'copy' || fate === '?') {
-      this.arc.context.findStoreByType(type, {tags, subtype: true}).forEach(
-          store => stores.set(store, fate === '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));
+    getMappableStores(fate, type, tags, counts) {
+        const stores = new Map();
+        if (fate === 'use' || fate === '?') {
+            const subtype = counts.out === 0;
+            // TODO: arc.findStoresByType doesn't use `subtype`. Shall it be removed?
+            this.arc.findStoresByType(type, { tags, subtype }).forEach(store => stores.set(store, 'use'));
+        }
+        if (fate === 'map' || fate === 'copy' || fate === '?') {
+            this.arc.context.findStoreByType(type, { tags, subtype: true }).forEach(store => stores.set(store, fate === '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));
+        }
+        return stores;
     }
-    return stores;
-  }
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-
 class InitPopulation extends Strategy {
-  constructor(arc, {contextual = false}) {
-    super();
-    this._arc = arc;
-    this._contextual = contextual;
-    this._loadedParticles = new Set(this._arc.loadedParticles().map(spec => spec.implFile));
-  }
-
-  async generate({generation}) {
-    if (generation !== 0) {
-      return [];
+    constructor(arc, { contextual = false }) {
+        super(arc, { contextual });
+        this._contextual = contextual;
+        this._loadedParticles = new Set(this.arc.loadedParticles().map(spec => spec.implFile));
     }
-
-    await this._arc.recipeIndex.ready;
-    const results = this._contextual
-        ? this._contextualResults()
-        : this._allResults();
-
-    return results.map(({recipe, score = 1}) => ({
-      result: recipe,
-      score,
-      derivation: [{strategy: this, parent: undefined}],
-      hash: recipe.digest(),
-      valid: Object.isFrozen(recipe)
-    }));
-  }
-
-  _contextualResults() {
-    const results = [];
-    for (const slot of this._arc.activeRecipe.slots.filter(s => s.sourceConnection)) {
-      results.push(...this._arc.recipeIndex.findConsumeSlotConnectionMatch(slot).map(
-          ({slotConn}) => ({recipe: slotConn.recipe})));
-    }
-    let innerArcHandles = [];
-    for (const recipe of this._arc._recipes) {
-      for (const innerArc of [...recipe.innerArcs.values()]) {
-        innerArcHandles = innerArcHandles.concat(innerArc.activeRecipe.handles);
-      }
-    }
-    for (const handle of this._arc.activeRecipe.handles.concat(innerArcHandles)) {
-      results.push(...this._arc.recipeIndex.findHandleMatch(handle, ['use', '?']).map(
-          otherHandle => ({recipe: otherHandle.recipe})));
-    }
-    return results;
-  }
-
-  _allResults() {
-    return this._arc.recipeIndex.recipes.map(recipe => ({
-      recipe,
-      score: 1 - recipe.particles.filter(
-          particle => particle.spec && this._loadedParticles.has(particle.spec.implFile)).length
-    }));
-  }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-
-class MatchParticleByVerb extends Strategy {
-  constructor(arc) {
-    super();
-    this._arc = arc;
-  }
-
-  async generate(inputParams) {
-    const arc = this._arc;
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onParticle(recipe, particle) {
-        if (particle.name) {
-          // Particle already has explicit name.
-          return undefined;
+    async generate({ generation }) {
+        if (generation !== 0) {
+            return [];
         }
-
-        const particleSpecs = arc.context.findParticlesByVerb(particle.primaryVerb)
-            .filter(spec => !arc.pec.slotComposer || spec.matchModality(arc.pec.slotComposer.modality));
-
-        return particleSpecs.map(spec => {
-          return (recipe, particle) => {
-            const score = 1;
-
-            particle.name = spec.name;
-            particle.spec = spec;
-
-            return score;
-          };
-        });
-      }
-    }(Walker$1.Permuted), this);
-  }
+        await this.arc.recipeIndex.ready;
+        const results = this._contextual
+            ? this._contextualResults()
+            : this._allResults();
+        return results.map(({ recipe, score = 1 }) => ({
+            result: recipe,
+            score,
+            derivation: [{ strategy: this, parent: undefined }],
+            hash: recipe.digest(),
+            valid: Object.isFrozen(recipe)
+        }));
+    }
+    _contextualResults() {
+        const results = [];
+        for (const slot of this.arc.activeRecipe.slots.filter(s => s.sourceConnection)) {
+            results.push(...this.arc.recipeIndex.findConsumeSlotConnectionMatch(slot).map(({ slotConn }) => ({ recipe: slotConn.recipe })));
+        }
+        let innerArcHandles = [];
+        for (const recipe of this.arc.recipes) {
+            for (const innerArc of [...recipe.innerArcs.values()]) {
+                innerArcHandles = innerArcHandles.concat(innerArc.activeRecipe.handles);
+            }
+        }
+        for (const handle of this.arc.activeRecipe.handles.concat(innerArcHandles)) {
+            results.push(...this.arc.recipeIndex.findHandleMatch(handle, ['use', '?']).map(otherHandle => ({ recipe: otherHandle.recipe })));
+        }
+        return results;
+    }
+    _allResults() {
+        return this.arc.recipeIndex.recipes.map(recipe => ({
+            recipe,
+            score: 1 - recipe.particles.filter(particle => particle.spec && this._loadedParticles.has(particle.spec.implFile)).length
+        }));
+    }
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
+class MatchParticleByVerb extends Strategy {
+    async generate(inputParams) {
+        const arc = this.arc;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onParticle(recipe, particle) {
+                if (particle.name) {
+                    // Particle already has explicit name.
+                    return undefined;
+                }
+                const particleSpecs = arc.context.findParticlesByVerb(particle.primaryVerb)
+                    .filter(spec => !arc.pec.slotComposer || spec.matchModality(arc.pec.slotComposer.modality));
+                return particleSpecs.map(spec => {
+                    return (recipe, particle) => {
+                        const score = 1;
+                        particle.name = spec.name;
+                        particle.spec = spec;
+                        return score;
+                    };
+                });
+            }
+        }(Walker.Permuted), this);
+    }
+}
 
+// Copyright (c) 2017 Google Inc. All rights reserved.
 // This strategy substitutes '&verb' declarations with recipes,
 // according to the following conditions:
 // 1) the recipe is named by the verb described in the particle
@@ -43784,602 +43692,512 @@ class MatchParticleByVerb extends Strategy {
 // this strategy currently only connects the first instance of the pattern up
 // if there are multiple instances.
 class MatchRecipeByVerb extends Strategy {
-  constructor(arc) {
-    super();
-    this._arc = arc;
-  }
-
-  async generate(inputParams) {
-    const arc = this._arc;
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onParticle(recipe, particle) {
-        if (particle.name) {
-          // Particle already has explicit name.
-          return undefined;
-        }
-
-        let recipes = arc.context.findRecipesByVerb(particle.primaryVerb);
-
-        // Extract slot information from recipe. This is extracted in the form:
-        // {consume-slot-name: targetSlot: <slot>, providedSlots: {provide-slot-name: <slot>}}
-        //
-        // Note that slots are only included if connected to other components of the recipe - e.g.
-        // the target slot has a source connection.
-        const slotConstraints = {};
-        for (const consumeSlot of Object.values(particle.consumedSlotConnections)) {
-          const targetSlot = consumeSlot.targetSlot && consumeSlot.targetSlot.sourceConnection ? consumeSlot.targetSlot : null;
-          slotConstraints[consumeSlot.name] = {targetSlot, providedSlots: {}};
-          for (const providedSlot of Object.keys(consumeSlot.providedSlots)) {
-            const sourceSlot = consumeSlot.providedSlots[providedSlot].consumeConnections.length > 0 ? consumeSlot.providedSlots[providedSlot] : null;
-            slotConstraints[consumeSlot.name].providedSlots[providedSlot] = sourceSlot;
-          }
-        }
-
-        const handleConstraints = {named: {}, unnamed: []};
-        for (const handleConnection of Object.values(particle.connections)) {
-          handleConstraints.named[handleConnection.name] = {direction: handleConnection.direction, handle: handleConnection.handle};
-        }
-        for (const unnamedConnection of particle.unnamedConnections) {
-          handleConstraints.unnamed.push({direction: unnamedConnection.direction, handle: unnamedConnection.handle});
-        }
-
-        recipes = recipes.filter(recipe => MatchRecipeByVerb.satisfiesSlotConstraints(recipe, slotConstraints))
-                         .filter(recipe => MatchRecipeByVerb.satisfiesHandleConstraints(recipe, handleConstraints));
-
-        return recipes.map(recipe => {
-          return (outputRecipe, particleForReplacing) => {
-            const {handles, particles, slots} = recipe.mergeInto(outputRecipe);
-
-            particleForReplacing.remove();
-
-
-            for (const consumeSlot in slotConstraints) {
-              if (slotConstraints[consumeSlot].targetSlot || Object.values(slotConstraints[consumeSlot].providedSlots).filter(a => a != null).length > 0) {
-                let slotMapped = false;
-                for (const particle of particles) {
-                  if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, consumeSlot, slotConstraints[consumeSlot].providedSlots)) {
-                    if (slotConstraints[consumeSlot].targetSlot) {
-                      const {mappedSlot} = outputRecipe.updateToClone({mappedSlot: slotConstraints[consumeSlot].targetSlot});
-                      particle.consumedSlotConnections[consumeSlot]._targetSlot = mappedSlot;
-                      mappedSlot.consumeConnections.push(particle.consumedSlotConnections[consumeSlot]);
+    async generate(inputParams) {
+        const arc = this.arc;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onParticle(recipe, particle) {
+                if (particle.name) {
+                    // Particle already has explicit name.
+                    return undefined;
+                }
+                let recipes = arc.context.findRecipesByVerb(particle.primaryVerb);
+                // Extract slot information from recipe. This is extracted in the form:
+                // {consume-slot-name: targetSlot: <slot>, providedSlots: {provide-slot-name: <slot>}}
+                //
+                // Note that slots are only included if connected to other components of the recipe - e.g.
+                // the target slot has a source connection.
+                const slotConstraints = {};
+                for (const consumeSlot of Object.values(particle.consumedSlotConnections)) {
+                    const targetSlot = consumeSlot.targetSlot && consumeSlot.targetSlot.sourceConnection ? consumeSlot.targetSlot : null;
+                    slotConstraints[consumeSlot.name] = { targetSlot, providedSlots: {} };
+                    for (const providedSlot of Object.keys(consumeSlot.providedSlots)) {
+                        const sourceSlot = consumeSlot.providedSlots[providedSlot].consumeConnections.length > 0 ? consumeSlot.providedSlots[providedSlot] : null;
+                        slotConstraints[consumeSlot.name].providedSlots[providedSlot] = sourceSlot;
                     }
-                    for (const slotName in slotConstraints[consumeSlot].providedSlots) {
-                      const slot = slotConstraints[consumeSlot].providedSlots[slotName];
-                      if (slot == null) {
-                        continue;
-                      }
-                      const {mappedSlot} = outputRecipe.updateToClone({mappedSlot: slot});
-                      const oldSlot = particle.consumedSlotConnections[consumeSlot].providedSlots[slotName];
-                      oldSlot.remove();
-                      particle.consumedSlotConnections[consumeSlot].providedSlots[slotName] = mappedSlot;
-                      mappedSlot._sourceConnection = particle.consumedSlotConnections[consumeSlot];
-                    }
-                    slotMapped = true;
-                    break;
-                  }
                 }
-                assert(slotMapped);
-              }
-            }
-
-            function tryApplyHandleConstraint(name, connection, constraint, handle) {
-              if (connection.handle != null) {
-                return false;
-              }
-              if (!MatchRecipeByVerb.connectionMatchesConstraint(
-                      connection, constraint)) {
-                return false;
-              }
-              for (let i = 0; i < handle.connections.length; i++) {
-                const candidate = handle.connections[i];
-                // TODO candidate.name === name triggers test failures
-                if (candidate.particle === particleForReplacing && candidate.name == name) {
-                  connection._handle = handle;
-                  handle.connections[i] = connection;
-                  return true;
+                const handleConstraints = { named: {}, unnamed: [] };
+                for (const handleConnection of Object.values(particle.connections)) {
+                    handleConstraints.named[handleConnection.name] = { direction: handleConnection.direction, handle: handleConnection.handle };
                 }
-              }
-              return false;
-            }
-
-            function applyHandleConstraint(name, constraint, handle) {
-              const {mappedHandle} = outputRecipe.updateToClone({mappedHandle: handle});
-              for (const particle of particles) {
-                if (name) {
-                  if (tryApplyHandleConstraint(
-                          name,
-                          particle.connections[name],
-                          constraint,
-                          mappedHandle)) {
-                    return true;
-                  }
-                } else {
-                  for (const connection of Object.values(particle.connections)) {
-                    if (tryApplyHandleConstraint(
-                            name, connection, constraint, mappedHandle)) {
-                      return true;
-                    }
-                  }
+                for (const unnamedConnection of particle.unnamedConnections) {
+                    handleConstraints.unnamed.push({ direction: unnamedConnection.direction, handle: unnamedConnection.handle });
                 }
-              }
-              return false;
-            }
-
-            for (const name in handleConstraints.named) {
-              if (handleConstraints.named[name].handle) {
-                assert(applyHandleConstraint(
-                    name,
-                    handleConstraints.named[name],
-                    handleConstraints.named[name].handle));
-              }
-            }
-
-            for (const connection of handleConstraints.unnamed) {
-              if (connection.handle) {
-                assert(
-                    applyHandleConstraint(null, connection, connection.handle));
-              }
-            }
-
-            return 1;
-          };
-        });
-      }
-    }(Walker$1.Permuted), this);
-  }
-
-  static satisfiesHandleConstraints(recipe, handleConstraints) {
-    for (const handleName in handleConstraints.named) {
-      if (!MatchRecipeByVerb.satisfiesHandleConnection(
-              recipe, handleName, handleConstraints.named[handleName])) {
-        return false;
-      }
-    }
-    for (const handleData of handleConstraints.unnamed) {
-      if (!MatchRecipeByVerb.satisfiesUnnamedHandleConnection(
-              recipe, handleData)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  static satisfiesUnnamedHandleConnection(recipe, handleData) {
-    // refuse to match unnamed handle connections unless some type information is present.
-    if (!handleData.handle) {
-      return false;
-    }
-    for (const particle of recipe.particles) {
-      for (const connection of Object.values(particle.connections)) {
-        if (MatchRecipeByVerb.connectionMatchesConstraint(
-                connection, handleData)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  static satisfiesHandleConnection(recipe, handleName, handleData) {
-    for (const particle of recipe.particles) {
-      if (particle.connections[handleName]) {
-        if (MatchRecipeByVerb.connectionMatchesConstraint(
-                particle.connections[handleName], handleData)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  static connectionMatchesConstraint(connection, handleData) {
-    if (connection.direction !== handleData.direction) {
-      return false;
-    }
-    if (!handleData.handle) {
-      return true;
-    }
-    return Handle$1.effectiveType(handleData.handle._mappedType, handleData.handle.connections.concat(connection)) != null;
-  }
-
-  static satisfiesSlotConstraints(recipe, slotConstraints) {
-    for (const slotName in slotConstraints) {
-      if (!MatchRecipeByVerb.satisfiesSlotConnection(
-              recipe, slotName, slotConstraints[slotName])) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  static satisfiesSlotConnection(recipe, slotName, constraints) {
-    for (const particle of recipe.particles) {
-      if (MatchRecipeByVerb.slotsMatchConstraint(
-              particle.consumedSlotConnections, slotName, constraints)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  static slotsMatchConstraint(connections, name, constraints) {
-    if (connections[name] == null) {
-      return false;
-    }
-    if (connections[name]._targetSlot != null &&
-        constraints.targetSlot != null) {
-      return false;
-    }
-    for (const provideName in constraints.providedSlots) {
-      if (connections[name].providedSlots[provideName] == null) {
-        return false;
-      }
-    }
-    return true;
-  }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-
-class AddMissingHandles extends Strategy {
-  // TODO: move generation to use an async generator.
-  async generate(inputParams) {
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onRecipe(recipe) {
-        // Don't add use handles while there are outstanding constraints
-        if (recipe.connectionConstraints.length > 0) {
-          return undefined;
-        }
-        // Don't add use handles to a recipe with free handles
-        const freeHandles = recipe.handles.filter(handle => handle.connections.length === 0);
-        if (freeHandles.length > 0) {
-          return undefined;
-        }
-
-        // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
-        // not being properly supported in arc instantiation). For now just hardcode skiping them.
-        const disconnectedConnections = recipe.handleConnections.filter(
-            hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
-        if (disconnectedConnections.length === 0) {
-          return undefined;
-        }
-
-        return recipe => {
-          disconnectedConnections.forEach(hc => {
-            const clonedHC = recipe.updateToClone({hc}).hc;
-            const handle = recipe.newHandle();
-            handle.fate = '?';
-            clonedHC.connectToHandle(handle);
-          });
-          return 0;
-        };
-      }
-    }(Walker$1.Permuted), this);
-  }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-
-class CreateDescriptionHandle extends Strategy {
-  async generate(inputParams) {
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onHandleConnection(recipe, handleConnection) {
-        if (handleConnection.handle) {
-          return undefined;
-        }
-        if (handleConnection.name !== 'descriptions') {
-          return undefined;
-        }
-
-        return (recipe, handleConnection) => {
-          const handle = recipe.newHandle();
-          handle.fate = 'create';
-          handleConnection.connectToHandle(handle);
-          return 1;
-        };
-      }
-    }(Walker$1.Permuted), this);
-  }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-
-class SearchTokensToParticles extends Strategy {
-  constructor(arc) {
-    super();
-
-    const thingByToken = {};
-    const thingByPhrase = {};
-    for (const [thing, packaged] of [...arc.context.particles.map(p => [p, {spec: p}]),
-                                   ...arc.context.allRecipes.map(r => [r, {innerRecipe: r}])]) {
-      this._addThing(thing.name, packaged, thingByToken, thingByPhrase);
-      thing.verbs.forEach(verb => this._addThing(verb, packaged, thingByToken, thingByPhrase));
-    }
-
-    class SearchWalker extends Walker$1 {
-      constructor(tactic, arc) {
-        super(tactic);
-        this.index = arc.recipeIndex;
-      }
-
-      onRecipe(recipe) {
-        if (!recipe.search || !recipe.search.unresolvedTokens.length) {
-          return undefined;
-        }
-
-        const byToken = {};
-        const resolvedTokens = new Set();
-        const _addThingsByToken = (token, things) => {
-          things.forEach(thing => {
-            byToken[token] = byToken[token] || [];
-            byToken[token].push(thing);
-            token.split(' ').forEach(t => resolvedTokens.add(t));
-          });
-        };
-
-        for (const [phrase, things] of Object.entries(thingByPhrase)) {
-          const tokens = phrase.split(' ');
-          if (tokens.every(token => recipe.search.unresolvedTokens.find(unresolved => unresolved === token)) &&
-              recipe.search.phrase.includes(phrase)) {
-            _addThingsByToken(phrase, things);
-          }
-        }
-
-        for (const token of recipe.search.unresolvedTokens) {
-          if (resolvedTokens.has(token)) {
-            continue;
-          }
-          const things = thingByToken[token];
-          things && _addThingsByToken(token, things);
-        }
-
-        if (resolvedTokens.size === 0) {
-          return undefined;
-        }
-
-        const flatten = (arr) => [].concat(...arr);
-        const product = (...sets) =>
-          sets.reduce((acc, set) =>
-            flatten(acc.map(x => set.map(y => [...x, y]))),
-            [[]]);
-        const possibleCombinations = product(...Object.values(byToken).map(v => flatten(v)));
-
-        return possibleCombinations.map(combination => {
-          return recipe => {
-            resolvedTokens.forEach(token => recipe.search.resolveToken(token));
-            combination.forEach(({spec, innerRecipe}) => {
-              if (spec) {
-                const particle = recipe.newParticle(spec.name);
-                particle.spec = spec;
-              } else {
-                const otherToHandle = this.index.findCoalescableHandles(recipe, innerRecipe);
-                assert(innerRecipe);
-                const {cloneMap} = innerRecipe.mergeInto(recipe);
-                otherToHandle.forEach((otherHandle, handle) => cloneMap.get(otherHandle).mergeInto(handle));
-              }
-            });
-            return resolvedTokens.size;
-          };
-        });
-      }
-    }
-    this._walker = new SearchWalker(Walker$1.Permuted, arc);
-  }
-
-  get walker() {
-    return this._walker;
-  }
-
-  getResults(inputParams) {
-    assert(inputParams);
-    const generated = super.getResults(inputParams).filter(result => !result.result.isResolved());
-    const terminal = inputParams.terminal;
-    return [...generated, ...terminal];
-  }
-
-  _addThing(token, thing, thingByToken, thingByPhrase) {
-    if (!token) {
-      return;
-    }
-    this._addThingByToken(token.toLowerCase(), thing, thingByToken);
-
-    // split DoSomething into "do something" and add the phrase
-    const phrase = token.replace(/([^A-Z])([A-Z])/g, '$1 $2').replace(/([A-Z][^A-Z])/g, ' $1').replace(/[\s]+/g, ' ').trim();
-    if (phrase !== token) {
-      this._addThingByToken(phrase.toLowerCase(), thing, thingByPhrase);
-    }
-  }
-  _addThingByToken(key, thing, thingByKey) {
-    assert(key === key.toLowerCase());
-    thingByKey[key] = thingByKey[key] || [];
-    if (!thingByKey[key].find(t => t === thing)) {
-      thingByKey[key].push(thing);
-    }
-  }
-
-  async generate(inputParams) {
-    await this.walker.index.ready;
-    return Recipe.over(this.getResults(inputParams), this.walker, this);
-  }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-
-class GroupHandleConnections extends Strategy {
-  constructor() {
-    super();
-
-    this._walker = new class extends Walker$1 {
-      onRecipe(recipe) {
-        // Only apply this strategy if ALL handle connections are named and have types.
-        if (recipe.handleConnections.find(hc => !hc.type || !hc.name || hc.isOptional)) {
-          return undefined;
-        }
-        // Find all unique types used in the recipe that have unbound handle connections.
-        const types = new Set();
-        recipe.handleConnections.forEach(hc => {
-          if (!hc.isOptional && !hc.handle && !Array.from(types).find(t => t.equals(hc.type))) {
-            types.add(hc.type);
-          }
-        });
-
-        const groupsByType = new Map();
-        types.forEach(type => {
-          // Find the particle with the largest number of unbound connections of the same type.
-          const countConnectionsByType = (connections) => Object.values(connections).filter(conn => {
-            return !conn.isOptional && !conn.handle && type.equals(conn.type);
-          }).length;
-          const sortedParticles = [...recipe.particles].sort((p1, p2) => {
-            return countConnectionsByType(p2.connections) - countConnectionsByType(p1.connections);
-          }).filter(p => countConnectionsByType(p.connections) > 0);
-          assert(sortedParticles.length > 0);
-
-          // Handle connections of the same particle cannot be bound to the same handle. Iterate on handle connections of the particle
-          // with the most connections of the given type, and group each of them with same typed handle connections of other particles.
-          const particleWithMostConnectionsOfType = sortedParticles[0];
-          const groups = new Map();
-          let allTypeHandleConnections = recipe.handleConnections.filter(c => {
-            return !c.isOptional && !c.handle && type.equals(c.type) && (c.particle !== particleWithMostConnectionsOfType);
-          });
-
-          let iteration = 0;
-          while (allTypeHandleConnections.length > 0) {
-            Object.values(particleWithMostConnectionsOfType.connections).forEach(handleConnection => {
-              if (!type.equals(handleConnection.type)) {
-                return;
-              }
-              if (!groups.has(handleConnection)) {
-                groups.set(handleConnection, []);
-              }
-              const group = groups.get(handleConnection);
-
-              // filter all connections where this particle is already in a group.
-              const possibleConnections = allTypeHandleConnections.filter(c => !group.find(gc => gc.particle === c.particle));
-              let selectedConn = possibleConnections.find(c => handleConnection.isInput !== c.isInput || handleConnection.isOutput !== c.isOutput);
-              // TODO: consider tags.
-              // TODO: Slots handle restrictions should also be accounted for when grouping.
-              if (!selectedConn) {
-                if (possibleConnections.length === 0 || iteration === 0) {
-                  // During first iteration only bind opposite direction connections ("in" with "out" and vice versa)
-                  // to ensure each group has both direction connections as much as possible.
-                  return;
-                }
-                selectedConn = possibleConnections[0];
-              }
-              group.push(selectedConn);
-              allTypeHandleConnections = allTypeHandleConnections.filter(c => c !== selectedConn);
-            });
-            iteration++;
-          }
-          // Remove groups where no connections were bound together.
-          groups.forEach((otherConns, conn) => {
-            if (otherConns.length === 0) {
-              groups.delete(conn);
-            } else {
-              otherConns.push(conn);
-            }
-          });
-
-          if (groups.size !== 0) {
-            groupsByType.set(type, groups);
-          }
-        });
-
-        if (groupsByType.size > 0) {
-          return recipe => {
-            groupsByType.forEach((groups, type) => {
-              groups.forEach(group => {
-                const recipeHandle = recipe.newHandle();
-                group.forEach(conn => {
-                  const cloneConn = recipe.updateToClone({conn}).conn;
-                  cloneConn.connectToHandle(recipeHandle);
+                recipes = recipes.filter(recipe => MatchRecipeByVerb.satisfiesSlotConstraints(recipe, slotConstraints))
+                    .filter(recipe => MatchRecipeByVerb.satisfiesHandleConstraints(recipe, handleConstraints));
+                return recipes.map(recipe => {
+                    return (outputRecipe, particleForReplacing) => {
+                        const { handles, particles, slots } = recipe.mergeInto(outputRecipe);
+                        particleForReplacing.remove();
+                        for (const consumeSlot in slotConstraints) {
+                            if (slotConstraints[consumeSlot].targetSlot || Object.values(slotConstraints[consumeSlot].providedSlots).filter(a => a != null).length > 0) {
+                                let slotMapped = false;
+                                for (const particle of particles) {
+                                    if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, consumeSlot, slotConstraints[consumeSlot].providedSlots)) {
+                                        if (slotConstraints[consumeSlot].targetSlot) {
+                                            const { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slotConstraints[consumeSlot].targetSlot });
+                                            particle.consumedSlotConnections[consumeSlot]._targetSlot = mappedSlot;
+                                            mappedSlot.consumeConnections.push(particle.consumedSlotConnections[consumeSlot]);
+                                        }
+                                        for (const slotName of Object.keys(slotConstraints[consumeSlot].providedSlots)) {
+                                            const slot = slotConstraints[consumeSlot].providedSlots[slotName];
+                                            if (slot == null) {
+                                                continue;
+                                            }
+                                            const { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slot });
+                                            const oldSlot = particle.consumedSlotConnections[consumeSlot].providedSlots[slotName];
+                                            oldSlot.remove();
+                                            particle.consumedSlotConnections[consumeSlot].providedSlots[slotName] = mappedSlot;
+                                            mappedSlot._sourceConnection = particle.consumedSlotConnections[consumeSlot];
+                                        }
+                                        slotMapped = true;
+                                        break;
+                                    }
+                                }
+                                assert(slotMapped);
+                            }
+                        }
+                        function tryApplyHandleConstraint(name, connection, constraint, handle) {
+                            if (connection.handle != null) {
+                                return false;
+                            }
+                            if (!MatchRecipeByVerb.connectionMatchesConstraint(connection, constraint)) {
+                                return false;
+                            }
+                            for (let i = 0; i < handle.connections.length; i++) {
+                                const candidate = handle.connections[i];
+                                // TODO candidate.name === name triggers test failures
+                                // tslint:disable-next-line: triple-equals
+                                if (candidate.particle === particleForReplacing && candidate.name == name) {
+                                    connection._handle = handle;
+                                    handle.connections[i] = connection;
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                        function applyHandleConstraint(name, constraint, handle) {
+                            const { mappedHandle } = outputRecipe.updateToClone({ mappedHandle: handle });
+                            for (const particle of particles) {
+                                if (name) {
+                                    if (tryApplyHandleConstraint(name, particle.connections[name], constraint, mappedHandle)) {
+                                        return true;
+                                    }
+                                }
+                                else {
+                                    for (const connection of Object.values(particle.connections)) {
+                                        if (tryApplyHandleConstraint(name, connection, constraint, mappedHandle)) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+                            return false;
+                        }
+                        for (const name in handleConstraints.named) {
+                            if (handleConstraints.named[name].handle) {
+                                assert(applyHandleConstraint(name, handleConstraints.named[name], handleConstraints.named[name].handle));
+                            }
+                        }
+                        for (const connection of handleConstraints.unnamed) {
+                            if (connection.handle) {
+                                assert(applyHandleConstraint(null, connection, connection.handle));
+                            }
+                        }
+                        return 1;
+                    };
                 });
-              });
-            });
-            // TODO: score!
-          };
+            }
+        }(Walker.Permuted), this);
+    }
+    static satisfiesHandleConstraints(recipe, handleConstraints) {
+        for (const handleName in handleConstraints.named) {
+            if (!MatchRecipeByVerb.satisfiesHandleConnection(recipe, handleName, handleConstraints.named[handleName])) {
+                return false;
+            }
         }
-        return undefined;
-      }
-    }(Walker$1.Permuted);
-  }
-  get walker() {
-    return this._walker;
-  }
-  async generate(inputParams) {
-    return Recipe.over(this.getResults(inputParams), this.walker, this);
-  }
+        for (const handleData of handleConstraints.unnamed) {
+            if (!MatchRecipeByVerb.satisfiesUnnamedHandleConnection(recipe, handleData)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    static satisfiesUnnamedHandleConnection(recipe, handleData) {
+        // refuse to match unnamed handle connections unless some type information is present.
+        if (!handleData.handle) {
+            return false;
+        }
+        for (const particle of recipe.particles) {
+            for (const connection of Object.values(particle.connections)) {
+                if (MatchRecipeByVerb.connectionMatchesConstraint(connection, handleData)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    static satisfiesHandleConnection(recipe, handleName, handleData) {
+        for (const particle of recipe.particles) {
+            if (particle.connections[handleName]) {
+                if (MatchRecipeByVerb.connectionMatchesConstraint(particle.connections[handleName], handleData)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    static connectionMatchesConstraint(connection, handleData) {
+        if (connection.direction !== handleData.direction) {
+            return false;
+        }
+        if (!handleData.handle) {
+            return true;
+        }
+        return Handle$1.effectiveType(handleData.handle._mappedType, handleData.handle.connections.concat(connection)) != null;
+    }
+    static satisfiesSlotConstraints(recipe, slotConstraints) {
+        for (const slotName in slotConstraints) {
+            if (!MatchRecipeByVerb.satisfiesSlotConnection(recipe, slotName, slotConstraints[slotName])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    static satisfiesSlotConnection(recipe, slotName, constraints) {
+        for (const particle of recipe.particles) {
+            if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, slotName, constraints)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    static slotsMatchConstraint(connections, name, constraints) {
+        if (connections[name] == null) {
+            return false;
+        }
+        if (connections[name]._targetSlot != null &&
+            constraints.targetSlot != null) {
+            return false;
+        }
+        for (const provideName in constraints.providedSlots) {
+            if (connections[name].providedSlots[provideName] == null) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
+class AddMissingHandles extends Strategy {
+    // TODO: move generation to use an async generator.
+    async generate(inputParams) {
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onRecipe(recipe) {
+                // Don't add use handles while there are outstanding constraints
+                if (recipe.connectionConstraints.length > 0) {
+                    return undefined;
+                }
+                // Don't add use handles to a recipe with free handles
+                const freeHandles = recipe.handles.filter(handle => handle.connections.length === 0);
+                if (freeHandles.length > 0) {
+                    return undefined;
+                }
+                // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
+                // not being properly supported in arc instantiation). For now just hardcode skiping them.
+                const disconnectedConnections = recipe.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
+                if (disconnectedConnections.length === 0) {
+                    return undefined;
+                }
+                return recipe => {
+                    disconnectedConnections.forEach(hc => {
+                        const clonedHC = recipe.updateToClone({ hc }).hc;
+                        const handle = recipe.newHandle();
+                        handle.fate = '?';
+                        clonedHC.connectToHandle(handle);
+                    });
+                    return 0;
+                };
+            }
+        }(Walker.Permuted), this);
+    }
+}
 
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class CreateDescriptionHandle extends Strategy {
+    async generate(inputParams) {
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandleConnection(recipe, handleConnection) {
+                if (handleConnection.handle) {
+                    return undefined;
+                }
+                if (handleConnection.name !== 'descriptions') {
+                    return undefined;
+                }
+                return (recipe, handleConnection) => {
+                    const handle = recipe.newHandle();
+                    handle.fate = 'create';
+                    handleConnection.connectToHandle(handle);
+                    return 1;
+                };
+            }
+        }(Walker.Permuted), this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class SearchTokensToParticles extends Strategy {
+    constructor(arc, options) {
+        super(arc, options);
+        const thingByToken = {};
+        const thingByPhrase = {};
+        arc.context.particles.forEach(p => {
+            this._addThing(p.name, { spec: p }, thingByToken, thingByPhrase);
+            p.verbs.forEach(verb => this._addThing(verb, { spec: p }, thingByToken, thingByPhrase));
+        });
+        arc.context.allRecipes.forEach(r => {
+            const packaged = { innerRecipe: r };
+            this._addThing(r.name, packaged, thingByToken, thingByPhrase);
+            r.verbs.forEach(verb => this._addThing(verb, packaged, thingByToken, thingByPhrase));
+        });
+        class SearchWalker extends Walker {
+            constructor(tactic, arc) {
+                super(tactic);
+                this.index = arc.recipeIndex;
+            }
+            onRecipe(recipe) {
+                if (!recipe.search || !recipe.search.unresolvedTokens.length) {
+                    return undefined;
+                }
+                const byToken = {};
+                const resolvedTokens = new Set();
+                const _addThingsByToken = (token, things) => {
+                    things.forEach(thing => {
+                        byToken[token] = byToken[token] || [];
+                        byToken[token].push(thing);
+                        token.split(' ').forEach(t => resolvedTokens.add(t));
+                    });
+                };
+                for (const [phrase, things] of Object.entries(thingByPhrase)) {
+                    const tokens = phrase.split(' ');
+                    if (tokens.every(token => recipe.search.unresolvedTokens.includes(token)) &&
+                        recipe.search.phrase.includes(phrase)) {
+                        _addThingsByToken(phrase, things);
+                    }
+                }
+                for (const token of recipe.search.unresolvedTokens) {
+                    if (resolvedTokens.has(token)) {
+                        continue;
+                    }
+                    const things = thingByToken[token];
+                    if (things) {
+                        _addThingsByToken(token, things);
+                    }
+                }
+                if (resolvedTokens.size === 0) {
+                    return undefined;
+                }
+                const flatten = (arr) => [].concat(...arr);
+                const product = (...sets) => sets.reduce((acc, set) => flatten(acc.map(x => set.map(y => [...x, y]))), [[]]);
+                const possibleCombinations = product(...Object.values(byToken).map(v => flatten(v)));
+                return possibleCombinations.map(combination => {
+                    return recipe => {
+                        resolvedTokens.forEach(token => recipe.search.resolveToken(token));
+                        combination.forEach(({ spec, innerRecipe }) => {
+                            if (spec) {
+                                const particle = recipe.newParticle(spec.name);
+                                particle.spec = spec;
+                            }
+                            else {
+                                const otherToHandle = this.index.findCoalescableHandles(recipe, innerRecipe);
+                                assert(innerRecipe);
+                                const { cloneMap } = innerRecipe.mergeInto(recipe);
+                                otherToHandle.forEach((otherHandle, handle) => cloneMap.get(otherHandle).mergeInto(handle));
+                            }
+                        });
+                        return resolvedTokens.size;
+                    };
+                });
+            }
+        }
+        this._walker = new SearchWalker(Walker.Permuted, arc);
+    }
+    get walker() {
+        return this._walker;
+    }
+    getResults(inputParams) {
+        assert(inputParams);
+        const generated = super.getResults(inputParams).filter(result => !result.result.isResolved());
+        const terminal = inputParams.terminal;
+        return [...generated, ...terminal];
+    }
+    _addThing(token, thing, thingByToken, thingByPhrase) {
+        if (!token) {
+            return;
+        }
+        this._addThingByToken(token.toLowerCase(), thing, thingByToken);
+        // split DoSomething into "do something" and add the phrase
+        const phrase = token.replace(/([^A-Z])([A-Z])/g, '$1 $2').replace(/([A-Z][^A-Z])/g, ' $1').replace(/[\s]+/g, ' ').trim();
+        if (phrase !== token) {
+            this._addThingByToken(phrase.toLowerCase(), thing, thingByPhrase);
+        }
+    }
+    _addThingByToken(key, thing, thingByKey) {
+        assert(key === key.toLowerCase());
+        thingByKey[key] = thingByKey[key] || [];
+        if (!thingByKey[key].find(t => t === thing)) {
+            thingByKey[key].push(thing);
+        }
+    }
+    async generate(inputParams) {
+        await this.walker.index.ready;
+        return Recipe.over(this.getResults(inputParams), this.walker, this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class GroupHandleConnections extends Strategy {
+    constructor(arc, args) {
+        super(arc, args);
+        this._walker = new class extends Walker {
+            onRecipe(recipe, result) {
+                // Only apply this strategy if ALL handle connections are named and have types.
+                if (recipe.handleConnections.find(hc => !hc.type || !hc.name || hc.isOptional)) {
+                    return undefined;
+                }
+                // Find all unique types used in the recipe that have unbound handle connections.
+                const types = new Set();
+                recipe.handleConnections.forEach(hc => {
+                    if (!hc.isOptional && !hc.handle && !Array.from(types).find(t => t.equals(hc.type))) {
+                        types.add(hc.type);
+                    }
+                });
+                const groupsByType = new Map();
+                types.forEach(type => {
+                    // Find the particle with the largest number of unbound connections of the same type.
+                    const countConnectionsByType = (connections) => Object.values(connections).filter(conn => {
+                        return !conn.isOptional && !conn.handle && type.equals(conn.type);
+                    }).length;
+                    const sortedParticles = [...recipe.particles].sort((p1, p2) => {
+                        return countConnectionsByType(p2.connections) - countConnectionsByType(p1.connections);
+                    }).filter(p => countConnectionsByType(p.connections) > 0);
+                    assert(sortedParticles.length > 0);
+                    // Handle connections of the same particle cannot be bound to the same handle. Iterate on handle connections of the particle
+                    // with the most connections of the given type, and group each of them with same typed handle connections of other particles.
+                    const particleWithMostConnectionsOfType = sortedParticles[0];
+                    const groups = new Map();
+                    let allTypeHandleConnections = recipe.handleConnections.filter(c => {
+                        return !c.isOptional && !c.handle && type.equals(c.type) && (c.particle !== particleWithMostConnectionsOfType);
+                    });
+                    let iteration = 0;
+                    while (allTypeHandleConnections.length > 0) {
+                        Object.values(particleWithMostConnectionsOfType.connections).forEach(handleConnection => {
+                            if (!type.equals(handleConnection.type)) {
+                                return;
+                            }
+                            if (!groups.has(handleConnection)) {
+                                groups.set(handleConnection, []);
+                            }
+                            const group = groups.get(handleConnection);
+                            // filter all connections where this particle is already in a group.
+                            const possibleConnections = allTypeHandleConnections.filter(c => !group.find(gc => gc.particle === c.particle));
+                            let selectedConn = possibleConnections.find(c => handleConnection.isInput !== c.isInput || handleConnection.isOutput !== c.isOutput);
+                            // TODO: consider tags.
+                            // TODO: Slots handle restrictions should also be accounted for when grouping.
+                            if (!selectedConn) {
+                                if (possibleConnections.length === 0 || iteration === 0) {
+                                    // During first iteration only bind opposite direction connections ("in" with "out" and vice versa)
+                                    // to ensure each group has both direction connections as much as possible.
+                                    return;
+                                }
+                                selectedConn = possibleConnections[0];
+                            }
+                            group.push(selectedConn);
+                            allTypeHandleConnections = allTypeHandleConnections.filter(c => c !== selectedConn);
+                        });
+                        iteration++;
+                    }
+                    // Remove groups where no connections were bound together.
+                    groups.forEach((otherConns, conn) => {
+                        if (otherConns.length === 0) {
+                            groups.delete(conn);
+                        }
+                        else {
+                            otherConns.push(conn);
+                        }
+                    });
+                    if (groups.size !== 0) {
+                        groupsByType.set(type, groups);
+                    }
+                });
+                if (groupsByType.size > 0) {
+                    return recipe => {
+                        groupsByType.forEach((groups, type) => {
+                            groups.forEach(group => {
+                                const recipeHandle = recipe.newHandle();
+                                group.forEach(conn => {
+                                    const cloneConn = recipe.updateToClone({ conn }).conn;
+                                    cloneConn.connectToHandle(recipeHandle);
+                                });
+                            });
+                        });
+                        // TODO: score!
+                    };
+                }
+                return undefined;
+            }
+        }(Walker.Permuted);
+    }
+    get walker() {
+        return this._walker;
+    }
+    async generate(inputParams) {
+        return Recipe.over(this.getResults(inputParams), this.walker, this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
 /*
  * Match free handles (i.e. handles that aren't connected to any connections)
  * to connections.
  */
 class MatchFreeHandlesToConnections extends Strategy {
-  async generate(inputParams) {
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onHandle(recipe, handle) {
-        if (handle.connections.length > 0) {
-          return;
-        }
-
-        const matchingConnections = recipe.handleConnections.filter(connection => connection.handle == undefined && connection.name !== 'descriptions');
-
-        return matchingConnections.map(connection => {
-          return (recipe, handle) => {
-            const newConnection = recipe.updateToClone({connection}).connection;
-            newConnection.connectToHandle(handle);
-            return 1;
-          };
-        });
-      }
-    }(Walker$1.Permuted), this);
-  }
+    async generate(inputParams) {
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandle(recipe, handle) {
+                if (handle.connections.length > 0) {
+                    return;
+                }
+                const matchingConnections = recipe.handleConnections.filter(connection => connection.handle == undefined && connection.name !== 'descriptions');
+                return matchingConnections.map(connection => {
+                    return (recipe, handle) => {
+                        const newConnection = recipe.updateToClone({ connection }).connection;
+                        newConnection.connectToHandle(handle);
+                        return 1;
+                    };
+                });
+            }
+        }(Walker.Permuted), this);
+    }
 }
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
-
+// tslint:disable-next-line: variable-name
 const Empty$1 = new Ruleset.Builder().build();
-
-const ExperimentalPhased = new Ruleset.Builder().order(
-  [
+// tslint:disable-next-line: variable-name
+const ExperimentalPhased = new Ruleset.Builder().order([
     InitPopulation,
     InitSearch
-  ],
-  SearchTokensToParticles,
-  [
+], SearchTokensToParticles, [
     MatchRecipeByVerb,
     MatchParticleByVerb
-  ],
-  ConvertConstraintsToConnections,
-  GroupHandleConnections,
-  [
+], ConvertConstraintsToConnections, GroupHandleConnections, [
     AddMissingHandles,
     AssignHandles,
     MatchFreeHandlesToConnections,
-  ],
-  MapSlots,
-  CreateDescriptionHandle,
-  ResolveRecipe
-).build();
-
-const ExperimentalLinear = new Ruleset.Builder().order(
-  InitPopulation,
-  InitSearch,
-  SearchTokensToParticles,
-  MatchRecipeByVerb,
-  MatchParticleByVerb,
-  ConvertConstraintsToConnections,
-  GroupHandleConnections,
-  MatchFreeHandlesToConnections,
-  AddMissingHandles,
-  AssignHandles,
-  MapSlots,
-  CreateDescriptionHandle,
-  ResolveRecipe
-).build();
+], MapSlots, CreateDescriptionHandle, ResolveRecipe).build();
+// tslint:disable-next-line: variable-name
+const ExperimentalLinear = new Ruleset.Builder().order(InitPopulation, InitSearch, SearchTokensToParticles, MatchRecipeByVerb, MatchParticleByVerb, ConvertConstraintsToConnections, GroupHandleConnections, MatchFreeHandlesToConnections, AddMissingHandles, AssignHandles, MapSlots, CreateDescriptionHandle, ResolveRecipe).build();
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
 
@@ -44397,458 +44215,384 @@ class DeviceInfo {
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-
 class NameUnnamedConnections extends Strategy {
-  async generate(inputParams) {
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onHandleConnection(recipe, handleConnection) {
-        if (handleConnection.name) {
-          // it is already named.
-          return;
-        }
-
-        if (!handleConnection.particle.spec) {
-          // the particle doesn't have spec yet.
-          return;
-        }
-
-        const possibleSpecConns = handleConnection.particle.spec.connections.filter(specConn => {
-          // filter specs with matching types that don't have handles bound to the corresponding handle connection.
-          return !specConn.isOptional &&
-                 handleConnection.handle.type.equals(specConn.type) &&
-                 !handleConnection.particle.getConnectionByName(specConn.name).handle;
-        });
-
-        return possibleSpecConns.map(specConn => {
-          return (recipe, handleConnection) => {
-            handleConnection.particle.nameConnection(handleConnection, specConn.name);
-            return 1;
-          };
-        });
-      }
-    }(Walker$1.Permuted), this);
-  }
+    async generate(inputParams) {
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandleConnection(recipe, handleConnection) {
+                if (handleConnection.name) {
+                    // it is already named.
+                    return;
+                }
+                if (!handleConnection.particle.spec) {
+                    // the particle doesn't have spec yet.
+                    return;
+                }
+                const possibleSpecConns = handleConnection.particle.spec.connections.filter(specConn => {
+                    // filter specs with matching types that don't have handles bound to the corresponding handle connection.
+                    return !specConn.isOptional &&
+                        handleConnection.handle.type.equals(specConn.type) &&
+                        !handleConnection.particle.getConnectionByName(specConn.name).handle;
+                });
+                return possibleSpecConns.map(specConn => {
+                    return (recipe, handleConnection) => {
+                        handleConnection.particle.nameConnection(handleConnection, specConn.name);
+                        return 1;
+                    };
+                });
+            }
+        }(Walker.Permuted), this);
+    }
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-
 class SearchTokensToHandles extends Strategy {
-  constructor(arc) {
-    super();
-    this._arc = arc;
-  }
-
-  async generate(inputParams) {
-    const arc = this._arc;
-    // Finds stores matching the provided token and compatible with the provided handle's type,
-    // which are not already mapped into the provided handle's recipe
-    const findMatchingStores = (token, handle) => {
-      const counts = RecipeUtil.directionCounts(handle);
-      let stores = arc.findStoresByType(handle.type, {tags: [`${token}`], subtype: counts.out === 0});
-      let fate = 'use';
-      if (stores.length === 0) {
-        stores = arc._context.findStoreByType(handle.type, {tags: [`${token}`], subtype: counts.out === 0});
-        fate = counts.out === 0 ? 'map' : 'copy';
-      }
-      stores = stores.filter(store => !handle.recipe.handles.find(handle => handle.id === store.id));
-      return stores.map(store => { return {store, fate, token}; });
-    };
-
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onHandle(recipe, handle) {
-        if (!recipe.search || recipe.search.unresolvedTokens.length === 0) {
-          return undefined;
-        }
-        if (handle.isResolved() || handle.connections.length === 0) {
-          return undefined;
-        }
-
-        const possibleMatches = [];
-        for (const token of recipe.search.unresolvedTokens) {
-          possibleMatches.push(...findMatchingStores(token, handle));
-        }
-        if (possibleMatches.length === 0) {
-          return undefined;
-        }
-        return possibleMatches.map(match => {
-          return (recipe, handle) => {
-            handle.fate = match.fate;
-            handle.mapToStorage(match.store);
-            recipe.search.resolveToken(match.token);
-          };
-        });
-      }
-    }(Walker$1.Permuted), this);
-  }
+    async generate(inputParams) {
+        const arc = this.arc;
+        // Finds stores matching the provided token and compatible with the provided handle's type,
+        // which are not already mapped into the provided handle's recipe
+        const findMatchingStores = (token, handle) => {
+            const counts = RecipeUtil.directionCounts(handle);
+            let stores = arc.findStoresByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
+            let fate = 'use';
+            if (stores.length === 0) {
+                stores = arc.context.findStoreByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
+                fate = counts.out === 0 ? 'map' : 'copy';
+            }
+            stores = stores.filter(store => !handle.recipe.handles.find(handle => handle.id === store.id));
+            return stores.map(store => ({ store, fate, token }));
+        };
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandle(recipe, handle) {
+                if (!recipe.search || recipe.search.unresolvedTokens.length === 0) {
+                    return undefined;
+                }
+                if (handle.isResolved() || handle.connections.length === 0) {
+                    return undefined;
+                }
+                const possibleMatches = [];
+                for (const token of recipe.search.unresolvedTokens) {
+                    possibleMatches.push(...findMatchingStores(token, handle));
+                }
+                if (possibleMatches.length === 0) {
+                    return undefined;
+                }
+                return possibleMatches.map(match => {
+                    return (recipe, handle) => {
+                        handle.fate = match.fate;
+                        handle.mapToStorage(match.store);
+                        recipe.search.resolveToken(match.token);
+                    };
+                });
+            }
+        }(Walker.Permuted), this);
+    }
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-
 class CreateHandleGroup extends Strategy {
-
-  async generate(inputParams) {
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onRecipe(recipe) {
-        // Resolve constraints before assuming connections are free.
-        if (recipe.connectionConstraints.length > 0) return undefined;
-
-        const freeConnections = recipe.handleConnections.filter(hc => !hc.handle && !hc.isOptional);
-        let maximalGroup = null;
-        for (const writer of freeConnections.filter(hc => hc.isOutput)) {
-          const compatibleConnections = [writer];
-          let effectiveType = Handle$1.effectiveType(null, compatibleConnections);
-          let typeCandidate = null;
-          const involvedParticles = new Set([writer.particle]);
-
-          let foundSomeReader = false;
-          for (const reader of freeConnections.filter(hc => hc.isInput)) {
-            if (!involvedParticles.has(reader.particle) &&
-                (typeCandidate = Handle$1.effectiveType(effectiveType, [reader])) !== null) {
-              compatibleConnections.push(reader);
-              involvedParticles.add(reader.particle);
-              effectiveType = typeCandidate;
-              foundSomeReader = true;
-            }
-          }
-
-          // Only make a 'create' group for a writer->reader case.
-          if (!foundSomeReader) continue;
-
-          for (const otherWriter of freeConnections.filter(hc => hc.isOutput)) {
-            if (!involvedParticles.has(otherWriter.particle) &&
-                (typeCandidate = Handle$1.effectiveType(effectiveType, [otherWriter])) !== null) {
-              compatibleConnections.push(otherWriter);
-              involvedParticles.add(otherWriter.particle);
-              effectiveType = typeCandidate;
-            }
-          }
-
-          if (!maximalGroup || compatibleConnections.length > maximalGroup.length) {
-            maximalGroup = compatibleConnections;
-          }
-        }
-
-        if (maximalGroup) {
-          return recipe => {
-            const newHandle = recipe.newHandle();
-            newHandle.fate = 'create';
-            for (const conn of maximalGroup) {
-              const cloneConn = recipe.updateToClone({conn}).conn;
-              cloneConn.connectToHandle(newHandle);
-            }
-          };
-        }
-        return undefined;
-      }
-    }(Walker$1.Independent), this);
-  }
-}
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-
-class FindHostedParticle extends Strategy {
-
-  constructor(arc) {
-    super();
-    this._arc = arc;
-  }
-
-  async generate(inputParams) {
-    const arc = this._arc;
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      onHandleConnection(recipe, connection) {
-        if (connection.direction !== 'host' || connection.handle) return undefined;
-        assert(connection.type.isInterface);
-
-        const results = [];
-        for (const particle of arc.context.particles) {
-          // This is what shape.particleMatches() does, but we also do
-          // canEnsureResolved at the end:
-          const shapeClone = connection.type.interfaceShape.cloneWithResolutions(new Map());
-          // If particle doesn't match the requested shape.
-          if (shapeClone.restrictType(particle) === false) continue;
-          // If we still have unresolvable shape after matching a particle.
-          // This can happen if both shape and particle have type variables.
-          // TODO: What to do here? We need concrete type for the particle spec
-          //       handle, but we don't have one.
-          if (!shapeClone.canEnsureResolved()) continue;
-
-          results.push((recipe, hc) => {
-            // Restricting the type of the connection to the concrete particle
-            // may restrict type variable across the recipe.
-            hc.type.interfaceShape.restrictType(particle);
-
-            // The connection type may still have type variables:
-            // E.g. if shape requires `in ~a *`
-            //      and particle has `in Entity input`
-            //      then type system has to ensure ~a is at least Entity.
-            // The type of a handle hosting the particle literal has to be
-            // concrete, so we concretize connection type with maybeEnsureResolved().
-            const handleType = hc.type.clone(new Map());
-            handleType.maybeEnsureResolved();
-
-            const id = `${arc.id}:particle-literal:${particle.name}`;
-
-            // Reuse a handle if we already hold this particle spec in the recipe.
-            for (const handle of recipe.handles) {
-              if (handle.id === id && handle.fate === 'copy'
-                  && handle._mappedType && handle._mappedType.equals(handleType)) {
-                hc.connectToHandle(handle);
+    async generate(inputParams) {
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onRecipe(recipe, result) {
+                // Resolve constraints before assuming connections are free.
+                if (recipe.connectionConstraints.length > 0)
+                    return undefined;
+                const freeConnections = recipe.handleConnections.filter(hc => !hc.handle && !hc.isOptional);
+                let maximalGroup = null;
+                for (const writer of freeConnections.filter(hc => hc.isOutput)) {
+                    const compatibleConnections = [writer];
+                    let effectiveType = Handle$1.effectiveType(null, compatibleConnections);
+                    let typeCandidate = null;
+                    const involvedParticles = new Set([writer.particle]);
+                    let foundSomeReader = false;
+                    for (const reader of freeConnections.filter(hc => hc.isInput)) {
+                        if (!involvedParticles.has(reader.particle) &&
+                            (typeCandidate = Handle$1.effectiveType(effectiveType, [reader])) !== null) {
+                            compatibleConnections.push(reader);
+                            involvedParticles.add(reader.particle);
+                            effectiveType = typeCandidate;
+                            foundSomeReader = true;
+                        }
+                    }
+                    // Only make a 'create' group for a writer->reader case.
+                    if (!foundSomeReader)
+                        continue;
+                    for (const otherWriter of freeConnections.filter(hc => hc.isOutput)) {
+                        if (!involvedParticles.has(otherWriter.particle) &&
+                            (typeCandidate = Handle$1.effectiveType(effectiveType, [otherWriter])) !== null) {
+                            compatibleConnections.push(otherWriter);
+                            involvedParticles.add(otherWriter.particle);
+                            effectiveType = typeCandidate;
+                        }
+                    }
+                    if (!maximalGroup || compatibleConnections.length > maximalGroup.length) {
+                        maximalGroup = compatibleConnections;
+                    }
+                }
+                if (maximalGroup) {
+                    return recipe => {
+                        const newHandle = recipe.newHandle();
+                        newHandle.fate = 'create';
+                        for (const conn of maximalGroup) {
+                            const cloneConn = recipe.updateToClone({ conn }).conn;
+                            cloneConn.connectToHandle(newHandle);
+                        }
+                    };
+                }
                 return undefined;
-              }
             }
-
-            // TODO: Add a digest of a particle literal to the ID, so that we
-            //       can ensure we load the correct particle. It is currently
-            //       hard as digest is asynchronous and recipe walker is
-            //       synchronous.
-            const handle = recipe.newHandle();
-            handle._mappedType = handleType;
-            handle.fate = 'copy';
-            handle.id = id;
-            hc.connectToHandle(handle);
-          });
-        }
-        return results;
-      }
-    }(Walker$1.Permuted), this);
-  }
+        }(Walker.Independent), this);
+    }
 }
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
+class FindHostedParticle extends Strategy {
+    async generate(inputParams) {
+        const arc = this.arc;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandleConnection(recipe, connection) {
+                if (connection.direction !== 'host' || connection.handle)
+                    return undefined;
+                assert(connection.type.isInterface);
+                const results = [];
+                for (const particle of arc.context.particles) {
+                    // This is what shape.particleMatches() does, but we also do
+                    // canEnsureResolved at the end:
+                    const shapeClone = connection.type.interfaceShape.cloneWithResolutions(new Map());
+                    // If particle doesn't match the requested shape.
+                    if (shapeClone.restrictType(particle) === false)
+                        continue;
+                    // If we still have unresolvable shape after matching a particle.
+                    // This can happen if both shape and particle have type variables.
+                    // TODO: What to do here? We need concrete type for the particle spec
+                    //       handle, but we don't have one.
+                    if (!shapeClone.canEnsureResolved())
+                        continue;
+                    results.push((recipe, hc) => {
+                        // Restricting the type of the connection to the concrete particle
+                        // may restrict type variable across the recipe.
+                        hc.type.interfaceShape.restrictType(particle);
+                        // The connection type may still have type variables:
+                        // E.g. if shape requires `in ~a *`
+                        //      and particle has `in Entity input`
+                        //      then type system has to ensure ~a is at least Entity.
+                        // The type of a handle hosting the particle literal has to be
+                        // concrete, so we concretize connection type with maybeEnsureResolved().
+                        const handleType = hc.type.clone(new Map());
+                        handleType.maybeEnsureResolved();
+                        const id = `${arc.id}:particle-literal:${particle.name}`;
+                        // Reuse a handle if we already hold this particle spec in the recipe.
+                        for (const handle of recipe.handles) {
+                            if (handle.id === id && handle.fate === 'copy'
+                                && handle._mappedType && handle._mappedType.equals(handleType)) {
+                                hc.connectToHandle(handle);
+                                return undefined;
+                            }
+                        }
+                        // TODO: Add a digest of a particle literal to the ID, so that we
+                        //       can ensure we load the correct particle. It is currently
+                        //       hard as digest is asynchronous and recipe walker is
+                        //       synchronous.
+                        const handle = recipe.newHandle();
+                        handle._mappedType = handleType;
+                        handle.fate = 'copy';
+                        handle.id = id;
+                        hc.connectToHandle(handle);
+                    });
+                }
+                return results;
+            }
+        }(Walker.Permuted), this);
+    }
+}
 
+// Copyright (c) 2018 Google Inc. All rights reserved.
 // This strategy coalesces unresolved terminal recipes (i.e. those that cannot
 // be modified by any strategy apart from this one) by finding unresolved
 // use/? handle and finding a matching create/? handle in another recipe and
 // merging those.
 class CoalesceRecipes extends Strategy {
-  constructor(arc) {
-    super();
-    this._arc = arc;
-  }
-
-  get arc() { return this._arc; }
-
-  getResults(inputParams) {
-    // Coalescing for terminal recipes that are either unresolved recipes or have no UI.
-    return inputParams.terminal.filter(result => !result.result.isResolved() || result.result.slots.length === 0);
-  }
-
-  async generate(inputParams) {
-    const arc = this.arc;
-    const index = this.arc.recipeIndex;
-    await index.ready;
-
-    return Recipe.over(this.getResults(inputParams), new class extends Walker$1 {
-      // Find a provided slot for unfulfilled consume connection.
-      onSlotConnection(recipe, slotConnection) {
-        if (slotConnection.isResolved()) {
-          return undefined;
-        }
-        if (!slotConnection.name || !slotConnection.particle) {
-          return undefined;
-        }
-
-        if (slotConnection.targetSlot) {
-          return undefined;
-        }
-
-        // TODO: also support a consume slot connection that is NOT required,
-        // but no other connections are resolved.
-
-        const results = [];
-        // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
-        // these handles are coalescable? Add support for this.
-        for (const providedSlot of index.findProvidedSlot(slotConnection)) {
-          // Don't grow recipes above 10 particles, otherwise we might never stop.
-          if (recipe.particles.length + providedSlot.recipe.particles.length > 10) continue;
-
-          if (RecipeUtil.matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
-            // skip candidate recipe, if matches the shape of the arc's active recipe
-            continue;
-          }
-
-          results.push((recipe, slotConnection) => {
-            const otherToHandle = index.findCoalescableHandles(recipe, providedSlot.recipe);
-
-            const {cloneMap} = providedSlot.recipe.mergeInto(slotConnection.recipe);
-            const mergedSlot = cloneMap.get(providedSlot);
-            slotConnection.connectToSlot(mergedSlot);
-
-            this._connectOtherHandles(otherToHandle, cloneMap, false);
-
-            // Clear verbs and recipe name after coalescing two recipes.
-            recipe.verbs.splice(0);
-            recipe.name = null;
-            return 1;
-          });
-        }
-
-        if (results.length > 0) {
-          return results;
-        }
-      }
-
-      onSlot(recipe, slot) {
-        // Find slots that according to their provided-spec must be consumed, but have no consume connection.
-        if (slot.consumeConnections.length > 0) {
-          return undefined; // slot has consume connections.
-        }
-        if (!slot.sourceConnection || !slot.sourceConnection.slotSpec.getProvidedSlotSpec(slot.name).isRequired) {
-          return undefined; // either a remote slot (no source connection), or a not required one.
-        }
-
-        const results = [];
-        for (const {slotConn, matchingHandles} of index.findConsumeSlotConnectionMatch(slot)) {
-          // Don't grow recipes above 10 particles, otherwise we might never stop.
-          if (recipe.particles.length + slotConn.recipe.particles.length > 10) continue;
-
-          if (RecipeUtil.matchesRecipe(arc.activeRecipe, slotConn.recipe)) {
-            // skip candidate recipe, if matches the shape of the arc's active recipe
-            continue;
-          }
-
-          if (RecipeUtil.matchesRecipe(recipe, slotConn.recipe)) {
-            // skip candidate recipe, if matches the shape of the currently explored recipe
-            continue;
-          }
-
-          results.push((recipe, slot) => {
-            // Find other handles that may be merged, as recipes are being coalesced.
-            const otherToHandle = index.findCoalescableHandles(recipe, slotConn.recipe,
-              new Set(slot.handleConnections.map(hc => hc.handle).concat(matchingHandles.map(({handle, matchingConn}) => matchingConn.handle))));
-
-            const {cloneMap} = slotConn.recipe.mergeInto(slot.recipe);
-            const mergedSlotConn = cloneMap.get(slotConn);
-            mergedSlotConn.connectToSlot(slot);
-            for (const {handle, matchingConn} of matchingHandles) {
-              // matchingConn in the mergedSlotConnection's recipe should be connected to `handle` in the slot's recipe.
-              const mergedMatchingConn = cloneMap.get(matchingConn);
-              const disconnectedHandle = mergedMatchingConn.handle;
-              const clonedHandle = slot.handleConnections.find(handleConn => handleConn.handle && handleConn.handle.id === handle.id).handle;
-              if (disconnectedHandle === clonedHandle) {
-                continue; // this handle was already reconnected
-              }
-
-              while (disconnectedHandle.connections.length > 0) {
-                const conn = disconnectedHandle.connections[0];
-                conn.disconnectHandle();
-                conn.connectToHandle(clonedHandle);
-              }
-              recipe.removeHandle(disconnectedHandle);
+    getResults(inputParams) {
+        // Coalescing for terminal recipes that are either unresolved recipes or have no UI.
+        return inputParams.terminal.filter(result => !result.result.isResolved() || result.result.slots.length === 0);
+    }
+    async generate(inputParams) {
+        const arc = this.arc;
+        const index = this.arc.recipeIndex;
+        await index.ready;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            // Find a provided slot for unfulfilled consume connection.
+            onSlotConnection(recipe, slotConnection) {
+                if (slotConnection.isResolved()) {
+                    return undefined;
+                }
+                if (!slotConnection.name || !slotConnection.particle) {
+                    return undefined;
+                }
+                if (slotConnection.targetSlot) {
+                    return undefined;
+                }
+                // TODO: also support a consume slot connection that is NOT required,
+                // but no other connections are resolved.
+                const results = [];
+                // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
+                // these handles are coalescable? Add support for this.
+                for (const providedSlot of index.findProvidedSlot(slotConnection)) {
+                    // Don't grow recipes above 10 particles, otherwise we might never stop.
+                    if (recipe.particles.length + providedSlot.recipe.particles.length > 10)
+                        continue;
+                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
+                        // skip candidate recipe, if matches the shape of the arc's active recipe
+                        continue;
+                    }
+                    results.push((recipe, slotConnection) => {
+                        const otherToHandle = index.findCoalescableHandles(recipe, providedSlot.recipe);
+                        const { cloneMap } = providedSlot.recipe.mergeInto(slotConnection.recipe);
+                        const mergedSlot = cloneMap.get(providedSlot);
+                        slotConnection.connectToSlot(mergedSlot);
+                        this._connectOtherHandles(otherToHandle, cloneMap, false);
+                        // Clear verbs and recipe name after coalescing two recipes.
+                        recipe.verbs.splice(0);
+                        recipe.name = null;
+                        return 1;
+                    });
+                }
+                if (results.length > 0) {
+                    return results;
+                }
+                return undefined;
             }
-
-            this._connectOtherHandles(otherToHandle, cloneMap, false);
-
-            // Clear verbs and recipe name after coalescing two recipes.
-            recipe.verbs.splice(0);
-            recipe.name = null;
-
-            // TODO: Merge description/patterns of both recipes.
-            // TODO: Unify common code in slot and handle recipe coalescing.
-
-            return 1;
-          });
-        }
-
-        if (results.length > 0) {
-          return results;
-        }
-        return undefined;
-      }
-
-      onHandle(recipe, handle) {
-        if (!index.coalescableFates.includes(handle.fate)
-            || handle.id
-            || handle.connections.length === 0
-            || handle.name === 'descriptions') return undefined;
-        const results = [];
-
-        for (const otherHandle of index.findHandleMatch(handle, index.coalescableFates)) {
-          // Don't grow recipes above 10 particles, otherwise we might never stop.
-          if (recipe.particles.length + otherHandle.recipe.particles.length > 10) continue;
-
-          // This is a poor man's proxy for the other handle being an output of a recipe.
-          if (otherHandle.connections.find(conn => conn.direction === 'in')) continue;
-
-          // We ignore type variables not constrained for reading, otherwise
-          // generic recipes would apply - which we currently don't want here.
-          if (otherHandle.type.hasVariable) {
-            let resolved = otherHandle.type.resolvedType();
-            // TODO: getContainedType returns non-null for references ... is that correct here?
-            resolved = resolved.getContainedType() || resolved;
-            if (resolved.isVariable && !resolved.canReadSubset) continue;
-          }
-
-          if (RecipeUtil.matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
-            // skip candidate recipe, if matches the shape of the arc's active recipe
-            continue;
-          }
-
-          if (RecipeUtil.matchesRecipe(recipe, otherHandle.recipe)) {
-            // skip candidate recipe, if matches the shape of the currently explored recipe
-            continue;
-          }
-
-          results.push((recipe, handle) => {
-            // Find other handles in the original recipe that could be coalesced with handles in otherHandle's recipe.
-            const otherToHandle = index.findCoalescableHandles(recipe, otherHandle.recipe, new Set([handle, otherHandle]));
-
-            const {cloneMap} = otherHandle.recipe.mergeInto(handle.recipe);
-
-            // Connect the handle that the recipes are being coalesced on.
-            cloneMap.get(otherHandle).mergeInto(handle);
-
-            // Connect all other connectable handles.
-            this._connectOtherHandles(otherToHandle, cloneMap, true);
-
-            // Clear verbs and recipe name after coalescing two recipes.
-            recipe.verbs.splice(0);
-            recipe.name = null;
-
-            // TODO: Merge description/patterns of both recipes.
-
-            return 1;
-          });
-        }
-
-        return results;
-      }
-
-      _connectOtherHandles(otherToHandle, cloneMap, verifyTypes) {
-        otherToHandle.forEach((otherHandle, handle) => {
-          const otherHandleClone = cloneMap.get(otherHandle);
-
-          // For coalescing that was triggered by handle coalescing (vs slot or slot connection)
-          // once the main handle (one that triggered coalescing) was coalesced, types may have changed.
-          // Need to verify all the type information for the "other" coalescable handles is still valid.
-
-          // TODO(mmandlis): This is relying on only ever considering a single "other" handles to coalesce,
-          // so the handle either is still a valid match or not.
-          // In order to do it right for multiple handles, we need to try ALL handles,
-          // then fallback to all valid N-1 combinations, then N-2 etc.
-          if (verifyTypes) {
-            if (!this._reverifyHandleTypes(handle, otherHandleClone)) {
-              return;
+            onSlot(recipe, slot) {
+                // Find slots that according to their provided-spec must be consumed, but have no consume connection.
+                if (slot.consumeConnections.length > 0) {
+                    return undefined; // slot has consume connections.
+                }
+                if (!slot.sourceConnection || !slot.sourceConnection.slotSpec.getProvidedSlotSpec(slot.name).isRequired) {
+                    return undefined; // either a remote slot (no source connection), or a not required one.
+                }
+                const results = [];
+                for (const { slotConn, matchingHandles } of index.findConsumeSlotConnectionMatch(slot)) {
+                    // Don't grow recipes above 10 particles, otherwise we might never stop.
+                    if (recipe.particles.length + slotConn.recipe.particles.length > 10)
+                        continue;
+                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, slotConn.recipe)) {
+                        // skip candidate recipe, if matches the shape of the arc's active recipe
+                        continue;
+                    }
+                    if (RecipeUtil.matchesRecipe(recipe, slotConn.recipe)) {
+                        // skip candidate recipe, if matches the shape of the currently explored recipe
+                        continue;
+                    }
+                    results.push((recipe, slot) => {
+                        // Find other handles that may be merged, as recipes are being coalesced.
+                        const otherToHandle = index.findCoalescableHandles(recipe, slotConn.recipe, new Set(slot.handleConnections.map(hc => hc.handle).concat(matchingHandles.map(({ handle, matchingConn }) => matchingConn.handle))));
+                        const { cloneMap } = slotConn.recipe.mergeInto(slot.recipe);
+                        const mergedSlotConn = cloneMap.get(slotConn);
+                        mergedSlotConn.connectToSlot(slot);
+                        for (const { handle, matchingConn } of matchingHandles) {
+                            // matchingConn in the mergedSlotConnection's recipe should be connected to `handle` in the slot's recipe.
+                            const mergedMatchingConn = cloneMap.get(matchingConn);
+                            const disconnectedHandle = mergedMatchingConn.handle;
+                            const clonedHandle = slot.handleConnections.find(handleConn => handleConn.handle && handleConn.handle.id === handle.id).handle;
+                            if (disconnectedHandle === clonedHandle) {
+                                continue; // this handle was already reconnected
+                            }
+                            while (disconnectedHandle.connections.length > 0) {
+                                const conn = disconnectedHandle.connections[0];
+                                conn.disconnectHandle();
+                                conn.connectToHandle(clonedHandle);
+                            }
+                            recipe.removeHandle(disconnectedHandle);
+                        }
+                        this._connectOtherHandles(otherToHandle, cloneMap, false);
+                        // Clear verbs and recipe name after coalescing two recipes.
+                        recipe.verbs.splice(0);
+                        recipe.name = null;
+                        // TODO: Merge description/patterns of both recipes.
+                        // TODO: Unify common code in slot and handle recipe coalescing.
+                        return 1;
+                    });
+                }
+                if (results.length > 0) {
+                    return results;
+                }
+                return undefined;
             }
-          }
-
-          otherHandleClone.mergeInto(handle);
-        });
-      }
-
-      // Returns true, if both handles have types that can be coalesced.
-      _reverifyHandleTypes(handle, otherHandle) {
-        assert(handle.recipe === otherHandle.recipe);
-        const cloneMap = new Map();
-        const recipeClone = handle.recipe.clone(cloneMap);
-        recipeClone.normalize();
-        return Handle$1.effectiveType(cloneMap.get(handle).type,
-            [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
-      }
-
-    }(Walker$1.Independent), this);
-  }
+            onHandle(recipe, handle) {
+                if (!index.coalescableFates.includes(handle.fate)
+                    || handle.id
+                    || handle.connections.length === 0
+                    || handle.name === 'descriptions')
+                    return undefined;
+                const results = [];
+                for (const otherHandle of index.findHandleMatch(handle, index.coalescableFates)) {
+                    // Don't grow recipes above 10 particles, otherwise we might never stop.
+                    if (recipe.particles.length + otherHandle.recipe.particles.length > 10)
+                        continue;
+                    // This is a poor man's proxy for the other handle being an output of a recipe.
+                    if (otherHandle.connections.find(conn => conn.direction === 'in'))
+                        continue;
+                    // We ignore type variables not constrained for reading, otherwise
+                    // generic recipes would apply - which we currently don't want here.
+                    if (otherHandle.type.hasVariable) {
+                        let resolved = otherHandle.type.resolvedType();
+                        // TODO: getContainedType returns non-null for references ... is that correct here?
+                        resolved = resolved.getContainedType() || resolved;
+                        if (resolved.isVariable && !resolved.canReadSubset)
+                            continue;
+                    }
+                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
+                        // skip candidate recipe, if matches the shape of the arc's active recipe
+                        continue;
+                    }
+                    if (RecipeUtil.matchesRecipe(recipe, otherHandle.recipe)) {
+                        // skip candidate recipe, if matches the shape of the currently explored recipe
+                        continue;
+                    }
+                    results.push((recipe, handle) => {
+                        // Find other handles in the original recipe that could be coalesced with handles in otherHandle's recipe.
+                        const otherToHandle = index.findCoalescableHandles(recipe, otherHandle.recipe, new Set([handle, otherHandle]));
+                        const { cloneMap } = otherHandle.recipe.mergeInto(handle.recipe);
+                        // Connect the handle that the recipes are being coalesced on.
+                        cloneMap.get(otherHandle).mergeInto(handle);
+                        // Connect all other connectable handles.
+                        this._connectOtherHandles(otherToHandle, cloneMap, true);
+                        // Clear verbs and recipe name after coalescing two recipes.
+                        recipe.verbs.splice(0);
+                        recipe.name = null;
+                        // TODO: Merge description/patterns of both recipes.
+                        return 1;
+                    });
+                }
+                return results;
+            }
+            _connectOtherHandles(otherToHandle, cloneMap, verifyTypes) {
+                otherToHandle.forEach((otherHandle, handle) => {
+                    const otherHandleClone = cloneMap.get(otherHandle);
+                    // For coalescing that was triggered by handle coalescing (vs slot or slot connection)
+                    // once the main handle (one that triggered coalescing) was coalesced, types may have changed.
+                    // Need to verify all the type information for the "other" coalescable handles is still valid.
+                    // TODO(mmandlis): This is relying on only ever considering a single "other" handles to coalesce,
+                    // so the handle either is still a valid match or not.
+                    // In order to do it right for multiple handles, we need to try ALL handles,
+                    // then fallback to all valid N-1 combinations, then N-2 etc.
+                    if (verifyTypes) {
+                        if (!this._reverifyHandleTypes(handle, otherHandleClone)) {
+                            return;
+                        }
+                    }
+                    otherHandleClone.mergeInto(handle);
+                });
+            }
+            // Returns true, if both handles have types that can be coalesced.
+            _reverifyHandleTypes(handle, otherHandle) {
+                assert(handle.recipe === otherHandle.recipe);
+                const cloneMap = new Map();
+                const recipeClone = handle.recipe.clone(cloneMap);
+                recipeClone.normalize();
+                return Handle$1.effectiveType(cloneMap.get(handle).type, [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
+            }
+        }(Walker.Independent), this);
+    }
 }
 
 class Relevance {
@@ -45221,8 +44965,8 @@ class Planner {
     init(arc, { strategies = Planner.AllStrategies, ruleset = Empty$1, strategyArgs = {} } = {}) {
         strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
         this._arc = arc;
-        strategies = strategies.map(strategy => new strategy(arc, strategyArgs));
-        this.strategizer = new Strategizer(strategies, [], ruleset);
+        const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
+        this.strategizer = new Strategizer(strategyImpls, [], ruleset);
     }
     // Specify a timeout value less than zero to disable timeouts.
     async plan(timeout, generations) {
@@ -45461,16 +45205,14 @@ class PlanProducer {
             if (this.result.contextual) {
                 // If we're searching but currently only have contextual suggestions,
                 // we need get non-contextual suggestions as well.
-                Object.assign(options, { contextual: false });
+                options.contextual = false;
             }
             else {
                 // If search changed and we already how all suggestions (i.e. including
                 // non-contextual ones) then it's enough to initialize with InitSearch
                 // with a new search phrase.
-                Object.assign(options, {
-                    strategies: [InitSearch].concat(Planner.ResolutionStrategies),
-                    append: true
-                });
+                options.append = true;
+                options.strategies = [InitSearch, ...Planner.ResolutionStrategies];
             }
             this.produceSuggestions(options);
         }

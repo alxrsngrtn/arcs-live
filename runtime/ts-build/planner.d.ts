@@ -1,4 +1,5 @@
 import { Arc } from './arc.js';
+import { StrategyDerived } from './strategizer/strategizer.js';
 import { Speculator } from './speculator.js';
 import { Suggestion } from './plan/suggestion';
 export declare class Planner {
@@ -7,8 +8,8 @@ export declare class Planner {
     private _relevances;
     private strategizer;
     init(arc: Arc, { strategies, ruleset, strategyArgs }?: {
-        strategies?: any[];
-        ruleset?: any;
+        strategies?: StrategyDerived[];
+        ruleset?: import("./strategizer/strategizer.js").Ruleset;
         strategyArgs?: {};
     }): void;
     plan(timeout: number, generations: any): Promise<any[]>;
@@ -17,7 +18,7 @@ export declare class Planner {
     suggest(timeout: number, generations: [], speculator?: Speculator): Promise<Suggestion[]>;
     _updateGeneration(generations: any, hash: string, handler: any): void;
     dispose(): void;
-    static InitializationStrategies: any[];
-    static ResolutionStrategies: any[];
-    static AllStrategies: any[];
+    static InitializationStrategies: StrategyDerived[];
+    static ResolutionStrategies: StrategyDerived[];
+    static AllStrategies: StrategyDerived[];
 }
