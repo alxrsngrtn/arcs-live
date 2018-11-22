@@ -7,10 +7,10 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { ParticleExecutionContext } from './particle-execution-context.js';
-import { Type } from './type.js';
+import { ReferenceType } from './type.js';
 export declare class Reference {
     entity: any;
-    type: Type;
+    type: ReferenceType;
     private readonly id;
     private storageKey;
     private readonly context;

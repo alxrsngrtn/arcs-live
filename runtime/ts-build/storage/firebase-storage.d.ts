@@ -146,7 +146,7 @@ declare class FirebaseCollection extends FirebaseStorageProvider {
     private readonly valueChangeCallback;
     constructor(type: any, storageEngine: any, id: any, reference: any, firebaseKey: any);
     dispose(): void;
-    backingType(): Type;
+    backingType(): any;
     remoteStateChanged(dataSnapshot: any): void;
     readonly versionForTesting: number;
     get(id: any): any;
@@ -209,7 +209,7 @@ declare class FirebaseBigCollection extends FirebaseStorageProvider {
     private cursors;
     private cursorIndex;
     constructor(type: any, storageEngine: any, id: any, reference: any, firebaseKey: any);
-    backingType(): Type;
+    backingType(): any;
     enableReferenceMode(): void;
     get(id: any): Promise<any>;
     store(value: any, keys: any, originatorId: any): Promise<void>;

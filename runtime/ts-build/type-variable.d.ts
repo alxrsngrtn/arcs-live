@@ -26,10 +26,18 @@ export declare class TypeVariable {
     canWriteSuperset: any;
     canReadSubset: any;
     readonly hasConstraint: boolean;
-    canEnsureResolved(): any;
-    maybeEnsureResolved(): any;
-    toLiteral(): any;
-    toLiteralIgnoringResolutions(): any;
-    static fromLiteral(data: any): any;
+    canEnsureResolved(): boolean;
+    maybeEnsureResolved(): boolean;
+    toLiteral(): {
+        name: string;
+        canWriteSuperset: any;
+        canReadSubset: any;
+    };
+    toLiteralIgnoringResolutions(): {
+        name: string;
+        canWriteSuperset: any;
+        canReadSubset: any;
+    };
+    static fromLiteral(data: any): TypeVariable;
     isResolved(): boolean;
 }

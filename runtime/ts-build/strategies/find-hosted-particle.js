@@ -16,11 +16,12 @@ export class FindHostedParticle extends Strategy {
                 if (connection.direction !== 'host' || connection.handle)
                     return undefined;
                 assert(connection.type.isInterface);
+                const iface = connection.type;
                 const results = [];
                 for (const particle of arc.context.particles) {
                     // This is what shape.particleMatches() does, but we also do
                     // canEnsureResolved at the end:
-                    const shapeClone = connection.type.interfaceShape.cloneWithResolutions(new Map());
+                    const shapeClone = iface.interfaceShape.cloneWithResolutions(new Map());
                     // If particle doesn't match the requested shape.
                     if (shapeClone.restrictType(particle) === false)
                         continue;

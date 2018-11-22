@@ -105,7 +105,7 @@ export declare class ParticleSpec {
     clone(): ParticleSpec;
     equals(other: any): boolean;
     validateDescription(description: any): void;
-    toInterface(): Type;
+    toInterface(): import("./type.js").InterfaceType;
     _toShape(): Shape;
     toString(): string;
     toManifestString(): string;

@@ -6,7 +6,6 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { Entity } from './entity.js';
-import { Type } from './type.js';
 import { Symbols } from './symbols.js';
 // TODO: Should relations normalized by another layer, or here?
 export class Relation extends Entity {
@@ -16,10 +15,6 @@ export class Relation extends Entity {
     }
     get data() {
         return this.entities.map(entity => entity[Symbols.identifier].toLiteral());
-    }
-    static typeFor(relation) {
-        const result = new Type(relation.entities.map(entity => entity.constructor.type), relation.constructor);
-        return result;
     }
 }
 //# sourceMappingURL=relation.js.map

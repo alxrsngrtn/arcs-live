@@ -1,7 +1,14 @@
-commit 319acbeea37c993d75f8c8846474a798fce69867
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Nov 22 16:38:59 2018 +1100
+commit f3d768df9f680bd62e5955b158be4c0ee75df7fc
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Nov 22 16:53:50 2018 +1100
 
-    Simplify reserved words test (#2291)
+    Split monolithic Type class into multiple classes. (#2289)
     
-    * Simplify reserved words test
+    This is a first step which mostly doesn't change the API, with the
+    following exceptions:
+    - TupleFields, Type.hasVariableReference, Type.isVariableReference and
+      Relation.typeFor have been removed (they're either undefined or unused)
+    - referenceReferredType has been renamed to referredType
+    
+    Next steps will be to replace the is<Type> with instanceof checks,
+    replace Type.data with type-specific fields and fix the naming.

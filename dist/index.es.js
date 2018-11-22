@@ -13,6 +13,434 @@ import fetch$1 from 'node-fetch';
 // Copyright (c) 2017 Google Inc. All rights reserved.
 
 // @license
+class TypeVariable {
+    constructor(name, canWriteSuperset, canReadSubset) {
+        this.name = name;
+        this._canWriteSuperset = canWriteSuperset;
+        this._canReadSubset = canReadSubset;
+        this._resolution = null;
+    }
+    /**
+     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
+     * of two variables together. Use this when two separate type variables need to resolve
+     * to the same value.
+     */
+    maybeMergeConstraints(variable) {
+        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
+            return false;
+        }
+        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
+    }
+    /**
+     * Merge a type variable's read subset (upper bound) constraints into this variable.
+     * This is used to accumulate read constraints when resolving a handle's type.
+     */
+    maybeMergeCanReadSubset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canReadSubset == null) {
+            this.canReadSubset = constraint;
+            return true;
+        }
+        if (this.canReadSubset.isSlot && constraint.isSlot) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        const mergedSchema = Schema.intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
+        if (!mergedSchema) {
+            return false;
+        }
+        this.canReadSubset = Type.newEntity(mergedSchema);
+        return true;
+    }
+    /**
+     * merge a type variable's write superset (lower bound) constraints into this variable.
+     * This is used to accumulate write constraints when resolving a handle's type.
+     */
+    maybeMergeCanWriteSuperset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canWriteSuperset == null) {
+            this.canWriteSuperset = constraint;
+            return true;
+        }
+        if (this.canWriteSuperset.isSlot && constraint.isSlot) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        const mergedSchema = Schema.union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
+        if (!mergedSchema) {
+            return false;
+        }
+        this.canWriteSuperset = Type.newEntity(mergedSchema);
+        return true;
+    }
+    isSatisfiedBy(type) {
+        const constraint = this._canWriteSuperset;
+        if (!constraint) {
+            return true;
+        }
+        if (!constraint.isEntity || !type.isEntity) {
+            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
+        }
+        return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
+    }
+    get resolution() {
+        if (this._resolution) {
+            return this._resolution.resolvedType();
+        }
+        return null;
+    }
+    set resolution(value) {
+        assert(!this._resolution);
+        const elementType = value.resolvedType().getContainedType();
+        if (elementType !== null && elementType.isVariable) {
+            assert(elementType.variable !== this, 'variable cannot resolve to collection of itself');
+        }
+        let probe = value;
+        while (probe) {
+            if (!(probe instanceof VariableType)) {
+                break;
+            }
+            if (probe.variable === this) {
+                return;
+            }
+            probe = probe.variable.resolution;
+        }
+        this._resolution = value;
+        this._canWriteSuperset = null;
+        this._canReadSubset = null;
+    }
+    get canWriteSuperset() {
+        if (this._resolution) {
+            assert(!this._canWriteSuperset);
+            if (this._resolution instanceof VariableType) {
+                return this._resolution.variable.canWriteSuperset;
+            }
+            return null;
+        }
+        return this._canWriteSuperset;
+    }
+    set canWriteSuperset(value) {
+        assert(!this._resolution);
+        this._canWriteSuperset = value;
+    }
+    get canReadSubset() {
+        if (this._resolution) {
+            assert(!this._canReadSubset);
+            if (this._resolution instanceof VariableType) {
+                return this._resolution.variable.canReadSubset;
+            }
+            return null;
+        }
+        return this._canReadSubset;
+    }
+    set canReadSubset(value) {
+        assert(!this._resolution);
+        this._canReadSubset = value;
+    }
+    get hasConstraint() {
+        return this._canReadSubset !== null || this._canWriteSuperset !== null;
+    }
+    canEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.canEnsureResolved();
+        }
+        if (this._canWriteSuperset || this._canReadSubset) {
+            return true;
+        }
+        return false;
+    }
+    maybeEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.maybeEnsureResolved();
+        }
+        if (this._canWriteSuperset) {
+            this.resolution = this._canWriteSuperset;
+            return true;
+        }
+        if (this._canReadSubset) {
+            this.resolution = this._canReadSubset;
+            return true;
+        }
+        return false;
+    }
+    toLiteral() {
+        assert(this.resolution == null);
+        return this.toLiteralIgnoringResolutions();
+    }
+    toLiteralIgnoringResolutions() {
+        return {
+            name: this.name,
+            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
+            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
+        };
+    }
+    static fromLiteral(data) {
+        return new TypeVariable(data.name, data.canWriteSuperset ? Type.fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? Type.fromLiteral(data.canReadSubset) : null);
+    }
+    isResolved() {
+        return (this._resolution && this._resolution.isResolved());
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class TypeChecker {
+    // resolve a list of handleConnection types against a handle
+    // base type. This is the core type resolution mechanism, but should only
+    // be used when types can actually be associated with each other / constrained.
+    //
+    // By design this function is called exactly once per handle in a recipe during
+    // normalization, and should provide the same final answers regardless of the
+    // ordering of handles within that recipe
+    //
+    // NOTE: you probably don't want to call this function, if you think you
+    // do, talk to shans@.
+    static processTypeList(baseType, list) {
+        const newBaseTypeVariable = new TypeVariable('', null, null);
+        if (baseType) {
+            newBaseTypeVariable.resolution = baseType;
+        }
+        const newBaseType = Type.newVariable(newBaseTypeVariable);
+        baseType = newBaseType;
+        const concreteTypes = [];
+        // baseType might be a variable (and is definitely a variable if no baseType was available).
+        // Some of the list might contain variables too.
+        // First attempt to merge all the variables into the baseType
+        //
+        // If the baseType is a variable then this results in a single place to manipulate the constraints
+        // of all the other connected variables at the same time.
+        for (const item of list) {
+            if (item.type.resolvedType().hasVariable) {
+                baseType = TypeChecker._tryMergeTypeVariable(baseType, item.type);
+                if (baseType == null) {
+                    return null;
+                }
+            }
+            else {
+                concreteTypes.push(item);
+            }
+        }
+        for (const item of concreteTypes) {
+            if (!TypeChecker._tryMergeConstraints(baseType, item)) {
+                return null;
+            }
+        }
+        const getResolution = candidate => {
+            if (candidate.isVariable === false) {
+                return candidate;
+            }
+            if (candidate.canReadSubset == null || candidate.canWriteSuperset == null) {
+                return candidate;
+            }
+            if (candidate.canReadSubset.isMoreSpecificThan(candidate.canWriteSuperset)) {
+                if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset)) {
+                    candidate.variable.resolution = candidate.canReadSubset;
+                }
+                return candidate;
+            }
+            return null;
+        };
+        const candidate = baseType.resolvedType();
+        if (candidate.isCollection) {
+            const resolution = getResolution(candidate.collectionType);
+            return (resolution !== null) ? resolution.collectionOf() : null;
+        }
+        if (candidate.isBigCollection) {
+            const resolution = getResolution(candidate.bigCollectionType);
+            return (resolution !== null) ? resolution.bigCollectionOf() : null;
+        }
+        return getResolution(candidate);
+    }
+    static _tryMergeTypeVariable(base, onto) {
+        const [primitiveBase, primitiveOnto] = Type.unwrapPair(base.resolvedType(), onto.resolvedType());
+        if (primitiveBase.isVariable) {
+            if (primitiveOnto.isVariable) {
+                // base, onto both variables.
+                const result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
+                if (result === false) {
+                    return null;
+                }
+                // Here onto grows, one level at a time,
+                // as we assign new resolution to primitiveOnto, which is a leaf.
+                primitiveOnto.variable.resolution = primitiveBase;
+            }
+            else {
+                // base variable, onto not.
+                primitiveBase.variable.resolution = primitiveOnto;
+            }
+            return base;
+        }
+        else if (primitiveOnto.isVariable) {
+            // onto variable, base not.
+            primitiveOnto.variable.resolution = primitiveBase;
+            return onto;
+        }
+        else if (primitiveBase.isInterface && primitiveOnto.isInterface) {
+            const result = primitiveBase.interfaceShape.tryMergeTypeVariablesWith(primitiveOnto.interfaceShape);
+            if (result == null) {
+                return null;
+            }
+            return Type.newInterface(result);
+        }
+        else if ((primitiveBase.isTypeContainer() && primitiveBase.hasVariable)
+            || (primitiveOnto.isTypeContainer() && primitiveOnto.hasVariable)) {
+            // Cannot merge [~a] with a type that is not a variable and not a collection.
+            return null;
+        }
+        throw new Error('tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
+    }
+    static _tryMergeConstraints(handleType, { type, direction }) {
+        let [primitiveHandleType, primitiveConnectionType] = Type.unwrapPair(handleType.resolvedType(), type.resolvedType());
+        if (primitiveHandleType.isVariable) {
+            while (primitiveConnectionType.isTypeContainer()) {
+                if (primitiveHandleType.variable.resolution != null
+                    || primitiveHandleType.variable.canReadSubset != null
+                    || primitiveHandleType.variable.canWriteSuperset != null) {
+                    // Resolved and/or constrained variables can only represent Entities, not sets.
+                    return false;
+                }
+                // If this is an undifferentiated variable then we need to create structure to match against. That's
+                // allowed because this variable could represent anything, and it needs to represent this structure
+                // in order for type resolution to succeed.
+                const newVar = Type.newVariable(new TypeVariable('a', null, null));
+                primitiveHandleType.variable.resolution =
+                    primitiveConnectionType.isCollection ? Type.newCollection(newVar) : (primitiveConnectionType.isBigCollection ? Type.newBigCollection(newVar) : Type.newReference(newVar));
+                const unwrap = Type.unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
+                [primitiveHandleType, primitiveConnectionType] = unwrap;
+            }
+            if (direction === 'out' || direction === 'inout' || direction === '`provide') {
+                // the canReadSubset of the handle represents the maximal type that can be read from the
+                // handle, so we need to intersect out any type that is more specific than the maximal type
+                // that could be written.
+                if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset)) {
+                    return false;
+                }
+            }
+            if (direction === 'in' || direction === 'inout' || direction === '`consume') {
+                // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
+                // so we need to union it with the type that wants to be read here.
+                if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset)) {
+                    return false;
+                }
+            }
+        }
+        else {
+            if (primitiveConnectionType.tag !== primitiveHandleType.tag) {
+                return false;
+            }
+            if (direction === 'out' || direction === 'inout') {
+                if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
+                    return false;
+                }
+            }
+            if (direction === 'in' || direction === 'inout') {
+                if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    static _writeConstraintsApply(handleType, connectionType) {
+        // this connection wants to write to this handle. If the written type is
+        // more specific than the canReadSubset then it isn't violating the maximal type
+        // that can be read.
+        const writtenType = connectionType.canWriteSuperset;
+        if (writtenType == null || handleType.canReadSubset == null) {
+            return true;
+        }
+        if (writtenType.isMoreSpecificThan(handleType.canReadSubset)) {
+            return true;
+        }
+        return false;
+    }
+    static _readConstraintsApply(handleType, connectionType) {
+        // this connection wants to read from this handle. If the read type
+        // is less specific than the canWriteSuperset, then it isn't violating
+        // the maximum lower-bound read type.
+        const readType = connectionType.canReadSubset;
+        if (readType == null || handleType.canWriteSuperset == null) {
+            return true;
+        }
+        if (handleType.canWriteSuperset.isMoreSpecificThan(readType)) {
+            return true;
+        }
+        return false;
+    }
+    // Compare two types to see if they could be potentially resolved (in the absence of other
+    // information). This is used as a filter when selecting compatible handles or checking
+    // validity of recipes. This function returning true never implies that full type resolution
+    // will succeed, but if the function returns false for a pair of types that are associated
+    // then type resolution is guaranteed to fail.
+    //
+    // left, right: {type, direction, connection}
+    static compareTypes(left, right) {
+        const resolvedLeft = left.type.resolvedType();
+        const resolvedRight = right.type.resolvedType();
+        const [leftType, rightType] = Type.unwrapPair(resolvedLeft, resolvedRight);
+        // a variable is compatible with a set only if it is unconstrained.
+        if (leftType.isVariable && rightType.isTypeContainer()) {
+            return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
+        }
+        if (rightType.isVariable && leftType.isTypeContainer()) {
+            return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
+        }
+        if (leftType.isVariable || rightType.isVariable) {
+            // TODO: everything should use this, eventually. Need to implement the
+            // right functionality in Shapes first, though.
+            return Type.canMergeConstraints(leftType, rightType);
+        }
+        if ((leftType === undefined) !== (rightType === undefined)) {
+            return false;
+        }
+        if (leftType === rightType) {
+            return true;
+        }
+        if (leftType.tag !== rightType.tag) {
+            return false;
+        }
+        if (leftType.isSlot) {
+            return true;
+        }
+        // TODO: we need a generic way to evaluate type compatibility
+        //       shapes + entities + etc
+        if (leftType.isInterface && rightType.isInterface) {
+            if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
+                return true;
+            }
+        }
+        if (!leftType.isEntity || !rightType.isEntity) {
+            return false;
+        }
+        const leftIsSub = leftType.entitySchema.isMoreSpecificThan(rightType.entitySchema);
+        const leftIsSuper = rightType.entitySchema.isMoreSpecificThan(leftType.entitySchema);
+        if (leftIsSuper && leftIsSub) {
+            return true;
+        }
+        if (!leftIsSuper && !leftIsSub) {
+            return false;
+        }
+        const [superclass, subclass] = leftIsSuper ? [left, right] : [right, left];
+        // treat handle types as if they were 'inout' connections. Note that this
+        // guarantees that the handle's type will be preserved, and that the fact
+        // that the type comes from a handle rather than a connection will also
+        // be preserved.
+        const superDirection = superclass.direction || (superclass.connection ? superclass.connection.direction : 'inout');
+        const subDirection = subclass.direction || (subclass.connection ? subclass.connection.direction : 'inout');
+        if (superDirection === 'in') {
+            return true;
+        }
+        if (subDirection === 'out') {
+            return true;
+        }
+        return false;
+    }
+}
+
+// @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -488,7 +916,7 @@ class Reference {
     }
     async ensureStorageProxy() {
         if (this.storageProxy == null) {
-            this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referenceReferredType);
+            this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referredType);
             this.handle = handleFor(this.storageProxy);
             if (this.storageKey) {
                 assert(this.storageKey === this.storageProxy.storageKey);
@@ -514,7 +942,7 @@ class Reference {
         return class extends Reference {
             constructor(entity) {
                 // TODO(shans): start carrying storageKey information around on Entity objects
-                super({ id: entity.id, storageKey: null }, Type.newReference(entity.constructor.type), context);
+                super({ id: entity.id, storageKey: null }, new ReferenceType(entity.constructor.type), context);
                 this.mode = ReferenceMode.Unstored;
                 this.entity = entity;
                 this.stored = new Promise(async (resolve, reject) => {
@@ -919,434 +1347,6 @@ class Schema {
     }
 }
 
-// @license
-class TypeVariable {
-    constructor(name, canWriteSuperset, canReadSubset) {
-        this.name = name;
-        this._canWriteSuperset = canWriteSuperset;
-        this._canReadSubset = canReadSubset;
-        this._resolution = null;
-    }
-    /**
-     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
-     * of two variables together. Use this when two separate type variables need to resolve
-     * to the same value.
-     */
-    maybeMergeConstraints(variable) {
-        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
-            return false;
-        }
-        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
-    }
-    /**
-     * Merge a type variable's read subset (upper bound) constraints into this variable.
-     * This is used to accumulate read constraints when resolving a handle's type.
-     */
-    maybeMergeCanReadSubset(constraint) {
-        if (constraint == null) {
-            return true;
-        }
-        if (this.canReadSubset == null) {
-            this.canReadSubset = constraint;
-            return true;
-        }
-        if (this.canReadSubset.isSlot && constraint.isSlot) {
-            // TODO: formFactor compatibility, etc.
-            return true;
-        }
-        const mergedSchema = Schema.intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
-        if (!mergedSchema) {
-            return false;
-        }
-        this.canReadSubset = Type.newEntity(mergedSchema);
-        return true;
-    }
-    /**
-     * merge a type variable's write superset (lower bound) constraints into this variable.
-     * This is used to accumulate write constraints when resolving a handle's type.
-     */
-    maybeMergeCanWriteSuperset(constraint) {
-        if (constraint == null) {
-            return true;
-        }
-        if (this.canWriteSuperset == null) {
-            this.canWriteSuperset = constraint;
-            return true;
-        }
-        if (this.canWriteSuperset.isSlot && constraint.isSlot) {
-            // TODO: formFactor compatibility, etc.
-            return true;
-        }
-        const mergedSchema = Schema.union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
-        if (!mergedSchema) {
-            return false;
-        }
-        this.canWriteSuperset = Type.newEntity(mergedSchema);
-        return true;
-    }
-    isSatisfiedBy(type) {
-        const constraint = this._canWriteSuperset;
-        if (!constraint) {
-            return true;
-        }
-        if (!constraint.isEntity || !type.isEntity) {
-            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
-        }
-        return type.entitySchema.isMoreSpecificThan(constraint.entitySchema);
-    }
-    get resolution() {
-        if (this._resolution) {
-            return this._resolution.resolvedType();
-        }
-        return null;
-    }
-    set resolution(value) {
-        assert(!this._resolution);
-        const elementType = value.resolvedType().getContainedType();
-        if (elementType !== null && elementType.isVariable) {
-            assert(elementType.variable !== this, 'variable cannot resolve to collection of itself');
-        }
-        let probe = value;
-        while (probe) {
-            if (!probe.isVariable) {
-                break;
-            }
-            if (probe.variable === this) {
-                return;
-            }
-            probe = probe.variable.resolution;
-        }
-        this._resolution = value;
-        this._canWriteSuperset = null;
-        this._canReadSubset = null;
-    }
-    get canWriteSuperset() {
-        if (this._resolution) {
-            assert(!this._canWriteSuperset);
-            if (this._resolution.isVariable) {
-                return this._resolution.variable.canWriteSuperset;
-            }
-            return null;
-        }
-        return this._canWriteSuperset;
-    }
-    set canWriteSuperset(value) {
-        assert(!this._resolution);
-        this._canWriteSuperset = value;
-    }
-    get canReadSubset() {
-        if (this._resolution) {
-            assert(!this._canReadSubset);
-            if (this._resolution.isVariable) {
-                return this._resolution.variable.canReadSubset;
-            }
-            return null;
-        }
-        return this._canReadSubset;
-    }
-    set canReadSubset(value) {
-        assert(!this._resolution);
-        this._canReadSubset = value;
-    }
-    get hasConstraint() {
-        return this._canReadSubset !== null || this._canWriteSuperset !== null;
-    }
-    canEnsureResolved() {
-        if (this._resolution) {
-            return this._resolution.canEnsureResolved();
-        }
-        if (this._canWriteSuperset || this._canReadSubset) {
-            return true;
-        }
-        return false;
-    }
-    maybeEnsureResolved() {
-        if (this._resolution) {
-            return this._resolution.maybeEnsureResolved();
-        }
-        if (this._canWriteSuperset) {
-            this.resolution = this._canWriteSuperset;
-            return true;
-        }
-        if (this._canReadSubset) {
-            this.resolution = this._canReadSubset;
-            return true;
-        }
-        return false;
-    }
-    toLiteral() {
-        assert(this.resolution == null);
-        return this.toLiteralIgnoringResolutions();
-    }
-    toLiteralIgnoringResolutions() {
-        return {
-            name: this.name,
-            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
-            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
-        };
-    }
-    static fromLiteral(data) {
-        return new TypeVariable(data.name, data.canWriteSuperset ? Type.fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? Type.fromLiteral(data.canReadSubset) : null);
-    }
-    isResolved() {
-        return (this._resolution && this._resolution.isResolved());
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class TypeChecker {
-    // resolve a list of handleConnection types against a handle
-    // base type. This is the core type resolution mechanism, but should only
-    // be used when types can actually be associated with each other / constrained.
-    //
-    // By design this function is called exactly once per handle in a recipe during
-    // normalization, and should provide the same final answers regardless of the
-    // ordering of handles within that recipe
-    //
-    // NOTE: you probably don't want to call this function, if you think you
-    // do, talk to shans@.
-    static processTypeList(baseType, list) {
-        const newBaseTypeVariable = new TypeVariable('', null, null);
-        if (baseType) {
-            newBaseTypeVariable.resolution = baseType;
-        }
-        const newBaseType = Type.newVariable(newBaseTypeVariable);
-        baseType = newBaseType;
-        const concreteTypes = [];
-        // baseType might be a variable (and is definitely a variable if no baseType was available).
-        // Some of the list might contain variables too.
-        // First attempt to merge all the variables into the baseType
-        //
-        // If the baseType is a variable then this results in a single place to manipulate the constraints
-        // of all the other connected variables at the same time.
-        for (const item of list) {
-            if (item.type.resolvedType().hasVariable) {
-                baseType = TypeChecker._tryMergeTypeVariable(baseType, item.type);
-                if (baseType == null) {
-                    return null;
-                }
-            }
-            else {
-                concreteTypes.push(item);
-            }
-        }
-        for (const item of concreteTypes) {
-            if (!TypeChecker._tryMergeConstraints(baseType, item)) {
-                return null;
-            }
-        }
-        const getResolution = candidate => {
-            if (candidate.isVariable === false) {
-                return candidate;
-            }
-            if (candidate.canReadSubset == null || candidate.canWriteSuperset == null) {
-                return candidate;
-            }
-            if (candidate.canReadSubset.isMoreSpecificThan(candidate.canWriteSuperset)) {
-                if (candidate.canWriteSuperset.isMoreSpecificThan(candidate.canReadSubset)) {
-                    candidate.variable.resolution = candidate.canReadSubset;
-                }
-                return candidate;
-            }
-            return null;
-        };
-        const candidate = baseType.resolvedType();
-        if (candidate.isCollection) {
-            const resolution = getResolution(candidate.collectionType);
-            return (resolution !== null) ? resolution.collectionOf() : null;
-        }
-        if (candidate.isBigCollection) {
-            const resolution = getResolution(candidate.bigCollectionType);
-            return (resolution !== null) ? resolution.bigCollectionOf() : null;
-        }
-        return getResolution(candidate);
-    }
-    static _tryMergeTypeVariable(base, onto) {
-        const [primitiveBase, primitiveOnto] = Type.unwrapPair(base.resolvedType(), onto.resolvedType());
-        if (primitiveBase.isVariable) {
-            if (primitiveOnto.isVariable) {
-                // base, onto both variables.
-                const result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
-                if (result === false) {
-                    return null;
-                }
-                // Here onto grows, one level at a time,
-                // as we assign new resolution to primitiveOnto, which is a leaf.
-                primitiveOnto.variable.resolution = primitiveBase;
-            }
-            else {
-                // base variable, onto not.
-                primitiveBase.variable.resolution = primitiveOnto;
-            }
-            return base;
-        }
-        else if (primitiveOnto.isVariable) {
-            // onto variable, base not.
-            primitiveOnto.variable.resolution = primitiveBase;
-            return onto;
-        }
-        else if (primitiveBase.isInterface && primitiveOnto.isInterface) {
-            const result = primitiveBase.interfaceShape.tryMergeTypeVariablesWith(primitiveOnto.interfaceShape);
-            if (result == null) {
-                return null;
-            }
-            return Type.newInterface(result);
-        }
-        else if ((primitiveBase.isTypeContainer() && primitiveBase.hasVariable)
-            || (primitiveOnto.isTypeContainer() && primitiveOnto.hasVariable)) {
-            // Cannot merge [~a] with a type that is not a variable and not a collection.
-            return null;
-        }
-        throw new Error('tryMergeTypeVariable shouldn\'t be called on two types without any type variables');
-    }
-    static _tryMergeConstraints(handleType, { type, direction }) {
-        let [primitiveHandleType, primitiveConnectionType] = Type.unwrapPair(handleType.resolvedType(), type.resolvedType());
-        if (primitiveHandleType.isVariable) {
-            while (primitiveConnectionType.isTypeContainer()) {
-                if (primitiveHandleType.variable.resolution != null
-                    || primitiveHandleType.variable.canReadSubset != null
-                    || primitiveHandleType.variable.canWriteSuperset != null) {
-                    // Resolved and/or constrained variables can only represent Entities, not sets.
-                    return false;
-                }
-                // If this is an undifferentiated variable then we need to create structure to match against. That's
-                // allowed because this variable could represent anything, and it needs to represent this structure
-                // in order for type resolution to succeed.
-                const newVar = Type.newVariable(new TypeVariable('a', null, null));
-                primitiveHandleType.variable.resolution =
-                    primitiveConnectionType.isCollection ? Type.newCollection(newVar) : (primitiveConnectionType.isBigCollection ? Type.newBigCollection(newVar) : Type.newReference(newVar));
-                const unwrap = Type.unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
-                [primitiveHandleType, primitiveConnectionType] = unwrap;
-            }
-            if (direction === 'out' || direction === 'inout' || direction === '`provide') {
-                // the canReadSubset of the handle represents the maximal type that can be read from the
-                // handle, so we need to intersect out any type that is more specific than the maximal type
-                // that could be written.
-                if (!primitiveHandleType.variable.maybeMergeCanReadSubset(primitiveConnectionType.canWriteSuperset)) {
-                    return false;
-                }
-            }
-            if (direction === 'in' || direction === 'inout' || direction === '`consume') {
-                // the canWriteSuperset of the handle represents the maximum lower-bound type that is read from the handle,
-                // so we need to union it with the type that wants to be read here.
-                if (!primitiveHandleType.variable.maybeMergeCanWriteSuperset(primitiveConnectionType.canReadSubset)) {
-                    return false;
-                }
-            }
-        }
-        else {
-            if (primitiveConnectionType.tag !== primitiveHandleType.tag) {
-                return false;
-            }
-            if (direction === 'out' || direction === 'inout') {
-                if (!TypeChecker._writeConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
-                    return false;
-                }
-            }
-            if (direction === 'in' || direction === 'inout') {
-                if (!TypeChecker._readConstraintsApply(primitiveHandleType, primitiveConnectionType)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    static _writeConstraintsApply(handleType, connectionType) {
-        // this connection wants to write to this handle. If the written type is
-        // more specific than the canReadSubset then it isn't violating the maximal type
-        // that can be read.
-        const writtenType = connectionType.canWriteSuperset;
-        if (writtenType == null || handleType.canReadSubset == null) {
-            return true;
-        }
-        if (writtenType.isMoreSpecificThan(handleType.canReadSubset)) {
-            return true;
-        }
-        return false;
-    }
-    static _readConstraintsApply(handleType, connectionType) {
-        // this connection wants to read from this handle. If the read type
-        // is less specific than the canWriteSuperset, then it isn't violating
-        // the maximum lower-bound read type.
-        const readType = connectionType.canReadSubset;
-        if (readType == null || handleType.canWriteSuperset == null) {
-            return true;
-        }
-        if (handleType.canWriteSuperset.isMoreSpecificThan(readType)) {
-            return true;
-        }
-        return false;
-    }
-    // Compare two types to see if they could be potentially resolved (in the absence of other
-    // information). This is used as a filter when selecting compatible handles or checking
-    // validity of recipes. This function returning true never implies that full type resolution
-    // will succeed, but if the function returns false for a pair of types that are associated
-    // then type resolution is guaranteed to fail.
-    //
-    // left, right: {type, direction, connection}
-    static compareTypes(left, right) {
-        const resolvedLeft = left.type.resolvedType();
-        const resolvedRight = right.type.resolvedType();
-        const [leftType, rightType] = Type.unwrapPair(resolvedLeft, resolvedRight);
-        // a variable is compatible with a set only if it is unconstrained.
-        if (leftType.isVariable && rightType.isTypeContainer()) {
-            return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
-        }
-        if (rightType.isVariable && leftType.isTypeContainer()) {
-            return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
-        }
-        if (leftType.isVariable || rightType.isVariable) {
-            // TODO: everything should use this, eventually. Need to implement the
-            // right functionality in Shapes first, though.
-            return Type.canMergeConstraints(leftType, rightType);
-        }
-        if ((leftType === undefined) !== (rightType === undefined)) {
-            return false;
-        }
-        if (leftType === rightType) {
-            return true;
-        }
-        if (leftType.tag !== rightType.tag) {
-            return false;
-        }
-        if (leftType.isSlot) {
-            return true;
-        }
-        // TODO: we need a generic way to evaluate type compatibility
-        //       shapes + entities + etc
-        if (leftType.isInterface && rightType.isInterface) {
-            if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
-                return true;
-            }
-        }
-        if (!leftType.isEntity || !rightType.isEntity) {
-            return false;
-        }
-        const leftIsSub = leftType.entitySchema.isMoreSpecificThan(rightType.entitySchema);
-        const leftIsSuper = rightType.entitySchema.isMoreSpecificThan(leftType.entitySchema);
-        if (leftIsSuper && leftIsSub) {
-            return true;
-        }
-        if (!leftIsSuper && !leftIsSub) {
-            return false;
-        }
-        const [superclass, subclass] = leftIsSuper ? [left, right] : [right, left];
-        // treat handle types as if they were 'inout' connections. Note that this
-        // guarantees that the handle's type will be preserved, and that the fact
-        // that the type comes from a handle rather than a connection will also
-        // be preserved.
-        const superDirection = superclass.direction || (superclass.connection ? superclass.connection.direction : 'inout');
-        const subDirection = subclass.direction || (subclass.connection ? subclass.connection.direction : 'inout');
-        if (superDirection === 'in') {
-            return true;
-        }
-        if (subDirection === 'out') {
-            return true;
-        }
-        return false;
-    }
-}
-
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1609,9 +1609,6 @@ ${this._slotsToManifestString()}
         if (shapeHandle.type == undefined) {
             return true;
         }
-        if (shapeHandle.type.isVariableReference) {
-            return false;
-        }
         const [left, right] = Type.unwrapPair(shapeHandle.type, particleHandle.type);
         if (left.isVariable) {
             return [{ var: left, value: right, direction: shapeHandle.direction }];
@@ -1703,330 +1700,99 @@ ${this._slotsToManifestString()}
     }
 }
 
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class TupleFields {
-    constructor(fieldList) {
-        this.fieldList = fieldList;
-    }
-    static fromLiteral(literal) {
-        return new TupleFields(literal.map(a => Type.fromLiteral(a)));
-    }
-    toLiteral() {
-        return this.fieldList.map(a => a.toLiteral());
-    }
-    clone() {
-        return new TupleFields(this.fieldList.map(a => a.clone({})));
-    }
-    equals(other) {
-        if (this.fieldList.length !== other.fieldList.length) {
-            return false;
-        }
-        for (let i = 0; i < this.fieldList.length; i++) {
-            if (!this.fieldList[i].equals(other.fieldList[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-}
-
 // @license
-function addType(name, arg) {
-    const lowerName = name[0].toLowerCase() + name.substring(1);
-    const upperArg = arg ? arg[0].toUpperCase() + arg.substring(1) : '';
-    Object.defineProperty(Type.prototype, `${lowerName}${upperArg}`, {
-        get() {
-            if (!this[`is${name}`]) {
-                assert(this[`is${name}`], `{${this.tag}, ${this.data}} is not of type ${name}`);
-            }
-            return this.data;
-        }
-    });
-    Object.defineProperty(Type.prototype, `is${name}`, {
-        get() {
-            return this.tag === name;
-        }
-    });
-}
 class Type {
     constructor(tag, data) {
-        assert(typeof tag === 'string');
-        if (tag === 'Entity') {
-            assert(data instanceof Schema);
-        }
-        if (tag === 'Collection' || tag === 'BigCollection') {
-            if (!(data instanceof Type) && data.tag && data.data) {
-                data = new Type(data.tag, data.data);
-            }
-        }
-        if (tag === 'Variable') {
-            if (!(data instanceof TypeVariable)) {
-                // type constraints ("~a with EntityName") should be considered minimum requirements
-                // for the type, so are fed in as 'canWriteSuperset' (i.e. low-watermark) constraints.
-                data = new TypeVariable(data.name, data.constraint, null);
-            }
-        }
         this.tag = tag;
         this.data = data;
     }
+    // TODO: replace with instanceof checks
+    get isEntity() { return false; }
+    get isVariable() { return false; }
+    get isCollection() { return false; }
+    get isBigCollection() { return false; }
+    get isRelation() { return false; }
+    get isInterface() { return false; }
+    get isSlot() { return false; }
+    get isReference() { return false; }
+    get isArcInfo() { return false; }
+    get isHandleInfo() { return false; }
+    // TODO: remove these; callers can directly construct the classes now
     static newEntity(entity) {
-        return new Type('Entity', entity);
+        return new EntityType(entity);
     }
     static newVariable(variable) {
-        return new Type('Variable', variable);
+        return new VariableType(variable);
     }
     static newCollection(collection) {
-        return new Type('Collection', collection);
+        return new CollectionType(collection);
     }
     static newBigCollection(bigCollection) {
-        return new Type('BigCollection', bigCollection);
+        return new BigCollectionType(bigCollection);
     }
     static newRelation(relation) {
-        return new Type('Relation', relation);
+        return new RelationType(relation);
     }
     static newInterface(iface) {
-        return new Type('Interface', iface);
+        return new InterfaceType(iface);
     }
     static newSlot(slot) {
-        return new Type('Slot', slot);
+        return new SlotType(slot);
     }
     static newReference(reference) {
-        return new Type('Reference', reference);
+        return new ReferenceType(reference);
     }
     static newArcInfo() {
-        return new Type('ArcInfo', null);
+        return new ArcInfoType();
     }
     static newHandleInfo() {
-        return new Type('HandleInfo', null);
+        return new HandleInfoType();
     }
-    mergeTypeVariablesByName(variableMap) {
-        if (this.isVariable) {
-            const name = this.variable.name;
-            let variable = variableMap.get(name);
-            if (!variable) {
-                variable = this;
-                variableMap.set(name, this);
-            }
-            else {
-                if (variable.variable.hasConstraint || this.variable.hasConstraint) {
-                    const mergedConstraint = variable.variable.maybeMergeConstraints(this.variable);
-                    if (!mergedConstraint) {
-                        throw new Error('could not merge type variables');
-                    }
-                }
-            }
-            return variable;
+    static fromLiteral(literal) {
+        switch (literal.tag) {
+            case 'Entity':
+                return new EntityType(Schema.fromLiteral(literal.data));
+            case 'Variable':
+                return new VariableType(TypeVariable.fromLiteral(literal.data));
+            case 'Collection':
+                return new CollectionType(Type.fromLiteral(literal.data));
+            case 'BigCollection':
+                return new BigCollectionType(Type.fromLiteral(literal.data));
+            case 'Relation':
+                return new RelationType(literal.data);
+            case 'Interface':
+                return new InterfaceType(Shape.fromLiteral(literal.data));
+            case 'Slot':
+                return new SlotType(literal.data);
+            case 'Reference':
+                return new ReferenceType(Type.fromLiteral(literal.data));
+            case 'ArcInfo':
+                return new ArcInfoType();
+            case 'HandleInfo':
+                return new HandleInfoType();
+            default:
+                throw new Error(`fromLiteral: unknown type ${literal}`);
         }
-        if (this.isCollection) {
-            const primitiveType = this.collectionType;
-            const result = primitiveType.mergeTypeVariablesByName(variableMap);
-            return (result === primitiveType) ? this : result.collectionOf();
-        }
-        if (this.isBigCollection) {
-            const primitiveType = this.bigCollectionType;
-            const result = primitiveType.mergeTypeVariablesByName(variableMap);
-            return (result === primitiveType) ? this : result.bigCollectionOf();
-        }
-        if (this.isInterface) {
-            const shape = this.interfaceShape.clone(new Map());
-            shape.mergeTypeVariablesByName(variableMap);
-            // TODO: only build a new type when a variable is modified
-            return Type.newInterface(shape);
-        }
-        return this;
     }
     static unwrapPair(type1, type2) {
-        assert(type1 instanceof Type);
-        assert(type2 instanceof Type);
-        if (type1.isCollection && type2.isCollection) {
-            return Type.unwrapPair(type1.collectionType, type2.collectionType);
-        }
-        if (type1.isBigCollection && type2.isBigCollection) {
-            return Type.unwrapPair(type1.bigCollectionType, type2.bigCollectionType);
-        }
-        if (type1.isReference && type2.isReference) {
-            return Type.unwrapPair(type1.referenceReferredType, type2.referenceReferredType);
+        if (type1.tag === type2.tag) {
+            const contained1 = type1.getContainedType();
+            if (contained1 !== null) {
+                return Type.unwrapPair(contained1, type2.getContainedType());
+            }
         }
         return [type1, type2];
     }
-    // TODO: update call sites to use the type checker instead (since they will
-    // have additional information about direction etc.)
-    equals(type) {
-        return TypeChecker.compareTypes({ type: this }, { type });
-    }
-    _applyExistenceTypeTest(test) {
-        if (this.isCollection) {
-            return this.collectionType._applyExistenceTypeTest(test);
-        }
-        if (this.isBigCollection) {
-            return this.bigCollectionType._applyExistenceTypeTest(test);
-        }
-        if (this.isInterface) {
-            return this.interfaceShape._applyExistenceTypeTest(test);
-        }
-        return test(this);
-    }
-    get hasVariable() {
-        return this._applyExistenceTypeTest(type => type.isVariable);
-    }
-    get hasUnresolvedVariable() {
-        return this._applyExistenceTypeTest(type => type.isVariable && !type.variable.isResolved());
-    }
-    get hasVariableReference() {
-        return this._applyExistenceTypeTest(type => type.isVariableReference);
-    }
-    // TODO: remove this in favor of a renamed collectionType
-    primitiveType() {
-        return this.collectionType;
-    }
-    getContainedType() {
-        if (this.isCollection) {
-            return this.collectionType;
-        }
-        if (this.isBigCollection) {
-            return this.bigCollectionType;
-        }
-        if (this.isReference) {
-            return this.referenceReferredType;
-        }
-        return null;
-    }
-    isTypeContainer() {
-        return this.isCollection || this.isBigCollection || this.isReference;
-    }
-    collectionOf() {
-        return Type.newCollection(this);
-    }
-    bigCollectionOf() {
-        return Type.newBigCollection(this);
-    }
-    resolvedType() {
-        if (this.isCollection) {
-            const primitiveType = this.collectionType;
-            const resolvedPrimitiveType = primitiveType.resolvedType();
-            return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.collectionOf() : this;
-        }
-        if (this.isBigCollection) {
-            const primitiveType = this.bigCollectionType;
-            const resolvedPrimitiveType = primitiveType.resolvedType();
-            return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.bigCollectionOf() : this;
-        }
-        if (this.isReference) {
-            const primitiveType = this.referenceReferredType;
-            const resolvedPrimitiveType = primitiveType.resolvedType();
-            return (primitiveType !== resolvedPrimitiveType) ? Type.newReference(resolvedPrimitiveType) : this;
-        }
-        if (this.isVariable) {
-            const resolution = this.variable.resolution;
-            if (resolution) {
-                return resolution;
-            }
-        }
-        if (this.isInterface) {
-            return Type.newInterface(this.interfaceShape.resolvedType());
-        }
-        return this;
-    }
-    isResolved() {
-        // TODO: one of these should not exist.
-        return !this.hasUnresolvedVariable;
-    }
-    canEnsureResolved() {
-        if (this.isResolved()) {
-            return true;
-        }
-        if (this.isInterface) {
-            return this.interfaceShape.canEnsureResolved();
-        }
-        if (this.isVariable) {
-            return this.variable.canEnsureResolved();
-        }
-        if (this.isCollection) {
-            return this.collectionType.canEnsureResolved();
-        }
-        if (this.isBigCollection) {
-            return this.bigCollectionType.canEnsureResolved();
-        }
-        if (this.isReference) {
-            return this.referenceReferredType.canEnsureResolved();
-        }
-        return true;
-    }
-    maybeEnsureResolved() {
-        if (this.isInterface) {
-            return this.interfaceShape.maybeEnsureResolved();
-        }
-        if (this.isVariable) {
-            return this.variable.maybeEnsureResolved();
-        }
-        if (this.isCollection) {
-            return this.collectionType.maybeEnsureResolved();
-        }
-        if (this.isBigCollection) {
-            return this.bigCollectionType.maybeEnsureResolved();
-        }
-        if (this.isReference) {
-            return this.referenceReferredType.maybeEnsureResolved();
-        }
-        return true;
-    }
-    get canWriteSuperset() {
-        if (this.isVariable) {
-            return this.variable.canWriteSuperset;
-        }
-        if (this.isEntity || this.isSlot) {
-            return this;
-        }
-        if (this.isInterface) {
-            return Type.newInterface(this.interfaceShape.canWriteSuperset);
-        }
-        throw new Error(`canWriteSuperset not implemented for ${this}`);
-    }
-    get canReadSubset() {
-        if (this.isVariable) {
-            return this.variable.canReadSubset;
-        }
-        if (this.isEntity || this.isSlot) {
-            return this;
-        }
-        if (this.isInterface) {
-            return Type.newInterface(this.interfaceShape.canReadSubset);
-        }
-        if (this.isReference) {
-            return this.referenceReferredType.canReadSubset;
-        }
-        throw new Error(`canReadSubset not implemented for ${this}`);
-    }
-    isMoreSpecificThan(type) {
-        if (this.tag !== type.tag) {
-            return false;
-        }
-        if (this.isEntity) {
-            return this.entitySchema.isMoreSpecificThan(type.entitySchema);
-        }
-        if (this.isInterface) {
-            return this.interfaceShape.isMoreSpecificThan(type.interfaceShape);
-        }
-        if (this.isSlot) {
-            // TODO: formFactor checking, etc.
-            return true;
-        }
-        throw new Error(`contains not implemented for ${this}`);
+    /** Tests whether two types' constraints are compatible with each other. */
+    static canMergeConstraints(type1, type2) {
+        return Type._canMergeCanReadSubset(type1, type2) && Type._canMergeCanWriteSuperset(type1, type2);
     }
     static _canMergeCanReadSubset(type1, type2) {
         if (type1.canReadSubset && type2.canReadSubset) {
             if (type1.canReadSubset.tag !== type2.canReadSubset.tag) {
                 return false;
             }
-            if (type1.canReadSubset.isEntity) {
+            if (type1.canReadSubset instanceof EntityType) {
                 return Schema.intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
             }
             throw new Error(`_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
@@ -2038,15 +1804,71 @@ class Type {
             if (type1.canWriteSuperset.tag !== type2.canWriteSuperset.tag) {
                 return false;
             }
-            if (type1.canWriteSuperset.isEntity) {
+            if (type1.canWriteSuperset instanceof EntityType) {
                 return Schema.union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
             }
         }
         return true;
     }
-    /** Tests whether two types' constraints are compatible with each other. */
-    static canMergeConstraints(type1, type2) {
-        return Type._canMergeCanReadSubset(type1, type2) && Type._canMergeCanWriteSuperset(type1, type2);
+    // TODO: update call sites to use the type checker instead (since they will
+    // have additional information about direction etc.)
+    equals(type) {
+        return TypeChecker.compareTypes({ type: this }, { type });
+    }
+    isResolved() {
+        // TODO: one of these should not exist.
+        return !this.hasUnresolvedVariable;
+    }
+    mergeTypeVariablesByName(variableMap) {
+        return this;
+    }
+    _applyExistenceTypeTest(test) {
+        return test(this);
+    }
+    get hasVariable() {
+        return this._applyExistenceTypeTest(type => type.isVariable);
+    }
+    get hasUnresolvedVariable() {
+        return this._applyExistenceTypeTest(type => type.isVariable && !type.variable.isResolved());
+    }
+    primitiveType() {
+        return null;
+    }
+    getContainedType() {
+        return null;
+    }
+    isTypeContainer() {
+        return false;
+    }
+    collectionOf() {
+        return new CollectionType(this);
+    }
+    bigCollectionOf() {
+        return new BigCollectionType(this);
+    }
+    resolvedType() {
+        return this;
+    }
+    canEnsureResolved() {
+        return this.isResolved() || this._canEnsureResolved();
+    }
+    _canEnsureResolved() {
+        return true;
+    }
+    maybeEnsureResolved() {
+        return true;
+    }
+    get canWriteSuperset() {
+        throw new Error(`canWriteSuperset not implemented for ${this}`);
+    }
+    get canReadSubset() {
+        throw new Error(`canReadSubset not implemented for ${this}`);
+    }
+    isMoreSpecificThan(type) {
+        return this.tag === type.tag && this._isMoreSpecificThan(type);
+    }
+    _isMoreSpecificThan(type) {
+        throw new Error(`isMoreSpecificThan not implemented for ${this}`);
     }
     /**
      * Clone a type object.
@@ -2055,19 +1877,20 @@ class Type {
      * property, create a Map() and pass it into all clone calls in the group.
      */
     clone(variableMap) {
+        // TODO: clean this up
         const type = this.resolvedType();
-        if (type.isVariable) {
+        if (type instanceof VariableType) {
             if (variableMap.has(type.variable)) {
-                return new Type('Variable', variableMap.get(type.variable));
+                return new VariableType(variableMap.get(type.variable));
             }
             else {
                 const newTypeVariable = TypeVariable.fromLiteral(type.variable.toLiteral());
                 variableMap.set(type.variable, newTypeVariable);
-                return new Type('Variable', newTypeVariable);
+                return new VariableType(newTypeVariable);
             }
         }
-        if (type.data.clone) {
-            return new Type(type.tag, type.data.clone(variableMap));
+        if (type.data['clone']) {
+            return Type.fromLiteral({ tag: type.tag, data: type.data['clone'](variableMap) });
         }
         return Type.fromLiteral(type.toLiteral());
     }
@@ -2078,190 +1901,426 @@ class Type {
      * cloned.
      */
     _cloneWithResolutions(variableMap) {
-        if (this.isVariable) {
-            if (variableMap.has(this.variable)) {
-                return new Type('Variable', variableMap.get(this.variable));
-            }
-            else {
-                const newTypeVariable = TypeVariable.fromLiteral(this.variable.toLiteralIgnoringResolutions());
-                if (this.variable.resolution) {
-                    newTypeVariable.resolution = this.variable.resolution._cloneWithResolutions(variableMap);
-                }
-                if (this.variable._canReadSubset) {
-                    newTypeVariable.canReadSubset = this.variable.canReadSubset._cloneWithResolutions(variableMap);
-                }
-                if (this.variable._canWriteSuperset) {
-                    newTypeVariable.canWriteSuperset = this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
-                }
-                variableMap.set(this.variable, newTypeVariable);
-                return new Type('Variable', newTypeVariable);
-            }
-        }
-        if (this.data instanceof Shape || this.data instanceof Type) {
-            return new Type(this.tag, this.data._cloneWithResolutions(variableMap));
-        }
         return Type.fromLiteral(this.toLiteral());
     }
+    // tslint:disable-next-line: no-any
     toLiteral() {
-        if (this.isVariable && this.variable.resolution) {
-            return this.variable.resolution.toLiteral();
-        }
-        if (this.data instanceof Type || this.data instanceof Shape || this.data instanceof Schema ||
-            this.data instanceof TypeVariable) {
-            return { tag: this.tag, data: this.data.toLiteral() };
-        }
         return this;
-    }
-    static _deliteralizer(tag) {
-        switch (tag) {
-            case 'Interface':
-                return Shape.fromLiteral;
-            case 'Entity':
-                return Schema.fromLiteral;
-            case 'Collection':
-            case 'BigCollection':
-                return Type.fromLiteral;
-            case 'Tuple':
-                return TupleFields.fromLiteral;
-            case 'Variable':
-                return TypeVariable.fromLiteral;
-            case 'Reference':
-                return Type.fromLiteral;
-            default:
-                return a => a;
-        }
-    }
-    static fromLiteral(literal) {
-        if (literal.tag === 'SetView') {
-            // TODO: SetView is deprecated, remove when possible.
-            literal.tag = 'Collection';
-        }
-        return new Type(literal.tag, Type._deliteralizer(literal.tag)(literal.data));
     }
     // TODO: is this the same as _applyExistenceTypeTest
     hasProperty(property) {
-        if (property(this)) {
-            return true;
-        }
-        if (this.isCollection) {
-            return this.collectionType.hasProperty(property);
-        }
-        if (this.isBigCollection) {
-            return this.bigCollectionType.hasProperty(property);
-        }
+        return property(this) || this._hasProperty(property);
+    }
+    _hasProperty(property) {
         return false;
     }
     toString(options = undefined) {
-        if (this.isCollection) {
-            return `[${this.collectionType.toString(options)}]`;
-        }
-        if (this.isBigCollection) {
-            return `BigCollection<${this.bigCollectionType.toString(options)}>`;
-        }
-        if (this.isEntity) {
-            return this.entitySchema.toInlineSchemaString(options);
-        }
-        if (this.isInterface) {
-            return this.interfaceShape.name;
-        }
-        if (this.isVariable) {
-            return `~${this.variable.name}`;
-        }
-        if (this.isSlot) {
-            const fields = [];
-            for (const key of Object.keys(this.data)) {
-                if (this.data[key] !== undefined) {
-                    fields.push(`${key}:${this.data[key]}`);
-                }
-            }
-            let fieldsString = '';
-            if (fields.length !== 0) {
-                fieldsString = ` {${fields.join(', ')}}`;
-            }
-            return `Slot${fieldsString}`;
-        }
-        if (this.isReference) {
-            return 'Reference<' + this.referenceReferredType.toString() + '>';
-        }
-        if (this.isArcInfo || this.isHandleInfo) {
-            return this.tag;
-        }
-        throw new Error(`Add support to serializing type: ${JSON.stringify(this)}`);
+        return this.tag;
     }
     getEntitySchema() {
-        if (this.isCollection) {
-            return this.collectionType.getEntitySchema();
-        }
-        if (this.isBigCollection) {
-            return this.bigCollectionType.getEntitySchema();
-        }
-        if (this.isEntity) {
-            return this.entitySchema;
-        }
-        if (this.isVariable) {
-            if (this.variable.isResolved()) {
-                return this.resolvedType().getEntitySchema();
-            }
-        }
+        return null;
     }
     toPrettyString() {
-        // Try extract the description from schema spec.
-        const entitySchema = this.getEntitySchema();
-        if (entitySchema) {
-            if (this.isTypeContainer() && entitySchema.description.plural) {
-                return entitySchema.description.plural;
-            }
-            if (this.isEntity && entitySchema.description.pattern) {
-                return entitySchema.description.pattern;
-            }
-        }
-        if (this.isRelation) {
-            return JSON.stringify(this.data);
-        }
-        if (this.isCollection) {
-            return `${this.collectionType.toPrettyString()} List`;
-        }
-        if (this.isBigCollection) {
-            return `Collection of ${this.bigCollectionType.toPrettyString()}`;
-        }
-        if (this.isVariable) {
-            return this.variable.isResolved() ? this.resolvedType().toPrettyString() : `[~${this.variable.name}]`;
-        }
-        if (this.isSlot) {
-            const fields = [];
-            for (const key of Object.keys(this.data)) {
-                if (this.data[key] !== undefined) {
-                    fields.push(`${key}:${this.data[key]}`);
-                }
-            }
-            let fieldsString = '';
-            if (fields.length !== 0) {
-                fieldsString = ` {${fields.join(', ')}}`;
-            }
-            return `Slot${fieldsString}`;
-        }
-        if (this.isEntity) {
-            // Spit MyTypeFOO to My Type FOO
-            if (this.entitySchema.name) {
-                return this.entitySchema.name.replace(/([^A-Z])([A-Z])/g, '$1 $2').replace(/([A-Z][^A-Z])/g, ' $1').replace(/[\s]+/g, ' ').trim();
-            }
-            return JSON.stringify(this.entitySchema.toLiteral());
-        }
-        if (this.isInterface) {
-            return this.interfaceShape.toPrettyString();
-        }
+        return null;
     }
 }
-addType('Entity', 'schema');
-addType('Variable');
-addType('Collection', 'type');
-addType('BigCollection', 'type');
-addType('Relation', 'entities');
-addType('Interface', 'shape');
-addType('Slot');
-addType('Reference', 'referredType');
-addType('ArcInfo');
-addType('HandleInfo');
+class EntityType extends Type {
+    // TODO: replace with a member var once data has been removed
+    get entitySchema() { return this.data; }
+    constructor(schema) {
+        super('Entity', schema);
+    }
+    get isEntity() {
+        return true;
+    }
+    get canWriteSuperset() {
+        return this;
+    }
+    get canReadSubset() {
+        return this;
+    }
+    _isMoreSpecificThan(type) {
+        return this.entitySchema.isMoreSpecificThan(type.entitySchema);
+    }
+    toLiteral() {
+        return { tag: this.tag, data: this.entitySchema.toLiteral() };
+    }
+    toString(options = undefined) {
+        return this.entitySchema.toInlineSchemaString(options);
+    }
+    getEntitySchema() {
+        return this.entitySchema;
+    }
+    toPrettyString() {
+        if (this.entitySchema.description.pattern) {
+            return this.entitySchema.description.pattern;
+        }
+        // Spit MyTypeFOO to My Type FOO
+        if (this.entitySchema.name) {
+            return this.entitySchema.name.replace(/([^A-Z])([A-Z])/g, '$1 $2')
+                .replace(/([A-Z][^A-Z])/g, ' $1')
+                .replace(/[\s]+/g, ' ')
+                .trim();
+        }
+        return JSON.stringify(this.entitySchema.toLiteral());
+    }
+}
+// Yes, these names need fixing.
+class VariableType extends Type {
+    // TODO: replace with a member var once data has been removed
+    get variable() { return this.data; }
+    constructor(variable) {
+        super('Variable', variable);
+    }
+    get isVariable() {
+        return true;
+    }
+    mergeTypeVariablesByName(variableMap) {
+        const name = this.variable.name;
+        let variable = variableMap.get(name);
+        if (!variable) {
+            variable = this;
+            variableMap.set(name, this);
+        }
+        else if (variable instanceof VariableType) {
+            if (variable.variable.hasConstraint || this.variable.hasConstraint) {
+                const mergedConstraint = variable.variable.maybeMergeConstraints(this.variable);
+                if (!mergedConstraint) {
+                    throw new Error('could not merge type variables');
+                }
+            }
+        }
+        return variable;
+    }
+    resolvedType() {
+        return this.variable.resolution || this;
+    }
+    _canEnsureResolved() {
+        return this.variable.canEnsureResolved();
+    }
+    maybeEnsureResolved() {
+        return this.variable.maybeEnsureResolved();
+    }
+    get canWriteSuperset() {
+        return this.variable.canWriteSuperset;
+    }
+    get canReadSubset() {
+        return this.variable.canReadSubset;
+    }
+    _cloneWithResolutions(variableMap) {
+        if (variableMap.has(this.variable)) {
+            return new VariableType(variableMap.get(this.variable));
+        }
+        else {
+            const newTypeVariable = TypeVariable.fromLiteral(this.variable.toLiteralIgnoringResolutions());
+            if (this.variable.resolution) {
+                newTypeVariable.resolution = this.variable.resolution._cloneWithResolutions(variableMap);
+            }
+            if (this.variable._canReadSubset) {
+                newTypeVariable.canReadSubset = this.variable.canReadSubset._cloneWithResolutions(variableMap);
+            }
+            if (this.variable._canWriteSuperset) {
+                newTypeVariable.canWriteSuperset = this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
+            }
+            variableMap.set(this.variable, newTypeVariable);
+            return new VariableType(newTypeVariable);
+        }
+    }
+    toLiteral() {
+        return this.variable.resolution ? this.variable.resolution.toLiteral()
+            : { tag: this.tag, data: this.variable.toLiteral() };
+    }
+    toString(options = undefined) {
+        return `~${this.variable.name}`;
+    }
+    getEntitySchema() {
+        return this.variable.isResolved() ? this.resolvedType().getEntitySchema() : null;
+    }
+    toPrettyString() {
+        return this.variable.isResolved() ? this.resolvedType().toPrettyString() : `[~${this.variable.name}]`;
+    }
+}
+class CollectionType extends Type {
+    // TODO: replace with a member var once data has been removed
+    get collectionType() { return this.data; }
+    constructor(collectionType) {
+        super('Collection', collectionType);
+    }
+    get isCollection() {
+        return true;
+    }
+    mergeTypeVariablesByName(variableMap) {
+        const primitiveType = this.collectionType;
+        const result = primitiveType.mergeTypeVariablesByName(variableMap);
+        return (result === primitiveType) ? this : result.collectionOf();
+    }
+    _applyExistenceTypeTest(test) {
+        return this.collectionType._applyExistenceTypeTest(test);
+    }
+    // TODO: remove this in favor of a renamed collectionType
+    primitiveType() {
+        return this.collectionType;
+    }
+    getContainedType() {
+        return this.collectionType;
+    }
+    isTypeContainer() {
+        return true;
+    }
+    resolvedType() {
+        const primitiveType = this.collectionType;
+        const resolvedPrimitiveType = primitiveType.resolvedType();
+        return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.collectionOf() : this;
+    }
+    _canEnsureResolved() {
+        return this.collectionType.canEnsureResolved();
+    }
+    maybeEnsureResolved() {
+        return this.collectionType.maybeEnsureResolved();
+    }
+    _cloneWithResolutions(variableMap) {
+        return new CollectionType(this.collectionType._cloneWithResolutions(variableMap));
+    }
+    toLiteral() {
+        return { tag: this.tag, data: this.collectionType.toLiteral() };
+    }
+    _hasProperty(property) {
+        return this.collectionType.hasProperty(property);
+    }
+    toString(options = undefined) {
+        return `[${this.collectionType.toString(options)}]`;
+    }
+    getEntitySchema() {
+        return this.collectionType.getEntitySchema();
+    }
+    toPrettyString() {
+        const entitySchema = this.getEntitySchema();
+        if (entitySchema && entitySchema.description.plural) {
+            return entitySchema.description.plural;
+        }
+        return `${this.collectionType.toPrettyString()} List`;
+    }
+}
+class BigCollectionType extends Type {
+    // TODO: replace with a member var once data has been removed
+    get bigCollectionType() { return this.data; }
+    constructor(bigCollectionType) {
+        super('BigCollection', bigCollectionType);
+    }
+    get isBigCollection() {
+        return true;
+    }
+    mergeTypeVariablesByName(variableMap) {
+        const primitiveType = this.bigCollectionType;
+        const result = primitiveType.mergeTypeVariablesByName(variableMap);
+        return (result === primitiveType) ? this : result.bigCollectionOf();
+    }
+    _applyExistenceTypeTest(test) {
+        return this.bigCollectionType._applyExistenceTypeTest(test);
+    }
+    getContainedType() {
+        return this.bigCollectionType;
+    }
+    isTypeContainer() {
+        return true;
+    }
+    resolvedType() {
+        const primitiveType = this.bigCollectionType;
+        const resolvedPrimitiveType = primitiveType.resolvedType();
+        return (primitiveType !== resolvedPrimitiveType) ? resolvedPrimitiveType.bigCollectionOf() : this;
+    }
+    _canEnsureResolved() {
+        return this.bigCollectionType.canEnsureResolved();
+    }
+    maybeEnsureResolved() {
+        return this.bigCollectionType.maybeEnsureResolved();
+    }
+    _cloneWithResolutions(variableMap) {
+        return new BigCollectionType(this.bigCollectionType._cloneWithResolutions(variableMap));
+    }
+    toLiteral() {
+        return { tag: this.tag, data: this.bigCollectionType.toLiteral() };
+    }
+    _hasProperty(property) {
+        return this.bigCollectionType.hasProperty(property);
+    }
+    toString(options = undefined) {
+        return `BigCollection<${this.bigCollectionType.toString(options)}>`;
+    }
+    getEntitySchema() {
+        return this.bigCollectionType.getEntitySchema();
+    }
+    toPrettyString() {
+        const entitySchema = this.getEntitySchema();
+        if (entitySchema && entitySchema.description.plural) {
+            return entitySchema.description.plural;
+        }
+        return `Collection of ${this.bigCollectionType.toPrettyString()}`;
+    }
+}
+class RelationType extends Type {
+    // TODO: replace with a member var once data has been removed
+    get relationEntities() { return this.data; }
+    constructor(relation) {
+        super('Relation', relation);
+    }
+    get isRelation() {
+        return true;
+    }
+    toPrettyString() {
+        return JSON.stringify(this.relationEntities);
+    }
+}
+class InterfaceType extends Type {
+    // TODO: replace with a member var once data has been removed
+    get interfaceShape() { return this.data; }
+    constructor(iface) {
+        super('Interface', iface);
+    }
+    get isInterface() {
+        return true;
+    }
+    mergeTypeVariablesByName(variableMap) {
+        const shape = this.interfaceShape.clone(new Map());
+        shape.mergeTypeVariablesByName(variableMap);
+        // TODO: only build a new type when a variable is modified
+        return new InterfaceType(shape);
+    }
+    _applyExistenceTypeTest(test) {
+        return this.interfaceShape._applyExistenceTypeTest(test);
+    }
+    resolvedType() {
+        return new InterfaceType(this.interfaceShape.resolvedType());
+    }
+    _canEnsureResolved() {
+        return this.interfaceShape.canEnsureResolved();
+    }
+    maybeEnsureResolved() {
+        return this.interfaceShape.maybeEnsureResolved();
+    }
+    get canWriteSuperset() {
+        return new InterfaceType(this.interfaceShape.canWriteSuperset);
+    }
+    get canReadSubset() {
+        return new InterfaceType(this.interfaceShape.canReadSubset);
+    }
+    _isMoreSpecificThan(type) {
+        return this.interfaceShape.isMoreSpecificThan(type.interfaceShape);
+    }
+    _cloneWithResolutions(variableMap) {
+        return new InterfaceType(this.interfaceShape._cloneWithResolutions(variableMap));
+    }
+    toLiteral() {
+        return { tag: this.tag, data: this.interfaceShape.toLiteral() };
+    }
+    toString(options = undefined) {
+        return this.interfaceShape.name;
+    }
+    toPrettyString() {
+        return this.interfaceShape.toPrettyString();
+    }
+}
+class SlotType extends Type {
+    // TODO: replace with a member var once data has been removed
+    get slot() { return this.data; }
+    constructor(slot) {
+        super('Slot', slot);
+    }
+    get isSlot() {
+        return true;
+    }
+    get canWriteSuperset() {
+        return this;
+    }
+    get canReadSubset() {
+        return this;
+    }
+    _isMoreSpecificThan(type) {
+        // TODO: formFactor checking, etc.
+        return true;
+    }
+    toString(options = undefined) {
+        const fields = [];
+        for (const key of Object.keys(this.slot)) {
+            if (this.slot[key] !== undefined) {
+                fields.push(`${key}:${this.slot[key]}`);
+            }
+        }
+        let fieldsString = '';
+        if (fields.length !== 0) {
+            fieldsString = ` {${fields.join(', ')}}`;
+        }
+        return `Slot${fieldsString}`;
+    }
+    toPrettyString() {
+        const fields = [];
+        for (const key of Object.keys(this.slot)) {
+            if (this.slot[key] !== undefined) {
+                fields.push(`${key}:${this.slot[key]}`);
+            }
+        }
+        let fieldsString = '';
+        if (fields.length !== 0) {
+            fieldsString = ` {${fields.join(', ')}}`;
+        }
+        return `Slot${fieldsString}`;
+    }
+}
+class ReferenceType extends Type {
+    // TODO: replace with a member var once data has been removed
+    get referredType() { return this.data; }
+    constructor(reference) {
+        super('Reference', reference);
+    }
+    get isReference() {
+        return true;
+    }
+    getContainedType() {
+        return this.referredType;
+    }
+    isTypeContainer() {
+        return true;
+    }
+    resolvedType() {
+        const primitiveType = this.referredType;
+        const resolvedPrimitiveType = primitiveType.resolvedType();
+        return (primitiveType !== resolvedPrimitiveType) ? new ReferenceType(resolvedPrimitiveType) : this;
+    }
+    _canEnsureResolved() {
+        return this.referredType.canEnsureResolved();
+    }
+    maybeEnsureResolved() {
+        return this.referredType.maybeEnsureResolved();
+    }
+    get canReadSubset() {
+        return this.referredType.canReadSubset;
+    }
+    _cloneWithResolutions(variableMap) {
+        return new ReferenceType(this.referredType._cloneWithResolutions(variableMap));
+    }
+    toLiteral() {
+        return { tag: this.tag, data: this.referredType.toLiteral() };
+    }
+    toString(options = undefined) {
+        return 'Reference<' + this.referredType.toString() + '>';
+    }
+}
+class ArcInfoType extends Type {
+    constructor() {
+        super('ArcInfo', null);
+    }
+    get isArcInfo() {
+        return true;
+    }
+}
+class HandleInfoType extends Type {
+    constructor() {
+        super('HandleInfo', null);
+    }
+    get isHandleInfo() {
+        return true;
+    }
+}
 
 /**
  * @license
@@ -12640,7 +12699,6 @@ class Handle$1 {
         this._id = storage.id;
         this._originalId = storage.originalId;
         this._type = undefined;
-        assert(storage.type == undefined || !(storage.type.hasVariableReference), `variable references shouldn't be part of handle types`);
         this._mappedType = storage.type;
         this._storageKey = storage.storageKey;
     }
@@ -39496,7 +39554,6 @@ class Manifest {
     // TODO: newParticle, Schema, etc.
     // TODO: simplify() / isValid().
     async createStore(type, name, id, tags, storageKey) {
-        assert(!type.hasVariableReference, `stores can't have variable references`);
         const store = await this.storageProviderFactory.construct(id, type, storageKey || `volatile://${this.id}`);
         assert(store.version !== null);
         store.name = name;
@@ -40176,7 +40233,6 @@ ${e.message}
                     if (!hostedParticle) {
                         throw new ManifestError(connectionItem.target.location, `Could not find hosted particle '${connectionItem.target.particle}'`);
                     }
-                    assert(!connection.type.hasVariableReference);
                     assert(connection.type.isInterface);
                     if (!connection.type.interfaceShape.restrictType(hostedParticle)) {
                         throw new ManifestError(connectionItem.target.location, `Hosted particle '${hostedParticle.name}' does not match shape '${connection.name}'`);
@@ -44353,11 +44409,12 @@ class FindHostedParticle extends Strategy {
                 if (connection.direction !== 'host' || connection.handle)
                     return undefined;
                 assert(connection.type.isInterface);
+                const iface = connection.type;
                 const results = [];
                 for (const particle of arc.context.particles) {
                     // This is what shape.particleMatches() does, but we also do
                     // canEnsureResolved at the end:
-                    const shapeClone = connection.type.interfaceShape.cloneWithResolutions(new Map());
+                    const shapeClone = iface.interfaceShape.cloneWithResolutions(new Map());
                     // If particle doesn't match the requested shape.
                     if (shapeClone.restrictType(particle) === false)
                         continue;
@@ -46698,13 +46755,14 @@ class OuterPortAttachment {
   // TODO: This is fragile and incomplete. Change this into sending entire
   //       handle object once and refer back to it via its ID in the tool.
   _describeHandleType(handleType) {
+    if (handleType instanceof Type) {
+      switch (handleType.tag) {
+        case 'Collection': return `[${this._describeHandleType(handleType.data)}]`;
+        case 'Entity': return this._describeHandleType(handleType.data);
+        default: return `${handleType.tag} ${this._describeHandleType(handleType.data)}`;
+      }
+    }
     switch (handleType.constructor.name) {
-      case 'Type':
-        switch (handleType.tag) {
-          case 'Collection': return `[${this._describeHandleType(handleType.data)}]`;
-          case 'Entity': return this._describeHandleType(handleType.data);
-          default: return `${handleType.tag} ${this._describeHandleType(handleType.data)}`;
-        }
       case 'Schema':
         return handleType.name;
       case 'Shape':

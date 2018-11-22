@@ -1,7 +1,7 @@
 import { PouchDbStorageProvider } from './pouch-db-storage-provider';
 export declare class PouchDbBigCollection extends PouchDbStorageProvider {
     constructor(type: any, storageEngine: any, name: any, id: any, key: any);
-    backingType(): import("../../type").Type;
+    backingType(): any;
     get(id: any): Promise<void>;
     store(value: any, keys: any, originatorId: any): Promise<void>;
     remove(id: any, keys: any, originatorId: any): Promise<void>;

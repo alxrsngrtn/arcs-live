@@ -49,8 +49,8 @@ export declare class Shape {
         }[];
     };
     clone(variableMap: any): Shape;
-    cloneWithResolutions(variableMap: any): any;
-    _cloneWithResolutions(variableMap: any): any;
+    cloneWithResolutions(variableMap: any): Shape;
+    _cloneWithResolutions(variableMap: any): Shape;
     canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
     tryMergeTypeVariablesWith(other: any): Shape;

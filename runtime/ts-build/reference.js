@@ -7,7 +7,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
-import { Type } from './type.js';
+import { ReferenceType } from './type.js';
 import { handleFor } from './handle.js';
 var ReferenceMode;
 (function (ReferenceMode) {
@@ -27,7 +27,7 @@ export class Reference {
     }
     async ensureStorageProxy() {
         if (this.storageProxy == null) {
-            this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referenceReferredType);
+            this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referredType);
             this.handle = handleFor(this.storageProxy);
             if (this.storageKey) {
                 assert(this.storageKey === this.storageProxy.storageKey);
@@ -53,7 +53,7 @@ export class Reference {
         return class extends Reference {
             constructor(entity) {
                 // TODO(shans): start carrying storageKey information around on Entity objects
-                super({ id: entity.id, storageKey: null }, Type.newReference(entity.constructor.type), context);
+                super({ id: entity.id, storageKey: null }, new ReferenceType(entity.constructor.type), context);
                 this.mode = ReferenceMode.Unstored;
                 this.entity = entity;
                 this.stored = new Promise(async (resolve, reject) => {

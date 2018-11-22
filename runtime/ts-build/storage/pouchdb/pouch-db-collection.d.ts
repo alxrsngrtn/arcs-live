@@ -16,7 +16,7 @@ export declare class PouchDbCollection extends PouchDbStorageProvider {
      */
     constructor(type: Type, storageEngine: PouchDbStorage, name: string, id: string, key: string);
     /** @inheritDoc */
-    backingType(): Type;
+    backingType(): any;
     clone(): PouchDbCollection;
     cloneFrom(handle: any): Promise<void>;
     /** @inheritDoc */

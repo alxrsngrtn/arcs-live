@@ -70,7 +70,7 @@ export declare class Manifest {
     _find<a>(manifestFinder: ManifestFinder<a>): a;
     _findAll<a>(manifestFinder: ManifestFinderGenerator<a>): IterableIterator<a>;
     findSchemaByName(name: any): Schema;
-    findTypeByName(name: any): Type;
+    findTypeByName(name: any): import("./type.js").EntityType | import("./type.js").InterfaceType;
     findParticleByName(name: any): ParticleSpec;
     findParticlesByVerb(verb: any): ParticleSpec[];
     findStoreByName(name: any): StorageProviderBase;
