@@ -1,17 +1,5 @@
-commit 65b23c45d8c051a1cb2aa1238aabd90909583885
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Nov 21 18:26:27 2018 -0800
+commit 64b40641a6606065146261945518a80500b67f39
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Nov 22 13:48:38 2018 +1100
 
-    Convert strategizer and strategies to typescript (#2284)
-    
-    * Convert strategizer and strategies to typescript
-    
-    - Avoid use of Object.assign in plan-producer
-    - Introduce StrategyDerived Interface
-    - Introduce abstract base class EndPoint for connection-constraints
-    - Move arc/options to the Strategy abstract constructor
-    - Simplify constructor of SearchTokensToParticles to use ForEach
-    - Hoist Ruleset.Builder class to top-level RulesetBuilder
-    - Various cleanups and moar types
-    
-    * lint fix
+    Finding functionality for an object-explorer (#2269)
