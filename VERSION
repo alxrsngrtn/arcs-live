@@ -1,5 +1,5 @@
-commit ab6c94e864797520bc82575c850c97a9c208eca7
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Nov 22 17:12:02 2018 +1100
+commit 6c844896d48ae357b85fe971dd60b9eda70228c6
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Nov 22 14:14:29 2018 -0800
 
-    Reorder parse attempts to avoid unecessary parse failure (#2292)
+    delete old planificator (#2294)
