@@ -8,6 +8,7 @@ import { Strategy } from '../strategizer/strategizer.js';
 import { Recipe } from '../recipe/recipe.js';
 import { Walker } from '../recipe/walker.js';
 import { assert } from '../../../platform/assert-web.js';
+import { InterfaceType } from '../type.js';
 export class FindHostedParticle extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
@@ -15,7 +16,7 @@ export class FindHostedParticle extends Strategy {
             onHandleConnection(recipe, connection) {
                 if (connection.direction !== 'host' || connection.handle)
                     return undefined;
-                assert(connection.type.isInterface);
+                assert(connection.type instanceof InterfaceType);
                 const iface = connection.type;
                 const results = [];
                 for (const particle of arc.context.particles) {

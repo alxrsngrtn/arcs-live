@@ -7,5 +7,5 @@ export declare class TypeChecker {
     }): boolean;
     static _writeConstraintsApply(handleType: any, connectionType: any): boolean;
     static _readConstraintsApply(handleType: any, connectionType: any): boolean;
-    static compareTypes(left: any, right: any): boolean;
+    static compareTypes(left: any, right: any): any;
 }

@@ -16,7 +16,7 @@ import { ParticleSpec } from './particle-spec.js';
 import { Schema } from './schema.js';
 import { Search } from './recipe/search.js';
 import { Shape } from './shape.js';
-import { Type } from './type.js';
+import { Type, EntityType, CollectionType, BigCollectionType, InterfaceType } from './type.js';
 import { compareComparables } from './recipe/util.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ManifestMeta } from './manifest-meta.js';
@@ -229,11 +229,12 @@ export class Manifest {
         function typePredicate(store) {
             const resolvedType = type.resolvedType();
             if (!resolvedType.isResolved()) {
-                return type.isCollection === store.type.isCollection && type.isBigCollection === store.type.isBigCollection;
+                return (type instanceof CollectionType) === (store.type instanceof CollectionType) &&
+                    (type instanceof BigCollectionType) === (store.type instanceof BigCollectionType);
             }
             if (subtype) {
                 const [left, right] = Type.unwrapPair(store.type, resolvedType);
-                if (left.isEntity && right.isEntity) {
+                if (left instanceof EntityType && right instanceof EntityType) {
                     return left.entitySchema.isMoreSpecificThan(right.entitySchema);
                 }
                 return false;
@@ -246,7 +247,7 @@ export class Manifest {
         const stores = [...this._findAll(manifest => manifest._stores.filter(store => typePredicate(store) && tagPredicate(manifest, store)))];
         // Quick check that a new handle can fulfill the type contract.
         // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
-        return stores.filter(s => !!Handle.effectiveType(type, [{ type: s.type, direction: s.type.isInterface ? 'host' : 'inout' }]));
+        return stores.filter(s => !!Handle.effectiveType(type, [{ type: s.type, direction: (s.type instanceof InterfaceType) ? 'host' : 'inout' }]));
     }
     findShapeByName(name) {
         return this._find(manifest => manifest._shapes.find(shape => shape.name === name));
@@ -838,7 +839,7 @@ ${e.message}
                     if (!hostedParticle) {
                         throw new ManifestError(connectionItem.target.location, `Could not find hosted particle '${connectionItem.target.particle}'`);
                     }
-                    assert(connection.type.isInterface);
+                    assert(connection.type instanceof InterfaceType);
                     if (!connection.type.interfaceShape.restrictType(hostedParticle)) {
                         throw new ManifestError(connectionItem.target.location, `Hosted particle '${hostedParticle.name}' does not match shape '${connection.name}'`);
                     }
@@ -976,10 +977,10 @@ ${e.message}
         }
         // TODO: clean this up
         let unitType;
-        if (type.isCollection) {
+        if (type instanceof CollectionType) {
             unitType = type.collectionType;
         }
-        else if (type.isBigCollection) {
+        else if (type instanceof BigCollectionType) {
             unitType = type.bigCollectionType;
         }
         else {
@@ -990,7 +991,7 @@ ${e.message}
             entities = entities.slice(entities.length - 1);
             unitType = type;
         }
-        if (unitType.isEntity) {
+        if (unitType instanceof EntityType) {
             let hasSerializedId = false;
             entities = entities.map(entity => {
                 if (entity == null) {
@@ -1029,10 +1030,10 @@ ${e.message}
         // For this store to be able to be treated as a CRDT, each item needs a key.
         // Using id as key seems safe, nothing else should do this.
         let model;
-        if (type.isCollection) {
+        if (type instanceof CollectionType) {
             model = entities.map(value => ({ id: value.id, value, keys: new Set([value.id]) }));
         }
-        else if (type.isBigCollection) {
+        else if (type instanceof BigCollectionType) {
             model = entities.map(value => {
                 const index = value.rawData.$index;
                 delete value.rawData.$index;

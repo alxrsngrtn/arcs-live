@@ -21,7 +21,7 @@ export declare class TypeVariable {
      * This is used to accumulate write constraints when resolving a handle's type.
      */
     maybeMergeCanWriteSuperset(constraint: any): boolean;
-    isSatisfiedBy(type: any): any;
+    isSatisfiedBy(type: any): boolean;
     resolution: Type;
     canWriteSuperset: any;
     canReadSubset: any;

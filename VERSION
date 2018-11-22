@@ -1,5 +1,7 @@
-commit 8a6050f7a75a1c82fff83fc39ee3337412024d5e
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Nov 23 09:28:00 2018 +1100
+commit 1cafee212b6839d8c51d3740e82774828d95a1f7
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Nov 23 10:31:55 2018 +1100
 
-    Make structure names generate a parse failure if used as identifiers (#2293)
+    Replace uses of is<Type> with instanceof checks in the runtime. (#2295)
+    
+    I've left the is* methods on the type classes so non-runtime code can use them for now.

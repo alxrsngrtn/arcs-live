@@ -4440,6 +4440,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./symbols.js */ "./runtime/ts-build/symbols.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./particle-spec.js */ "./runtime/ts-build/particle-spec.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
 /** @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -4448,6 +4449,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -4689,13 +4691,13 @@ class Variable extends Handle {
         if (model === null) {
             return null;
         }
-        if (this.type.isEntity) {
+        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"]) {
             return restore(model, this.entityClass);
         }
-        if (this.type.isInterface) {
+        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["InterfaceType"]) {
             return _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__["ParticleSpec"].fromLiteral(model);
         }
-        if (this.type.isReference) {
+        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["ReferenceType"]) {
             return new _reference_js__WEBPACK_IMPORTED_MODULE_0__["Reference"](model, this.type, this._proxy.pec);
         }
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(false, `Don't know how to deliver handle data of type ${this.type}`);
@@ -4823,17 +4825,17 @@ class BigCollection extends Handle {
 }
 function handleFor(proxy, name = null, particleId = 0, canRead = true, canWrite = true) {
     let handle;
-    if (proxy.type.isCollection) {
+    if (proxy.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["CollectionType"]) {
         handle = new Collection(proxy, name, particleId, canRead, canWrite);
     }
-    else if (proxy.type.isBigCollection) {
+    else if (proxy.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["BigCollectionType"]) {
         handle = new BigCollection(proxy, name, particleId, canRead, canWrite);
     }
     else {
         handle = new Variable(proxy, name, particleId, canRead, canWrite);
     }
     const type = proxy.type.getContainedType() || proxy.type;
-    if (type.isEntity) {
+    if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"]) {
         handle.entityClass = type.entitySchema.entityClass(proxy.pec);
     }
     return handle;
@@ -5752,7 +5754,7 @@ class TypeChecker {
             }
         }
         const getResolution = candidate => {
-            if (candidate.isVariable === false) {
+            if (!(candidate instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"])) {
                 return candidate;
             }
             if (candidate.canReadSubset == null || candidate.canWriteSuperset == null) {
@@ -5767,11 +5769,11 @@ class TypeChecker {
             return null;
         };
         const candidate = baseType.resolvedType();
-        if (candidate.isCollection) {
+        if (candidate instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["CollectionType"]) {
             const resolution = getResolution(candidate.collectionType);
             return (resolution !== null) ? resolution.collectionOf() : null;
         }
-        if (candidate.isBigCollection) {
+        if (candidate instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["BigCollectionType"]) {
             const resolution = getResolution(candidate.bigCollectionType);
             return (resolution !== null) ? resolution.bigCollectionOf() : null;
         }
@@ -5779,8 +5781,8 @@ class TypeChecker {
     }
     static _tryMergeTypeVariable(base, onto) {
         const [primitiveBase, primitiveOnto] = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(base.resolvedType(), onto.resolvedType());
-        if (primitiveBase.isVariable) {
-            if (primitiveOnto.isVariable) {
+        if (primitiveBase instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
+            if (primitiveOnto instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
                 // base, onto both variables.
                 const result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
                 if (result === false) {
@@ -5796,12 +5798,12 @@ class TypeChecker {
             }
             return base;
         }
-        else if (primitiveOnto.isVariable) {
+        else if (primitiveOnto instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
             // onto variable, base not.
             primitiveOnto.variable.resolution = primitiveBase;
             return onto;
         }
-        else if (primitiveBase.isInterface && primitiveOnto.isInterface) {
+        else if (primitiveBase instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"] && primitiveOnto instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"]) {
             const result = primitiveBase.interfaceShape.tryMergeTypeVariablesWith(primitiveOnto.interfaceShape);
             if (result == null) {
                 return null;
@@ -5817,7 +5819,7 @@ class TypeChecker {
     }
     static _tryMergeConstraints(handleType, { type, direction }) {
         let [primitiveHandleType, primitiveConnectionType] = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(handleType.resolvedType(), type.resolvedType());
-        if (primitiveHandleType.isVariable) {
+        if (primitiveHandleType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
             while (primitiveConnectionType.isTypeContainer()) {
                 if (primitiveHandleType.variable.resolution != null
                     || primitiveHandleType.variable.canReadSubset != null
@@ -5829,8 +5831,15 @@ class TypeChecker {
                 // allowed because this variable could represent anything, and it needs to represent this structure
                 // in order for type resolution to succeed.
                 const newVar = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]('a', null, null));
-                primitiveHandleType.variable.resolution =
-                    primitiveConnectionType.isCollection ? _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newCollection(newVar) : (primitiveConnectionType.isBigCollection ? _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newBigCollection(newVar) : _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newReference(newVar));
+                if (primitiveConnectionType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["CollectionType"]) {
+                    primitiveHandleType.variable.resolution = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newCollection(newVar);
+                }
+                else if (primitiveConnectionType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["BigCollectionType"]) {
+                    primitiveHandleType.variable.resolution = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newBigCollection(newVar);
+                }
+                else {
+                    primitiveHandleType.variable.resolution = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newReference(newVar);
+                }
                 const unwrap = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
                 [primitiveHandleType, primitiveConnectionType] = unwrap;
             }
@@ -5905,13 +5914,13 @@ class TypeChecker {
         const resolvedRight = right.type.resolvedType();
         const [leftType, rightType] = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(resolvedLeft, resolvedRight);
         // a variable is compatible with a set only if it is unconstrained.
-        if (leftType.isVariable && rightType.isTypeContainer()) {
+        if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"] && rightType.isTypeContainer()) {
             return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
         }
-        if (rightType.isVariable && leftType.isTypeContainer()) {
+        if (rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"] && leftType.isTypeContainer()) {
             return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
         }
-        if (leftType.isVariable || rightType.isVariable) {
+        if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"] || rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
             // TODO: everything should use this, eventually. Need to implement the
             // right functionality in Shapes first, though.
             return _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].canMergeConstraints(leftType, rightType);
@@ -5925,17 +5934,17 @@ class TypeChecker {
         if (leftType.tag !== rightType.tag) {
             return false;
         }
-        if (leftType.isSlot) {
+        if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["SlotType"]) {
             return true;
         }
         // TODO: we need a generic way to evaluate type compatibility
         //       shapes + entities + etc
-        if (leftType.isInterface && rightType.isInterface) {
+        if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"] && rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"]) {
             if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
                 return true;
             }
         }
-        if (!leftType.isEntity || !rightType.isEntity) {
+        if (!(leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["EntityType"]) || !(rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["EntityType"])) {
             return false;
         }
         const leftIsSub = leftType.entitySchema.isMoreSpecificThan(rightType.entitySchema);
@@ -6003,7 +6012,6 @@ class Reference {
         this.id = data.id;
         this.storageKey = data.storageKey;
         this.context = context;
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.isReference);
         this.type = type;
     }
     async ensureStorageProxy() {
@@ -6488,6 +6496,7 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 
+
 // ShapeHandle {name, direction, type}
 // Slot {name, direction, isRequired, isSet}
 function _fromLiteral(member) {
@@ -6723,7 +6732,7 @@ ${this._slotsToManifestString()}
         typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
     }
     static isTypeVar(reference) {
-        return (reference instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"]) && reference.hasProperty(r => r.isVariable);
+        return (reference instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"]) && reference.hasProperty(r => r instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["VariableType"]);
     }
     static mustMatch(reference) {
         return !(reference == undefined || Shape.isTypeVar(reference));
@@ -6742,7 +6751,7 @@ ${this._slotsToManifestString()}
             return true;
         }
         const [left, right] = _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].unwrapPair(shapeHandle.type, particleHandle.type);
-        if (left.isVariable) {
+        if (left instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["VariableType"]) {
             return [{ var: left, value: right, direction: shapeHandle.direction }];
         }
         else {
@@ -6816,7 +6825,7 @@ ${this._slotsToManifestString()}
             if (!constraint.var.variable.resolution) {
                 constraint.var.variable.resolution = constraint.value;
             }
-            else if (constraint.var.variable.resolution.isVariable) {
+            else if (constraint.var.variable.resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["VariableType"]) {
                 // TODO(shans): revisit how this should be done,
                 // consider reusing tryMergeTypeVariablesWith(other).
                 if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"].processTypeList(constraint.var, [{
@@ -6854,6 +6863,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./storage/crdt-collection-model.js */ "./runtime/ts-build/storage/crdt-collection-model.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6863,6 +6873,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -6911,10 +6922,10 @@ class StorageProxy {
         this.pec = pec;
     }
     static newProxy(id, type, port, pec, scheduler, name) {
-        if (type.isCollection) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["CollectionType"]) {
             return new CollectionProxy(id, type, port, pec, scheduler, name);
         }
-        if (type.isBigCollection) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["BigCollectionType"]) {
             return new BigCollectionProxy(id, type, port, pec, scheduler, name);
         }
         return new VariableProxy(id, type, port, pec, scheduler, name);
@@ -7612,7 +7623,7 @@ class TypeVariable {
             this.canReadSubset = constraint;
             return true;
         }
-        if (this.canReadSubset.isSlot && constraint.isSlot) {
+        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["SlotType"]) {
             // TODO: formFactor compatibility, etc.
             return true;
         }
@@ -7635,7 +7646,7 @@ class TypeVariable {
             this.canWriteSuperset = constraint;
             return true;
         }
-        if (this.canWriteSuperset.isSlot && constraint.isSlot) {
+        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["SlotType"]) {
             // TODO: formFactor compatibility, etc.
             return true;
         }
@@ -7651,7 +7662,7 @@ class TypeVariable {
         if (!constraint) {
             return true;
         }
-        if (!constraint.isEntity || !type.isEntity) {
+        if (!(constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["EntityType"]) || !(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["EntityType"])) {
             throw new Error(`constraint checking not implemented for ${this} and ${type}`);
         }
         return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
@@ -7665,7 +7676,7 @@ class TypeVariable {
     set resolution(value) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._resolution);
         const elementType = value.resolvedType().getContainedType();
-        if (elementType !== null && elementType.isVariable) {
+        if (elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(elementType.variable !== this, 'variable cannot resolve to collection of itself');
         }
         let probe = value;
@@ -7798,17 +7809,6 @@ class Type {
         this.tag = tag;
         this.data = data;
     }
-    // TODO: replace with instanceof checks
-    get isEntity() { return false; }
-    get isVariable() { return false; }
-    get isCollection() { return false; }
-    get isBigCollection() { return false; }
-    get isRelation() { return false; }
-    get isInterface() { return false; }
-    get isSlot() { return false; }
-    get isReference() { return false; }
-    get isArcInfo() { return false; }
-    get isHandleInfo() { return false; }
     // TODO: remove these; callers can directly construct the classes now
     static newEntity(entity) {
         return new EntityType(entity);
@@ -7918,10 +7918,10 @@ class Type {
         return test(this);
     }
     get hasVariable() {
-        return this._applyExistenceTypeTest(type => type.isVariable);
+        return this._applyExistenceTypeTest(type => type instanceof VariableType);
     }
     get hasUnresolvedVariable() {
-        return this._applyExistenceTypeTest(type => type.isVariable && !type.variable.isResolved());
+        return this._applyExistenceTypeTest(type => type instanceof VariableType && !type.variable.isResolved());
     }
     primitiveType() {
         return null;
@@ -8022,6 +8022,7 @@ class EntityType extends Type {
     constructor(schema) {
         super('Entity', schema);
     }
+    // These type identifier methods are being left in place for non-runtime code.
     get isEntity() {
         return true;
     }

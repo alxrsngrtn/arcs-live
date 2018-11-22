@@ -22,7 +22,6 @@ export class Reference {
         this.id = data.id;
         this.storageKey = data.storageKey;
         this.context = context;
-        assert(type.isReference);
         this.type = type;
     }
     async ensureStorageProxy() {

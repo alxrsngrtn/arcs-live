@@ -13,6 +13,7 @@ import { Search } from './search.js';
 import { Slot } from './slot.js';
 import { Handle } from './handle.js';
 import { compareComparables } from './util.js';
+import { InterfaceType } from '../type.js';
 export class Recipe {
     constructor(name = undefined) {
         this._particles = [];
@@ -275,7 +276,9 @@ export class Recipe {
         const slots = [];
         // Reorder connections so that interfaces come last.
         // TODO: update handle-connection comparison method instead?
-        for (const connection of connections.filter(c => !c.type || !c.type.isInterface).concat(connections.filter(c => !!c.type && !!c.type.isInterface))) {
+        let ordered = connections.filter(c => !c.type || !(c.type instanceof InterfaceType));
+        ordered = ordered.concat(connections.filter(c => !!c.type && !!(c.type instanceof InterfaceType)));
+        for (const connection of ordered) {
             if (!seenParticles.has(connection.particle)) {
                 particles.push(connection.particle);
                 seenParticles.add(connection.particle);

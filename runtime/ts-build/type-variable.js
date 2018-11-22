@@ -5,7 +5,7 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Type, VariableType } from './type.js';
+import { Type, EntityType, VariableType, SlotType } from './type.js';
 import { assert } from '../../platform/assert-web.js';
 import { Schema } from './schema.js';
 export class TypeVariable {
@@ -38,7 +38,7 @@ export class TypeVariable {
             this.canReadSubset = constraint;
             return true;
         }
-        if (this.canReadSubset.isSlot && constraint.isSlot) {
+        if (this.canReadSubset instanceof SlotType && constraint instanceof SlotType) {
             // TODO: formFactor compatibility, etc.
             return true;
         }
@@ -61,7 +61,7 @@ export class TypeVariable {
             this.canWriteSuperset = constraint;
             return true;
         }
-        if (this.canWriteSuperset.isSlot && constraint.isSlot) {
+        if (this.canWriteSuperset instanceof SlotType && constraint instanceof SlotType) {
             // TODO: formFactor compatibility, etc.
             return true;
         }
@@ -77,7 +77,7 @@ export class TypeVariable {
         if (!constraint) {
             return true;
         }
-        if (!constraint.isEntity || !type.isEntity) {
+        if (!(constraint instanceof EntityType) || !(type instanceof EntityType)) {
             throw new Error(`constraint checking not implemented for ${this} and ${type}`);
         }
         return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
@@ -91,7 +91,7 @@ export class TypeVariable {
     set resolution(value) {
         assert(!this._resolution);
         const elementType = value.resolvedType().getContainedType();
-        if (elementType !== null && elementType.isVariable) {
+        if (elementType instanceof VariableType) {
             assert(elementType.variable !== this, 'variable cannot resolve to collection of itself');
         }
         let probe = value;

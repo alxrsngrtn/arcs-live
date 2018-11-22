@@ -32,7 +32,7 @@ export declare class ConnectionSpec {
     instantiateDependentConnections(particle: any, typeVarMap: Map<string, Type>): void;
     readonly isInput: boolean;
     readonly isOutput: boolean;
-    isCompatibleType(type: any): boolean;
+    isCompatibleType(type: any): any;
 }
 declare type SerializedSlotSpec = {
     name: string;

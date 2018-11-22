@@ -11,7 +11,7 @@ import { Recipe } from './recipe/recipe.js';
 import { ParticleSpec } from './particle-spec.js';
 import { Schema } from './schema.js';
 import { Shape } from './shape.js';
-import { Type } from './type.js';
+import { Type, EntityType, InterfaceType } from './type.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ManifestMeta } from './manifest-meta.js';
@@ -70,7 +70,7 @@ export declare class Manifest {
     _find<a>(manifestFinder: ManifestFinder<a>): a;
     _findAll<a>(manifestFinder: ManifestFinderGenerator<a>): IterableIterator<a>;
     findSchemaByName(name: any): Schema;
-    findTypeByName(name: any): import("./type.js").EntityType | import("./type.js").InterfaceType;
+    findTypeByName(name: any): EntityType | InterfaceType;
     findParticleByName(name: any): ParticleSpec;
     findParticlesByVerb(verb: any): ParticleSpec[];
     findStoreByName(name: any): StorageProviderBase;

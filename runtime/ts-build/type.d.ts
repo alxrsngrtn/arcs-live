@@ -6,16 +6,6 @@ export declare class Type {
     tag: 'Entity' | 'Variable' | 'Collection' | 'BigCollection' | 'Relation' | 'Interface' | 'Slot' | 'Reference' | 'ArcInfo' | 'HandleInfo';
     data: Schema | TypeVariable | Type | [Type] | Shape | SlotInfo;
     protected constructor(tag: any, data: any);
-    readonly isEntity: boolean;
-    readonly isVariable: boolean;
-    readonly isCollection: boolean;
-    readonly isBigCollection: boolean;
-    readonly isRelation: boolean;
-    readonly isInterface: boolean;
-    readonly isSlot: boolean;
-    readonly isReference: boolean;
-    readonly isArcInfo: boolean;
-    readonly isHandleInfo: boolean;
     static newEntity(entity: Schema): EntityType;
     static newVariable(variable: TypeVariable): VariableType;
     static newCollection(collection: Type): CollectionType;
@@ -32,7 +22,7 @@ export declare class Type {
     static canMergeConstraints(type1: any, type2: any): boolean;
     static _canMergeCanReadSubset(type1: any, type2: any): boolean;
     static _canMergeCanWriteSuperset(type1: any, type2: any): boolean;
-    equals(type: any): boolean;
+    equals(type: any): any;
     isResolved(): boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): Type;
     _applyExistenceTypeTest(test: any): any;

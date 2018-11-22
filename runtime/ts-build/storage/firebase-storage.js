@@ -15,6 +15,7 @@ import { KeyBase } from './key-base.js';
 import { atob } from '../../../platform/atob-web.js';
 import { btoa } from '../../../platform/btoa-web.js';
 import { CrdtCollectionModel } from './crdt-collection-model.js';
+import { VariableType, CollectionType, BigCollectionType, ReferenceType } from '../type.js';
 import { setDiff } from '../util.js';
 export async function resetStorageForTesting(key) {
     key = new FirebaseKey(key);
@@ -85,11 +86,11 @@ export class FirebaseStorage extends StorageBase {
         this.baseStorePromises = new Map();
     }
     async construct(id, type, keyFragment) {
-        let referenceMode = !type.isReference;
-        if (type.isBigCollection) {
+        let referenceMode = !(type instanceof ReferenceType);
+        if (type instanceof BigCollectionType) {
             referenceMode = false;
         }
-        else if (type.isTypeContainer() && type.getContainedType().isReference) {
+        else if (type.isTypeContainer() && type.getContainedType() instanceof ReferenceType) {
             referenceMode = false;
         }
         return this._join(id, type, keyFragment, false, referenceMode);
@@ -131,8 +132,8 @@ export class FirebaseStorage extends StorageBase {
     // referenceMode is only referred to if shouldExist is false, or if shouldExist is 'unknown'
     // but this _join creates the storage location.
     async _join(id, type, keyString, shouldExist, referenceMode = false) {
-        assert(!type.isVariable);
-        assert(!type.isTypeContainer() || !type.getContainedType().isVariable);
+        assert(!(type instanceof VariableType));
+        assert(!type.isTypeContainer() || !(type.getContainedType() instanceof VariableType));
         const fbKey = new FirebaseKey(keyString);
         // TODO: is it ever going to be possible to autoconstruct new firebase datastores?
         if (fbKey.databaseUrl == undefined || fbKey.apiKey == undefined) {
@@ -215,10 +216,10 @@ class FirebaseStorageProvider extends StorageProviderBase {
         return this.pendingBackingStore;
     }
     static newProvider(type, storageEngine, id, reference, key, shouldExist) {
-        if (type.isCollection) {
+        if (type instanceof CollectionType) {
             return new FirebaseCollection(type, storageEngine, id, reference, key);
         }
-        if (type.isBigCollection) {
+        if (type instanceof BigCollectionType) {
             return new FirebaseBigCollection(type, storageEngine, id, reference, key);
         }
         return new FirebaseVariable(type, storageEngine, id, reference, key, shouldExist);

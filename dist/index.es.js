@@ -43,7 +43,7 @@ class TypeVariable {
             this.canReadSubset = constraint;
             return true;
         }
-        if (this.canReadSubset.isSlot && constraint.isSlot) {
+        if (this.canReadSubset instanceof SlotType && constraint instanceof SlotType) {
             // TODO: formFactor compatibility, etc.
             return true;
         }
@@ -66,7 +66,7 @@ class TypeVariable {
             this.canWriteSuperset = constraint;
             return true;
         }
-        if (this.canWriteSuperset.isSlot && constraint.isSlot) {
+        if (this.canWriteSuperset instanceof SlotType && constraint instanceof SlotType) {
             // TODO: formFactor compatibility, etc.
             return true;
         }
@@ -82,7 +82,7 @@ class TypeVariable {
         if (!constraint) {
             return true;
         }
-        if (!constraint.isEntity || !type.isEntity) {
+        if (!(constraint instanceof EntityType) || !(type instanceof EntityType)) {
             throw new Error(`constraint checking not implemented for ${this} and ${type}`);
         }
         return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
@@ -96,7 +96,7 @@ class TypeVariable {
     set resolution(value) {
         assert(!this._resolution);
         const elementType = value.resolvedType().getContainedType();
-        if (elementType !== null && elementType.isVariable) {
+        if (elementType instanceof VariableType) {
             assert(elementType.variable !== this, 'variable cannot resolve to collection of itself');
         }
         let probe = value;
@@ -229,7 +229,7 @@ class TypeChecker {
             }
         }
         const getResolution = candidate => {
-            if (candidate.isVariable === false) {
+            if (!(candidate instanceof VariableType)) {
                 return candidate;
             }
             if (candidate.canReadSubset == null || candidate.canWriteSuperset == null) {
@@ -244,11 +244,11 @@ class TypeChecker {
             return null;
         };
         const candidate = baseType.resolvedType();
-        if (candidate.isCollection) {
+        if (candidate instanceof CollectionType) {
             const resolution = getResolution(candidate.collectionType);
             return (resolution !== null) ? resolution.collectionOf() : null;
         }
-        if (candidate.isBigCollection) {
+        if (candidate instanceof BigCollectionType) {
             const resolution = getResolution(candidate.bigCollectionType);
             return (resolution !== null) ? resolution.bigCollectionOf() : null;
         }
@@ -256,8 +256,8 @@ class TypeChecker {
     }
     static _tryMergeTypeVariable(base, onto) {
         const [primitiveBase, primitiveOnto] = Type.unwrapPair(base.resolvedType(), onto.resolvedType());
-        if (primitiveBase.isVariable) {
-            if (primitiveOnto.isVariable) {
+        if (primitiveBase instanceof VariableType) {
+            if (primitiveOnto instanceof VariableType) {
                 // base, onto both variables.
                 const result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
                 if (result === false) {
@@ -273,12 +273,12 @@ class TypeChecker {
             }
             return base;
         }
-        else if (primitiveOnto.isVariable) {
+        else if (primitiveOnto instanceof VariableType) {
             // onto variable, base not.
             primitiveOnto.variable.resolution = primitiveBase;
             return onto;
         }
-        else if (primitiveBase.isInterface && primitiveOnto.isInterface) {
+        else if (primitiveBase instanceof InterfaceType && primitiveOnto instanceof InterfaceType) {
             const result = primitiveBase.interfaceShape.tryMergeTypeVariablesWith(primitiveOnto.interfaceShape);
             if (result == null) {
                 return null;
@@ -294,7 +294,7 @@ class TypeChecker {
     }
     static _tryMergeConstraints(handleType, { type, direction }) {
         let [primitiveHandleType, primitiveConnectionType] = Type.unwrapPair(handleType.resolvedType(), type.resolvedType());
-        if (primitiveHandleType.isVariable) {
+        if (primitiveHandleType instanceof VariableType) {
             while (primitiveConnectionType.isTypeContainer()) {
                 if (primitiveHandleType.variable.resolution != null
                     || primitiveHandleType.variable.canReadSubset != null
@@ -306,8 +306,15 @@ class TypeChecker {
                 // allowed because this variable could represent anything, and it needs to represent this structure
                 // in order for type resolution to succeed.
                 const newVar = Type.newVariable(new TypeVariable('a', null, null));
-                primitiveHandleType.variable.resolution =
-                    primitiveConnectionType.isCollection ? Type.newCollection(newVar) : (primitiveConnectionType.isBigCollection ? Type.newBigCollection(newVar) : Type.newReference(newVar));
+                if (primitiveConnectionType instanceof CollectionType) {
+                    primitiveHandleType.variable.resolution = Type.newCollection(newVar);
+                }
+                else if (primitiveConnectionType instanceof BigCollectionType) {
+                    primitiveHandleType.variable.resolution = Type.newBigCollection(newVar);
+                }
+                else {
+                    primitiveHandleType.variable.resolution = Type.newReference(newVar);
+                }
                 const unwrap = Type.unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
                 [primitiveHandleType, primitiveConnectionType] = unwrap;
             }
@@ -382,13 +389,13 @@ class TypeChecker {
         const resolvedRight = right.type.resolvedType();
         const [leftType, rightType] = Type.unwrapPair(resolvedLeft, resolvedRight);
         // a variable is compatible with a set only if it is unconstrained.
-        if (leftType.isVariable && rightType.isTypeContainer()) {
+        if (leftType instanceof VariableType && rightType.isTypeContainer()) {
             return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
         }
-        if (rightType.isVariable && leftType.isTypeContainer()) {
+        if (rightType instanceof VariableType && leftType.isTypeContainer()) {
             return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
         }
-        if (leftType.isVariable || rightType.isVariable) {
+        if (leftType instanceof VariableType || rightType instanceof VariableType) {
             // TODO: everything should use this, eventually. Need to implement the
             // right functionality in Shapes first, though.
             return Type.canMergeConstraints(leftType, rightType);
@@ -402,17 +409,17 @@ class TypeChecker {
         if (leftType.tag !== rightType.tag) {
             return false;
         }
-        if (leftType.isSlot) {
+        if (leftType instanceof SlotType) {
             return true;
         }
         // TODO: we need a generic way to evaluate type compatibility
         //       shapes + entities + etc
-        if (leftType.isInterface && rightType.isInterface) {
+        if (leftType instanceof InterfaceType && rightType instanceof InterfaceType) {
             if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
                 return true;
             }
         }
-        if (!leftType.isEntity || !rightType.isEntity) {
+        if (!(leftType instanceof EntityType) || !(rightType instanceof EntityType)) {
             return false;
         }
         const leftIsSub = leftType.entitySchema.isMoreSpecificThan(rightType.entitySchema);
@@ -740,13 +747,13 @@ class Variable extends Handle {
         if (model === null) {
             return null;
         }
-        if (this.type.isEntity) {
+        if (this.type instanceof EntityType) {
             return restore(model, this.entityClass);
         }
-        if (this.type.isInterface) {
+        if (this.type instanceof InterfaceType) {
             return ParticleSpec.fromLiteral(model);
         }
-        if (this.type.isReference) {
+        if (this.type instanceof ReferenceType) {
             return new Reference(model, this.type, this._proxy.pec);
         }
         assert(false, `Don't know how to deliver handle data of type ${this.type}`);
@@ -874,17 +881,17 @@ class BigCollection extends Handle {
 }
 function handleFor(proxy, name = null, particleId = 0, canRead = true, canWrite = true) {
     let handle;
-    if (proxy.type.isCollection) {
+    if (proxy.type instanceof CollectionType) {
         handle = new Collection(proxy, name, particleId, canRead, canWrite);
     }
-    else if (proxy.type.isBigCollection) {
+    else if (proxy.type instanceof BigCollectionType) {
         handle = new BigCollection(proxy, name, particleId, canRead, canWrite);
     }
     else {
         handle = new Variable(proxy, name, particleId, canRead, canWrite);
     }
     const type = proxy.type.getContainedType() || proxy.type;
-    if (type.isEntity) {
+    if (type instanceof EntityType) {
         handle.entityClass = type.entitySchema.entityClass(proxy.pec);
     }
     return handle;
@@ -911,7 +918,6 @@ class Reference {
         this.id = data.id;
         this.storageKey = data.storageKey;
         this.context = context;
-        assert(type.isReference);
         this.type = type;
     }
     async ensureStorageProxy() {
@@ -1591,7 +1597,7 @@ ${this._slotsToManifestString()}
         typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
     }
     static isTypeVar(reference) {
-        return (reference instanceof Type) && reference.hasProperty(r => r.isVariable);
+        return (reference instanceof Type) && reference.hasProperty(r => r instanceof VariableType);
     }
     static mustMatch(reference) {
         return !(reference == undefined || Shape.isTypeVar(reference));
@@ -1610,7 +1616,7 @@ ${this._slotsToManifestString()}
             return true;
         }
         const [left, right] = Type.unwrapPair(shapeHandle.type, particleHandle.type);
-        if (left.isVariable) {
+        if (left instanceof VariableType) {
             return [{ var: left, value: right, direction: shapeHandle.direction }];
         }
         else {
@@ -1683,7 +1689,7 @@ ${this._slotsToManifestString()}
             if (!constraint.var.variable.resolution) {
                 constraint.var.variable.resolution = constraint.value;
             }
-            else if (constraint.var.variable.resolution.isVariable) {
+            else if (constraint.var.variable.resolution instanceof VariableType) {
                 // TODO(shans): revisit how this should be done,
                 // consider reusing tryMergeTypeVariablesWith(other).
                 if (!TypeChecker.processTypeList(constraint.var, [{
@@ -1706,17 +1712,6 @@ class Type {
         this.tag = tag;
         this.data = data;
     }
-    // TODO: replace with instanceof checks
-    get isEntity() { return false; }
-    get isVariable() { return false; }
-    get isCollection() { return false; }
-    get isBigCollection() { return false; }
-    get isRelation() { return false; }
-    get isInterface() { return false; }
-    get isSlot() { return false; }
-    get isReference() { return false; }
-    get isArcInfo() { return false; }
-    get isHandleInfo() { return false; }
     // TODO: remove these; callers can directly construct the classes now
     static newEntity(entity) {
         return new EntityType(entity);
@@ -1826,10 +1821,10 @@ class Type {
         return test(this);
     }
     get hasVariable() {
-        return this._applyExistenceTypeTest(type => type.isVariable);
+        return this._applyExistenceTypeTest(type => type instanceof VariableType);
     }
     get hasUnresolvedVariable() {
-        return this._applyExistenceTypeTest(type => type.isVariable && !type.variable.isResolved());
+        return this._applyExistenceTypeTest(type => type instanceof VariableType && !type.variable.isResolved());
     }
     primitiveType() {
         return null;
@@ -1930,6 +1925,7 @@ class EntityType extends Type {
     constructor(schema) {
         super('Entity', schema);
     }
+    // These type identifier methods are being left in place for non-runtime code.
     get isEntity() {
         return true;
     }
@@ -2878,7 +2874,7 @@ class DescriptionFormatter {
             default: {
                 assert(!token.extra, `Unrecognized extra ${token.extra}`);
                 // Transformation's hosted particle.
-                if (token._handleConn.type.isInterface) {
+                if (token._handleConn.type instanceof InterfaceType) {
                     const particleSpec = ParticleSpec.fromLiteral(await token._store.get());
                     // TODO: call this.patternToSuggestion(...) to resolved expressions in the pattern template.
                     return particleSpec.pattern;
@@ -2893,8 +2889,10 @@ class DescriptionFormatter {
                 const storeValue = await this._formatStoreValue(token.handleName, token._store);
                 if (!description) {
                     // For singleton handle, if there is no real description (the type was used), use the plain value for description.
-                    // TODO: should this look at type.getContainedType() (which includes references), or maybe just type.isEntity?
-                    if (storeValue && !this.excludeValues && !token._store.type.isCollection && !token._store.type.isBigCollection) {
+                    // TODO: should this look at type.getContainedType() (which includes references), or maybe just check for EntityType?
+                    const storeType = token._store.type;
+                    if (storeValue && !this.excludeValues &&
+                        !(storeType instanceof CollectionType) && !(storeType instanceof BigCollectionType)) {
                         return storeValue;
                     }
                 }
@@ -2930,7 +2928,7 @@ class DescriptionFormatter {
         return this._joinDescriptions(results);
     }
     async _propertyTokenToString(handleName, store, properties) {
-        assert(!store.type.isCollection && !store.type.isBigCollection, `Cannot return property ${properties.join(',')} for Collection or BigCollection`);
+        assert(!(store.type instanceof CollectionType) && !(store.type instanceof BigCollectionType), `Cannot return property ${properties.join(',')} for Collection or BigCollection`);
         // Use singleton value's property (eg. "09/15" for person's birthday)
         const valueVar = await store.get();
         if (valueVar) {
@@ -2952,13 +2950,13 @@ class DescriptionFormatter {
         if (!store) {
             return;
         }
-        if (store.type.isCollection) {
+        if (store.type instanceof CollectionType) {
             const values = await store.toList();
             if (values && values.length > 0) {
                 return this._formatCollection(handleName, values);
             }
         }
-        else if (store.type.isBigCollection) {
+        else if (store.type instanceof BigCollectionType) {
             const cursorId = await store.stream(1);
             const { value, done } = await store.cursorNext(cursorId);
             store.cursorClose(cursorId);
@@ -13152,7 +13150,9 @@ class Recipe {
         const slots = [];
         // Reorder connections so that interfaces come last.
         // TODO: update handle-connection comparison method instead?
-        for (const connection of connections.filter(c => !c.type || !c.type.isInterface).concat(connections.filter(c => !!c.type && !!c.type.isInterface))) {
+        let ordered = connections.filter(c => !c.type || !(c.type instanceof InterfaceType));
+        ordered = ordered.concat(connections.filter(c => !!c.type && !!(c.type instanceof InterfaceType)));
+        for (const connection of ordered) {
             if (!seenParticles.has(connection.particle)) {
                 particles.push(connection.particle);
                 seenParticles.add(connection.particle);
@@ -13930,10 +13930,10 @@ class VolatileStorage extends StorageBase {
     }
     async construct(id, type, keyFragment) {
         const provider = await this._construct(id, type, keyFragment);
-        if (type.isReference || type.isBigCollection) {
+        if (type instanceof ReferenceType || type instanceof BigCollectionType) {
             return provider;
         }
-        if (type.isTypeContainer() && type.getContainedType().isReference) {
+        if (type.isTypeContainer() && type.getContainedType() instanceof ReferenceType) {
             return provider;
         }
         provider.enableReferenceMode();
@@ -14000,10 +14000,10 @@ class VolatileStorageProvider extends StorageProviderBase {
         this.pendingBackingStore = null;
     }
     static newProvider(type, storageEngine, name, id, key) {
-        if (type.isCollection) {
+        if (type instanceof CollectionType) {
             return new VolatileCollection(type, storageEngine, name, id, key);
         }
-        if (type.isBigCollection) {
+        if (type instanceof BigCollectionType) {
             return new VolatileBigCollection(type, storageEngine, name, id, key);
         }
         return new VolatileVariable(type, storageEngine, name, id, key);
@@ -36983,11 +36983,11 @@ class FirebaseStorage extends StorageBase {
         this.baseStorePromises = new Map();
     }
     async construct(id, type, keyFragment) {
-        let referenceMode = !type.isReference;
-        if (type.isBigCollection) {
+        let referenceMode = !(type instanceof ReferenceType);
+        if (type instanceof BigCollectionType) {
             referenceMode = false;
         }
-        else if (type.isTypeContainer() && type.getContainedType().isReference) {
+        else if (type.isTypeContainer() && type.getContainedType() instanceof ReferenceType) {
             referenceMode = false;
         }
         return this._join(id, type, keyFragment, false, referenceMode);
@@ -37029,8 +37029,8 @@ class FirebaseStorage extends StorageBase {
     // referenceMode is only referred to if shouldExist is false, or if shouldExist is 'unknown'
     // but this _join creates the storage location.
     async _join(id, type, keyString, shouldExist, referenceMode = false) {
-        assert(!type.isVariable);
-        assert(!type.isTypeContainer() || !type.getContainedType().isVariable);
+        assert(!(type instanceof VariableType));
+        assert(!type.isTypeContainer() || !(type.getContainedType() instanceof VariableType));
         const fbKey = new FirebaseKey(keyString);
         // TODO: is it ever going to be possible to autoconstruct new firebase datastores?
         if (fbKey.databaseUrl == undefined || fbKey.apiKey == undefined) {
@@ -37113,10 +37113,10 @@ class FirebaseStorageProvider extends StorageProviderBase {
         return this.pendingBackingStore;
     }
     static newProvider(type, storageEngine, id, reference, key, shouldExist) {
-        if (type.isCollection) {
+        if (type instanceof CollectionType) {
             return new FirebaseCollection(type, storageEngine, id, reference, key);
         }
-        if (type.isBigCollection) {
+        if (type instanceof BigCollectionType) {
             return new FirebaseBigCollection(type, storageEngine, id, reference, key);
         }
         return new FirebaseVariable(type, storageEngine, id, reference, key, shouldExist);
@@ -38955,10 +38955,10 @@ class PouchDbStorage extends StorageBase {
      */
     async construct(id, type, keyFragment) {
         const provider = await this._construct(id, type, keyFragment);
-        if (type.isReference) {
+        if (type instanceof ReferenceType) {
             return provider;
         }
-        if (type.isTypeContainer() && type.getContainedType().isReference) {
+        if (type.isTypeContainer() && type.getContainedType() instanceof ReferenceType) {
             return provider;
         }
         provider.enableReferenceMode();
@@ -39034,10 +39034,10 @@ class PouchDbStorage extends StorageBase {
     }
     /** Creates a new Variable or Collection given basic parameters */
     newProvider(type, name, id, key) {
-        if (type.isCollection) {
+        if (type instanceof CollectionType) {
             return new PouchDbCollection(type, this, name, id, key);
         }
-        if (type.isBigCollection) {
+        if (type instanceof BigCollectionType) {
             return new PouchDbBigCollection(type, this, name, id, key);
         }
         return new PouchDbVariable(type, this, name, id, key);
@@ -39681,11 +39681,12 @@ class Manifest {
         function typePredicate(store) {
             const resolvedType = type.resolvedType();
             if (!resolvedType.isResolved()) {
-                return type.isCollection === store.type.isCollection && type.isBigCollection === store.type.isBigCollection;
+                return (type instanceof CollectionType) === (store.type instanceof CollectionType) &&
+                    (type instanceof BigCollectionType) === (store.type instanceof BigCollectionType);
             }
             if (subtype) {
                 const [left, right] = Type.unwrapPair(store.type, resolvedType);
-                if (left.isEntity && right.isEntity) {
+                if (left instanceof EntityType && right instanceof EntityType) {
                     return left.entitySchema.isMoreSpecificThan(right.entitySchema);
                 }
                 return false;
@@ -39698,7 +39699,7 @@ class Manifest {
         const stores = [...this._findAll(manifest => manifest._stores.filter(store => typePredicate(store) && tagPredicate(manifest, store)))];
         // Quick check that a new handle can fulfill the type contract.
         // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
-        return stores.filter(s => !!Handle$1.effectiveType(type, [{ type: s.type, direction: s.type.isInterface ? 'host' : 'inout' }]));
+        return stores.filter(s => !!Handle$1.effectiveType(type, [{ type: s.type, direction: (s.type instanceof InterfaceType) ? 'host' : 'inout' }]));
     }
     findShapeByName(name) {
         return this._find(manifest => manifest._shapes.find(shape => shape.name === name));
@@ -40290,7 +40291,7 @@ ${e.message}
                     if (!hostedParticle) {
                         throw new ManifestError(connectionItem.target.location, `Could not find hosted particle '${connectionItem.target.particle}'`);
                     }
-                    assert(connection.type.isInterface);
+                    assert(connection.type instanceof InterfaceType);
                     if (!connection.type.interfaceShape.restrictType(hostedParticle)) {
                         throw new ManifestError(connectionItem.target.location, `Hosted particle '${hostedParticle.name}' does not match shape '${connection.name}'`);
                     }
@@ -40428,10 +40429,10 @@ ${e.message}
         }
         // TODO: clean this up
         let unitType;
-        if (type.isCollection) {
+        if (type instanceof CollectionType) {
             unitType = type.collectionType;
         }
-        else if (type.isBigCollection) {
+        else if (type instanceof BigCollectionType) {
             unitType = type.bigCollectionType;
         }
         else {
@@ -40442,7 +40443,7 @@ ${e.message}
             entities = entities.slice(entities.length - 1);
             unitType = type;
         }
-        if (unitType.isEntity) {
+        if (unitType instanceof EntityType) {
             let hasSerializedId = false;
             entities = entities.map(entity => {
                 if (entity == null) {
@@ -40481,10 +40482,10 @@ ${e.message}
         // For this store to be able to be treated as a CRDT, each item needs a key.
         // Using id as key seems safe, nothing else should do this.
         let model;
-        if (type.isCollection) {
+        if (type instanceof CollectionType) {
             model = entities.map(value => ({ id: value.id, value, keys: new Set([value.id]) }));
         }
-        else if (type.isBigCollection) {
+        else if (type instanceof BigCollectionType) {
             model = entities.map(value => {
                 const index = value.rawData.$index;
                 delete value.rawData.$index;
@@ -41719,7 +41720,7 @@ class Suggestion {
                 hostedParticleSpecs.push(hostedParticleSpec.toString());
                 // Override handle conenctions with particle name as local name.
                 Object.values(handle.connections).forEach(conn => {
-                    assert(conn['type'].isInterface);
+                    assert(conn['type'] instanceof InterfaceType);
                     conn['_handle'] = { localName: hostedParticleName };
                 });
                 // Remove the handle.
@@ -44465,7 +44466,7 @@ class FindHostedParticle extends Strategy {
             onHandleConnection(recipe, connection) {
                 if (connection.direction !== 'host' || connection.handle)
                     return undefined;
-                assert(connection.type.isInterface);
+                assert(connection.type instanceof InterfaceType);
                 const iface = connection.type;
                 const results = [];
                 for (const particle of arc.context.particles) {
@@ -44651,7 +44652,7 @@ class CoalesceRecipes extends Strategy {
                         let resolved = otherHandle.type.resolvedType();
                         // TODO: getContainedType returns non-null for references ... is that correct here?
                         resolved = resolved.getContainedType() || resolved;
-                        if (resolved.isVariable && !resolved.canReadSubset)
+                        if (resolved instanceof VariableType && !resolved.canReadSubset)
                             continue;
                     }
                     if (RecipeUtil.matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
@@ -47460,10 +47461,10 @@ class StorageProxy {
         this.pec = pec;
     }
     static newProxy(id, type, port, pec, scheduler, name) {
-        if (type.isCollection) {
+        if (type instanceof CollectionType) {
             return new CollectionProxy(id, type, port, pec, scheduler, name);
         }
-        if (type.isBigCollection) {
+        if (type instanceof BigCollectionType) {
             return new BigCollectionProxy(id, type, port, pec, scheduler, name);
         }
         return new VariableProxy(id, type, port, pec, scheduler, name);
@@ -50097,7 +50098,7 @@ class Arc {
     }
     async _serializeHandle(handle, context, id) {
         const type = handle.type.getContainedType() || handle.type;
-        if (type.isInterface) {
+        if (type instanceof InterfaceType) {
             context.interfaces += type.interfaceShape.toString() + '\n';
         }
         const key = this.storageProviderFactory.parseStringAsKey(handle.storageKey);
@@ -50361,7 +50362,7 @@ ${this.activeRecipe.toString()}`;
                 type = type.resolvedType();
                 assert(type.isResolved(), `Can't create handle for unresolved type ${type}`);
                 const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags);
-                if (recipeHandle.id && recipeHandle.type.isInterface
+                if (recipeHandle.id && recipeHandle.type instanceof InterfaceType
                     && recipeHandle.id.includes(':particle-literal:')) {
                     // 'particle-literal' handles are created by the FindHostedParticle strategy.
                     const particleName = recipeHandle.id.match(/:particle-literal:([a-zA-Z]+)$/)[1];
@@ -50427,7 +50428,7 @@ ${this.activeRecipe.toString()}`;
     }
     async createStore(type, name, id, tags, storageKey = undefined) {
         assert(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);
-        if (type.isRelation) {
+        if (type instanceof RelationType) {
             type = Type.newCollection(type);
         }
         if (id == undefined) {
@@ -50489,7 +50490,7 @@ ${this.activeRecipe.toString()}`;
                 return `list:${key}`;
             }
         }
-        else if (type.isEntity) {
+        else if (type instanceof EntityType) {
             return type.entitySchema.name;
         }
         else if (type.isShape) {
@@ -50497,7 +50498,7 @@ ${this.activeRecipe.toString()}`;
             // be of the 'same type' when searching by type.
             return type.shapeShape;
         }
-        else if (type.isVariable && type.isResolved()) {
+        else if (type instanceof VariableType && type.isResolved()) {
             return Arc._typeToKey(type.resolvedType());
         }
     }
@@ -50511,13 +50512,13 @@ ${this.activeRecipe.toString()}`;
                 }
             }
             else {
-                if (type.isVariable && !type.isResolved() && handle.type.isEntity) {
+                if (type instanceof VariableType && !type.isResolved() && handle.type instanceof EntityType) {
                     return true;
                 }
                 // elementType will only be non-null if type is either Collection or BigCollection; the tag
                 // comparison ensures that handle.type is the same sort of collection.
                 const elementType = type.getContainedType();
-                if (elementType && elementType.isVariable && !elementType.isResolved() && type.tag === handle.type.tag) {
+                if (elementType && elementType instanceof VariableType && !elementType.isResolved() && type.tag === handle.type.tag) {
                     return true;
                 }
             }
@@ -50528,7 +50529,7 @@ ${this.activeRecipe.toString()}`;
         }
         // Quick check that a new handle can fulfill the type contract.
         // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
-        return stores.filter(s => !!Handle$1.effectiveType(type, [{ type: s.type, direction: s.type.isInterface ? 'host' : 'inout' }]));
+        return stores.filter(s => !!Handle$1.effectiveType(type, [{ type: s.type, direction: (s.type instanceof InterfaceType) ? 'host' : 'inout' }]));
     }
     findStoreById(id) {
         let store = this.storesById.get(id);

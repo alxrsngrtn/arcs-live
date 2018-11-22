@@ -67478,7 +67478,7 @@ class Arc {
     }
     async _serializeHandle(handle, context, id) {
         const type = handle.type.getContainedType() || handle.type;
-        if (type.isInterface) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"]) {
             context.interfaces += type.interfaceShape.toString() + '\n';
         }
         const key = this.storageProviderFactory.parseStringAsKey(handle.storageKey);
@@ -67742,7 +67742,7 @@ ${this.activeRecipe.toString()}`;
                 type = type.resolvedType();
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.isResolved(), `Can't create handle for unresolved type ${type}`);
                 const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags);
-                if (recipeHandle.id && recipeHandle.type.isInterface
+                if (recipeHandle.id && recipeHandle.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"]
                     && recipeHandle.id.includes(':particle-literal:')) {
                     // 'particle-literal' handles are created by the FindHostedParticle strategy.
                     const particleName = recipeHandle.id.match(/:particle-literal:([a-zA-Z]+)$/)[1];
@@ -67808,7 +67808,7 @@ ${this.activeRecipe.toString()}`;
     }
     async createStore(type, name, id, tags, storageKey = undefined) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"], `can't createStore with type ${type} that isn't a Type`);
-        if (type.isRelation) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["RelationType"]) {
             type = _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].newCollection(type);
         }
         if (id == undefined) {
@@ -67870,7 +67870,7 @@ ${this.activeRecipe.toString()}`;
                 return `list:${key}`;
             }
         }
-        else if (type.isEntity) {
+        else if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"]) {
             return type.entitySchema.name;
         }
         else if (type.isShape) {
@@ -67878,7 +67878,7 @@ ${this.activeRecipe.toString()}`;
             // be of the 'same type' when searching by type.
             return type.shapeShape;
         }
-        else if (type.isVariable && type.isResolved()) {
+        else if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["VariableType"] && type.isResolved()) {
             return Arc._typeToKey(type.resolvedType());
         }
     }
@@ -67892,13 +67892,13 @@ ${this.activeRecipe.toString()}`;
                 }
             }
             else {
-                if (type.isVariable && !type.isResolved() && handle.type.isEntity) {
+                if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["VariableType"] && !type.isResolved() && handle.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"]) {
                     return true;
                 }
                 // elementType will only be non-null if type is either Collection or BigCollection; the tag
                 // comparison ensures that handle.type is the same sort of collection.
                 const elementType = type.getContainedType();
-                if (elementType && elementType.isVariable && !elementType.isResolved() && type.tag === handle.type.tag) {
+                if (elementType && elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["VariableType"] && !elementType.isResolved() && type.tag === handle.type.tag) {
                     return true;
                 }
             }
@@ -67909,7 +67909,7 @@ ${this.activeRecipe.toString()}`;
         }
         // Quick check that a new handle can fulfill the type contract.
         // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
-        return stores.filter(s => !!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(type, [{ type: s.type, direction: s.type.isInterface ? 'host' : 'inout' }]));
+        return stores.filter(s => !!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(type, [{ type: s.type, direction: (s.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"]) ? 'host' : 'inout' }]));
     }
     findStoreById(id) {
         let store = this.storesById.get(id);
@@ -68331,6 +68331,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DescriptionFormatter", function() { return DescriptionFormatter; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./particle-spec.js */ "./runtime/ts-build/particle-spec.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -68340,6 +68341,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -68654,7 +68656,7 @@ class DescriptionFormatter {
             default: {
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!token.extra, `Unrecognized extra ${token.extra}`);
                 // Transformation's hosted particle.
-                if (token._handleConn.type.isInterface) {
+                if (token._handleConn.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["InterfaceType"]) {
                     const particleSpec = _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"].fromLiteral(await token._store.get());
                     // TODO: call this.patternToSuggestion(...) to resolved expressions in the pattern template.
                     return particleSpec.pattern;
@@ -68669,8 +68671,10 @@ class DescriptionFormatter {
                 const storeValue = await this._formatStoreValue(token.handleName, token._store);
                 if (!description) {
                     // For singleton handle, if there is no real description (the type was used), use the plain value for description.
-                    // TODO: should this look at type.getContainedType() (which includes references), or maybe just type.isEntity?
-                    if (storeValue && !this.excludeValues && !token._store.type.isCollection && !token._store.type.isBigCollection) {
+                    // TODO: should this look at type.getContainedType() (which includes references), or maybe just check for EntityType?
+                    const storeType = token._store.type;
+                    if (storeValue && !this.excludeValues &&
+                        !(storeType instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["CollectionType"]) && !(storeType instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["BigCollectionType"])) {
                         return storeValue;
                     }
                 }
@@ -68706,7 +68710,7 @@ class DescriptionFormatter {
         return this._joinDescriptions(results);
     }
     async _propertyTokenToString(handleName, store, properties) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!store.type.isCollection && !store.type.isBigCollection, `Cannot return property ${properties.join(',')} for Collection or BigCollection`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!(store.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["CollectionType"]) && !(store.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["BigCollectionType"]), `Cannot return property ${properties.join(',')} for Collection or BigCollection`);
         // Use singleton value's property (eg. "09/15" for person's birthday)
         const valueVar = await store.get();
         if (valueVar) {
@@ -68728,13 +68732,13 @@ class DescriptionFormatter {
         if (!store) {
             return;
         }
-        if (store.type.isCollection) {
+        if (store.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["CollectionType"]) {
             const values = await store.toList();
             if (values && values.length > 0) {
                 return this._formatCollection(handleName, values);
             }
         }
-        else if (store.type.isBigCollection) {
+        else if (store.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["BigCollectionType"]) {
             const cursorId = await store.stream(1);
             const { value, done } = await store.cursorNext(cursorId);
             store.cursorClose(cursorId);
@@ -68984,6 +68988,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./symbols.js */ "./runtime/ts-build/symbols.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./particle-spec.js */ "./runtime/ts-build/particle-spec.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
 /** @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -68992,6 +68997,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -69233,13 +69239,13 @@ class Variable extends Handle {
         if (model === null) {
             return null;
         }
-        if (this.type.isEntity) {
+        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"]) {
             return restore(model, this.entityClass);
         }
-        if (this.type.isInterface) {
+        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["InterfaceType"]) {
             return _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__["ParticleSpec"].fromLiteral(model);
         }
-        if (this.type.isReference) {
+        if (this.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["ReferenceType"]) {
             return new _reference_js__WEBPACK_IMPORTED_MODULE_0__["Reference"](model, this.type, this._proxy.pec);
         }
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(false, `Don't know how to deliver handle data of type ${this.type}`);
@@ -69367,17 +69373,17 @@ class BigCollection extends Handle {
 }
 function handleFor(proxy, name = null, particleId = 0, canRead = true, canWrite = true) {
     let handle;
-    if (proxy.type.isCollection) {
+    if (proxy.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["CollectionType"]) {
         handle = new Collection(proxy, name, particleId, canRead, canWrite);
     }
-    else if (proxy.type.isBigCollection) {
+    else if (proxy.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["BigCollectionType"]) {
         handle = new BigCollection(proxy, name, particleId, canRead, canWrite);
     }
     else {
         handle = new Variable(proxy, name, particleId, canRead, canWrite);
     }
     const type = proxy.type.getContainedType() || proxy.type;
-    if (type.isEntity) {
+    if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"]) {
         handle.entityClass = type.entitySchema.entityClass(proxy.pec);
     }
     return handle;
@@ -70561,11 +70567,12 @@ class Manifest {
         function typePredicate(store) {
             const resolvedType = type.resolvedType();
             if (!resolvedType.isResolved()) {
-                return type.isCollection === store.type.isCollection && type.isBigCollection === store.type.isBigCollection;
+                return (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["CollectionType"]) === (store.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["CollectionType"]) &&
+                    (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["BigCollectionType"]) === (store.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["BigCollectionType"]);
             }
             if (subtype) {
                 const [left, right] = _type_js__WEBPACK_IMPORTED_MODULE_9__["Type"].unwrapPair(store.type, resolvedType);
-                if (left.isEntity && right.isEntity) {
+                if (left instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["EntityType"] && right instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["EntityType"]) {
                     return left.entitySchema.isMoreSpecificThan(right.entitySchema);
                 }
                 return false;
@@ -70578,7 +70585,7 @@ class Manifest {
         const stores = [...this._findAll(manifest => manifest._stores.filter(store => typePredicate(store) && tagPredicate(manifest, store)))];
         // Quick check that a new handle can fulfill the type contract.
         // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
-        return stores.filter(s => !!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__["Handle"].effectiveType(type, [{ type: s.type, direction: s.type.isInterface ? 'host' : 'inout' }]));
+        return stores.filter(s => !!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__["Handle"].effectiveType(type, [{ type: s.type, direction: (s.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["InterfaceType"]) ? 'host' : 'inout' }]));
     }
     findShapeByName(name) {
         return this._find(manifest => manifest._shapes.find(shape => shape.name === name));
@@ -71170,7 +71177,7 @@ ${e.message}
                     if (!hostedParticle) {
                         throw new ManifestError(connectionItem.target.location, `Could not find hosted particle '${connectionItem.target.particle}'`);
                     }
-                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(connection.type.isInterface);
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(connection.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["InterfaceType"]);
                     if (!connection.type.interfaceShape.restrictType(hostedParticle)) {
                         throw new ManifestError(connectionItem.target.location, `Hosted particle '${hostedParticle.name}' does not match shape '${connection.name}'`);
                     }
@@ -71308,10 +71315,10 @@ ${e.message}
         }
         // TODO: clean this up
         let unitType;
-        if (type.isCollection) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["CollectionType"]) {
             unitType = type.collectionType;
         }
-        else if (type.isBigCollection) {
+        else if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["BigCollectionType"]) {
             unitType = type.bigCollectionType;
         }
         else {
@@ -71322,7 +71329,7 @@ ${e.message}
             entities = entities.slice(entities.length - 1);
             unitType = type;
         }
-        if (unitType.isEntity) {
+        if (unitType instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["EntityType"]) {
             let hasSerializedId = false;
             entities = entities.map(entity => {
                 if (entity == null) {
@@ -71361,10 +71368,10 @@ ${e.message}
         // For this store to be able to be treated as a CRDT, each item needs a key.
         // Using id as key seems safe, nothing else should do this.
         let model;
-        if (type.isCollection) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["CollectionType"]) {
             model = entities.map(value => ({ id: value.id, value, keys: new Set([value.id]) }));
         }
-        else if (type.isBigCollection) {
+        else if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["BigCollectionType"]) {
             model = entities.map(value => {
                 const index = value.rawData.$index;
                 delete value.rawData.$index;
@@ -73188,6 +73195,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Suggestion", function() { return Suggestion; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../manifest.js */ "./runtime/ts-build/manifest.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -73197,6 +73205,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 class Suggestion {
@@ -73263,7 +73272,7 @@ class Suggestion {
                 hostedParticleSpecs.push(hostedParticleSpec.toString());
                 // Override handle conenctions with particle name as local name.
                 Object.values(handle.connections).forEach(conn => {
-                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(conn['type'].isInterface);
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(conn['type'] instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["InterfaceType"]);
                     conn['_handle'] = { localName: hostedParticleName };
                 });
                 // Remove the handle.
@@ -74929,12 +74938,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _slot_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./slot.js */ "./runtime/ts-build/recipe/slot.js");
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./handle.js */ "./runtime/ts-build/recipe/handle.js");
 /* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./util.js */ "./runtime/ts-build/recipe/util.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -75206,7 +75217,9 @@ class Recipe {
         const slots = [];
         // Reorder connections so that interfaces come last.
         // TODO: update handle-connection comparison method instead?
-        for (const connection of connections.filter(c => !c.type || !c.type.isInterface).concat(connections.filter(c => !!c.type && !!c.type.isInterface))) {
+        let ordered = connections.filter(c => !c.type || !(c.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["InterfaceType"]));
+        ordered = ordered.concat(connections.filter(c => !!c.type && !!(c.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["InterfaceType"])));
+        for (const connection of ordered) {
             if (!seenParticles.has(connection.particle)) {
                 particles.push(connection.particle);
                 seenParticles.add(connection.particle);
@@ -75921,7 +75934,7 @@ class TypeChecker {
             }
         }
         const getResolution = candidate => {
-            if (candidate.isVariable === false) {
+            if (!(candidate instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"])) {
                 return candidate;
             }
             if (candidate.canReadSubset == null || candidate.canWriteSuperset == null) {
@@ -75936,11 +75949,11 @@ class TypeChecker {
             return null;
         };
         const candidate = baseType.resolvedType();
-        if (candidate.isCollection) {
+        if (candidate instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["CollectionType"]) {
             const resolution = getResolution(candidate.collectionType);
             return (resolution !== null) ? resolution.collectionOf() : null;
         }
-        if (candidate.isBigCollection) {
+        if (candidate instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["BigCollectionType"]) {
             const resolution = getResolution(candidate.bigCollectionType);
             return (resolution !== null) ? resolution.bigCollectionOf() : null;
         }
@@ -75948,8 +75961,8 @@ class TypeChecker {
     }
     static _tryMergeTypeVariable(base, onto) {
         const [primitiveBase, primitiveOnto] = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(base.resolvedType(), onto.resolvedType());
-        if (primitiveBase.isVariable) {
-            if (primitiveOnto.isVariable) {
+        if (primitiveBase instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
+            if (primitiveOnto instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
                 // base, onto both variables.
                 const result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
                 if (result === false) {
@@ -75965,12 +75978,12 @@ class TypeChecker {
             }
             return base;
         }
-        else if (primitiveOnto.isVariable) {
+        else if (primitiveOnto instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
             // onto variable, base not.
             primitiveOnto.variable.resolution = primitiveBase;
             return onto;
         }
-        else if (primitiveBase.isInterface && primitiveOnto.isInterface) {
+        else if (primitiveBase instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"] && primitiveOnto instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"]) {
             const result = primitiveBase.interfaceShape.tryMergeTypeVariablesWith(primitiveOnto.interfaceShape);
             if (result == null) {
                 return null;
@@ -75986,7 +75999,7 @@ class TypeChecker {
     }
     static _tryMergeConstraints(handleType, { type, direction }) {
         let [primitiveHandleType, primitiveConnectionType] = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(handleType.resolvedType(), type.resolvedType());
-        if (primitiveHandleType.isVariable) {
+        if (primitiveHandleType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
             while (primitiveConnectionType.isTypeContainer()) {
                 if (primitiveHandleType.variable.resolution != null
                     || primitiveHandleType.variable.canReadSubset != null
@@ -75998,8 +76011,15 @@ class TypeChecker {
                 // allowed because this variable could represent anything, and it needs to represent this structure
                 // in order for type resolution to succeed.
                 const newVar = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]('a', null, null));
-                primitiveHandleType.variable.resolution =
-                    primitiveConnectionType.isCollection ? _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newCollection(newVar) : (primitiveConnectionType.isBigCollection ? _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newBigCollection(newVar) : _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newReference(newVar));
+                if (primitiveConnectionType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["CollectionType"]) {
+                    primitiveHandleType.variable.resolution = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newCollection(newVar);
+                }
+                else if (primitiveConnectionType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["BigCollectionType"]) {
+                    primitiveHandleType.variable.resolution = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newBigCollection(newVar);
+                }
+                else {
+                    primitiveHandleType.variable.resolution = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newReference(newVar);
+                }
                 const unwrap = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
                 [primitiveHandleType, primitiveConnectionType] = unwrap;
             }
@@ -76074,13 +76094,13 @@ class TypeChecker {
         const resolvedRight = right.type.resolvedType();
         const [leftType, rightType] = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(resolvedLeft, resolvedRight);
         // a variable is compatible with a set only if it is unconstrained.
-        if (leftType.isVariable && rightType.isTypeContainer()) {
+        if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"] && rightType.isTypeContainer()) {
             return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
         }
-        if (rightType.isVariable && leftType.isTypeContainer()) {
+        if (rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"] && leftType.isTypeContainer()) {
             return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
         }
-        if (leftType.isVariable || rightType.isVariable) {
+        if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"] || rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
             // TODO: everything should use this, eventually. Need to implement the
             // right functionality in Shapes first, though.
             return _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].canMergeConstraints(leftType, rightType);
@@ -76094,17 +76114,17 @@ class TypeChecker {
         if (leftType.tag !== rightType.tag) {
             return false;
         }
-        if (leftType.isSlot) {
+        if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["SlotType"]) {
             return true;
         }
         // TODO: we need a generic way to evaluate type compatibility
         //       shapes + entities + etc
-        if (leftType.isInterface && rightType.isInterface) {
+        if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"] && rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"]) {
             if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
                 return true;
             }
         }
-        if (!leftType.isEntity || !rightType.isEntity) {
+        if (!(leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["EntityType"]) || !(rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["EntityType"])) {
             return false;
         }
         const leftIsSub = leftType.entitySchema.isMoreSpecificThan(rightType.entitySchema);
@@ -76476,7 +76496,6 @@ class Reference {
         this.id = data.id;
         this.storageKey = data.storageKey;
         this.context = context;
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.isReference);
         this.type = type;
     }
     async ensureStorageProxy() {
@@ -77105,6 +77124,7 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 
+
 // ShapeHandle {name, direction, type}
 // Slot {name, direction, isRequired, isSet}
 function _fromLiteral(member) {
@@ -77340,7 +77360,7 @@ ${this._slotsToManifestString()}
         typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
     }
     static isTypeVar(reference) {
-        return (reference instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"]) && reference.hasProperty(r => r.isVariable);
+        return (reference instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"]) && reference.hasProperty(r => r instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["VariableType"]);
     }
     static mustMatch(reference) {
         return !(reference == undefined || Shape.isTypeVar(reference));
@@ -77359,7 +77379,7 @@ ${this._slotsToManifestString()}
             return true;
         }
         const [left, right] = _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].unwrapPair(shapeHandle.type, particleHandle.type);
-        if (left.isVariable) {
+        if (left instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["VariableType"]) {
             return [{ var: left, value: right, direction: shapeHandle.direction }];
         }
         else {
@@ -77433,7 +77453,7 @@ ${this._slotsToManifestString()}
             if (!constraint.var.variable.resolution) {
                 constraint.var.variable.resolution = constraint.value;
             }
-            else if (constraint.var.variable.resolution.isVariable) {
+            else if (constraint.var.variable.resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["VariableType"]) {
                 // TODO(shans): revisit how this should be done,
                 // consider reusing tryMergeTypeVariablesWith(other).
                 if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"].processTypeList(constraint.var, [{
@@ -78313,6 +78333,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./storage/crdt-collection-model.js */ "./runtime/ts-build/storage/crdt-collection-model.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -78322,6 +78343,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -78370,10 +78392,10 @@ class StorageProxy {
         this.pec = pec;
     }
     static newProxy(id, type, port, pec, scheduler, name) {
-        if (type.isCollection) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["CollectionType"]) {
             return new CollectionProxy(id, type, port, pec, scheduler, name);
         }
-        if (type.isBigCollection) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["BigCollectionType"]) {
             return new BigCollectionProxy(id, type, port, pec, scheduler, name);
         }
         return new VariableProxy(id, type, port, pec, scheduler, name);
@@ -79016,7 +79038,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_atob_web_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../platform/atob-web.js */ "./platform/atob-web.js");
 /* harmony import */ var _platform_btoa_web_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../platform/btoa-web.js */ "./platform/btoa-web.js");
 /* harmony import */ var _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./crdt-collection-model.js */ "./runtime/ts-build/storage/crdt-collection-model.js");
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../util.js */ "./runtime/ts-build/util.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../util.js */ "./runtime/ts-build/util.js");
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -79026,6 +79049,7 @@ __webpack_require__.r(__webpack_exports__);
 // http://polymer.github.io/PATENTS.txt
 
 // keep in sync with shell/source/ArcsLib.js
+
 
 
 
@@ -79104,11 +79128,11 @@ class FirebaseStorage extends _storage_provider_base__WEBPACK_IMPORTED_MODULE_0_
         this.baseStorePromises = new Map();
     }
     async construct(id, type, keyFragment) {
-        let referenceMode = !type.isReference;
-        if (type.isBigCollection) {
+        let referenceMode = !(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["ReferenceType"]);
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["BigCollectionType"]) {
             referenceMode = false;
         }
-        else if (type.isTypeContainer() && type.getContainedType().isReference) {
+        else if (type.isTypeContainer() && type.getContainedType() instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["ReferenceType"]) {
             referenceMode = false;
         }
         return this._join(id, type, keyFragment, false, referenceMode);
@@ -79150,8 +79174,8 @@ class FirebaseStorage extends _storage_provider_base__WEBPACK_IMPORTED_MODULE_0_
     // referenceMode is only referred to if shouldExist is false, or if shouldExist is 'unknown'
     // but this _join creates the storage location.
     async _join(id, type, keyString, shouldExist, referenceMode = false) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!type.isVariable);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!type.isTypeContainer() || !type.getContainedType().isVariable);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["VariableType"]));
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(!type.isTypeContainer() || !(type.getContainedType() instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["VariableType"]));
         const fbKey = new FirebaseKey(keyString);
         // TODO: is it ever going to be possible to autoconstruct new firebase datastores?
         if (fbKey.databaseUrl == undefined || fbKey.apiKey == undefined) {
@@ -79234,10 +79258,10 @@ class FirebaseStorageProvider extends _storage_provider_base__WEBPACK_IMPORTED_M
         return this.pendingBackingStore;
     }
     static newProvider(type, storageEngine, id, reference, key, shouldExist) {
-        if (type.isCollection) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["CollectionType"]) {
             return new FirebaseCollection(type, storageEngine, id, reference, key);
         }
-        if (type.isBigCollection) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["BigCollectionType"]) {
             return new FirebaseBigCollection(type, storageEngine, id, reference, key);
         }
         return new FirebaseVariable(type, storageEngine, id, reference, key, shouldExist);
@@ -79608,7 +79632,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
                 if (encId in this.remoteState.items) {
                     // 1. possibly updated remotely.
                     const encOldkeys = Object.keys(this.remoteState.items[encId].keys);
-                    const { add: encAddKeys, remove: encRemoveKeys } = Object(_util_js__WEBPACK_IMPORTED_MODULE_9__["setDiff"])(encOldkeys, encKeys);
+                    const { add: encAddKeys, remove: encRemoveKeys } = Object(_util_js__WEBPACK_IMPORTED_MODULE_10__["setDiff"])(encOldkeys, encKeys);
                     let addKeys = encAddKeys.map(FirebaseStorage.decodeKey);
                     const removeKeys = encRemoveKeys.map(FirebaseStorage.decodeKey);
                     if (suppression) {
@@ -80863,11 +80887,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../storage-provider-base.js */ "./runtime/ts-build/storage/storage-provider-base.js");
 /* harmony import */ var _pouch_db_key_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pouch-db-key.js */ "./runtime/ts-build/storage/pouchdb/pouch-db-key.js");
-/* harmony import */ var _pouch_db_collection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pouch-db-collection.js */ "./runtime/ts-build/storage/pouchdb/pouch-db-collection.js");
-/* harmony import */ var _pouch_db_big_collection_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pouch-db-big-collection.js */ "./runtime/ts-build/storage/pouchdb/pouch-db-big-collection.js");
-/* harmony import */ var _pouch_db_variable_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pouch-db-variable.js */ "./runtime/ts-build/storage/pouchdb/pouch-db-variable.js");
-/* harmony import */ var pouchdb__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! pouchdb */ "./node_modules/pouchdb/lib/index-browser.es.js");
-/* harmony import */ var pouchdb_adapter_memory__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! pouchdb-adapter-memory */ "./node_modules/pouchdb-adapter-memory/lib/index.es.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _pouch_db_collection_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pouch-db-collection.js */ "./runtime/ts-build/storage/pouchdb/pouch-db-collection.js");
+/* harmony import */ var _pouch_db_big_collection_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pouch-db-big-collection.js */ "./runtime/ts-build/storage/pouchdb/pouch-db-big-collection.js");
+/* harmony import */ var _pouch_db_variable_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pouch-db-variable.js */ "./runtime/ts-build/storage/pouchdb/pouch-db-variable.js");
+/* harmony import */ var pouchdb__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! pouchdb */ "./node_modules/pouchdb/lib/index-browser.es.js");
+/* harmony import */ var pouchdb_adapter_memory__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! pouchdb-adapter-memory */ "./node_modules/pouchdb-adapter-memory/lib/index.es.js");
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -80875,6 +80900,7 @@ __webpack_require__.r(__webpack_exports__);
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -80901,10 +80927,10 @@ class PouchDbStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_
      */
     async construct(id, type, keyFragment) {
         const provider = await this._construct(id, type, keyFragment);
-        if (type.isReference) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceType"]) {
             return provider;
         }
-        if (type.isTypeContainer() && type.getContainedType().isReference) {
+        if (type.isTypeContainer() && type.getContainedType() instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceType"]) {
             return provider;
         }
         provider.enableReferenceMode();
@@ -80980,13 +81006,13 @@ class PouchDbStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_
     }
     /** Creates a new Variable or Collection given basic parameters */
     newProvider(type, name, id, key) {
-        if (type.isCollection) {
-            return new _pouch_db_collection_js__WEBPACK_IMPORTED_MODULE_3__["PouchDbCollection"](type, this, name, id, key);
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["CollectionType"]) {
+            return new _pouch_db_collection_js__WEBPACK_IMPORTED_MODULE_4__["PouchDbCollection"](type, this, name, id, key);
         }
-        if (type.isBigCollection) {
-            return new _pouch_db_big_collection_js__WEBPACK_IMPORTED_MODULE_4__["PouchDbBigCollection"](type, this, name, id, key);
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["BigCollectionType"]) {
+            return new _pouch_db_big_collection_js__WEBPACK_IMPORTED_MODULE_5__["PouchDbBigCollection"](type, this, name, id, key);
         }
-        return new _pouch_db_variable_js__WEBPACK_IMPORTED_MODULE_5__["PouchDbVariable"](type, this, name, id, key);
+        return new _pouch_db_variable_js__WEBPACK_IMPORTED_MODULE_6__["PouchDbVariable"](type, this, name, id, key);
     }
     /** Removes everything that a test could have created. */
     static async resetPouchDbStorageForTesting() {
@@ -81014,18 +81040,18 @@ class PouchDbStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_
         }
         // New connect to a database
         if (key.dbLocation === 'local') {
-            db = new pouchdb__WEBPACK_IMPORTED_MODULE_6__["default"](key.dbName);
+            db = new pouchdb__WEBPACK_IMPORTED_MODULE_7__["default"](key.dbName);
         }
         else if (key.dbLocation === 'memory') {
-            pouchdb__WEBPACK_IMPORTED_MODULE_6__["default"].plugin(pouchdb_adapter_memory__WEBPACK_IMPORTED_MODULE_7__["default"]);
-            db = new pouchdb__WEBPACK_IMPORTED_MODULE_6__["default"](key.dbName, { adapter: 'memory' });
+            pouchdb__WEBPACK_IMPORTED_MODULE_7__["default"].plugin(pouchdb_adapter_memory__WEBPACK_IMPORTED_MODULE_8__["default"]);
+            db = new pouchdb__WEBPACK_IMPORTED_MODULE_7__["default"](key.dbName, { adapter: 'memory' });
         }
         else {
             // Create a local db to sync to the remote
-            db = new pouchdb__WEBPACK_IMPORTED_MODULE_6__["default"](key.dbName);
+            db = new pouchdb__WEBPACK_IMPORTED_MODULE_7__["default"](key.dbName);
             // Ensure a secure origin, http is okay for localhost, but other hosts need https
             const httpScheme = key.dbLocation.startsWith('localhost') ? 'http://' : 'https://';
-            const remoteDb = new pouchdb__WEBPACK_IMPORTED_MODULE_6__["default"](httpScheme + key.dbLocation + '/' + key.dbName);
+            const remoteDb = new pouchdb__WEBPACK_IMPORTED_MODULE_7__["default"](httpScheme + key.dbLocation + '/' + key.dbName);
             if (!remoteDb || !db) {
                 throw new Error('unable to connect to remote database for ' + key.toString());
             }
@@ -81863,6 +81889,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./storage-provider-base.js */ "./runtime/ts-build/storage/storage-provider-base.js");
 /* harmony import */ var _key_base_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./key-base.js */ "./runtime/ts-build/storage/key-base.js");
 /* harmony import */ var _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./crdt-collection-model.js */ "./runtime/ts-build/storage/crdt-collection-model.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
 // @
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -81870,6 +81897,7 @@ __webpack_require__.r(__webpack_exports__);
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -81919,10 +81947,10 @@ class VolatileStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE
     }
     async construct(id, type, keyFragment) {
         const provider = await this._construct(id, type, keyFragment);
-        if (type.isReference || type.isBigCollection) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["ReferenceType"] || type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["BigCollectionType"]) {
             return provider;
         }
-        if (type.isTypeContainer() && type.getContainedType().isReference) {
+        if (type.isTypeContainer() && type.getContainedType() instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["ReferenceType"]) {
             return provider;
         }
         provider.enableReferenceMode();
@@ -81989,10 +82017,10 @@ class VolatileStorageProvider extends _storage_provider_base_js__WEBPACK_IMPORTE
         this.pendingBackingStore = null;
     }
     static newProvider(type, storageEngine, name, id, key) {
-        if (type.isCollection) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["CollectionType"]) {
             return new VolatileCollection(type, storageEngine, name, id, key);
         }
-        if (type.isBigCollection) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["BigCollectionType"]) {
             return new VolatileBigCollection(type, storageEngine, name, id, key);
         }
         return new VolatileVariable(type, storageEngine, name, id, key);
@@ -82563,13 +82591,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
 /* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -82707,7 +82737,7 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
                         let resolved = otherHandle.type.resolvedType();
                         // TODO: getContainedType returns non-null for references ... is that correct here?
                         resolved = resolved.getContainedType() || resolved;
-                        if (resolved.isVariable && !resolved.canReadSubset)
+                        if (resolved instanceof _type_js__WEBPACK_IMPORTED_MODULE_5__["VariableType"] && !resolved.canReadSubset)
                             continue;
                     }
                     if (_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
@@ -82755,7 +82785,7 @@ class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODU
             }
             // Returns true, if both handles have types that can be coalesced.
             _reverifyHandleTypes(handle, otherHandle) {
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_5__["assert"])(handle.recipe === otherHandle.recipe);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_6__["assert"])(handle.recipe === otherHandle.recipe);
                 const cloneMap = new Map();
                 const recipeClone = handle.recipe.clone(cloneMap);
                 recipeClone.normalize();
@@ -83145,12 +83175,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../recipe/recipe.js */ "./runtime/ts-build/recipe/recipe.js");
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -83162,7 +83194,7 @@ class FindHostedParticle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_M
             onHandleConnection(recipe, connection) {
                 if (connection.direction !== 'host' || connection.handle)
                     return undefined;
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(connection.type.isInterface);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(connection.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["InterfaceType"]);
                 const iface = connection.type;
                 const results = [];
                 for (const particle of arc.context.particles) {
@@ -84930,7 +84962,7 @@ class TypeVariable {
             this.canReadSubset = constraint;
             return true;
         }
-        if (this.canReadSubset.isSlot && constraint.isSlot) {
+        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["SlotType"]) {
             // TODO: formFactor compatibility, etc.
             return true;
         }
@@ -84953,7 +84985,7 @@ class TypeVariable {
             this.canWriteSuperset = constraint;
             return true;
         }
-        if (this.canWriteSuperset.isSlot && constraint.isSlot) {
+        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["SlotType"]) {
             // TODO: formFactor compatibility, etc.
             return true;
         }
@@ -84969,7 +85001,7 @@ class TypeVariable {
         if (!constraint) {
             return true;
         }
-        if (!constraint.isEntity || !type.isEntity) {
+        if (!(constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["EntityType"]) || !(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["EntityType"])) {
             throw new Error(`constraint checking not implemented for ${this} and ${type}`);
         }
         return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
@@ -84983,7 +85015,7 @@ class TypeVariable {
     set resolution(value) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._resolution);
         const elementType = value.resolvedType().getContainedType();
-        if (elementType !== null && elementType.isVariable) {
+        if (elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(elementType.variable !== this, 'variable cannot resolve to collection of itself');
         }
         let probe = value;
@@ -85116,17 +85148,6 @@ class Type {
         this.tag = tag;
         this.data = data;
     }
-    // TODO: replace with instanceof checks
-    get isEntity() { return false; }
-    get isVariable() { return false; }
-    get isCollection() { return false; }
-    get isBigCollection() { return false; }
-    get isRelation() { return false; }
-    get isInterface() { return false; }
-    get isSlot() { return false; }
-    get isReference() { return false; }
-    get isArcInfo() { return false; }
-    get isHandleInfo() { return false; }
     // TODO: remove these; callers can directly construct the classes now
     static newEntity(entity) {
         return new EntityType(entity);
@@ -85236,10 +85257,10 @@ class Type {
         return test(this);
     }
     get hasVariable() {
-        return this._applyExistenceTypeTest(type => type.isVariable);
+        return this._applyExistenceTypeTest(type => type instanceof VariableType);
     }
     get hasUnresolvedVariable() {
-        return this._applyExistenceTypeTest(type => type.isVariable && !type.variable.isResolved());
+        return this._applyExistenceTypeTest(type => type instanceof VariableType && !type.variable.isResolved());
     }
     primitiveType() {
         return null;
@@ -85340,6 +85361,7 @@ class EntityType extends Type {
     constructor(schema) {
         super('Entity', schema);
     }
+    // These type identifier methods are being left in place for non-runtime code.
     get isEntity() {
         return true;
     }

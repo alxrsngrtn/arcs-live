@@ -19,7 +19,7 @@ export declare class Reference {
     constructor(data: {
         id: string;
         storageKey: string | null;
-    }, type: any, context: ParticleExecutionContext);
+    }, type: ReferenceType, context: ParticleExecutionContext);
     protected ensureStorageProxy(): Promise<void>;
     dereference(): Promise<void>;
     dataClone(): {

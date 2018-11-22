@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
+import { VariableType } from './type.js';
 // ShapeHandle {name, direction, type}
 // Slot {name, direction, isRequired, isSet}
 function _fromLiteral(member) {
@@ -243,7 +244,7 @@ ${this._slotsToManifestString()}
         typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
     }
     static isTypeVar(reference) {
-        return (reference instanceof Type) && reference.hasProperty(r => r.isVariable);
+        return (reference instanceof Type) && reference.hasProperty(r => r instanceof VariableType);
     }
     static mustMatch(reference) {
         return !(reference == undefined || Shape.isTypeVar(reference));
@@ -262,7 +263,7 @@ ${this._slotsToManifestString()}
             return true;
         }
         const [left, right] = Type.unwrapPair(shapeHandle.type, particleHandle.type);
-        if (left.isVariable) {
+        if (left instanceof VariableType) {
             return [{ var: left, value: right, direction: shapeHandle.direction }];
         }
         else {
@@ -336,7 +337,7 @@ ${this._slotsToManifestString()}
             if (!constraint.var.variable.resolution) {
                 constraint.var.variable.resolution = constraint.value;
             }
-            else if (constraint.var.variable.resolution.isVariable) {
+            else if (constraint.var.variable.resolution instanceof VariableType) {
                 // TODO(shans): revisit how this should be done,
                 // consider reusing tryMergeTypeVariablesWith(other).
                 if (!TypeChecker.processTypeList(constraint.var, [{

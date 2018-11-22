@@ -9,6 +9,7 @@
  */
 import { assert } from '../../../platform/assert-web.js';
 import { Manifest } from '../manifest.js';
+import { InterfaceType } from '../type.js';
 export class Suggestion {
     constructor(plan, hash, rank, arc) {
         assert(plan, `plan cannot be null`);
@@ -73,7 +74,7 @@ export class Suggestion {
                 hostedParticleSpecs.push(hostedParticleSpec.toString());
                 // Override handle conenctions with particle name as local name.
                 Object.values(handle.connections).forEach(conn => {
-                    assert(conn['type'].isInterface);
+                    assert(conn['type'] instanceof InterfaceType);
                     conn['_handle'] = { localName: hostedParticleName };
                 });
                 // Remove the handle.

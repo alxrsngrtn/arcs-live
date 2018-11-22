@@ -10,6 +10,7 @@ import { Reference } from './reference.js';
 import { Symbols } from './symbols.js';
 import { assert } from '../../platform/assert-web.js';
 import { ParticleSpec } from './particle-spec.js';
+import { EntityType, CollectionType, BigCollectionType, InterfaceType, ReferenceType } from './type.js';
 // TODO: This won't be needed once runtime is transferred between contexts.
 function cloneData(data) {
     return data;
@@ -247,13 +248,13 @@ class Variable extends Handle {
         if (model === null) {
             return null;
         }
-        if (this.type.isEntity) {
+        if (this.type instanceof EntityType) {
             return restore(model, this.entityClass);
         }
-        if (this.type.isInterface) {
+        if (this.type instanceof InterfaceType) {
             return ParticleSpec.fromLiteral(model);
         }
-        if (this.type.isReference) {
+        if (this.type instanceof ReferenceType) {
             return new Reference(model, this.type, this._proxy.pec);
         }
         assert(false, `Don't know how to deliver handle data of type ${this.type}`);
@@ -381,17 +382,17 @@ class BigCollection extends Handle {
 }
 export function handleFor(proxy, name = null, particleId = 0, canRead = true, canWrite = true) {
     let handle;
-    if (proxy.type.isCollection) {
+    if (proxy.type instanceof CollectionType) {
         handle = new Collection(proxy, name, particleId, canRead, canWrite);
     }
-    else if (proxy.type.isBigCollection) {
+    else if (proxy.type instanceof BigCollectionType) {
         handle = new BigCollection(proxy, name, particleId, canRead, canWrite);
     }
     else {
         handle = new Variable(proxy, name, particleId, canRead, canWrite);
     }
     const type = proxy.type.getContainedType() || proxy.type;
-    if (type.isEntity) {
+    if (type instanceof EntityType) {
         handle.entityClass = type.entitySchema.entityClass(proxy.pec);
     }
     return handle;

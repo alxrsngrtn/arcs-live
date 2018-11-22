@@ -10,6 +10,7 @@ import { Tracing } from '../../../tracelib/trace.js';
 import { StorageBase, StorageProviderBase, ChangeEvent } from './storage-provider-base.js';
 import { KeyBase } from './key-base.js';
 import { CrdtCollectionModel } from './crdt-collection-model.js';
+import { CollectionType, BigCollectionType, ReferenceType } from '../type.js';
 export function resetVolatileStorageForTesting() {
     for (const key of Object.keys(__storageCache)) {
         __storageCache[key]._memoryMap = {};
@@ -54,10 +55,10 @@ export class VolatileStorage extends StorageBase {
     }
     async construct(id, type, keyFragment) {
         const provider = await this._construct(id, type, keyFragment);
-        if (type.isReference || type.isBigCollection) {
+        if (type instanceof ReferenceType || type instanceof BigCollectionType) {
             return provider;
         }
-        if (type.isTypeContainer() && type.getContainedType().isReference) {
+        if (type.isTypeContainer() && type.getContainedType() instanceof ReferenceType) {
             return provider;
         }
         provider.enableReferenceMode();
@@ -124,10 +125,10 @@ class VolatileStorageProvider extends StorageProviderBase {
         this.pendingBackingStore = null;
     }
     static newProvider(type, storageEngine, name, id, key) {
-        if (type.isCollection) {
+        if (type instanceof CollectionType) {
             return new VolatileCollection(type, storageEngine, name, id, key);
         }
-        if (type.isBigCollection) {
+        if (type instanceof BigCollectionType) {
             return new VolatileBigCollection(type, storageEngine, name, id, key);
         }
         return new VolatileVariable(type, storageEngine, name, id, key);

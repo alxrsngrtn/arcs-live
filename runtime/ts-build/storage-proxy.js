@@ -10,6 +10,7 @@
 'use strict';
 import { assert } from '../../platform/assert-web.js';
 import { CrdtCollectionModel } from './storage/crdt-collection-model.js';
+import { CollectionType, BigCollectionType } from './type.js';
 var SyncState;
 (function (SyncState) {
     SyncState[SyncState["none"] = 0] = "none";
@@ -55,10 +56,10 @@ export class StorageProxy {
         this.pec = pec;
     }
     static newProxy(id, type, port, pec, scheduler, name) {
-        if (type.isCollection) {
+        if (type instanceof CollectionType) {
             return new CollectionProxy(id, type, port, pec, scheduler, name);
         }
-        if (type.isBigCollection) {
+        if (type instanceof BigCollectionType) {
             return new BigCollectionProxy(id, type, port, pec, scheduler, name);
         }
         return new VariableProxy(id, type, port, pec, scheduler, name);
