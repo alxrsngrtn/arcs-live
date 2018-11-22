@@ -1,5 +1,9 @@
-commit 772cbd6532fc1f415ab4f781b3810d1df296f6ac
+commit d2b549c9dcae460a76f7e75834981217fb4c0679
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Nov 21 17:00:54 2018 -0800
+Date:   Wed Nov 21 18:00:51 2018 -0800
 
-    update planificator storage keys for shell 6 (#2282)
+    rename Affordance to modality (#2285)
+    
+    * rename affordance to modality
+    
+    * update particle manifests

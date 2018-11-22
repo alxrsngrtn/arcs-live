@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Affordance } from './affordance.js';
+import { Modality } from './modality.js';
 import { Suggestion } from './plan/suggestion';
 export class SuggestionComposer {
     constructor(slotComposer) {
@@ -15,7 +15,7 @@ export class SuggestionComposer {
         this._suggestionsQueue = [];
         this._updateComplete = null;
         this._suggestConsumers = [];
-        this._affordance = Affordance.forName(slotComposer.affordance);
+        this._modality = Modality.forName(slotComposer.modality);
         this._container = slotComposer.findContainerByName('suggestions');
         this._slotComposer = slotComposer;
     }
@@ -34,7 +34,7 @@ export class SuggestionComposer {
     }
     clear() {
         if (this._container) {
-            this._affordance.slotConsumerClass.clear(this._container);
+            this._modality.slotConsumerClass.clear(this._container);
         }
         this._suggestConsumers.forEach(consumer => consumer.dispose());
         this._suggestConsumers = [];
@@ -46,12 +46,12 @@ export class SuggestionComposer {
             // TODO(mmandlis): This hack is needed for deserialized suggestions to work. Should
             // instead serialize the description object and generation suggestion content here.
             const suggestionContent = suggestion.descriptionDom ? suggestion.descriptionDom :
-                await suggestion.description.getRecipeSuggestion(this._affordance.descriptionFormatter);
+                await suggestion.description.getRecipeSuggestion(this._modality.descriptionFormatter);
             if (!suggestionContent) {
                 throw new Error('No suggestion content available');
             }
             if (this._container) {
-                this._affordance.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
+                this._modality.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
             }
             this._addInlineSuggestion(suggestion, suggestionContent);
         }
@@ -83,7 +83,7 @@ export class SuggestionComposer {
             // the suggestion doesn't use any of the handles that the context is restricted to.
             return;
         }
-        const suggestConsumer = new this._affordance.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
+        const suggestConsumer = new this._modality.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
             const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
             suggestConsumer.dispose();
             if (suggestion) {

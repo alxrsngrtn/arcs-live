@@ -1,7 +1,7 @@
 import { SlotComposer } from './slot-composer.js';
 import { Suggestion } from './plan/suggestion';
 export declare class SuggestionComposer {
-    private _affordance;
+    private _modality;
     private _container;
     private readonly _slotComposer;
     private _suggestions;

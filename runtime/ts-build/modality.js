@@ -13,7 +13,7 @@ import { SuggestDomConsumer } from '../suggest-dom-consumer.js';
 import { MockSlotDomConsumer } from '../testing/mock-slot-dom-consumer.js';
 import { MockSuggestDomConsumer } from '../testing/mock-suggest-dom-consumer.js';
 import { DescriptionDomFormatter } from './description-dom-formatter.js';
-export class Affordance {
+export class Modality {
     constructor(name, slotConsumerClass, suggestionConsumerClass, descriptionFormatter) {
         this.name = name;
         this.slotConsumerClass = slotConsumerClass;
@@ -21,14 +21,14 @@ export class Affordance {
         this.descriptionFormatter = descriptionFormatter;
     }
     static forName(name) {
-        assert(Affordance._affordances[name], `Unsupported affordance ${name}`);
-        return Affordance._affordances[name];
+        assert(Modality._modalities[name], `Unsupported modality ${name}`);
+        return Modality._modalities[name];
     }
 }
-Affordance._affordances = {
-    'dom': new Affordance('dom', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
-    'dom-touch': new Affordance('dom-touch', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
-    'vr': new Affordance('vr', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
-    'mock': new Affordance('mock', MockSlotDomConsumer, MockSuggestDomConsumer)
+Modality._modalities = {
+    'dom': new Modality('dom', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
+    'dom-touch': new Modality('dom-touch', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
+    'vr': new Modality('vr', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
+    'mock': new Modality('mock', MockSlotDomConsumer, MockSuggestDomConsumer)
 };
-//# sourceMappingURL=affordance.js.map
+//# sourceMappingURL=modality.js.map

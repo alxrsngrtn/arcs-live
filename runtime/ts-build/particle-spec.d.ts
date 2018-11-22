@@ -78,7 +78,7 @@ declare type SerializedParticleSpec = {
         pattern?: string;
     };
     implFile: string;
-    affordance: string[];
+    modality: string[];
     slots: SerializedSlotSpec[];
 };
 export declare class ParticleSpec {
@@ -91,7 +91,7 @@ export declare class ParticleSpec {
     outputs: ConnectionSpec[];
     pattern: string;
     implFile: string;
-    affordance: string[];
+    modality: string[];
     slots: Map<string, SlotSpec>;
     constructor(model: SerializedParticleSpec);
     createConnection(arg: SerializedConnectionSpec, typeVarMap: Map<string, Type>): ConnectionSpec;
@@ -99,7 +99,7 @@ export declare class ParticleSpec {
     isOutput(param: string): boolean;
     getSlotSpec(slotName: string): SlotSpec;
     readonly primaryVerb: string;
-    matchAffordance(affordance: string): boolean;
+    matchModality(modality: string): boolean;
     toLiteral(): SerializedParticleSpec;
     static fromLiteral(literal: SerializedParticleSpec): ParticleSpec;
     clone(): ParticleSpec;

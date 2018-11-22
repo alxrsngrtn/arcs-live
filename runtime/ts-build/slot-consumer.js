@@ -12,7 +12,7 @@ import { SlotContext } from './slot-context.js';
 export class SlotConsumer {
     constructor(consumeConn, containerKind) {
         this.providedSlotContexts = [];
-        // Contains `container` and other affordance specific rendering information
+        // Contains `container` and other modality specific rendering information
         // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
         this._renderingBySubId = new Map();
         this.innerContainerBySlotId = {};

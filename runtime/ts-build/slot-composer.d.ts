@@ -15,18 +15,18 @@ import { Particle } from './recipe/particle.js';
 export declare class SlotComposer {
     arc: Arc;
     private readonly _containerKind;
-    private _affordance;
+    private _modality;
     private _consumers;
     private _contexts;
     /**
      * |options| must contain:
-     * - affordance: the UI affordance the slots composer render to (for example: dom).
+     * - modality: the UI modality the slots composer render to (for example: dom).
      * - rootContainer: the top level container to be used for slots.
      * and may contain:
      * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
      */
     constructor(options: any);
-    readonly affordance: string;
+    readonly modality: string;
     readonly consumers: SlotConsumer[];
     readonly containerKind: string;
     getSlotConsumer(particle: Particle, slotName: string): SlotConsumer;
