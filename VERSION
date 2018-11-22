@@ -1,14 +1,5 @@
-commit f3d768df9f680bd62e5955b158be4c0ee75df7fc
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Nov 22 16:53:50 2018 +1100
+commit ab6c94e864797520bc82575c850c97a9c208eca7
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Nov 22 17:12:02 2018 +1100
 
-    Split monolithic Type class into multiple classes. (#2289)
-    
-    This is a first step which mostly doesn't change the API, with the
-    following exceptions:
-    - TupleFields, Type.hasVariableReference, Type.isVariableReference and
-      Relation.typeFor have been removed (they're either undefined or unused)
-    - referenceReferredType has been renamed to referredType
-    
-    Next steps will be to replace the is<Type> with instanceof checks,
-    replace Type.data with type-specific fields and fix the naming.
+    Reorder parse attempts to avoid unecessary parse failure (#2292)

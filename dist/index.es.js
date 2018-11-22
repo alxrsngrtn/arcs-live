@@ -5271,11 +5271,11 @@ const parser = /*
     function peg$parseShapeItem() {
       var s0;
 
-      s0 = peg$parseShapeInterface();
+      s0 = peg$parseShapeSlot();
       if (s0 === peg$FAILED) {
         s0 = peg$parseShapeArgumentItem();
         if (s0 === peg$FAILED) {
-          s0 = peg$parseShapeSlot();
+          s0 = peg$parseShapeInterface();
         }
       }
 
@@ -6043,15 +6043,15 @@ const parser = /*
     function peg$parseParticleItem() {
       var s0;
 
-      s0 = peg$parseParticleInterface();
+      s0 = peg$parseParticleModality();
       if (s0 === peg$FAILED) {
-        s0 = peg$parseParticleHandle();
+        s0 = peg$parseParticleSlot();
         if (s0 === peg$FAILED) {
-          s0 = peg$parseParticleModality();
+          s0 = peg$parseDescription();
           if (s0 === peg$FAILED) {
-            s0 = peg$parseParticleSlot();
+            s0 = peg$parseParticleHandle();
             if (s0 === peg$FAILED) {
-              s0 = peg$parseDescription();
+              s0 = peg$parseParticleInterface();
             }
           }
         }
@@ -7761,9 +7761,9 @@ const parser = /*
         if (s0 === peg$FAILED) {
           s0 = peg$parseRecipeSlot();
           if (s0 === peg$FAILED) {
-            s0 = peg$parseRecipeConnection();
+            s0 = peg$parseRecipeSearch();
             if (s0 === peg$FAILED) {
-              s0 = peg$parseRecipeSearch();
+              s0 = peg$parseRecipeConnection();
               if (s0 === peg$FAILED) {
                 s0 = peg$parseDescription();
               }
@@ -7950,9 +7950,9 @@ const parser = /*
     function peg$parseRecipeParticleItem() {
       var s0;
 
-      s0 = peg$parseRecipeParticleConnection();
+      s0 = peg$parseRecipeParticleSlotConnection();
       if (s0 === peg$FAILED) {
-        s0 = peg$parseRecipeParticleSlotConnection();
+        s0 = peg$parseRecipeParticleConnection();
       }
 
       return s0;
@@ -8513,9 +8513,9 @@ const parser = /*
       if (s0 === peg$FAILED) {
         s0 = peg$parseTagConnectionTarget();
         if (s0 === peg$FAILED) {
-          s0 = peg$parseNameConnectionTarget();
+          s0 = peg$parseParticleConnectionTarget();
           if (s0 === peg$FAILED) {
-            s0 = peg$parseParticleConnectionTarget();
+            s0 = peg$parseNameConnectionTarget();
           }
         }
       }
