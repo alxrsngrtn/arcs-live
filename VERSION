@@ -1,5 +1,8 @@
-commit c124fffeca3318509a2d2b64a2ec63b063b3a313
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Nov 22 14:29:21 2018 +1100
+commit 74e68163d26cfee1cbd55a59fd4d1e53d3bff516
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Nov 22 14:40:33 2018 +1100
 
-    Removing dead remaining code in strategizer directory (#2288)
+    Rename structures that use structure names (#2286)
+    
+    * Rename particles named 'particle' to 'particle0' to allow improved parser error messages
+    * Fix shape-test.js usage of schema inside recipe (rather than top level)
