@@ -1,5 +1,5 @@
-commit 64b40641a6606065146261945518a80500b67f39
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Nov 22 13:48:38 2018 +1100
+commit c124fffeca3318509a2d2b64a2ec63b063b3a313
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Thu Nov 22 14:29:21 2018 +1100
 
-    Finding functionality for an object-explorer (#2269)
+    Removing dead remaining code in strategizer directory (#2288)
