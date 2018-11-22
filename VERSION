@@ -1,5 +1,5 @@
-commit a7209f5c843a30aa46831fcf2239007204244047
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Nov 22 11:41:30 2018 +1100
+commit 772cbd6532fc1f415ab4f781b3810d1df296f6ac
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Nov 21 17:00:54 2018 -0800
 
-    Update test for reservedWord to use new isOptional syntax (#2281)
+    update planificator storage keys for shell 6 (#2282)
