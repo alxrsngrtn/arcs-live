@@ -4,8 +4,8 @@ import atob$1 from 'atob';
 import btoa$1 from 'btoa';
 import PouchDB from 'pouchdb';
 import PouchDbMemory from 'pouchdb-adapter-memory';
-import os from 'os';
 import WebSocket$1 from 'ws';
+import os from 'os';
 import fs from 'fs';
 import vm from 'vm';
 import fetch$1 from 'node-fetch';
@@ -41781,6 +41781,63 @@ class PlanningResult {
         assert(Boolean(suggestions), `Cannot set uninitialized suggestions`);
         this._suggestions = suggestions;
     }
+    static formatSerializableGenerations(generations) {
+        // Make a copy of everything and assign IDs to recipes.
+        const idMap = new Map(); // Recipe -> ID
+        let lastID = 0;
+        const assignIdAndCopy = recipe => {
+            idMap.set(recipe, lastID);
+            const { result, score, derivation, description, hash, valid, active, irrelevant } = recipe;
+            const resultString = result.toString({ showUnresolved: true, showInvalid: false, details: '' });
+            const resolved = result.isResolved();
+            return { result: resultString, resolved, score, derivation, description, hash, valid, active, irrelevant, id: lastID++ };
+        };
+        generations = generations.map(pop => ({
+            record: pop.record,
+            generated: pop.generated.map(assignIdAndCopy)
+        }));
+        // Change recipes in derivation to IDs and compute resolved stats.
+        return generations.map(pop => {
+            const population = pop.generated;
+            const record = pop.record;
+            // Adding those here to reuse recipe resolution computation.
+            record.resolvedDerivations = 0;
+            record.resolvedDerivationsByStrategy = {};
+            population.forEach(item => {
+                item.derivation = item.derivation.map(derivItem => {
+                    let parent;
+                    let strategy;
+                    if (derivItem.parent) {
+                        parent = idMap.get(derivItem.parent);
+                    }
+                    if (derivItem.strategy) {
+                        strategy = derivItem.strategy.constructor.name;
+                    }
+                    return { parent, strategy };
+                });
+                if (item.resolved) {
+                    record.resolvedDerivations++;
+                    const strategy = item.derivation[0].strategy;
+                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
+                        record.resolvedDerivationsByStrategy[strategy] = 0;
+                    }
+                    record.resolvedDerivationsByStrategy[strategy]++;
+                }
+            });
+            const populationMap = {};
+            population.forEach(item => {
+                if (populationMap[item.derivation[0].strategy] == undefined) {
+                    populationMap[item.derivation[0].strategy] = [];
+                }
+                populationMap[item.derivation[0].strategy].push(item);
+            });
+            const result = { population: [], record };
+            Object.keys(populationMap).forEach(strategy => {
+                result.population.push({ strategy, recipes: populationMap[strategy] });
+            });
+            return result;
+        });
+    }
     set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
         if (this.isEquivalent(suggestions)) {
             return false;
@@ -41814,10 +41871,11 @@ class PlanningResult {
             oldSuggestions.length === newSuggestions.length &&
             oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
     }
-    async deserialize({ suggestions, lastUpdated }) {
+    async deserialize({ suggestions, generations, lastUpdated }) {
         const recipeResolver = new RecipeResolver(this.arc);
         return this.set({
             suggestions: (await Promise.all(suggestions.map(suggestion => Suggestion.deserialize(suggestion, this.arc, recipeResolver)))).filter(s => s),
+            generations: JSON.parse(generations || '[]'),
             lastUpdated: new Date(lastUpdated),
             contextual: suggestions.contextual
         });
@@ -41825,6 +41883,7 @@ class PlanningResult {
     serialize() {
         return {
             suggestions: this.suggestions.map(suggestion => suggestion.serialize()),
+            generations: JSON.stringify(this.generations),
             lastUpdated: this.lastUpdated.toString(),
             contextual: this.contextual
         };
@@ -43285,6 +43344,191 @@ class SuggestionComposer {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+class AbstractDevtoolsChannel {
+  constructor() {
+    this.debouncedMessages = [];
+    this.debouncing = false;
+    this.messageListeners = new Map();
+  }
+
+  send(message) {
+    this.debouncedMessages.push(message);
+    if (!this.debouncing) {
+      this.debouncing = true;
+      setTimeout(() => {
+        this._flush(this.debouncedMessages);
+        this.debouncedMessages = [];
+        this.debouncing = false;
+      }, 100);
+    }
+  }
+
+  listen(arcOrId, messageType, callback) {
+    assert(messageType);
+    assert(arcOrId);
+    const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
+    const key = `${arcId}/${messageType}`;
+    let listeners = this.messageListeners.get(key);
+    if (!listeners) this.messageListeners.set(key, listeners = []);
+    listeners.push(callback);
+  }
+
+  _handleMessage(msg) {
+    const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
+    if (!listeners) {
+      console.warn(`No one is listening to ${msg.messageType} message`);
+    } else {
+      for (const listener of listeners) listener(msg);
+    }
+  }
+
+  _flush(messages) {
+    throw 'Not implemented in an abstract class';
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+// Debugging is initialized either by /devtools/src/run-mark-connected.js, which is
+// injected by the devtools extension content script in the browser env,
+// or used directly when debugging nodeJS.
+
+// Data needs to be referenced via a global object, otherwise extension and
+// Arcs have different instances.
+const root = typeof window === 'object' ? window : global;
+
+if (!root._arcDebugPromise) {
+  root._arcDebugPromise = new Promise(resolve => {
+    root._arcDebugPromiseResolve = resolve;
+  });
+}
+
+class DevtoolsBroker {
+  static get onceConnected() {
+    return root._arcDebugPromise;
+  }
+  static markConnected() {
+    root._arcDebugPromiseResolve();
+    return {preExistingArcs: !!root.arc};
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class DevtoolsChannel extends AbstractDevtoolsChannel {
+  constructor() {
+    super();
+    this.server = new WebSocket$1.Server({port: 8787});
+    this.server.on('connection', ws => {
+      this.socket = ws;
+      this.socket.on('message', msg => {
+        if (msg === 'init') {
+          DevtoolsBroker.markConnected();
+        } else {
+          this._handleMessage(JSON.parse(msg));
+        }
+      });
+    });
+  }
+
+  _flush(messages) {
+    if (this.socket) {
+      this.socket.send(JSON.stringify(messages));
+    }
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+let channel = null;
+let isConnected = false;
+let onceConnectedResolve = null;
+let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
+
+DevtoolsBroker.onceConnected.then(() => {
+  DevtoolsConnection.ensure();
+  onceConnectedResolve(channel);
+  isConnected = true;
+});
+
+class DevtoolsConnection {
+  static get isConnected() {
+    return isConnected;
+  }
+  static get onceConnected() {
+    return onceConnected;
+  }
+  static get() {
+    return channel;
+  }
+  static ensure() {
+    if (!channel) channel = new DevtoolsChannel();
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class StrategyExplorerAdapter {
+  static processGenerations(generations, devtoolsChannel, options = {}) {
+    devtoolsChannel.send({
+      messageType: 'generations',
+      messageBody: {results: generations, options},
+    });
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class PlanConsumer {
     constructor(arc, store) {
         // Callback is triggered when planning results have changed.
@@ -43325,6 +43569,9 @@ class PlanConsumer {
         if (await this.result.deserialize(value)) {
             this._onSuggestionsChanged();
             this._onMaybeSuggestionsChanged(previousSuggestions);
+            if (this.result.generations && DevtoolsConnection.isConnected) {
+                StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get());
+            }
         }
     }
     getCurrentSuggestions() {
@@ -44824,253 +45071,6 @@ class Speculator {
     }
 }
 
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class StrategyExplorerAdapter {
-  static processGenerations(generations, devtoolsChannel, options = {}) {
-    devtoolsChannel.send({
-      messageType: 'generations',
-      // TODO: Implement simple serialization and move the logic in adapt()
-      //       into the Strategy Explorer proper.
-      messageBody: {results: StrategyExplorerAdapter.adapt(generations), options}
-    });
-  }
-  static adapt(generations) {
-    // Make a copy of everything and assign IDs to recipes.
-    const idMap = new Map(); // Recipe -> ID
-    let lastID = 0;
-    const assignIdAndCopy = recipe => {
-      idMap.set(recipe, lastID);
-      const {result, score, derivation, description, hash, valid, active, irrelevant} = recipe;
-      return {result, score, derivation, description, hash, valid, active, irrelevant, id: lastID++};
-    };
-    generations = generations.map(pop => ({
-      record: pop.record,
-      generated: pop.generated.map(assignIdAndCopy)
-    }));
-
-    // Change recipes in derivation to IDs and compute resolved stats.
-    return generations.map(pop => {
-      const population = pop.generated;
-      const record = pop.record;
-      // Adding those here to reuse recipe resolution computation.
-      record.resolvedDerivations = 0;
-      record.resolvedDerivationsByStrategy = {};
-
-      population.forEach(item => {
-        item.derivation = item.derivation.map(derivItem => {
-          let parent;
-          let strategy;
-          if (derivItem.parent) {
-            parent = idMap.get(derivItem.parent);
-          }
-          if (derivItem.strategy) {
-            strategy = derivItem.strategy.constructor.name;
-          }
-          return {parent, strategy};
-        });
-        item.resolved = item.result.isResolved();
-        if (item.resolved) {
-          record.resolvedDerivations++;
-          const strategy = item.derivation[0].strategy;
-          if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
-            record.resolvedDerivationsByStrategy[strategy] = 0;
-          }
-          record.resolvedDerivationsByStrategy[strategy]++;
-        }
-        const options = {showUnresolved: true, showInvalid: false, details: ''};
-        item.result = item.result.toString(options);
-      });
-      const populationMap = {};
-      population.forEach(item => {
-        if (populationMap[item.derivation[0].strategy] == undefined) {
-          populationMap[item.derivation[0].strategy] = [];
-        }
-        populationMap[item.derivation[0].strategy].push(item);
-      });
-      const result = {population: [], record};
-      Object.keys(populationMap).forEach(strategy => {
-        result.population.push({strategy: strategy, recipes: populationMap[strategy]});
-      });
-      return result;
-    });
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class AbstractDevtoolsChannel {
-  constructor() {
-    this.debouncedMessages = [];
-    this.debouncing = false;
-    this.messageListeners = new Map();
-  }
-
-  send(message) {
-    this.debouncedMessages.push(message);
-    if (!this.debouncing) {
-      this.debouncing = true;
-      setTimeout(() => {
-        this._flush(this.debouncedMessages);
-        this.debouncedMessages = [];
-        this.debouncing = false;
-      }, 100);
-    }
-  }
-
-  listen(arcOrId, messageType, callback) {
-    assert(messageType);
-    assert(arcOrId);
-    const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
-    const key = `${arcId}/${messageType}`;
-    let listeners = this.messageListeners.get(key);
-    if (!listeners) this.messageListeners.set(key, listeners = []);
-    listeners.push(callback);
-  }
-
-  _handleMessage(msg) {
-    const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
-    if (!listeners) {
-      console.warn(`No one is listening to ${msg.messageType} message`);
-    } else {
-      for (const listener of listeners) listener(msg);
-    }
-  }
-
-  _flush(messages) {
-    throw 'Not implemented in an abstract class';
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-// Debugging is initialized either by /devtools/src/run-mark-connected.js, which is
-// injected by the devtools extension content script in the browser env,
-// or used directly when debugging nodeJS.
-
-// Data needs to be referenced via a global object, otherwise extension and
-// Arcs have different instances.
-const root = typeof window === 'object' ? window : global;
-
-if (!root._arcDebugPromise) {
-  root._arcDebugPromise = new Promise(resolve => {
-    root._arcDebugPromiseResolve = resolve;
-  });
-}
-
-class DevtoolsBroker {
-  static get onceConnected() {
-    return root._arcDebugPromise;
-  }
-  static markConnected() {
-    root._arcDebugPromiseResolve();
-    return {preExistingArcs: !!root.arc};
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class DevtoolsChannel extends AbstractDevtoolsChannel {
-  constructor() {
-    super();
-    this.server = new WebSocket$1.Server({port: 8787});
-    this.server.on('connection', ws => {
-      this.socket = ws;
-      this.socket.on('message', msg => {
-        if (msg === 'init') {
-          DevtoolsBroker.markConnected();
-        } else {
-          this._handleMessage(JSON.parse(msg));
-        }
-      });
-    });
-  }
-
-  _flush(messages) {
-    if (this.socket) {
-      this.socket.send(JSON.stringify(messages));
-    }
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-let channel = null;
-let isConnected = false;
-let onceConnectedResolve = null;
-let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
-
-DevtoolsBroker.onceConnected.then(() => {
-  DevtoolsConnection.ensure();
-  onceConnectedResolve(channel);
-  isConnected = true;
-});
-
-class DevtoolsConnection {
-  static get isConnected() {
-    return isConnected;
-  }
-  static get onceConnected() {
-    return onceConnected;
-  }
-  static get() {
-    return channel;
-  }
-  static ensure() {
-    if (!channel) channel = new DevtoolsChannel();
-  }
-}
-
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class Planner {
     constructor() {
@@ -45148,7 +45148,7 @@ class Planner {
         }
         return groups;
     }
-    async suggest(timeout, generations, speculator) {
+    async suggest(timeout, generations = [], speculator) {
         const trace = Tracing.start({ cat: 'planning', name: 'Planner::suggest', overview: true, args: { timeout } });
         if (!generations && DevtoolsConnection.isConnected)
             generations = [];
@@ -45203,9 +45203,6 @@ class Planner {
         })));
         results = [].concat(...results);
         this._relevances = [];
-        if (generations && DevtoolsConnection.isConnected) {
-            StrategyExplorerAdapter.processGenerations(generations, DevtoolsConnection.get());
-        }
         return trace.endWith(results);
     }
     _updateGeneration(generations, hash, handler) {
@@ -45267,9 +45264,10 @@ const defaultTimeoutMs = 5000;
 const log$1 = logFactory('PlanProducer', '#ff0090', 'log');
 const error$2 = logFactory('PlanProducer', '#ff0090', 'error');
 class PlanProducer {
-    constructor(arc, store, searchStore) {
+    constructor(arc, store, searchStore, { debug = false } = {}) {
         this.planner = null;
         this.stateChangedCallbacks = [];
+        this.debug = false;
         assert(arc, 'arc cannot be null');
         assert(store, 'store cannot be null');
         this.arc = arc;
@@ -45281,6 +45279,7 @@ class PlanProducer {
             this.searchStoreCallback = () => this.onSearchChanged();
             this.searchStore.on('change', this.searchStoreCallback, this);
         }
+        this.debug = debug;
     }
     get isPlanning() { return this._isPlanning; }
     set isPlanning(isPlanning) {
@@ -45362,7 +45361,7 @@ class PlanProducer {
         if (suggestions) {
             log$1(`Produced ${suggestions.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
             this.isPlanning = false;
-            await this._updateResult({ suggestions, generations }, this.replanOptions);
+            await this._updateResult({ suggestions, generations: this.debug ? generations : [] }, this.replanOptions);
         }
     }
     async runPlanner(options, generations) {
@@ -45394,6 +45393,7 @@ class PlanProducer {
         log$1(`Cancel planning`);
     }
     async _updateResult({ suggestions, generations }, options) {
+        generations = PlanningResult.formatSerializableGenerations(generations);
         if (options.append) {
             assert(!options['contextual'], `Cannot append to contextual options`);
             if (!this.result.append({ suggestions, generations })) {
@@ -45503,7 +45503,7 @@ class ReplanQueue {
  * http://polymer.github.io/PATENTS.txt
  */
 class Planificator {
-    constructor(arc, userid, store, searchStore, onlyConsumer) {
+    constructor(arc, userid, store, searchStore, onlyConsumer, debug) {
         this.search = null;
         // In <0.6 shell, this is needed to backward compatibility, in order to (1)
         // (1) trigger replanning with a local producer and (2) notify shell of the
@@ -45514,7 +45514,7 @@ class Planificator {
         this.userid = userid;
         this.searchStore = searchStore;
         if (!onlyConsumer) {
-            this.producer = new PlanProducer(arc, store, searchStore);
+            this.producer = new PlanProducer(arc, store, searchStore, { debug });
             this.replanQueue = new ReplanQueue(this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
@@ -45523,10 +45523,10 @@ class Planificator {
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
-    static async create(arc, { userid, protocol, onlyConsumer }) {
+    static async create(arc, { userid, protocol, onlyConsumer, debug = false }) {
         const store = await Planificator._initSuggestStore(arc, { userid, protocol, arcKey: null });
         const searchStore = await Planificator._initSearchStore(arc, { userid });
-        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer);
+        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
         // TODO(mmandlis): Switch to always use `contextual: true` once new arc doesn't need
         // to produce a plan in order to instantiate it.
         planificator.requestPlanning({ contextual: planificator.isArcPopulated() });
@@ -45677,10 +45677,11 @@ class Planificator {
 }
 
 class UserPlanner {
-  constructor(factory, context, userid) {
+  constructor(factory, context, userid, debug) {
     this.factory = factory;
     this.context = context;
     this.userid = userid;
+    this.debug = debug;
     this.runners = {};
 
     const fbuser = new FbUser((type, detail) => this.onEvent(type, detail));
@@ -45763,8 +45764,8 @@ class UserPlanner {
     return await this.factory.deserialize(this.context, serialization);
   }
   async createPlanificator(userid, key, arc) {
-    const planificator = await Planificator.create(arc, {userid}); /*, protocol: 'pouchdb' or 'volatile' */
-    planificator.registerSuggestionsChangedCallback(current => this.showPlansForArc(key, current.plans));
+    const planificator = await Planificator.create(arc, {userid, debug: this.debug}); /*, protocol: 'pouchdb' or 'volatile' */
+    planificator.registerSuggestionsChangedCallback(current => this.showPlansForArc(key, current.suggestions));
     // planificator.registerVisibleSuggestionsChangedCallback(suggestions => this.showSuggestionsForArc(key, suggestions));
     return planificator;
   }
@@ -49784,7 +49785,8 @@ class RecipeIndex {
 
       if (DevtoolsConnection.isConnected) {
         StrategyExplorerAdapter.processGenerations(
-            generations, DevtoolsConnection.get(), {label: 'Index', keep: true});
+            PlanningResult.formatSerializableGenerations(generations), 
+            DevtoolsConnection.get(), {label: 'Index', keep: true});
       }
 
       const population = strategizer.population;
@@ -50962,7 +50964,7 @@ class ShellPlanningInterface {
    * @param assetsPath a path (relative or absolute) to locate planning assets.
    * @param userid the User Id to do planning for.
    */
-  static async start(assetsPath, userid) {
+  static async start(assetsPath, userid, debug) {
     if (!assetsPath || !userid) {
       throw new Error('assetsPath and userid required');
     }
@@ -50972,12 +50974,11 @@ class ShellPlanningInterface {
       DevtoolsConnection.ensure();
       await DevtoolsConnection.onceConnected;  
     }
-    
     const factory = new ArcFactory(assetsPath);
     const context = await factory.createContext(manifest);
     const user = new UserContext();
     user._setProps({userid, context});
-    const planner = new UserPlanner(factory, context, userid);
+    const planner = new UserPlanner(factory, context, userid, debug);
   }
 }
 

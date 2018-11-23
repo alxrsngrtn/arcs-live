@@ -14,10 +14,11 @@ import { Recipe } from '../recipe/recipe.js';
 import { ReplanQueue } from './replan-queue.js';
 import { StorageProviderBase } from "../storage/storage-provider-base.js";
 export declare class Planificator {
-    static create(arc: Arc, { userid, protocol, onlyConsumer }: {
+    static create(arc: Arc, { userid, protocol, onlyConsumer, debug }: {
         userid: any;
         protocol: any;
         onlyConsumer: any;
+        debug?: boolean;
     }): Promise<Planificator>;
     arc: Arc;
     userid: string;
@@ -29,7 +30,7 @@ export declare class Planificator {
     searchStore: StorageProviderBase;
     arcCallback: ({}: {}) => void;
     lastActivatedPlan: Recipe | null;
-    constructor(arc: Arc, userid: string, store: StorageProviderBase, searchStore: StorageProviderBase, onlyConsumer: boolean);
+    constructor(arc: Arc, userid: string, store: StorageProviderBase, searchStore: StorageProviderBase, onlyConsumer: boolean, debug: boolean);
     requestPlanning(options?: {}): Promise<void>;
     readonly consumerOnly: boolean;
     loadSuggestions(): Promise<void>;

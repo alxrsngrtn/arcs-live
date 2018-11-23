@@ -14,7 +14,7 @@ import { ReplanQueue } from './replan-queue.js';
 import { Schema } from '../schema.js';
 import { Type } from '../type.js';
 export class Planificator {
-    constructor(arc, userid, store, searchStore, onlyConsumer) {
+    constructor(arc, userid, store, searchStore, onlyConsumer, debug) {
         this.search = null;
         // In <0.6 shell, this is needed to backward compatibility, in order to (1)
         // (1) trigger replanning with a local producer and (2) notify shell of the
@@ -25,7 +25,7 @@ export class Planificator {
         this.userid = userid;
         this.searchStore = searchStore;
         if (!onlyConsumer) {
-            this.producer = new PlanProducer(arc, store, searchStore);
+            this.producer = new PlanProducer(arc, store, searchStore, { debug });
             this.replanQueue = new ReplanQueue(this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
@@ -34,10 +34,10 @@ export class Planificator {
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
-    static async create(arc, { userid, protocol, onlyConsumer }) {
+    static async create(arc, { userid, protocol, onlyConsumer, debug = false }) {
         const store = await Planificator._initSuggestStore(arc, { userid, protocol, arcKey: null });
         const searchStore = await Planificator._initSearchStore(arc, { userid });
-        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer);
+        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
         // TODO(mmandlis): Switch to always use `contextual: true` once new arc doesn't need
         // to produce a plan in order to instantiate it.
         planificator.requestPlanning({ contextual: planificator.isArcPopulated() });

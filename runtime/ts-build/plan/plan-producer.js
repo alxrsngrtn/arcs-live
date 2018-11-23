@@ -18,9 +18,10 @@ const defaultTimeoutMs = 5000;
 const log = logFactory('PlanProducer', '#ff0090', 'log');
 const error = logFactory('PlanProducer', '#ff0090', 'error');
 export class PlanProducer {
-    constructor(arc, store, searchStore) {
+    constructor(arc, store, searchStore, { debug = false } = {}) {
         this.planner = null;
         this.stateChangedCallbacks = [];
+        this.debug = false;
         assert(arc, 'arc cannot be null');
         assert(store, 'store cannot be null');
         this.arc = arc;
@@ -32,6 +33,7 @@ export class PlanProducer {
             this.searchStoreCallback = () => this.onSearchChanged();
             this.searchStore.on('change', this.searchStoreCallback, this);
         }
+        this.debug = debug;
     }
     get isPlanning() { return this._isPlanning; }
     set isPlanning(isPlanning) {
@@ -113,7 +115,7 @@ export class PlanProducer {
         if (suggestions) {
             log(`Produced ${suggestions.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
             this.isPlanning = false;
-            await this._updateResult({ suggestions, generations }, this.replanOptions);
+            await this._updateResult({ suggestions, generations: this.debug ? generations : [] }, this.replanOptions);
         }
     }
     async runPlanner(options, generations) {
@@ -145,6 +147,7 @@ export class PlanProducer {
         log(`Cancel planning`);
     }
     async _updateResult({ suggestions, generations }, options) {
+        generations = PlanningResult.formatSerializableGenerations(generations);
         if (options.append) {
             assert(!options['contextual'], `Cannot append to contextual options`);
             if (!this.result.append({ suggestions, generations })) {

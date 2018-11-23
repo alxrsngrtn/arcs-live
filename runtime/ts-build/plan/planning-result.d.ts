@@ -17,6 +17,7 @@ export declare class PlanningResult {
     contextual: boolean;
     constructor(arc: any, result?: {});
     suggestions: Suggestion[];
+    static formatSerializableGenerations(generations: any): any;
     set({ suggestions, lastUpdated, generations, contextual }: {
         suggestions: any;
         lastUpdated?: Date;
@@ -31,8 +32,9 @@ export declare class PlanningResult {
     olderThan(other: any): boolean;
     isEquivalent(suggestions: any): any;
     static isEquivalent(oldSuggestions: any, newSuggestions: any): any;
-    deserialize({ suggestions, lastUpdated }: {
+    deserialize({ suggestions, generations, lastUpdated }: {
         suggestions: any;
+        generations: any;
         lastUpdated: any;
     }): Promise<boolean>;
     serialize(): {
@@ -46,6 +48,7 @@ export declare class PlanningResult {
                 model: {};
             };
         }[];
+        generations: string;
         lastUpdated: string;
         contextual: boolean;
     };

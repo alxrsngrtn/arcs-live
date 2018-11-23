@@ -1,7 +1,14 @@
-commit 1cafee212b6839d8c51d3740e82774828d95a1f7
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Nov 23 10:31:55 2018 +1100
+commit ead49e27922d16f76aeeacbee218ac9328fafe87
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Nov 22 18:38:45 2018 -0800
 
-    Replace uses of is<Type> with instanceof checks in the runtime. (#2295)
+    de/serialize generations and update strategy-explorer to support (#2287)
     
-    I've left the is* methods on the type classes so non-runtime code can use them for now.
+    * de/serialize generations and update strategy-explorer to support
+    
+    * address comments:
+    - unify generations formatting in planning-results
+    - rename plan-producer's flag to from `devTools` to `debug`
+    - add `planificatorDebug` to shell's urlParams and remote-planning
+    
+    * small cleanup

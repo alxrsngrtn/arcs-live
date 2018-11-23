@@ -30,7 +30,6 @@ import { ResolveRecipe } from './strategies/resolve-recipe.js';
 import { Speculator } from './speculator.js';
 import { Suggestion } from './plan/suggestion';
 import { Tracing } from '../../tracelib/trace.js';
-import { StrategyExplorerAdapter } from '../debug/strategy-explorer-adapter.js';
 import { DevtoolsConnection } from '../debug/devtools-connection.js';
 export class Planner {
     constructor() {
@@ -108,7 +107,7 @@ export class Planner {
         }
         return groups;
     }
-    async suggest(timeout, generations, speculator) {
+    async suggest(timeout, generations = [], speculator) {
         const trace = Tracing.start({ cat: 'planning', name: 'Planner::suggest', overview: true, args: { timeout } });
         if (!generations && DevtoolsConnection.isConnected)
             generations = [];
@@ -164,9 +163,6 @@ export class Planner {
         })));
         results = [].concat(...results);
         this._relevances = [];
-        if (generations && DevtoolsConnection.isConnected) {
-            StrategyExplorerAdapter.processGenerations(generations, DevtoolsConnection.get());
-        }
         return trace.endWith(results);
     }
     _updateGeneration(generations, hash, handler) {

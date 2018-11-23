@@ -15,7 +15,7 @@ export declare class Planner {
     plan(timeout: number, generations: any): Promise<any[]>;
     _speculativeThreadCount(): number;
     _splitToGroups(items: any, groupCount: number): any[];
-    suggest(timeout: number, generations: [], speculator?: Speculator): Promise<Suggestion[]>;
+    suggest(timeout: number, generations?: {}[], speculator?: Speculator): Promise<Suggestion[]>;
     _updateGeneration(generations: any, hash: string, handler: any): void;
     dispose(): void;
     static InitializationStrategies: StrategyDerived[];

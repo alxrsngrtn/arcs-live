@@ -65832,69 +65832,7 @@ class StrategyExplorerAdapter {
   static processGenerations(generations, devtoolsChannel, options = {}) {
     devtoolsChannel.send({
       messageType: 'generations',
-      // TODO: Implement simple serialization and move the logic in adapt()
-      //       into the Strategy Explorer proper.
-      messageBody: {results: StrategyExplorerAdapter.adapt(generations), options}
-    });
-  }
-  static adapt(generations) {
-    // Make a copy of everything and assign IDs to recipes.
-    const idMap = new Map(); // Recipe -> ID
-    let lastID = 0;
-    const assignIdAndCopy = recipe => {
-      idMap.set(recipe, lastID);
-      const {result, score, derivation, description, hash, valid, active, irrelevant} = recipe;
-      return {result, score, derivation, description, hash, valid, active, irrelevant, id: lastID++};
-    };
-    generations = generations.map(pop => ({
-      record: pop.record,
-      generated: pop.generated.map(assignIdAndCopy)
-    }));
-
-    // Change recipes in derivation to IDs and compute resolved stats.
-    return generations.map(pop => {
-      const population = pop.generated;
-      const record = pop.record;
-      // Adding those here to reuse recipe resolution computation.
-      record.resolvedDerivations = 0;
-      record.resolvedDerivationsByStrategy = {};
-
-      population.forEach(item => {
-        item.derivation = item.derivation.map(derivItem => {
-          let parent;
-          let strategy;
-          if (derivItem.parent) {
-            parent = idMap.get(derivItem.parent);
-          }
-          if (derivItem.strategy) {
-            strategy = derivItem.strategy.constructor.name;
-          }
-          return {parent, strategy};
-        });
-        item.resolved = item.result.isResolved();
-        if (item.resolved) {
-          record.resolvedDerivations++;
-          const strategy = item.derivation[0].strategy;
-          if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
-            record.resolvedDerivationsByStrategy[strategy] = 0;
-          }
-          record.resolvedDerivationsByStrategy[strategy]++;
-        }
-        const options = {showUnresolved: true, showInvalid: false, details: ''};
-        item.result = item.result.toString(options);
-      });
-      const populationMap = {};
-      population.forEach(item => {
-        if (populationMap[item.derivation[0].strategy] == undefined) {
-          populationMap[item.derivation[0].strategy] = [];
-        }
-        populationMap[item.derivation[0].strategy].push(item);
-      });
-      const result = {population: [], record};
-      Object.keys(populationMap).forEach(strategy => {
-        result.population.push({strategy: strategy, recipes: populationMap[strategy]});
-      });
-      return result;
+      messageBody: {results: generations, options},
     });
   }
 }
@@ -66695,6 +66633,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./ts-build/recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
 /* harmony import */ var _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./ts-build/recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _ts_build_plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./ts-build/plan/planning-result.js */ "./runtime/ts-build/plan/planning-result.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -66704,6 +66643,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -66798,7 +66738,8 @@ class RecipeIndex {
 
       if (_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].isConnected) {
         _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(
-            generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].get(), {label: 'Index', keep: true});
+            _ts_build_plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__["PlanningResult"].formatSerializableGenerations(generations), 
+            _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].get(), {label: 'Index', keep: true});
       }
 
       const population = strategizer.population;
@@ -72491,6 +72432,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./planning-result.js */ "./runtime/ts-build/plan/planning-result.js");
 /* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../suggestion-composer.js */ "./runtime/ts-build/suggestion-composer.js");
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
+/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -72500,6 +72443,8 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+
 
 
 
@@ -72543,6 +72488,9 @@ class PlanConsumer {
         if (await this.result.deserialize(value)) {
             this._onSuggestionsChanged();
             this._onMaybeSuggestionsChanged(previousSuggestions);
+            if (this.result.generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected) {
+                _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get());
+            }
         }
     }
     getCurrentSuggestions() {
@@ -72639,9 +72587,10 @@ const defaultTimeoutMs = 5000;
 const log = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'log');
 const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'error');
 class PlanProducer {
-    constructor(arc, store, searchStore) {
+    constructor(arc, store, searchStore, { debug = false } = {}) {
         this.planner = null;
         this.stateChangedCallbacks = [];
+        this.debug = false;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'store cannot be null');
         this.arc = arc;
@@ -72653,6 +72602,7 @@ class PlanProducer {
             this.searchStoreCallback = () => this.onSearchChanged();
             this.searchStore.on('change', this.searchStoreCallback, this);
         }
+        this.debug = debug;
     }
     get isPlanning() { return this._isPlanning; }
     set isPlanning(isPlanning) {
@@ -72734,7 +72684,7 @@ class PlanProducer {
         if (suggestions) {
             log(`Produced ${suggestions.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
             this.isPlanning = false;
-            await this._updateResult({ suggestions, generations }, this.replanOptions);
+            await this._updateResult({ suggestions, generations: this.debug ? generations : [] }, this.replanOptions);
         }
     }
     async runPlanner(options, generations) {
@@ -72766,6 +72716,7 @@ class PlanProducer {
         log(`Cancel planning`);
     }
     async _updateResult({ suggestions, generations }, options) {
+        generations = _planning_result_js__WEBPACK_IMPORTED_MODULE_5__["PlanningResult"].formatSerializableGenerations(generations);
         if (options.append) {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!options['contextual'], `Cannot append to contextual options`);
             if (!this.result.append({ suggestions, generations })) {
@@ -72824,7 +72775,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Planificator {
-    constructor(arc, userid, store, searchStore, onlyConsumer) {
+    constructor(arc, userid, store, searchStore, onlyConsumer, debug) {
         this.search = null;
         // In <0.6 shell, this is needed to backward compatibility, in order to (1)
         // (1) trigger replanning with a local producer and (2) notify shell of the
@@ -72835,7 +72786,7 @@ class Planificator {
         this.userid = userid;
         this.searchStore = searchStore;
         if (!onlyConsumer) {
-            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](arc, store, searchStore);
+            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](arc, store, searchStore, { debug });
             this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_3__["ReplanQueue"](this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
@@ -72844,10 +72795,10 @@ class Planificator {
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
-    static async create(arc, { userid, protocol, onlyConsumer }) {
+    static async create(arc, { userid, protocol, onlyConsumer, debug = false }) {
         const store = await Planificator._initSuggestStore(arc, { userid, protocol, arcKey: null });
         const searchStore = await Planificator._initSearchStore(arc, { userid });
-        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer);
+        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
         // TODO(mmandlis): Switch to always use `contextual: true` once new arc doesn't need
         // to produce a plan in order to instantiate it.
         planificator.requestPlanning({ contextual: planificator.isArcPopulated() });
@@ -73039,6 +72990,64 @@ class PlanningResult {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(suggestions), `Cannot set uninitialized suggestions`);
         this._suggestions = suggestions;
     }
+    static formatSerializableGenerations(generations) {
+        // Make a copy of everything and assign IDs to recipes.
+        const idMap = new Map(); // Recipe -> ID
+        let lastID = 0;
+        const assignIdAndCopy = recipe => {
+            idMap.set(recipe, lastID);
+            const { result, score, derivation, description, hash, valid, active, irrelevant } = recipe;
+            const resultString = result.toString({ showUnresolved: true, showInvalid: false, details: '' });
+            const resolved = result.isResolved();
+            return { result: resultString, resolved, score, derivation, description, hash, valid, active, irrelevant, id: lastID++ };
+        };
+        generations = generations.map(pop => ({
+            record: pop.record,
+            generated: pop.generated.map(assignIdAndCopy)
+        }));
+        // Change recipes in derivation to IDs and compute resolved stats.
+        return generations.map(pop => {
+            const population = pop.generated;
+            const record = pop.record;
+            // Adding those here to reuse recipe resolution computation.
+            record.resolvedDerivations = 0;
+            record.resolvedDerivationsByStrategy = {};
+            population.forEach(item => {
+                item.derivation = item.derivation.map(derivItem => {
+                    let parent;
+                    let strategy;
+                    if (derivItem.parent) {
+                        parent = idMap.get(derivItem.parent);
+                    }
+                    if (derivItem.strategy) {
+                        strategy = derivItem.strategy.constructor.name;
+                    }
+                    return { parent, strategy };
+                });
+                if (item.resolved) {
+                    record.resolvedDerivations++;
+                    const strategy = item.derivation[0].strategy;
+                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
+                        record.resolvedDerivationsByStrategy[strategy] = 0;
+                    }
+                    record.resolvedDerivationsByStrategy[strategy]++;
+                }
+                const options = { showUnresolved: true, showInvalid: false, details: '' };
+            });
+            const populationMap = {};
+            population.forEach(item => {
+                if (populationMap[item.derivation[0].strategy] == undefined) {
+                    populationMap[item.derivation[0].strategy] = [];
+                }
+                populationMap[item.derivation[0].strategy].push(item);
+            });
+            const result = { population: [], record };
+            Object.keys(populationMap).forEach(strategy => {
+                result.population.push({ strategy, recipes: populationMap[strategy] });
+            });
+            return result;
+        });
+    }
     set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
         if (this.isEquivalent(suggestions)) {
             return false;
@@ -73072,10 +73081,11 @@ class PlanningResult {
             oldSuggestions.length === newSuggestions.length &&
             oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
     }
-    async deserialize({ suggestions, lastUpdated }) {
+    async deserialize({ suggestions, generations, lastUpdated }) {
         const recipeResolver = new _recipe_recipe_resolver__WEBPACK_IMPORTED_MODULE_1__["RecipeResolver"](this.arc);
         return this.set({
             suggestions: (await Promise.all(suggestions.map(suggestion => _suggestion__WEBPACK_IMPORTED_MODULE_2__["Suggestion"].deserialize(suggestion, this.arc, recipeResolver)))).filter(s => s),
+            generations: JSON.parse(generations || '[]'),
             lastUpdated: new Date(lastUpdated),
             contextual: suggestions.contextual
         });
@@ -73083,6 +73093,7 @@ class PlanningResult {
     serialize() {
         return {
             suggestions: this.suggestions.map(suggestion => suggestion.serialize()),
+            generations: JSON.stringify(this.generations),
             lastUpdated: this.lastUpdated.toString(),
             contextual: this.contextual
         };
@@ -73349,15 +73360,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _speculator_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./speculator.js */ "./runtime/ts-build/speculator.js");
 /* harmony import */ var _plan_suggestion__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./plan/suggestion */ "./runtime/ts-build/plan/suggestion.js");
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ../debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ../debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ../debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 
 
@@ -73461,9 +73470,9 @@ class Planner {
         }
         return groups;
     }
-    async suggest(timeout, generations, speculator) {
+    async suggest(timeout, generations = [], speculator) {
         const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_25__["Tracing"].start({ cat: 'planning', name: 'Planner::suggest', overview: true, args: { timeout } });
-        if (!generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_27__["DevtoolsConnection"].isConnected)
+        if (!generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__["DevtoolsConnection"].isConnected)
             generations = [];
         const plans = await trace.wait(this.plan(timeout, generations));
         const suggestions = [];
@@ -73517,9 +73526,6 @@ class Planner {
         })));
         results = [].concat(...results);
         this._relevances = [];
-        if (generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_27__["DevtoolsConnection"].isConnected) {
-            _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_26__["StrategyExplorerAdapter"].processGenerations(generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_27__["DevtoolsConnection"].get());
-        }
         return trace.endWith(results);
     }
     _updateGeneration(generations, hash, handler) {

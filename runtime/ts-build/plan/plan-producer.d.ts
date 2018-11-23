@@ -25,7 +25,10 @@ export declare class PlanProducer {
     search: string;
     searchStore: StorageProviderBase;
     searchStoreCallback: ({}: {}) => void;
-    constructor(arc: Arc, store: StorageProviderBase, searchStore: StorageProviderBase);
+    debug: boolean;
+    constructor(arc: Arc, store: StorageProviderBase, searchStore: StorageProviderBase, { debug }?: {
+        debug?: boolean;
+    });
     isPlanning: boolean;
     registerStateChangedCallback(callback: any): void;
     onSearchChanged(): Promise<void>;
