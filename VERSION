@@ -1,14 +1,5 @@
-commit ead49e27922d16f76aeeacbee218ac9328fafe87
+commit 49f2a6659570d2977bd63888bf0e5b6eccc50ba4
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Nov 22 18:38:45 2018 -0800
+Date:   Fri Nov 23 15:07:18 2018 -0800
 
-    de/serialize generations and update strategy-explorer to support (#2287)
-    
-    * de/serialize generations and update strategy-explorer to support
-    
-    * address comments:
-    - unify generations formatting in planning-results
-    - rename plan-producer's flag to from `devTools` to `debug`
-    - add `planificatorDebug` to shell's urlParams and remote-planning
-    
-    * small cleanup
+    delete suggestion-storage (was only used in old planificator) (#2298)
