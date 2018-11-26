@@ -67409,21 +67409,24 @@ class Arc {
         const context = { handles: '', resources: '', interfaces: '', dataResources: new Map() };
         let id = 0;
         const importSet = new Set();
-        const handleSet = new Set();
+        const handlesToSerialize = new Set();
         const contextSet = new Set(this.context.stores.map(store => store.id));
         for (const handle of this._activeRecipe.handles) {
             if (handle.fate === 'map') {
                 importSet.add(this.context.findManifestUrlForHandleId(handle.id));
             }
             else {
-                handleSet.add(handle.id);
+                // Immediate value handles have values inlined in the recipe and are not serialized.
+                if (handle.immediateValue)
+                    continue;
+                handlesToSerialize.add(handle.id);
             }
         }
         for (const url of importSet.values()) {
             context.resources += `import '${url}'\n`;
         }
         for (const handle of this._stores) {
-            if (!handleSet.has(handle.id) || contextSet.has(handle.id)) {
+            if (!handlesToSerialize.has(handle.id) || contextSet.has(handle.id)) {
                 continue;
             }
             await this._serializeHandle(handle, context, `Store${id++}`);
@@ -67431,7 +67434,23 @@ class Arc {
         return context.resources + context.interfaces + context.handles;
     }
     _serializeParticles() {
-        return this._activeRecipe.particles.map(entry => entry.spec.toString()).join('\n');
+        const particleSpecs = [];
+        // Particles used directly.
+        particleSpecs.push(...this._activeRecipe.particles.map(entry => entry.spec));
+        // Particles referenced in an immediate mode.
+        particleSpecs.push(...this._activeRecipe.handles
+            .filter(h => h.immediateValue)
+            .map(h => h.immediateValue));
+        const results = [];
+        particleSpecs.forEach(spec => {
+            for (const connection of spec.connections) {
+                if (connection.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"]) {
+                    results.push(connection.type.interfaceShape.toString());
+                }
+            }
+            results.push(spec.toString());
+        });
+        return results.join('\n');
     }
     _serializeStorageKey() {
         if (this.storageKey) {
@@ -67599,15 +67618,12 @@ ${this.activeRecipe.toString()}`;
                 }
                 type = type.resolvedType();
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type.isResolved(), `Can't create handle for unresolved type ${type}`);
-                const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags);
-                if (recipeHandle.id && recipeHandle.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"]
-                    && recipeHandle.id.includes(':particle-literal:')) {
-                    // 'particle-literal' handles are created by the FindHostedParticle strategy.
-                    const particleName = recipeHandle.id.match(/:particle-literal:([a-zA-Z]+)$/)[1];
-                    const particle = this.context.findParticleByName(particleName);
-                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipeHandle.type.interfaceShape.particleMatches(particle));
-                    const particleClone = particle.clone().toLiteral();
-                    particleClone.id = recipeHandle.id;
+                const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags, recipeHandle.immediateValue ? 'volatile' : null);
+                if (recipeHandle.immediateValue) {
+                    const particleSpec = recipeHandle.immediateValue;
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipeHandle.type.interfaceShape.particleMatches(particleSpec));
+                    const particleClone = particleSpec.clone().toLiteral();
+                    particleClone.id = newStore.id;
                     // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
                     // tslint:disable-next-line: no-any
                     await newStore.set(particleClone);
@@ -70201,6 +70217,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./id.js */ "./runtime/ts-build/id.js");
 /* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./type-variable.js */ "./runtime/ts-build/type-variable.js");
 /* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./slot-info.js */ "./runtime/ts-build/slot-info.js");
+/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -70210,6 +70227,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -71042,27 +71060,10 @@ ${e.message}
                     if (!hostedParticle) {
                         throw new ManifestError(connectionItem.target.location, `Could not find hosted particle '${connectionItem.target.particle}'`);
                     }
-                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(connection.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["InterfaceType"]);
-                    if (!connection.type.interfaceShape.restrictType(hostedParticle)) {
+                    targetHandle = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_17__["RecipeUtil"].constructImmediateValueHandle(connection, hostedParticle, manifest.generateID());
+                    if (!targetHandle) {
                         throw new ManifestError(connectionItem.target.location, `Hosted particle '${hostedParticle.name}' does not match shape '${connection.name}'`);
                     }
-                    // TODO: loader should not be optional.
-                    if (hostedParticle.implFile && loader) {
-                        hostedParticle.implFile = loader.join(manifest.fileName, hostedParticle.implFile);
-                    }
-                    const hostedParticleLiteral = hostedParticle.clone().toLiteral();
-                    const particleSpecHash = await Object(_platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__["digest"])(JSON.stringify(hostedParticleLiteral));
-                    const id = `${manifest.generateID()}:${particleSpecHash}:${hostedParticle.name}`;
-                    hostedParticleLiteral.id = id;
-                    targetHandle = recipe.newHandle();
-                    targetHandle.fate = 'copy';
-                    const store = await manifest.createStore(connection.type, null, id, []);
-                    // TODO(shans): Work out a better way to turn off reference mode for these stores.
-                    // Maybe a different function call in the storageEngine? Alternatively another
-                    // param to the connect/construct functions?
-                    store.referenceMode = false;
-                    await store.set(hostedParticleLiteral);
-                    targetHandle.mapToStorage(store);
                 }
                 if (targetParticle) {
                     let targetConnection;
@@ -73143,9 +73144,8 @@ class ReplanQueue {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Suggestion", function() { return Suggestion; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../manifest.js */ "./runtime/ts-build/manifest.js");
-/* harmony import */ var _modality__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modality */ "./runtime/ts-build/modality.js");
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../manifest.js */ "./runtime/ts-build/manifest.js");
+/* harmony import */ var _modality__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modality */ "./runtime/ts-build/modality.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -73155,7 +73155,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -73184,7 +73183,7 @@ class Suggestion {
         const modality = this.arc.pec.slotComposer && this.arc.pec.slotComposer.modality;
         if (modality && modality !== 'text') {
             this.descriptionByModality[modality] =
-                await description.getRecipeSuggestion(_modality__WEBPACK_IMPORTED_MODULE_3__["Modality"].forName(modality).descriptionFormatter);
+                await description.getRecipeSuggestion(_modality__WEBPACK_IMPORTED_MODULE_2__["Modality"].forName(modality).descriptionFormatter);
         }
     }
     isEquivalent(other) {
@@ -73254,41 +73253,17 @@ class Suggestion {
         }
     }
     _planToString(plan) {
-        // Special handling is only needed for plans (1) with hosted particles or
-        // (2) local slot (ie missing slot IDs).
-        if (!plan.handles.some(h => h.id && h.id.includes('particle-literal')) &&
-            plan.slots.every(slot => Boolean(slot.id))) {
+        if (plan.slots.every(slot => Boolean(slot.id))) {
             return plan.toString();
         }
-        // TODO: This is a transformation particle hack for plans resolved by
-        // FindHostedParticle strategy. Find a proper way to do this.
-        // Update hosted particle handles and connections.
+        // Special handling needed for plans with local slot (ie missing slot IDs).
         const planClone = plan.clone();
         planClone.slots.forEach(slot => slot.id = slot.id || `slotid-${this.arc.generateID()}`);
-        const hostedParticleSpecs = [];
-        for (let i = 0; i < planClone.handles.length; ++i) {
-            const handle = planClone.handles[i];
-            if (handle.id && handle.id.includes('particle-literal')) {
-                const hostedParticleName = handle.id.substr(handle.id.lastIndexOf(':') + 1);
-                // Add particle spec to the list.
-                const hostedParticleSpec = this.arc.context.findParticleByName(hostedParticleName);
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(hostedParticleSpec, `Cannot find spec for particle '${hostedParticleName}'.`);
-                hostedParticleSpecs.push(hostedParticleSpec.toString());
-                // Override handle conenctions with particle name as local name.
-                Object.values(handle.connections).forEach(conn => {
-                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(conn['type'] instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"]);
-                    conn['_handle'] = { localName: hostedParticleName };
-                });
-                // Remove the handle.
-                planClone.handles.splice(i, 1);
-                --i;
-            }
-        }
-        return `${hostedParticleSpecs.join('\n')}\n${planClone.toString()}`;
+        return planClone.toString();
     }
     static async _planFromString(planString, arc, recipeResolver) {
         try {
-            const manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_2__["Manifest"].parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
+            const manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest.recipes.length === 1);
             let plan = manifest.recipes[0];
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
@@ -73988,7 +73963,12 @@ class HandleConnection {
         // TODO: better deal with unspecified direction.
         result.push({ 'in': '<-', 'out': '->', 'inout': '=', 'host': '=', '`consume': '<-', '`provide': '->' }[this.direction] || this.direction || '=');
         if (this.handle) {
-            result.push(`${(nameMap && nameMap.get(this.handle)) || this.handle.localName}`);
+            if (this.handle.immediateValue) {
+                result.push(this.handle.immediateValue.name);
+            }
+            else {
+                result.push(`${(nameMap && nameMap.get(this.handle)) || this.handle.localName}`);
+            }
         }
         result.push(...this.tags.map(a => `#${a}`));
         if (options && options.showUnresolved) {
@@ -74042,6 +74022,9 @@ class Handle {
         this._mappedType = undefined;
         this._storageKey = undefined;
         this._pattern = undefined;
+        // Value assigned in the immediate mode, E.g. hostedParticle = ShowProduct
+        // Currently only supports ParticleSpec.
+        this._immediateValue = undefined;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe);
         this._recipe = recipe;
     }
@@ -74060,6 +74043,7 @@ class Handle {
             handle._originalId = this._originalId;
             handle._mappedType = this._mappedType;
             handle._storageKey = this._storageKey;
+            handle._immediateValue = this._immediateValue;
             // the connections are re-established when Particles clone their
             // attached HandleConnection objects.
             handle._connections = [];
@@ -74075,6 +74059,7 @@ class Handle {
             connection.disconnectHandle();
             connection.connectToHandle(handle);
         }
+        handle._immediateValue = this._immediateValue;
         handle.tags = handle.tags.concat(this.tags);
         handle.recipe.removeHandle(this);
         handle.fate = this._mergedFate([this.fate, handle.fate]);
@@ -74108,6 +74093,8 @@ class Handle {
             return cmp;
         // TODO: type?
         if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])(this.fate, other.fate)) !== 0)
+            return cmp;
+        if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])(this._immediateValue && this._immediateValue.toString() || '', other._immediateValue && other._immediateValue.toString() || '')) !== 0)
             return cmp;
         return 0;
     }
@@ -74147,6 +74134,9 @@ class Handle {
     get pattern() { return this._pattern; }
     set pattern(pattern) { this._pattern = pattern; }
     get mappedType() { return this._mappedType; }
+    set mappedType(mappedType) { this._mappedType = mappedType; }
+    get immediateValue() { return this._immediateValue; }
+    set immediateValue(value) { this._immediateValue = value; }
     static effectiveType(handleType, connections) {
         const variableMap = new Map();
         // It's OK to use _cloneWithResolutions here as for the purpose of this test, the handle set + handleType 
@@ -74234,6 +74224,11 @@ class Handle {
         return resolved;
     }
     toString(nameMap, options) {
+        if (this._immediateValue) {
+            // Immediate Value handles are only rendered inline with particle connections.
+            // E.g. hostedParticle = ShowProduct
+            return undefined;
+        }
         options = options || {};
         // TODO: type? maybe output in a comment
         const result = [];
@@ -74583,12 +74578,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeUtil", function() { return RecipeUtil; });
 /* harmony import */ var _recipe_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./recipe.js */ "./runtime/ts-build/recipe/recipe.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 class Shape {
@@ -74705,12 +74702,22 @@ class RecipeUtil {
                         continue;
                     }
                     // Check whether shapeHC and recipeHC reference the same handle.
-                    // Note: the id of a handle with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
-                    // Skip the check if handles have 'create' fate (their ids are arbitrary).
-                    if ((shapeHC.handle.fate !== 'create' || (recipeHC.handle.fate !== 'create' && recipeHC.handle.originalFate !== 'create')) &&
-                        shapeHC.handle.id !== recipeHC.handle.id && shapeHC.handle.id !== recipeHC.handle.originalId) {
-                        // this is a different handle.
-                        continue;
+                    if (shapeHC.handle.fate !== 'create' || (recipeHC.handle.fate !== 'create' && recipeHC.handle.originalFate !== 'create')) {
+                        if (Boolean(shapeHC.handle.immediateValue) !== Boolean(recipeHC.handle.immediateValue)) {
+                            continue; // One is an immediate value handle and the other is not.
+                        }
+                        if (recipeHC.handle.immediateValue) {
+                            if (!recipeHC.handle.immediateValue.equals(shapeHC.handle.immediateValue)) {
+                                continue; // Immediate values are different.
+                            }
+                        }
+                        else {
+                            // Note: the id of a handle with 'copy' fate changes during recipe instantiation, hence comparing to original id too.
+                            // Skip the check if handles have 'create' fate (their ids are arbitrary).
+                            if (shapeHC.handle.id !== recipeHC.handle.id && shapeHC.handle.id !== recipeHC.handle.originalId) {
+                                continue; // This is a different handle.
+                            }
+                        }
                     }
                 }
                 // clone forward and reverse mappings and establish new components.
@@ -74892,6 +74899,28 @@ class RecipeUtil {
             forward.forEach((value, key) => match[shape.reverse.get(key)] = value);
             return { match, score };
         });
+    }
+    static constructImmediateValueHandle(connection, particleSpec, id) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(connection.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["InterfaceType"]);
+        if (!(connection.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["InterfaceType"]) ||
+            !connection.type.interfaceShape.restrictType(particleSpec)) {
+            // Type of the connection does not match the ParticleSpec.
+            return null;
+        }
+        // The connection type may have type variables:
+        // E.g. if connection shape requires `in ~a *`
+        //      and particle has `in Entity input`
+        //      then type system has to ensure ~a is at least Entity.
+        // The type of a handle hosting the particle literal has to be
+        // concrete, so we concretize connection type with maybeEnsureResolved().
+        const handleType = connection.type.clone(new Map());
+        handleType.maybeEnsureResolved();
+        const handle = connection.recipe.newHandle();
+        handle.id = id;
+        handle.mappedType = handleType;
+        handle.fate = 'copy';
+        handle.immediateValue = particleSpec;
+        return handle;
     }
     static directionCounts(handle) {
         const counts = { in: 0, out: 0, inout: 0, unknown: 0 };
@@ -75378,9 +75407,10 @@ class Recipe {
             }
             result.push(constraintStr);
         }
-        for (const handle of this.handles) {
-            result.push(handle.toString(nameMap, options).replace(/^|(\n)/g, '$1  '));
-        }
+        result.push(...this.handles
+            .map(h => h.toString(nameMap, options))
+            .filter(strValue => strValue)
+            .map(strValue => strValue.replace(/^|(\n)/g, '$1  ')));
         for (const slot of this.slots) {
             const slotString = slot.toString(nameMap, options);
             if (slotString) {
@@ -83176,12 +83206,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../recipe/walker.js */ "./runtime/ts-build/recipe/walker.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
 
 
 
@@ -83211,34 +83243,8 @@ class FindHostedParticle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_M
                     if (!shapeClone.canEnsureResolved())
                         continue;
                     results.push((recipe, hc) => {
-                        // Restricting the type of the connection to the concrete particle
-                        // may restrict type variable across the recipe.
-                        hc.type.interfaceShape.restrictType(particle);
-                        // The connection type may still have type variables:
-                        // E.g. if shape requires `in ~a *`
-                        //      and particle has `in Entity input`
-                        //      then type system has to ensure ~a is at least Entity.
-                        // The type of a handle hosting the particle literal has to be
-                        // concrete, so we concretize connection type with maybeEnsureResolved().
-                        const handleType = hc.type.clone(new Map());
-                        handleType.maybeEnsureResolved();
-                        const id = `${arc.id}:particle-literal:${particle.name}`;
-                        // Reuse a handle if we already hold this particle spec in the recipe.
-                        for (const handle of recipe.handles) {
-                            if (handle.id === id && handle.fate === 'copy'
-                                && handle._mappedType && handle._mappedType.equals(handleType)) {
-                                hc.connectToHandle(handle);
-                                return undefined;
-                            }
-                        }
-                        // TODO: Add a digest of a particle literal to the ID, so that we
-                        //       can ensure we load the correct particle. It is currently
-                        //       hard as digest is asynchronous and recipe walker is
-                        //       synchronous.
-                        const handle = recipe.newHandle();
-                        handle._mappedType = handleType;
-                        handle.fate = 'copy';
-                        handle.id = id;
+                        const handle = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_5__["RecipeUtil"].constructImmediateValueHandle(hc, particle, arc.generateID());
+                        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(handle); // Type matching should have been ensure by the checks above;
                         hc.connectToHandle(handle);
                     });
                 }

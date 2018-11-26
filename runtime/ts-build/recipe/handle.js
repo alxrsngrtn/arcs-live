@@ -23,6 +23,9 @@ export class Handle {
         this._mappedType = undefined;
         this._storageKey = undefined;
         this._pattern = undefined;
+        // Value assigned in the immediate mode, E.g. hostedParticle = ShowProduct
+        // Currently only supports ParticleSpec.
+        this._immediateValue = undefined;
         assert(recipe);
         this._recipe = recipe;
     }
@@ -41,6 +44,7 @@ export class Handle {
             handle._originalId = this._originalId;
             handle._mappedType = this._mappedType;
             handle._storageKey = this._storageKey;
+            handle._immediateValue = this._immediateValue;
             // the connections are re-established when Particles clone their
             // attached HandleConnection objects.
             handle._connections = [];
@@ -56,6 +60,7 @@ export class Handle {
             connection.disconnectHandle();
             connection.connectToHandle(handle);
         }
+        handle._immediateValue = this._immediateValue;
         handle.tags = handle.tags.concat(this.tags);
         handle.recipe.removeHandle(this);
         handle.fate = this._mergedFate([this.fate, handle.fate]);
@@ -89,6 +94,8 @@ export class Handle {
             return cmp;
         // TODO: type?
         if ((cmp = compareStrings(this.fate, other.fate)) !== 0)
+            return cmp;
+        if ((cmp = compareStrings(this._immediateValue && this._immediateValue.toString() || '', other._immediateValue && other._immediateValue.toString() || '')) !== 0)
             return cmp;
         return 0;
     }
@@ -128,6 +135,9 @@ export class Handle {
     get pattern() { return this._pattern; }
     set pattern(pattern) { this._pattern = pattern; }
     get mappedType() { return this._mappedType; }
+    set mappedType(mappedType) { this._mappedType = mappedType; }
+    get immediateValue() { return this._immediateValue; }
+    set immediateValue(value) { this._immediateValue = value; }
     static effectiveType(handleType, connections) {
         const variableMap = new Map();
         // It's OK to use _cloneWithResolutions here as for the purpose of this test, the handle set + handleType 
@@ -215,6 +225,11 @@ export class Handle {
         return resolved;
     }
     toString(nameMap, options) {
+        if (this._immediateValue) {
+            // Immediate Value handles are only rendered inline with particle connections.
+            // E.g. hostedParticle = ShowProduct
+            return undefined;
+        }
         options = options || {};
         // TODO: type? maybe output in a comment
         const result = [];

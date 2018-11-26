@@ -1,6 +1,7 @@
 import { Type } from '../type.js';
 import { Recipe } from './recipe.js';
 import { HandleConnection } from './handle-connection.js';
+import { ParticleSpec } from '../particle-spec.js';
 declare type Fate = 'use' | 'create' | 'map' | 'copy' | '?' | '`slot';
 export declare class Handle {
     private readonly _recipe;
@@ -15,6 +16,7 @@ export declare class Handle {
     private _mappedType;
     private _storageKey;
     private _pattern;
+    private _immediateValue;
     constructor(recipe: any);
     _copyInto(recipe: any): any;
     mergeInto(handle: any): void;
@@ -34,7 +36,8 @@ export declare class Handle {
     readonly connections: HandleConnection[];
     storageKey: string;
     pattern: string;
-    readonly mappedType: Type;
+    mappedType: Type;
+    immediateValue: ParticleSpec;
     static effectiveType(handleType: any, connections: any): any;
     static resolveEffectiveType(handleType: any, connections: any): any;
     _isValid(options: any): boolean;

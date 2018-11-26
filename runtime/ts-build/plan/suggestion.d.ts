@@ -32,7 +32,7 @@ export declare class Suggestion {
     mergeSearch(suggestion: Suggestion): boolean;
     _addSearch(searchGroup: string[]): boolean;
     serialize(): {
-        plan: string;
+        plan: any;
         hash: string;
         rank: number;
         searchGroups: string[][];
@@ -46,6 +46,6 @@ export declare class Suggestion {
         descriptionByModality: any;
     }, arc: any, recipeResolver: any): Promise<Suggestion>;
     instantiate(): Promise<void>;
-    _planToString(plan: any): string;
+    _planToString(plan: any): any;
     static _planFromString(planString: any, arc: any, recipeResolver: any): Promise<Recipe>;
 }

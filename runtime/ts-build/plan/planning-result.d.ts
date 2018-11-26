@@ -39,7 +39,7 @@ export declare class PlanningResult {
     }): Promise<boolean>;
     serialize(): {
         suggestions: {
-            plan: string;
+            plan: any;
             hash: string;
             rank: number;
             searchGroups: string[][];
