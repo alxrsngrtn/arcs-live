@@ -40,7 +40,7 @@ export class Arc {
         // TODO: context should not be optional.
         this._context = context || new Manifest({ id });
         // TODO: pecFactory should not be optional. update all callers and fix here.
-        this.pecFactory = pecFactory || FakePecFactory.bind(null);
+        this.pecFactory = pecFactory || FakePecFactory(loader).bind(null);
         // for now, every Arc gets its own session
         this.id = this.sessionId.fromString(id);
         this.speculative = !!speculative; // undefined => false

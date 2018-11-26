@@ -67029,6 +67029,66 @@ class MockSuggestDomConsumer extends _mock_slot_dom_consumer_js__WEBPACK_IMPORTE
 
 /***/ }),
 
+/***/ "./runtime/testing/stub-loader.js":
+/*!****************************************!*\
+  !*** ./runtime/testing/stub-loader.js ***!
+  \****************************************/
+/*! exports provided: StubLoader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StubLoader", function() { return StubLoader; });
+/* harmony import */ var _ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ts-build/loader.js */ "./runtime/ts-build/loader.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+/** @class StubLoader
+ * A Loader initialized with a per-path canned responses.
+ * Value for '*' key can be specified for a response if the path did not match.
+ * If '*' is not specified and path is not matched, Loader logic is invoked.
+ */
+class StubLoader extends _ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
+  constructor(fileMap) {
+    super();
+    this._fileMap = fileMap;
+    if (fileMap.hasOwnProperty('*')) {
+      this._cannedResponse = fileMap['*'];
+    }
+  }
+  loadResource(path) {
+    return this._fileMap.hasOwnProperty(path)
+        ? this._fileMap[path]
+        : (this._cannedResponse || super.loadResource(path));
+  }
+  path(fileName) {
+    return (this._fileMap.hasOwnProperty(fileName) || this._cannedResponse)
+        ? fileName
+        : super.path(fileName);
+  }
+  join(prefix, path) {
+    // If referring from stubbed content, don't prepend stubbed filename.
+    return (this._fileMap.hasOwnProperty(prefix) || this._cannedResponse)
+        ? path
+        : super.join(prefix, path);
+  }
+  clone() {
+    // Each ParticleExecutionContext should get its own Loader, this facilitates that.
+    return new StubLoader(this._fileMap);
+  }
+}
+
+
+/***/ }),
+
 /***/ "./runtime/transformation-dom-particle.js":
 /*!************************************************!*\
   !*** ./runtime/transformation-dom-particle.js ***!
@@ -67204,7 +67264,7 @@ class Arc {
         // TODO: context should not be optional.
         this._context = context || new _manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"]({ id });
         // TODO: pecFactory should not be optional. update all callers and fix here.
-        this.pecFactory = pecFactory || _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__["FakePecFactory"].bind(null);
+        this.pecFactory = pecFactory || Object(_fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__["FakePecFactory"])(loader).bind(null);
         // for now, every Arc gets its own session
         this.id = this.sessionId.fromString(id);
         this.speculative = !!speculative; // undefined => false
@@ -68749,6 +68809,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./particle-execution-context.js */ "./runtime/ts-build/particle-execution-context.js");
 /* harmony import */ var _message_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./message-channel.js */ "./runtime/ts-build/message-channel.js");
 /* harmony import */ var _loader_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./loader.js */ "./runtime/ts-build/loader.js");
+/* harmony import */ var _testing_stub_loader_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../testing/stub-loader.js */ "./runtime/testing/stub-loader.js");
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -68760,12 +68821,18 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 // TODO: Make this generic so that it can also be used in-browser, or add a
 // separate in-process browser pec-factory.
-function FakePecFactory(id) {
-    const channel = new _message_channel_js__WEBPACK_IMPORTED_MODULE_1__["MessageChannel"]();
-    const pec = new _particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](channel.port1, `${id}:inner`, new _loader_js__WEBPACK_IMPORTED_MODULE_2__["Loader"]());
-    return channel.port2;
+function FakePecFactory(loader) {
+    return (id) => {
+        const channel = new _message_channel_js__WEBPACK_IMPORTED_MODULE_1__["MessageChannel"]();
+        // Each PEC should get its own loader. Only a StubLoader knows how to be cloned,
+        // so its either a clone of a Stub or a new Loader.
+        const loaderToUse = loader instanceof _testing_stub_loader_js__WEBPACK_IMPORTED_MODULE_3__["StubLoader"] ? loader.clone() : new _loader_js__WEBPACK_IMPORTED_MODULE_2__["Loader"]();
+        const pec = new _particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](channel.port1, `${id}:inner`, loaderToUse);
+        return channel.port2;
+    };
 }
 //# sourceMappingURL=fake-pec-factory.js.map
 

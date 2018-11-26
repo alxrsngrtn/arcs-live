@@ -49098,13 +49098,63 @@ class Loader {
     }
 }
 
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+/** @class StubLoader
+ * A Loader initialized with a per-path canned responses.
+ * Value for '*' key can be specified for a response if the path did not match.
+ * If '*' is not specified and path is not matched, Loader logic is invoked.
+ */
+class StubLoader extends Loader {
+  constructor(fileMap) {
+    super();
+    this._fileMap = fileMap;
+    if (fileMap.hasOwnProperty('*')) {
+      this._cannedResponse = fileMap['*'];
+    }
+  }
+  loadResource(path) {
+    return this._fileMap.hasOwnProperty(path)
+        ? this._fileMap[path]
+        : (this._cannedResponse || super.loadResource(path));
+  }
+  path(fileName) {
+    return (this._fileMap.hasOwnProperty(fileName) || this._cannedResponse)
+        ? fileName
+        : super.path(fileName);
+  }
+  join(prefix, path) {
+    // If referring from stubbed content, don't prepend stubbed filename.
+    return (this._fileMap.hasOwnProperty(prefix) || this._cannedResponse)
+        ? path
+        : super.join(prefix, path);
+  }
+  clone() {
+    // Each ParticleExecutionContext should get its own Loader, this facilitates that.
+    return new StubLoader(this._fileMap);
+  }
+}
+
 // @license
 // TODO: Make this generic so that it can also be used in-browser, or add a
 // separate in-process browser pec-factory.
-function FakePecFactory(id) {
-    const channel = new MessageChannel();
-    const pec = new ParticleExecutionContext(channel.port1, `${id}:inner`, new Loader());
-    return channel.port2;
+function FakePecFactory(loader) {
+    return (id) => {
+        const channel = new MessageChannel();
+        // Each PEC should get its own loader. Only a StubLoader knows how to be cloned,
+        // so its either a clone of a Stub or a new Loader.
+        const loaderToUse = loader instanceof StubLoader ? loader.clone() : new Loader();
+        const pec = new ParticleExecutionContext(channel.port1, `${id}:inner`, loaderToUse);
+        return channel.port2;
+    };
 }
 
 /**
@@ -49887,7 +49937,7 @@ class Arc {
         // TODO: context should not be optional.
         this._context = context || new Manifest({ id });
         // TODO: pecFactory should not be optional. update all callers and fix here.
-        this.pecFactory = pecFactory || FakePecFactory.bind(null);
+        this.pecFactory = pecFactory || FakePecFactory(loader).bind(null);
         // for now, every Arc gets its own session
         this.id = this.sessionId.fromString(id);
         this.speculative = !!speculative; // undefined => false
