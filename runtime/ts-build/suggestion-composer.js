@@ -12,25 +12,10 @@ import { Suggestion } from './plan/suggestion';
 export class SuggestionComposer {
     constructor(slotComposer) {
         this._suggestions = [];
-        this._suggestionsQueue = [];
-        this._updateComplete = null;
         this._suggestConsumers = [];
         this._modality = Modality.forName(slotComposer.modality);
         this._container = slotComposer.findContainerByName('suggestions');
         this._slotComposer = slotComposer;
-    }
-    async setSuggestions(suggestions) {
-        this._suggestionsQueue.push(suggestions);
-        Promise.resolve().then(async () => {
-            if (this._updateComplete) {
-                await this._updateComplete;
-            }
-            if (this._suggestionsQueue.length > 0) {
-                this._suggestions = this._suggestionsQueue.pop();
-                this._suggestionsQueue = [];
-                this._updateComplete = this._updateSuggestions(this._suggestions);
-            }
-        });
     }
     clear() {
         if (this._container) {
@@ -39,14 +24,11 @@ export class SuggestionComposer {
         this._suggestConsumers.forEach(consumer => consumer.dispose());
         this._suggestConsumers = [];
     }
-    async _updateSuggestions(suggestions) {
+    setSuggestions(suggestions) {
         this.clear();
         const sortedSuggestions = suggestions.sort(Suggestion.compare);
         for (const suggestion of sortedSuggestions) {
-            // TODO(mmandlis): This hack is needed for deserialized suggestions to work. Should
-            // instead serialize the description object and generation suggestion content here.
-            const suggestionContent = suggestion.descriptionDom ? suggestion.descriptionDom :
-                await suggestion.description.getRecipeSuggestion(this._modality.descriptionFormatter);
+            const suggestionContent = suggestion.getDescription(this._modality.name) || suggestion.descriptionText;
             if (!suggestionContent) {
                 throw new Error('No suggestion content available');
             }

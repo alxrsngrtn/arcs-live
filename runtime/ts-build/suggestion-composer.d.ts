@@ -5,12 +5,9 @@ export declare class SuggestionComposer {
     private _container;
     private readonly _slotComposer;
     private _suggestions;
-    private _suggestionsQueue;
-    private _updateComplete;
     private _suggestConsumers;
     constructor(slotComposer: SlotComposer);
-    setSuggestions(suggestions: Suggestion[]): Promise<void>;
     clear(): void;
-    private _updateSuggestions;
+    setSuggestions(suggestions: Suggestion[]): void;
     private _addInlineSuggestion;
 }

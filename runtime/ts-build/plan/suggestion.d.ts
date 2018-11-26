@@ -15,15 +15,16 @@ import { Search } from '../recipe/search.js';
 export declare class Suggestion {
     arc: Arc;
     plan: Recipe;
-    description: Description;
-    descriptionText: string;
-    descriptionDom: {};
+    descriptionByModality: {};
     relevance: Relevance;
     readonly hash: string;
     readonly rank: number;
     groupIndex: number;
     searchGroups: string[][];
     constructor(plan: Recipe, hash: string, rank: number, arc: Arc);
+    readonly descriptionText: string;
+    getDescription(modality: string): string | {};
+    setDescription(description: Description): Promise<void>;
     isEquivalent(other: Suggestion): boolean;
     static compare(s1: Suggestion, s2: Suggestion): number;
     hasSearch(search: string): boolean;
@@ -34,20 +35,15 @@ export declare class Suggestion {
         plan: string;
         hash: string;
         rank: number;
-        descriptionText: string;
-        descriptionDom: {
-            template: string;
-            model: {};
-        };
         searchGroups: string[][];
+        descriptionByModality: {};
     };
-    static deserialize({ plan, hash, rank, descriptionText, descriptionDom, searchGroups }: {
+    static deserialize({ plan, hash, rank, searchGroups, descriptionByModality }: {
         plan: any;
         hash: any;
         rank: any;
-        descriptionText: any;
-        descriptionDom: any;
         searchGroups: any;
+        descriptionByModality: any;
     }, arc: any, recipeResolver: any): Promise<Suggestion>;
     instantiate(): Promise<void>;
     _planToString(plan: any): string;

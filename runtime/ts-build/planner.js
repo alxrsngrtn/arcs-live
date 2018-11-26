@@ -152,10 +152,8 @@ export class Planner {
                 // before returning.
                 relevance.newArc.stop();
                 const suggestion = new Suggestion(plan, hash, rank, this._arc);
-                suggestion.description = relevance.newArc.description;
-                // TODO(mmandlis): exclude the text description from returned results.
-                suggestion.descriptionText = description;
                 suggestion.setSearch(plan.search);
+                await suggestion.setDescription(relevance.newArc.description);
                 suggestion.groupIndex = groupIndex;
                 results.push(suggestion);
                 planTrace.end({ name: description, args: { rank, hash, groupIndex } });

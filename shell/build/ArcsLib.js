@@ -73145,6 +73145,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../manifest.js */ "./runtime/ts-build/manifest.js");
+/* harmony import */ var _modality__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modality */ "./runtime/ts-build/modality.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -73157,8 +73158,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 class Suggestion {
     constructor(plan, hash, rank, arc) {
+        // TODO: update Description class to be serializable.
+        this.descriptionByModality = {};
         // List of search resolved token groups, this suggestion corresponds to.
         this.searchGroups = [];
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan, `plan cannot be null`);
@@ -73167,6 +73171,21 @@ class Suggestion {
         this.hash = hash;
         this.rank = rank;
         this.arc = arc;
+    }
+    get descriptionText() {
+        return this.getDescription('text');
+    }
+    getDescription(modality) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.descriptionByModality[modality], `No description for modality '${modality}'`);
+        return this.descriptionByModality[modality];
+    }
+    async setDescription(description) {
+        this.descriptionByModality['text'] = await description.getRecipeSuggestion();
+        const modality = this.arc.pec.slotComposer && this.arc.pec.slotComposer.modality;
+        if (modality && modality !== 'text') {
+            this.descriptionByModality[modality] =
+                await description.getRecipeSuggestion(_modality__WEBPACK_IMPORTED_MODULE_3__["Modality"].forName(modality).descriptionFormatter);
+        }
     }
     isEquivalent(other) {
         return (this.hash === other.hash) && (this.descriptionText === other.descriptionText);
@@ -73213,18 +73232,16 @@ class Suggestion {
             plan: this._planToString(this.plan),
             hash: this.hash,
             rank: this.rank,
-            descriptionText: this.descriptionText,
-            descriptionDom: { template: this.descriptionText, model: {} },
-            searchGroups: this.searchGroups
+            searchGroups: this.searchGroups,
+            descriptionByModality: this.descriptionByModality
         };
     }
-    static async deserialize({ plan, hash, rank, descriptionText, descriptionDom, searchGroups }, arc, recipeResolver) {
+    static async deserialize({ plan, hash, rank, searchGroups, descriptionByModality }, arc, recipeResolver) {
         const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
         if (deserializedPlan) {
             const suggestion = new Suggestion(deserializedPlan, hash, rank, arc);
-            suggestion.descriptionText = descriptionText;
-            suggestion.descriptionDom = descriptionDom;
             suggestion.searchGroups = searchGroups;
+            suggestion.descriptionByModality = descriptionByModality;
             return suggestion;
         }
         return undefined;
@@ -73491,10 +73508,8 @@ class Planner {
                 // before returning.
                 relevance.newArc.stop();
                 const suggestion = new _plan_suggestion__WEBPACK_IMPORTED_MODULE_24__["Suggestion"](plan, hash, rank, this._arc);
-                suggestion.description = relevance.newArc.description;
-                // TODO(mmandlis): exclude the text description from returned results.
-                suggestion.descriptionText = description;
                 suggestion.setSearch(plan.search);
+                await suggestion.setDescription(relevance.newArc.description);
                 suggestion.groupIndex = groupIndex;
                 results.push(suggestion);
                 planTrace.end({ name: description, args: { rank, hash, groupIndex } });
@@ -84780,25 +84795,10 @@ __webpack_require__.r(__webpack_exports__);
 class SuggestionComposer {
     constructor(slotComposer) {
         this._suggestions = [];
-        this._suggestionsQueue = [];
-        this._updateComplete = null;
         this._suggestConsumers = [];
         this._modality = _modality_js__WEBPACK_IMPORTED_MODULE_0__["Modality"].forName(slotComposer.modality);
         this._container = slotComposer.findContainerByName('suggestions');
         this._slotComposer = slotComposer;
-    }
-    async setSuggestions(suggestions) {
-        this._suggestionsQueue.push(suggestions);
-        Promise.resolve().then(async () => {
-            if (this._updateComplete) {
-                await this._updateComplete;
-            }
-            if (this._suggestionsQueue.length > 0) {
-                this._suggestions = this._suggestionsQueue.pop();
-                this._suggestionsQueue = [];
-                this._updateComplete = this._updateSuggestions(this._suggestions);
-            }
-        });
     }
     clear() {
         if (this._container) {
@@ -84807,14 +84807,11 @@ class SuggestionComposer {
         this._suggestConsumers.forEach(consumer => consumer.dispose());
         this._suggestConsumers = [];
     }
-    async _updateSuggestions(suggestions) {
+    setSuggestions(suggestions) {
         this.clear();
         const sortedSuggestions = suggestions.sort(_plan_suggestion__WEBPACK_IMPORTED_MODULE_1__["Suggestion"].compare);
         for (const suggestion of sortedSuggestions) {
-            // TODO(mmandlis): This hack is needed for deserialized suggestions to work. Should
-            // instead serialize the description object and generation suggestion content here.
-            const suggestionContent = suggestion.descriptionDom ? suggestion.descriptionDom :
-                await suggestion.description.getRecipeSuggestion(this._modality.descriptionFormatter);
+            const suggestionContent = suggestion.getDescription(this._modality.name) || suggestion.descriptionText;
             if (!suggestionContent) {
                 throw new Error('No suggestion content available');
             }

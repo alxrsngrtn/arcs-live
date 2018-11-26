@@ -41658,301 +41658,6 @@ class RecipeResolver {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class Suggestion {
-    constructor(plan, hash, rank, arc) {
-        // List of search resolved token groups, this suggestion corresponds to.
-        this.searchGroups = [];
-        assert(plan, `plan cannot be null`);
-        assert(hash, `hash cannot be null`);
-        this.plan = plan;
-        this.hash = hash;
-        this.rank = rank;
-        this.arc = arc;
-    }
-    isEquivalent(other) {
-        return (this.hash === other.hash) && (this.descriptionText === other.descriptionText);
-    }
-    static compare(s1, s2) {
-        return s2.rank - s1.rank;
-    }
-    hasSearch(search) {
-        const tokens = search.split(' ');
-        return this.searchGroups.some(group => tokens.every(token => group.includes(token)));
-    }
-    setSearch(search) {
-        this.searchGroups = [];
-        if (search) {
-            this._addSearch(search.resolvedTokens);
-        }
-    }
-    mergeSearch(suggestion) {
-        let updated = false;
-        for (const other of suggestion.searchGroups) {
-            if (this._addSearch(other)) {
-                if (this.searchGroups.length === 1) {
-                    this.searchGroups.push(['']);
-                }
-                updated = true;
-            }
-        }
-        this.searchGroups.sort();
-        return updated;
-    }
-    _addSearch(searchGroup) {
-        const equivalentGroup = (group, otherGroup) => {
-            return group.length === otherGroup.length &&
-                group.every(token => otherGroup.includes(token));
-        };
-        if (!this.searchGroups.find(group => equivalentGroup(group, searchGroup))) {
-            this.searchGroups.push(searchGroup);
-            return true;
-        }
-        return false;
-    }
-    serialize() {
-        return {
-            plan: this._planToString(this.plan),
-            hash: this.hash,
-            rank: this.rank,
-            descriptionText: this.descriptionText,
-            descriptionDom: { template: this.descriptionText, model: {} },
-            searchGroups: this.searchGroups
-        };
-    }
-    static async deserialize({ plan, hash, rank, descriptionText, descriptionDom, searchGroups }, arc, recipeResolver) {
-        const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
-        if (deserializedPlan) {
-            const suggestion = new Suggestion(deserializedPlan, hash, rank, arc);
-            suggestion.descriptionText = descriptionText;
-            suggestion.descriptionDom = descriptionDom;
-            suggestion.searchGroups = searchGroups;
-            return suggestion;
-        }
-        return undefined;
-    }
-    async instantiate() {
-        // For now shell is responsible for creating and setting the new arc.
-        assert(this.arc, `Cannot instantiate suggestion without and arc`);
-        if (this.arc) {
-            return this.arc.instantiate(this.plan);
-        }
-    }
-    _planToString(plan) {
-        // Special handling is only needed for plans (1) with hosted particles or
-        // (2) local slot (ie missing slot IDs).
-        if (!plan.handles.some(h => h.id && h.id.includes('particle-literal')) &&
-            plan.slots.every(slot => Boolean(slot.id))) {
-            return plan.toString();
-        }
-        // TODO: This is a transformation particle hack for plans resolved by
-        // FindHostedParticle strategy. Find a proper way to do this.
-        // Update hosted particle handles and connections.
-        const planClone = plan.clone();
-        planClone.slots.forEach(slot => slot.id = slot.id || `slotid-${this.arc.generateID()}`);
-        const hostedParticleSpecs = [];
-        for (let i = 0; i < planClone.handles.length; ++i) {
-            const handle = planClone.handles[i];
-            if (handle.id && handle.id.includes('particle-literal')) {
-                const hostedParticleName = handle.id.substr(handle.id.lastIndexOf(':') + 1);
-                // Add particle spec to the list.
-                const hostedParticleSpec = this.arc.context.findParticleByName(hostedParticleName);
-                assert(hostedParticleSpec, `Cannot find spec for particle '${hostedParticleName}'.`);
-                hostedParticleSpecs.push(hostedParticleSpec.toString());
-                // Override handle conenctions with particle name as local name.
-                Object.values(handle.connections).forEach(conn => {
-                    assert(conn['type'] instanceof InterfaceType);
-                    conn['_handle'] = { localName: hostedParticleName };
-                });
-                // Remove the handle.
-                planClone.handles.splice(i, 1);
-                --i;
-            }
-        }
-        return `${hostedParticleSpecs.join('\n')}\n${planClone.toString()}`;
-    }
-    static async _planFromString(planString, arc, recipeResolver) {
-        try {
-            const manifest = await Manifest.parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
-            assert(manifest.recipes.length === 1);
-            let plan = manifest.recipes[0];
-            assert(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
-            if (!plan.isResolved()) {
-                const resolvedPlan = await recipeResolver.resolve(plan);
-                assert(resolvedPlan, `can't resolve plan: ${plan.toString({ showUnresolved: true })}`);
-                if (resolvedPlan) {
-                    plan = resolvedPlan;
-                }
-            }
-            for (const store of manifest.stores) {
-                // If recipe has hosted particles, manifest will have stores with hosted
-                // particle specs. Moving these stores into the current arc's context.
-                // TODO: This is a hack, find a proper way of doing this.
-                arc.context._addStore(store, []);
-            }
-            return plan;
-        }
-        catch (e) {
-            console.error(`Failed to parse suggestion ${e}.`);
-        }
-        return null;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class PlanningResult {
-    constructor(arc, result = {}) {
-        this.contextual = true;
-        assert(arc, 'Arc cannot be null');
-        this.arc = arc;
-        this._suggestions = result['suggestions'];
-        this.lastUpdated = result['lastUpdated'] || new Date(null);
-        this.generations = result['generations'] || [];
-    }
-    get suggestions() { return this._suggestions || []; }
-    set suggestions(suggestions) {
-        assert(Boolean(suggestions), `Cannot set uninitialized suggestions`);
-        this._suggestions = suggestions;
-    }
-    static formatSerializableGenerations(generations) {
-        // Make a copy of everything and assign IDs to recipes.
-        const idMap = new Map(); // Recipe -> ID
-        let lastID = 0;
-        const assignIdAndCopy = recipe => {
-            idMap.set(recipe, lastID);
-            const { result, score, derivation, description, hash, valid, active, irrelevant } = recipe;
-            const resultString = result.toString({ showUnresolved: true, showInvalid: false, details: '' });
-            const resolved = result.isResolved();
-            return { result: resultString, resolved, score, derivation, description, hash, valid, active, irrelevant, id: lastID++ };
-        };
-        generations = generations.map(pop => ({
-            record: pop.record,
-            generated: pop.generated.map(assignIdAndCopy)
-        }));
-        // Change recipes in derivation to IDs and compute resolved stats.
-        return generations.map(pop => {
-            const population = pop.generated;
-            const record = pop.record;
-            // Adding those here to reuse recipe resolution computation.
-            record.resolvedDerivations = 0;
-            record.resolvedDerivationsByStrategy = {};
-            population.forEach(item => {
-                item.derivation = item.derivation.map(derivItem => {
-                    let parent;
-                    let strategy;
-                    if (derivItem.parent) {
-                        parent = idMap.get(derivItem.parent);
-                    }
-                    if (derivItem.strategy) {
-                        strategy = derivItem.strategy.constructor.name;
-                    }
-                    return { parent, strategy };
-                });
-                if (item.resolved) {
-                    record.resolvedDerivations++;
-                    const strategy = item.derivation[0].strategy;
-                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
-                        record.resolvedDerivationsByStrategy[strategy] = 0;
-                    }
-                    record.resolvedDerivationsByStrategy[strategy]++;
-                }
-            });
-            const populationMap = {};
-            population.forEach(item => {
-                if (populationMap[item.derivation[0].strategy] == undefined) {
-                    populationMap[item.derivation[0].strategy] = [];
-                }
-                populationMap[item.derivation[0].strategy].push(item);
-            });
-            const result = { population: [], record };
-            Object.keys(populationMap).forEach(strategy => {
-                result.population.push({ strategy, recipes: populationMap[strategy] });
-            });
-            return result;
-        });
-    }
-    set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
-        if (this.isEquivalent(suggestions)) {
-            return false;
-        }
-        this.suggestions = suggestions;
-        this.generations = generations;
-        this.lastUpdated = lastUpdated;
-        this.contextual = contextual;
-        return true;
-    }
-    append({ suggestions, lastUpdated = new Date(), generations = [] }) {
-        const newSuggestions = [];
-        let searchUpdated = false;
-        for (const newSuggestion of suggestions) {
-            const existingSuggestion = this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion));
-            if (existingSuggestion) {
-                searchUpdated = existingSuggestion.mergeSearch(newSuggestion);
-            }
-            else {
-                newSuggestions.push(newSuggestion);
-            }
-        }
-        if (newSuggestions.length > 0) {
-            this.suggestions = this.suggestions.concat(newSuggestions);
-        }
-        else {
-            if (!searchUpdated) {
-                return false;
-            }
-        }
-        // TODO: filter out generations of other suggestions.
-        this.generations.push(...generations);
-        this.lastUpdated = lastUpdated;
-        return true;
-    }
-    olderThan(other) {
-        return this.lastUpdated < other.lastUpdated;
-    }
-    isEquivalent(suggestions) {
-        return PlanningResult.isEquivalent(this._suggestions, suggestions);
-    }
-    static isEquivalent(oldSuggestions, newSuggestions) {
-        assert(newSuggestions, `New suggestions cannot be null.`);
-        return oldSuggestions &&
-            oldSuggestions.length === newSuggestions.length &&
-            oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
-    }
-    async deserialize({ suggestions, generations, lastUpdated }) {
-        const recipeResolver = new RecipeResolver(this.arc);
-        return this.set({
-            suggestions: (await Promise.all(suggestions.map(suggestion => Suggestion.deserialize(suggestion, this.arc, recipeResolver)))).filter(s => s),
-            generations: JSON.parse(generations || '[]'),
-            lastUpdated: new Date(lastUpdated),
-            contextual: suggestions.contextual
-        });
-    }
-    serialize() {
-        return {
-            suggestions: this.suggestions.map(suggestion => suggestion.serialize()),
-            generations: JSON.stringify(this.generations),
-            lastUpdated: this.lastUpdated.toString(),
-            contextual: this.contextual
-        };
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 /**
  * Holds container (eg div element) and its additional info.
  * Must be initialized either with a container (for root slots provided by the shell) or
@@ -43298,28 +43003,323 @@ Modality._modalities = {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+class Suggestion {
+    constructor(plan, hash, rank, arc) {
+        // TODO: update Description class to be serializable.
+        this.descriptionByModality = {};
+        // List of search resolved token groups, this suggestion corresponds to.
+        this.searchGroups = [];
+        assert(plan, `plan cannot be null`);
+        assert(hash, `hash cannot be null`);
+        this.plan = plan;
+        this.hash = hash;
+        this.rank = rank;
+        this.arc = arc;
+    }
+    get descriptionText() {
+        return this.getDescription('text');
+    }
+    getDescription(modality) {
+        assert(this.descriptionByModality[modality], `No description for modality '${modality}'`);
+        return this.descriptionByModality[modality];
+    }
+    async setDescription(description) {
+        this.descriptionByModality['text'] = await description.getRecipeSuggestion();
+        const modality = this.arc.pec.slotComposer && this.arc.pec.slotComposer.modality;
+        if (modality && modality !== 'text') {
+            this.descriptionByModality[modality] =
+                await description.getRecipeSuggestion(Modality.forName(modality).descriptionFormatter);
+        }
+    }
+    isEquivalent(other) {
+        return (this.hash === other.hash) && (this.descriptionText === other.descriptionText);
+    }
+    static compare(s1, s2) {
+        return s2.rank - s1.rank;
+    }
+    hasSearch(search) {
+        const tokens = search.split(' ');
+        return this.searchGroups.some(group => tokens.every(token => group.includes(token)));
+    }
+    setSearch(search) {
+        this.searchGroups = [];
+        if (search) {
+            this._addSearch(search.resolvedTokens);
+        }
+    }
+    mergeSearch(suggestion) {
+        let updated = false;
+        for (const other of suggestion.searchGroups) {
+            if (this._addSearch(other)) {
+                if (this.searchGroups.length === 1) {
+                    this.searchGroups.push(['']);
+                }
+                updated = true;
+            }
+        }
+        this.searchGroups.sort();
+        return updated;
+    }
+    _addSearch(searchGroup) {
+        const equivalentGroup = (group, otherGroup) => {
+            return group.length === otherGroup.length &&
+                group.every(token => otherGroup.includes(token));
+        };
+        if (!this.searchGroups.find(group => equivalentGroup(group, searchGroup))) {
+            this.searchGroups.push(searchGroup);
+            return true;
+        }
+        return false;
+    }
+    serialize() {
+        return {
+            plan: this._planToString(this.plan),
+            hash: this.hash,
+            rank: this.rank,
+            searchGroups: this.searchGroups,
+            descriptionByModality: this.descriptionByModality
+        };
+    }
+    static async deserialize({ plan, hash, rank, searchGroups, descriptionByModality }, arc, recipeResolver) {
+        const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
+        if (deserializedPlan) {
+            const suggestion = new Suggestion(deserializedPlan, hash, rank, arc);
+            suggestion.searchGroups = searchGroups;
+            suggestion.descriptionByModality = descriptionByModality;
+            return suggestion;
+        }
+        return undefined;
+    }
+    async instantiate() {
+        // For now shell is responsible for creating and setting the new arc.
+        assert(this.arc, `Cannot instantiate suggestion without and arc`);
+        if (this.arc) {
+            return this.arc.instantiate(this.plan);
+        }
+    }
+    _planToString(plan) {
+        // Special handling is only needed for plans (1) with hosted particles or
+        // (2) local slot (ie missing slot IDs).
+        if (!plan.handles.some(h => h.id && h.id.includes('particle-literal')) &&
+            plan.slots.every(slot => Boolean(slot.id))) {
+            return plan.toString();
+        }
+        // TODO: This is a transformation particle hack for plans resolved by
+        // FindHostedParticle strategy. Find a proper way to do this.
+        // Update hosted particle handles and connections.
+        const planClone = plan.clone();
+        planClone.slots.forEach(slot => slot.id = slot.id || `slotid-${this.arc.generateID()}`);
+        const hostedParticleSpecs = [];
+        for (let i = 0; i < planClone.handles.length; ++i) {
+            const handle = planClone.handles[i];
+            if (handle.id && handle.id.includes('particle-literal')) {
+                const hostedParticleName = handle.id.substr(handle.id.lastIndexOf(':') + 1);
+                // Add particle spec to the list.
+                const hostedParticleSpec = this.arc.context.findParticleByName(hostedParticleName);
+                assert(hostedParticleSpec, `Cannot find spec for particle '${hostedParticleName}'.`);
+                hostedParticleSpecs.push(hostedParticleSpec.toString());
+                // Override handle conenctions with particle name as local name.
+                Object.values(handle.connections).forEach(conn => {
+                    assert(conn['type'] instanceof InterfaceType);
+                    conn['_handle'] = { localName: hostedParticleName };
+                });
+                // Remove the handle.
+                planClone.handles.splice(i, 1);
+                --i;
+            }
+        }
+        return `${hostedParticleSpecs.join('\n')}\n${planClone.toString()}`;
+    }
+    static async _planFromString(planString, arc, recipeResolver) {
+        try {
+            const manifest = await Manifest.parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
+            assert(manifest.recipes.length === 1);
+            let plan = manifest.recipes[0];
+            assert(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
+            if (!plan.isResolved()) {
+                const resolvedPlan = await recipeResolver.resolve(plan);
+                assert(resolvedPlan, `can't resolve plan: ${plan.toString({ showUnresolved: true })}`);
+                if (resolvedPlan) {
+                    plan = resolvedPlan;
+                }
+            }
+            for (const store of manifest.stores) {
+                // If recipe has hosted particles, manifest will have stores with hosted
+                // particle specs. Moving these stores into the current arc's context.
+                // TODO: This is a hack, find a proper way of doing this.
+                arc.context._addStore(store, []);
+            }
+            return plan;
+        }
+        catch (e) {
+            console.error(`Failed to parse suggestion ${e}.`);
+        }
+        return null;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class PlanningResult {
+    constructor(arc, result = {}) {
+        this.contextual = true;
+        assert(arc, 'Arc cannot be null');
+        this.arc = arc;
+        this._suggestions = result['suggestions'];
+        this.lastUpdated = result['lastUpdated'] || new Date(null);
+        this.generations = result['generations'] || [];
+    }
+    get suggestions() { return this._suggestions || []; }
+    set suggestions(suggestions) {
+        assert(Boolean(suggestions), `Cannot set uninitialized suggestions`);
+        this._suggestions = suggestions;
+    }
+    static formatSerializableGenerations(generations) {
+        // Make a copy of everything and assign IDs to recipes.
+        const idMap = new Map(); // Recipe -> ID
+        let lastID = 0;
+        const assignIdAndCopy = recipe => {
+            idMap.set(recipe, lastID);
+            const { result, score, derivation, description, hash, valid, active, irrelevant } = recipe;
+            const resultString = result.toString({ showUnresolved: true, showInvalid: false, details: '' });
+            const resolved = result.isResolved();
+            return { result: resultString, resolved, score, derivation, description, hash, valid, active, irrelevant, id: lastID++ };
+        };
+        generations = generations.map(pop => ({
+            record: pop.record,
+            generated: pop.generated.map(assignIdAndCopy)
+        }));
+        // Change recipes in derivation to IDs and compute resolved stats.
+        return generations.map(pop => {
+            const population = pop.generated;
+            const record = pop.record;
+            // Adding those here to reuse recipe resolution computation.
+            record.resolvedDerivations = 0;
+            record.resolvedDerivationsByStrategy = {};
+            population.forEach(item => {
+                item.derivation = item.derivation.map(derivItem => {
+                    let parent;
+                    let strategy;
+                    if (derivItem.parent) {
+                        parent = idMap.get(derivItem.parent);
+                    }
+                    if (derivItem.strategy) {
+                        strategy = derivItem.strategy.constructor.name;
+                    }
+                    return { parent, strategy };
+                });
+                if (item.resolved) {
+                    record.resolvedDerivations++;
+                    const strategy = item.derivation[0].strategy;
+                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
+                        record.resolvedDerivationsByStrategy[strategy] = 0;
+                    }
+                    record.resolvedDerivationsByStrategy[strategy]++;
+                }
+            });
+            const populationMap = {};
+            population.forEach(item => {
+                if (populationMap[item.derivation[0].strategy] == undefined) {
+                    populationMap[item.derivation[0].strategy] = [];
+                }
+                populationMap[item.derivation[0].strategy].push(item);
+            });
+            const result = { population: [], record };
+            Object.keys(populationMap).forEach(strategy => {
+                result.population.push({ strategy, recipes: populationMap[strategy] });
+            });
+            return result;
+        });
+    }
+    set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
+        if (this.isEquivalent(suggestions)) {
+            return false;
+        }
+        this.suggestions = suggestions;
+        this.generations = generations;
+        this.lastUpdated = lastUpdated;
+        this.contextual = contextual;
+        return true;
+    }
+    append({ suggestions, lastUpdated = new Date(), generations = [] }) {
+        const newSuggestions = [];
+        let searchUpdated = false;
+        for (const newSuggestion of suggestions) {
+            const existingSuggestion = this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion));
+            if (existingSuggestion) {
+                searchUpdated = existingSuggestion.mergeSearch(newSuggestion);
+            }
+            else {
+                newSuggestions.push(newSuggestion);
+            }
+        }
+        if (newSuggestions.length > 0) {
+            this.suggestions = this.suggestions.concat(newSuggestions);
+        }
+        else {
+            if (!searchUpdated) {
+                return false;
+            }
+        }
+        // TODO: filter out generations of other suggestions.
+        this.generations.push(...generations);
+        this.lastUpdated = lastUpdated;
+        return true;
+    }
+    olderThan(other) {
+        return this.lastUpdated < other.lastUpdated;
+    }
+    isEquivalent(suggestions) {
+        return PlanningResult.isEquivalent(this._suggestions, suggestions);
+    }
+    static isEquivalent(oldSuggestions, newSuggestions) {
+        assert(newSuggestions, `New suggestions cannot be null.`);
+        return oldSuggestions &&
+            oldSuggestions.length === newSuggestions.length &&
+            oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
+    }
+    async deserialize({ suggestions, generations, lastUpdated }) {
+        const recipeResolver = new RecipeResolver(this.arc);
+        return this.set({
+            suggestions: (await Promise.all(suggestions.map(suggestion => Suggestion.deserialize(suggestion, this.arc, recipeResolver)))).filter(s => s),
+            generations: JSON.parse(generations || '[]'),
+            lastUpdated: new Date(lastUpdated),
+            contextual: suggestions.contextual
+        });
+    }
+    serialize() {
+        return {
+            suggestions: this.suggestions.map(suggestion => suggestion.serialize()),
+            generations: JSON.stringify(this.generations),
+            lastUpdated: this.lastUpdated.toString(),
+            contextual: this.contextual
+        };
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 class SuggestionComposer {
     constructor(slotComposer) {
         this._suggestions = [];
-        this._suggestionsQueue = [];
-        this._updateComplete = null;
         this._suggestConsumers = [];
         this._modality = Modality.forName(slotComposer.modality);
         this._container = slotComposer.findContainerByName('suggestions');
         this._slotComposer = slotComposer;
-    }
-    async setSuggestions(suggestions) {
-        this._suggestionsQueue.push(suggestions);
-        Promise.resolve().then(async () => {
-            if (this._updateComplete) {
-                await this._updateComplete;
-            }
-            if (this._suggestionsQueue.length > 0) {
-                this._suggestions = this._suggestionsQueue.pop();
-                this._suggestionsQueue = [];
-                this._updateComplete = this._updateSuggestions(this._suggestions);
-            }
-        });
     }
     clear() {
         if (this._container) {
@@ -43328,14 +43328,11 @@ class SuggestionComposer {
         this._suggestConsumers.forEach(consumer => consumer.dispose());
         this._suggestConsumers = [];
     }
-    async _updateSuggestions(suggestions) {
+    setSuggestions(suggestions) {
         this.clear();
         const sortedSuggestions = suggestions.sort(Suggestion.compare);
         for (const suggestion of sortedSuggestions) {
-            // TODO(mmandlis): This hack is needed for deserialized suggestions to work. Should
-            // instead serialize the description object and generation suggestion content here.
-            const suggestionContent = suggestion.descriptionDom ? suggestion.descriptionDom :
-                await suggestion.description.getRecipeSuggestion(this._modality.descriptionFormatter);
+            const suggestionContent = suggestion.getDescription(this._modality.name) || suggestion.descriptionText;
             if (!suggestionContent) {
                 throw new Error('No suggestion content available');
             }
@@ -45246,10 +45243,8 @@ class Planner {
                 // before returning.
                 relevance.newArc.stop();
                 const suggestion = new Suggestion(plan, hash, rank, this._arc);
-                suggestion.description = relevance.newArc.description;
-                // TODO(mmandlis): exclude the text description from returned results.
-                suggestion.descriptionText = description;
                 suggestion.setSearch(plan.search);
+                await suggestion.setDescription(relevance.newArc.description);
                 suggestion.groupIndex = groupIndex;
                 results.push(suggestion);
                 planTrace.end({ name: description, args: { rank, hash, groupIndex } });

@@ -1,10 +1,10 @@
-commit a7a3a78de5b5799f1b94e2eadb1bdabd17c77166
+commit c2298c9f23100083f3fbcb3bab4c0625884959d8
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Nov 26 11:09:39 2018 -0800
+Date:   Mon Nov 26 11:42:11 2018 -0800
 
-    Search in suggestions (#2297)
+    Suggestion stores 'text description and one for the current modality (#2299)
     
-    * - Add search to suggestion and de/serialize
-    - Skip serializing search in plan (to not affect hash)
+    * Suggestion stores 'text description and one for the current modality
+    instead of a non-serializable Description object.
     
-    * address comments: add param types
+    * merge, fix tests and address comment: add param types

@@ -42,12 +42,8 @@ export declare class PlanningResult {
             plan: string;
             hash: string;
             rank: number;
-            descriptionText: string;
-            descriptionDom: {
-                template: string;
-                model: {};
-            };
             searchGroups: string[][];
+            descriptionByModality: {};
         }[];
         generations: string;
         lastUpdated: string;
