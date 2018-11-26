@@ -22,7 +22,6 @@ import { KeyBase } from '../key-base.js';
 export declare class PouchDbKey extends KeyBase {
     readonly dbLocation: string;
     readonly dbName: string;
-    location: string;
     constructor(key: string);
     /**
      * Creates a new child PouchDbKey relative to the current key, based on the value of id.

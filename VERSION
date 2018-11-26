@@ -1,5 +1,8 @@
-commit 7126872da88812f4c47cbbf895a3cfa6912a69cb
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Nov 26 16:07:10 2018 +1100
+commit a31f14febd1872e03bfc32f200801e4b5913c01c
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Nov 26 10:34:30 2018 -0800
 
-    Passes the loader to FakePecFactory by default (#2301)
+    Hoist location field into KeyBase (#2271)
+    
+    - used consistently between pouch/firebase/volatile implementations
+    - not an issue for synthetic keys it appears

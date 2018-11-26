@@ -10,7 +10,6 @@ declare class FirebaseKey extends KeyBase {
     databaseUrl?: string;
     projectId?: string;
     apiKey?: string;
-    location: string;
     constructor(key: string);
     childKeyForHandle(id: any): FirebaseKey;
     toString(): string;

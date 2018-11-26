@@ -6,7 +6,6 @@ import { Type } from '../type.js';
 export declare function resetVolatileStorageForTesting(): void;
 declare class VolatileKey extends KeyBase {
     arcId: string;
-    location: string;
     constructor(key: string);
     childKeyForHandle(id: any): VolatileKey;
     toString(): string;
