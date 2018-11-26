@@ -1,5 +1,10 @@
-commit 84334307bb62403a7d61725f61e2df93c4cdf656
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Nov 26 15:24:41 2018 -0800
+commit 4eab0bc808e22ac89f215faf7d3307d24fb457af
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Nov 26 15:29:37 2018 -0800
 
-    s/artifacts_0_6_0/particles_0_6_0 (#2308)
+    Refactor for better background processing abstraction (#2309)
+    
+    - Move AppBase to app-base.ts for consistency
+    - Create a new lifecycle method on AppBase for background processing
+    - Return AppBase to top level controller instead of express object.
+    - Call background processing in the onListening callback

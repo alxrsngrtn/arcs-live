@@ -38,6 +38,14 @@ export class AppBase {
         this.express.use(bodyParser.urlencoded({ limit: '5mb', extended: false }));
     }
     /**
+     * Override this method to execute code after the server starts listening.
+     * Used to run background processes like Shell Planning.
+     */
+    startBackgroundProcessing() {
+        // optional method that starts background processing.
+        console.log("Running optional background process");
+    }
+    /**
      * Adds handlers for static content.  The public directory is
      * checked first.  If not found then the legacy arcs directory is searched.
      */
@@ -76,4 +84,4 @@ export class AppBase {
         this.express.use('/arcs', router);
     }
 }
-//# sourceMappingURL=app.js.map
+//# sourceMappingURL=app-base.js.map

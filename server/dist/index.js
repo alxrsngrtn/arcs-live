@@ -16,8 +16,8 @@ const app = process.env.ARCS_MASTER ? masterapp : dbapp;
  */
 debug('ts-express:server');
 const port = normalizePort(process.env.PORT || 8080);
-app.set('port', port);
-const server = http.createServer(app);
+app.express.set('port', port);
+const server = http.createServer(app.express);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
@@ -55,5 +55,8 @@ function onListening() {
     const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
     debug(`Listening on ${bind}`);
     console.log(`Arcs Server listening on ${bind}`);
+    setTimeout(() => {
+        app.startBackgroundProcessing();
+    });
 }
 //# sourceMappingURL=index.js.map

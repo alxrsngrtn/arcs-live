@@ -9,7 +9,7 @@ import PouchDB from 'pouchdb';
 import PouchDbAdapterMemory from 'pouchdb-adapter-memory';
 import PouchDbServer from 'express-pouchdb';
 import { ShellPlanningInterface } from 'arcs';
-import { AppBase } from './app';
+import { AppBase } from './app-base';
 import { ON_DISK_DB, VM_URL_PREFIX } from "./deployment/utils";
 /**
  * An app server that additionally configures a pouchdb.
@@ -21,20 +21,10 @@ import { ON_DISK_DB, VM_URL_PREFIX } from "./deployment/utils";
  * - `STORAGE_KEY_BASE` default is `pouchdb://localhost:8080/user`
  */
 class PouchDbApp extends AppBase {
-    constructor() {
-        super();
-        let userId = process.env['ARCS_USER_ID'];
-        // Default to USER_ID_CLETUS for now.
-        // TODO(lindner): make this required, use base64'd public key
-        if (!userId) {
-            userId = ShellPlanningInterface.USER_ID_CLETUS;
-        }
-        const storageKeyBase = process.env['STORAGE_KEY_BASE'] || 'pouchdb://localhost:8080/user';
-        // TODO(plindner): extract this into a separate coroutine instead
-        // of starting it here.
+    startBackgroundProcessing() {
         try {
-            console.log("starting shell planning for " + userId + ' with storage Key ' + storageKeyBase);
-            ShellPlanningInterface.start('../', userId, storageKeyBase);
+            console.log("starting shell planning for " + PouchDbApp.userId + ' with storage Key ' + PouchDbApp.storageKeyBase);
+            ShellPlanningInterface.start('../', PouchDbApp.userId, PouchDbApp.storageKeyBase);
         }
         catch (err) {
             console.warn(err);
@@ -73,7 +63,10 @@ class PouchDbApp extends AppBase {
             const inMemPouchDb = PouchDB.plugin(PouchDbAdapterMemory).defaults({ adapter: 'memory' });
             this.express.use('/', PouchDbServer(inMemPouchDb, { mode: 'fullCouchDB', inMemoryConfig: true }));
         }
+        console.log('added pouch routes');
     }
 }
-export const app = new PouchDbApp().express;
+PouchDbApp.storageKeyBase = process.env['STORAGE_KEY_BASE'] || 'pouchdb://localhost:8080/user/';
+PouchDbApp.userId = process.env['ARCS_USER_ID'] || ShellPlanningInterface.USER_ID_CLETUS;
+export const app = new PouchDbApp();
 //# sourceMappingURL=pouch-db-app.js.map

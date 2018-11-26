@@ -16,6 +16,11 @@ export declare abstract class AppBase {
     /** Configure Express middleware. */
     private middleware;
     /**
+     * Override this method to execute code after the server starts listening.
+     * Used to run background processes like Shell Planning.
+     */
+    startBackgroundProcessing(): void;
+    /**
      * Adds handlers for static content.  The public directory is
      * checked first.  If not found then the legacy arcs directory is searched.
      */
