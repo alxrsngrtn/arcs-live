@@ -56714,7 +56714,6 @@ class APIPort {
     const handlerName = 'on' + e.data.messageType;
     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this[handlerName], `no handler named ${handlerName}`);
     if (this._debugAttachment) {
-      if (this._debugAttachment[handlerName]) this._debugAttachment[handlerName](args);
       this._debugAttachment.handlePecMessage(handlerName, e.data.messageBody, cnt, e.data.stack);
     }
     const result = this[handlerName](args);
@@ -56747,7 +56746,6 @@ class APIPort {
       const cnt = this.messageCount++;
       this._port.postMessage(call);
       if (this._debugAttachment) {
-        if (this._debugAttachment[name]) this._debugAttachment[name](args);
         this._debugAttachment.handlePecMessage(name, call.messageBody, cnt, new Error().stack);
       }
     };
@@ -56779,7 +56777,6 @@ class APIPort {
       const cnt = this.messageCount++;
       this._port.postMessage(call);
       if (this._debugAttachment) {
-        if (this._debugAttachment[name]) this._debugAttachment[name](thing, args);
         this._debugAttachment.handlePecMessage(name, call.messageBody, cnt, new Error().stack);
       }
     };
@@ -56804,8 +56801,8 @@ class PECOuterPort extends APIPort {
     this.registerHandler('Render', {particle: this.Mapped, slotName: this.Direct, content: this.Direct});
     this.registerHandler('InitializeProxy', {handle: this.Mapped, callback: this.Direct});
     this.registerHandler('SynchronizeProxy', {handle: this.Mapped, callback: this.Direct});
-    this.registerHandler('HandleGet', {handle: this.Mapped, callback: this.Direct, particleId: this.Direct});
-    this.registerHandler('HandleToList', {handle: this.Mapped, callback: this.Direct, particleId: this.Direct});
+    this.registerHandler('HandleGet', {handle: this.Mapped, callback: this.Direct});
+    this.registerHandler('HandleToList', {handle: this.Mapped, callback: this.Direct});
     this.registerHandler('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerHandler('HandleStore', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
@@ -56864,8 +56861,8 @@ class PECInnerPort extends APIPort {
     this.registerCall('Render', {particle: this.Mapped, slotName: this.Direct, content: this.Direct});
     this.registerCall('InitializeProxy', {handle: this.Mapped, callback: this.LocalMapped});
     this.registerCall('SynchronizeProxy', {handle: this.Mapped, callback: this.LocalMapped});
-    this.registerCall('HandleGet', {handle: this.Mapped, callback: this.LocalMapped, particleId: this.Direct});
-    this.registerCall('HandleToList', {handle: this.Mapped, callback: this.LocalMapped, particleId: this.Direct});
+    this.registerCall('HandleGet', {handle: this.Mapped, callback: this.LocalMapped});
+    this.registerCall('HandleToList', {handle: this.Mapped, callback: this.LocalMapped});
     this.registerCall('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
     this.registerCall('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
     this.registerCall('HandleStore', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
@@ -65567,7 +65564,6 @@ class DevtoolsForTests {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OuterPortAttachment", function() { return OuterPortAttachment; });
 /* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/sourcemapped-stacktrace-web.js */ "./platform/sourcemapped-stacktrace-web.js");
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/type.js */ "./runtime/ts-build/type.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -65581,14 +65577,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class OuterPortAttachment {
   constructor(arc, devtoolsChannel) {
     this._devtoolsChannel = devtoolsChannel;
     this._arcIdString = arc.id.toString();
     this._speculative = arc.isSpeculative;
-    this._callbackRegistry = {};
-    this._particleRegistry = {};
   }
 
   handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
@@ -65666,142 +65659,6 @@ class OuterPortAttachment {
       stack.push(frame);
     }), {sync: true, cacheGlobally: true});
     return stack;
-  }
-
-  InstantiateParticle(particle, {id, spec, handles}) {
-    this._particleRegistry[id] = spec;
-    this._devtoolsChannel.send({
-      messageType: 'InstantiateParticle',
-      messageBody: Object.assign(
-        this._arcMetadata(),
-        this._trimParticleSpec(id, spec, handles)
-      )
-    });
-  }
-
-  SimpleCallback({callback, data}) {
-    const callbackDetails = this._callbackRegistry[callback];
-    if (callbackDetails) {
-      // Copying callback data, as the callback can be used multiple times.
-      this._sendDataflowMessage(Object.assign({}, callbackDetails), data);
-    }
-  }
-
-  onInitializeProxy({handle, callback}) {
-    this._callbackRegistry[callback] = this._describeHandleCall(
-      {operation: 'on-change', handle});
-  }
-
-  onSynchronizeProxy({handle, callback}) {
-    this._callbackRegistry[callback] = this._describeHandleCall(
-      {operation: 'sync-model', handle});
-  }
-
-  onHandleGet({handle, callback, particleId}) {
-    this._callbackRegistry[callback] = this._describeHandleCall(
-      {operation: 'get', handle, particleId});
-  }
-
-  onHandleToList({handle, callback, particleId}) {
-    this._callbackRegistry[callback] = this._describeHandleCall(
-      {operation: 'toList', handle, particleId});
-  }
-
-  onHandleSet({handle, data, particleId, barrier}) {
-    this._logHandleCall({operation: 'set', handle, data, particleId});
-  }
-
-  onHandleStore({handle, data, particleId}) {
-    this._logHandleCall({operation: 'store', handle, data, particleId});
-  }
-
-  onHandleClear({handle, particleId, barrier}) {
-    this._logHandleCall({operation: 'clear', handle, particleId});
-  }
-
-  onHandleRemove({handle, data, particleId}) {
-    this._logHandleCall({operation: 'remove', handle, data, particleId});
-  }
-
-  // TODO: add BigCollection stream APIs?
-
-  _logHandleCall(args) {
-    this._sendDataflowMessage(this._describeHandleCall(args), args.data);
-  }
-
-  _sendDataflowMessage(messageBody, data) {
-    messageBody.data = JSON.stringify(data);
-    messageBody.timestamp = Date.now();
-    this._devtoolsChannel.send({messageType: 'dataflow', messageBody});
-  }
-
-  _describeHandleCall({operation, handle, particleId}) {
-    const metadata = Object.assign(this._arcMetadata(), {
-      operation,
-      handle: this._describeHandle(handle)
-    });
-    if (particleId) metadata.particle = this._describeParticle(particleId);
-    return metadata;
-  }
-
-  _arcMetadata() {
-    return {
-      arcId: this._arcIdString,
-      speculative: this._speculative
-    };
-  }
-
-  _trimParticleSpec(id, spec, handles) {
-    const connections = {};
-    spec.connectionMap.forEach((value, key) => {
-      connections[key] = Object.assign({
-        direction: value.direction
-      }, this._describeHandle(handles.get(key)));
-    });
-    return {
-      id,
-      name: spec.name,
-      connections,
-      implFile: spec.implFile
-    };
-  }
-
-  _describeParticle(id) {
-    const particleSpec = this._particleRegistry[id];
-    return {
-      id,
-      name: particleSpec && particleSpec.name
-      // TODO: Send entire spec only once and refer to it by ID in the tool.
-    };
-  }
-
-  _describeHandle(handle) {
-    return {
-      id: handle.id,
-      storageKey: handle._storageKey,
-      name: handle.name,
-      description: handle.description,
-      type: this._describeHandleType(handle._type)
-    };
-  }
-
-  // TODO: This is fragile and incomplete. Change this into sending entire
-  //       handle object once and refer back to it via its ID in the tool.
-  _describeHandleType(handleType) {
-    if (handleType instanceof _ts_build_type_js__WEBPACK_IMPORTED_MODULE_1__["Type"]) {
-      switch (handleType.tag) {
-        case 'Collection': return `[${this._describeHandleType(handleType.data)}]`;
-        case 'Entity': return this._describeHandleType(handleType.data);
-        default: return `${handleType.tag} ${this._describeHandleType(handleType.data)}`;
-      }
-    }
-    switch (handleType.constructor.name) {
-      case 'Schema':
-        return handleType.name;
-      case 'Shape':
-        return 'Shape';
-    }
-    return '';
   }
 }
 
@@ -69080,7 +68937,7 @@ class Collection extends Handle {
         if (!this.canRead) {
             throw new Error('Handle not readable');
         }
-        return this._restore(await this._proxy.toList(this._particleId));
+        return this._restore(await this._proxy.toList());
     }
     _restore(list) {
         return (list !== null) ? list.map(a => restore(a, this.entityClass)) : null;
@@ -69173,7 +69030,7 @@ class Variable extends Handle {
         if (!this.canRead) {
             throw new Error('Handle not readable');
         }
-        const model = await this._proxy.get(this._particleId);
+        const model = await this._proxy.get();
         return this._restore(model);
     }
     _restore(model) {
@@ -78611,14 +78468,14 @@ class CollectionProxy extends StorageProxy {
     }
     // Read ops: if we're synchronized we can just return the local copy of the data.
     // Otherwise, send a request to the backing store.
-    toList(particleId) {
+    toList() {
         if (this.synchronized === SyncState.full) {
             return Promise.resolve(this.model.toList());
         }
         else {
             // TODO: in synchronized mode, this should integrate with SynchronizeProxy rather than
             //       sending a parallel request
-            return new Promise(resolve => this.port.HandleToList({ callback: resolve, handle: this, particleId }));
+            return new Promise(resolve => this.port.HandleToList({ callback: resolve, handle: this }));
         }
     }
     get(id, particleId) {
@@ -78733,12 +78590,12 @@ class VariableProxy extends StorageProxy {
     // Otherwise, send a request to the backing store.
     // TODO: in synchronized mode, these should integrate with SynchronizeProxy rather than
     //       sending a parallel request
-    get(particleId) {
+    get() {
         if (this.synchronized === SyncState.full) {
             return Promise.resolve(this.model);
         }
         else {
-            return new Promise(resolve => this.port.HandleGet({ callback: resolve, handle: this, particleId }));
+            return new Promise(resolve => this.port.HandleGet({ callback: resolve, handle: this }));
         }
     }
     set(entity, particleId) {

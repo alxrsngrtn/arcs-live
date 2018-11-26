@@ -1,5 +1,5 @@
-commit 49f2a6659570d2977bd63888bf0e5b6eccc50ba4
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Nov 23 15:07:18 2018 -0800
+commit 367fe590210455c3639df7a32130806e9c755028
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Nov 26 11:50:51 2018 +1100
 
-    delete suggestion-storage (was only used in old planificator) (#2298)
+    Retires the old DevTools DataFlow tool (#2296)

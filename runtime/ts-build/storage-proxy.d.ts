@@ -98,7 +98,7 @@ export declare class CollectionProxy extends StorageProxy {
         remove?: {}[];
         originatorId: string;
     };
-    toList(particleId: any): Promise<{}>;
+    toList(): Promise<{}>;
     get(id: any, particleId: any): Promise<{}>;
     store(value: any, keys: any, particleId: any): void;
     clear(particleId: any): void;
@@ -120,7 +120,7 @@ export declare class VariableProxy extends StorageProxy {
     };
     _synchronizeModel(version: number, model: SerializedModelEntry[]): boolean;
     _processUpdate(update: any, apply?: boolean): any;
-    get(particleId: any): Promise<{}>;
+    get(): Promise<{}>;
     set(entity: any, particleId: any): void;
     clear(particleId: any): void;
 }

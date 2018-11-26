@@ -148,7 +148,7 @@ class Collection extends Handle {
         if (!this.canRead) {
             throw new Error('Handle not readable');
         }
-        return this._restore(await this._proxy.toList(this._particleId));
+        return this._restore(await this._proxy.toList());
     }
     _restore(list) {
         return (list !== null) ? list.map(a => restore(a, this.entityClass)) : null;
@@ -241,7 +241,7 @@ class Variable extends Handle {
         if (!this.canRead) {
             throw new Error('Handle not readable');
         }
-        const model = await this._proxy.get(this._particleId);
+        const model = await this._proxy.get();
         return this._restore(model);
     }
     _restore(model) {
