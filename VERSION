@@ -1,8 +1,10 @@
-commit a31f14febd1872e03bfc32f200801e4b5913c01c
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Nov 26 10:34:30 2018 -0800
+commit a7a3a78de5b5799f1b94e2eadb1bdabd17c77166
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Nov 26 11:09:39 2018 -0800
 
-    Hoist location field into KeyBase (#2271)
+    Search in suggestions (#2297)
     
-    - used consistently between pouch/firebase/volatile implementations
-    - not an issue for synthetic keys it appears
+    * - Add search to suggestion and de/serialize
+    - Skip serializing search in plan (to not affect hash)
+    
+    * address comments: add param types

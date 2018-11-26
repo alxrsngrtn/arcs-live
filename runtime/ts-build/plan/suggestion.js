@@ -8,10 +8,12 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/assert-web.js';
-import { Manifest } from '../manifest.js';
 import { InterfaceType } from '../type.js';
+import { Manifest } from '../manifest.js';
 export class Suggestion {
     constructor(plan, hash, rank, arc) {
+        // List of search resolved token groups, this suggestion corresponds to.
+        this.searchGroups = [];
         assert(plan, `plan cannot be null`);
         assert(hash, `hash cannot be null`);
         this.plan = plan;
@@ -25,21 +27,57 @@ export class Suggestion {
     static compare(s1, s2) {
         return s2.rank - s1.rank;
     }
+    hasSearch(search) {
+        const tokens = search.split(' ');
+        return this.searchGroups.some(group => tokens.every(token => group.includes(token)));
+    }
+    setSearch(search) {
+        this.searchGroups = [];
+        if (search) {
+            this._addSearch(search.resolvedTokens);
+        }
+    }
+    mergeSearch(suggestion) {
+        let updated = false;
+        for (const other of suggestion.searchGroups) {
+            if (this._addSearch(other)) {
+                if (this.searchGroups.length === 1) {
+                    this.searchGroups.push(['']);
+                }
+                updated = true;
+            }
+        }
+        this.searchGroups.sort();
+        return updated;
+    }
+    _addSearch(searchGroup) {
+        const equivalentGroup = (group, otherGroup) => {
+            return group.length === otherGroup.length &&
+                group.every(token => otherGroup.includes(token));
+        };
+        if (!this.searchGroups.find(group => equivalentGroup(group, searchGroup))) {
+            this.searchGroups.push(searchGroup);
+            return true;
+        }
+        return false;
+    }
     serialize() {
         return {
             plan: this._planToString(this.plan),
             hash: this.hash,
             rank: this.rank,
             descriptionText: this.descriptionText,
-            descriptionDom: { template: this.descriptionText, model: {} }
+            descriptionDom: { template: this.descriptionText, model: {} },
+            searchGroups: this.searchGroups
         };
     }
-    static async deserialize({ plan, hash, rank, descriptionText, descriptionDom }, arc, recipeResolver) {
+    static async deserialize({ plan, hash, rank, descriptionText, descriptionDom, searchGroups }, arc, recipeResolver) {
         const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
         if (deserializedPlan) {
             const suggestion = new Suggestion(deserializedPlan, hash, rank, arc);
             suggestion.descriptionText = descriptionText;
             suggestion.descriptionDom = descriptionDom;
+            suggestion.searchGroups = searchGroups;
             return suggestion;
         }
         return undefined;

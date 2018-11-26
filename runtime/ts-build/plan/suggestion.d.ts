@@ -11,6 +11,7 @@ import { Arc } from '../arc.js';
 import { Description } from '../description.js';
 import { Recipe } from '../recipe/recipe.js';
 import { Relevance } from '../relevance.js';
+import { Search } from '../recipe/search.js';
 export declare class Suggestion {
     arc: Arc;
     plan: Recipe;
@@ -21,9 +22,14 @@ export declare class Suggestion {
     readonly hash: string;
     readonly rank: number;
     groupIndex: number;
+    searchGroups: string[][];
     constructor(plan: Recipe, hash: string, rank: number, arc: Arc);
-    isEquivalent(other: any): boolean;
+    isEquivalent(other: Suggestion): boolean;
     static compare(s1: Suggestion, s2: Suggestion): number;
+    hasSearch(search: string): boolean;
+    setSearch(search: Search): void;
+    mergeSearch(suggestion: Suggestion): boolean;
+    _addSearch(searchGroup: string[]): boolean;
     serialize(): {
         plan: string;
         hash: string;
@@ -33,13 +39,15 @@ export declare class Suggestion {
             template: string;
             model: {};
         };
+        searchGroups: string[][];
     };
-    static deserialize({ plan, hash, rank, descriptionText, descriptionDom }: {
+    static deserialize({ plan, hash, rank, descriptionText, descriptionDom, searchGroups }: {
         plan: any;
         hash: any;
         rank: any;
         descriptionText: any;
         descriptionDom: any;
+        searchGroups: any;
     }, arc: any, recipeResolver: any): Promise<Suggestion>;
     instantiate(): Promise<void>;
     _planToString(plan: any): string;

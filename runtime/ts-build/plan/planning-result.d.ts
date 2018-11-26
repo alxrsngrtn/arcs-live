@@ -47,6 +47,7 @@ export declare class PlanningResult {
                 template: string;
                 model: {};
             };
+            searchGroups: string[][];
         }[];
         generations: string;
         lastUpdated: string;

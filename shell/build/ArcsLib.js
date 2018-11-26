@@ -72421,13 +72421,13 @@ class PlanConsumer {
         const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0);
         // `showAll`: returns all suggestions that render into slots.
         if (this.suggestFilter['showAll']) {
+            // Should filter out suggestions produced by search phrases?
             return suggestions;
         }
         // search filter non empty: match plan search phrase or description text.
         if (this.suggestFilter['search']) {
             return suggestions.filter(suggestion => suggestion.descriptionText.toLowerCase().includes(this.suggestFilter['search']) ||
-                (suggestion.plan.search &&
-                    suggestion.plan.search.phrase.includes(this.suggestFilter['search'])));
+                suggestion.hasSearch(this.suggestFilter['search']));
         }
         return suggestions.filter(suggestion => {
             const usesHandlesFromActiveRecipe = suggestion.plan.handles.find(handle => {
@@ -72983,11 +72983,25 @@ class PlanningResult {
         return true;
     }
     append({ suggestions, lastUpdated = new Date(), generations = [] }) {
-        const newSuggestions = suggestions.filter(newSuggestion => !this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion)));
-        if (newSuggestions.length === 0) {
-            return false;
+        const newSuggestions = [];
+        let searchUpdated = false;
+        for (const newSuggestion of suggestions) {
+            const existingSuggestion = this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion));
+            if (existingSuggestion) {
+                searchUpdated = existingSuggestion.mergeSearch(newSuggestion);
+            }
+            else {
+                newSuggestions.push(newSuggestion);
+            }
         }
-        this.suggestions.push(...newSuggestions);
+        if (newSuggestions.length > 0) {
+            this.suggestions = this.suggestions.concat(newSuggestions);
+        }
+        else {
+            if (!searchUpdated) {
+                return false;
+            }
+        }
         // TODO: filter out generations of other suggestions.
         this.generations.push(...generations);
         this.lastUpdated = lastUpdated;
@@ -73129,8 +73143,8 @@ class ReplanQueue {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Suggestion", function() { return Suggestion; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../manifest.js */ "./runtime/ts-build/manifest.js");
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../manifest.js */ "./runtime/ts-build/manifest.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -73145,6 +73159,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class Suggestion {
     constructor(plan, hash, rank, arc) {
+        // List of search resolved token groups, this suggestion corresponds to.
+        this.searchGroups = [];
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan, `plan cannot be null`);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(hash, `hash cannot be null`);
         this.plan = plan;
@@ -73158,21 +73174,57 @@ class Suggestion {
     static compare(s1, s2) {
         return s2.rank - s1.rank;
     }
+    hasSearch(search) {
+        const tokens = search.split(' ');
+        return this.searchGroups.some(group => tokens.every(token => group.includes(token)));
+    }
+    setSearch(search) {
+        this.searchGroups = [];
+        if (search) {
+            this._addSearch(search.resolvedTokens);
+        }
+    }
+    mergeSearch(suggestion) {
+        let updated = false;
+        for (const other of suggestion.searchGroups) {
+            if (this._addSearch(other)) {
+                if (this.searchGroups.length === 1) {
+                    this.searchGroups.push(['']);
+                }
+                updated = true;
+            }
+        }
+        this.searchGroups.sort();
+        return updated;
+    }
+    _addSearch(searchGroup) {
+        const equivalentGroup = (group, otherGroup) => {
+            return group.length === otherGroup.length &&
+                group.every(token => otherGroup.includes(token));
+        };
+        if (!this.searchGroups.find(group => equivalentGroup(group, searchGroup))) {
+            this.searchGroups.push(searchGroup);
+            return true;
+        }
+        return false;
+    }
     serialize() {
         return {
             plan: this._planToString(this.plan),
             hash: this.hash,
             rank: this.rank,
             descriptionText: this.descriptionText,
-            descriptionDom: { template: this.descriptionText, model: {} }
+            descriptionDom: { template: this.descriptionText, model: {} },
+            searchGroups: this.searchGroups
         };
     }
-    static async deserialize({ plan, hash, rank, descriptionText, descriptionDom }, arc, recipeResolver) {
+    static async deserialize({ plan, hash, rank, descriptionText, descriptionDom, searchGroups }, arc, recipeResolver) {
         const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
         if (deserializedPlan) {
             const suggestion = new Suggestion(deserializedPlan, hash, rank, arc);
             suggestion.descriptionText = descriptionText;
             suggestion.descriptionDom = descriptionDom;
+            suggestion.searchGroups = searchGroups;
             return suggestion;
         }
         return undefined;
@@ -73207,7 +73259,7 @@ class Suggestion {
                 hostedParticleSpecs.push(hostedParticleSpec.toString());
                 // Override handle conenctions with particle name as local name.
                 Object.values(handle.connections).forEach(conn => {
-                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(conn['type'] instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["InterfaceType"]);
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(conn['type'] instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"]);
                     conn['_handle'] = { localName: hostedParticleName };
                 });
                 // Remove the handle.
@@ -73219,7 +73271,7 @@ class Suggestion {
     }
     static async _planFromString(planString, arc, recipeResolver) {
         try {
-            const manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
+            const manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_2__["Manifest"].parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest.recipes.length === 1);
             let plan = manifest.recipes[0];
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
@@ -73442,6 +73494,7 @@ class Planner {
                 suggestion.description = relevance.newArc.description;
                 // TODO(mmandlis): exclude the text description from returned results.
                 suggestion.descriptionText = description;
+                suggestion.setSearch(plan.search);
                 suggestion.groupIndex = groupIndex;
                 results.push(suggestion);
                 planTrace.end({ name: description, args: { rank, hash, groupIndex } });
@@ -75298,8 +75351,10 @@ class Recipe {
         const result = [];
         const verbs = this.verbs.length > 0 ? ` ${this.verbs.map(verb => `&${verb}`).join(' ')}` : '';
         result.push(`recipe${this.name ? ` ${this.name}` : ''}${verbs}`);
-        if (this.search) {
-            result.push(this.search.toString(options).replace(/^|(\n)/g, '$1  '));
+        if (options && options.showUnresolved) {
+            if (this.search) {
+                result.push(this.search.toString(options).replace(/^|(\n)/g, '$1  '));
+            }
         }
         for (const constraint of this._connectionConstraints) {
             let constraintStr = constraint.toString().replace(/^|(\n)/g, '$1  ');

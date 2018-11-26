@@ -155,6 +155,7 @@ export class Planner {
                 suggestion.description = relevance.newArc.description;
                 // TODO(mmandlis): exclude the text description from returned results.
                 suggestion.descriptionText = description;
+                suggestion.setSearch(plan.search);
                 suggestion.groupIndex = groupIndex;
                 results.push(suggestion);
                 planTrace.end({ name: description, args: { rank, hash, groupIndex } });

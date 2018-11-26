@@ -93,11 +93,25 @@ export class PlanningResult {
         return true;
     }
     append({ suggestions, lastUpdated = new Date(), generations = [] }) {
-        const newSuggestions = suggestions.filter(newSuggestion => !this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion)));
-        if (newSuggestions.length === 0) {
-            return false;
+        const newSuggestions = [];
+        let searchUpdated = false;
+        for (const newSuggestion of suggestions) {
+            const existingSuggestion = this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion));
+            if (existingSuggestion) {
+                searchUpdated = existingSuggestion.mergeSearch(newSuggestion);
+            }
+            else {
+                newSuggestions.push(newSuggestion);
+            }
         }
-        this.suggestions.push(...newSuggestions);
+        if (newSuggestions.length > 0) {
+            this.suggestions = this.suggestions.concat(newSuggestions);
+        }
+        else {
+            if (!searchUpdated) {
+                return false;
+            }
+        }
         // TODO: filter out generations of other suggestions.
         this.generations.push(...generations);
         this.lastUpdated = lastUpdated;
