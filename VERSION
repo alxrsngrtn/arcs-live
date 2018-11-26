@@ -1,5 +1,5 @@
-commit 429bd34932800adc3c05934d9ce7312a62d60fc2
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Nov 27 07:43:22 2018 +1100
+commit 84334307bb62403a7d61725f61e2df93c4cdf656
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Nov 26 15:24:41 2018 -0800
 
-    Exposes immediate mode in recipe format and unifies store instantiation (#2300)
+    s/artifacts_0_6_0/particles_0_6_0 (#2308)
