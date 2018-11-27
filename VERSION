@@ -1,12 +1,5 @@
-commit 3ebae2dc83d81d29cc92b7d49084f01d423f124b
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Nov 27 13:33:48 2018 -0800
+commit c5006e16c814b3a9a721379c642047ef37a35d74
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Nov 27 15:27:49 2018 -0800
 
-    Strict updates for server (#2319)
-    
-    - Add noImplicitThis to main config (already compliant)
-    - Add strictPropertyInitialization to server
-    - Update package-lock.json
-    - Move to fine-grained pouchdb @types
-    - Add @types/cors, @types/node-fetch, @types/request, @types/websocket
-    - Fix most 'implicit any' usage in server.
+    fix suggestion title in test (#2323)

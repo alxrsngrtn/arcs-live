@@ -134,6 +134,622 @@ class DevtoolsBroker {
 
 /***/ }),
 
+/***/ "./modalities/dom/components/icons.css.js":
+/*!************************************************!*\
+  !*** ./modalities/dom/components/icons.css.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = (`
+  icon {
+    font-family: "Material Icons";
+    font-size: 24px;
+    font-style: normal;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    /* partial FOUC prevention */
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+  }
+  icon[hidden] {
+    /* required because of display rule above,
+    display rule required for overflow: hidden */
+    display: none;
+  }
+`);
+
+
+/***/ }),
+
+/***/ "./modalities/dom/components/xen/xen-state.js":
+/*!****************************************************!*\
+  !*** ./modalities/dom/components/xen/xen-state.js ***!
+  \****************************************************/
+/*! exports provided: XenStateMixin, nob, debounce */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "XenStateMixin", function() { return XenStateMixin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nob", function() { return nob; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "debounce", function() { return debounce; });
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+const nob = () => Object.create(null);
+
+const debounce = (key, action, delay) => {
+  if (key) {
+    clearTimeout(key);
+  }
+  if (action && delay) {
+    return setTimeout(action, delay);
+  }
+};
+
+const XenStateMixin = Base => class extends Base {
+  constructor() {
+    super();
+    this._pendingProps = nob();
+    this._props = this._getInitialProps() || nob();
+    this._lastProps = nob();
+    this._state = this._getInitialState() || nob();
+    this._lastState = nob();
+  }
+  _getInitialProps() {
+  }
+  _getInitialState() {
+  }
+  _getProperty(name) {
+    return this._pendingProps[name] || this._props[name];
+  }
+  _setProperty(name, value) {
+    // dirty checking opportunity
+    if (this._validator || this._wouldChangeProp(name, value)) {
+      this._pendingProps[name] = value;
+      this._invalidateProps();
+    }
+  }
+  _wouldChangeValue(map, name, value) {
+    // TODO(sjmiles): fundamental dirty-checking issue here. Can be overridden to change
+    // behavior, but the default implementation will use strict reference checking.
+    // To modify structured values one must create a new Object with the new values.
+    // See `_setImmutableState`.
+    return (map[name] !== value);
+    // TODO(sjmiles): an example of dirty-checking that instead simply punts on structured data
+    //return (typeof value === 'object') || (map[name] !== value);
+  }
+  _wouldChangeProp(name, value) {
+    return this._wouldChangeValue(this._props, name, value);
+  }
+  _wouldChangeState(name, value) {
+    return this._wouldChangeValue(this._state, name, value);
+  }
+  _setProps(props) {
+    // TODO(sjmiles): should be a replace instead of a merge?
+    Object.assign(this._pendingProps, props);
+    this._invalidateProps();
+  }
+  _invalidateProps() {
+    this._propsInvalid = true;
+    this._invalidate();
+  }
+  _setImmutableState(name, value) {
+    if (typeof name === 'object') {
+      console.warn('Xen:: _setImmutableState takes name and value args for a single property, dictionaries not supported.');
+      value = Object.values(name)[0];
+      name = Object.names(name)[0];
+    }
+    if (typeof value === 'object') {
+      value = Object.assign(Object.create(null), value);
+    }
+    this._state[name] = value;
+    this._invalidate();
+  }
+  _setState(object) {
+    let dirty = false;
+    const state = this._state;
+    for (const property in object) {
+      const value = object[property];
+      if (this._wouldChangeState(property, value)) {
+        dirty = true;
+        state[property] = value;
+      }
+    }
+    if (dirty) {
+      this._invalidate();
+      return true;
+    }
+  }
+  // TODO(sjmiles): deprecated
+  _setIfDirty(object) {
+    return this._setState(object);
+  }
+  _async(fn) {
+    return Promise.resolve().then(fn.bind(this));
+    //return setTimeout(fn.bind(this), 10);
+  }
+  _invalidate() {
+    if (!this._validator) {
+      this._validator = this._async(this._validate);
+    }
+  }
+  _getStateArgs() {
+    return [this._props, this._state, this._lastProps, this._lastState];
+  }
+  _validate() {
+    const stateArgs = this._getStateArgs();
+    // try..catch to ensure we nullify `validator` before return
+    try {
+      // TODO(sjmiles): should be a replace instead of a merge
+      Object.assign(this._props, this._pendingProps);
+      if (this._propsInvalid) {
+        // TODO(sjmiles): should/can have different timing from rendering?
+        this._willReceiveProps(...stateArgs);
+        this._propsInvalid = false;
+      }
+      if (this._shouldUpdate(...stateArgs)) {
+        // TODO(sjmiles): consider throttling update to rAF
+        this._ensureMount();
+        this._doUpdate(...stateArgs);
+      }
+    } catch (x) {
+      console.error(x);
+    }
+    // nullify validator _after_ methods so state changes don't reschedule validation
+    this._validator = null;
+    // save the old props and state
+    this._lastProps = Object.assign(nob(), this._props);
+    this._lastState = Object.assign(nob(), this._state);
+  }
+  _doUpdate(...stateArgs) {
+    this._update(...stateArgs);
+    this._didUpdate(...stateArgs);
+  }
+  _ensureMount() {
+  }
+  _willReceiveProps() {
+  }
+  _shouldUpdate() {
+    return true;
+  }
+  _update() {
+  }
+  _didUpdate() {
+  }
+  _debounce(key, func, delay) {
+    key = `_debounce_${key}`;
+    this._state[key] = debounce(this._state[key], func, delay != null ? delay : 16);
+  }
+};
+
+
+
+
+/***/ }),
+
+/***/ "./modalities/dom/components/xen/xen-template.js":
+/*!*******************************************************!*\
+  !*** ./modalities/dom/components/xen/xen-template.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/*
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+// HTMLImports compatibility stuff, delete soonish
+if (typeof document !== 'undefined' && !('currentImport' in document)) {
+  Object.defineProperty(document, 'currentImport', {
+    get() {
+      const script = this.currentScript;
+      let doc = script.ownerDocument || this;
+      // this code for CEv1 compatible HTMLImports polyfill (aka modern)
+      if (window['HTMLImports']) {
+        doc = window.HTMLImports.importForElement(script);
+        doc.URL = script.parentElement.href;
+      }
+      return doc;
+    }
+  });
+}
+
+/* Annotator */
+// tree walker that generates arbitrary data using visitor function `cb`
+// `cb` is called as `cb(node, key, notes)`
+// where
+//   `node` is a visited node.
+//   `key` is a handle which identifies the node in a map generated by `Annotator.locateNodes`.
+class Annotator {
+  constructor(cb) {
+    this.cb = cb;
+  }
+  // For subtree at `node`, produce annotation object `notes`.
+  // the content of `notes` is completely determined by the behavior of the
+  // annotator callback function supplied at the constructor.
+  annotate(node, notes, opts) {
+    this.notes = notes;
+    this.opts = opts || 0;
+    this.key = this.opts.key || 0;
+    notes.locator = this._annotateSubtree(node);
+    return notes;
+  }
+  // walking subtree at `node`
+  _annotateSubtree(node) {
+    let childLocators;
+    for (let i = 0, child = node.firstChild, previous = null, neo; child; i++) {
+      // returns a locator only if a node in the subtree requires one
+      const childLocator = this._annotateNode(child);
+      // only when necessary, maintain a sparse array of locators
+      if (childLocator) {
+        (childLocators = childLocators || {})[i] = childLocator;
+      }
+      // `child` may have been evacipated by visitor
+      neo = previous ? previous.nextSibling : node.firstChild;
+      if (neo === child) {
+        previous = child;
+        child = child.nextSibling;
+      } else {
+        child = neo;
+        i--;
+      }
+    }
+    // is falsey unless there was at least one childLocator
+    return childLocators;
+  }
+  _annotateNode(node) {
+    // visit node
+    const key = this.key++;
+    const shouldLocate = this.cb(node, key, this.notes, this.opts);
+    // recurse
+    const locators = this._annotateSubtree(node);
+    if (shouldLocate || locators) {
+      const cl = Object.create(null);
+      cl.key = key;
+      if (locators) {
+        cl.sub = locators;
+      }
+      return cl;
+    }
+  }
+}
+
+const locateNodes = function(root, locator, map) {
+  map = map || [];
+  for (const n in locator) {
+    const loc = locator[n];
+    if (loc) {
+      const node = root.childNodes[n];
+      // TODO(sjmiles): text-nodes sometimes evacipate when stamped, so map to the parentElement instead
+      map[loc.key] = (node.nodeType === Node.TEXT_NODE) ? node.parentElement : node;
+      if (loc.sub) {
+        // recurse
+        locateNodes(node, loc.sub, map);
+      }
+    }
+  }
+  return map;
+};
+
+/* Annotation Producer */
+// must return `true` for any node whose key we wish to track
+const annotatorImpl = function(node, key, notes, opts) {
+  // hook
+  if (opts.annotator && opts.annotator(node, key, notes, opts)) {
+    return true;
+  }
+  // default
+  switch (node.nodeType) {
+    case Node.DOCUMENT_FRAGMENT_NODE:
+      return;
+    case Node.ELEMENT_NODE:
+      return annotateElementNode(node, key, notes);
+    case Node.TEXT_NODE:
+      return annotateTextNode(node, key, notes);
+  }
+};
+
+const annotateTextNode = function(node, key, notes) {
+  if (annotateMustache(node, key, notes, 'textContent', node.textContent)) {
+    node.textContent = '';
+    return true;
+  }
+};
+
+const annotateElementNode = function(node, key, notes) {
+  if (node.hasAttributes()) {
+    let noted = false;
+    for (let a$ = node.attributes, i = a$.length - 1, a; i >= 0 && (a = a$[i]); i--) {
+      if (
+        annotateEvent(node, key, notes, a.name, a.value) ||
+        annotateMustache(node, key, notes, a.name, a.value)
+      ) {
+        node.removeAttribute(a.name);
+        noted = true;
+      }
+    }
+    return noted;
+  }
+};
+
+const annotateMustache = function(node, key, notes, property, mustache) {
+  if (mustache.slice(0, 2) === '{{') {
+    if (property === 'class') {
+      property = 'className';
+    }
+    let value = mustache.slice(2, -2);
+    const override = value.split(':');
+    if (override.length === 2) {
+      property = override[0];
+      value = override[1];
+    }
+    takeNote(notes, key, 'mustaches', property, value);
+    if (value[0] === '$') {
+      takeNote(notes, 'xlate', value, true);
+    }
+    return true;
+  }
+};
+
+const annotateEvent = function(node, key, notes, name, value) {
+  if (name.slice(0, 3) === 'on-') {
+    if (value.slice(0, 2) === '{{') {
+      value = value.slice(2, -2);
+      console.warn(
+        `Xen: event handler for '${name}' expressed as a mustache, which is not supported. Using literal value '${value}' instead.`
+      );
+    }
+    takeNote(notes, key, 'events', name.slice(3), value);
+    return true;
+  }
+};
+
+const takeNote = function(notes, key, group, name, note) {
+  const n$ = notes[key] || (notes[key] = Object.create(null));
+  (n$[group] || (n$[group] = {}))[name] = note;
+};
+
+const annotator = new Annotator(annotatorImpl);
+
+const annotate = function(root, key, opts) {
+  return (root._notes ||
+    (root._notes = annotator.annotate(root.content, {/*ids:{}*/}, key, opts))
+  );
+};
+
+/* Annotation Consumer */
+const mapEvents = function(notes, map, mapper) {
+  // add event listeners
+  for (const key in notes) {
+    const node = map[key];
+    const events = notes[key] && notes[key].events;
+    if (node && events) {
+      for (const name in events) {
+        mapper(node, name, events[name]);
+      }
+    }
+  }
+};
+
+const listen = function(controller, node, eventName, handlerName) {
+  node.addEventListener(eventName, function(e) {
+    if (controller[handlerName]) {
+      return controller[handlerName](e, e.detail);
+    }
+  });
+};
+
+const set = function(notes, map, scope, controller) {
+  if (scope) {
+    for (const key in notes) {
+      const node = map[key];
+      if (node) {
+        // everybody gets a scope
+        node.scope = scope;
+        // now get your regularly scheduled bindings
+        const mustaches = notes[key].mustaches;
+        for (const name in mustaches) {
+          const property = mustaches[name];
+          if (property in scope) {
+            _set(node, name, scope[property], controller);
+          }
+        }
+      }
+    }
+  }
+};
+
+const _set = function(node, property, value, controller) {
+  // TODO(sjmiles): the property conditionals here could be precompiled
+  const modifier = property.slice(-1);
+  if (property === 'style%' || property === 'style' || property === 'xen:style') {
+    if (typeof value === 'string') {
+      node.style.cssText = value;
+    } else {
+      Object.assign(node.style, value);
+    }
+  } else if (modifier == '$') {
+    const n = property.slice(0, -1);
+    if (typeof value === 'boolean' || value === undefined) {
+      setBoolAttribute(node, n, Boolean(value));
+    } else {
+      node.setAttribute(n, value);
+    }
+  } else if (property === 'textContent') {
+    if (value && (value.$template || value.template)) {
+      _setSubTemplate(node, value, controller);
+    } else {
+      node.textContent = (value || '');
+    }
+  } else if (property === 'unsafe-html') {
+    node.innerHTML = value || '';
+  } else if (property === 'value') {
+    // TODO(sjmiles): specifically dirty-check `value` to avoid resetting input elements
+    if (node.value !== value) {
+      node.value = value;
+    }
+  } else {
+    node[property] = value;
+  }
+};
+
+const setBoolAttribute = function(node, attr, state) {
+  node[
+    (state === undefined ? !node.hasAttribute(attr) : state)
+      ? 'setAttribute'
+      : 'removeAttribute'
+  ](attr, '');
+};
+
+const _setSubTemplate = function(node, value, controller) {
+  // TODO(sjmiles): subtemplate iteration ability specially implemented to support arcs (serialization boundary)
+  // TODO(sjmiles): Aim to re-implement as a plugin.
+  let {template, models} = value;
+  if (!template) {
+    const container = node.getRootNode();
+    template = container.querySelector(`template[${value.$template}]`);
+  } else {
+    template = maybeStringToTemplate(template);
+  }
+  _renderSubtemplates(node, controller, template, models);
+};
+
+const _renderSubtemplates = function(container, controller, template, models) {
+  //console.log('XList::_renderList:', props);
+  let child = container.firstElementChild;
+  let next;
+  if (template && models) {
+    models && models.forEach((model, i)=>{
+      next = child && child.nextElementSibling;
+      // use existing node if possible
+      if (!child) {
+        const dom = stamp(template).events(controller);
+        child = dom.root.firstElementChild;
+        if (child) {
+          child._subtreeDom = dom;
+          container.appendChild(child);
+          if (!template._shapeWarning && dom.root.firstElementChild) {
+            template._shapeWarning = true;
+            console.warn(`xen-template: subtemplate has multiple root nodes: only the first is used.`, template);
+          }
+        }
+      }
+      if (child) {
+        child._subtreeDom.set(model);
+        child = next;
+      }
+    });
+  }
+  // remove extra nodes
+  while (child) {
+    next = child.nextElementSibling;
+    child.remove();
+    child = next;
+  }
+};
+
+//window.stampCount = 0;
+//window.stampTime = 0;
+
+const stamp = function(template, opts) {
+  //const startTime = performance.now();
+  //window.stampCount++;
+  template = maybeStringToTemplate(template);
+  // construct (or use memoized) notes
+  const notes = annotate(template, opts);
+  // CRITICAL TIMING ISSUE #1:
+  // importNode can have side-effects, like CustomElement callbacks (before we
+  // can do any work on the imported subtree, before we can mapEvents, e.g.).
+  // we could clone into an inert document (say a new template) and process the nodes
+  // before importing if necessary.
+  const root = document.importNode(template.content, true);
+  // map DOM to keys
+  const map = locateNodes(root, notes.locator);
+  // return dom manager
+  const dom = {
+    root,
+    notes,
+    map,
+    $(slctr) {
+      return this.root.querySelector(slctr);
+    },
+    set: function(scope) {
+      scope && set(notes, map, scope, this.controller);
+      return this;
+    },
+    events: function(controller) {
+      // TODO(sjmiles): originally `controller` was expected to be an Object with event handler
+      // methods on it (typically a custom-element stamping a template).
+      // In Arcs, we want to attach a generic handler (Function) for any event on this node.
+      // Subtemplate stamping gets involved because they need to reuse whichever controller.
+      // I suspect this can be simplified, but right now I'm just making it go.
+      if (controller && typeof controller !== 'function') {
+        controller = listen.bind(this, controller);
+      }
+      this.controller = controller;
+      if (controller) {
+        mapEvents(notes, map, controller);
+      }
+      return this;
+    },
+    appendTo: function(node) {
+      if (this.root) {
+        // TODO(sjmiles): assumes this.root is a fragment
+        node.appendChild(this.root);
+      } else {
+        console.warn('Xen: cannot appendTo, template stamped no DOM');
+      }
+      // TODO(sjmiles): this.root is no longer a fragment
+      this.root = node;
+      return this;
+    }
+  };
+  //window.stampTime += performance.now() - startTime;
+  return dom;
+};
+
+const maybeStringToTemplate = template => {
+  // TODO(sjmiles): need to memoize this somehow
+  return (typeof template === 'string') ? createTemplate(template) : template;
+};
+
+const createTemplate = innerHTML => {
+  return Object.assign(document.createElement('template'), {innerHTML});
+};
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  createTemplate,
+  setBoolAttribute,
+  stamp
+});
+
+
+/***/ }),
+
 /***/ "./node_modules/@firebase/app/dist/index.cjs.js":
 /*!******************************************************!*\
   !*** ./node_modules/@firebase/app/dist/index.cjs.js ***!
@@ -66248,7 +66864,7 @@ class DomParticleBase extends _ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _shell_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shell/components/xen/xen-state.js */ "./shell/components/xen/xen-state.js");
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modalities/dom/components/xen/xen-state.js */ "./modalities/dom/components/xen/xen-state.js");
 /* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dom-particle-base.js */ "./runtime/dom-particle-base.js");
 /**
  * @license
@@ -66268,7 +66884,7 @@ __webpack_require__.r(__webpack_exports__);
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
-class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__["XenStateMixin"])(_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__["DomParticleBase"]) {
+class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__["XenStateMixin"])(_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__["DomParticleBase"]) {
   constructor() {
     super();
     // alias properties to remove `_`
@@ -78079,8 +78695,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotDomConsumer", function() { return SlotDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-consumer.js */ "./runtime/ts-build/slot-consumer.js");
-/* harmony import */ var _shell_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shell/components/xen/xen-template.js */ "./shell/components/xen/xen-template.js");
-/* harmony import */ var _shell_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../shell/components/icons.css.js */ "./shell/components/icons.css.js");
+/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../modalities/dom/components/xen/xen-template.js */ "./modalities/dom/components/xen/xen-template.js");
+/* harmony import */ var _modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../modalities/dom/components/icons.css.js */ "./modalities/dom/components/icons.css.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -78129,7 +78745,7 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         // TODO(sjmiles): introduce tree scope
         newContainer.attachShadow({ mode: `open` });
         // provision basic stylesheet
-        _shell_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["default"].stamp(`<style>${_shell_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__["default"]}</style>`).appendTo(newContainer.shadowRoot);
+        _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["default"].stamp(`<style>${_modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__["default"]}</style>`).appendTo(newContainer.shadowRoot);
         // TODO(sjmiles): maybe inject boilerplate styles
         return newContainer.shadowRoot;
     }
@@ -78274,7 +78890,7 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         if (!rendering.liveDom) {
             // TODO(sjmiles): hack to allow subtree elements (e.g. x-list) to marshal events
             rendering.container._eventMapper = this._eventMapper.bind(this, this.eventHandler);
-            rendering.liveDom = _shell_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["default"]
+            rendering.liveDom = _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["default"]
                 .stamp(template)
                 .events(rendering.container._eventMapper)
                 .appendTo(rendering.container);
@@ -86011,615 +86627,6 @@ function setDiffCustom(from, to, keyFn) {
     return result;
 }
 //# sourceMappingURL=util.js.map
-
-/***/ }),
-
-/***/ "./shell/components/icons.css.js":
-/*!***************************************!*\
-  !*** ./shell/components/icons.css.js ***!
-  \***************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = (`icon {
-    font-family: "Material Icons";
-    font-size: 24px;
-    font-style: normal;
-    -webkit-font-feature-settings: "liga";
-    -webkit-font-smoothing: antialiased;
-    /*vertical-align: middle;*/
-    cursor: pointer;
-    user-select: none;
-    flex-shrink: 0;
-    /* partial FOUC prevention */
-    width: 24px;
-    height: 24px;
-    overflow: hidden;;
-  }`);
-
-
-/***/ }),
-
-/***/ "./shell/components/xen/xen-state.js":
-/*!*******************************************!*\
-  !*** ./shell/components/xen/xen-state.js ***!
-  \*******************************************/
-/*! exports provided: XenStateMixin, nob, debounce */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "XenStateMixin", function() { return XenStateMixin; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nob", function() { return nob; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "debounce", function() { return debounce; });
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-const nob = () => Object.create(null);
-
-const debounce = (key, action, delay) => {
-  if (key) {
-    clearTimeout(key);
-  }
-  if (action && delay) {
-    return setTimeout(action, delay);
-  }
-};
-
-const XenStateMixin = Base => class extends Base {
-  constructor() {
-    super();
-    this._pendingProps = nob();
-    this._props = this._getInitialProps() || nob();
-    this._lastProps = nob();
-    this._state = this._getInitialState() || nob();
-    this._lastState = nob();
-  }
-  _getInitialProps() {
-  }
-  _getInitialState() {
-  }
-  _getProperty(name) {
-    return this._pendingProps[name] || this._props[name];
-  }
-  _setProperty(name, value) {
-    // dirty checking opportunity
-    if (this._validator || this._wouldChangeProp(name, value)) {
-      this._pendingProps[name] = value;
-      this._invalidateProps();
-    }
-  }
-  _wouldChangeValue(map, name, value) {
-    // TODO(sjmiles): fundamental dirty-checking issue here. Can be overridden to change
-    // behavior, but the default implementation will use strict reference checking.
-    // To modify structured values one must create a new Object with the new values.
-    // See `_setImmutableState`.
-    return (map[name] !== value);
-    // TODO(sjmiles): an example of dirty-checking that instead simply punts on structured data
-    //return (typeof value === 'object') || (map[name] !== value);
-  }
-  _wouldChangeProp(name, value) {
-    return this._wouldChangeValue(this._props, name, value);
-  }
-  _wouldChangeState(name, value) {
-    return this._wouldChangeValue(this._state, name, value);
-  }
-  _setProps(props) {
-    // TODO(sjmiles): should be a replace instead of a merge?
-    Object.assign(this._pendingProps, props);
-    this._invalidateProps();
-  }
-  _invalidateProps() {
-    this._propsInvalid = true;
-    this._invalidate();
-  }
-  _setImmutableState(name, value) {
-    if (typeof name === 'object') {
-      console.warn('Xen:: _setImmutableState takes name and value args for a single property, dictionaries not supported.');
-      value = Object.values(name)[0];
-      name = Object.names(name)[0];
-    }
-    if (typeof value === 'object') {
-      value = Object.assign(Object.create(null), value);
-    }
-    this._state[name] = value;
-    this._invalidate();
-  }
-  _setState(object) {
-    let dirty = false;
-    const state = this._state;
-    for (const property in object) {
-      const value = object[property];
-      if (this._wouldChangeState(property, value)) {
-        dirty = true;
-        state[property] = value;
-      }
-    }
-    if (dirty) {
-      this._invalidate();
-      return true;
-    }
-  }
-  // TODO(sjmiles): deprecated
-  _setIfDirty(object) {
-    return this._setState(object);
-  }
-  _async(fn) {
-    return Promise.resolve().then(fn.bind(this));
-    //return setTimeout(fn.bind(this), 10);
-  }
-  _invalidate() {
-    if (!this._validator) {
-      this._validator = this._async(this._validate);
-    }
-  }
-  _getStateArgs() {
-    return [this._props, this._state, this._lastProps, this._lastState];
-  }
-  _validate() {
-    const stateArgs = this._getStateArgs();
-    // try..catch to ensure we nullify `validator` before return
-    try {
-      // TODO(sjmiles): should be a replace instead of a merge
-      Object.assign(this._props, this._pendingProps);
-      if (this._propsInvalid) {
-        // TODO(sjmiles): should/can have different timing from rendering?
-        this._willReceiveProps(...stateArgs);
-        this._propsInvalid = false;
-      }
-      if (this._shouldUpdate(...stateArgs)) {
-        // TODO(sjmiles): consider throttling update to rAF
-        this._ensureMount();
-        this._doUpdate(...stateArgs);
-      }
-    } catch (x) {
-      console.error(x);
-    }
-    // nullify validator _after_ methods so state changes don't reschedule validation
-    this._validator = null;
-    // save the old props and state
-    this._lastProps = Object.assign(nob(), this._props);
-    this._lastState = Object.assign(nob(), this._state);
-  }
-  _doUpdate(...stateArgs) {
-    this._update(...stateArgs);
-    this._didUpdate(...stateArgs);
-  }
-  _ensureMount() {
-  }
-  _willReceiveProps() {
-  }
-  _shouldUpdate() {
-    return true;
-  }
-  _update() {
-  }
-  _didUpdate() {
-  }
-  _debounce(key, func, delay) {
-    key = `_debounce_${key}`;
-    this._state[key] = debounce(this._state[key], func, delay != null ? delay : 16);
-  }
-};
-
-
-
-
-/***/ }),
-
-/***/ "./shell/components/xen/xen-template.js":
-/*!**********************************************!*\
-  !*** ./shell/components/xen/xen-template.js ***!
-  \**********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/*
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-// HTMLImports compatibility stuff, delete soonish
-if (typeof document !== 'undefined' && !('currentImport' in document)) {
-  Object.defineProperty(document, 'currentImport', {
-    get() {
-      const script = this.currentScript;
-      let doc = script.ownerDocument || this;
-      // this code for CEv1 compatible HTMLImports polyfill (aka modern)
-      if (window['HTMLImports']) {
-        doc = window.HTMLImports.importForElement(script);
-        doc.URL = script.parentElement.href;
-      }
-      return doc;
-    }
-  });
-}
-
-/* Annotator */
-// tree walker that generates arbitrary data using visitor function `cb`
-// `cb` is called as `cb(node, key, notes)`
-// where
-//   `node` is a visited node.
-//   `key` is a handle which identifies the node in a map generated by `Annotator.locateNodes`.
-class Annotator {
-  constructor(cb) {
-    this.cb = cb;
-  }
-  // For subtree at `node`, produce annotation object `notes`.
-  // the content of `notes` is completely determined by the behavior of the
-  // annotator callback function supplied at the constructor.
-  annotate(node, notes, opts) {
-    this.notes = notes;
-    this.opts = opts || 0;
-    this.key = this.opts.key || 0;
-    notes.locator = this._annotateSubtree(node);
-    return notes;
-  }
-  // walking subtree at `node`
-  _annotateSubtree(node) {
-    let childLocators;
-    for (let i = 0, child = node.firstChild, previous = null, neo; child; i++) {
-      // returns a locator only if a node in the subtree requires one
-      const childLocator = this._annotateNode(child);
-      // only when necessary, maintain a sparse array of locators
-      if (childLocator) {
-        (childLocators = childLocators || {})[i] = childLocator;
-      }
-      // `child` may have been evacipated by visitor
-      neo = previous ? previous.nextSibling : node.firstChild;
-      if (neo === child) {
-        previous = child;
-        child = child.nextSibling;
-      } else {
-        child = neo;
-        i--;
-      }
-    }
-    // is falsey unless there was at least one childLocator
-    return childLocators;
-  }
-  _annotateNode(node) {
-    // visit node
-    const key = this.key++;
-    const shouldLocate = this.cb(node, key, this.notes, this.opts);
-    // recurse
-    const locators = this._annotateSubtree(node);
-    if (shouldLocate || locators) {
-      const cl = Object.create(null);
-      cl.key = key;
-      if (locators) {
-        cl.sub = locators;
-      }
-      return cl;
-    }
-  }
-}
-
-const locateNodes = function(root, locator, map) {
-  map = map || [];
-  for (const n in locator) {
-    const loc = locator[n];
-    if (loc) {
-      const node = root.childNodes[n];
-      // TODO(sjmiles): text-nodes sometimes evacipate when stamped, so map to the parentElement instead
-      map[loc.key] = (node.nodeType === Node.TEXT_NODE) ? node.parentElement : node;
-      if (loc.sub) {
-        // recurse
-        locateNodes(node, loc.sub, map);
-      }
-    }
-  }
-  return map;
-};
-
-/* Annotation Producer */
-// must return `true` for any node whose key we wish to track
-const annotatorImpl = function(node, key, notes, opts) {
-  // hook
-  if (opts.annotator && opts.annotator(node, key, notes, opts)) {
-    return true;
-  }
-  // default
-  switch (node.nodeType) {
-    case Node.DOCUMENT_FRAGMENT_NODE:
-      return;
-    case Node.ELEMENT_NODE:
-      return annotateElementNode(node, key, notes);
-    case Node.TEXT_NODE:
-      return annotateTextNode(node, key, notes);
-  }
-};
-
-const annotateTextNode = function(node, key, notes) {
-  if (annotateMustache(node, key, notes, 'textContent', node.textContent)) {
-    node.textContent = '';
-    return true;
-  }
-};
-
-const annotateElementNode = function(node, key, notes) {
-  if (node.hasAttributes()) {
-    let noted = false;
-    for (let a$ = node.attributes, i = a$.length - 1, a; i >= 0 && (a = a$[i]); i--) {
-      if (
-        annotateEvent(node, key, notes, a.name, a.value) ||
-        annotateMustache(node, key, notes, a.name, a.value)
-      ) {
-        node.removeAttribute(a.name);
-        noted = true;
-      }
-    }
-    return noted;
-  }
-};
-
-const annotateMustache = function(node, key, notes, property, mustache) {
-  if (mustache.slice(0, 2) === '{{') {
-    if (property === 'class') {
-      property = 'className';
-    }
-    let value = mustache.slice(2, -2);
-    const override = value.split(':');
-    if (override.length === 2) {
-      property = override[0];
-      value = override[1];
-    }
-    takeNote(notes, key, 'mustaches', property, value);
-    if (value[0] === '$') {
-      takeNote(notes, 'xlate', value, true);
-    }
-    return true;
-  }
-};
-
-const annotateEvent = function(node, key, notes, name, value) {
-  if (name.slice(0, 3) === 'on-') {
-    if (value.slice(0, 2) === '{{') {
-      value = value.slice(2, -2);
-      console.warn(
-        `Xen: event handler for '${name}' expressed as a mustache, which is not supported. Using literal value '${value}' instead.`
-      );
-    }
-    takeNote(notes, key, 'events', name.slice(3), value);
-    return true;
-  }
-};
-
-const takeNote = function(notes, key, group, name, note) {
-  const n$ = notes[key] || (notes[key] = Object.create(null));
-  (n$[group] || (n$[group] = {}))[name] = note;
-};
-
-const annotator = new Annotator(annotatorImpl);
-
-const annotate = function(root, key, opts) {
-  return (root._notes ||
-    (root._notes = annotator.annotate(root.content, {/*ids:{}*/}, key, opts))
-  );
-};
-
-/* Annotation Consumer */
-const mapEvents = function(notes, map, mapper) {
-  // add event listeners
-  for (const key in notes) {
-    const node = map[key];
-    const events = notes[key] && notes[key].events;
-    if (node && events) {
-      for (const name in events) {
-        mapper(node, name, events[name]);
-      }
-    }
-  }
-};
-
-const listen = function(controller, node, eventName, handlerName) {
-  node.addEventListener(eventName, function(e) {
-    if (controller[handlerName]) {
-      return controller[handlerName](e, e.detail);
-    }
-  });
-};
-
-const set = function(notes, map, scope, controller) {
-  if (scope) {
-    for (const key in notes) {
-      const node = map[key];
-      if (node) {
-        // everybody gets a scope
-        node.scope = scope;
-        // now get your regularly scheduled bindings
-        const mustaches = notes[key].mustaches;
-        for (const name in mustaches) {
-          const property = mustaches[name];
-          if (property in scope) {
-            _set(node, name, scope[property], controller);
-          }
-        }
-      }
-    }
-  }
-};
-
-const _set = function(node, property, value, controller) {
-  // TODO(sjmiles): the property conditionals here could be precompiled
-  const modifier = property.slice(-1);
-  if (property === 'style%' || property === 'style' || property === 'xen:style') {
-    if (typeof value === 'string') {
-      node.style.cssText = value;
-    } else {
-      Object.assign(node.style, value);
-    }
-  } else if (modifier == '$') {
-    const n = property.slice(0, -1);
-    if (typeof value === 'boolean' || value === undefined) {
-      setBoolAttribute(node, n, Boolean(value));
-    } else {
-      node.setAttribute(n, value);
-    }
-  } else if (property === 'textContent') {
-    if (value && (value.$template || value.template)) {
-      _setSubTemplate(node, value, controller);
-    } else {
-      node.textContent = (value || '');
-    }
-  } else if (property === 'unsafe-html') {
-    node.innerHTML = value || '';
-  } else if (property === 'value') {
-    // TODO(sjmiles): specifically dirty-check `value` to avoid resetting input elements
-    if (node.value !== value) {
-      node.value = value;
-    }
-  } else {
-    node[property] = value;
-  }
-};
-
-const setBoolAttribute = function(node, attr, state) {
-  node[
-    (state === undefined ? !node.hasAttribute(attr) : state)
-      ? 'setAttribute'
-      : 'removeAttribute'
-  ](attr, '');
-};
-
-const _setSubTemplate = function(node, value, controller) {
-  // TODO(sjmiles): subtemplate iteration ability specially implemented to support arcs (serialization boundary)
-  // TODO(sjmiles): Aim to re-implement as a plugin.
-  let {template, models} = value;
-  if (!template) {
-    const container = node.getRootNode();
-    template = container.querySelector(`template[${value.$template}]`);
-  } else {
-    template = maybeStringToTemplate(template);
-  }
-  _renderSubtemplates(node, controller, template, models);
-};
-
-const _renderSubtemplates = function(container, controller, template, models) {
-  //console.log('XList::_renderList:', props);
-  let child = container.firstElementChild;
-  let next;
-  if (template && models) {
-    models && models.forEach((model, i)=>{
-      next = child && child.nextElementSibling;
-      // use existing node if possible
-      if (!child) {
-        const dom = stamp(template).events(controller);
-        child = dom.root.firstElementChild;
-        if (child) {
-          child._subtreeDom = dom;
-          container.appendChild(child);
-          if (!template._shapeWarning && dom.root.firstElementChild) {
-            template._shapeWarning = true;
-            console.warn(`xen-template: subtemplate has multiple root nodes: only the first is used.`, template);
-          }
-        }
-      }
-      if (child) {
-        child._subtreeDom.set(model);
-        child = next;
-      }
-    });
-  }
-  // remove extra nodes
-  while (child) {
-    next = child.nextElementSibling;
-    child.remove();
-    child = next;
-  }
-};
-
-//window.stampCount = 0;
-//window.stampTime = 0;
-
-const stamp = function(template, opts) {
-  //const startTime = performance.now();
-  //window.stampCount++;
-  template = maybeStringToTemplate(template);
-  // construct (or use memoized) notes
-  const notes = annotate(template, opts);
-  // CRITICAL TIMING ISSUE #1:
-  // importNode can have side-effects, like CustomElement callbacks (before we
-  // can do any work on the imported subtree, before we can mapEvents, e.g.).
-  // we could clone into an inert document (say a new template) and process the nodes
-  // before importing if necessary.
-  const root = document.importNode(template.content, true);
-  // map DOM to keys
-  const map = locateNodes(root, notes.locator);
-  // return dom manager
-  const dom = {
-    root,
-    notes,
-    map,
-    $(slctr) {
-      return this.root.querySelector(slctr);
-    },
-    set: function(scope) {
-      scope && set(notes, map, scope, this.controller);
-      return this;
-    },
-    events: function(controller) {
-      // TODO(sjmiles): originally `controller` was expected to be an Object with event handler
-      // methods on it (typically a custom-element stamping a template).
-      // In Arcs, we want to attach a generic handler (Function) for any event on this node.
-      // Subtemplate stamping gets involved because they need to reuse whichever controller.
-      // I suspect this can be simplified, but right now I'm just making it go.
-      if (controller && typeof controller !== 'function') {
-        controller = listen.bind(this, controller);
-      }
-      this.controller = controller;
-      if (controller) {
-        mapEvents(notes, map, controller);
-      }
-      return this;
-    },
-    appendTo: function(node) {
-      if (this.root) {
-        // TODO(sjmiles): assumes this.root is a fragment
-        node.appendChild(this.root);
-      } else {
-        console.warn('Xen: cannot appendTo, template stamped no DOM');
-      }
-      // TODO(sjmiles): this.root is no longer a fragment
-      this.root = node;
-      return this;
-    }
-  };
-  //window.stampTime += performance.now() - startTime;
-  return dom;
-};
-
-const maybeStringToTemplate = template => {
-  // TODO(sjmiles): need to memoize this somehow
-  return (typeof template === 'string') ? createTemplate(template) : template;
-};
-
-const createTemplate = innerHTML => {
-  return Object.assign(document.createElement('template'), {innerHTML});
-};
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  createTemplate,
-  setBoolAttribute,
-  stamp
-});
-
 
 /***/ }),
 
