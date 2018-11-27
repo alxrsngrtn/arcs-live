@@ -1,5 +1,5 @@
-commit 89510f4ffdefd16a15e735eed6549cc717466f3b
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Nov 27 11:18:59 2018 +1100
+commit 48b69e87baf834bf934792ecd46cfeed461288bb
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Nov 26 16:51:05 2018 -0800
 
-    Don't send empty generations to Strategy Explorer (#2312)
+    Default to `debug=true` planificator, if using volatile storage. (#2315)
