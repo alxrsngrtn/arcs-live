@@ -1,13 +1,10 @@
-/// <reference types="pouchdb-find" />
-/// <reference types="pouchdb-core" />
-/// <reference types="pouchdb-mapreduce" />
-/// <reference types="pouchdb-replication" />
 import { StorageBase } from '../storage-provider-base.js';
 import { PouchDbKey } from './pouch-db-key.js';
 import { Id } from '../../id.js';
 import { Type } from '../../type.js';
 import { PouchDbCollection } from './pouch-db-collection.js';
 import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
+import PouchDB from 'pouchdb';
 export declare class PouchDbStorage extends StorageBase {
     /**
      * A map of the key location to the actual provider.

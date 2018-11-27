@@ -77,6 +77,7 @@ class GCPDisk {
 class BetaCompute extends Compute {
     constructor(options) {
         super(options);
+        this.packageJson = {};
         options = common.util.normalizeArguments(this, options);
         const config = {
             baseUrl: 'https://www.googleapis.com/compute/beta',

@@ -1,12 +1,9 @@
-/// <reference types="pouchdb-find" />
-/// <reference types="pouchdb-core" />
-/// <reference types="pouchdb-mapreduce" />
-/// <reference types="pouchdb-replication" />
 import { StorageProviderBase } from '../storage-provider-base.js';
 import { PouchDbCollection } from './pouch-db-collection.js';
 import { PouchDbStorage } from './pouch-db-storage.js';
 import { PouchDbKey } from './pouch-db-key.js';
 import { Type } from '../../type.js';
+import PouchDB from 'pouchdb';
 /**
  * Base class for PouchDb related Storage classes
  * (PouchDbVariable/PouchDbCollection)

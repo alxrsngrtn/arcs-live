@@ -1,7 +1,7 @@
-/// <reference types="pouchdb-core" />
 import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 import { Type } from '../../type.js';
 import { PouchDbStorage } from './pouch-db-storage';
+import PouchDB from 'pouchdb';
 export declare class PouchDbCollection extends PouchDbStorageProvider {
     /** The local synced model */
     private _model;

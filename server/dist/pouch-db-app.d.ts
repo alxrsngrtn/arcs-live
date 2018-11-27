@@ -1,5 +1,3 @@
-import express from 'express';
-import { Runtime } from 'arcs';
 import { AppBase } from './app-base';
 /**
  * An app server that additionally configures a pouchdb.
@@ -11,8 +9,6 @@ import { AppBase } from './app-base';
  * - `STORAGE_KEY_BASE` default is `pouchdb://localhost:8080/user`
  */
 declare class PouchDbApp extends AppBase {
-    express: express.Application;
-    runtime: Runtime;
     private static readonly storageKeyBase;
     private static readonly userId;
     startBackgroundProcessing(): void;

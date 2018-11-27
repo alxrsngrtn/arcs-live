@@ -1,7 +1,12 @@
-commit 0e2d54d16da2371a2e352584cbd2f7bb40e0d7cb
+commit 3ebae2dc83d81d29cc92b7d49084f01d423f124b
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Nov 27 09:43:53 2018 -0800
+Date:   Tue Nov 27 13:33:48 2018 -0800
 
-    Convert recipe-index.js to typescript (#2320)
+    Strict updates for server (#2319)
     
-    Addresses #1765
+    - Add noImplicitThis to main config (already compliant)
+    - Add strictPropertyInitialization to server
+    - Update package-lock.json
+    - Move to fine-grained pouchdb @types
+    - Add @types/cors, @types/node-fetch, @types/request, @types/websocket
+    - Fix most 'implicit any' usage in server.
