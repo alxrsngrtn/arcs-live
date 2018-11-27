@@ -52,7 +52,7 @@ export class PlanConsumer {
         if (await this.result.deserialize(value)) {
             this._onSuggestionsChanged();
             this._onMaybeSuggestionsChanged(previousSuggestions);
-            if (this.result.generations && DevtoolsConnection.isConnected) {
+            if (this.result.generations.length && DevtoolsConnection.isConnected) {
                 StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get());
             }
         }

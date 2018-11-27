@@ -1,9 +1,5 @@
-commit 86a64c9bd3a568cfe96b9789fb5c25189a839a85
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Nov 26 16:08:23 2018 -0800
+commit 89510f4ffdefd16a15e735eed6549cc717466f3b
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Nov 27 11:18:59 2018 +1100
 
-    Restaurants work (0_6_0) (#2311)
-    
-    * merge Reservations and Restaurants, disable coalescer recipes in favor of demo, enable RestaurantDetail
-    
-    * install ReservationForm
+    Don't send empty generations to Strategy Explorer (#2312)

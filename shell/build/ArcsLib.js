@@ -72413,7 +72413,7 @@ class PlanConsumer {
         if (await this.result.deserialize(value)) {
             this._onSuggestionsChanged();
             this._onMaybeSuggestionsChanged(previousSuggestions);
-            if (this.result.generations && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected) {
+            if (this.result.generations.length && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected) {
                 _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get());
             }
         }
