@@ -1,10 +1,9 @@
-commit 3cf1aec9aecc1e456d0532ab5527fa27ea3b87eb
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Nov 26 18:19:16 2018 -0800
+commit a563a7c5c7a0d778129b2f4aad398e2dcaa0a7e1
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Nov 26 20:10:47 2018 -0800
 
-    Convert suggest-dom-consumer to typescript (#2316)
+    specify exact slot bindings to avoid duplicate recipe (#2317)
     
-    - Adjust SlotConsumer to take optional arguments in places.
-    - Use spread instead of Object.assign
-    - introduce addRenderingBySubId to avoid exposing private instance variables
-    - Fix incorrect typing in suggestion-composer
+    * specify exact slot bindings to avoid duplicate recipe
+    
+    * remove unnecessary slot bingings and comments
