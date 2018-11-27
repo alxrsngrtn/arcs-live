@@ -1,10 +1,9 @@
-commit 4eab0bc808e22ac89f215faf7d3307d24fb457af
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Nov 26 15:29:37 2018 -0800
+commit 86a64c9bd3a568cfe96b9789fb5c25189a839a85
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Nov 26 16:08:23 2018 -0800
 
-    Refactor for better background processing abstraction (#2309)
+    Restaurants work (0_6_0) (#2311)
     
-    - Move AppBase to app-base.ts for consistency
-    - Create a new lifecycle method on AppBase for background processing
-    - Return AppBase to top level controller instead of express object.
-    - Call background processing in the onListening callback
+    * merge Reservations and Restaurants, disable coalescer recipes in favor of demo, enable RestaurantDetail
+    
+    * install ReservationForm
