@@ -1,5 +1,9 @@
-commit 48b69e87baf834bf934792ecd46cfeed461288bb
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Nov 26 16:51:05 2018 -0800
+commit 9288dae07cb6556ab28bc34e5b74b9827d88a725
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Nov 26 17:13:20 2018 -0800
 
-    Default to `debug=true` planificator, if using volatile storage. (#2315)
+    Move fetch to platform directory for consistency (#2310)
+    
+    * Move fetch to platform directory for consistency
+    
+    * add missing usage of fetch-node

@@ -56426,6 +56426,34 @@ async function digest(str) {
 
 /***/ }),
 
+/***/ "./platform/fetch-web.js":
+/*!*******************************!*\
+  !*** ./platform/fetch-web.js ***!
+  \*******************************/
+/*! exports provided: fetch */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetch", function() { return local_fetch; });
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+// 'export default fetch' works because 'fetch' is evaluated as an expression, which finds the
+// appropriate global definition - but we don't want to use default exports.
+// 'export {fetch}' doesn't work because 'fetch' is just a name in that context and is not defined.
+// So we need to use an expression to find the global fetch function then map that for export.
+
+const local_fetch = fetch;
+
+
+
+/***/ }),
+
 /***/ "./platform/fs-web.js":
 /*!****************************!*\
   !*** ./platform/fs-web.js ***!
@@ -66186,34 +66214,6 @@ class DomParticle extends Object(_shell_components_xen_xen_state_js__WEBPACK_IMP
 
 /***/ }),
 
-/***/ "./runtime/fetch-web.js":
-/*!******************************!*\
-  !*** ./runtime/fetch-web.js ***!
-  \******************************/
-/*! exports provided: fetch */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetch", function() { return local_fetch; });
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-// 'export default fetch' works because 'fetch' is evaluated as an expression, which finds the
-// appropriate global definition - but we don't want to use default exports.
-// 'export {fetch}' doesn't work because 'fetch' is just a name in that context and is not defined.
-// So we need to use an expression to find the global fetch function then map that for export.
-
-const local_fetch = fetch;
-
-
-
-/***/ }),
-
 /***/ "./runtime/firebase.js":
 /*!*****************************!*\
   !*** ./runtime/firebase.js ***!
@@ -70033,7 +70033,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
 /* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/fs-web.js */ "./platform/fs-web.js");
 /* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/vm-web.js */ "./platform/vm-web.js");
-/* harmony import */ var _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../fetch-web.js */ "./runtime/fetch-web.js");
+/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../platform/fetch-web.js */ "./platform/fetch-web.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./particle.js */ "./runtime/ts-build/particle.js");
 /* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../dom-particle.js */ "./runtime/dom-particle.js");
@@ -70114,11 +70114,11 @@ class Loader {
     _loadURL(url) {
         if (/\/\/schema.org\//.test(url)) {
             if (url.endsWith('/Thing')) {
-                return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data, { '@id': 'schema:Thing' }));
+                return Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])('https://schema.org/Product.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data, { '@id': 'schema:Thing' }));
             }
-            return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url + '.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data));
+            return Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url + '.jsonld').then(res => res.text()).then(data => _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__["JsonldToManifest"].convert(data));
         }
-        return Object(_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url).then(res => res.text());
+        return Object(_platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"])(url).then(res => res.text());
     }
     async loadParticleClass(spec) {
         const clazz = await this.requireParticle(spec.implFile);
@@ -70137,7 +70137,7 @@ class Loader {
                 result.push(particleWrapper);
             },
             console,
-            fetch: _fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"],
+            fetch: _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__["fetch"],
             setTimeout,
             importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
         };
