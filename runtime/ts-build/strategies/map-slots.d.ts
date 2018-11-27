@@ -1,7 +1,7 @@
 import { Strategy } from '../strategizer/strategizer.js';
 import { SlotConnection } from '../recipe/slot-connection.js';
 export declare class MapSlots extends Strategy {
-    generate(inputParams: any): Promise<import("../strategizer/strategizer.js").Descendant[]>;
+    generate(inputParams: any): any;
     static connectSlotConnection(slotConnection: any, selectedSlot: any): void;
     static findAllSlotCandidates(slotConnection: any, arc: any): {
         local: any;

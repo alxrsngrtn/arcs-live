@@ -129,6 +129,9 @@
 							<li>
 								<a href="coalescerecipes.html" class="tsd-signature-type">CoalesceRecipes</a>
 							</li>
+							<li>
+								<a href="relevantcontextrecipes.html" class="tsd-signature-type">RelevantContextRecipes</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
@@ -174,19 +177,19 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Strategy<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a>, args<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="strategy.html" class="tsd-signature-type">Strategy</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Strategy<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">?: </span><a href="arc.html" class="tsd-signature-type">Arc</a>, args<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="strategy.html" class="tsd-signature-type">Strategy</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a563a7c/runtime/ts/strategizer/strategizer.ts#L285">strategizer/strategizer.ts:285</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0e2d54d/runtime/ts/strategizer/strategizer.ts#L280">strategizer/strategizer.ts:280</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> args: <span class="tsd-signature-type">any</span></h5>
@@ -201,11 +204,11 @@
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_arc" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _arc</h3>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagOptional">Optional</span> _arc</h3>
 					<div class="tsd-signature tsd-kind-icon">_arc<span class="tsd-signature-symbol">:</span> <a href="arc.html" class="tsd-signature-type">Arc</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a563a7c/runtime/ts/strategizer/strategizer.ts#L284">strategizer/strategizer.ts:284</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0e2d54d/runtime/ts/strategizer/strategizer.ts#L279">strategizer/strategizer.ts:279</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -215,7 +218,7 @@
 					<div class="tsd-signature tsd-kind-icon">_args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a563a7c/runtime/ts/strategizer/strategizer.ts#L285">strategizer/strategizer.ts:285</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0e2d54d/runtime/ts/strategizer/strategizer.ts#L280">strategizer/strategizer.ts:280</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -226,16 +229,19 @@
 					<a name="arc" class="tsd-anchor"></a>
 					<h3>arc</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> arc<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> arc<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a563a7c/runtime/ts/strategizer/strategizer.ts#L291">strategizer/strategizer.ts:291</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0e2d54d/runtime/ts/strategizer/strategizer.ts#L286">strategizer/strategizer.ts:286</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="arc.html" class="tsd-signature-type">Arc</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="arc.html" class="tsd-signature-type">Arc</a>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">undefined</span>
+							</h4>
 						</li>
 					</ul>
 				</section>
@@ -252,7 +258,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a563a7c/runtime/ts/strategizer/strategizer.ts#L293">strategizer/strategizer.ts:293</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0e2d54d/runtime/ts/strategizer/strategizer.ts#L290">strategizer/strategizer.ts:290</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -275,7 +281,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a563a7c/runtime/ts/strategizer/strategizer.ts#L305">strategizer/strategizer.ts:305</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0e2d54d/runtime/ts/strategizer/strategizer.ts#L305">strategizer/strategizer.ts:305</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -301,7 +307,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a563a7c/runtime/ts/strategizer/strategizer.ts#L302">strategizer/strategizer.ts:302</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0e2d54d/runtime/ts/strategizer/strategizer.ts#L301">strategizer/strategizer.ts:301</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -324,7 +330,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a563a7c/runtime/ts/strategizer/strategizer.ts#L299">strategizer/strategizer.ts:299</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0e2d54d/runtime/ts/strategizer/strategizer.ts#L297">strategizer/strategizer.ts:297</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>

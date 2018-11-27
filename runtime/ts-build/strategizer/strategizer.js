@@ -7,13 +7,13 @@
 import { assert } from '../../../platform/assert-web.js';
 export class Strategizer {
     constructor(strategies, evaluators, ruleset) {
-        this._strategies = strategies;
-        this._evaluators = evaluators;
         this._generation = 0;
         this._internalPopulation = [];
         this._population = [];
         this._generated = [];
         this._terminal = [];
+        this._strategies = strategies;
+        this._evaluators = evaluators;
         this._ruleset = ruleset;
         this.populationHash = new Map();
     }
@@ -30,7 +30,7 @@ export class Strategizer {
         return this._generated;
     }
     /**
-     * @return   Individuals from the previous generation that were not descended from in the
+     * @return Individuals from the previous generation that were not descended from in the
      * current generation.
      */
     get terminal() {
@@ -229,7 +229,9 @@ export class Strategy {
         this._arc = arc;
         this._args = args;
     }
-    get arc() { return this._arc; }
+    get arc() {
+        return this._arc;
+    }
     async activate(strategizer) {
         // Returns estimated ability to generate/evaluate.
         // TODO: What do these numbers mean? Some sort of indication of the accuracy of the

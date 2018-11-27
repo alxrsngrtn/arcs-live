@@ -3,5 +3,5 @@ import { Arc } from '../arc';
 export declare class ConvertConstraintsToConnections extends Strategy {
     modality: string;
     constructor(arc: Arc, args?: any);
-    generate(inputParams: any): Promise<import("../strategizer/strategizer.js").Descendant[]>;
+    generate(inputParams: any): any;
 }

@@ -7,5 +7,5 @@ export declare class SearchTokensToParticles extends Strategy {
     getResults(inputParams: any): any[];
     private _addThing;
     private _addThingByToken;
-    generate(inputParams: any): Promise<import("../strategizer/strategizer.js").Descendant[]>;
+    generate(inputParams: any): any;
 }

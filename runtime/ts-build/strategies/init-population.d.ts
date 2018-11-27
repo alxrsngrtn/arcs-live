@@ -1,14 +1,15 @@
 import { Strategy } from '../strategizer/strategizer.js';
 import { Arc } from '../arc.js';
+import { Descendant } from '../strategizer/strategizer.js';
 export declare class InitPopulation extends Strategy {
     _contextual: boolean;
-    _loadedParticles: any;
+    _loadedParticles: Set<string>;
     constructor(arc: Arc, { contextual }: {
         contextual?: boolean;
     });
     generate({ generation }: {
-        generation: any;
-    }): Promise<any>;
+        generation: number;
+    }): Promise<Descendant[]>;
     private _contextualResults;
     private _allResults;
 }

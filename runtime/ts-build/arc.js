@@ -19,7 +19,7 @@ import { FakePecFactory } from './fake-pec-factory.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Id } from './id.js';
 import { ArcDebugHandler } from '../debug/arc-debug-handler.js';
-import { RecipeIndex } from '../recipe-index.js';
+import { RecipeIndex } from './recipe-index.js';
 export class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, recipeIndex }) {
         this.nextLocalID = 0;

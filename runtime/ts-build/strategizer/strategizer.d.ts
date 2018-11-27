@@ -7,20 +7,20 @@ export declare class Strategizer {
         fitness: number;
         individual: any;
     }[];
-    _population: any;
-    _generated: any;
+    _population: any[];
+    _generated: any[];
     _ruleset: Ruleset;
-    _terminal: any;
+    _terminal: any[];
     populationHash: any;
     constructor(strategies: Strategy[], evaluators: Strategy[], ruleset: Ruleset);
     readonly generation: number;
-    readonly population: any;
-    readonly generated: any;
+    readonly population: any[];
+    readonly generated: any[];
     /**
-     * @return   Individuals from the previous generation that were not descended from in the
+     * @return Individuals from the previous generation that were not descended from in the
      * current generation.
      */
-    readonly terminal: any;
+    readonly terminal: any[];
     generate(): Promise<{
         generation: number;
         sizeOfLastGeneration: number;
@@ -58,10 +58,10 @@ export declare abstract class StrategizerWalker {
     onStrategyDone(): void;
 }
 export declare abstract class Strategy {
-    private _arc;
+    private _arc?;
     private _args?;
-    constructor(arc: Arc, args?: any);
-    readonly arc: Arc;
+    constructor(arc?: Arc, args?: any);
+    readonly arc: Arc | undefined;
     activate(strategizer: any): Promise<{
         generate: number;
         evaluate: number;

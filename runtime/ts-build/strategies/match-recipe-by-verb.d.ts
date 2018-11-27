@@ -1,6 +1,6 @@
 import { Strategy } from '../strategizer/strategizer.js';
 export declare class MatchRecipeByVerb extends Strategy {
-    generate(inputParams: any): Promise<import("../strategizer/strategizer.js").Descendant[]>;
+    generate(inputParams: any): any;
     static satisfiesHandleConstraints(recipe: any, handleConstraints: any): boolean;
     static satisfiesUnnamedHandleConnection(recipe: any, handleData: any): boolean;
     static satisfiesHandleConnection(recipe: any, handleName: any, handleData: any): boolean;

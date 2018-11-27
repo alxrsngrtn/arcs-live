@@ -13,7 +13,7 @@ import { Manifest } from './manifest.js';
 import { Description } from './description.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Id } from './id.js';
-import { RecipeIndex } from '../recipe-index.js';
+import { RecipeIndex } from './recipe-index.js';
 import { Loader } from './loader.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { ParticleSpec } from './particle-spec.js';

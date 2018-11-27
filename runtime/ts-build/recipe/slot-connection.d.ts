@@ -28,7 +28,7 @@ export declare class SlotConnection {
     _normalize(): void;
     _compareTo(other: any): any;
     _isValid(options: any): boolean;
-    isResolved(options: any): boolean;
+    isResolved(options?: any): boolean;
     isConnectedToInternalSlot(): boolean;
     isConnectedToRemoteSlot(): boolean;
     isConnected(): boolean;

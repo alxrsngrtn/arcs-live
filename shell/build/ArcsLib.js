@@ -66463,355 +66463,6 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 
 /***/ }),
 
-/***/ "./runtime/recipe-index.js":
-/*!*********************************!*\
-  !*** ./runtime/recipe-index.js ***!
-  \*********************************/
-/*! exports provided: RecipeIndex */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeIndex", function() { return RecipeIndex; });
-/* harmony import */ var _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ts-build/manifest.js */ "./runtime/ts-build/manifest.js");
-/* harmony import */ var _ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/arc.js */ "./runtime/ts-build/arc.js");
-/* harmony import */ var _ts_build_slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/slot-composer.js */ "./runtime/ts-build/slot-composer.js");
-/* harmony import */ var _ts_build_strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ts-build/strategizer/strategizer.js */ "./runtime/ts-build/strategizer/strategizer.js");
-/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _ts_build_strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ts-build/strategies/convert-constraints-to-connections.js */ "./runtime/ts-build/strategies/convert-constraints-to-connections.js");
-/* harmony import */ var _ts_build_strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ts-build/strategies/match-free-handles-to-connections.js */ "./runtime/ts-build/strategies/match-free-handles-to-connections.js");
-/* harmony import */ var _ts_build_strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ts-build/strategies/resolve-recipe.js */ "./runtime/ts-build/strategies/resolve-recipe.js");
-/* harmony import */ var _ts_build_strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ts-build/strategies/create-handle-group.js */ "./runtime/ts-build/strategies/create-handle-group.js");
-/* harmony import */ var _ts_build_strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./ts-build/strategies/add-missing-handles.js */ "./runtime/ts-build/strategies/add-missing-handles.js");
-/* harmony import */ var _ts_build_strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./ts-build/strategies/rulesets.js */ "./runtime/ts-build/strategies/rulesets.js");
-/* harmony import */ var _ts_build_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./ts-build/strategies/map-slots.js */ "./runtime/ts-build/strategies/map-slots.js");
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
-/* harmony import */ var _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./ts-build/recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
-/* harmony import */ var _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./ts-build/recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _ts_build_plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./ts-build/plan/planning-result.js */ "./runtime/ts-build/plan/planning-result.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class RelevantContextRecipes extends _ts_build_strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategy"] {
-  constructor(context, modality) {
-    super();
-    this._recipes = [];
-    for (let recipe of context.allRecipes) {
-      if (modality && recipe.particles.find(p => p.spec && !p.spec.matchModality(modality)) !== undefined) {
-        continue;
-      }
-
-      recipe = recipe.clone();
-      const options = {errors: new Map()};
-      if (recipe.normalize(options)) {
-        this._recipes.push(recipe);
-      } else {
-        console.warn(`could not normalize a context recipe: ${[...options.errors.values()].join('\n')}.\n${recipe.toString()}`);
-      }
-    }
-  }
-
-  async generate({generation}) {
-    if (generation != 0) {
-      return [];
-    }
-
-    return this._recipes.map(recipe => ({
-      result: recipe,
-      score: 1,
-      derivation: [{strategy: this, parent: undefined}],
-      hash: recipe.digest(),
-      valid: Object.isFrozen(recipe),
-    }));
-  }
-}
-
-const IndexStrategies = [
-  _ts_build_strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__["ConvertConstraintsToConnections"],
-  _ts_build_strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__["AddMissingHandles"],
-  _ts_build_strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_8__["ResolveRecipe"],
-  _ts_build_strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__["MatchFreeHandlesToConnections"],
-  // This one is not in-line with 'transparent' interfaces, but it operates on
-  // recipes without looking at the context and cannot run after AddUseHandles.
-  // We will revisit this list when we take a stab at recipe interfaces.
-  _ts_build_strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__["CreateHandleGroup"]
-];
-
-class RecipeIndex {
-  constructor(context, loader, modality) {
-    const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__["Tracing"].start({cat: 'indexing', name: 'RecipeIndex::constructor', overview: true});
-    const arcStub = new _ts_build_arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"]({
-      id: 'index-stub',
-      context: new _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_0__["Manifest"]({id: 'empty-context'}),
-      loader,
-      slotComposer: modality ? new _ts_build_slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"]({modality, noRoot: true}) : null,
-      recipeIndex: {},
-      // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
-      speculative: true
-    });
-    const strategizer = new _ts_build_strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"](
-      [
-        new RelevantContextRecipes(context, modality),
-        ...IndexStrategies.map(S => new S(arcStub))
-      ],
-      [],
-      _ts_build_strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__["Empty"]
-    );
-    this.ready = trace.endWith(new Promise(async resolve => {
-      const generations = [];
-
-      do {
-        const record = await strategizer.generate();
-        generations.push({record, generated: strategizer.generated});
-      } while (strategizer.generated.length + strategizer.terminal.length > 0);
-
-      if (_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].isConnected) {
-        _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(
-            _ts_build_plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__["PlanningResult"].formatSerializableGenerations(generations), 
-            _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].get(), {label: 'Index', keep: true});
-      }
-
-      const population = strategizer.population;
-      const candidates = new Set(population);
-      for (const result of population) {
-        for (const deriv of result.derivation) {
-          if (deriv.parent) candidates.delete(deriv.parent);
-        }
-      }
-      this._recipes = [...candidates].map(r => r.result);
-      this._isReady = true;
-      resolve(true);
-    }));
-  }
-
-  get recipes() {
-    if (!this._isReady) throw Error('await on recipeIndex.ready before accessing');
-    return this._recipes;
-  }
-
-  ensureReady() {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(this._isReady, 'await on recipeIndex.ready before accessing');
-  }
-
-  // Given provided handle and requested fates, finds handles with
-  // matching type and requested fate.
-  findHandleMatch(handle, requestedFates) {
-    this.ensureReady();
-
-    const particleNames = handle.connections.map(conn => conn.particle.name);
-
-    const results = [];
-    for (const recipe of this._recipes) {
-      if (recipe.particles.some(particle => !particle.name)) {
-        // Skip recipes where not all verbs are resolved to specific particles
-        // to avoid trying to coalesce a recipe with itself.
-        continue;
-      }
-      for (const otherHandle of recipe.handles) {
-        if (requestedFates && !(requestedFates.includes(otherHandle.fate))) {
-          continue;
-        }
-
-        if (!this.doesHandleMatch(handle, otherHandle)) {
-          continue;
-        }
-
-        // If we're connecting the same sets of particles, that's probably not OK.
-        // This is a poor workaround for connecting the exact same recipes together, to be improved.
-        const otherParticleNames = otherHandle.connections.map(conn => conn.particle.name);
-        const connectedParticles = new Set([...particleNames, ...otherParticleNames]);
-        if (connectedParticles.size == particleNames.length
-            && particleNames.length == otherParticleNames.length) continue;
-
-        results.push(otherHandle);
-      }
-    }
-    return results;
-  }
-
-  doesHandleMatch(handle, otherHandle) {
-    if (Boolean(handle.id) && Boolean(otherHandle.id) && handle.id !== otherHandle.id) {
-      // Either at most one of the handles has an ID, or they are the same.
-      return false;
-    }
-    if (otherHandle.connections.length === 0 || otherHandle.name === 'descriptions') {
-      return false;
-    }
-
-    // If we're connecting only create/use/? handles, we require communication.
-    // We don't do that if at least one handle is map/copy, as in such case
-    // everyone can be a reader.
-    // We inspect both fate and originalFate as copy ends up as use in an
-    // active recipe, and ? could end up as anything.
-    const fates = [handle.originalFate, handle.fate, otherHandle.originalFate, otherHandle.fate];
-    if (!fates.includes('copy') && !fates.includes('map')) {
-      const counts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(handle);
-      const otherCounts = _ts_build_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(otherHandle);
-      // Someone has to read and someone has to write.
-      if (otherCounts.in + counts.in === 0 || otherCounts.out + counts.out === 0) {
-        return false;
-      }
-    }
-
-    // If requesting handle has tags, we should have overlap.
-    if (handle.tags.length > 0 && !handle.tags.some(t => otherHandle.tags.includes(t))) {
-      return false;
-    }
-
-    // If types don't match.
-    if (!_ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(handle._mappedType, [...handle.connections, ...otherHandle.connections])) {
-      return false;
-    }
-
-    return true;
-  }
-
-  // Given a slot, find consume slot connections that could be connected to it.
-  findConsumeSlotConnectionMatch(slot) {
-    this.ensureReady();
-
-    const consumeConns = [];
-    for (const recipe of this._recipes) {
-      if (recipe.particles.some(particle => !particle.name)) {
-        // Skip recipes where not all verbs are resolved to specific particles
-        // to avoid trying to coalesce a recipe with itself.
-        continue;
-      }
-      for (const slotConn of recipe.slotConnections) {
-        if (!slotConn.targetSlot && _ts_build_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].specMatch(slotConn, slot) && _ts_build_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].tagsOrNameMatch(slotConn, slot)) {
-          const matchingHandles = [];
-          if (!_ts_build_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].handlesMatch(slotConn, slot)) {
-            // Find potential handle connections to coalesce
-            slot.handleConnections.forEach(slotHandleConn => {
-              const matchingConns = Object.values(slotConn.particle.connections).filter(particleConn => {
-                return particleConn.direction !== 'host'
-                    && (!particleConn.handle || !particleConn.handle.id || particleConn.handle.id == slotHandleConn.handle.id)
-                    && _ts_build_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(slotHandleConn.handle._mappedType, [particleConn]);
-              });
-              matchingConns.forEach(matchingConn => {
-                if (this._fatesAndDirectionsMatch(slotHandleConn, matchingConn)) {
-                  matchingHandles.push({handle: slotHandleConn.handle, matchingConn});
-                }
-              });
-            });
-
-            if (matchingHandles.length == 0) {
-              continue;
-            }
-          }
-          consumeConns.push({slotConn, matchingHandles});
-        }
-      }
-    }
-    return consumeConns;
-  }
-
-  findProvidedSlot(slotConn) {
-    this.ensureReady();
-
-    const providedSlots = [];
-    for (const recipe of this._recipes) {
-      if (recipe.particles.some(particle => !particle.name)) {
-        // Skip recipes where not all verbs are resolved to specific particles
-        // to avoid trying to coalesce a recipe with itself.
-        continue;
-      }
-      for (const consumeConn of recipe.slotConnections) {
-        for (const providedSlot of Object.values(consumeConn.providedSlots)) {
-          if (_ts_build_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].slotMatches(slotConn, providedSlot)) {
-            providedSlots.push(providedSlot);
-          }
-        }
-      }
-    }
-    return providedSlots;
-  }
-
-  // Helper function that determines whether handle connections in a provided slot
-  // and a potential consuming slot connection could be match, considering their fates and directions.
-  // `slotHandleConn` is a handle connection restricting the provided slot.
-  // `matchingHandleConn` - a handle connection of a particle, whose slot connection is explored
-  // as a potential match to a slot above.
-  _fatesAndDirectionsMatch(slotHandleConn, matchingHandleConn) {
-    const matchingHandle = matchingHandleConn.handle;
-    const allMatchingHandleConns = matchingHandle ? matchingHandle.connections : [matchingHandleConn];
-    const matchingHandleConnsHasOutput = allMatchingHandleConns.find(conn => ['out', 'inout'].includes(conn.direction));
-    switch (slotHandleConn.handle.fate) {
-      case 'create':
-        // matching handle not defined or its fate is 'create' or '?'.
-        return !matchingHandle || ['use', '?'].includes(matchingHandle.fate);
-      case 'use':
-        // matching handle is not defined or its fate is either 'use' or '?'.
-        return !matchingHandle || ['use', '?'].includes(matchingHandle.fate);
-      case 'copy':
-        // Any handle fate, except explicit 'create'.
-        return !matchingHandle || matchingHandle.fate != 'create';
-      case 'map':
-        // matching connections don't have output direction and matching handle's fate isn't copy.
-        return !matchingHandleConnsHasOutput && (!matchingHandle || matchingHandle.fate != 'copy');
-      case '?':
-        return false;
-      default:
-        throw new Error(`Unexpected fate ${slotHandleConn.handle.fate}`);
-    }
-  }
-
-  get coalescableFates() { return ['create', 'use', '?']; }
-
-  findCoalescableHandles(recipe, otherRecipe, usedHandles) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(recipe != otherRecipe, 'Cannot coalesce handles in the same recipe');
-    const otherToHandle = new Map();
-    usedHandles = usedHandles || new Set();
-    for (const handle of recipe.handles) {
-      if (usedHandles.has(handle) || !this.coalescableFates.includes(handle.fate)) {
-        continue;
-      }
-      for (const otherHandle of otherRecipe.handles) {
-        if (usedHandles.has(otherHandle) || !this.coalescableFates.includes(otherHandle.fate)) {
-          continue;
-        }
-        if (this.doesHandleMatch(handle, otherHandle)) {
-          otherToHandle.set(handle, otherHandle);
-          usedHandles.add(handle);
-          usedHandles.add(otherHandle);
-        }
-      }
-    }
-    return otherToHandle;
-  }
-}
-
-
-/***/ }),
-
 /***/ "./runtime/testing/mock-slot-dom-consumer.js":
 /*!***************************************************!*\
   !*** ./runtime/testing/mock-slot-dom-consumer.js ***!
@@ -67151,7 +66802,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
 /* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./id.js */ "./runtime/ts-build/id.js");
 /* harmony import */ var _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../debug/arc-debug-handler.js */ "./runtime/debug/arc-debug-handler.js");
-/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../recipe-index.js */ "./runtime/recipe-index.js");
+/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./recipe-index.js */ "./runtime/ts-build/recipe-index.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -73532,6 +73183,334 @@ class Random {
 
 /***/ }),
 
+/***/ "./runtime/ts-build/recipe-index.js":
+/*!******************************************!*\
+  !*** ./runtime/ts-build/recipe-index.js ***!
+  \******************************************/
+/*! exports provided: RecipeIndex */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeIndex", function() { return RecipeIndex; });
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./manifest.js */ "./runtime/ts-build/manifest.js");
+/* harmony import */ var _arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./arc.js */ "./runtime/ts-build/arc.js");
+/* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./slot-composer.js */ "./runtime/ts-build/slot-composer.js");
+/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./strategizer/strategizer.js */ "./runtime/ts-build/strategizer/strategizer.js");
+/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
+/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
+/* harmony import */ var _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./strategies/convert-constraints-to-connections.js */ "./runtime/ts-build/strategies/convert-constraints-to-connections.js");
+/* harmony import */ var _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./strategies/match-free-handles-to-connections.js */ "./runtime/ts-build/strategies/match-free-handles-to-connections.js");
+/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./strategies/resolve-recipe.js */ "./runtime/ts-build/strategies/resolve-recipe.js");
+/* harmony import */ var _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./strategies/create-handle-group.js */ "./runtime/ts-build/strategies/create-handle-group.js");
+/* harmony import */ var _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./strategies/add-missing-handles.js */ "./runtime/ts-build/strategies/add-missing-handles.js");
+/* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./strategies/rulesets.js */ "./runtime/ts-build/strategies/rulesets.js");
+/* harmony import */ var _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./strategies/map-slots.js */ "./runtime/ts-build/strategies/map-slots.js");
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
+/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
+/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./plan/planning-result.js */ "./runtime/ts-build/plan/planning-result.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class RelevantContextRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategy"] {
+    constructor(context, modality) {
+        super();
+        this._recipes = [];
+        for (let recipe of context.allRecipes) {
+            if (modality && recipe.particles.find(p => p.spec && !p.spec.matchModality(modality)) !== undefined) {
+                continue;
+            }
+            recipe = recipe.clone();
+            const options = { errors: new Map() };
+            if (recipe.normalize(options)) {
+                this._recipes.push(recipe);
+            }
+            else {
+                console.warn(`could not normalize a context recipe: ${[...options.errors.values()].join('\n')}.\n${recipe.toString()}`);
+            }
+        }
+    }
+    async generate({ generation }) {
+        if (generation !== 0) {
+            return [];
+        }
+        return this._recipes.map(recipe => ({
+            result: recipe,
+            score: 1,
+            derivation: [{ strategy: this, parent: undefined }],
+            hash: recipe.digest(),
+            valid: Object.isFrozen(recipe),
+        }));
+    }
+}
+// tslint:disable-next-line: variable-name
+const IndexStrategies = [
+    _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__["ConvertConstraintsToConnections"],
+    _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__["AddMissingHandles"],
+    _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_8__["ResolveRecipe"],
+    _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__["MatchFreeHandlesToConnections"],
+    // This one is not in-line with 'transparent' interfaces, but it operates on
+    // recipes without looking at the context and cannot run after AddUseHandles.
+    // We will revisit this list when we take a stab at recipe interfaces.
+    _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__["CreateHandleGroup"]
+];
+class RecipeIndex {
+    constructor(context, loader, modality) {
+        this._isReady = false;
+        const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__["Tracing"].start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
+        const arcStub = new _arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"]({
+            id: 'index-stub',
+            context: new _manifest_js__WEBPACK_IMPORTED_MODULE_0__["Manifest"]({ id: 'empty-context' }),
+            loader,
+            slotComposer: modality ? new _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"]({ modality, noRoot: true }) : null,
+            recipeIndex: this,
+            // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
+            speculative: true
+        });
+        const strategizer = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"]([
+            new RelevantContextRecipes(context, modality),
+            ...IndexStrategies.map(S => new S(arcStub))
+        ], [], _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__["Empty"]);
+        this.ready = trace.endWith(new Promise(async (resolve) => {
+            const generations = [];
+            do {
+                const record = await strategizer.generate();
+                generations.push({ record, generated: strategizer.generated });
+            } while (strategizer.generated.length + strategizer.terminal.length > 0);
+            if (_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].isConnected) {
+                _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(_plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__["PlanningResult"].formatSerializableGenerations(generations), _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].get(), { label: 'Index', keep: true });
+            }
+            const population = strategizer.population;
+            const candidates = new Set(population);
+            for (const result of population) {
+                for (const deriv of result.derivation) {
+                    if (deriv.parent)
+                        candidates.delete(deriv.parent);
+                }
+            }
+            this._recipes = [...candidates].map(r => r.result);
+            this._isReady = true;
+            resolve(true);
+        }));
+    }
+    get recipes() {
+        if (!this._isReady)
+            throw Error('await on recipeIndex.ready before accessing');
+        return this._recipes;
+    }
+    ensureReady() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(this._isReady, 'await on recipeIndex.ready before accessing');
+    }
+    /**
+     * Given provided handle and requested fates, finds handles with
+     * matching type and requested fate.
+     */
+    findHandleMatch(handle, requestedFates) {
+        this.ensureReady();
+        const particleNames = handle.connections.map(conn => conn.particle.name);
+        const results = [];
+        for (const recipe of this._recipes) {
+            if (recipe.particles.some(particle => !particle.name)) {
+                // Skip recipes where not all verbs are resolved to specific particles
+                // to avoid trying to coalesce a recipe with itself.
+                continue;
+            }
+            for (const otherHandle of recipe.handles) {
+                if (requestedFates && !(requestedFates.includes(otherHandle.fate))) {
+                    continue;
+                }
+                if (!this.doesHandleMatch(handle, otherHandle)) {
+                    continue;
+                }
+                // If we're connecting the same sets of particles, that's probably not OK.
+                // This is a poor workaround for connecting the exact same recipes together, to be improved.
+                const otherParticleNames = otherHandle.connections.map(conn => conn.particle.name);
+                const connectedParticles = new Set([...particleNames, ...otherParticleNames]);
+                if (connectedParticles.size === particleNames.length
+                    && particleNames.length === otherParticleNames.length)
+                    continue;
+                results.push(otherHandle);
+            }
+        }
+        return results;
+    }
+    doesHandleMatch(handle, otherHandle) {
+        if (Boolean(handle.id) && Boolean(otherHandle.id) && handle.id !== otherHandle.id) {
+            // Either at most one of the handles has an ID, or they are the same.
+            return false;
+        }
+        // TODO was otherHandle.name, is localName correct
+        if (otherHandle.connections.length === 0 || otherHandle.localName === 'descriptions') {
+            return false;
+        }
+        // If we're connecting only create/use/? handles, we require communication.
+        // We don't do that if at least one handle is map/copy, as in such case
+        // everyone can be a reader.
+        // We inspect both fate and originalFate as copy ends up as use in an
+        // active recipe, and ? could end up as anything.
+        const fates = [handle.originalFate, handle.fate, otherHandle.originalFate, otherHandle.fate];
+        if (!fates.includes('copy') && !fates.includes('map')) {
+            const counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(handle);
+            const otherCounts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(otherHandle);
+            // Someone has to read and someone has to write.
+            if (otherCounts.in + counts.in === 0 || otherCounts.out + counts.out === 0) {
+                return false;
+            }
+        }
+        // If requesting handle has tags, we should have overlap.
+        if (handle.tags.length > 0 && !handle.tags.some(t => otherHandle.tags.includes(t))) {
+            return false;
+        }
+        // If types don't match.
+        if (!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(handle.mappedType, [...handle.connections, ...otherHandle.connections])) {
+            return false;
+        }
+        return true;
+    }
+    /**
+     * Given a slot, find consume slot connections that could be connected to it.
+     */
+    findConsumeSlotConnectionMatch(slot) {
+        this.ensureReady();
+        const consumeConns = [];
+        for (const recipe of this._recipes) {
+            if (recipe.particles.some(particle => !particle.name)) {
+                // Skip recipes where not all verbs are resolved to specific particles
+                // to avoid trying to coalesce a recipe with itself.
+                continue;
+            }
+            for (const slotConn of recipe.slotConnections) {
+                if (!slotConn.targetSlot && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].specMatch(slotConn, slot) && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].tagsOrNameMatch(slotConn, slot)) {
+                    const matchingHandles = [];
+                    if (!_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].handlesMatch(slotConn, slot)) {
+                        // Find potential handle connections to coalesce
+                        slot.handleConnections.forEach(slotHandleConn => {
+                            const matchingConns = Object.values(slotConn.particle.connections).filter(particleConn => {
+                                return particleConn.direction !== 'host'
+                                    && (!particleConn.handle || !particleConn.handle.id || particleConn.handle.id === slotHandleConn.handle.id)
+                                    && _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(slotHandleConn.handle.mappedType, [particleConn]);
+                            });
+                            matchingConns.forEach(matchingConn => {
+                                if (this._fatesAndDirectionsMatch(slotHandleConn, matchingConn)) {
+                                    matchingHandles.push({ handle: slotHandleConn.handle, matchingConn });
+                                }
+                            });
+                        });
+                        if (matchingHandles.length === 0) {
+                            continue;
+                        }
+                    }
+                    consumeConns.push({ slotConn, matchingHandles });
+                }
+            }
+        }
+        return consumeConns;
+    }
+    findProvidedSlot(slotConn) {
+        this.ensureReady();
+        const providedSlots = [];
+        for (const recipe of this._recipes) {
+            if (recipe.particles.some(particle => !particle.name)) {
+                // Skip recipes where not all verbs are resolved to specific particles
+                // to avoid trying to coalesce a recipe with itself.
+                continue;
+            }
+            for (const consumeConn of recipe.slotConnections) {
+                for (const providedSlot of Object.values(consumeConn.providedSlots)) {
+                    if (_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].slotMatches(slotConn, providedSlot)) {
+                        providedSlots.push(providedSlot);
+                    }
+                }
+            }
+        }
+        return providedSlots;
+    }
+    /**
+     * Helper function that determines whether handle connections in a provided slot
+     * and a potential consuming slot connection could be match, considering their fates and directions.
+     *
+     * - `slotHandleConn` is a handle connection restricting the provided slot.
+     * - `matchingHandleConn` - a handle connection of a particle, whose slot connection is explored
+     *    as a potential match to a slot above.
+     */
+    _fatesAndDirectionsMatch(slotHandleConn, matchingHandleConn) {
+        const matchingHandle = matchingHandleConn.handle;
+        const allMatchingHandleConns = matchingHandle ? matchingHandle.connections : [matchingHandleConn];
+        const matchingHandleConnsHasOutput = allMatchingHandleConns.find(conn => ['out', 'inout'].includes(conn.direction));
+        switch (slotHandleConn.handle.fate) {
+            case 'create':
+                // matching handle not defined or its fate is 'create' or '?'.
+                return !matchingHandle || ['use', '?'].includes(matchingHandle.fate);
+            case 'use':
+                // matching handle is not defined or its fate is either 'use' or '?'.
+                return !matchingHandle || ['use', '?'].includes(matchingHandle.fate);
+            case 'copy':
+                // Any handle fate, except explicit 'create'.
+                return !matchingHandle || matchingHandle.fate !== 'create';
+            case 'map':
+                // matching connections don't have output direction and matching handle's fate isn't copy.
+                return !matchingHandleConnsHasOutput && (!matchingHandle || matchingHandle.fate !== 'copy');
+            case '?':
+                return false;
+            default:
+                throw new Error(`Unexpected fate ${slotHandleConn.handle.fate}`);
+        }
+    }
+    get coalescableFates() {
+        return ['create', 'use', '?'];
+    }
+    findCoalescableHandles(recipe, otherRecipe, usedHandles) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(recipe !== otherRecipe, 'Cannot coalesce handles in the same recipe');
+        const otherToHandle = new Map();
+        usedHandles = usedHandles || new Set();
+        for (const handle of recipe.handles) {
+            if (usedHandles.has(handle) || !this.coalescableFates.includes(handle.fate)) {
+                continue;
+            }
+            for (const otherHandle of otherRecipe.handles) {
+                if (usedHandles.has(otherHandle) || !this.coalescableFates.includes(otherHandle.fate)) {
+                    continue;
+                }
+                if (this.doesHandleMatch(handle, otherHandle)) {
+                    otherToHandle.set(handle, otherHandle);
+                    usedHandles.add(handle);
+                    usedHandles.add(otherHandle);
+                }
+            }
+        }
+        return otherToHandle;
+    }
+}
+//# sourceMappingURL=recipe-index.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/recipe/connection-constraint.js":
 /*!**********************************************************!*\
   !*** ./runtime/ts-build/recipe/connection-constraint.js ***!
@@ -75039,11 +75018,11 @@ class Recipe {
     set name(name) { this._name = name; }
     get localName() { return this._localName; }
     set localName(name) { this._localName = name; }
-    get particles() { return this._particles; } // Particle*
+    get particles() { return this._particles; }
     set particles(particles) { this._particles = particles; }
-    get handles() { return this._handles; } // Handle*
+    get handles() { return this._handles; }
     set handles(handles) { this._handles = handles; }
-    get slots() { return this._slots; } // Slot*
+    get slots() { return this._slots; }
     set slots(slots) { this._slots = slots; }
     get connectionConstraints() { return this._connectionConstraints; }
     get obligations() { return this._obligations; }
@@ -75096,8 +75075,12 @@ class Recipe {
         }
         return null;
     }
-    get patterns() { return this._patterns; }
-    set patterns(patterns) { this._patterns = patterns; }
+    get patterns() {
+        return this._patterns;
+    }
+    set patterns(patterns) {
+        this._patterns = patterns;
+    }
     set description(description) {
         const pattern = description.find(desc => desc.name === 'pattern');
         if (pattern) {
@@ -84386,13 +84369,13 @@ __webpack_require__.r(__webpack_exports__);
 
 class Strategizer {
     constructor(strategies, evaluators, ruleset) {
-        this._strategies = strategies;
-        this._evaluators = evaluators;
         this._generation = 0;
         this._internalPopulation = [];
         this._population = [];
         this._generated = [];
         this._terminal = [];
+        this._strategies = strategies;
+        this._evaluators = evaluators;
         this._ruleset = ruleset;
         this.populationHash = new Map();
     }
@@ -84409,7 +84392,7 @@ class Strategizer {
         return this._generated;
     }
     /**
-     * @return   Individuals from the previous generation that were not descended from in the
+     * @return Individuals from the previous generation that were not descended from in the
      * current generation.
      */
     get terminal() {
@@ -84608,7 +84591,9 @@ class Strategy {
         this._arc = arc;
         this._args = args;
     }
-    get arc() { return this._arc; }
+    get arc() {
+        return this._arc;
+    }
     async activate(strategizer) {
         // Returns estimated ability to generate/evaluate.
         // TODO: What do these numbers mean? Some sort of indication of the accuracy of the

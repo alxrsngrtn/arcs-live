@@ -1,9 +1,7 @@
-commit a563a7c5c7a0d778129b2f4aad398e2dcaa0a7e1
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Nov 26 20:10:47 2018 -0800
+commit 0e2d54d16da2371a2e352584cbd2f7bb40e0d7cb
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Nov 27 09:43:53 2018 -0800
 
-    specify exact slot bindings to avoid duplicate recipe (#2317)
+    Convert recipe-index.js to typescript (#2320)
     
-    * specify exact slot bindings to avoid duplicate recipe
-    
-    * remove unnecessary slot bingings and comments
+    Addresses #1765

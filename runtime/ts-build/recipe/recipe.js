@@ -140,11 +140,11 @@ export class Recipe {
     set name(name) { this._name = name; }
     get localName() { return this._localName; }
     set localName(name) { this._localName = name; }
-    get particles() { return this._particles; } // Particle*
+    get particles() { return this._particles; }
     set particles(particles) { this._particles = particles; }
-    get handles() { return this._handles; } // Handle*
+    get handles() { return this._handles; }
     set handles(handles) { this._handles = handles; }
-    get slots() { return this._slots; } // Slot*
+    get slots() { return this._slots; }
     set slots(slots) { this._slots = slots; }
     get connectionConstraints() { return this._connectionConstraints; }
     get obligations() { return this._obligations; }
@@ -197,8 +197,12 @@ export class Recipe {
         }
         return null;
     }
-    get patterns() { return this._patterns; }
-    set patterns(patterns) { this._patterns = patterns; }
+    get patterns() {
+        return this._patterns;
+    }
+    set patterns(patterns) {
+        this._patterns = patterns;
+    }
     set description(description) {
         const pattern = description.find(desc => desc.name === 'pattern');
         if (pattern) {

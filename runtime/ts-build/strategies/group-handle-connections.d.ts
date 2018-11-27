@@ -5,5 +5,5 @@ export declare class GroupHandleConnections extends Strategy {
     _walker: Walker;
     constructor(arc: Arc, args?: any);
     readonly walker: Walker;
-    generate(inputParams: any): Promise<import("../strategizer/strategizer.js").Descendant[]>;
+    generate(inputParams: any): any;
 }

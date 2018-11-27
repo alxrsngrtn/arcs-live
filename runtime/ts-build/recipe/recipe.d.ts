@@ -1,7 +1,9 @@
+import { Strategy, Descendant } from '../strategizer/strategizer.js';
 import { ConnectionConstraint } from './connection-constraint.js';
 import { Particle } from './particle.js';
 import { Search } from './search.js';
 import { Slot } from './slot.js';
+import { SlotConnection } from './slot-connection.js';
 import { Handle } from './handle.js';
 import { HandleConnection } from './handle-connection.js';
 export declare class Recipe {
@@ -32,7 +34,7 @@ export declare class Recipe {
     isResolved(): boolean;
     _findDuplicate(items: any, options: any): any;
     _isValid(options?: any): boolean;
-    name: string;
+    name: string | undefined;
     localName: string;
     particles: Particle[];
     handles: Handle[];
@@ -40,9 +42,9 @@ export declare class Recipe {
     readonly connectionConstraints: ConnectionConstraint[];
     readonly obligations: ConnectionConstraint[];
     verbs: string[];
-    search: Search;
-    setSearchPhrase(phrase: any): void;
-    readonly slotConnections: any[];
+    search: Search | null;
+    setSearchPhrase(phrase?: string): void;
+    readonly slotConnections: SlotConnection[];
     readonly handleConnections: HandleConnection[];
     isEmpty(): boolean;
     findHandle(id: any): Handle;
@@ -60,7 +62,7 @@ export declare class Recipe {
     };
     _copyInto(recipe: any, cloneMap: any): void;
     updateToClone(dict: any): {};
-    static over(results: any, walker: any, strategy: any): import("../strategizer/strategizer.js").Descendant[];
+    static over(results: any, walker: any, strategy: Strategy): Descendant[];
     _makeLocalNameMap(): Map<any, any>;
     toString(options?: any): string;
 }
