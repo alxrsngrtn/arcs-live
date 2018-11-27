@@ -41784,6 +41784,9 @@ class SlotConsumer {
     get consumeConn() { return this._consumeConn; }
     getRendering(subId) { return this._renderingBySubId.get(subId); }
     get renderings() { return [...this._renderingBySubId.entries()]; }
+    addRenderingBySubId(subId, rendering) {
+        this._renderingBySubId.set(subId, rendering);
+    }
     onContainerUpdate(newContainer, originalContainer) {
         if (Boolean(newContainer) !== Boolean(originalContainer)) {
             if (newContainer) {
@@ -42629,46 +42632,43 @@ class SlotDomConsumer extends SlotConsumer {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 class SuggestDomConsumer extends SlotDomConsumer {
-  constructor(containerKind, suggestion, suggestionContent, eventHandler) {
-    super(/* consumeConn= */null, containerKind);
-    this._suggestion = suggestion;
-    this._suggestionContent = suggestionContent;
-    this._eventHandler = eventHandler;
-  }
-
-  get suggestion() { return this._suggestion; }
-
-  get templatePrefix() { return 'suggest'; }
-
-  formatContent(content) {
-    return {
-      template: `<suggestion-element inline key="{{hash}}" on-click="">${content.template}</suggestion-element>`,
-      templateName: 'suggestion',
-      model: Object.assign({hash: this.suggestion.hash}, content.model)
-    };
-  }
-
-  onContainerUpdate(container, originalContainer) {
-    super.onContainerUpdate(container, originalContainer);
-
-    if (container) {
-      this.setContent(this._suggestionContent, this._eventHandler);
+    constructor(containerKind, suggestion, suggestionContent, eventHandler) {
+        super(/* consumeConn= */ null, containerKind);
+        this._suggestion = suggestion;
+        this._suggestionContent = suggestionContent;
+        this._eventHandler = eventHandler;
     }
-  }
-
-  static render(container, plan, content) {
-    const consumer = new SlotDomConsumer();
-    const suggestionContainer = Object.assign(document.createElement('suggestion-element'), {plan});
-    container.appendChild(suggestionContainer, container.firstElementChild);
-    const rendering = {container: suggestionContainer, model: content.model};
-    consumer._renderingBySubId.set(undefined, rendering);
-    consumer._eventHandler = (() => {});
-    consumer._stampTemplate(rendering, consumer.createTemplateElement(content.template));
-    consumer._onUpdate(rendering);
-    return consumer;
-  }
+    get suggestion() {
+        return this._suggestion;
+    }
+    get templatePrefix() {
+        return 'suggest';
+    }
+    formatContent(content) {
+        return {
+            template: `<suggestion-element inline key="{{hash}}" on-click="">${content.template}</suggestion-element>`,
+            templateName: 'suggestion',
+            model: Object.assign({ hash: this.suggestion.hash }, content.model)
+        };
+    }
+    onContainerUpdate(container, originalContainer) {
+        super.onContainerUpdate(container, originalContainer);
+        if (container) {
+            this.setContent(this._suggestionContent, this._eventHandler);
+        }
+    }
+    static render(container, plan, content) {
+        const suggestionContainer = Object.assign(document.createElement('suggestion-element'), { plan });
+        container.appendChild(suggestionContainer, container.firstElementChild);
+        const rendering = { container: suggestionContainer, model: content.model };
+        const consumer = new SlotDomConsumer();
+        consumer.addRenderingBySubId(undefined, rendering);
+        consumer.eventHandler = (() => { });
+        consumer._stampTemplate(rendering, consumer.createTemplateElement(content.template));
+        consumer._onUpdate(rendering);
+        return consumer;
+    }
 }
 
 /**

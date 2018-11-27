@@ -1,9 +1,10 @@
-commit 9288dae07cb6556ab28bc34e5b74b9827d88a725
+commit 3cf1aec9aecc1e456d0532ab5527fa27ea3b87eb
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Nov 26 17:13:20 2018 -0800
+Date:   Mon Nov 26 18:19:16 2018 -0800
 
-    Move fetch to platform directory for consistency (#2310)
+    Convert suggest-dom-consumer to typescript (#2316)
     
-    * Move fetch to platform directory for consistency
-    
-    * add missing usage of fetch-node
+    - Adjust SlotConsumer to take optional arguments in places.
+    - Use spread instead of Object.assign
+    - introduce addRenderingBySubId to avoid exposing private instance variables
+    - Fix incorrect typing in suggestion-composer

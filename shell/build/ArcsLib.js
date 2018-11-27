@@ -66812,76 +66812,6 @@ class RecipeIndex {
 
 /***/ }),
 
-/***/ "./runtime/suggest-dom-consumer.js":
-/*!*****************************************!*\
-  !*** ./runtime/suggest-dom-consumer.js ***!
-  \*****************************************/
-/*! exports provided: SuggestDomConsumer */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestDomConsumer", function() { return SuggestDomConsumer; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/slot-dom-consumer.js */ "./runtime/ts-build/slot-dom-consumer.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class SuggestDomConsumer extends _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"] {
-  constructor(containerKind, suggestion, suggestionContent, eventHandler) {
-    super(/* consumeConn= */null, containerKind);
-    this._suggestion = suggestion;
-    this._suggestionContent = suggestionContent;
-    this._eventHandler = eventHandler;
-  }
-
-  get suggestion() { return this._suggestion; }
-
-  get templatePrefix() { return 'suggest'; }
-
-  formatContent(content) {
-    return {
-      template: `<suggestion-element inline key="{{hash}}" on-click="">${content.template}</suggestion-element>`,
-      templateName: 'suggestion',
-      model: Object.assign({hash: this.suggestion.hash}, content.model)
-    };
-  }
-
-  onContainerUpdate(container, originalContainer) {
-    super.onContainerUpdate(container, originalContainer);
-
-    if (container) {
-      this.setContent(this._suggestionContent, this._eventHandler);
-    }
-  }
-
-  static render(container, plan, content) {
-    const consumer = new _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"]();
-    const suggestionContainer = Object.assign(document.createElement('suggestion-element'), {plan});
-    container.appendChild(suggestionContainer, container.firstElementChild);
-    const rendering = {container: suggestionContainer, model: content.model};
-    consumer._renderingBySubId.set(undefined, rendering);
-    consumer._eventHandler = (() => {});
-    consumer._stampTemplate(rendering, consumer.createTemplateElement(content.template));
-    consumer._onUpdate(rendering);
-    return consumer;
-  }
-}
-
-
-/***/ }),
-
 /***/ "./runtime/testing/mock-slot-dom-consumer.js":
 /*!***************************************************!*\
   !*** ./runtime/testing/mock-slot-dom-consumer.js ***!
@@ -71374,7 +71304,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Modality", function() { return Modality; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./slot-dom-consumer.js */ "./runtime/ts-build/slot-dom-consumer.js");
-/* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../suggest-dom-consumer.js */ "./runtime/suggest-dom-consumer.js");
+/* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./suggest-dom-consumer.js */ "./runtime/ts-build/suggest-dom-consumer.js");
 /* harmony import */ var _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../testing/mock-slot-dom-consumer.js */ "./runtime/testing/mock-slot-dom-consumer.js");
 /* harmony import */ var _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../testing/mock-suggest-dom-consumer.js */ "./runtime/testing/mock-suggest-dom-consumer.js");
 /* harmony import */ var _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./description-dom-formatter.js */ "./runtime/ts-build/description-dom-formatter.js");
@@ -77718,6 +77648,9 @@ class SlotConsumer {
     get consumeConn() { return this._consumeConn; }
     getRendering(subId) { return this._renderingBySubId.get(subId); }
     get renderings() { return [...this._renderingBySubId.entries()]; }
+    addRenderingBySubId(subId, rendering) {
+        this._renderingBySubId.set(subId, rendering);
+    }
     onContainerUpdate(newContainer, originalContainer) {
         if (Boolean(newContainer) !== Boolean(originalContainer)) {
             if (newContainer) {
@@ -84776,6 +84709,69 @@ Ruleset.Builder = RulesetBuilder;
 
 /***/ }),
 
+/***/ "./runtime/ts-build/suggest-dom-consumer.js":
+/*!**************************************************!*\
+  !*** ./runtime/ts-build/suggest-dom-consumer.js ***!
+  \**************************************************/
+/*! exports provided: SuggestDomConsumer */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestDomConsumer", function() { return SuggestDomConsumer; });
+/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./slot-dom-consumer.js */ "./runtime/ts-build/slot-dom-consumer.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class SuggestDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__["SlotDomConsumer"] {
+    constructor(containerKind, suggestion, suggestionContent, eventHandler) {
+        super(/* consumeConn= */ null, containerKind);
+        this._suggestion = suggestion;
+        this._suggestionContent = suggestionContent;
+        this._eventHandler = eventHandler;
+    }
+    get suggestion() {
+        return this._suggestion;
+    }
+    get templatePrefix() {
+        return 'suggest';
+    }
+    formatContent(content) {
+        return {
+            template: `<suggestion-element inline key="{{hash}}" on-click="">${content.template}</suggestion-element>`,
+            templateName: 'suggestion',
+            model: Object.assign({ hash: this.suggestion.hash }, content.model)
+        };
+    }
+    onContainerUpdate(container, originalContainer) {
+        super.onContainerUpdate(container, originalContainer);
+        if (container) {
+            this.setContent(this._suggestionContent, this._eventHandler);
+        }
+    }
+    static render(container, plan, content) {
+        const suggestionContainer = Object.assign(document.createElement('suggestion-element'), { plan });
+        container.appendChild(suggestionContainer, container.firstElementChild);
+        const rendering = { container: suggestionContainer, model: content.model };
+        const consumer = new _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__["SlotDomConsumer"]();
+        consumer.addRenderingBySubId(undefined, rendering);
+        consumer.eventHandler = (() => { });
+        consumer._stampTemplate(rendering, consumer.createTemplateElement(content.template));
+        consumer._onUpdate(rendering);
+        return consumer;
+    }
+}
+//# sourceMappingURL=suggest-dom-consumer.js.map
+
+/***/ }),
+
 /***/ "./runtime/ts-build/suggestion-composer.js":
 /*!*************************************************!*\
   !*** ./runtime/ts-build/suggestion-composer.js ***!
@@ -84787,7 +84783,7 @@ Ruleset.Builder = RulesetBuilder;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestionComposer", function() { return SuggestionComposer; });
 /* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modality.js */ "./runtime/ts-build/modality.js");
-/* harmony import */ var _plan_suggestion__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./plan/suggestion */ "./runtime/ts-build/plan/suggestion.js");
+/* harmony import */ var _plan_suggestion_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./plan/suggestion.js */ "./runtime/ts-build/plan/suggestion.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84816,7 +84812,7 @@ class SuggestionComposer {
     }
     setSuggestions(suggestions) {
         this.clear();
-        const sortedSuggestions = suggestions.sort(_plan_suggestion__WEBPACK_IMPORTED_MODULE_1__["Suggestion"].compare);
+        const sortedSuggestions = suggestions.sort(_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_1__["Suggestion"].compare);
         for (const suggestion of sortedSuggestions) {
             const suggestionContent = suggestion.getDescription(this._modality.name) || suggestion.descriptionText;
             if (!suggestionContent) {

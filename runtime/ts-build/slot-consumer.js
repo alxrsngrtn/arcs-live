@@ -22,6 +22,9 @@ export class SlotConsumer {
     get consumeConn() { return this._consumeConn; }
     getRendering(subId) { return this._renderingBySubId.get(subId); }
     get renderings() { return [...this._renderingBySubId.entries()]; }
+    addRenderingBySubId(subId, rendering) {
+        this._renderingBySubId.set(subId, rendering);
+    }
     onContainerUpdate(newContainer, originalContainer) {
         if (Boolean(newContainer) !== Boolean(originalContainer)) {
             if (newContainer) {

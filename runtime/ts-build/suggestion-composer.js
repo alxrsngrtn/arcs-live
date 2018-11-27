@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Modality } from './modality.js';
-import { Suggestion } from './plan/suggestion';
+import { Suggestion } from './plan/suggestion.js';
 export class SuggestionComposer {
     constructor(slotComposer) {
         this._suggestions = [];
