@@ -1,9 +1,11 @@
 import assert from 'assert';
-import crypto from 'crypto';
+import crypto$1 from 'crypto';
 import atob$1 from 'atob';
 import btoa$1 from 'btoa';
 import PouchDB from 'pouchdb';
 import PouchDbMemory from 'pouchdb-adapter-memory';
+import idb from 'idb';
+import rs from 'jsrsasign';
 import WebSocket$1 from 'ws';
 import os from 'os';
 import fs from 'fs';
@@ -3088,7 +3090,7 @@ class DescriptionFormatter {
 // Copyright (c) 2017 Google Inc. All rights reserved.
 
 async function digest(str) {
-  const sha = crypto.createHash('sha1');
+  const sha = crypto$1.createHash('sha1');
   sha.update(str);
   return Promise.resolve().then(() => sha.digest('hex'));
 }
@@ -40977,6 +40979,500 @@ class Runtime {
     }
 }
 
+// ISC License (ISC)
+//
+// Copyright 2017 Rhett Robinson
+//
+// Permission to use, copy, modify, and/or distribute this software for any purpose
+// with or without fee is hereby granted, provided that the above copyright notice
+// and this permission notice appear in all copies.
+//
+//     THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+// REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+//     INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+// OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+// TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+// THIS SOFTWARE.
+// Originally forked from https://github.com/rrhett/typescript-base64-arraybuffer/blob/master/src/base64.ts
+// For the base64 encoding pieces.
+/*
+ * Most of the key management operatins deals with ArrayBuffers/TypedArrays. Although atob and btoa are built into
+ * JS, they are not convenient to use for ArrayBuffers.
+ */
+const alphabet = [
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+    'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+    'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+    'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+    'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+    'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+    'w', 'x', 'y', 'z', '0', '1', '2', '3',
+    '4', '5', '6', '7', '8', '9', '+', '/'
+];
+const values = {};
+for (let i = 0; i < 64; ++i) {
+    values[alphabet[i]] = i;
+}
+function encode(bytes) {
+    const array = new Uint8Array(bytes);
+    const base64 = [];
+    let index = 0;
+    let quantum;
+    let value;
+    /* tslint:disable:no-bitwise */
+    // Grab as many sets of 3 bytes as we can, that form 24 bits.
+    while (index + 2 < array.byteLength) {
+        quantum = (array[index] << 16) | (array[index + 1] << 8) | array[index + 2];
+        // 24 bits will become 4 base64 chars.
+        value = (quantum >> 18) & 0x3f;
+        base64.push(alphabet[value]);
+        value = (quantum >> 12) & 0x3f;
+        base64.push(alphabet[value]);
+        value = (quantum >> 6) & 0x3f;
+        base64.push(alphabet[value]);
+        value = quantum & 0x3f;
+        base64.push(alphabet[value]);
+        index += 3;
+    }
+    // At this point, there are 0, 1 or 2 bytes left.
+    if (index + 1 === array.byteLength) {
+        // 8 bits; shift by 4 to pad on the right with 0s to make 12 bits total.
+        quantum = array[index] << 4;
+        value = (quantum >> 6) & 0x3f;
+        base64.push(alphabet[value]);
+        value = quantum & 0x3f;
+        base64.push(alphabet[value]);
+        base64.push('==');
+    }
+    else if (index + 2 === array.byteLength) {
+        // 16 bits; shift by 2 to pad on the right with 0s to make 18 bits total.
+        quantum = (array[index] << 10) | (array[index + 1] << 2);
+        value = (quantum >> 12) & 0x3f;
+        base64.push(alphabet[value]);
+        value = (quantum >> 6) & 0x3f;
+        base64.push(alphabet[value]);
+        value = quantum & 0x3f;
+        base64.push(alphabet[value]);
+        base64.push('=');
+    }
+    /* tslint:enable:no-bitwise */
+    return base64.join('');
+}
+function decode$1(str) {
+    let size = str.length;
+    if (size === 0) {
+        return new Uint8Array(new ArrayBuffer(0));
+    }
+    if (size % 4 !== 0) {
+        throw new Error('Bad length: ' + size);
+    }
+    if (!str.match(/^[a-zA-Z0-9+/]+={0,2}$/)) {
+        throw new Error('Invalid base64 encoded value');
+    }
+    // Every 4 base64 chars = 24 bits = 3 bytes. But, we also need to figure out
+    // padding, if any.
+    let bytes = 3 * (size / 4);
+    let numPad = 0;
+    if (str.charAt(size - 1) === '=') {
+        numPad++;
+        bytes--;
+    }
+    if (str.charAt(size - 2) === '=') {
+        numPad++;
+        bytes--;
+    }
+    const buffer = new Uint8Array(new ArrayBuffer(bytes));
+    let index = 0;
+    let bufferIndex = 0;
+    let quantum;
+    if (numPad > 0) {
+        size -= 4; // handle the last one specially
+    }
+    /* tslint:disable:no-bitwise */
+    while (index < size) {
+        quantum = 0;
+        for (let i = 0; i < 4; ++i) {
+            quantum = (quantum << 6) | values[str.charAt(index + i)];
+        }
+        // quantum is now a 24-bit value.
+        buffer[bufferIndex++] = (quantum >> 16) & 0xff;
+        buffer[bufferIndex++] = (quantum >> 8) & 0xff;
+        buffer[bufferIndex++] = quantum & 0xff;
+        index += 4;
+    }
+    if (numPad > 0) {
+        // if numPad == 1, there is one =, and we have 18 bits with 2 0s at end.
+        // if numPad == 2, there is two ==, and we have 12 bits with 4 0s at end.
+        // First, grab my quantum.
+        quantum = 0;
+        for (let i = 0; i < 4 - numPad; ++i) {
+            quantum = (quantum << 6) | values[str.charAt(index + i)];
+        }
+        if (numPad === 1) {
+            // quantum is 18 bits, but really represents two bytes.
+            quantum = quantum >> 2;
+            buffer[bufferIndex++] = (quantum >> 8) & 0xff;
+            buffer[bufferIndex++] = quantum & 0xff;
+        }
+        else {
+            // quantum is 12 bits, but really represents only one byte.
+            quantum = quantum >> 4;
+            buffer[bufferIndex++] = quantum & 0xff;
+        }
+    }
+    /* tslint:enable:no-bitwise */
+    return buffer;
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const DEVICE_KEY_ALGORITHM = 'RSA-OAEP';
+const X509_CERTIFICATE_ALGORITHM = "RSA-OAEP";
+const X509_CERTIFICATE_HASH_ALGORITHM = "SHA-1";
+const DEVICE_KEY_HASH_ALGORITHM = "SHA-512";
+const STORAGE_KEY_ALGORITHM = "AES-GCM";
+const ARCS_CRYPTO_STORE_NAME = 'ArcsKeyManagementStore';
+const ARCS_CRYPTO_INDEXDB_NAME = 'ArcsKeyManagement';
+/**
+ * A CryptoKey or CryptoKeyPair that is capable of being stored in IndexDB key storage.
+ */
+class WebCryptoStorableKey {
+    constructor(key) {
+        this.key = key;
+    }
+    algorithm() {
+        return this.key.algorithm ? this.key.algorithm.name :
+            this.key.publicKey.algorithm.name;
+    }
+    storableKey() {
+        return this.key;
+    }
+}
+/**
+ * An AES-GCM symmetric key in raw formatted encrypted using an RSA-OAEP public key.
+ * We use a symmetrically derived key for the shared secret instead of just random numbers. There are two
+ * reasons for this.
+ *
+ * First, WebCrypto treats CryptoKeys specially in that the material is can be setup to
+ * never be exposed the application, so when we generate these secrets, we can hide them from JS by declaring
+ * them non-extractable or usable for wrapping or encrypting only.
+ *
+ * Secondly, we eventually want to move off of RSA-OAEP and use ECDH, and ECDH doesn't support encryption or wrapping
+ * of randomly generated bits.
+ */
+class WebCryptoWrappedKey {
+    constructor(wrappedKeyData, wrappedBy) {
+        this.wrappedKeyData = wrappedKeyData;
+        this.wrappedBy = wrappedBy;
+    }
+    algorithm() {
+        return this.wrappedBy.algorithm();
+    }
+    unwrap(privKey) {
+        const webPrivKey = privKey;
+        return crypto.subtle.unwrapKey("raw", this.wrappedKeyData, webPrivKey.cryptoKey(), {
+            name: privKey.algorithm()
+        }, {
+            name: STORAGE_KEY_ALGORITHM,
+        }, true, ["encrypt", "decrypt"]).then(key => new WebCryptoSessionKey(key));
+    }
+    rewrap(privKey, pubKey) {
+        return this.unwrap(privKey).then(skey => skey.disposeToWrappedKeyUsing(pubKey));
+    }
+    export() {
+        return encode(this.wrappedKeyData.buffer);
+    }
+    fingerprint() {
+        return Promise.resolve(encode(this.wrappedKeyData.buffer));
+    }
+}
+/**
+ * An implementation of PrivateKey using WebCrypto.
+ */
+class WebCryptoPrivateKey extends WebCryptoStorableKey {
+    constructor(key) {
+        super(key);
+    }
+    cryptoKey() {
+        return this.storableKey();
+    }
+}
+/**
+ * An implementation of PublicKey using WebCrypto.
+ */
+class WebCryptoPublicKey extends WebCryptoStorableKey {
+    constructor(key) {
+        super(key);
+    }
+    cryptoKey() {
+        return this.storableKey();
+    }
+    static digest(str) {
+        return WebCryptoPublicKey.sha256(str);
+    }
+    static hex(buffer) {
+        const hexCodes = [];
+        const view = new DataView(buffer);
+        for (let i = 0; i < view.byteLength; i += 4) {
+            // Using getUint32 reduces the number of iterations needed (we process 4 bytes each time)
+            const value = view.getUint32(i);
+            // toString(16) will give the hex representation of the number without padding
+            const stringValue = value.toString(16);
+            // We use concatenation and slice for padding
+            const padding = '00000000';
+            const paddedValue = (padding + stringValue).slice(-padding.length);
+            hexCodes.push(paddedValue);
+        }
+        // Join all the hex strings into one
+        return hexCodes.join("");
+    }
+    static sha256(str) {
+        // We transform the string into an arraybuffer.
+        const buffer = new Uint8Array(str.split('').map(x => x.charCodeAt(0)));
+        return crypto.subtle.digest("SHA-256", buffer).then((hash) => WebCryptoPublicKey.hex(hash));
+    }
+    fingerprint() {
+        return crypto.subtle.exportKey("jwk", this.cryptoKey())
+            // Use the modulus 'n' as the fingerprint since 'e' is fixed
+            .then(key => WebCryptoPublicKey.digest(key['n']));
+    }
+}
+class WebCryptoSessionKey {
+    // Visible/Used for testing only.
+    decrypt(buffer, iv) {
+        return crypto.subtle.decrypt({
+            name: this.algorithm(),
+            iv,
+        }, this.sessionKey, buffer);
+    }
+    // Visible/Used for testing only.
+    encrypt(buffer, iv) {
+        return crypto.subtle.encrypt({
+            name: this.algorithm(),
+            iv
+        }, this.sessionKey, buffer);
+    }
+    constructor(sessionKey) {
+        this.sessionKey = sessionKey;
+    }
+    /**
+     * This encodes the session key as a hexadecimal string.
+     * TODO: this is a temporary hack for the provisioning App's QR-scanning procedure which will be
+     * removed once the the key-blessing algorithm is implemented.
+     */
+    export() {
+        return crypto.subtle.exportKey("raw", this.sessionKey).then((raw) => {
+            const buf = new Uint8Array(raw);
+            let res = "";
+            buf.forEach((x) => res += (x < 16 ? '0' : '') + x.toString(16));
+            return res;
+        });
+    }
+    algorithm() {
+        return this.sessionKey.algorithm.name;
+    }
+    /**
+     * Encrypts this session key with the private key, and makes a best effort to destroy the session
+     * key material (presumably erased during garbage collection).
+     * @param pkey
+     */
+    disposeToWrappedKeyUsing(pkey) {
+        try {
+            const webPkey = pkey;
+            const rawWrappedKey = crypto.subtle.wrapKey("raw", this.sessionKey, pkey.cryptoKey(), {
+                name: webPkey.algorithm(),
+            });
+            return rawWrappedKey.then(rawKey => new WebCryptoWrappedKey(new Uint8Array(rawKey), pkey));
+        }
+        finally {
+            // Hopefully this frees the underlying key material
+            this.sessionKey = null;
+        }
+    }
+    isDisposed() {
+        return this.sessionKey != null;
+    }
+}
+class WebCryptoDeviceKey extends WebCryptoStorableKey {
+    algorithm() {
+        return this.publicKey().algorithm();
+    }
+    constructor(key) {
+        super(key);
+    }
+    privateKey() {
+        return new WebCryptoPrivateKey(this.key.privateKey);
+    }
+    publicKey() {
+        return new WebCryptoPublicKey(this.key.publicKey);
+    }
+    /**
+     * Returns a fingerprint of the public key of the devicekey pair.
+     */
+    fingerprint() {
+        return this.publicKey().fingerprint();
+    }
+}
+/**
+ * Implementation of KeyGenerator using WebCrypto interface.
+ */
+class WebCryptoKeyGenerator {
+    generateWrappedStorageKey(deviceKey) {
+        const generatedKey = crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
+        return generatedKey.then(key => new WebCryptoSessionKey(key))
+            .then(skey => skey.disposeToWrappedKeyUsing(deviceKey.publicKey()));
+    }
+    static getInstance() {
+        // TODO: may want to reuse instance in future
+        return new WebCryptoKeyGenerator();
+    }
+    generateAndStoreRecoveryKey() {
+        // TODO: Implement
+        return Promise.reject("Not implemented");
+    }
+    generateDeviceKey() {
+        const generatedKey = crypto.subtle.generateKey({
+            hash: { name: DEVICE_KEY_HASH_ALGORITHM },
+            // TODO: Note, RSA-OAEP is deprecated, we should move to ECDH in the future, but it
+            // doesn't use key-wrapping, instead it uses a different mechanism: key-derivation.
+            name: DEVICE_KEY_ALGORITHM,
+            modulusLength: 2048,
+            // exponent is only allowed to be 3 or 65537 for RSA
+            publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+        }, 
+        // false means the key material is not visible to the application
+        false, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
+        return generatedKey.then(key => new WebCryptoDeviceKey(key));
+    }
+    /**
+     * Decodes X509 PEM certificates, extracts their key material, and returns a PublicKey.
+     * @param pemKey
+     */
+    importKey(pemKey) {
+        const key = rs.KEYUTIL.getKey(pemKey);
+        const jwk = rs.KEYUTIL.getJWKFromKey(key);
+        return crypto.subtle.importKey("jwk", jwk, {
+            name: X509_CERTIFICATE_ALGORITHM,
+            hash: { name: X509_CERTIFICATE_HASH_ALGORITHM }
+        }, true, ["encrypt", "wrapKey"]).then(ikey => new WebCryptoPublicKey(ikey));
+    }
+    importWrappedKey(wrappedKey, wrappedBy) {
+        const decodedKey = decode$1(wrappedKey);
+        return Promise.resolve(new WebCryptoWrappedKey(decodedKey, wrappedBy));
+    }
+}
+/**
+ * The Web Crypto spec states that IndexDB may be used to store CryptoKey objects without ever exposing
+ * key material to the application: https://www.w3.org/TR/WebCryptoAPI/#concepts-key-storage
+ */
+class WebCryptoKeyIndexedDBStorage {
+    async runOnStore(fn) {
+        try {
+            const db = await idb.open(ARCS_CRYPTO_INDEXDB_NAME, 1, upgradeDB => upgradeDB.createObjectStore(ARCS_CRYPTO_STORE_NAME, { keyPath: "keyFingerPrint" }));
+            const tx = db.transaction(ARCS_CRYPTO_STORE_NAME, 'readwrite');
+            const store = tx.objectStore(ARCS_CRYPTO_STORE_NAME);
+            const result = await fn(store);
+            await tx.complete;
+            db.close();
+            return Promise.resolve(result);
+        }
+        catch (e) {
+            return Promise.reject(e);
+        }
+    }
+    async find(keyId) {
+        const result = await this.runOnStore(store => {
+            return store.get(keyId);
+        });
+        if (!result) {
+            return Promise.resolve(null);
+        }
+        if (result.key && result.key['privateKey'] && result.key['publicKey']) {
+            return Promise.resolve(new WebCryptoDeviceKey(result.key));
+        }
+        else if (result.key instanceof CryptoKey) {
+            return Promise.resolve(new WebCryptoPublicKey(result.key));
+        }
+        else if (result.key instanceof Uint8Array) {
+            const wrappedBy = await this.find(result.wrappingKeyFingerprint);
+            return Promise.resolve(new WebCryptoWrappedKey(result.key, wrappedBy));
+        }
+        return Promise.reject("Unrecognized key type found in keystore.");
+    }
+    async write(keyFingerPrint, key) {
+        if (key instanceof WebCryptoStorableKey) {
+            const skey = key;
+            await this.runOnStore(store => {
+                return store.put({ keyFingerPrint, key: skey.storableKey() });
+            });
+            return keyFingerPrint;
+        }
+        else if (key instanceof WebCryptoWrappedKey) {
+            const wrappedKey = key;
+            const wrappingKeyFingerprint = await wrappedKey.wrappedBy.fingerprint();
+            await this.runOnStore(store => {
+                return store.put({ keyFingerPrint, key: wrappedKey.wrappedKeyData,
+                    wrappingKeyFingerprint });
+            });
+            return keyFingerPrint;
+        }
+        return Promise.reject("Can't write key that isn't StorableKey or WrappedKey.");
+    }
+    static getInstance() {
+        // TODO: If IndexDB open/close is expensive, we may want to reuse instances.
+        return new WebCryptoKeyIndexedDBStorage();
+    }
+}
+
+/**
+ * Implementation of KeyStorage using a Map, used for testing only.
+ */
+class WebCryptoMemoryKeyStorage {
+    constructor() {
+        this.storageMap = new Map();
+    }
+    find(keyFingerPrint) {
+        return Promise.resolve(this.storageMap.get(keyFingerPrint));
+    }
+    async write(keyFingerprint, key) {
+        this.storageMap.set(keyFingerprint, key);
+        return Promise.resolve(keyFingerprint);
+    }
+    static getInstance() {
+        return new WebCryptoMemoryKeyStorage();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class KeyManager {
+    static getGenerator() {
+        return WebCryptoKeyGenerator.getInstance();
+        // return AndroidWebViewKeyGenerator.getInstance()
+    }
+    static getStorage() {
+        // TODO: move this hackery to the platform/ directory for node vs worker vs web?
+        const globalScope = typeof window !== 'undefined' ? window : (typeof self !== 'undefined' ? self : global);
+        return globalScope['indexedDB'] != null ? WebCryptoKeyIndexedDBStorage.getInstance() : WebCryptoMemoryKeyStorage.getInstance();
+        // return AndroidWebViewKeyStorage.getInstance()
+    }
+}
+
 /*
 @license
 Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
@@ -50969,5 +51465,5 @@ ShellPlanningInterface.USER_ID_MARIA = '-LMtek9Nzp8f5pwiLuF6';
 ShellPlanningInterface.USER_ID_CLETUS = '-LMtek9LSN6eSMg97nXV';
 ShellPlanningInterface.USER_ID_BERNI = '-LMtek9Mdy1iAc3MAkNw';
 
-export { Runtime, ShellPlanningInterface };
+export { Runtime, KeyManager, ShellPlanningInterface };
 //# sourceMappingURL=index.es.js.map
