@@ -1,5 +1,5 @@
-commit 5bfce28e919914c768dce9563e9e01dc0fe42949
+commit 0a28c406b04f02ee10aeff2342295e287c0ad703
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Nov 28 12:48:04 2018 +1100
+Date:   Thu Nov 29 05:11:55 2018 +1100
 
-    Fixes to session handling in the Id class and Id handling in the Manifest (#2318)
+    Uses Mersenne Twister PRNG in tests (#2325)

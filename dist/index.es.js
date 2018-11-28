@@ -4,6 +4,7 @@ import atob$1 from 'atob';
 import btoa$1 from 'btoa';
 import PouchDB from 'pouchdb';
 import PouchDbMemory from 'pouchdb-adapter-memory';
+import MersenneTwister from 'mersenne-twister';
 import idb from 'idb';
 import rs from 'jsrsasign';
 import WebSocket$1 from 'ws';
@@ -39436,11 +39437,10 @@ class MathRandomRNG extends RNG {
 class SeededRNG extends RNG {
     constructor() {
         super(...arguments);
-        this.seed = 0;
+        this.generator = new MersenneTwister(7);
     }
     next() {
-        this.seed = Math.pow(this.seed + Math.E, Math.PI) % 1;
-        return this.seed;
+        return this.generator.random();
     }
 }
 // Singleton Pattern

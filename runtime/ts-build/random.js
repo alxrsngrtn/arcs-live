@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import MersenneTwister from 'mersenne-twister';
 class RNG {
 }
 /**
@@ -23,11 +24,10 @@ class MathRandomRNG extends RNG {
 class SeededRNG extends RNG {
     constructor() {
         super(...arguments);
-        this.seed = 0;
+        this.generator = new MersenneTwister(7);
     }
     next() {
-        this.seed = Math.pow(this.seed + Math.E, Math.PI) % 1;
-        return this.seed;
+        return this.generator.random();
     }
 }
 // Singleton Pattern
