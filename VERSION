@@ -1,5 +1,11 @@
-commit 0a28c406b04f02ee10aeff2342295e287c0ad703
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Nov 29 05:11:55 2018 +1100
+commit c2880781124da74867ce25724a25c84a435e0f0a
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Nov 28 11:14:47 2018 -0800
 
-    Uses Mersenne Twister PRNG in tests (#2325)
+    Restaurant demo work (ui) (#2324)
+    
+    * update restaurant particles
+    
+    * record user in localstorage in all cases
+    
+    * make pipes arc appear old so it sinks to the bottom of the launcher
