@@ -8,12 +8,19 @@
  * http://polymer.github.io/PATENTS.txt
  */
 export declare class Id {
-    private readonly session;
+    private session;
     private readonly currentSession;
     private nextIdComponent;
     private readonly components;
     constructor(currentSession: string, components?: string[]);
     static newSessionId(): Id;
+    /**
+     * When used in the following way:
+     *   const id = Id.newSessionId().fromString(stringId);
+     *
+     * The resulting id will receive a newly generated session id in the currentSession field,
+     * while maintaining an original session from the string representation in the session field.
+     */
     fromString(str: string): Id;
     toString(): string;
     toStringWithoutSessionForTesting(): string;

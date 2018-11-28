@@ -37,7 +37,6 @@ export declare class Manifest {
     private _shapes;
     storeTags: Map<StorageProviderBase, string[]>;
     private _fileName;
-    private nextLocalID;
     private readonly _id;
     private _storageProviderFactory;
     private _meta;

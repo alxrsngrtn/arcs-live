@@ -1,28 +1,5 @@
-commit 88c7a3b986a46614a32455693952863cfe8f6d82
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Tue Nov 27 16:37:08 2018 -0800
+commit 5bfce28e919914c768dce9563e9e01dc0fe42949
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Nov 28 12:48:04 2018 +1100
 
-    Add KeyManagement to rollup (#2231)
-    
-    * Add KeyManagement to rollup
-    
-    * Add a Web ESM rollup config for frontend apps (e.g. provisioning app)
-    
-    Polymer 3.0 only understands ESM modules, so we need to rollup a
-    bundled output that has all CJS dependencies bundled inside, except
-    it should not contain any non-web dependencies (e.g. node APIs).
-    
-    To do this, we use the Typescript plugin to compile direct from TS,
-    export .d.ts files, and and use the commonjs() resolver plugin.
-    
-    We still face the problem that the Polymer-CLI build tools won't
-    pick up the 'browser' dependency in package.json, so that you must
-    directly import 'dist/indexweb.esm.js' for now.
-    
-    * add declaration:true to rollup
-    
-    * server now picks up "main" and polymer picks up "module" in package.json
-    
-    * Adds webmain.ts, entrypoint for shared code (keymgmt)
-    
-    * fix trailing comma
+    Fixes to session handling in the Id class and Id handling in the Manifest (#2318)

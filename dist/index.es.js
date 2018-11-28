@@ -39476,14 +39476,22 @@ class Id {
         const session = Math.floor(Random.next() * Math.pow(2, 50)) + '';
         return new Id(session);
     }
+    /**
+     * When used in the following way:
+     *   const id = Id.newSessionId().fromString(stringId);
+     *
+     * The resulting id will receive a newly generated session id in the currentSession field,
+     * while maintaining an original session from the string representation in the session field.
+     */
     fromString(str) {
+        const newId = new Id(this.currentSession);
         let components = str.split(':');
-        let session = this.currentSession;
         if (components[0][0] === '!') {
-            session = components[0].slice(1);
+            newId.session = components[0].slice(1);
             components = components.slice(1);
         }
-        return new Id(session, components);
+        newId.components.push(...components);
+        return newId;
     }
     toString() {
         return `!${this.session}:${this.components.join(':')}`;
@@ -39959,13 +39967,23 @@ class Manifest {
         this._shapes = [];
         this.storeTags = new Map();
         this._fileName = null;
-        this.nextLocalID = 0;
         this._storageProviderFactory = undefined;
         this._meta = new ManifestMeta();
         this._resources = {};
         this.storeManifestUrls = new Map();
         this.warnings = [];
-        this._id = id;
+        // TODO: Cleanup usage of strings as Ids.
+        assert(id instanceof Id || typeof id === 'string');
+        if (id instanceof Id) {
+            this._id = id;
+        }
+        else {
+            // We use the first component of an ID as a session ID, for manifests parsed
+            // from the file, this is the 'manifest' phrase.
+            // TODO: Figure out if this is ok.
+            const components = id.split(':');
+            this._id = new Id(components[0], components.slice(1));
+        }
     }
     get id() {
         if (this._meta.name) {
@@ -40120,8 +40138,9 @@ class Manifest {
     findRecipesByVerb(verb) {
         return [...this._findAll(manifest => manifest._recipes.filter(recipe => recipe.verbs.includes(verb)))];
     }
+    // TODO: Unify ID handling to use ID instances, not strings. Change return type here to ID.
     generateID() {
-        return `${this.id}:${this.nextLocalID++}`;
+        return this.id.createId().toString();
     }
     static async load(fileName, loader, options) {
         options = options || {};

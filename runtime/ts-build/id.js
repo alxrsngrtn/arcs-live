@@ -20,14 +20,22 @@ export class Id {
         const session = Math.floor(Random.next() * Math.pow(2, 50)) + '';
         return new Id(session);
     }
+    /**
+     * When used in the following way:
+     *   const id = Id.newSessionId().fromString(stringId);
+     *
+     * The resulting id will receive a newly generated session id in the currentSession field,
+     * while maintaining an original session from the string representation in the session field.
+     */
     fromString(str) {
+        const newId = new Id(this.currentSession);
         let components = str.split(':');
-        let session = this.currentSession;
         if (components[0][0] === '!') {
-            session = components[0].slice(1);
+            newId.session = components[0].slice(1);
             components = components.slice(1);
         }
-        return new Id(session, components);
+        newId.components.push(...components);
+        return newId;
     }
     toString() {
         return `!${this.session}:${this.components.join(':')}`;
