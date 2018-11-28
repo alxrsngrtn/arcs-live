@@ -7,23 +7,19 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 export class DevtoolsChannelStub {
-  constructor() {
-    this._messages = [];
-  }
-
-  get messages() {
-    return this._messages;
-  }
-
-  send(message) {
-    this._messages.push(JSON.parse(JSON.stringify(message)));
-  }
-
-  listen(arcOrId, messageType, callback) { /* No-op */ }
-
-  clear() {
-    this._messages.length = 0;
-  }
+    constructor() {
+        this._messages = [];
+    }
+    get messages() {
+        return this._messages;
+    }
+    send(message) {
+        this._messages.push(JSON.parse(JSON.stringify(message)));
+    }
+    listen(arcOrId, messageType, callback) { }
+    clear() {
+        this._messages.length = 0;
+    }
 }
+//# sourceMappingURL=devtools-channel-stub.js.map

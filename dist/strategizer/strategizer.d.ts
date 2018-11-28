@@ -45,6 +45,8 @@ export interface Descendant {
     derivation: any;
     hash: any;
     valid: boolean;
+    errors?: any;
+    normalized?: any;
 }
 export declare abstract class StrategizerWalker {
     descendants: Descendant[];

@@ -30,7 +30,7 @@ import { ResolveRecipe } from './strategies/resolve-recipe.js';
 import { Speculator } from './speculator.js';
 import { Suggestion } from './plan/suggestion';
 import { Tracing } from '../../tracelib/trace.js';
-import { DevtoolsConnection } from '../debug/devtools-connection.js';
+import { DevtoolsConnection } from './debug/devtools-connection.js';
 export class Planner {
     constructor() {
         this._relevances = [];

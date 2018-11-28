@@ -45,13 +45,13 @@ export declare class Arc {
     private nextLocalID;
     private _activeRecipe;
     private _recipes;
-    private readonly _loader;
+    readonly _loader: Loader;
     private dataChangeCallbacks;
     private storesById;
     private storageKeys;
     readonly storageKey: string;
     storageProviderFactory: StorageProviderFactory;
-    private storeTags;
+    storeTags: Map<StorageProviderBase, Set<string>>;
     private storeDescriptions;
     private readonly _description;
     private instantiatePlanCallbacks;

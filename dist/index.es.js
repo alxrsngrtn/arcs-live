@@ -11849,6 +11849,7 @@ class SlotConnection {
     getQualifiedName() { return `${this.particle.name}::${this.name}`; }
     get slotSpec() { return this._slotSpec; }
     get targetSlot() { return this._targetSlot; }
+    set targetSlot(targetSlot) { this._targetSlot = targetSlot; }
     get providedSlots() { return this._providedSlots; }
     get tags() { return this._tags; }
     set tags(tags) { this._tags = tags; }
@@ -13238,6 +13239,7 @@ class Recipe {
         recipe._cloneMap = cloneMap;
         return recipe;
     }
+    // tslint:disable-next-line: no-any
     mergeInto(recipe) {
         const cloneMap = new Map();
         const numHandles = recipe._handles.length;
@@ -43961,48 +43963,46 @@ class SuggestionComposer {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 class AbstractDevtoolsChannel {
-  constructor() {
-    this.debouncedMessages = [];
-    this.debouncing = false;
-    this.messageListeners = new Map();
-  }
-
-  send(message) {
-    this.debouncedMessages.push(message);
-    if (!this.debouncing) {
-      this.debouncing = true;
-      setTimeout(() => {
-        this._flush(this.debouncedMessages);
+    constructor() {
         this.debouncedMessages = [];
         this.debouncing = false;
-      }, 100);
+        this.messageListeners = new Map();
     }
-  }
-
-  listen(arcOrId, messageType, callback) {
-    assert(messageType);
-    assert(arcOrId);
-    const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
-    const key = `${arcId}/${messageType}`;
-    let listeners = this.messageListeners.get(key);
-    if (!listeners) this.messageListeners.set(key, listeners = []);
-    listeners.push(callback);
-  }
-
-  _handleMessage(msg) {
-    const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
-    if (!listeners) {
-      console.warn(`No one is listening to ${msg.messageType} message`);
-    } else {
-      for (const listener of listeners) listener(msg);
+    send(message) {
+        this.debouncedMessages.push(message);
+        if (!this.debouncing) {
+            this.debouncing = true;
+            setTimeout(() => {
+                this._flush(this.debouncedMessages);
+                this.debouncedMessages = [];
+                this.debouncing = false;
+            }, 100);
+        }
     }
-  }
-
-  _flush(messages) {
-    throw 'Not implemented in an abstract class';
-  }
+    listen(arcOrId, messageType, callback) {
+        assert(messageType);
+        assert(arcOrId);
+        const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
+        const key = `${arcId}/${messageType}`;
+        let listeners = this.messageListeners.get(key);
+        if (!listeners)
+            this.messageListeners.set(key, listeners = []);
+        listeners.push(callback);
+    }
+    _handleMessage(msg) {
+        const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
+        if (!listeners) {
+            console.warn(`No one is listening to ${msg.messageType} message`);
+        }
+        else {
+            for (const listener of listeners)
+                listener(msg);
+        }
+    }
+    _flush(messages) {
+        throw new Error('Not implemented in an abstract class');
+    }
 }
 
 /**
@@ -44091,31 +44091,29 @@ class DevtoolsChannel extends AbstractDevtoolsChannel {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 let channel = null;
 let isConnected = false;
 let onceConnectedResolve = null;
 let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
-
 DevtoolsBroker.onceConnected.then(() => {
-  DevtoolsConnection.ensure();
-  onceConnectedResolve(channel);
-  isConnected = true;
+    DevtoolsConnection.ensure();
+    onceConnectedResolve(channel);
+    isConnected = true;
 });
-
 class DevtoolsConnection {
-  static get isConnected() {
-    return isConnected;
-  }
-  static get onceConnected() {
-    return onceConnected;
-  }
-  static get() {
-    return channel;
-  }
-  static ensure() {
-    if (!channel) channel = new DevtoolsChannel();
-  }
+    static get isConnected() {
+        return isConnected;
+    }
+    static get onceConnected() {
+        return onceConnected;
+    }
+    static get() {
+        return channel;
+    }
+    static ensure() {
+        if (!channel)
+            channel = new DevtoolsChannel();
+    }
 }
 
 /**
@@ -44127,14 +44125,13 @@ class DevtoolsConnection {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 class StrategyExplorerAdapter {
-  static processGenerations(generations, devtoolsChannel, options = {}) {
-    devtoolsChannel.send({
-      messageType: 'generations',
-      messageBody: {results: generations, options},
-    });
-  }
+    static processGenerations(generations, devtoolsChannel, options = {}) {
+        devtoolsChannel.send({
+            messageType: 'generations',
+            messageBody: { results: generations, options },
+        });
+    }
 }
 
 /**
@@ -44713,7 +44710,7 @@ class MatchRecipeByVerb extends Strategy {
                                     if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, consumeSlot, slotConstraints[consumeSlot].providedSlots)) {
                                         if (slotConstraints[consumeSlot].targetSlot) {
                                             const { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slotConstraints[consumeSlot].targetSlot });
-                                            particle.consumedSlotConnections[consumeSlot]._targetSlot = mappedSlot;
+                                            particle.consumedSlotConnections[consumeSlot].targetSlot = mappedSlot;
                                             mappedSlot.consumeConnections.push(particle.consumedSlotConnections[consumeSlot]);
                                         }
                                         for (const slotName of Object.keys(slotConstraints[consumeSlot].providedSlots)) {
@@ -47235,53 +47232,49 @@ class UserContext extends XenStateMixin(Empty$2) {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 class OuterPortAttachment {
-  constructor(arc, devtoolsChannel) {
-    this._devtoolsChannel = devtoolsChannel;
-    this._arcIdString = arc.id.toString();
-    this._speculative = arc.isSpeculative;
-  }
-
-  handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
-    // Skip speculative and pipes arcs for now.
-    if (this._arcIdString.endsWith('-pipes') || this._speculative) return;
-
-    const stack = this._extractStackFrames(stackString);
-    this._devtoolsChannel.send({
-      messageType: 'PecLog',
-      messageBody: {name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack},
-    });
-  }
-
-  _extractStackFrames(stackString) {
-    const stack = [];
-    if (!stackString) return stack;
-
-    // File refs should appear only in stack traces generated by tests run with
-    // --explore set.
-    if (stackString.includes('(file:///')) {
-      // The slice discards the 'Error' text and the the stack frame
-      // corresponding to the API channel function, which is already being
-      // displayed in the log entry.
-      for (const frameString of stackString.split('\n    at ').slice(2)) {
-        let match = frameString.match(/^(.*) \((.*)\)$/);
-        if (match === null) {
-          match = {1: '<unknown>', 2: frameString};
-        }
-
-        let location = match[2].replace(/:[0-9]+$/, '');
-        if (location.startsWith('file')) {
-          // 'file:///<path>/arcs.*/runtime/file.js:84'
-          // -> location: 'runtime/file.js:150'
-          location = location.replace(/^.*\/arcs[^/]*\//, '');
-        }
-        stack.push({method: match[1], location, target: null, targetClass: 'noLink'});
-      }
-      return stack;
+    constructor(arc, devtoolsChannel) {
+        this._devtoolsChannel = devtoolsChannel;
+        this._arcIdString = arc.id.toString();
+        this._speculative = arc.isSpeculative;
     }
-    return stack;
-  }
+    handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
+        // Skip speculative and pipes arcs for now.
+        if (this._arcIdString.endsWith('-pipes') || this._speculative)
+            return;
+        const stack = this._extractStackFrames(stackString);
+        this._devtoolsChannel.send({
+            messageType: 'PecLog',
+            messageBody: { name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack },
+        });
+    }
+    _extractStackFrames(stackString) {
+        const stack = [];
+        if (!stackString)
+            return stack;
+        // File refs should appear only in stack traces generated by tests run with
+        // --explore set.
+        if (stackString.includes('(file:///')) {
+            // The slice discards the 'Error' text and the the stack frame
+            // corresponding to the API channel function, which is already being
+            // displayed in the log entry.
+            for (const frameString of stackString.split('\n    at ').slice(2)) {
+                let match = frameString.match(/^(.*) \((.*)\)$/);
+                if (match === null) {
+                    match = { 1: '<unknown>', 2: frameString };
+                }
+                let location = match[2].replace(/:[0-9]+$/, '');
+                if (location.startsWith('file')) {
+                    // 'file:///<path>/arcs.*/runtime/file.js:84'
+                    // -> location: 'runtime/file.js:150'
+                    location = location.replace(/^.*\/arcs[^/]*\//, '');
+                }
+                stack.push({ method: match[1], location, target: null, targetClass: 'noLink' });
+            }
+            return stack;
+        }
+        return stack;
+    }
 }
 
 /**
@@ -49757,31 +49750,25 @@ function FakePecFactory(loader) {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 let streamingToDevtools = false;
-
 function enableTracingAdapter(devtoolsChannel) {
-  if (!streamingToDevtools) {
-    if (!Tracing.enabled) Tracing.enable();
-
-    devtoolsChannel.send({
-      messageType: 'trace-time-sync',
-      messageBody: {
-        traceTime: Tracing.now(),
-        localTime: Date.now()
-      }
-    });
-
-    Tracing.stream(
-      trace => devtoolsChannel.send({
-        messageType: 'trace',
-        messageBody: trace
-      }),
-      trace => trace.ov // Overview events only.
-    );
-
-    streamingToDevtools = true;
-  }
+    if (!streamingToDevtools) {
+        if (!Tracing.enabled)
+            Tracing.enable();
+        devtoolsChannel.send({
+            messageType: 'trace-time-sync',
+            messageBody: {
+                traceTime: Tracing.now(),
+                localTime: Date.now()
+            }
+        });
+        Tracing.stream(trace => devtoolsChannel.send({
+            messageType: 'trace',
+            messageBody: trace
+        }), trace => trace.ov // Overview events only.
+        );
+        streamingToDevtools = true;
+    }
 }
 
 /**
@@ -49793,61 +49780,53 @@ function enableTracingAdapter(devtoolsChannel) {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 class ArcPlannerInvoker {
-  constructor(arc, devtoolsChannel) {
-    this.arc = arc;
-    this.planner = new Planner();
-    this.planner.init(arc);
-
-    devtoolsChannel.listen(arc, 'fetch-strategies', () => devtoolsChannel.send({
-      messageType: 'fetch-strategies-result',
-      messageBody: this.planner.strategizer._strategies.map(a => a.constructor.name)
-    }));
-
-    devtoolsChannel.listen(arc, 'invoke-planner', async msg => devtoolsChannel.send({
-      messageType: 'invoke-planner-result',
-      messageBody: await this.invokePlanner(msg.messageBody)
-    }));
-  }
-
-  async invokePlanner(msg) {
-    const strategy = this.planner.strategizer._strategies.find(s => s.constructor.name === msg.strategy);
-    if (!strategy) return {error: 'could not find strategy'};
-
-    let manifest;
-    try {
-      manifest = await Manifest.parse(msg.recipe, {loader: this.arc._loader, fileName: 'manifest.manifest'});
-    } catch (error) {
-      return {error: error.message};
+    constructor(arc, devtoolsChannel) {
+        this.arc = arc;
+        this.planner = new Planner();
+        this.planner.init(arc);
+        devtoolsChannel.listen(arc, 'fetch-strategies', () => devtoolsChannel.send({
+            messageType: 'fetch-strategies-result',
+            messageBody: this.planner.strategizer._strategies.map(a => a.constructor.name)
+        }));
+        devtoolsChannel.listen(arc, 'invoke-planner', async (msg) => devtoolsChannel.send({
+            messageType: 'invoke-planner-result',
+            messageBody: await this.invokePlanner(msg.messageBody)
+        }));
     }
-
-    const recipe = manifest.recipes[0];
-    recipe.normalize();
-
-    const results = await strategy.generate({
-      generation: 0,
-      generated: [{result: recipe, score: 1}],
-      population: [{result: recipe, score: 1}],
-      terminal: []
-    });
-
-    for (const result of results) {
-      result.hash = await result.hash;
-      result.derivation = undefined;
-      const recipe = result.result;
-      result.result = recipe.toString({showUnresolved: true});
-
-      if (!Object.isFrozen(recipe)) {
-        const errors = new Map();
-        recipe.normalize({errors});
-        result.errors = [...errors.keys()].map(thing => ({id: thing.id, error: errors.get(thing)}));
-        result.normalized = recipe.toString();
-      }
+    async invokePlanner(msg) {
+        const strategy = this.planner.strategizer._strategies.find(s => s.constructor.name === msg.strategy);
+        if (!strategy)
+            return { error: 'could not find strategy' };
+        let manifest;
+        try {
+            manifest = await Manifest.parse(msg.recipe, { loader: this.arc._loader, fileName: 'manifest.manifest' });
+        }
+        catch (error) {
+            return { error: error.message };
+        }
+        const recipe = manifest.recipes[0];
+        recipe.normalize();
+        const results = await strategy.generate({
+            generation: 0,
+            generated: [{ result: recipe, score: 1 }],
+            population: [{ result: recipe, score: 1 }],
+            terminal: []
+        });
+        for (const result of results) {
+            result.hash = await result.hash;
+            result.derivation = undefined;
+            const recipe = result.result;
+            result.result = recipe.toString({ showUnresolved: true });
+            if (!Object.isFrozen(recipe)) {
+                const errors = new Map();
+                recipe.normalize({ errors });
+                result.errors = [...errors.keys()].map(thing => ({ id: thing.id, error: errors.get(thing) }));
+                result.normalized = recipe.toString();
+            }
+        }
+        return { results };
     }
-
-    return {results};
-  }
 }
 
 /**
@@ -49859,52 +49838,49 @@ class ArcPlannerInvoker {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 class ArcStoresFetcher {
-  constructor(arc, devtoolsChannel) {
-    this._arc = arc;
-
-    devtoolsChannel.listen(arc, 'fetch-stores', async () => devtoolsChannel.send({
-      messageType: 'fetch-stores-result',
-      messageBody: await this._listStores()
-    }));
-  }
-
-  async _listStores() {
-    const find = manifest => {
-      let tags = [...manifest.storeTags];
-      if (manifest.imports) {
-        manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
-      }
-      return tags;
-    };
-    return {
-      arcStores: await this._digestStores(this._arc.storeTags),
-      contextStores: await this._digestStores(find(this._arc.context))
-    };
-  }
-
-  async _digestStores(stores) {
-    const result = [];
-    for (const [store, tags] of stores) {
-      let value = `(don't know how to dereference)`;
-      if (store.toList) {
-        value = await store.toList();
-      } else if (store.get) {
-        value = await store.get();
-      }
-      result.push({
-        name: store.name,
-        tags: tags ? [...tags] : [],
-        id: store.id,
-        storage: store.storageKey,
-        type: store.type,
-        description: store.description,
-        value
-      });
+    constructor(arc, devtoolsChannel) {
+        this._arc = arc;
+        devtoolsChannel.listen(arc, 'fetch-stores', async () => devtoolsChannel.send({
+            messageType: 'fetch-stores-result',
+            messageBody: await this._listStores()
+        }));
     }
-    return result;
-  }
+    async _listStores() {
+        const find = manifest => {
+            let tags = [...manifest.storeTags];
+            if (manifest.imports) {
+                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
+            }
+            return tags;
+        };
+        return {
+            arcStores: await this._digestStores(this._arc.storeTags),
+            contextStores: await this._digestStores(find(this._arc.context))
+        };
+    }
+    async _digestStores(stores) {
+        const result = [];
+        for (const [store, tags] of stores) {
+            let value = `(don't know how to dereference)`;
+            if (store.toList) {
+                value = await store.toList();
+            }
+            else if (store.get) {
+                value = await store.get();
+            }
+            result.push({
+                name: store.name,
+                tags: tags ? [...tags] : [],
+                id: store.id,
+                storage: store.storageKey,
+                type: store.type,
+                description: store.description,
+                value
+            });
+        }
+        return result;
+    }
 }
 
 /**
@@ -49916,54 +49892,49 @@ class ArcStoresFetcher {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 // Arc-independent handlers for devtools logic.
 DevtoolsConnection.onceConnected.then(devtoolsChannel => {
-  enableTracingAdapter(devtoolsChannel);
+    enableTracingAdapter(devtoolsChannel);
 });
-
 class ArcDebugHandler {
-  constructor(arc) {
-    this._devtoolsChannel = null;
-    this._arcId = arc.id.toString();
-    this._isSpeculative = arc.isSpeculative;
-
-    DevtoolsConnection.onceConnected.then(devtoolsChannel => {
-      this._devtoolsChannel = devtoolsChannel;
-      if (!arc.isSpeculative) {
-        // Message handles go here.
-        new ArcPlannerInvoker(arc, devtoolsChannel);
-        new ArcStoresFetcher(arc, devtoolsChannel);
-      }
-
-      devtoolsChannel.send({
-        messageType: 'arc-available',
-        messageBody: {
-          id: arc.id.toString(),
-          isSpeculative: arc.isSpeculative
-        }
-      });
-    });
-  }
-
-  recipeInstantiated({particles}) {
-    if (!this._devtoolsChannel || this._isSpeculative) return;
-
-    const truncate = ({id, name}) => ({id, name});
-    const slotConnections = [];
-    particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
-      slotConnections.push({
-        arcId: this._arcId,
-        particleId: cs.particle.id,
-        consumed: truncate(cs.targetSlot),
-        provided: Object.values(cs.providedSlots).map(slot  => truncate(slot)),
-      });
-    }));
-    this._devtoolsChannel.send({
-      messageType: 'recipe-instantiated',
-      messageBody: {slotConnections}
-    });
-  }
+    constructor(arc) {
+        this._devtoolsChannel = null;
+        this._arcId = arc.id.toString();
+        this._isSpeculative = arc.isSpeculative;
+        DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+            this._devtoolsChannel = devtoolsChannel;
+            if (!arc.isSpeculative) {
+                // Message handles go here.
+                const arcPlannerInvoker = new ArcPlannerInvoker(arc, devtoolsChannel);
+                const arcStoresFetcher = new ArcStoresFetcher(arc, devtoolsChannel);
+            }
+            this._devtoolsChannel.send({
+                messageType: 'arc-available',
+                messageBody: {
+                    id: arc.id.toString(),
+                    isSpeculative: arc.isSpeculative
+                }
+            });
+        });
+    }
+    recipeInstantiated({ particles }) {
+        if (!this._devtoolsChannel || this._isSpeculative)
+            return;
+        const truncate = ({ id, name }) => ({ id, name });
+        const slotConnections = [];
+        particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
+            slotConnections.push({
+                arcId: this._arcId,
+                particleId: cs.particle.id,
+                consumed: truncate(cs.targetSlot),
+                provided: Object.values(cs.providedSlots).map(slot => truncate(slot)),
+            });
+        }));
+        this._devtoolsChannel.send({
+            messageType: 'recipe-instantiated',
+            messageBody: { slotConnections }
+        });
+    }
 }
 
 /**
@@ -50498,7 +50469,7 @@ class Arc {
         this.storesById = new Map();
         // storage keys for referenced handles
         this.storageKeys = {};
-        // Map from each store to a set of tags.
+        // Map from each store to a set of tags. public for debug access
         this.storeTags = new Map();
         // Map from each store to its description (originating in the manifest).
         this.storeDescriptions = new Map();
@@ -50865,7 +50836,8 @@ ${this.activeRecipe.toString()}`;
                 const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags, recipeHandle.immediateValue ? 'volatile' : null);
                 if (recipeHandle.immediateValue) {
                     const particleSpec = recipeHandle.immediateValue;
-                    assert(recipeHandle.type.interfaceShape.particleMatches(particleSpec));
+                    const type = recipeHandle.type;
+                    assert(type instanceof InterfaceType && type.interfaceShape.particleMatches(particleSpec));
                     const particleClone = particleSpec.clone().toLiteral();
                     particleClone.id = newStore.id;
                     // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
@@ -50916,7 +50888,7 @@ ${this.activeRecipe.toString()}`;
             // Note: callbacks not triggered for inner-arc recipe instantiation or speculative arcs.
             this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
         }
-        this.debugHandler.recipeInstantiated({ handles, particles, slots });
+        this.debugHandler.recipeInstantiated({ particles });
     }
     _connectParticleToHandle(particle, name, targetHandle) {
         assert(targetHandle, 'no target handle provided');

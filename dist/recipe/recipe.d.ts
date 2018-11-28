@@ -54,10 +54,10 @@ export declare class Recipe {
     digest(): Promise<any>;
     normalize(options?: any): boolean;
     clone(cloneMap?: any): Recipe;
-    mergeInto(recipe: any): {
-        handles: any;
-        particles: any;
-        slots: any;
+    mergeInto(recipe: Recipe): {
+        handles: Handle[];
+        particles: Particle[];
+        slots: Slot[];
         cloneMap: Map<any, any>;
     };
     _copyInto(recipe: any, cloneMap: any): void;

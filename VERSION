@@ -1,11 +1,7 @@
-commit c2880781124da74867ce25724a25c84a435e0f0a
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Nov 28 11:14:47 2018 -0800
+commit ebb57d88636e4111e1a51b79b095163bbd9c7004
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Nov 28 15:23:41 2018 -0800
 
-    Restaurant demo work (ui) (#2324)
+    Convert debug to typescript (#2335)
     
-    * update restaurant particles
-    
-    * record user in localstorage in all cases
-    
-    * make pipes arc appear old so it sinks to the bottom of the launcher
+    Addresses #1765

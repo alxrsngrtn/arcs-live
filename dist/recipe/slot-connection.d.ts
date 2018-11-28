@@ -17,7 +17,7 @@ export declare class SlotConnection {
     readonly name: string;
     getQualifiedName(): string;
     slotSpec: SlotSpec;
-    readonly targetSlot: Slot;
+    targetSlot: Slot | undefined;
     readonly providedSlots: {
         [index: string]: Slot;
     };

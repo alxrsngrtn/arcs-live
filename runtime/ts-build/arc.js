@@ -18,7 +18,7 @@ import { compareComparables } from './recipe/util.js';
 import { FakePecFactory } from './fake-pec-factory.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Id } from './id.js';
-import { ArcDebugHandler } from '../debug/arc-debug-handler.js';
+import { ArcDebugHandler } from './debug/arc-debug-handler.js';
 import { RecipeIndex } from './recipe-index.js';
 export class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, recipeIndex }) {
@@ -30,7 +30,7 @@ export class Arc {
         this.storesById = new Map();
         // storage keys for referenced handles
         this.storageKeys = {};
-        // Map from each store to a set of tags.
+        // Map from each store to a set of tags. public for debug access
         this.storeTags = new Map();
         // Map from each store to its description (originating in the manifest).
         this.storeDescriptions = new Map();
@@ -397,7 +397,8 @@ ${this.activeRecipe.toString()}`;
                 const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags, recipeHandle.immediateValue ? 'volatile' : null);
                 if (recipeHandle.immediateValue) {
                     const particleSpec = recipeHandle.immediateValue;
-                    assert(recipeHandle.type.interfaceShape.particleMatches(particleSpec));
+                    const type = recipeHandle.type;
+                    assert(type instanceof InterfaceType && type.interfaceShape.particleMatches(particleSpec));
                     const particleClone = particleSpec.clone().toLiteral();
                     particleClone.id = newStore.id;
                     // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
@@ -448,7 +449,7 @@ ${this.activeRecipe.toString()}`;
             // Note: callbacks not triggered for inner-arc recipe instantiation or speculative arcs.
             this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
         }
-        this.debugHandler.recipeInstantiated({ handles, particles, slots });
+        this.debugHandler.recipeInstantiated({ particles });
     }
     _connectParticleToHandle(particle, name, targetHandle) {
         assert(targetHandle, 'no target handle provided');

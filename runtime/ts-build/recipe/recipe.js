@@ -339,6 +339,7 @@ export class Recipe {
         recipe._cloneMap = cloneMap;
         return recipe;
     }
+    // tslint:disable-next-line: no-any
     mergeInto(recipe) {
         const cloneMap = new Map();
         const numHandles = recipe._handles.length;

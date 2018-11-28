@@ -17,8 +17,8 @@ export declare class Handle {
     private _storageKey;
     private _pattern;
     private _immediateValue;
-    constructor(recipe: any);
-    _copyInto(recipe: any): any;
+    constructor(recipe: Recipe);
+    _copyInto(recipe: Recipe): any;
     mergeInto(handle: any): void;
     _mergedFate(fates: any): "use" | "create";
     _startNormalize(): void;
@@ -26,11 +26,11 @@ export declare class Handle {
     _compareTo(other: any): any;
     fate: Fate;
     readonly originalFate: Fate;
-    readonly originalId: string;
+    readonly originalId: string | null;
     readonly recipe: Recipe;
     tags: string[];
     readonly type: Type;
-    id: string;
+    id: string | null;
     mapToStorage(storage: any): void;
     localName: string;
     readonly connections: HandleConnection[];

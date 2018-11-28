@@ -1,12 +1,12 @@
 import { Arc } from './arc.js';
-import { StrategyDerived } from './strategizer/strategizer.js';
+import { Strategizer, StrategyDerived } from './strategizer/strategizer.js';
 import { Speculator } from './speculator.js';
 import { Suggestion } from './plan/suggestion';
 export declare class Planner {
     constructor();
     private _arc;
     private _relevances;
-    private strategizer;
+    strategizer: Strategizer;
     init(arc: Arc, { strategies, ruleset, strategyArgs }?: {
         strategies?: StrategyDerived[];
         ruleset?: import("./strategizer/strategizer.js").Ruleset;

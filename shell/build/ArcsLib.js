@@ -57419,7 +57419,7 @@ class DeviceInfo {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DevtoolsChannel", function() { return DevtoolsChannel; });
-/* harmony import */ var _runtime_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../runtime/debug/abstract-devtools-channel.js */ "./runtime/debug/abstract-devtools-channel.js");
+/* harmony import */ var _runtime_ts_build_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../runtime/ts-build/debug/abstract-devtools-channel.js */ "./runtime/ts-build/debug/abstract-devtools-channel.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -57433,7 +57433,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class DevtoolsChannel extends _runtime_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__["AbstractDevtoolsChannel"] {
+class DevtoolsChannel extends _runtime_ts_build_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__["AbstractDevtoolsChannel"] {
   constructor() {
     super();
     document.addEventListener('arcs-debug-in', e => this._handleMessage(e.detail));
@@ -57611,8 +57611,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ts-build/particle-spec.js */ "./runtime/ts-build/particle-spec.js");
 /* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ts-build/type.js */ "./runtime/ts-build/type.js");
-/* harmony import */ var _debug_outer_port_attachment_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./debug/outer-port-attachment.js */ "./runtime/debug/outer-port-attachment.js");
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
+/* harmony import */ var _ts_build_debug_outer_port_attachment_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ts-build/debug/outer-port-attachment.js */ "./runtime/ts-build/debug/outer-port-attachment.js");
+/* harmony import */ var _ts_build_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ts-build/debug/devtools-connection.js */ "./runtime/ts-build/debug/devtools-connection.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -57911,9 +57911,9 @@ class PECOuterPort extends APIPort {
     // We need an API call to tell the context side that DevTools has been connected, so it can start sending
     // stack traces attached to the API calls made from that side.
     this.registerCall('DevToolsConnected', {});
-    _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_4__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => {
+    _ts_build_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_4__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => {
       this.DevToolsConnected();
-      this._debugAttachment = new _debug_outer_port_attachment_js__WEBPACK_IMPORTED_MODULE_3__["OuterPortAttachment"](arc, devtoolsChannel);
+      this._debugAttachment = new _ts_build_debug_outer_port_attachment_js__WEBPACK_IMPORTED_MODULE_3__["OuterPortAttachment"](arc, devtoolsChannel);
     });
   }
 }
@@ -66245,627 +66245,6 @@ const parser = /*
 
 /***/ }),
 
-/***/ "./runtime/debug/abstract-devtools-channel.js":
-/*!****************************************************!*\
-  !*** ./runtime/debug/abstract-devtools-channel.js ***!
-  \****************************************************/
-/*! exports provided: AbstractDevtoolsChannel */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AbstractDevtoolsChannel", function() { return AbstractDevtoolsChannel; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-class AbstractDevtoolsChannel {
-  constructor() {
-    this.debouncedMessages = [];
-    this.debouncing = false;
-    this.messageListeners = new Map();
-  }
-
-  send(message) {
-    this.debouncedMessages.push(message);
-    if (!this.debouncing) {
-      this.debouncing = true;
-      setTimeout(() => {
-        this._flush(this.debouncedMessages);
-        this.debouncedMessages = [];
-        this.debouncing = false;
-      }, 100);
-    }
-  }
-
-  listen(arcOrId, messageType, callback) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(messageType);
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arcOrId);
-    const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
-    const key = `${arcId}/${messageType}`;
-    let listeners = this.messageListeners.get(key);
-    if (!listeners) this.messageListeners.set(key, listeners = []);
-    listeners.push(callback);
-  }
-
-  _handleMessage(msg) {
-    const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
-    if (!listeners) {
-      console.warn(`No one is listening to ${msg.messageType} message`);
-    } else {
-      for (const listener of listeners) listener(msg);
-    }
-  }
-
-  _flush(messages) {
-    throw 'Not implemented in an abstract class';
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/debug/arc-debug-handler.js":
-/*!********************************************!*\
-  !*** ./runtime/debug/arc-debug-handler.js ***!
-  \********************************************/
-/*! exports provided: ArcDebugHandler */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcDebugHandler", function() { return ArcDebugHandler; });
-/* harmony import */ var _tracing_adapter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./tracing-adapter.js */ "./runtime/debug/tracing-adapter.js");
-/* harmony import */ var _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./arc-planner-invoker.js */ "./runtime/debug/arc-planner-invoker.js");
-/* harmony import */ var _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./arc-stores-fetcher.js */ "./runtime/debug/arc-stores-fetcher.js");
-/* harmony import */ var _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./devtools-connection.js */ "./runtime/debug/devtools-connection.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-// Arc-independent handlers for devtools logic.
-_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => {
-  Object(_tracing_adapter_js__WEBPACK_IMPORTED_MODULE_0__["enableTracingAdapter"])(devtoolsChannel);
-});
-
-class ArcDebugHandler {
-  constructor(arc) {
-    this._devtoolsChannel = null;
-    this._arcId = arc.id.toString();
-    this._isSpeculative = arc.isSpeculative;
-
-    _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => {
-      this._devtoolsChannel = devtoolsChannel;
-      if (!arc.isSpeculative) {
-        // Message handles go here.
-        new _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__["ArcPlannerInvoker"](arc, devtoolsChannel);
-        new _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__["ArcStoresFetcher"](arc, devtoolsChannel);
-      }
-
-      devtoolsChannel.send({
-        messageType: 'arc-available',
-        messageBody: {
-          id: arc.id.toString(),
-          isSpeculative: arc.isSpeculative
-        }
-      });
-    });
-  }
-
-  recipeInstantiated({particles}) {
-    if (!this._devtoolsChannel || this._isSpeculative) return;
-
-    const truncate = ({id, name}) => ({id, name});
-    const slotConnections = [];
-    particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
-      slotConnections.push({
-        arcId: this._arcId,
-        particleId: cs.particle.id,
-        consumed: truncate(cs.targetSlot),
-        provided: Object.values(cs.providedSlots).map(slot  => truncate(slot)),
-      });
-    }));
-    this._devtoolsChannel.send({
-      messageType: 'recipe-instantiated',
-      messageBody: {slotConnections}
-    });
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/debug/arc-planner-invoker.js":
-/*!**********************************************!*\
-  !*** ./runtime/debug/arc-planner-invoker.js ***!
-  \**********************************************/
-/*! exports provided: ArcPlannerInvoker */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcPlannerInvoker", function() { return ArcPlannerInvoker; });
-/* harmony import */ var _ts_build_planner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ts-build/planner.js */ "./runtime/ts-build/planner.js");
-/* harmony import */ var _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ts-build/manifest.js */ "./runtime/ts-build/manifest.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-class ArcPlannerInvoker {
-  constructor(arc, devtoolsChannel) {
-    this.arc = arc;
-    this.planner = new _ts_build_planner_js__WEBPACK_IMPORTED_MODULE_0__["Planner"]();
-    this.planner.init(arc);
-
-    devtoolsChannel.listen(arc, 'fetch-strategies', () => devtoolsChannel.send({
-      messageType: 'fetch-strategies-result',
-      messageBody: this.planner.strategizer._strategies.map(a => a.constructor.name)
-    }));
-
-    devtoolsChannel.listen(arc, 'invoke-planner', async msg => devtoolsChannel.send({
-      messageType: 'invoke-planner-result',
-      messageBody: await this.invokePlanner(msg.messageBody)
-    }));
-  }
-
-  async invokePlanner(msg) {
-    const strategy = this.planner.strategizer._strategies.find(s => s.constructor.name === msg.strategy);
-    if (!strategy) return {error: 'could not find strategy'};
-
-    let manifest;
-    try {
-      manifest = await _ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(msg.recipe, {loader: this.arc._loader, fileName: 'manifest.manifest'});
-    } catch (error) {
-      return {error: error.message};
-    }
-
-    const recipe = manifest.recipes[0];
-    recipe.normalize();
-
-    const results = await strategy.generate({
-      generation: 0,
-      generated: [{result: recipe, score: 1}],
-      population: [{result: recipe, score: 1}],
-      terminal: []
-    });
-
-    for (const result of results) {
-      result.hash = await result.hash;
-      result.derivation = undefined;
-      const recipe = result.result;
-      result.result = recipe.toString({showUnresolved: true});
-
-      if (!Object.isFrozen(recipe)) {
-        const errors = new Map();
-        recipe.normalize({errors});
-        result.errors = [...errors.keys()].map(thing => ({id: thing.id, error: errors.get(thing)}));
-        result.normalized = recipe.toString();
-      }
-    }
-
-    return {results};
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/debug/arc-stores-fetcher.js":
-/*!*********************************************!*\
-  !*** ./runtime/debug/arc-stores-fetcher.js ***!
-  \*********************************************/
-/*! exports provided: ArcStoresFetcher */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcStoresFetcher", function() { return ArcStoresFetcher; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class ArcStoresFetcher {
-  constructor(arc, devtoolsChannel) {
-    this._arc = arc;
-
-    devtoolsChannel.listen(arc, 'fetch-stores', async () => devtoolsChannel.send({
-      messageType: 'fetch-stores-result',
-      messageBody: await this._listStores()
-    }));
-  }
-
-  async _listStores() {
-    const find = manifest => {
-      let tags = [...manifest.storeTags];
-      if (manifest.imports) {
-        manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
-      }
-      return tags;
-    };
-    return {
-      arcStores: await this._digestStores(this._arc.storeTags),
-      contextStores: await this._digestStores(find(this._arc.context))
-    };
-  }
-
-  async _digestStores(stores) {
-    const result = [];
-    for (const [store, tags] of stores) {
-      let value = `(don't know how to dereference)`;
-      if (store.toList) {
-        value = await store.toList();
-      } else if (store.get) {
-        value = await store.get();
-      }
-      result.push({
-        name: store.name,
-        tags: tags ? [...tags] : [],
-        id: store.id,
-        storage: store.storageKey,
-        type: store.type,
-        description: store.description,
-        value
-      });
-    }
-    return result;
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/debug/devtools-connection.js":
-/*!**********************************************!*\
-  !*** ./runtime/debug/devtools-connection.js ***!
-  \**********************************************/
-/*! exports provided: DevtoolsConnection, DevtoolsForTests */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DevtoolsConnection", function() { return DevtoolsConnection; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DevtoolsForTests", function() { return DevtoolsForTests; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _platform_devtools_channel_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../platform/devtools-channel-web.js */ "./platform/devtools-channel-web.js");
-/* harmony import */ var _testing_devtools_channel_stub_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./testing/devtools-channel-stub.js */ "./runtime/debug/testing/devtools-channel-stub.js");
-/* harmony import */ var _devtools_shared_devtools_broker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../devtools/shared/devtools-broker.js */ "./devtools/shared/devtools-broker.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-let channel = null;
-let isConnected = false;
-let onceConnectedResolve = null;
-let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
-
-_devtools_shared_devtools_broker_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsBroker"].onceConnected.then(() => {
-  DevtoolsConnection.ensure();
-  onceConnectedResolve(channel);
-  isConnected = true;
-});
-
-class DevtoolsConnection {
-  static get isConnected() {
-    return isConnected;
-  }
-  static get onceConnected() {
-    return onceConnected;
-  }
-  static get() {
-    return channel;
-  }
-  static ensure() {
-    if (!channel) channel = new _platform_devtools_channel_web_js__WEBPACK_IMPORTED_MODULE_1__["DevtoolsChannel"]();
-  }
-}
-
-class DevtoolsForTests {
-  static get channel() {
-    return channel;
-  }
-  static ensureStub() {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!channel);
-    channel = new _testing_devtools_channel_stub_js__WEBPACK_IMPORTED_MODULE_2__["DevtoolsChannelStub"]();
-    onceConnectedResolve(channel);
-    isConnected = true;
-  }
-  static reset() {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(channel);
-    isConnected = false;
-    onceConnectedResolve = null;
-    onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
-    channel = null;
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/debug/outer-port-attachment.js":
-/*!************************************************!*\
-  !*** ./runtime/debug/outer-port-attachment.js ***!
-  \************************************************/
-/*! exports provided: OuterPortAttachment */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OuterPortAttachment", function() { return OuterPortAttachment; });
-/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/sourcemapped-stacktrace-web.js */ "./platform/sourcemapped-stacktrace-web.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-class OuterPortAttachment {
-  constructor(arc, devtoolsChannel) {
-    this._devtoolsChannel = devtoolsChannel;
-    this._arcIdString = arc.id.toString();
-    this._speculative = arc.isSpeculative;
-  }
-
-  handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
-    // Skip speculative and pipes arcs for now.
-    if (this._arcIdString.endsWith('-pipes') || this._speculative) return;
-
-    const stack = this._extractStackFrames(stackString);
-    this._devtoolsChannel.send({
-      messageType: 'PecLog',
-      messageBody: {name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack},
-    });
-  }
-
-  _extractStackFrames(stackString) {
-    const stack = [];
-    if (!stackString) return stack;
-
-    // File refs should appear only in stack traces generated by tests run with
-    // --explore set.
-    if (stackString.includes('(file:///')) {
-      // The slice discards the 'Error' text and the the stack frame
-      // corresponding to the API channel function, which is already being
-      // displayed in the log entry.
-      for (const frameString of stackString.split('\n    at ').slice(2)) {
-        let match = frameString.match(/^(.*) \((.*)\)$/);
-        if (match === null) {
-          match = {1: '<unknown>', 2: frameString};
-        }
-
-        let location = match[2].replace(/:[0-9]+$/, '');
-        if (location.startsWith('file')) {
-          // 'file:///<path>/arcs.*/runtime/file.js:84'
-          // -> location: 'runtime/file.js:150'
-          location = location.replace(/^.*\/arcs[^/]*\//, '');
-        }
-        stack.push({method: match[1], location, target: null, targetClass: 'noLink'});
-      }
-      return stack;
-    }
-
-    // The slice discards the stack frame corresponding to the API channel
-    // function, which is already being displayed in the log entry.
-    Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__["mapStackTrace"])(stackString, mapped => mapped.slice(1).map(frameString => {
-      // Each frame has the form '    at function (source:line:column)'.
-      // Extract the function name and source:line:column text, then set up
-      // a frame object with the following fields:
-      //   location: text to display as the source in devtools Arcs panel
-      //   target: URL to open in devtools Sources panel
-      //   targetClass: CSS class specifier to attach to the location text
-      let match = frameString.match(/^ {4}at (.*) \((.*)\)$/);
-      if (match === null) {
-        match = {1: '<unknown>', 2: frameString.replace(/^ *at */, '')};
-      }
-
-      const frame = {method: match[1]};
-      const source = match[2].replace(/:[0-9]+$/, '');
-      if (source.startsWith('http')) {
-        // 'http://<url>/arcs.*/shell/file.js:150'
-        // -> location: 'shell/file.js:150', target: same as source
-        frame.location = source.replace(/^.*\/arcs[^/]*\//, '');
-        frame.target = source;
-        frame.targetClass = 'link';
-      } else if (source.startsWith('webpack')) {
-        // 'webpack:///runtime/sub/file.js:18'
-        // -> location: 'runtime/sub/file.js:18', target: 'webpack:///./runtime/sub/file.js:18'
-        frame.location = source.slice(11);
-        frame.target = `webpack:///./${frame.location}`;
-        frame.targetClass = 'link';
-      } else {
-        // '<anonymous>' (or similar)
-        frame.location = source;
-        frame.target = null;
-        frame.targetClass = 'noLink';
-      }
-      stack.push(frame);
-    }), {sync: true, cacheGlobally: true});
-    return stack;
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/debug/strategy-explorer-adapter.js":
-/*!****************************************************!*\
-  !*** ./runtime/debug/strategy-explorer-adapter.js ***!
-  \****************************************************/
-/*! exports provided: StrategyExplorerAdapter */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StrategyExplorerAdapter", function() { return StrategyExplorerAdapter; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class StrategyExplorerAdapter {
-  static processGenerations(generations, devtoolsChannel, options = {}) {
-    devtoolsChannel.send({
-      messageType: 'generations',
-      messageBody: {results: generations, options},
-    });
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/debug/testing/devtools-channel-stub.js":
-/*!********************************************************!*\
-  !*** ./runtime/debug/testing/devtools-channel-stub.js ***!
-  \********************************************************/
-/*! exports provided: DevtoolsChannelStub */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DevtoolsChannelStub", function() { return DevtoolsChannelStub; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class DevtoolsChannelStub {
-  constructor() {
-    this._messages = [];
-  }
-
-  get messages() {
-    return this._messages;
-  }
-
-  send(message) {
-    this._messages.push(JSON.parse(JSON.stringify(message)));
-  }
-
-  listen(arcOrId, messageType, callback) { /* No-op */ }
-
-  clear() {
-    this._messages.length = 0;
-  }
-}
-
-
-/***/ }),
-
-/***/ "./runtime/debug/tracing-adapter.js":
-/*!******************************************!*\
-  !*** ./runtime/debug/tracing-adapter.js ***!
-  \******************************************/
-/*! exports provided: enableTracingAdapter */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "enableTracingAdapter", function() { return enableTracingAdapter; });
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-let streamingToDevtools = false;
-
-function enableTracingAdapter(devtoolsChannel) {
-  if (!streamingToDevtools) {
-    if (!_tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__["Tracing"].enabled) _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__["Tracing"].enable();
-
-    devtoolsChannel.send({
-      messageType: 'trace-time-sync',
-      messageBody: {
-        traceTime: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__["Tracing"].now(),
-        localTime: Date.now()
-      }
-    });
-
-    _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__["Tracing"].stream(
-      trace => devtoolsChannel.send({
-        messageType: 'trace',
-        messageBody: trace
-      }),
-      trace => trace.ov // Overview events only.
-    );
-
-    streamingToDevtools = true;
-  }
-}
-
-
-/***/ }),
-
 /***/ "./runtime/dom-particle-base.js":
 /*!**************************************!*\
   !*** ./runtime/dom-particle-base.js ***!
@@ -67848,7 +67227,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fake_pec_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./fake-pec-factory.js */ "./runtime/ts-build/fake-pec-factory.js");
 /* harmony import */ var _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./storage/storage-provider-factory.js */ "./runtime/ts-build/storage/storage-provider-factory.js");
 /* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./id.js */ "./runtime/ts-build/id.js");
-/* harmony import */ var _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../debug/arc-debug-handler.js */ "./runtime/debug/arc-debug-handler.js");
+/* harmony import */ var _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./debug/arc-debug-handler.js */ "./runtime/ts-build/debug/arc-debug-handler.js");
 /* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./recipe-index.js */ "./runtime/ts-build/recipe-index.js");
 /**
  * @license
@@ -67882,7 +67261,7 @@ class Arc {
         this.storesById = new Map();
         // storage keys for referenced handles
         this.storageKeys = {};
-        // Map from each store to a set of tags.
+        // Map from each store to a set of tags. public for debug access
         this.storeTags = new Map();
         // Map from each store to its description (originating in the manifest).
         this.storeDescriptions = new Map();
@@ -68249,7 +67628,8 @@ ${this.activeRecipe.toString()}`;
                 const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags, recipeHandle.immediateValue ? 'volatile' : null);
                 if (recipeHandle.immediateValue) {
                     const particleSpec = recipeHandle.immediateValue;
-                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipeHandle.type.interfaceShape.particleMatches(particleSpec));
+                    const type = recipeHandle.type;
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"] && type.interfaceShape.particleMatches(particleSpec));
                     const particleClone = particleSpec.clone().toLiteral();
                     particleClone.id = newStore.id;
                     // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
@@ -68300,7 +67680,7 @@ ${this.activeRecipe.toString()}`;
             // Note: callbacks not triggered for inner-arc recipe instantiation or speculative arcs.
             this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
         }
-        this.debugHandler.recipeInstantiated({ handles, particles, slots });
+        this.debugHandler.recipeInstantiated({ particles });
     }
     _connectParticleToHandle(particle, name, targetHandle) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targetHandle, 'no target handle provided');
@@ -68578,6 +67958,584 @@ class JsonldToManifest {
     }
 }
 //# sourceMappingURL=jsonldToManifest.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/debug/abstract-devtools-channel.js":
+/*!*************************************************************!*\
+  !*** ./runtime/ts-build/debug/abstract-devtools-channel.js ***!
+  \*************************************************************/
+/*! exports provided: AbstractDevtoolsChannel */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AbstractDevtoolsChannel", function() { return AbstractDevtoolsChannel; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class AbstractDevtoolsChannel {
+    constructor() {
+        this.debouncedMessages = [];
+        this.debouncing = false;
+        this.messageListeners = new Map();
+    }
+    send(message) {
+        this.debouncedMessages.push(message);
+        if (!this.debouncing) {
+            this.debouncing = true;
+            setTimeout(() => {
+                this._flush(this.debouncedMessages);
+                this.debouncedMessages = [];
+                this.debouncing = false;
+            }, 100);
+        }
+    }
+    listen(arcOrId, messageType, callback) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(messageType);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arcOrId);
+        const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
+        const key = `${arcId}/${messageType}`;
+        let listeners = this.messageListeners.get(key);
+        if (!listeners)
+            this.messageListeners.set(key, listeners = []);
+        listeners.push(callback);
+    }
+    _handleMessage(msg) {
+        const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
+        if (!listeners) {
+            console.warn(`No one is listening to ${msg.messageType} message`);
+        }
+        else {
+            for (const listener of listeners)
+                listener(msg);
+        }
+    }
+    _flush(messages) {
+        throw new Error('Not implemented in an abstract class');
+    }
+}
+//# sourceMappingURL=abstract-devtools-channel.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/debug/arc-debug-handler.js":
+/*!*****************************************************!*\
+  !*** ./runtime/ts-build/debug/arc-debug-handler.js ***!
+  \*****************************************************/
+/*! exports provided: ArcDebugHandler */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcDebugHandler", function() { return ArcDebugHandler; });
+/* harmony import */ var _tracing_adapter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./tracing-adapter.js */ "./runtime/ts-build/debug/tracing-adapter.js");
+/* harmony import */ var _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./arc-planner-invoker.js */ "./runtime/ts-build/debug/arc-planner-invoker.js");
+/* harmony import */ var _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./arc-stores-fetcher.js */ "./runtime/ts-build/debug/arc-stores-fetcher.js");
+/* harmony import */ var _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./devtools-connection.js */ "./runtime/ts-build/debug/devtools-connection.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+// Arc-independent handlers for devtools logic.
+_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => {
+    Object(_tracing_adapter_js__WEBPACK_IMPORTED_MODULE_0__["enableTracingAdapter"])(devtoolsChannel);
+});
+class ArcDebugHandler {
+    constructor(arc) {
+        this._devtoolsChannel = null;
+        this._arcId = arc.id.toString();
+        this._isSpeculative = arc.isSpeculative;
+        _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => {
+            this._devtoolsChannel = devtoolsChannel;
+            if (!arc.isSpeculative) {
+                // Message handles go here.
+                const arcPlannerInvoker = new _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__["ArcPlannerInvoker"](arc, devtoolsChannel);
+                const arcStoresFetcher = new _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__["ArcStoresFetcher"](arc, devtoolsChannel);
+            }
+            this._devtoolsChannel.send({
+                messageType: 'arc-available',
+                messageBody: {
+                    id: arc.id.toString(),
+                    isSpeculative: arc.isSpeculative
+                }
+            });
+        });
+    }
+    recipeInstantiated({ particles }) {
+        if (!this._devtoolsChannel || this._isSpeculative)
+            return;
+        const truncate = ({ id, name }) => ({ id, name });
+        const slotConnections = [];
+        particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
+            slotConnections.push({
+                arcId: this._arcId,
+                particleId: cs.particle.id,
+                consumed: truncate(cs.targetSlot),
+                provided: Object.values(cs.providedSlots).map(slot => truncate(slot)),
+            });
+        }));
+        this._devtoolsChannel.send({
+            messageType: 'recipe-instantiated',
+            messageBody: { slotConnections }
+        });
+    }
+}
+//# sourceMappingURL=arc-debug-handler.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/debug/arc-planner-invoker.js":
+/*!*******************************************************!*\
+  !*** ./runtime/ts-build/debug/arc-planner-invoker.js ***!
+  \*******************************************************/
+/*! exports provided: ArcPlannerInvoker */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcPlannerInvoker", function() { return ArcPlannerInvoker; });
+/* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../planner.js */ "./runtime/ts-build/planner.js");
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../manifest.js */ "./runtime/ts-build/manifest.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+class ArcPlannerInvoker {
+    constructor(arc, devtoolsChannel) {
+        this.arc = arc;
+        this.planner = new _planner_js__WEBPACK_IMPORTED_MODULE_0__["Planner"]();
+        this.planner.init(arc);
+        devtoolsChannel.listen(arc, 'fetch-strategies', () => devtoolsChannel.send({
+            messageType: 'fetch-strategies-result',
+            messageBody: this.planner.strategizer._strategies.map(a => a.constructor.name)
+        }));
+        devtoolsChannel.listen(arc, 'invoke-planner', async (msg) => devtoolsChannel.send({
+            messageType: 'invoke-planner-result',
+            messageBody: await this.invokePlanner(msg.messageBody)
+        }));
+    }
+    async invokePlanner(msg) {
+        const strategy = this.planner.strategizer._strategies.find(s => s.constructor.name === msg.strategy);
+        if (!strategy)
+            return { error: 'could not find strategy' };
+        let manifest;
+        try {
+            manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(msg.recipe, { loader: this.arc._loader, fileName: 'manifest.manifest' });
+        }
+        catch (error) {
+            return { error: error.message };
+        }
+        const recipe = manifest.recipes[0];
+        recipe.normalize();
+        const results = await strategy.generate({
+            generation: 0,
+            generated: [{ result: recipe, score: 1 }],
+            population: [{ result: recipe, score: 1 }],
+            terminal: []
+        });
+        for (const result of results) {
+            result.hash = await result.hash;
+            result.derivation = undefined;
+            const recipe = result.result;
+            result.result = recipe.toString({ showUnresolved: true });
+            if (!Object.isFrozen(recipe)) {
+                const errors = new Map();
+                recipe.normalize({ errors });
+                result.errors = [...errors.keys()].map(thing => ({ id: thing.id, error: errors.get(thing) }));
+                result.normalized = recipe.toString();
+            }
+        }
+        return { results };
+    }
+}
+//# sourceMappingURL=arc-planner-invoker.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/debug/arc-stores-fetcher.js":
+/*!******************************************************!*\
+  !*** ./runtime/ts-build/debug/arc-stores-fetcher.js ***!
+  \******************************************************/
+/*! exports provided: ArcStoresFetcher */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcStoresFetcher", function() { return ArcStoresFetcher; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ArcStoresFetcher {
+    constructor(arc, devtoolsChannel) {
+        this._arc = arc;
+        devtoolsChannel.listen(arc, 'fetch-stores', async () => devtoolsChannel.send({
+            messageType: 'fetch-stores-result',
+            messageBody: await this._listStores()
+        }));
+    }
+    async _listStores() {
+        const find = manifest => {
+            let tags = [...manifest.storeTags];
+            if (manifest.imports) {
+                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
+            }
+            return tags;
+        };
+        return {
+            arcStores: await this._digestStores(this._arc.storeTags),
+            contextStores: await this._digestStores(find(this._arc.context))
+        };
+    }
+    async _digestStores(stores) {
+        const result = [];
+        for (const [store, tags] of stores) {
+            let value = `(don't know how to dereference)`;
+            if (store.toList) {
+                value = await store.toList();
+            }
+            else if (store.get) {
+                value = await store.get();
+            }
+            result.push({
+                name: store.name,
+                tags: tags ? [...tags] : [],
+                id: store.id,
+                storage: store.storageKey,
+                type: store.type,
+                description: store.description,
+                value
+            });
+        }
+        return result;
+    }
+}
+//# sourceMappingURL=arc-stores-fetcher.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/debug/devtools-connection.js":
+/*!*******************************************************!*\
+  !*** ./runtime/ts-build/debug/devtools-connection.js ***!
+  \*******************************************************/
+/*! exports provided: DevtoolsConnection, DevtoolsForTests */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DevtoolsConnection", function() { return DevtoolsConnection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DevtoolsForTests", function() { return DevtoolsForTests; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
+/* harmony import */ var _platform_devtools_channel_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../platform/devtools-channel-web.js */ "./platform/devtools-channel-web.js");
+/* harmony import */ var _testing_devtools_channel_stub_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./testing/devtools-channel-stub.js */ "./runtime/ts-build/debug/testing/devtools-channel-stub.js");
+/* harmony import */ var _devtools_shared_devtools_broker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../devtools/shared/devtools-broker.js */ "./devtools/shared/devtools-broker.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+let channel = null;
+let isConnected = false;
+let onceConnectedResolve = null;
+let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
+_devtools_shared_devtools_broker_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsBroker"].onceConnected.then(() => {
+    DevtoolsConnection.ensure();
+    onceConnectedResolve(channel);
+    isConnected = true;
+});
+class DevtoolsConnection {
+    static get isConnected() {
+        return isConnected;
+    }
+    static get onceConnected() {
+        return onceConnected;
+    }
+    static get() {
+        return channel;
+    }
+    static ensure() {
+        if (!channel)
+            channel = new _platform_devtools_channel_web_js__WEBPACK_IMPORTED_MODULE_1__["DevtoolsChannel"]();
+    }
+}
+class DevtoolsForTests {
+    static get channel() {
+        return channel;
+    }
+    static ensureStub() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!channel);
+        channel = new _testing_devtools_channel_stub_js__WEBPACK_IMPORTED_MODULE_2__["DevtoolsChannelStub"]();
+        onceConnectedResolve(channel);
+        isConnected = true;
+    }
+    static reset() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(channel);
+        isConnected = false;
+        onceConnectedResolve = null;
+        onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
+        channel = null;
+    }
+}
+//# sourceMappingURL=devtools-connection.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/debug/outer-port-attachment.js":
+/*!*********************************************************!*\
+  !*** ./runtime/ts-build/debug/outer-port-attachment.js ***!
+  \*********************************************************/
+/*! exports provided: OuterPortAttachment */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OuterPortAttachment", function() { return OuterPortAttachment; });
+/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/sourcemapped-stacktrace-web.js */ "./platform/sourcemapped-stacktrace-web.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+class OuterPortAttachment {
+    constructor(arc, devtoolsChannel) {
+        this._devtoolsChannel = devtoolsChannel;
+        this._arcIdString = arc.id.toString();
+        this._speculative = arc.isSpeculative;
+    }
+    handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
+        // Skip speculative and pipes arcs for now.
+        if (this._arcIdString.endsWith('-pipes') || this._speculative)
+            return;
+        const stack = this._extractStackFrames(stackString);
+        this._devtoolsChannel.send({
+            messageType: 'PecLog',
+            messageBody: { name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack },
+        });
+    }
+    _extractStackFrames(stackString) {
+        const stack = [];
+        if (!stackString)
+            return stack;
+        // File refs should appear only in stack traces generated by tests run with
+        // --explore set.
+        if (stackString.includes('(file:///')) {
+            // The slice discards the 'Error' text and the the stack frame
+            // corresponding to the API channel function, which is already being
+            // displayed in the log entry.
+            for (const frameString of stackString.split('\n    at ').slice(2)) {
+                let match = frameString.match(/^(.*) \((.*)\)$/);
+                if (match === null) {
+                    match = { 1: '<unknown>', 2: frameString };
+                }
+                let location = match[2].replace(/:[0-9]+$/, '');
+                if (location.startsWith('file')) {
+                    // 'file:///<path>/arcs.*/runtime/file.js:84'
+                    // -> location: 'runtime/file.js:150'
+                    location = location.replace(/^.*\/arcs[^/]*\//, '');
+                }
+                stack.push({ method: match[1], location, target: null, targetClass: 'noLink' });
+            }
+            return stack;
+        }
+        // The slice discards the stack frame corresponding to the API channel
+        // function, which is already being displayed in the log entry.
+        Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__["mapStackTrace"])(stackString, mapped => mapped.slice(1).map(frameString => {
+            // Each frame has the form '    at function (source:line:column)'.
+            // Extract the function name and source:line:column text, then set up
+            // a frame object with the following fields:
+            //   location: text to display as the source in devtools Arcs panel
+            //   target: URL to open in devtools Sources panel
+            //   targetClass: CSS class specifier to attach to the location text
+            let match = frameString.match(/^ {4}at (.*) \((.*)\)$/);
+            if (match === null) {
+                match = { 1: '<unknown>', 2: frameString.replace(/^ *at */, '') };
+            }
+            const frame = { method: match[1] };
+            const source = match[2].replace(/:[0-9]+$/, '');
+            if (source.startsWith('http')) {
+                // 'http://<url>/arcs.*/shell/file.js:150'
+                // -> location: 'shell/file.js:150', target: same as source
+                frame.location = source.replace(/^.*\/arcs[^/]*\//, '');
+                frame.target = source;
+                frame.targetClass = 'link';
+            }
+            else if (source.startsWith('webpack')) {
+                // 'webpack:///runtime/sub/file.js:18'
+                // -> location: 'runtime/sub/file.js:18', target: 'webpack:///./runtime/sub/file.js:18'
+                frame.location = source.slice(11);
+                frame.target = `webpack:///./${frame.location}`;
+                frame.targetClass = 'link';
+            }
+            else {
+                // '<anonymous>' (or similar)
+                frame.location = source;
+                frame.target = null;
+                frame.targetClass = 'noLink';
+            }
+            stack.push(frame);
+        }), { sync: true, cacheGlobally: true });
+        return stack;
+    }
+}
+//# sourceMappingURL=outer-port-attachment.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/debug/strategy-explorer-adapter.js":
+/*!*************************************************************!*\
+  !*** ./runtime/ts-build/debug/strategy-explorer-adapter.js ***!
+  \*************************************************************/
+/*! exports provided: StrategyExplorerAdapter */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StrategyExplorerAdapter", function() { return StrategyExplorerAdapter; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class StrategyExplorerAdapter {
+    static processGenerations(generations, devtoolsChannel, options = {}) {
+        devtoolsChannel.send({
+            messageType: 'generations',
+            messageBody: { results: generations, options },
+        });
+    }
+}
+//# sourceMappingURL=strategy-explorer-adapter.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/debug/testing/devtools-channel-stub.js":
+/*!*****************************************************************!*\
+  !*** ./runtime/ts-build/debug/testing/devtools-channel-stub.js ***!
+  \*****************************************************************/
+/*! exports provided: DevtoolsChannelStub */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DevtoolsChannelStub", function() { return DevtoolsChannelStub; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class DevtoolsChannelStub {
+    constructor() {
+        this._messages = [];
+    }
+    get messages() {
+        return this._messages;
+    }
+    send(message) {
+        this._messages.push(JSON.parse(JSON.stringify(message)));
+    }
+    listen(arcOrId, messageType, callback) { }
+    clear() {
+        this._messages.length = 0;
+    }
+}
+//# sourceMappingURL=devtools-channel-stub.js.map
+
+/***/ }),
+
+/***/ "./runtime/ts-build/debug/tracing-adapter.js":
+/*!***************************************************!*\
+  !*** ./runtime/ts-build/debug/tracing-adapter.js ***!
+  \***************************************************/
+/*! exports provided: enableTracingAdapter */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "enableTracingAdapter", function() { return enableTracingAdapter; });
+/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../tracelib/trace.js */ "./tracelib/trace.js");
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+let streamingToDevtools = false;
+function enableTracingAdapter(devtoolsChannel) {
+    if (!streamingToDevtools) {
+        if (!_tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__["Tracing"].enabled)
+            _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__["Tracing"].enable();
+        devtoolsChannel.send({
+            messageType: 'trace-time-sync',
+            messageBody: {
+                traceTime: _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__["Tracing"].now(),
+                localTime: Date.now()
+            }
+        });
+        _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__["Tracing"].stream(trace => devtoolsChannel.send({
+            messageType: 'trace',
+            messageBody: trace
+        }), trace => trace.ov // Overview events only.
+        );
+        streamingToDevtools = true;
+    }
+}
+//# sourceMappingURL=tracing-adapter.js.map
 
 /***/ }),
 
@@ -73004,8 +72962,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./planning-result.js */ "./runtime/ts-build/plan/planning-result.js");
 /* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../suggestion-composer.js */ "./runtime/ts-build/suggestion-composer.js");
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
-/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../debug/devtools-connection.js */ "./runtime/ts-build/debug/devtools-connection.js");
+/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../debug/strategy-explorer-adapter.js */ "./runtime/ts-build/debug/strategy-explorer-adapter.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -73976,7 +73934,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _speculator_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./speculator.js */ "./runtime/ts-build/speculator.js");
 /* harmony import */ var _plan_suggestion__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./plan/suggestion */ "./runtime/ts-build/plan/suggestion.js");
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ../debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/ts-build/debug/devtools-connection.js");
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -74265,7 +74223,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./arc.js */ "./runtime/ts-build/arc.js");
 /* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./slot-composer.js */ "./runtime/ts-build/slot-composer.js");
 /* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./strategizer/strategizer.js */ "./runtime/ts-build/strategizer/strategizer.js");
-/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../debug/strategy-explorer-adapter.js */ "./runtime/debug/strategy-explorer-adapter.js");
+/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./debug/strategy-explorer-adapter.js */ "./runtime/ts-build/debug/strategy-explorer-adapter.js");
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../tracelib/trace.js */ "./tracelib/trace.js");
 /* harmony import */ var _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./strategies/convert-constraints-to-connections.js */ "./runtime/ts-build/strategies/convert-constraints-to-connections.js");
 /* harmony import */ var _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./strategies/match-free-handles-to-connections.js */ "./runtime/ts-build/strategies/match-free-handles-to-connections.js");
@@ -74274,7 +74232,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./strategies/add-missing-handles.js */ "./runtime/ts-build/strategies/add-missing-handles.js");
 /* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./strategies/rulesets.js */ "./runtime/ts-build/strategies/rulesets.js");
 /* harmony import */ var _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./strategies/map-slots.js */ "./runtime/ts-build/strategies/map-slots.js");
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../debug/devtools-connection.js */ "./runtime/debug/devtools-connection.js");
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./debug/devtools-connection.js */ "./runtime/ts-build/debug/devtools-connection.js");
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./recipe/recipe-util.js */ "./runtime/ts-build/recipe/recipe-util.js");
 /* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./recipe/handle.js */ "./runtime/ts-build/recipe/handle.js");
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
@@ -76285,6 +76243,7 @@ class Recipe {
         recipe._cloneMap = cloneMap;
         return recipe;
     }
+    // tslint:disable-next-line: no-any
     mergeInto(recipe) {
         const cloneMap = new Map();
         const numHandles = recipe._handles.length;
@@ -76573,6 +76532,7 @@ class SlotConnection {
     getQualifiedName() { return `${this.particle.name}::${this.name}`; }
     get slotSpec() { return this._slotSpec; }
     get targetSlot() { return this._targetSlot; }
+    set targetSlot(targetSlot) { this._targetSlot = targetSlot; }
     get providedSlots() { return this._providedSlots; }
     get tags() { return this._tags; }
     set tags(tags) { this._tags = tags; }
@@ -84800,7 +84760,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
                                     if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, consumeSlot, slotConstraints[consumeSlot].providedSlots)) {
                                         if (slotConstraints[consumeSlot].targetSlot) {
                                             const { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slotConstraints[consumeSlot].targetSlot });
-                                            particle.consumedSlotConnections[consumeSlot]._targetSlot = mappedSlot;
+                                            particle.consumedSlotConnections[consumeSlot].targetSlot = mappedSlot;
                                             mappedSlot.consumeConnections.push(particle.consumedSlotConnections[consumeSlot]);
                                         }
                                         for (const slotName of Object.keys(slotConstraints[consumeSlot].providedSlots)) {

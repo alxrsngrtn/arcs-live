@@ -10,8 +10,8 @@
 import { assert } from '../../../platform/assert-web.js';
 import { PlanningResult } from './planning-result.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
-import { DevtoolsConnection } from '../../debug/devtools-connection.js';
-import { StrategyExplorerAdapter } from '../../debug/strategy-explorer-adapter.js';
+import { DevtoolsConnection } from '../debug/devtools-connection.js';
+import { StrategyExplorerAdapter } from '../debug/strategy-explorer-adapter.js';
 export class PlanConsumer {
     constructor(arc, store) {
         // Callback is triggered when planning results have changed.
