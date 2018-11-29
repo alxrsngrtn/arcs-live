@@ -709,7 +709,7 @@ class Variable extends Handle {
                     await particle.onHandleSync(this, this._restore(details));
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.name}::onHandleSync`);
+                    this.raiseSystemException(e, `${particle.spec.name}::onHandleSync`);
                 }
                 return;
             case 'update': {
@@ -717,7 +717,7 @@ class Variable extends Handle {
                     await particle.onHandleUpdate(this, { data: this._restore(details.data) });
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.name}::onHandleUpdate`);
+                    this.raiseSystemException(e, `${particle.spec.name}::onHandleUpdate`);
                 }
                 return;
             }
@@ -726,7 +726,7 @@ class Variable extends Handle {
                     await particle.onHandleDesync(this);
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.name}::onHandleDesync`);
+                    this.raiseSystemException(e, `${particle.spec.name}::onHandleDesync`);
                 }
                 return;
             default:
@@ -47222,6 +47222,14 @@ class UserContext extends XenStateMixin(Empty$2) {
 }
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+// This is only relevant in the web devtools.
+const mapStackTrace = () => {};
 
 /**
  * @license
@@ -47914,7 +47922,8 @@ class StorageProxy {
         return new VariableProxy(id, type, port, pec, scheduler, name);
     }
     raiseSystemException(exception, methodName, particleId) {
-        this.port.RaiseSystemException({ exception: { message: exception.message, stack: exception.stack, name: exception.name }, methodName, particleId });
+        // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
+        mapStackTrace(exception.stack, mappedStack => this.port.RaiseSystemException({ exception: { message: exception.message, stack: mappedStack.join('\n'), name: exception.name }, methodName, particleId }));
     }
     /**
      *  Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.

@@ -1,7 +1,5 @@
-commit ebb57d88636e4111e1a51b79b095163bbd9c7004
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Nov 28 15:23:41 2018 -0800
+commit 60dfaf23e735b0c48def0ef7a8c3318698086b73
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Nov 29 14:53:57 2018 +1100
 
-    Convert debug to typescript (#2335)
-    
-    Addresses #1765
+    Source-map the stack traces sent over the RaiseSystemException call (#2337)

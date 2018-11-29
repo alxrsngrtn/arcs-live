@@ -207,7 +207,7 @@ class Variable extends Handle {
                     await particle.onHandleSync(this, this._restore(details));
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.name}::onHandleSync`);
+                    this.raiseSystemException(e, `${particle.spec.name}::onHandleSync`);
                 }
                 return;
             case 'update': {
@@ -215,7 +215,7 @@ class Variable extends Handle {
                     await particle.onHandleUpdate(this, { data: this._restore(details.data) });
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.name}::onHandleUpdate`);
+                    this.raiseSystemException(e, `${particle.spec.name}::onHandleUpdate`);
                 }
                 return;
             }
@@ -224,7 +224,7 @@ class Variable extends Handle {
                     await particle.onHandleDesync(this);
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.name}::onHandleDesync`);
+                    this.raiseSystemException(e, `${particle.spec.name}::onHandleDesync`);
                 }
                 return;
             default:

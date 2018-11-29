@@ -11,6 +11,7 @@
 import { assert } from '../../platform/assert-web.js';
 import { CrdtCollectionModel } from './storage/crdt-collection-model.js';
 import { CollectionType, BigCollectionType } from './type.js';
+import { mapStackTrace } from '../../platform/sourcemapped-stacktrace-web.js';
 var SyncState;
 (function (SyncState) {
     SyncState[SyncState["none"] = 0] = "none";
@@ -65,7 +66,8 @@ export class StorageProxy {
         return new VariableProxy(id, type, port, pec, scheduler, name);
     }
     raiseSystemException(exception, methodName, particleId) {
-        this.port.RaiseSystemException({ exception: { message: exception.message, stack: exception.stack, name: exception.name }, methodName, particleId });
+        // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
+        mapStackTrace(exception.stack, mappedStack => this.port.RaiseSystemException({ exception: { message: exception.message, stack: mappedStack.join('\n'), name: exception.name }, methodName, particleId }));
     }
     /**
      *  Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.

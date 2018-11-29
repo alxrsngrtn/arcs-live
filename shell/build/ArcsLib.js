@@ -69665,7 +69665,7 @@ class Variable extends Handle {
                     await particle.onHandleSync(this, this._restore(details));
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.name}::onHandleSync`);
+                    this.raiseSystemException(e, `${particle.spec.name}::onHandleSync`);
                 }
                 return;
             case 'update': {
@@ -69673,7 +69673,7 @@ class Variable extends Handle {
                     await particle.onHandleUpdate(this, { data: this._restore(details.data) });
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.name}::onHandleUpdate`);
+                    this.raiseSystemException(e, `${particle.spec.name}::onHandleUpdate`);
                 }
                 return;
             }
@@ -69682,7 +69682,7 @@ class Variable extends Handle {
                     await particle.onHandleDesync(this);
                 }
                 catch (e) {
-                    this.raiseSystemException(e, `${particle.name}::onHandleDesync`);
+                    this.raiseSystemException(e, `${particle.spec.name}::onHandleDesync`);
                 }
                 return;
             default:
@@ -79309,6 +79309,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../platform/assert-web.js */ "./platform/assert-web.js");
 /* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./storage/crdt-collection-model.js */ "./runtime/ts-build/storage/crdt-collection-model.js");
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../platform/sourcemapped-stacktrace-web.js */ "./platform/sourcemapped-stacktrace-web.js");
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -79318,6 +79319,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -79376,7 +79378,8 @@ class StorageProxy {
         return new VariableProxy(id, type, port, pec, scheduler, name);
     }
     raiseSystemException(exception, methodName, particleId) {
-        this.port.RaiseSystemException({ exception: { message: exception.message, stack: exception.stack, name: exception.name }, methodName, particleId });
+        // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
+        Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_3__["mapStackTrace"])(exception.stack, mappedStack => this.port.RaiseSystemException({ exception: { message: exception.message, stack: mappedStack.join('\n'), name: exception.name }, methodName, particleId }));
     }
     /**
      *  Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
