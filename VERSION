@@ -1,5 +1,5 @@
-commit 60dfaf23e735b0c48def0ef7a8c3318698086b73
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Nov 29 14:53:57 2018 +1100
+commit f4fa4661f6bb146baf7670861f6a316394921292
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Nov 29 12:45:43 2018 -0800
 
-    Source-map the stack traces sent over the RaiseSystemException call (#2337)
+    delete index.html from remote-planning (#2338)
