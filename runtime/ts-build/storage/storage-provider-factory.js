@@ -43,6 +43,14 @@ export class StorageProviderFactory {
         // TODO(shans): don't use reference mode once adapters are implemented
         return await this._storageForKey(key).connect(id, type, key);
     }
+    async connectOrConstruct(id, type, key) {
+        const storage = this._storageForKey(key);
+        let result = await storage.connect(id, type, key);
+        if (result == null) {
+            result = await storage.construct(id, type, key);
+        }
+        return result;
+    }
     async baseStorageFor(type, keyString) {
         return await this._storageForKey(keyString).baseStorageFor(type, keyString);
     }

@@ -8,6 +8,7 @@ declare class VolatileKey extends KeyBase {
     arcId: string;
     constructor(key: string);
     childKeyForHandle(id: any): VolatileKey;
+    childKeyForArcInfo(): VolatileKey;
     toString(): string;
 }
 export declare class VolatileStorage extends StorageBase {

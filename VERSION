@@ -1,5 +1,9 @@
-commit 045ce73139342c886291a89b14a02cdf60dd3663
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Nov 30 00:32:13 2018 -0800
+commit 5550c422cc21b16f32334da3ce79d7ea4789fafb
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Sat Dec 1 06:30:24 2018 +1100
 
-    add relevance to suggestions (#2343)
+    Add Arc.persistSerialization method. (#2347)
+    
+    This moves responsibility for "locating" and formatting the stored
+    serialization into the runtime code and strengthens the typing around
+    it.

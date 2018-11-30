@@ -248,6 +248,18 @@ ${this._serializeParticles()}
 @active
 ${this.activeRecipe.toString()}`;
     }
+    // Writes `serialization` to the ArcInfo child key under the Arc's storageKey.
+    // This does not directly use serialize() as callers may want to modify the
+    // contents of the serialized arc before persisting.
+    async persistSerialization(serialization) {
+        const storage = this.storageProviderFactory;
+        const key = storage.parseStringAsKey(this.storageKey).childKeyForArcInfo();
+        const arcInfoType = Type.newArcInfo();
+        const store = await storage.connectOrConstruct('store', arcInfoType, key.toString());
+        store.referenceMode = false;
+        // TODO: storage refactor: make sure set() is available here (or wrap store in a Handle-like adaptor).
+        await store['set'](arcInfoType.newInstance(this.id, serialization));
+    }
     static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context }) {
         const manifest = await Manifest.parse(serialization, { loader, fileName, context });
         const arc = new Arc({

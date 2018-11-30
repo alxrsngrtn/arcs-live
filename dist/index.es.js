@@ -1707,6 +1707,34 @@ ${this._slotsToManifestString()}
 }
 
 // @license
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+// Equivalent to an Entity with Schema { serialization Text }
+class ArcInfo {
+    constructor(arcId, serialization) {
+        this.id = arcId.toString();
+        // TODO: remove the import-removal hack when import statements no longer appear
+        // in serialized manifests, or deal with them correctly if they end up staying
+        this.serialization = serialization.replace(/\bimport .*\n/g, '');
+    }
+    // Retrieves the serialized string from a stored instance of ArcInfo.
+    static extractSerialization(data) {
+        return data.serialization.replace(/\bimport .*\n/g, '');
+    }
+}
+class ArcHandle {
+    constructor(storageKey, type, tags) {
+        this.storageKey = storageKey;
+        this.type = type;
+        this.tags = tags;
+    }
+}
+
+// @license
 class Type {
     constructor(tag, data) {
         this.tag = tag;
@@ -2307,6 +2335,9 @@ class ArcInfoType extends Type {
     }
     get isArcInfo() {
         return true;
+    }
+    newInstance(arcId, serialization) {
+        return new ArcInfo(arcId, serialization);
     }
 }
 class HandleInfoType extends Type {
@@ -13935,6 +13966,9 @@ class VolatileKey extends KeyBase {
     }
     childKeyForHandle(id) {
         return new VolatileKey('volatile');
+    }
+    childKeyForArcInfo() {
+        return new VolatileKey(`${this.protocol}://${this.arcId}^^arc-info`);
     }
     toString() {
         if (this.location !== undefined && this.arcId !== undefined) {
@@ -37010,11 +37044,17 @@ class FirebaseKey extends KeyBase {
         }
     }
     childKeyForHandle(id) {
+        return this.buildChildKey(`handles/${id}`);
+    }
+    childKeyForArcInfo() {
+        return this.buildChildKey('arc-info');
+    }
+    buildChildKey(leaf) {
         let location = '';
         if (this.location != undefined && this.location.length > 0) {
             location = this.location + '/';
         }
-        location += `handles/${id}`;
+        location += leaf;
         return new FirebaseKey(`${this.protocol}://${this.databaseUrl}/${this.apiKey}/${location}`);
     }
     toString() {
@@ -37023,13 +37063,6 @@ class FirebaseKey extends KeyBase {
         }
         return `${this.protocol}://`;
     }
-}
-// Firebase's 'once' API does not return a Promise; wrap it so we can await the invocation of the
-// callback that returns the snapshot.
-function getSnapshot(reference) {
-    return new Promise(resolve => {
-        reference.once('value', snapshot => resolve(snapshot));
-    });
 }
 let _nextAppNameSuffix = 0;
 class FirebaseStorage extends StorageBase {
@@ -37110,7 +37143,7 @@ class FirebaseStorage extends StorageBase {
             this.apps[fbKey.projectId] = { app, owned: true };
         }
         const reference = firebase.database(this.apps[fbKey.projectId].app).ref(fbKey.location);
-        const currentSnapshot = await getSnapshot(reference);
+        const currentSnapshot = await reference.once('value');
         if (shouldExist !== 'unknown' && shouldExist !== currentSnapshot.exists()) {
             return null;
         }
@@ -37953,7 +37986,7 @@ class FirebaseCursor {
     async _init() {
         assert(this.state === CursorState.new);
         // Retrieve the current last item to establish our streaming version.
-        const lastEntry = await getSnapshot(this.orderByIndex.limitToLast(1));
+        const lastEntry = await this.orderByIndex.limitToLast(1).once('value');
         lastEntry.forEach(entry => this.end = entry.val().index);
         // Read one past the page size each time to establish the boundary index for the next page.
         this.baseQuery = this.forward
@@ -37997,7 +38030,7 @@ class FirebaseCursor {
         const value = [];
         if (this.state === CursorState.stream) {
             this.nextBoundary = null;
-            const queryResults = await getSnapshot(query);
+            const queryResults = await query.once('value');
             if (this.forward) {
                 // For non-final pages, the last entry is the start of the next page.
                 queryResults.forEach(entry => {
@@ -38092,7 +38125,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     // TODO: rename this to avoid clashing with Variable and allow particles some way to specify the id
     async get(id) {
         const encId = FirebaseStorage.encodeKey(id);
-        const snapshot = await getSnapshot(this.reference.child('items/' + encId));
+        const snapshot = await this.reference.child('items/' + encId).once('value');
         return (snapshot.val() !== null) ? snapshot.val().value : null;
     }
     // originatorId is included to maintain parity with Collection.store but is not used.
@@ -38252,11 +38285,17 @@ class PouchDbKey extends KeyBase {
      */
     childKeyForHandle(id) {
         assert(id && id.length > 0, 'invalid id');
+        return this.buildChildKey(`handles/${id}`);
+    }
+    childKeyForArcInfo() {
+        return this.buildChildKey('arc-info');
+    }
+    buildChildKey(leaf) {
         let location = '';
         if (this.location != undefined && this.location.length > 0) {
             location = this.location + '/';
         }
-        location += `handles/${id}`;
+        location += leaf;
         const newKey = new PouchDbKey(this.toString());
         newKey.location = location;
         return newKey;
@@ -39210,13 +39249,6 @@ class PouchDbStorage extends StorageBase {
 PouchDbStorage.dbLocationToInstance = new Map();
 
 // @license
-class ArcHandle {
-    constructor(storageKey, type, tags) {
-        this.storageKey = storageKey;
-        this.type = type;
-        this.tags = tags;
-    }
-}
 var Scope;
 (function (Scope) {
     Scope[Scope["arc"] = 1] = "arc"; // target must be a storage key for an ArcInfo Variable
@@ -39227,7 +39259,7 @@ var Category;
 })(Category || (Category = {}));
 // Format is 'synthetic://<scope>/<category>/<target>'
 class SyntheticKey extends KeyBase {
-    constructor(key) {
+    constructor(key, storageFactory) {
         super();
         const match = key.match(/^synthetic:\/\/([^/]+)\/([^/]+)\/(.+)$/);
         if (match === null || match.length !== 4) {
@@ -39235,9 +39267,10 @@ class SyntheticKey extends KeyBase {
         }
         this.scope = Scope[match[1]];
         this.category = Category[match[2]];
-        this.targetKey = match[3];
         if (this.scope === Scope.arc) {
             this.targetType = Type.newArcInfo();
+            const key = storageFactory.parseStringAsKey(match[3]).childKeyForArcInfo();
+            this.targetKey = key.toString();
         }
         else {
             throw new Error(`invalid scope '${match[1]}' for synthetic key: ${key}`);
@@ -39256,6 +39289,10 @@ class SyntheticKey extends KeyBase {
         assert(false, 'childKeyForHandle not supported for synthetic keys');
         return null;
     }
+    childKeyForArcInfo() {
+        assert(false, 'childKeyForArcInfo not supported for synthetic keys');
+        return null;
+    }
     toString() {
         return `${this.protocol}://${Scope[this.scope]}/${Category[this.category]}/${this.targetKey}`;
     }
@@ -39270,7 +39307,7 @@ class SyntheticStorage extends StorageBase {
     }
     async connect(id, type, key) {
         assert(type === null, 'SyntheticStorage does not accept a type parameter');
-        const synthKey = new SyntheticKey(key);
+        const synthKey = new SyntheticKey(key, this.storageFactory);
         const targetStore = await this.storageFactory.connect(id, synthKey.targetType, synthKey.targetKey);
         if (targetStore === null) {
             return null;
@@ -39284,7 +39321,7 @@ class SyntheticStorage extends StorageBase {
         throw new Error('baseStorageKey not implemented for SyntheticStorage');
     }
     parseStringAsKey(s) {
-        return new SyntheticKey(s);
+        return new SyntheticKey(s, this.storageFactory);
     }
 }
 // Currently hard-wired to parse serialized data in an ArcInfo Variable to provide a list of ArcHandles.
@@ -39307,9 +39344,7 @@ class SyntheticCollection extends StorageProviderBase {
         let handles;
         try {
             if (data) {
-                // TODO: remove the import-removal hack when import statements no longer appear in
-                // serialized manifests, or deal with them correctly if they end up staying
-                const manifest = await Manifest.parse(data.serialized.replace(/\bimport .*\n/g, ''), {});
+                const manifest = await Manifest.parse(ArcInfo.extractSerialization(data), {});
                 handles = manifest.activeRecipe && manifest.activeRecipe.handles;
             }
         }
@@ -39379,6 +39414,14 @@ class StorageProviderFactory {
     async connect(id, type, key) {
         // TODO(shans): don't use reference mode once adapters are implemented
         return await this._storageForKey(key).connect(id, type, key);
+    }
+    async connectOrConstruct(id, type, key) {
+        const storage = this._storageForKey(key);
+        let result = await storage.connect(id, type, key);
+        if (result == null) {
+            result = await storage.construct(id, type, key);
+        }
+        return result;
     }
     async baseStorageFor(type, keyString) {
         return await this._storageForKey(keyString).baseStorageFor(type, keyString);
@@ -50769,6 +50812,18 @@ ${this._serializeParticles()}
 
 @active
 ${this.activeRecipe.toString()}`;
+    }
+    // Writes `serialization` to the ArcInfo child key under the Arc's storageKey.
+    // This does not directly use serialize() as callers may want to modify the
+    // contents of the serialized arc before persisting.
+    async persistSerialization(serialization) {
+        const storage = this.storageProviderFactory;
+        const key = storage.parseStringAsKey(this.storageKey).childKeyForArcInfo();
+        const arcInfoType = Type.newArcInfo();
+        const store = await storage.connectOrConstruct('store', arcInfoType, key.toString());
+        store.referenceMode = false;
+        // TODO: storage refactor: make sure set() is available here (or wrap store in a Handle-like adaptor).
+        await store['set'](arcInfoType.newInstance(this.id, serialization));
     }
     static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context }) {
         const manifest = await Manifest.parse(serialization, { loader, fileName, context });

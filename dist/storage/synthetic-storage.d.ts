@@ -1,13 +1,9 @@
 import { StorageBase, StorageProviderBase } from './storage-provider-base.js';
+import { StorageProviderFactory } from './storage-provider-factory.js';
 import { KeyBase } from './key-base.js';
 import { Id } from '../id.js';
 import { Type } from '../type.js';
-export declare class ArcHandle {
-    readonly storageKey: string;
-    readonly type: Type;
-    readonly tags: string[];
-    constructor(storageKey: any, type: any, tags: any);
-}
+import { ArcHandle } from '../synthetic-types.js';
 declare enum Scope {
     arc = 1
 }
@@ -20,14 +16,15 @@ declare class SyntheticKey extends KeyBase {
     readonly targetKey: string;
     readonly targetType: Type;
     readonly syntheticType: Type;
-    constructor(key: string);
+    constructor(key: string, storageFactory: StorageProviderFactory);
     readonly protocol: string;
     childKeyForHandle(id: any): SyntheticKey;
+    childKeyForArcInfo(): SyntheticKey;
     toString(): string;
 }
 export declare class SyntheticStorage extends StorageBase {
     private readonly storageFactory;
-    constructor(arcId: Id, storageFactory: any);
+    constructor(arcId: Id, storageFactory: StorageProviderFactory);
     construct(id: string, type: Type, keyFragment: string): Promise<SyntheticCollection>;
     connect(id: string, type: Type, key: string): Promise<SyntheticCollection>;
     baseStorageFor(type: Type, key: string): Promise<StorageProviderBase>;

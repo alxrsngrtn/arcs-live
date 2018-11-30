@@ -12,6 +12,8 @@ declare class FirebaseKey extends KeyBase {
     apiKey?: string;
     constructor(key: string);
     childKeyForHandle(id: any): FirebaseKey;
+    childKeyForArcInfo(): FirebaseKey;
+    private buildChildKey;
     toString(): string;
 }
 export declare class FirebaseStorage extends StorageBase {

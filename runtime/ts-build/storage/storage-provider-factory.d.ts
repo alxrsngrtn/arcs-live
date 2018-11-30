@@ -11,6 +11,7 @@ export declare class StorageProviderFactory {
     isPersistent(key: any): boolean;
     construct(id: string, type: Type, keyFragment: string): Promise<StorageProviderBase>;
     connect(id: string, type: Type, key: string): Promise<StorageProviderBase>;
+    connectOrConstruct(id: string, type: Type, key: string): Promise<StorageProviderBase>;
     baseStorageFor(type: Type, keyString: string): Promise<StorageProviderBase>;
     baseStorageKey(type: Type, keyString: string): string;
     parseStringAsKey(s: string): KeyBase;

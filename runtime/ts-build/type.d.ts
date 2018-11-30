@@ -2,6 +2,8 @@ import { Schema } from './schema.js';
 import { TypeVariable } from './type-variable.js';
 import { Shape } from './shape.js';
 import { SlotInfo } from './slot-info.js';
+import { ArcInfo } from './synthetic-types.js';
+import { Id } from './id.js';
 export declare class Type {
     tag: 'Entity' | 'Variable' | 'Collection' | 'BigCollection' | 'Relation' | 'Interface' | 'Slot' | 'Reference' | 'ArcInfo' | 'HandleInfo';
     data: Schema | TypeVariable | Type | [Type] | Shape | SlotInfo;
@@ -211,6 +213,7 @@ export declare class ReferenceType extends Type {
 export declare class ArcInfoType extends Type {
     constructor();
     readonly isArcInfo: boolean;
+    newInstance(arcId: Id, serialization: string): ArcInfo;
 }
 export declare class HandleInfoType extends Type {
     constructor();

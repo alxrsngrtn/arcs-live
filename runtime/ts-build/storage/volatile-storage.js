@@ -30,6 +30,9 @@ class VolatileKey extends KeyBase {
     childKeyForHandle(id) {
         return new VolatileKey('volatile');
     }
+    childKeyForArcInfo() {
+        return new VolatileKey(`${this.protocol}://${this.arcId}^^arc-info`);
+    }
     toString() {
         if (this.location !== undefined && this.arcId !== undefined) {
             return `${this.protocol}://${this.arcId}^^${this.location}`;

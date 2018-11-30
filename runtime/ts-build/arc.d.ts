@@ -80,6 +80,7 @@ export declare class Arc {
     _serializeParticles(): string;
     _serializeStorageKey(): string;
     serialize(): Promise<string>;
+    persistSerialization(serialization: string): Promise<void>;
     static deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context }: {
         serialization: any;
         pecFactory: any;

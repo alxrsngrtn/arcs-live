@@ -9,6 +9,7 @@ import { Schema } from './schema.js';
 import { TypeVariable } from './type-variable.js';
 import { Shape } from './shape.js';
 import { TypeChecker } from './recipe/type-checker.js';
+import { ArcInfo } from './synthetic-types.js';
 export class Type {
     constructor(tag, data) {
         this.tag = tag;
@@ -609,6 +610,9 @@ export class ArcInfoType extends Type {
     }
     get isArcInfo() {
         return true;
+    }
+    newInstance(arcId, serialization) {
+        return new ArcInfo(arcId, serialization);
     }
 }
 export class HandleInfoType extends Type {
