@@ -1,41 +1,5 @@
-commit 92dbbfc9c744f2456fb38b5ff1a0b986b2d11041
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Nov 29 17:26:57 2018 -0800
+commit 20f917a82e1d98be1aaa3ced2f4b4f4fee46f764
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Nov 29 17:38:33 2018 -0800
 
-    Collate and cleanup all the latest shell goodies (#2339)
-    
-    * rework arcs-env as a top-level package with better module marshaling
-    
-    * Rework env for better module loading, polish up all the latest stuff, put it in shells/
-    
-    * remove canned avatars
-    
-    * gitignore transient artifacts
-    
-    * fixup shells test infra
-    
-    * make Travis happy
-    
-    * clean up various paths
-    
-    * source/worker.js got replaced with a built file? fix
-    
-    * remove build/* that was committed before being gitignored
-    
-    * shell_0_6_0 is dead, long live shells
-    
-    * fix test url
-    
-    * remove dead path
-    
-    * enable WebPack watch from cli instead of config
-    
-    * add shells/env build support to sigh, make webpack do minimization
-    
-    * serialize webpack tasks with await
-    
-    * webpack function must return true for success
-    
-    * tweak null traps for shell style
-    
-    * update doc-urls
+    Remove unused couchdb-test directory (#2344)
