@@ -1,7 +1,54 @@
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+import { assert } from '../../platform/assert-web.js';
 export class Relevance {
-    constructor(arcState) {
-        this.arcState = arcState;
+    constructor() {
+        // stores a copy of arc.getVersionByStore
+        this.versionByStore = {};
         this.relevanceMap = new Map();
+    }
+    static create(arc, recipe) {
+        const relevance = new Relevance();
+        const versionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        recipe.handles.forEach(handle => {
+            if (handle.id) {
+                relevance.versionByStore[handle.id] = versionByStore[handle.id];
+            }
+        });
+        return relevance;
+    }
+    static deserialize({ versionByStore, relevanceMap }, recipe) {
+        const relevance = new Relevance();
+        Object.assign(relevance.versionByStore, JSON.parse(versionByStore));
+        Object.keys(relevanceMap).forEach(particleName => {
+            const particle = recipe.particles.find(particle => particle.name === particleName);
+            assert(particle, `Cannot find particle ${particleName} in ${recipe.toString()}`);
+            if (relevance.relevanceMap.has(particle)) {
+                console.warn(`Multiple particles with name ${particleName}, relevance may be incorrect.`);
+            }
+            relevance.relevanceMap.set(particle, relevanceMap[particleName]);
+        });
+        return relevance;
+    }
+    serialize() {
+        const serializedRelevanceMap = {};
+        this.relevanceMap.forEach((relevances, particle) => {
+            // TODO(mmandlis): Should use particle ID or some other unique identifier instead,
+            // as recipe may contain multiple particles with the same name.
+            serializedRelevanceMap[particle.name] = relevances;
+        });
+        return {
+            // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
+            versionByStore: JSON.stringify(this.versionByStore),
+            relevanceMap: serializedRelevanceMap
+        };
     }
     apply(relevance) {
         for (const key of relevance.keys()) {

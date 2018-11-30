@@ -3,9 +3,7 @@ import { Strategizer, StrategyDerived } from './strategizer/strategizer.js';
 import { Speculator } from './speculator.js';
 import { Suggestion } from './plan/suggestion';
 export declare class Planner {
-    constructor();
     private _arc;
-    private _relevances;
     strategizer: Strategizer;
     init(arc: Arc, { strategies, ruleset, strategyArgs }?: {
         strategies?: StrategyDerived[];
@@ -17,7 +15,6 @@ export declare class Planner {
     _splitToGroups(items: any, groupCount: number): any[];
     suggest(timeout: number, generations?: {}[], speculator?: Speculator): Promise<Suggestion[]>;
     _updateGeneration(generations: any, hash: string, handler: any): void;
-    dispose(): void;
     static InitializationStrategies: StrategyDerived[];
     static ResolutionStrategies: StrategyDerived[];
     static AllStrategies: StrategyDerived[];

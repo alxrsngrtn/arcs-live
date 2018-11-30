@@ -43590,6 +43590,123 @@ Modality._modalities = {
 
 /**
  * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Relevance {
+    constructor() {
+        // stores a copy of arc.getVersionByStore
+        this.versionByStore = {};
+        this.relevanceMap = new Map();
+    }
+    static create(arc, recipe) {
+        const relevance = new Relevance();
+        const versionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        recipe.handles.forEach(handle => {
+            if (handle.id) {
+                relevance.versionByStore[handle.id] = versionByStore[handle.id];
+            }
+        });
+        return relevance;
+    }
+    static deserialize({ versionByStore, relevanceMap }, recipe) {
+        const relevance = new Relevance();
+        Object.assign(relevance.versionByStore, JSON.parse(versionByStore));
+        Object.keys(relevanceMap).forEach(particleName => {
+            const particle = recipe.particles.find(particle => particle.name === particleName);
+            assert(particle, `Cannot find particle ${particleName} in ${recipe.toString()}`);
+            if (relevance.relevanceMap.has(particle)) {
+                console.warn(`Multiple particles with name ${particleName}, relevance may be incorrect.`);
+            }
+            relevance.relevanceMap.set(particle, relevanceMap[particleName]);
+        });
+        return relevance;
+    }
+    serialize() {
+        const serializedRelevanceMap = {};
+        this.relevanceMap.forEach((relevances, particle) => {
+            // TODO(mmandlis): Should use particle ID or some other unique identifier instead,
+            // as recipe may contain multiple particles with the same name.
+            serializedRelevanceMap[particle.name] = relevances;
+        });
+        return {
+            // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
+            versionByStore: JSON.stringify(this.versionByStore),
+            relevanceMap: serializedRelevanceMap
+        };
+    }
+    apply(relevance) {
+        for (const key of relevance.keys()) {
+            if (this.relevanceMap.has(key)) {
+                this.relevanceMap.set(key, this.relevanceMap.get(key).concat(relevance.get(key)));
+            }
+            else {
+                this.relevanceMap.set(key, relevance.get(key));
+            }
+        }
+    }
+    calcRelevanceScore() {
+        let relevance = 1;
+        let hasNegative = false;
+        for (const rList of this.relevanceMap.values()) {
+            const particleRelevance = Relevance.particleRelevance(rList);
+            if (particleRelevance < 0) {
+                hasNegative = true;
+            }
+            relevance *= Math.abs(particleRelevance);
+        }
+        return relevance * (hasNegative ? -1 : 1);
+    }
+    // Returns false, if at least one of the particles relevance lists ends with a negative score.
+    isRelevant(plan) {
+        const hasUi = plan.particles.some(p => Object.keys(p.consumedSlotConnections).length > 0);
+        let rendersUi = false;
+        for (const [particle, rList] of this.relevanceMap) {
+            if (rList[rList.length - 1] < 0) {
+                continue;
+            }
+            else if (Object.keys(particle.consumedSlotConnections).length) {
+                rendersUi = true;
+                break;
+            }
+        }
+        // If the recipe has UI rendering particles, at least one of the particles must render UI.
+        return hasUi === rendersUi;
+    }
+    static scaleRelevance(relevance) {
+        if (relevance == undefined) {
+            relevance = 5;
+        }
+        relevance = Math.max(-1, Math.min(relevance, 10));
+        // TODO: might want to make this geometric or something instead;
+        return relevance / 5;
+    }
+    static particleRelevance(relevanceList) {
+        let relevance = 1;
+        let hasNegative = false;
+        relevanceList.forEach(r => {
+            const scaledRelevance = Relevance.scaleRelevance(r);
+            if (scaledRelevance < 0) {
+                hasNegative = true;
+            }
+            relevance *= Math.abs(scaledRelevance);
+        });
+        return relevance * (hasNegative ? -1 : 1);
+    }
+    calcParticleRelevance(particle) {
+        if (this.relevanceMap.has(particle)) {
+            return Relevance.particleRelevance(this.relevanceMap.get(particle));
+        }
+        return -1;
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -43598,7 +43715,7 @@ Modality._modalities = {
  * http://polymer.github.io/PATENTS.txt
  */
 class Suggestion {
-    constructor(plan, hash, rank, arc) {
+    constructor(plan, hash, relevance, arc) {
         // TODO: update Description class to be serializable.
         this.descriptionByModality = {};
         // List of search resolved token groups, this suggestion corresponds to.
@@ -43607,7 +43724,8 @@ class Suggestion {
         assert(hash, `hash cannot be null`);
         this.plan = plan;
         this.hash = hash;
-        this.rank = rank;
+        this.rank = relevance.calcRelevanceScore();
+        this.relevance = relevance;
         this.arc = arc;
     }
     get descriptionText() {
@@ -43670,14 +43788,15 @@ class Suggestion {
             plan: this._planToString(this.plan),
             hash: this.hash,
             rank: this.rank,
+            relevance: this.relevance.serialize(),
             searchGroups: this.searchGroups,
             descriptionByModality: this.descriptionByModality
         };
     }
-    static async deserialize({ plan, hash, rank, searchGroups, descriptionByModality }, arc, recipeResolver) {
+    static async deserialize({ plan, hash, relevance, searchGroups, descriptionByModality }, arc, recipeResolver) {
         const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
         if (deserializedPlan) {
-            const suggestion = new Suggestion(deserializedPlan, hash, rank, arc);
+            const suggestion = new Suggestion(deserializedPlan, hash, Relevance.deserialize(relevance, deserializedPlan), arc);
             suggestion.searchGroups = searchGroups;
             suggestion.descriptionByModality = descriptionByModality;
             return suggestion;
@@ -45547,77 +45666,6 @@ class CoalesceRecipes extends Strategy {
     }
 }
 
-class Relevance {
-    constructor(arcState) {
-        this.arcState = arcState;
-        this.relevanceMap = new Map();
-    }
-    apply(relevance) {
-        for (const key of relevance.keys()) {
-            if (this.relevanceMap.has(key)) {
-                this.relevanceMap.set(key, this.relevanceMap.get(key).concat(relevance.get(key)));
-            }
-            else {
-                this.relevanceMap.set(key, relevance.get(key));
-            }
-        }
-    }
-    calcRelevanceScore() {
-        let relevance = 1;
-        let hasNegative = false;
-        for (const rList of this.relevanceMap.values()) {
-            const particleRelevance = Relevance.particleRelevance(rList);
-            if (particleRelevance < 0) {
-                hasNegative = true;
-            }
-            relevance *= Math.abs(particleRelevance);
-        }
-        return relevance * (hasNegative ? -1 : 1);
-    }
-    // Returns false, if at least one of the particles relevance lists ends with a negative score.
-    isRelevant(plan) {
-        const hasUi = plan.particles.some(p => Object.keys(p.consumedSlotConnections).length > 0);
-        let rendersUi = false;
-        for (const [particle, rList] of this.relevanceMap) {
-            if (rList[rList.length - 1] < 0) {
-                continue;
-            }
-            else if (Object.keys(particle.consumedSlotConnections).length) {
-                rendersUi = true;
-                break;
-            }
-        }
-        // If the recipe has UI rendering particles, at least one of the particles must render UI.
-        return hasUi === rendersUi;
-    }
-    static scaleRelevance(relevance) {
-        if (relevance == undefined) {
-            relevance = 5;
-        }
-        relevance = Math.max(-1, Math.min(relevance, 10));
-        // TODO: might want to make this geometric or something instead;
-        return relevance / 5;
-    }
-    static particleRelevance(relevanceList) {
-        let relevance = 1;
-        let hasNegative = false;
-        relevanceList.forEach(r => {
-            const scaledRelevance = Relevance.scaleRelevance(r);
-            if (scaledRelevance < 0) {
-                hasNegative = true;
-            }
-            relevance *= Math.abs(scaledRelevance);
-        });
-        return relevance * (hasNegative ? -1 : 1);
-    }
-    calcParticleRelevance(particle) {
-        if (this.relevanceMap.has(particle)) {
-            return Relevance.particleRelevance(this.relevanceMap.get(particle));
-        }
-        return -1;
-    }
-}
-
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -45628,44 +45676,62 @@ class Relevance {
  * http://polymer.github.io/PATENTS.txt
  */
 class Speculator {
-    constructor() {
-        this._relevanceByHash = new Map();
+    constructor(planningResult) {
+        this.suggestionByHash = {};
+        this.speculativeArcs = [];
+        if (planningResult) {
+            for (const suggestion of planningResult.suggestions) {
+                this.suggestionByHash[suggestion.hash] = suggestion;
+            }
+        }
     }
     async speculate(arc, plan, hash) {
         assert(plan.isResolved(), `Cannot speculate on an unresolved plan: ${plan.toString({ showUnresolved: true })}`);
-        if (this._relevanceByHash.has(hash)) {
-            const arcStoreVersionById = arc.getStoresState({ includeContext: true });
-            const relevance = this._relevanceByHash.get(hash);
-            const relevanceStoreVersionById = relevance.arcState;
-            if (plan.handles.every(handle => arcStoreVersionById.get(handle.id) === relevanceStoreVersionById.get(handle.id))) {
-                return relevance;
+        let suggestion = this.suggestionByHash[hash];
+        if (suggestion) {
+            const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
+            const relevanceVersionByStoreId = suggestion.relevance.versionByStore;
+            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === relevanceVersionByStoreId[handle.id])) {
+                return suggestion;
             }
         }
-        const newArc = await arc.cloneForSpeculativeExecution();
-        const relevance = new Relevance(arc.getStoresState({ includeContext: true }));
-        const relevanceByHash = this._relevanceByHash;
-        async function awaitCompletion() {
-            const messageCount = newArc.pec.messageCount;
-            relevance.apply(await newArc.pec.idle);
-            // We expect two messages here, one requesting the idle status, and one answering it.
-            if (newArc.pec.messageCount !== messageCount + 2) {
-                return awaitCompletion();
-            }
-            else {
-                relevance.newArc = newArc;
-                relevanceByHash.set(hash, relevance);
-                return relevance;
-            }
+        const speculativeArc = await arc.cloneForSpeculativeExecution();
+        this.speculativeArcs.push(speculativeArc);
+        const relevance = Relevance.create(arc, plan);
+        await speculativeArc.instantiate(plan);
+        await this.awaitCompletion(relevance, speculativeArc);
+        if (!relevance.isRelevant(plan)) {
+            return null;
         }
-        return newArc.instantiate(plan).then(a => awaitCompletion());
+        speculativeArc.description.relevance = relevance;
+        suggestion = new Suggestion(plan, hash, relevance, arc);
+        suggestion.setSearch(plan.search);
+        await suggestion.setDescription(speculativeArc.description);
+        this.suggestionByHash[hash] = suggestion;
+        return suggestion;
+    }
+    async awaitCompletion(relevance, speculativeArc) {
+        const messageCount = speculativeArc.pec.messageCount;
+        relevance.apply(await speculativeArc.pec.idle);
+        // We expect two messages here, one requesting the idle status, and one answering it.
+        if (speculativeArc.pec.messageCount !== messageCount + 2) {
+            return this.awaitCompletion(relevance, speculativeArc);
+        }
+        else {
+            speculativeArc.stop();
+            this.speculativeArcs.splice(this.speculativeArcs.indexOf(speculativeArc, 1));
+            return relevance;
+        }
+    }
+    dispose() {
+        for (const arc of this.speculativeArcs) {
+            arc.dispose();
+        }
     }
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class Planner {
-    constructor() {
-        this._relevances = [];
-    }
     // TODO: Use context.arc instead of arc
     init(arc, { strategies = Planner.AllStrategies, ruleset = Empty$1, strategyArgs = {} } = {}) {
         strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
@@ -45765,33 +45831,20 @@ class Planner {
                     overview: true,
                     args: { groupIndex }
                 });
-                // TODO(wkorman): Look at restoring trace.wait() here, and whether we
-                // should do similar for the async getRecipeSuggestion() below as well?
-                const relevance = await speculator.speculate(this._arc, plan, hash);
-                this._relevances.push(relevance);
-                if (!relevance.isRelevant(plan)) {
+                const suggestion = await speculator.speculate(this._arc, plan, hash);
+                if (!suggestion) {
                     this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
                     planTrace.end({ name: '[Irrelevant suggestion]', hash, groupIndex });
                     continue;
                 }
-                const rank = relevance.calcRelevanceScore();
-                relevance.newArc.description.relevance = relevance;
-                const description = await relevance.newArc.description.getRecipeSuggestion();
-                this._updateGeneration(generations, hash, (g) => g.description = description);
-                // TODO: Move this logic inside speculate, so that it can stop the arc
-                // before returning.
-                relevance.newArc.stop();
-                const suggestion = new Suggestion(plan, hash, rank, this._arc);
-                suggestion.setSearch(plan.search);
-                await suggestion.setDescription(relevance.newArc.description);
+                this._updateGeneration(generations, hash, async (g) => g.description = suggestion.descriptionText);
                 suggestion.groupIndex = groupIndex;
                 results.push(suggestion);
-                planTrace.end({ name: description, args: { rank, hash, groupIndex } });
+                planTrace.end({ name: suggestion.descriptionText, args: { rank: suggestion.rank, hash, groupIndex } });
             }
             return results;
         })));
         results = [].concat(...results);
-        this._relevances = [];
         return trace.endWith(results);
     }
     _updateGeneration(generations, hash, handler) {
@@ -45804,13 +45857,6 @@ class Planner {
                 });
             });
         }
-    }
-    dispose() {
-        // The speculative arc particle execution contexts are are worklets,
-        // so they need to be cleanly shut down, otherwise they would persist,
-        // as an idle eventLoop in a process waiting for messages.
-        this._relevances.forEach(relevance => relevance.newArc.dispose());
-        this._relevances = [];
     }
 }
 // tslint:disable-next-line: variable-name
@@ -45862,7 +45908,7 @@ class PlanProducer {
         this.arc = arc;
         this.result = new PlanningResult(arc);
         this.store = store;
-        this.speculator = new Speculator();
+        this.speculator = new Speculator(this.result);
         this.searchStore = searchStore;
         if (this.searchStore) {
             this.searchStoreCallback = () => this.onSearchChanged();
@@ -45974,9 +46020,9 @@ class PlanProducer {
     }
     _cancelPlanning() {
         if (this.planner) {
-            this.planner.dispose();
             this.planner = null;
         }
+        this.speculator.dispose();
         this.needReplan = false;
         this.isPlanning = false; // using the setter method to trigger callbacks.
         log$1(`Cancel planning`);
@@ -51055,11 +51101,13 @@ ${this.activeRecipe.toString()}`;
         assert(store, 'Cannot fetch description for nonexistent store');
         return this.storeDescriptions.get(store) || store.description;
     }
-    getStoresState(options) {
-        const versionById = new Map();
-        this.storesById.forEach((handle, id) => versionById.set(id, handle.version));
-        if ((options || {}).includeContext) {
-            this._context.allStores.forEach(handle => versionById.set(handle.id, handle.version));
+    getVersionByStore({ includeArc = true, includeContext = false }) {
+        const versionById = {};
+        if (includeArc) {
+            this.storesById.forEach((handle, id) => versionById[id] = handle.version);
+        }
+        if (includeContext) {
+            this._context.allStores.forEach(handle => versionById[handle.id] = handle.version);
         }
         return versionById;
     }

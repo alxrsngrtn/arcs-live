@@ -7,11 +7,15 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Relevance } from './relevance.js';
 import { Arc } from './arc.js';
+import { PlanningResult } from './plan/planning-result.js';
 import { Recipe } from './recipe/recipe.js';
+import { Suggestion } from './plan/suggestion.js';
 export declare class Speculator {
-    _relevanceByHash: Map<string, Relevance>;
-    constructor();
-    speculate(arc: Arc, plan: Recipe, hash: string): Promise<Relevance>;
+    private suggestionByHash;
+    private speculativeArcs;
+    constructor(planningResult?: PlanningResult);
+    speculate(arc: Arc, plan: Recipe, hash: string): Promise<Suggestion | null>;
+    awaitCompletion(relevance: any, speculativeArc: any): any;
+    dispose(): void;
 }

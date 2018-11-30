@@ -27,7 +27,7 @@ export class PlanProducer {
         this.arc = arc;
         this.result = new PlanningResult(arc);
         this.store = store;
-        this.speculator = new Speculator();
+        this.speculator = new Speculator(this.result);
         this.searchStore = searchStore;
         if (this.searchStore) {
             this.searchStoreCallback = () => this.onSearchChanged();
@@ -139,9 +139,9 @@ export class PlanProducer {
     }
     _cancelPlanning() {
         if (this.planner) {
-            this.planner.dispose();
             this.planner = null;
         }
+        this.speculator.dispose();
         this.needReplan = false;
         this.isPlanning = false; // using the setter method to trigger callbacks.
         log(`Cancel planning`);

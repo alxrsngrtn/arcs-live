@@ -8,8 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/assert-web.js';
-import { RecipeResolver } from '../recipe/recipe-resolver';
-import { Suggestion } from './suggestion';
+import { RecipeResolver } from '../recipe/recipe-resolver.js';
+import { Suggestion } from './suggestion.js';
 export class PlanningResult {
     constructor(arc, result = {}) {
         this.contextual = true;

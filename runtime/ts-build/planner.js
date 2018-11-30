@@ -28,13 +28,9 @@ import { FindHostedParticle } from './strategies/find-hosted-particle.js';
 import { CoalesceRecipes } from './strategies/coalesce-recipes.js';
 import { ResolveRecipe } from './strategies/resolve-recipe.js';
 import { Speculator } from './speculator.js';
-import { Suggestion } from './plan/suggestion';
 import { Tracing } from '../../tracelib/trace.js';
 import { DevtoolsConnection } from './debug/devtools-connection.js';
 export class Planner {
-    constructor() {
-        this._relevances = [];
-    }
     // TODO: Use context.arc instead of arc
     init(arc, { strategies = Planner.AllStrategies, ruleset = Rulesets.Empty, strategyArgs = {} } = {}) {
         strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
@@ -135,33 +131,20 @@ export class Planner {
                     overview: true,
                     args: { groupIndex }
                 });
-                // TODO(wkorman): Look at restoring trace.wait() here, and whether we
-                // should do similar for the async getRecipeSuggestion() below as well?
-                const relevance = await speculator.speculate(this._arc, plan, hash);
-                this._relevances.push(relevance);
-                if (!relevance.isRelevant(plan)) {
+                const suggestion = await speculator.speculate(this._arc, plan, hash);
+                if (!suggestion) {
                     this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
                     planTrace.end({ name: '[Irrelevant suggestion]', hash, groupIndex });
                     continue;
                 }
-                const rank = relevance.calcRelevanceScore();
-                relevance.newArc.description.relevance = relevance;
-                const description = await relevance.newArc.description.getRecipeSuggestion();
-                this._updateGeneration(generations, hash, (g) => g.description = description);
-                // TODO: Move this logic inside speculate, so that it can stop the arc
-                // before returning.
-                relevance.newArc.stop();
-                const suggestion = new Suggestion(plan, hash, rank, this._arc);
-                suggestion.setSearch(plan.search);
-                await suggestion.setDescription(relevance.newArc.description);
+                this._updateGeneration(generations, hash, async (g) => g.description = suggestion.descriptionText);
                 suggestion.groupIndex = groupIndex;
                 results.push(suggestion);
-                planTrace.end({ name: description, args: { rank, hash, groupIndex } });
+                planTrace.end({ name: suggestion.descriptionText, args: { rank: suggestion.rank, hash, groupIndex } });
             }
             return results;
         })));
         results = [].concat(...results);
-        this._relevances = [];
         return trace.endWith(results);
     }
     _updateGeneration(generations, hash, handler) {
@@ -174,13 +157,6 @@ export class Planner {
                 });
             });
         }
-    }
-    dispose() {
-        // The speculative arc particle execution contexts are are worklets,
-        // so they need to be cleanly shut down, otherwise they would persist,
-        // as an idle eventLoop in a process waiting for messages.
-        this._relevances.forEach(relevance => relevance.newArc.dispose());
-        this._relevances = [];
     }
 }
 // tslint:disable-next-line: variable-name

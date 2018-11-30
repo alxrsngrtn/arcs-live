@@ -579,11 +579,13 @@ ${this.activeRecipe.toString()}`;
         assert(store, 'Cannot fetch description for nonexistent store');
         return this.storeDescriptions.get(store) || store.description;
     }
-    getStoresState(options) {
-        const versionById = new Map();
-        this.storesById.forEach((handle, id) => versionById.set(id, handle.version));
-        if ((options || {}).includeContext) {
-            this._context.allStores.forEach(handle => versionById.set(handle.id, handle.version));
+    getVersionByStore({ includeArc = true, includeContext = false }) {
+        const versionById = {};
+        if (includeArc) {
+            this.storesById.forEach((handle, id) => versionById[id] = handle.version);
+        }
+        if (includeContext) {
+            this._context.allStores.forEach(handle => versionById[handle.id] = handle.version);
         }
         return versionById;
     }

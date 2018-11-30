@@ -21,7 +21,7 @@ export declare class Suggestion {
     readonly rank: number;
     groupIndex: number;
     searchGroups: string[][];
-    constructor(plan: Recipe, hash: string, rank: number, arc: Arc);
+    constructor(plan: Recipe, hash: string, relevance: Relevance, arc: Arc);
     readonly descriptionText: string;
     getDescription(modality: string): string | {};
     setDescription(description: Description): Promise<void>;
@@ -35,13 +35,14 @@ export declare class Suggestion {
         plan: any;
         hash: string;
         rank: number;
+        relevance: {};
         searchGroups: string[][];
         descriptionByModality: {};
     };
-    static deserialize({ plan, hash, rank, searchGroups, descriptionByModality }: {
+    static deserialize({ plan, hash, relevance, searchGroups, descriptionByModality }: {
         plan: any;
         hash: any;
-        rank: any;
+        relevance: any;
         searchGroups: any;
         descriptionByModality: any;
     }, arc: any, recipeResolver: any): Promise<Suggestion>;

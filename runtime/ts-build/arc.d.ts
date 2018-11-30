@@ -31,7 +31,7 @@ declare type ArcOptions = {
     speculative?: boolean;
     recipeIndex?: RecipeIndex;
 };
-declare type PlanCallback = (recipe: Recipe) => void;
+export declare type PlanCallback = (recipe: Recipe) => void;
 declare type SerializeContext = {
     handles: string;
     resources: string;
@@ -113,7 +113,10 @@ export declare class Arc {
     findStoreById(id: any): StorageProviderBase;
     findStoreTags(store: any): string[] | Set<string>;
     getStoreDescription(store: any): any;
-    getStoresState(options: any): Map<any, any>;
+    getVersionByStore({ includeArc, includeContext }: {
+        includeArc?: boolean;
+        includeContext?: boolean;
+    }): {};
     keyForId(id: any): string;
     stop(): void;
     toContextString(options: any): string;

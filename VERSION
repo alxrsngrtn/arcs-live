@@ -1,5 +1,5 @@
-commit 20f917a82e1d98be1aaa3ced2f4b4f4fee46f764
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Nov 29 17:38:33 2018 -0800
+commit 045ce73139342c886291a89b14a02cdf60dd3663
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Nov 30 00:32:13 2018 -0800
 
-    Remove unused couchdb-test directory (#2344)
+    add relevance to suggestions (#2343)

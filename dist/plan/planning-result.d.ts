@@ -7,8 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Arc } from '../arc';
-import { Suggestion } from './suggestion';
+import { Arc } from '../arc.js';
+import { Suggestion } from './suggestion.js';
 export declare class PlanningResult {
     arc: Arc;
     _suggestions: Suggestion[];
@@ -37,16 +37,5 @@ export declare class PlanningResult {
         generations: any;
         lastUpdated: any;
     }): Promise<boolean>;
-    serialize(): {
-        suggestions: {
-            plan: any;
-            hash: string;
-            rank: number;
-            searchGroups: string[][];
-            descriptionByModality: {};
-        }[];
-        generations: string;
-        lastUpdated: string;
-        contextual: boolean;
-    };
+    serialize(): {};
 }
