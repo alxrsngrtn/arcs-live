@@ -1,9 +1,9 @@
-commit 5550c422cc21b16f32334da3ce79d7ea4789fafb
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Sat Dec 1 06:30:24 2018 +1100
+commit b8f8f6c7a9579ab40a034a508fba7cf4f66ffac0
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Fri Nov 30 15:51:29 2018 -0800
 
-    Add Arc.persistSerialization method. (#2347)
+    include `shells/env/build` in deployment (#2350)
     
-    This moves responsibility for "locating" and formatting the stored
-    serialization into the runtime code and strengthens the typing around
-    it.
+    * include `shells/env/build` in deployment
+    
+    * ensure searchGroups is valued
