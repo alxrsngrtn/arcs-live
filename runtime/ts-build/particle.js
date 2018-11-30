@@ -7,6 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { BigCollection } from './handle.js';
+import { Collection } from './handle.js';
 /**
  * A basic particle. For particles that provide UI, you may like to
  * instead use DOMParticle.
@@ -148,7 +150,9 @@ export class Particle {
             // Typescript can't infer the type here and fails with TS2351
             // tslint:disable-next-line: no-any
             const entityClass = descriptions.entityClass;
-            descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
+            if (descriptions instanceof Collection || descriptions instanceof BigCollection) {
+                descriptions.store(new entityClass({ key: connectionName, value: pattern }, this.spec.name + '-' + connectionName));
+            }
             return true;
         }
         throw new Error('A particle needs a description handle to set a decription pattern');

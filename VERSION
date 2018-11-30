@@ -1,10 +1,9 @@
-commit 12b3ecb3722d8e3bd221db4c55b97610eb3876dc
+commit 688991de18802dbb6a098925d39eac69136f94d7
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Nov 29 16:38:17 2018 -0800
+Date:   Thu Nov 29 17:07:19 2018 -0800
 
-    Pouch / Cloud Planning integration (#2302)
+    Convert dom-particle-base to typescript (#2333)
     
-    - switch from protocol override (which led to weird Storage Keys like:
-      pouchdb://arcs-storage.firebaseio.com/...
-    - revamp storagekey construction.
-    - deal with unitialized store in various places
+    * Convert dom-particle-base to typescript
+    
+    Addresses #1765

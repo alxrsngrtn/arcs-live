@@ -24,9 +24,11 @@ export declare class Particle {
     private _idle;
     private _idleResolver;
     private _busy;
-    private _slotByName;
+    protected _slotByName: Map<string, any>;
     private capabilities;
-    constructor(capabilities: any);
+    constructor(capabilities?: {
+        constructInnerArc?: Function;
+    });
     /**
      * This method is invoked with a handle for each store this particle
      * is registered to interact with, once those handles are ready for
