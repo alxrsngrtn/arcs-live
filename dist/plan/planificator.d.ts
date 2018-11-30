@@ -13,13 +13,14 @@ import { PlanProducer } from './plan-producer.js';
 import { Recipe } from '../recipe/recipe.js';
 import { ReplanQueue } from './replan-queue.js';
 import { StorageProviderBase } from "../storage/storage-provider-base.js";
+declare type PlanificatorOptions = {
+    userid: string;
+    storageKeyBase?: string;
+    debug?: boolean;
+    onlyConsumer?: boolean;
+};
 export declare class Planificator {
-    static create(arc: Arc, { userid, protocol, onlyConsumer, debug }: {
-        userid: any;
-        protocol: any;
-        onlyConsumer: any;
-        debug?: boolean;
-    }): Promise<Planificator>;
+    static create(arc: Arc, { userid, storageKeyBase, onlyConsumer, debug }: PlanificatorOptions): Promise<Planificator>;
     arc: Arc;
     userid: string;
     consumer: PlanConsumer;
@@ -51,3 +52,4 @@ export declare class Planificator {
     _storeSearch(arcKey: string, search: string): Promise<void>;
     isArcPopulated(): boolean;
 }
+export {};

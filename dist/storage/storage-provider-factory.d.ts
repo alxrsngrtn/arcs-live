@@ -7,7 +7,7 @@ export declare class StorageProviderFactory {
     private _storageInstances;
     constructor(arcId: Id);
     private getInstance;
-    _storageForKey(key: any): StorageBase;
+    _storageForKey(key: string): StorageBase;
     isPersistent(key: any): boolean;
     construct(id: string, type: Type, keyFragment: string): Promise<StorageProviderBase>;
     connect(id: string, type: Type, key: string): Promise<StorageProviderBase>;

@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/assert-web.js';
+import { FirebaseStorage } from '../storage/firebase-storage.js';
 import { PlanConsumer } from './plan-consumer.js';
 import { PlanProducer } from './plan-producer.js';
 import { ReplanQueue } from './replan-queue.js';
@@ -34,10 +35,10 @@ export class Planificator {
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
-    static async create(arc, { userid, protocol, onlyConsumer, debug = false }) {
-        debug = debug || (protocol === 'volatile');
-        const store = await Planificator._initSuggestStore(arc, { userid, protocol, arcKey: null });
-        const searchStore = await Planificator._initSearchStore(arc, { userid });
+    static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
+        debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
+        const store = await Planificator._initSuggestStore(arc, { userid, storageKeyBase, arcKey: null });
+        const searchStore = await Planificator._initSearchStore(arc, { userid, storageKeyBase });
         const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
         // TODO(mmandlis): Switch to always use `contextual: true` once new arc doesn't need
         // to produce a plan in order to instantiate it.
@@ -105,62 +106,57 @@ export class Planificator {
             }
         });
     }
-    static async _initSuggestStore(arc, { userid, protocol, arcKey }) {
+    static async _initSuggestStore(arc, { userid, storageKeyBase, arcKey }) {
         assert(userid, 'Missing user id.');
-        const storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
-        const storageKey = storage.parseStringAsKey(arc.storageKey);
-        if (protocol) {
-            storageKey.protocol = protocol;
-        }
-        if (storageKey.location.includes('/arcs/')) {
-            // Backward compatibility for shell older than 0_6_0.
-            storageKey.location = storageKey['location']
-                .replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/${arcKey || '$1'}`);
-        }
-        else {
-            storageKey.location = storageKey.location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/$1`);
-        }
+        const location = arc.storageProviderFactory.parseStringAsKey(arc.storageKey).location;
+        // Construct a new key based on the storageKeyBase
+        // Use '/dummylocation' suffix because Volatile keys require it.
+        const storageKey = storageKeyBase
+            ? arc.storageProviderFactory.parseStringAsKey(storageKeyBase + '/dummylocation')
+            : arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        // Backward compatibility for shell older than 0_6_0.
+        storageKey.location = location.includes('/arcs/')
+            ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/${arcKey || '$1'}`)
+            : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/$1`);
         const schema = new Schema({ names: ['Suggestions'], fields: { current: 'Object' } });
         const type = Type.newEntity(schema);
         return Planificator._initStore(arc, 'suggestions-id', type, storageKey);
     }
-    static async _initSearchStore(arc, { userid }) {
-        const storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
-        const storageKey = storage.parseStringAsKey(arc.storageKey);
-        if (storageKey['location'].includes('/arcs/')) {
-            // Backward compatibility for shell older than 0_6_0.
-            storageKey.location = storageKey.location
-                .replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/search`);
-        }
-        else {
-            storageKey.location = storageKey.location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/search`);
-        }
+    static async _initSearchStore(arc, { userid, storageKeyBase }) {
+        assert(userid, 'Missing user id.');
+        const location = arc.storageProviderFactory.parseStringAsKey(arc.storageKey).location;
+        // Construct a new key based on the storageKeyBase
+        const storageKey = storageKeyBase
+            ? arc.storageProviderFactory.parseStringAsKey(storageKeyBase + '/dummylocation')
+            : arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        storageKey.location = location.includes('/arcs/')
+            ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/search`)
+            : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/search`);
         const schema = new Schema({ names: ['Search'], fields: { current: 'Object' } });
         const type = Type.newEntity(schema);
         return Planificator._initStore(arc, 'search-id', type, storageKey);
     }
     static async _initStore(arc, id, type, storageKey) {
+        const providerFactory = arc.storageProviderFactory;
         // TODO: unify initialization of suggestions storage.
         const storageKeyStr = storageKey.toString();
-        const storage = arc.storageProviderFactory._storageForKey(storageKeyStr);
+        const storage = providerFactory._storageForKey(storageKey.toString());
         let store = null;
-        switch (storageKey.protocol) {
-            case 'firebase':
-                return storage['_join'](id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
-            case 'volatile':
-            case 'pouchdb':
-                try {
-                    store = await storage.construct(id, type, storageKeyStr);
-                }
-                catch (e) {
-                    store = await storage.connect(id, type, storageKeyStr);
-                }
-                assert(store, `Failed initializing '${storageKey.protocol}' store.`);
-                store.referenceMode = false;
-                return store;
-            default:
-                throw new Error(`Unsupported protocol '${storageKey.protocol}'`);
+        if (storage instanceof FirebaseStorage) {
+            // TODO make firebase use the standard construct/connect API
+            store = await storage._join(id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
         }
+        else {
+            try {
+                store = await storage.construct(id, type, storageKeyStr);
+            }
+            catch (e) {
+                store = await storage.connect(id, type, storageKeyStr);
+            }
+        }
+        assert(store, `Failed initializing '${storageKeyStr}' store.`);
+        store.referenceMode = false;
+        return store;
     }
     async _storeSearch(arcKey, search) {
         const values = await this.searchStore['get']() || [];

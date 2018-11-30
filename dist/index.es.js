@@ -39139,9 +39139,11 @@ class PouchDbStorage extends StorageBase {
             db = new PouchDB(key.dbName);
             // Ensure a secure origin, http is okay for localhost, but other hosts need https
             const httpScheme = key.dbLocation.startsWith('localhost') ? 'http://' : 'https://';
-            const remoteDb = new PouchDB(httpScheme + key.dbLocation + '/' + key.dbName);
+            const dbUrl = `${httpScheme}${key.dbLocation}/${key.dbName}`;
+            console.log('Connecting to ' + dbUrl);
+            const remoteDb = new PouchDB(dbUrl);
             if (!remoteDb || !db) {
-                throw new Error('unable to connect to remote database for ' + key.toString());
+                throw new Error('unable to connect to remote database ' + dbUrl + ' for ' + key.toString());
             }
             // Make an early explicit connection to the database to catch bad configurations
             remoteDb
@@ -39365,6 +39367,9 @@ class StorageProviderFactory {
         return instance;
     }
     _storageForKey(key) {
+        if (!key) {
+            throw new Error('key is required');
+        }
         return this.getInstance(key).storage;
     }
     isPersistent(key) {
@@ -46110,10 +46115,10 @@ class Planificator {
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
-    static async create(arc, { userid, protocol, onlyConsumer, debug = false }) {
-        debug = debug || (protocol === 'volatile');
-        const store = await Planificator._initSuggestStore(arc, { userid, protocol, arcKey: null });
-        const searchStore = await Planificator._initSearchStore(arc, { userid });
+    static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
+        debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
+        const store = await Planificator._initSuggestStore(arc, { userid, storageKeyBase, arcKey: null });
+        const searchStore = await Planificator._initSearchStore(arc, { userid, storageKeyBase });
         const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
         // TODO(mmandlis): Switch to always use `contextual: true` once new arc doesn't need
         // to produce a plan in order to instantiate it.
@@ -46181,62 +46186,57 @@ class Planificator {
             }
         });
     }
-    static async _initSuggestStore(arc, { userid, protocol, arcKey }) {
+    static async _initSuggestStore(arc, { userid, storageKeyBase, arcKey }) {
         assert(userid, 'Missing user id.');
-        const storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
-        const storageKey = storage.parseStringAsKey(arc.storageKey);
-        if (protocol) {
-            storageKey.protocol = protocol;
-        }
-        if (storageKey.location.includes('/arcs/')) {
-            // Backward compatibility for shell older than 0_6_0.
-            storageKey.location = storageKey['location']
-                .replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/${arcKey || '$1'}`);
-        }
-        else {
-            storageKey.location = storageKey.location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/$1`);
-        }
+        const location = arc.storageProviderFactory.parseStringAsKey(arc.storageKey).location;
+        // Construct a new key based on the storageKeyBase
+        // Use '/dummylocation' suffix because Volatile keys require it.
+        const storageKey = storageKeyBase
+            ? arc.storageProviderFactory.parseStringAsKey(storageKeyBase + '/dummylocation')
+            : arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        // Backward compatibility for shell older than 0_6_0.
+        storageKey.location = location.includes('/arcs/')
+            ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/${arcKey || '$1'}`)
+            : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/$1`);
         const schema = new Schema({ names: ['Suggestions'], fields: { current: 'Object' } });
         const type = Type.newEntity(schema);
         return Planificator._initStore(arc, 'suggestions-id', type, storageKey);
     }
-    static async _initSearchStore(arc, { userid }) {
-        const storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
-        const storageKey = storage.parseStringAsKey(arc.storageKey);
-        if (storageKey['location'].includes('/arcs/')) {
-            // Backward compatibility for shell older than 0_6_0.
-            storageKey.location = storageKey.location
-                .replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/search`);
-        }
-        else {
-            storageKey.location = storageKey.location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/search`);
-        }
+    static async _initSearchStore(arc, { userid, storageKeyBase }) {
+        assert(userid, 'Missing user id.');
+        const location = arc.storageProviderFactory.parseStringAsKey(arc.storageKey).location;
+        // Construct a new key based on the storageKeyBase
+        const storageKey = storageKeyBase
+            ? arc.storageProviderFactory.parseStringAsKey(storageKeyBase + '/dummylocation')
+            : arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        storageKey.location = location.includes('/arcs/')
+            ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/search`)
+            : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/search`);
         const schema = new Schema({ names: ['Search'], fields: { current: 'Object' } });
         const type = Type.newEntity(schema);
         return Planificator._initStore(arc, 'search-id', type, storageKey);
     }
     static async _initStore(arc, id, type, storageKey) {
+        const providerFactory = arc.storageProviderFactory;
         // TODO: unify initialization of suggestions storage.
         const storageKeyStr = storageKey.toString();
-        const storage = arc.storageProviderFactory._storageForKey(storageKeyStr);
+        const storage = providerFactory._storageForKey(storageKey.toString());
         let store = null;
-        switch (storageKey.protocol) {
-            case 'firebase':
-                return storage['_join'](id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
-            case 'volatile':
-            case 'pouchdb':
-                try {
-                    store = await storage.construct(id, type, storageKeyStr);
-                }
-                catch (e) {
-                    store = await storage.connect(id, type, storageKeyStr);
-                }
-                assert(store, `Failed initializing '${storageKey.protocol}' store.`);
-                store.referenceMode = false;
-                return store;
-            default:
-                throw new Error(`Unsupported protocol '${storageKey.protocol}'`);
+        if (storage instanceof FirebaseStorage) {
+            // TODO make firebase use the standard construct/connect API
+            store = await storage._join(id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
         }
+        else {
+            try {
+                store = await storage.construct(id, type, storageKeyStr);
+            }
+            catch (e) {
+                store = await storage.connect(id, type, storageKeyStr);
+            }
+        }
+        assert(store, `Failed initializing '${storageKeyStr}' store.`);
+        store.referenceMode = false;
+        return store;
     }
     async _storeSearch(arcKey, search) {
         const values = await this.searchStore['get']() || [];
@@ -46265,7 +46265,7 @@ class Planificator {
 }
 
 class UserPlanner {
-  constructor(factory, context, userid, debug) {
+  constructor(factory, context, userid, storageKeyBase, debug) {
     this.factory = factory;
     this.context = context;
     this.userid = userid;
@@ -46280,7 +46280,7 @@ class UserPlanner {
     const launcherArc = this.factory.spawn(this.context);
     const launcherKey = `launcher`;
     launcherArc.storageKey = `${Firebase.storageKey}/arcs/${launcherKey}`;
-    const launcherPlanificator = this.createPlanificator(userid, launcherKey, launcherArc);
+    const launcherPlanificator = this.createPlanificator(userid, storageKeyBase, launcherKey, launcherArc);
     this.runners[launcherKey] = {arc: launcherArc, planificator: launcherPlanificator};
   }
   dispose() {
@@ -46351,12 +46351,13 @@ class UserPlanner {
     }
     return await this.factory.deserialize(this.context, serialization);
   }
-  async createPlanificator(userid, key, arc) {
-    const planificator = await Planificator.create(arc, {userid, debug: this.debug}); /*, protocol: 'pouchdb' or 'volatile' */
+  async createPlanificator(userid, storageKeyBase, key, arc) {
+    const planificator = await Planificator.create(arc, {userid, storageKeyBase, debug: this.debug});
     planificator.registerSuggestionsChangedCallback(current => this.showPlansForArc(key, current.suggestions));
     // planificator.registerVisibleSuggestionsChangedCallback(suggestions => this.showSuggestionsForArc(key, suggestions));
     return planificator;
   }
+
   showPlansForArc(key, metaplans) {
     console.log(`======= Arc[${key}] ${metaplans.length} plans ======================================`);
     console.log(metaplans.map(plan => `${plan.descriptionText}    [${plan.plan.particles.map(p => p.name).join(', ')}]`));
@@ -46849,6 +46850,10 @@ const SingleUserContext = class {
     }
   }
   async _observeStore(store, key, cb) {
+    if (!store) {
+      console.warn('uninitialized store');
+      return;
+    }
     // SyntheticCollection has `toList` but is `!type.isCollection`,
     if (store.toList) {
     //if (store.type.isCollection) {
@@ -46985,6 +46990,10 @@ const SingleUserContext = class {
     await Promise.all(jobs);
   }
   async _removeUserStoreEntities(userid, store, isProfile) {
+    if (!store) {
+      console.warn('uninitialized store');
+      return;
+    }
     log$2(`scanning [${userid}] [${store.id}] (${store.toList ? 'collection' : 'variable'})`);
     //const tags = context.findStoreTags(store);
     if (store.toList) {
@@ -51440,10 +51449,11 @@ class ShellPlanningInterface {
    *
    * @param assetsPath a path (relative or absolute) to locate planning assets.
    * @param userid the User Id to do planning for.
+   * @param storageKeyBase Plans will be stored in a key that begins with this prefix.
    */
-  static async start(assetsPath, userid, debug) {
-    if (!assetsPath || !userid) {
-      throw new Error('assetsPath and userid required');
+  static async start(assetsPath, userid, storageKeyBase, debug) {
+    if (!assetsPath || !userid || !storageKeyBase) {
+      throw new Error('assetsPath, userid, and storageKeyBase required');
     }
 
     if (process.argv.includes('--explore')) {
@@ -51455,7 +51465,7 @@ class ShellPlanningInterface {
     const context = await factory.createContext(manifest);
     const user = new UserContext();
     user._setProps({userid, context});
-    const planner = new UserPlanner(factory, context, userid, debug);
+    const planner = new UserPlanner(factory, context, userid, storageKeyBase, debug);
   }
 }
 

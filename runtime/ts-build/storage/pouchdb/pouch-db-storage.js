@@ -156,9 +156,11 @@ export class PouchDbStorage extends StorageBase {
             db = new PouchDB(key.dbName);
             // Ensure a secure origin, http is okay for localhost, but other hosts need https
             const httpScheme = key.dbLocation.startsWith('localhost') ? 'http://' : 'https://';
-            const remoteDb = new PouchDB(httpScheme + key.dbLocation + '/' + key.dbName);
+            const dbUrl = `${httpScheme}${key.dbLocation}/${key.dbName}`;
+            console.log('Connecting to ' + dbUrl);
+            const remoteDb = new PouchDB(dbUrl);
             if (!remoteDb || !db) {
-                throw new Error('unable to connect to remote database for ' + key.toString());
+                throw new Error('unable to connect to remote database ' + dbUrl + ' for ' + key.toString());
             }
             // Make an early explicit connection to the database to catch bad configurations
             remoteDb

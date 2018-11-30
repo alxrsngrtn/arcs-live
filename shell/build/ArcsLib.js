@@ -73284,11 +73284,12 @@ class PlanProducer {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planificator", function() { return Planificator; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../platform/assert-web.js */ "./platform/assert-web.js");
-/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./plan-consumer.js */ "./runtime/ts-build/plan/plan-consumer.js");
-/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./plan-producer.js */ "./runtime/ts-build/plan/plan-producer.js");
-/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./replan-queue.js */ "./runtime/ts-build/plan/replan-queue.js");
-/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../schema.js */ "./runtime/ts-build/schema.js");
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
+/* harmony import */ var _storage_firebase_storage_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../storage/firebase-storage.js */ "./runtime/ts-build/storage/firebase-storage.js");
+/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./plan-consumer.js */ "./runtime/ts-build/plan/plan-consumer.js");
+/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./plan-producer.js */ "./runtime/ts-build/plan/plan-producer.js");
+/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./replan-queue.js */ "./runtime/ts-build/plan/replan-queue.js");
+/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../schema.js */ "./runtime/ts-build/schema.js");
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../type.js */ "./runtime/ts-build/type.js");
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -73298,6 +73299,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -73316,19 +73318,19 @@ class Planificator {
         this.userid = userid;
         this.searchStore = searchStore;
         if (!onlyConsumer) {
-            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](arc, store, searchStore, { debug });
-            this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_3__["ReplanQueue"](this.producer);
+            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_3__["PlanProducer"](arc, store, searchStore, { debug });
+            this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__["ReplanQueue"](this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
         }
-        this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](arc, store);
+        this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_2__["PlanConsumer"](arc, store);
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
-    static async create(arc, { userid, protocol, onlyConsumer, debug = false }) {
-        debug = debug || (protocol === 'volatile');
-        const store = await Planificator._initSuggestStore(arc, { userid, protocol, arcKey: null });
-        const searchStore = await Planificator._initSearchStore(arc, { userid });
+    static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
+        debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
+        const store = await Planificator._initSuggestStore(arc, { userid, storageKeyBase, arcKey: null });
+        const searchStore = await Planificator._initSearchStore(arc, { userid, storageKeyBase });
         const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
         // TODO(mmandlis): Switch to always use `contextual: true` once new arc doesn't need
         // to produce a plan in order to instantiate it.
@@ -73396,62 +73398,57 @@ class Planificator {
             }
         });
     }
-    static async _initSuggestStore(arc, { userid, protocol, arcKey }) {
+    static async _initSuggestStore(arc, { userid, storageKeyBase, arcKey }) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'Missing user id.');
-        const storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
-        const storageKey = storage.parseStringAsKey(arc.storageKey);
-        if (protocol) {
-            storageKey.protocol = protocol;
-        }
-        if (storageKey.location.includes('/arcs/')) {
-            // Backward compatibility for shell older than 0_6_0.
-            storageKey.location = storageKey['location']
-                .replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/${arcKey || '$1'}`);
-        }
-        else {
-            storageKey.location = storageKey.location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/$1`);
-        }
-        const schema = new _schema_js__WEBPACK_IMPORTED_MODULE_4__["Schema"]({ names: ['Suggestions'], fields: { current: 'Object' } });
-        const type = _type_js__WEBPACK_IMPORTED_MODULE_5__["Type"].newEntity(schema);
+        const location = arc.storageProviderFactory.parseStringAsKey(arc.storageKey).location;
+        // Construct a new key based on the storageKeyBase
+        // Use '/dummylocation' suffix because Volatile keys require it.
+        const storageKey = storageKeyBase
+            ? arc.storageProviderFactory.parseStringAsKey(storageKeyBase + '/dummylocation')
+            : arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        // Backward compatibility for shell older than 0_6_0.
+        storageKey.location = location.includes('/arcs/')
+            ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/${arcKey || '$1'}`)
+            : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/$1`);
+        const schema = new _schema_js__WEBPACK_IMPORTED_MODULE_5__["Schema"]({ names: ['Suggestions'], fields: { current: 'Object' } });
+        const type = _type_js__WEBPACK_IMPORTED_MODULE_6__["Type"].newEntity(schema);
         return Planificator._initStore(arc, 'suggestions-id', type, storageKey);
     }
-    static async _initSearchStore(arc, { userid }) {
-        const storage = arc.storageProviderFactory._storageForKey(arc.storageKey);
-        const storageKey = storage.parseStringAsKey(arc.storageKey);
-        if (storageKey['location'].includes('/arcs/')) {
-            // Backward compatibility for shell older than 0_6_0.
-            storageKey.location = storageKey.location
-                .replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/search`);
-        }
-        else {
-            storageKey.location = storageKey.location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/search`);
-        }
-        const schema = new _schema_js__WEBPACK_IMPORTED_MODULE_4__["Schema"]({ names: ['Search'], fields: { current: 'Object' } });
-        const type = _type_js__WEBPACK_IMPORTED_MODULE_5__["Type"].newEntity(schema);
+    static async _initSearchStore(arc, { userid, storageKeyBase }) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'Missing user id.');
+        const location = arc.storageProviderFactory.parseStringAsKey(arc.storageKey).location;
+        // Construct a new key based on the storageKeyBase
+        const storageKey = storageKeyBase
+            ? arc.storageProviderFactory.parseStringAsKey(storageKeyBase + '/dummylocation')
+            : arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        storageKey.location = location.includes('/arcs/')
+            ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/search`)
+            : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/search`);
+        const schema = new _schema_js__WEBPACK_IMPORTED_MODULE_5__["Schema"]({ names: ['Search'], fields: { current: 'Object' } });
+        const type = _type_js__WEBPACK_IMPORTED_MODULE_6__["Type"].newEntity(schema);
         return Planificator._initStore(arc, 'search-id', type, storageKey);
     }
     static async _initStore(arc, id, type, storageKey) {
+        const providerFactory = arc.storageProviderFactory;
         // TODO: unify initialization of suggestions storage.
         const storageKeyStr = storageKey.toString();
-        const storage = arc.storageProviderFactory._storageForKey(storageKeyStr);
+        const storage = providerFactory._storageForKey(storageKey.toString());
         let store = null;
-        switch (storageKey.protocol) {
-            case 'firebase':
-                return storage['_join'](id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
-            case 'volatile':
-            case 'pouchdb':
-                try {
-                    store = await storage.construct(id, type, storageKeyStr);
-                }
-                catch (e) {
-                    store = await storage.connect(id, type, storageKeyStr);
-                }
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${storageKey.protocol}' store.`);
-                store.referenceMode = false;
-                return store;
-            default:
-                throw new Error(`Unsupported protocol '${storageKey.protocol}'`);
+        if (storage instanceof _storage_firebase_storage_js__WEBPACK_IMPORTED_MODULE_1__["FirebaseStorage"]) {
+            // TODO make firebase use the standard construct/connect API
+            store = await storage._join(id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
         }
+        else {
+            try {
+                store = await storage.construct(id, type, storageKeyStr);
+            }
+            catch (e) {
+                store = await storage.connect(id, type, storageKeyStr);
+            }
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${storageKeyStr}' store.`);
+        store.referenceMode = false;
+        return store;
     }
     async _storeSearch(arcKey, search) {
         const values = await this.searchStore['get']() || [];
@@ -82029,9 +82026,11 @@ class PouchDbStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_
             db = new pouchdb__WEBPACK_IMPORTED_MODULE_7__["default"](key.dbName);
             // Ensure a secure origin, http is okay for localhost, but other hosts need https
             const httpScheme = key.dbLocation.startsWith('localhost') ? 'http://' : 'https://';
-            const remoteDb = new pouchdb__WEBPACK_IMPORTED_MODULE_7__["default"](httpScheme + key.dbLocation + '/' + key.dbName);
+            const dbUrl = `${httpScheme}${key.dbLocation}/${key.dbName}`;
+            console.log('Connecting to ' + dbUrl);
+            const remoteDb = new pouchdb__WEBPACK_IMPORTED_MODULE_7__["default"](dbUrl);
             if (!remoteDb || !db) {
-                throw new Error('unable to connect to remote database for ' + key.toString());
+                throw new Error('unable to connect to remote database ' + dbUrl + ' for ' + key.toString());
             }
             // Make an early explicit connection to the database to catch bad configurations
             remoteDb
@@ -82650,6 +82649,9 @@ class StorageProviderFactory {
         return instance;
     }
     _storageForKey(key) {
+        if (!key) {
+            throw new Error('key is required');
+        }
         return this.getInstance(key).storage;
     }
     isPersistent(key) {

@@ -1,5 +1,10 @@
-commit f4fa4661f6bb146baf7670861f6a316394921292
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Nov 29 12:45:43 2018 -0800
+commit 12b3ecb3722d8e3bd221db4c55b97610eb3876dc
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Nov 29 16:38:17 2018 -0800
 
-    delete index.html from remote-planning (#2338)
+    Pouch / Cloud Planning integration (#2302)
+    
+    - switch from protocol override (which led to weird Storage Keys like:
+      pouchdb://arcs-storage.firebaseio.com/...
+    - revamp storagekey construction.
+    - deal with unitialized store in various places
