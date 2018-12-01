@@ -1,9 +1,11 @@
-commit 14e32c88e95015a8677e9c302505d57930bc8d64
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Nov 30 18:59:10 2018 -0800
+commit 84dfad211d15bf4d26d3b9d9f1f7b8e189158025
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Sat Dec 1 01:42:41 2018 -0800
 
-    planificator search and suggestions tweaks (#2349)
+    use standard mechanism for configuring storageKey (#2353)
     
-    * planificator search and suggestions tweaks
+    * use standard mechanism for configuring storageKey, put default key into constants.js
     
-    * revert changed to planificator's dispose
+    * remove unused import
+    
+    * remove dead code
