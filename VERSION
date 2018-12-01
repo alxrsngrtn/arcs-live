@@ -1,21 +1,9 @@
-commit 51205509176f6f06fc016c9179d407fe9fbede1a
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Nov 30 16:23:30 2018 -0800
+commit 14e32c88e95015a8677e9c302505d57930bc8d64
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Nov 30 18:59:10 2018 -0800
 
-    Fetch serialialization (#2351)
+    planificator search and suggestions tweaks (#2349)
     
-    * clean up, make default user just `user`
+    * planificator search and suggestions tweaks
     
-    * use Storage to retrieve serialization
-    
-    * more _ relief
-    
-    * clean ups
-    
-    * disable minimization for sigh builds, it takes forever and sourceMaps can't handle mangled names.,. note that minimization make the apps faster
-    
-    * closer to purity
-    
-    * not used
-    
-    * add null trap
+    * revert changed to planificator's dispose

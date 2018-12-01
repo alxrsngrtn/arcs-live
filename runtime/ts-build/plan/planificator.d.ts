@@ -13,7 +13,7 @@ import { PlanProducer } from './plan-producer.js';
 import { Recipe } from '../recipe/recipe.js';
 import { ReplanQueue } from './replan-queue.js';
 import { StorageProviderBase } from "../storage/storage-provider-base.js";
-declare type PlanificatorOptions = {
+export declare type PlanificatorOptions = {
     userid: string;
     storageKeyBase?: string;
     debug?: boolean;
@@ -49,7 +49,6 @@ export declare class Planificator {
     private static _initSuggestStore;
     private static _initSearchStore;
     private static _initStore;
-    _storeSearch(arcKey: string, search: string): Promise<void>;
+    _storeSearch(): Promise<void>;
     isArcPopulated(): boolean;
 }
-export {};
