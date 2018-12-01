@@ -33,7 +33,7 @@ export class StorageProviderFactory {
         return this.getInstance(key).storage;
     }
     isPersistent(key) {
-        return this.getInstance(key).isPersistent;
+        return key && this.getInstance(key).isPersistent;
     }
     async construct(id, type, keyFragment) {
         // TODO(shans): don't use reference mode once adapters are implemented

@@ -1,9 +1,21 @@
-commit b8f8f6c7a9579ab40a034a508fba7cf4f66ffac0
+commit 51205509176f6f06fc016c9179d407fe9fbede1a
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Fri Nov 30 15:51:29 2018 -0800
+Date:   Fri Nov 30 16:23:30 2018 -0800
 
-    include `shells/env/build` in deployment (#2350)
+    Fetch serialialization (#2351)
     
-    * include `shells/env/build` in deployment
+    * clean up, make default user just `user`
     
-    * ensure searchGroups is valued
+    * use Storage to retrieve serialization
+    
+    * more _ relief
+    
+    * clean ups
+    
+    * disable minimization for sigh builds, it takes forever and sourceMaps can't handle mangled names.,. note that minimization make the apps faster
+    
+    * closer to purity
+    
+    * not used
+    
+    * add null trap
