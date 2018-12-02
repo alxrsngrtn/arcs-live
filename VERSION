@@ -1,11 +1,5 @@
-commit 84dfad211d15bf4d26d3b9d9f1f7b8e189158025
+commit 79699ce571dda4a334a3df314d5b5ce90a7f2aa0
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Sat Dec 1 01:42:41 2018 -0800
+Date:   Sun Dec 2 12:34:06 2018 -0800
 
-    use standard mechanism for configuring storageKey (#2353)
-    
-    * use standard mechanism for configuring storageKey, put default key into constants.js
-    
-    * remove unused import
-    
-    * remove dead code
+    plumb suggestion slot into user arc (#2354)
