@@ -98,10 +98,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _runtime_ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(32);
 /* harmony import */ var _runtime_ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(184);
 /* harmony import */ var _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(45);
-/* harmony import */ var _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(248);
+/* harmony import */ var _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(249);
 /* harmony import */ var _runtime_ts_build_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(176);
-/* harmony import */ var _runtime_firebase_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(254);
-/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(255);
+/* harmony import */ var _runtime_firebase_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(255);
+/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(256);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -84110,7 +84110,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _storage_firebase_storage_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(52);
 /* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(243);
 /* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(245);
-/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(247);
+/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(248);
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(4);
 /**
@@ -84717,6 +84717,7 @@ class PlanProducer {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
+/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(247);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -84724,16 +84725,140 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-const logFactory = (preamble, color, log='log') => {
-  return console[log].bind(console, `%c${preamble}`,
+
+
+const _nopFactory = () => () => {};
+const _logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`,
       `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
-};
 
-
+const logFactory = _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["Debug"].level < 1 ? _nopFactory : _logFactory;
 
 
 /***/ }),
 /* 247 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Debug", function() { return Debug; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "walker", function() { return walker; });
+const Debug = (Base, log) => class extends Base {
+  _setProperty(name, value) {
+    if (Debug.level > 1) {
+      if (((name in this._pendingProps) && (this._pendingProps[name] !== value)) || (this._props[name] !== value)) {
+        log('props', deepishClone({[name]: value}));
+      }
+    }
+    return super._setProperty(name, value);
+  }
+  _setState(state) {
+    if (typeof state !== 'object') {
+      console.warn(`Xen::_setState argument must be an object`);
+      return false;
+    }
+    if (super._setState(state)) {
+      if (Debug.level > 1) {
+        if (Debug.lastFire) {
+          //Debug.lastFire.log('[next state change from] fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
+          //Debug.lastFire.log('fire', Debug.lastFire.name, Debug.lastFire.detail);
+          log('(fired -->) state', deepishClone(state));
+        } else {
+          log('state', deepishClone(state));
+        }
+      }
+      return true;
+    }
+  }
+  _setImmutableState(name, value) {
+    log('state [immutable]', {[name]: value});
+    super._setImmutableState(name, value);
+  }
+  _fire(name, detail, node, init) {
+    Debug.lastFire = {name, detail: deepishClone(detail), log};
+    log('fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
+    super._fire(name, detail, node, init);
+    Debug.lastFire = null;
+  }
+  _doUpdate(...args) {
+    if (Debug.level > 2) {
+      log('updating...');
+    }
+    return super._doUpdate(...args);
+  }
+  _invalidate() {
+    if (Debug.level > 2) {
+      if (!this._validator) {
+        log('invalidating...');
+      }
+    }
+    super._invalidate();
+  }
+};
+
+// TODO(sjmiles): cloning prevents console log from showing values from the future,
+// but this must be a deep clone. Circular objects are not cloned.
+const deepishClone = (obj, depth) => {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+  const clone = Object.create(null);
+  for (const n in obj) {
+    let value = obj[n];
+    //try {
+    //  value = JSON.parse(JSON.stringify(value));
+    //} catch (x) {
+      if (depth < 1) {
+        value = deepishClone(obj, (depth || 0) + 1);
+      }
+    //}
+    clone[n] = value;
+  }
+  return clone;
+};
+
+Debug.level = 0;
+
+const _logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
+const logFactory = (preamble, color, log) => (Debug.level > 0) ? _logFactory(preamble, color, log) : () => {};
+
+const walker = (node, tree) => {
+  let subtree = tree;
+  if (!subtree) {
+    subtree = {};
+  }
+  const root = node || document.body;
+  let index = 1;
+  let child = root.firstElementChild;
+  while (child) {
+    const name = child.localName;
+    const clas = customElements.get(name);
+    if (clas) {
+      const shadow = child.shadowRoot;
+      const record = {
+        node: child,
+        props: child._props,
+        state: child._state
+      };
+      const children = shadow ? walker(shadow) : {};
+      if (children) {
+        record.children = children;
+      }
+      let moniker = `${name}${child.id ? `#${child.id}` : ``} (${index++})`;
+      while (subtree[moniker]) {
+        moniker += '_';
+      }
+      subtree[moniker] = record;
+    }
+    walker(child, subtree);
+    child = child.nextElementSibling;
+  }
+  return subtree;
+};
+
+
+/***/ }),
+/* 248 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -84819,14 +84944,14 @@ class ReplanQueue {
 //# sourceMappingURL=replan-queue.js.map
 
 /***/ }),
-/* 248 */
+/* 249 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "KeyManager", function() { return KeyManager; });
-/* harmony import */ var _webcrypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(249);
-/* harmony import */ var _testing_cryptotestutils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(253);
+/* harmony import */ var _webcrypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(250);
+/* harmony import */ var _testing_cryptotestutils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(254);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84854,17 +84979,17 @@ class KeyManager {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
-/* 249 */
+/* 250 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WebCryptoKeyGenerator", function() { return WebCryptoKeyGenerator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WebCryptoKeyIndexedDBStorage", function() { return WebCryptoKeyIndexedDBStorage; });
-/* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(250);
+/* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(251);
 /* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(idb__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _base64__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(251);
-/* harmony import */ var jsrsasign__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(252);
+/* harmony import */ var _base64__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(252);
+/* harmony import */ var jsrsasign__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(253);
 /* harmony import */ var jsrsasign__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jsrsasign__WEBPACK_IMPORTED_MODULE_2__);
 /**
  * @license
@@ -85178,7 +85303,7 @@ class WebCryptoKeyIndexedDBStorage {
 //# sourceMappingURL=webcrypto.js.map
 
 /***/ }),
-/* 250 */
+/* 251 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -85499,7 +85624,7 @@ class WebCryptoKeyIndexedDBStorage {
 
 
 /***/ }),
-/* 251 */
+/* 252 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -85654,7 +85779,7 @@ function decode(str) {
 //# sourceMappingURL=base64.js.map
 
 /***/ }),
-/* 252 */
+/* 253 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {
@@ -85985,7 +86110,7 @@ exports.lang = KJUR.lang;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(102).Buffer))
 
 /***/ }),
-/* 253 */
+/* 254 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86012,7 +86137,7 @@ class WebCryptoMemoryKeyStorage {
 //# sourceMappingURL=cryptotestutils.js.map
 
 /***/ }),
-/* 254 */
+/* 255 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86030,7 +86155,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /***/ }),
-/* 255 */
+/* 256 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86041,6 +86166,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(192);
 /* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(195);
 /* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(196);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(246);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -86057,7 +86183,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble} [Particle]`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 4px;`);
+
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 
 const dumbCache = {};
@@ -86109,7 +86235,7 @@ class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE
     };
     importScripts(path);
     delete self.defineParticle;
-    const logger = logFactory(fileName.split('/').pop(), '#1faa00');
+    const logger = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__["logFactory"])(fileName.split('/').pop(), '#1faa00');
     return this.unwrapParticle(result[0], logger);
   }
   mapParticleUrl(path) {

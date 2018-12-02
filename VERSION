@@ -1,5 +1,25 @@
-commit 79699ce571dda4a334a3df314d5b5ce90a7f2aa0
+commit 2636e8432c7bd22d29c1b6860214801b64132926
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Sun Dec 2 12:34:06 2018 -0800
+Date:   Sun Dec 2 13:17:49 2018 -0800
 
-    plumb suggestion slot into user arc (#2354)
+    Particles work (#2355)
+    
+    * s/particles_0_6_0/particles
+    
+    * fix path
+    
+    * add issue link to warning
+    
+    * adjust tile spacing
+    
+    * tweak wdio settings so it works on Windows, turn off tests for deprecated shell
+    
+    * factor xen-debug out of xen so we can use Xen,Debug.level in log-web and browser-loader
+    
+    * debug/log fixups
+    
+    * moar tests
+    
+    * modernize Type marshaling
+    
+    * fix load order to control debug level

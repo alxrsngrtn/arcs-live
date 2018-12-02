@@ -44431,16 +44431,11 @@ class InitSearch extends Strategy {
 }
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
 
 // TODO(wkorman): Incorporate debug levels. Consider outputting
 // preamble in the specified color via ANSI escape codes. Consider
-// sharing with similar log factory logic in `xen.js`.
-const logFactory = (preamble, color, log='log') => {
+// sharing with similar log factory logic in `xen.js`. See `log-web.js`.
+const logFactory$1 = (preamble, color, log='log') => {
   return console[log].bind(console, `(${preamble})`);
 };
 
@@ -45939,8 +45934,8 @@ Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.Resoluti
  * http://polymer.github.io/PATENTS.txt
  */
 const defaultTimeoutMs = 5000;
-const log$1 = logFactory('PlanProducer', '#ff0090', 'log');
-const error$2 = logFactory('PlanProducer', '#ff0090', 'error');
+const log$1 = logFactory$1('PlanProducer', '#ff0090', 'log');
+const error$2 = logFactory$1('PlanProducer', '#ff0090', 'error');
 class PlanProducer {
     constructor(arc, store, searchStore, { debug = false } = {}) {
         this.planner = null;
