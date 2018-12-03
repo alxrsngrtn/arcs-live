@@ -25,7 +25,6 @@ export class PouchDbStorage extends StorageBase {
         // Used for reference mode
         this.baseStores = new Map();
         this.baseStorePromises = new Map();
-        this.localIDBase = 0;
     }
     /**
      * Instantiates a new key for id/type stored at keyFragment.

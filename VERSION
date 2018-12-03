@@ -1,9 +1,5 @@
-commit 4dc97f7610a5fb31b3094284c0881e7ff7494a0c
-Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
-Date:   Mon Dec 3 14:50:22 2018 +1100
+commit df8c2f6210ae82755f1bfb289a52afb8c493ead8
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Dec 3 14:53:22 2018 +1100
 
-    Created a require section that can be used to replace the use fate. (#2357)
-    
-    * Created a require section that can be used to replace the use fate.
-    
-    * Fixed lint errors
+    Some easy ID cleanups (#2356)

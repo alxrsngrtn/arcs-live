@@ -22,7 +22,6 @@ import { ArcDebugHandler } from './debug/arc-debug-handler.js';
 import { RecipeIndex } from './recipe-index.js';
 export class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, recipeIndex }) {
-        this.nextLocalID = 0;
         this._activeRecipe = new Recipe();
         this._recipes = [];
         this.dataChangeCallbacks = new Map();
@@ -35,14 +34,13 @@ export class Arc {
         // Map from each store to its description (originating in the manifest).
         this.storeDescriptions = new Map();
         this.instantiatePlanCallbacks = [];
-        this.sessionId = Id.newSessionId();
         this.particleHandleMaps = new Map();
         // TODO: context should not be optional.
         this._context = context || new Manifest({ id });
         // TODO: pecFactory should not be optional. update all callers and fix here.
         this.pecFactory = pecFactory || FakePecFactory(loader).bind(null);
         // for now, every Arc gets its own session
-        this.id = this.sessionId.fromString(id);
+        this.id = Id.newSessionId().fromString(id);
         this.speculative = !!speculative; // undefined => false
         // TODO: rename: this are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
         this._loader = loader;
@@ -311,9 +309,6 @@ ${this.activeRecipe.toString()}`;
     }
     generateID(component = '') {
         return this.id.createId(component).toString();
-    }
-    generateIDComponents() {
-        return { base: this.id, component: () => this.nextLocalID++ };
     }
     get _stores() {
         return [...this.storesById.values()];

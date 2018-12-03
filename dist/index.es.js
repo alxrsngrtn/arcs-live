@@ -39195,7 +39195,6 @@ class PouchDbStorage extends StorageBase {
         // Used for reference mode
         this.baseStores = new Map();
         this.baseStorePromises = new Map();
-        this.localIDBase = 0;
     }
     /**
      * Instantiates a new key for id/type stored at keyFragment.
@@ -48658,12 +48657,11 @@ class StorageProxyScheduler {
 class ParticleExecutionContext {
     constructor(port, idBase, loader) {
         this.particles = [];
-        this._nextLocalID = 0;
         this.pendingLoads = [];
         this.scheduler = new StorageProxyScheduler();
         this.keyedProxies = {};
         this.apiPort = new PECInnerPort(port);
-        this.idBase = idBase;
+        this.idBase = Id.newSessionId().fromString(idBase);
         this.loader = loader;
         loader.setParticleExecutionContext(this);
         /*
@@ -48805,11 +48803,8 @@ class ParticleExecutionContext {
             particle._slotByName.delete(slotName);
         };
     }
-    generateIDComponents() {
-        return { base: this.idBase, component: () => this._nextLocalID++ };
-    }
     generateID() {
-        return `${this.idBase}:${this._nextLocalID++}`;
+        return this.idBase.createId().toString();
     }
     innerArcHandle(arcId, particleId) {
         const pec = this;
@@ -50757,7 +50752,6 @@ class RecipeIndex {
  */
 class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, recipeIndex }) {
-        this.nextLocalID = 0;
         this._activeRecipe = new Recipe();
         this._recipes = [];
         this.dataChangeCallbacks = new Map();
@@ -50770,14 +50764,13 @@ class Arc {
         // Map from each store to its description (originating in the manifest).
         this.storeDescriptions = new Map();
         this.instantiatePlanCallbacks = [];
-        this.sessionId = Id.newSessionId();
         this.particleHandleMaps = new Map();
         // TODO: context should not be optional.
         this._context = context || new Manifest({ id });
         // TODO: pecFactory should not be optional. update all callers and fix here.
         this.pecFactory = pecFactory || FakePecFactory(loader).bind(null);
         // for now, every Arc gets its own session
-        this.id = this.sessionId.fromString(id);
+        this.id = Id.newSessionId().fromString(id);
         this.speculative = !!speculative; // undefined => false
         // TODO: rename: this are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
         this._loader = loader;
@@ -51046,9 +51039,6 @@ ${this.activeRecipe.toString()}`;
     }
     generateID(component = '') {
         return this.id.createId(component).toString();
-    }
-    generateIDComponents() {
-        return { base: this.id, component: () => this.nextLocalID++ };
     }
     get _stores() {
         return [...this.storesById.values()];

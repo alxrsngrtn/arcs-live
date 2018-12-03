@@ -42,7 +42,6 @@ export declare class Arc {
     private readonly _context;
     private readonly pecFactory;
     private readonly speculative;
-    private nextLocalID;
     private _activeRecipe;
     private _recipes;
     readonly _loader: Loader;
@@ -58,8 +57,7 @@ export declare class Arc {
     private readonly _recipeIndex;
     private waitForIdlePromise;
     private debugHandler;
-    sessionId: Id;
-    id: Id;
+    readonly id: Id;
     particleHandleMaps: Map<string, {
         spec: ParticleSpec;
         handles: Map<string, StorageProviderBase>;
@@ -95,10 +93,6 @@ export declare class Arc {
     loadedParticles(): ParticleSpec[];
     _instantiateParticle(recipeParticle: Particle): void;
     generateID(component?: string): string;
-    generateIDComponents(): {
-        base: Id;
-        component: () => number;
-    };
     readonly _stores: StorageProviderBase[];
     cloneForSpeculativeExecution(): Promise<Arc>;
     instantiate(recipe: Recipe, innerArc?: any): Promise<void>;

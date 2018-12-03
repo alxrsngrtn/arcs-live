@@ -91,7 +91,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _runtime_ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(33);
+/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -124,6 +124,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(15);
 /* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(31);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(33);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -137,15 +138,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 class ParticleExecutionContext {
     constructor(port, idBase, loader) {
         this.particles = [];
-        this._nextLocalID = 0;
         this.pendingLoads = [];
         this.scheduler = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxyScheduler"]();
         this.keyedProxies = {};
         this.apiPort = new _api_channel_js__WEBPACK_IMPORTED_MODULE_2__["PECInnerPort"](port);
-        this.idBase = idBase;
+        this.idBase = _id_js__WEBPACK_IMPORTED_MODULE_4__["Id"].newSessionId().fromString(idBase);
         this.loader = loader;
         loader.setParticleExecutionContext(this);
         /*
@@ -287,11 +288,8 @@ class ParticleExecutionContext {
             particle._slotByName.delete(slotName);
         };
     }
-    generateIDComponents() {
-        return { base: this.idBase, component: () => this._nextLocalID++ };
-    }
     generateID() {
-        return `${this.idBase}:${this._nextLocalID++}`;
+        return this.idBase.createId().toString();
     }
     innerArcHandle(arcId, particleId) {
         const pec = this;
@@ -7020,12 +7018,355 @@ class CrdtCollectionModel {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
+/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(34);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class Id {
+    constructor(currentSession, components = []) {
+        this.nextIdComponent = 0;
+        this.components = [];
+        this.session = currentSession;
+        this.currentSession = currentSession;
+        this.components = components;
+    }
+    static newSessionId() {
+        const session = Math.floor(_random_js__WEBPACK_IMPORTED_MODULE_0__["Random"].next() * Math.pow(2, 50)) + '';
+        return new Id(session);
+    }
+    /**
+     * When used in the following way:
+     *   const id = Id.newSessionId().fromString(stringId);
+     *
+     * The resulting id will receive a newly generated session id in the currentSession field,
+     * while maintaining an original session from the string representation in the session field.
+     */
+    fromString(str) {
+        const newId = new Id(this.currentSession);
+        let components = str.split(':');
+        if (components[0][0] === '!') {
+            newId.session = components[0].slice(1);
+            components = components.slice(1);
+        }
+        newId.components.push(...components);
+        return newId;
+    }
+    toString() {
+        return `!${this.session}:${this.components.join(':')}`;
+    }
+    // Only use this for testing!
+    toStringWithoutSessionForTesting() {
+        return this.components.join(':');
+    }
+    createId(component = '') {
+        const id = new Id(this.currentSession, this.components.slice());
+        id.components.push(component + this.nextIdComponent++);
+        return id;
+    }
+    equal(id) {
+        if (id.session !== this.session || id.components.length !== this.components.length) {
+            return false;
+        }
+        for (let i = 0; i < id.components.length; i++) {
+            if (id.components[i] !== this.components[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+//# sourceMappingURL=id.js.map
+
+/***/ }),
+/* 34 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Random", function() { return Random; });
+/* harmony import */ var mersenne_twister__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(35);
+/* harmony import */ var mersenne_twister__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(mersenne_twister__WEBPACK_IMPORTED_MODULE_0__);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class RNG {
+}
+/**
+ * A basic random number generator using Math.random();
+ */
+class MathRandomRNG extends RNG {
+    next() {
+        return Math.random();
+    }
+}
+/**
+ * Provides a deterministic Random Number Generator for Tests
+ */
+class SeededRNG extends RNG {
+    constructor() {
+        super(...arguments);
+        this.generator = new mersenne_twister__WEBPACK_IMPORTED_MODULE_0___default.a(7);
+    }
+    next() {
+        return this.generator.random();
+    }
+}
+// Singleton Pattern
+let random = new MathRandomRNG();
+class Random {
+    static next() {
+        return random.next();
+    }
+    // TODO: remove test code and allow for injectable implementations.
+    static seedForTests() {
+        random = new SeededRNG();
+    }
+}
+//# sourceMappingURL=random.js.map
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports) {
+
+/*
+  https://github.com/banksean wrapped Makoto Matsumoto and Takuji Nishimura's code in a namespace
+  so it's better encapsulated. Now you can have multiple random number generators
+  and they won't stomp all over eachother's state.
+
+  If you want to use this as a substitute for Math.random(), use the random()
+  method like so:
+
+  var m = new MersenneTwister();
+  var randomNumber = m.random();
+
+  You can also call the other genrand_{foo}() methods on the instance.
+
+  If you want to use a specific seed in order to get a repeatable random
+  sequence, pass an integer into the constructor:
+
+  var m = new MersenneTwister(123);
+
+  and that will always produce the same random sequence.
+
+  Sean McCullough (banksean@gmail.com)
+*/
+
+/*
+   A C-program for MT19937, with initialization improved 2002/1/26.
+   Coded by Takuji Nishimura and Makoto Matsumoto.
+
+   Before using, initialize the state by using init_seed(seed)
+   or init_by_array(init_key, key_length).
+
+   Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions
+   are met:
+
+     1. Redistributions of source code must retain the above copyright
+        notice, this list of conditions and the following disclaimer.
+
+     2. Redistributions in binary form must reproduce the above copyright
+        notice, this list of conditions and the following disclaimer in the
+        documentation and/or other materials provided with the distribution.
+
+     3. The names of its contributors may not be used to endorse or promote
+        products derived from this software without specific prior written
+        permission.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+   A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+   Any feedback is very welcome.
+   http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html
+   email: m-mat @ math.sci.hiroshima-u.ac.jp (remove space)
+*/
+
+var MersenneTwister = function(seed) {
+	if (seed == undefined) {
+		seed = new Date().getTime();
+	}
+
+	/* Period parameters */
+	this.N = 624;
+	this.M = 397;
+	this.MATRIX_A = 0x9908b0df;   /* constant vector a */
+	this.UPPER_MASK = 0x80000000; /* most significant w-r bits */
+	this.LOWER_MASK = 0x7fffffff; /* least significant r bits */
+
+	this.mt = new Array(this.N); /* the array for the state vector */
+	this.mti=this.N+1; /* mti==N+1 means mt[N] is not initialized */
+
+	if (seed.constructor == Array) {
+		this.init_by_array(seed, seed.length);
+	}
+	else {
+		this.init_seed(seed);
+	}
+}
+
+/* initializes mt[N] with a seed */
+/* origin name init_genrand */
+MersenneTwister.prototype.init_seed = function(s) {
+	this.mt[0] = s >>> 0;
+	for (this.mti=1; this.mti<this.N; this.mti++) {
+		var s = this.mt[this.mti-1] ^ (this.mt[this.mti-1] >>> 30);
+		this.mt[this.mti] = (((((s & 0xffff0000) >>> 16) * 1812433253) << 16) + (s & 0x0000ffff) * 1812433253)
+		+ this.mti;
+		/* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
+		/* In the previous versions, MSBs of the seed affect   */
+		/* only MSBs of the array mt[].                        */
+		/* 2002/01/09 modified by Makoto Matsumoto             */
+		this.mt[this.mti] >>>= 0;
+		/* for >32 bit machines */
+	}
+}
+
+/* initialize by an array with array-length */
+/* init_key is the array for initializing keys */
+/* key_length is its length */
+/* slight change for C++, 2004/2/26 */
+MersenneTwister.prototype.init_by_array = function(init_key, key_length) {
+	var i, j, k;
+	this.init_seed(19650218);
+	i=1; j=0;
+	k = (this.N>key_length ? this.N : key_length);
+	for (; k; k--) {
+		var s = this.mt[i-1] ^ (this.mt[i-1] >>> 30)
+		this.mt[i] = (this.mt[i] ^ (((((s & 0xffff0000) >>> 16) * 1664525) << 16) + ((s & 0x0000ffff) * 1664525)))
+		+ init_key[j] + j; /* non linear */
+		this.mt[i] >>>= 0; /* for WORDSIZE > 32 machines */
+		i++; j++;
+		if (i>=this.N) { this.mt[0] = this.mt[this.N-1]; i=1; }
+		if (j>=key_length) j=0;
+	}
+	for (k=this.N-1; k; k--) {
+		var s = this.mt[i-1] ^ (this.mt[i-1] >>> 30);
+		this.mt[i] = (this.mt[i] ^ (((((s & 0xffff0000) >>> 16) * 1566083941) << 16) + (s & 0x0000ffff) * 1566083941))
+		- i; /* non linear */
+		this.mt[i] >>>= 0; /* for WORDSIZE > 32 machines */
+		i++;
+		if (i>=this.N) { this.mt[0] = this.mt[this.N-1]; i=1; }
+	}
+
+	this.mt[0] = 0x80000000; /* MSB is 1; assuring non-zero initial array */
+}
+
+/* generates a random number on [0,0xffffffff]-interval */
+/* origin name genrand_int32 */
+MersenneTwister.prototype.random_int = function() {
+	var y;
+	var mag01 = new Array(0x0, this.MATRIX_A);
+	/* mag01[x] = x * MATRIX_A  for x=0,1 */
+
+	if (this.mti >= this.N) { /* generate N words at one time */
+		var kk;
+
+		if (this.mti == this.N+1)  /* if init_seed() has not been called, */
+			this.init_seed(5489);  /* a default initial seed is used */
+
+		for (kk=0;kk<this.N-this.M;kk++) {
+			y = (this.mt[kk]&this.UPPER_MASK)|(this.mt[kk+1]&this.LOWER_MASK);
+			this.mt[kk] = this.mt[kk+this.M] ^ (y >>> 1) ^ mag01[y & 0x1];
+		}
+		for (;kk<this.N-1;kk++) {
+			y = (this.mt[kk]&this.UPPER_MASK)|(this.mt[kk+1]&this.LOWER_MASK);
+			this.mt[kk] = this.mt[kk+(this.M-this.N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+		}
+		y = (this.mt[this.N-1]&this.UPPER_MASK)|(this.mt[0]&this.LOWER_MASK);
+		this.mt[this.N-1] = this.mt[this.M-1] ^ (y >>> 1) ^ mag01[y & 0x1];
+
+		this.mti = 0;
+	}
+
+	y = this.mt[this.mti++];
+
+	/* Tempering */
+	y ^= (y >>> 11);
+	y ^= (y << 7) & 0x9d2c5680;
+	y ^= (y << 15) & 0xefc60000;
+	y ^= (y >>> 18);
+
+	return y >>> 0;
+}
+
+/* generates a random number on [0,0x7fffffff]-interval */
+/* origin name genrand_int31 */
+MersenneTwister.prototype.random_int31 = function() {
+	return (this.random_int()>>>1);
+}
+
+/* generates a random number on [0,1]-real-interval */
+/* origin name genrand_real1 */
+MersenneTwister.prototype.random_incl = function() {
+	return this.random_int()*(1.0/4294967295.0);
+	/* divided by 2^32-1 */
+}
+
+/* generates a random number on [0,1)-real-interval */
+MersenneTwister.prototype.random = function() {
+	return this.random_int()*(1.0/4294967296.0);
+	/* divided by 2^32 */
+}
+
+/* generates a random number on (0,1)-real-interval */
+/* origin name genrand_real3 */
+MersenneTwister.prototype.random_excl = function() {
+	return (this.random_int() + 0.5)*(1.0/4294967296.0);
+	/* divided by 2^32 */
+}
+
+/* generates a random number on [0,1) with 53-bit resolution*/
+/* origin name genrand_res53 */
+MersenneTwister.prototype.random_long = function() {
+	var a=this.random_int()>>>5, b=this.random_int()>>>6;
+	return(a*67108864.0+b)*(1.0/9007199254740992.0);
+}
+
+/* These real versions are due to Isaku Wada, 2002/01/09 added */
+
+module.exports = MersenneTwister;
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrowserLoader", function() { return BrowserLoader; });
-/* harmony import */ var _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(34);
-/* harmony import */ var _runtime_ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(38);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(39);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(42);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(43);
+/* harmony import */ var _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _runtime_ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(41);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(42);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(46);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7127,22 +7468,22 @@ class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE
 
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
-/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(35);
-/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
-/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(37);
+/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(38);
+/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(39);
+/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(38);
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(39);
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(42);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(41);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(45);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(4);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(43);
-/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(44);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(46);
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(47);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7258,7 +7599,7 @@ class Loader {
 //# sourceMappingURL=loader.js.map
 
 /***/ }),
-/* 35 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7275,7 +7616,7 @@ const fs = {};
 
 
 /***/ }),
-/* 36 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7292,7 +7633,7 @@ const vm = {};
 
 
 /***/ }),
-/* 37 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7315,7 +7656,7 @@ const local_fetch = fetch;
 
 
 /***/ }),
-/* 38 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7485,14 +7826,14 @@ class Particle {
 //# sourceMappingURL=particle.js.map
 
 /***/ }),
-/* 39 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(40);
-/* harmony import */ var _ts_build_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(41);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(43);
+/* harmony import */ var _ts_build_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(44);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7666,7 +8007,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 
 
 /***/ }),
-/* 40 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7835,14 +8176,14 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 41 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(38);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(41);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
 /**
  * @license
@@ -8062,7 +8403,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 42 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8070,7 +8411,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
 /* harmony import */ var _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(43);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(46);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8283,13 +8624,13 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 
 
 /***/ }),
-/* 43 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(39);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(42);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8342,7 +8683,7 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 
 
 /***/ }),
-/* 44 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

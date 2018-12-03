@@ -13,16 +13,11 @@ export declare class ParticleExecutionContext {
     private apiPort;
     private particles;
     private idBase;
-    private _nextLocalID;
     private loader;
     private pendingLoads;
     private scheduler;
     private keyedProxies;
     constructor(port: any, idBase: string, loader: Loader);
-    generateIDComponents(): {
-        base: string;
-        component: () => number;
-    };
     generateID(): string;
     innerArcHandle(arcId: any, particleId: any): {
         createHandle(type: any, name: any, hostParticle: any): Promise<{}>;

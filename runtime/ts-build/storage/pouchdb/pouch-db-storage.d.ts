@@ -13,7 +13,6 @@ export declare class PouchDbStorage extends StorageBase {
     private readonly providerByLocationCache;
     private readonly baseStores;
     private readonly baseStorePromises;
-    private localIDBase;
     /** Global map of database types/name to Pouch Database Instances */
     private static dbLocationToInstance;
     /** Tracks replication status and allows cancellation in tests */
