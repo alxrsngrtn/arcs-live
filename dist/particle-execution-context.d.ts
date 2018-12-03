@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Handle } from './handle.js';
 import { StorageProxy } from './storage-proxy.js';
 import { Loader } from './loader.js';
 export declare class ParticleExecutionContext {
@@ -19,9 +20,9 @@ export declare class ParticleExecutionContext {
     private keyedProxies;
     constructor(port: any, idBase: string, loader: Loader);
     generateID(): string;
-    innerArcHandle(arcId: any, particleId: any): {
+    innerArcHandle(arcId: string, particleId: string): {
         createHandle(type: any, name: any, hostParticle: any): Promise<{}>;
-        mapHandle(handle: any): Promise<{}>;
+        mapHandle(handle: Handle): Promise<{}>;
         createSlot(transformationParticle: any, transformationSlotName: any, hostedParticleName: any, hostedSlotName: any, handleId: any): Promise<{}>;
         loadRecipe(recipe: any): Promise<{}>;
     };

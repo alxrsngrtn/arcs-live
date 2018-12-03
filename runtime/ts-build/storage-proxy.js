@@ -67,7 +67,7 @@ export class StorageProxy {
     }
     raiseSystemException(exception, methodName, particleId) {
         // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
-        mapStackTrace(exception.stack, mappedStack => this.port.RaiseSystemException({ exception: { message: exception.message, stack: mappedStack.join('\n'), name: exception.name }, methodName, particleId }));
+        mapStackTrace(exception.stack, mappedStack => this.port.RaiseSystemException({ message: exception.message, stack: mappedStack.join('\n'), name: exception.name }, methodName, particleId));
     }
     /**
      *  Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
@@ -79,7 +79,7 @@ export class StorageProxy {
         this.observers.push({ particle, handle });
         // Attach an event listener to the backing store when the first readable handle is registered.
         if (!this.listenerAttached) {
-            this.port.InitializeProxy({ handle: this, callback: x => this._onUpdate(x) });
+            this.port.InitializeProxy(this, x => this._onUpdate(x));
             this.listenerAttached = true;
         }
         // Change to synchronized mode as soon as we get any handle configured with keepSynced and send
@@ -87,7 +87,7 @@ export class StorageProxy {
         // TODO: drop back to non-sync mode if all handles re-configure to !keepSynced
         if (handle.options.keepSynced) {
             if (!this.keepSynced) {
-                this.port.SynchronizeProxy({ handle: this, callback: x => this._onSynchronize(x) });
+                this.port.SynchronizeProxy(this, x => this._onSynchronize(x));
                 this.keepSynced = true;
             }
             // If a handle configured for sync notifications registers after we've received the full
@@ -180,7 +180,7 @@ export class StorageProxy {
         if (this.updates.length > 0) {
             if (this.synchronized !== SyncState.none) {
                 this.synchronized = SyncState.none;
-                this.port.SynchronizeProxy({ handle: this, callback: x => this._onSynchronize(x) });
+                this.port.SynchronizeProxy(this, x => this._onSynchronize(x));
                 for (const { handle, particle } of this.observers) {
                     if (handle.options.notifyDesync) {
                         this.scheduler.enqueue(particle, handle, ['desync', particle]);
@@ -278,7 +278,7 @@ export class CollectionProxy extends StorageProxy {
         else {
             // TODO: in synchronized mode, this should integrate with SynchronizeProxy rather than
             //       sending a parallel request
-            return new Promise(resolve => this.port.HandleToList({ callback: resolve, handle: this }));
+            return new Promise(resolve => this.port.HandleToList(this, resolve));
         }
     }
     get(id, particleId) {
@@ -286,13 +286,13 @@ export class CollectionProxy extends StorageProxy {
             return Promise.resolve(this.model.getValue(id));
         }
         else {
-            return new Promise((resolve, reject) => this.port.HandleToList({ callback: r => resolve(r.find(entity => entity.id === id)), handle: this, particleId }));
+            return new Promise((resolve, reject) => this.port.HandleToList(this, r => resolve(r.find(entity => entity.id === id))));
         }
     }
     store(value, keys, particleId) {
         const id = value.id;
         const data = { value, keys };
-        this.port.HandleStore({ handle: this, callback: () => { }, data, particleId });
+        this.port.HandleStore(this, () => { }, data, particleId);
         if (this.synchronized !== SyncState.full) {
             return;
         }
@@ -304,10 +304,10 @@ export class CollectionProxy extends StorageProxy {
     }
     clear(particleId) {
         if (this.synchronized !== SyncState.full) {
-            this.port.HandleRemoveMultiple({ handle: this, callback: () => { }, data: [], particleId });
+            this.port.HandleRemoveMultiple(this, () => { }, [], particleId);
         }
         let items = this.model.toList().map(item => ({ id: item.id, keys: this.model.getKeys(item.id) }));
-        this.port.HandleRemoveMultiple({ handle: this, callback: () => { }, data: items, particleId });
+        this.port.HandleRemoveMultiple(this, () => { }, items, particleId);
         items = items.map(({ id, keys }) => ({ rawData: this.model.getValue(id).rawData, id, keys }));
         items = items.filter(item => this.model.remove(item.id, item.keys));
         if (items.length > 0) {
@@ -317,7 +317,7 @@ export class CollectionProxy extends StorageProxy {
     remove(id, keys, particleId) {
         if (this.synchronized !== SyncState.full) {
             const data = { id, keys: [] };
-            this.port.HandleRemove({ handle: this, callback: () => { }, data, particleId });
+            this.port.HandleRemove(this, () => { }, data, particleId);
             return;
         }
         const value = this.model.getValue(id);
@@ -328,7 +328,7 @@ export class CollectionProxy extends StorageProxy {
             keys = this.model.getKeys(id);
         }
         const data = { id, keys };
-        this.port.HandleRemove({ handle: this, callback: () => { }, data, particleId });
+        this.port.HandleRemove(this, () => { }, data, particleId);
         if (!this.model.remove(id, keys)) {
             return;
         }
@@ -398,7 +398,7 @@ export class VariableProxy extends StorageProxy {
             return Promise.resolve(this.model);
         }
         else {
-            return new Promise(resolve => this.port.HandleGet({ callback: resolve, handle: this }));
+            return new Promise(resolve => this.port.HandleGet(this, resolve));
         }
     }
     set(entity, particleId) {
@@ -422,7 +422,7 @@ export class VariableProxy extends StorageProxy {
         // TODO: is this already a clone?
         this.model = JSON.parse(JSON.stringify(entity));
         this.barrier = barrier;
-        this.port.HandleSet({ data: entity, handle: this, particleId, barrier });
+        this.port.HandleSet(this, entity, particleId, barrier);
         const update = { originatorId: particleId, data: entity };
         this._notify('update', update, options => options.notifyUpdate);
     }
@@ -433,7 +433,7 @@ export class VariableProxy extends StorageProxy {
         const barrier = this.generateID( /* 'barrier' */);
         this.model = null;
         this.barrier = barrier;
-        this.port.HandleClear({ handle: this, particleId, barrier });
+        this.port.HandleClear(this, particleId, barrier);
         const update = { originatorId: particleId, data: null };
         this._notify('update', update, options => options.notifyUpdate);
     }
@@ -458,19 +458,19 @@ export class BigCollectionProxy extends StorageProxy {
     }
     // TODO: surface get()
     async store(value, keys, particleId) {
-        return new Promise(resolve => this.port.HandleStore({ handle: this, callback: resolve, data: { value, keys }, particleId }));
+        return new Promise(resolve => this.port.HandleStore(this, resolve, { value, keys }, particleId));
     }
     async remove(id, particleId) {
-        return new Promise(resolve => this.port.HandleRemove({ handle: this, callback: resolve, data: { id, keys: [] }, particleId }));
+        return new Promise(resolve => this.port.HandleRemove(this, resolve, { id, keys: [] }, particleId));
     }
     async stream(pageSize, forward) {
-        return new Promise(resolve => this.port.HandleStream({ handle: this, callback: resolve, pageSize, forward }));
+        return new Promise(resolve => this.port.HandleStream(this, resolve, pageSize, forward));
     }
     async cursorNext(cursorId) {
-        return new Promise(resolve => this.port.StreamCursorNext({ handle: this, callback: resolve, cursorId }));
+        return new Promise(resolve => this.port.StreamCursorNext(this, resolve, cursorId));
     }
     cursorClose(cursorId) {
-        this.port.StreamCursorClose({ handle: this, cursorId });
+        this.port.StreamCursorClose(this, cursorId);
     }
 }
 export class StorageProxyScheduler {

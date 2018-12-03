@@ -377,7 +377,7 @@ export class BigCollection extends Handle {
         return new Cursor(this, cursorId);
     }
 }
-export function handleFor(proxy, name = null, particleId = 0, canRead = true, canWrite = true) {
+export function handleFor(proxy, name = null, particleId = '', canRead = true, canWrite = true) {
     let handle;
     if (proxy.type instanceof CollectionType) {
         handle = new Collection(proxy, name, particleId, canRead, canWrite);

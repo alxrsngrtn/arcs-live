@@ -7,13 +7,13 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Type } from './type.js';
+import { Type, TypeLiteral } from './type.js';
 import { Shape } from './shape.js';
 import { Direction } from './recipe/handle-connection.js';
 declare type SerializedConnectionSpec = {
     direction: Direction;
     name: string;
-    type: Type;
+    type: Type | TypeLiteral;
     isOptional: boolean;
     tags?: string[];
     dependentConnections: SerializedConnectionSpec[];

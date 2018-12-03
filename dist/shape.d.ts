@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Type } from './type.js';
 interface Handle {
     type: Type;
     name: string;
@@ -69,5 +70,4 @@ export declare class Shape {
     restrictType(particleSpec: any): false | this;
     _restrictThis(particleSpec: any): false | this;
 }
-import { Type } from './type.js';
 export {};

@@ -10,5 +10,11 @@ export class SlotInfo {
         this.formFactor = formFactor;
         this.handle = handle;
     }
+    toLiteral() {
+        return this;
+    }
+    static fromLiteral(data) {
+        return new SlotInfo(data);
+    }
 }
 //# sourceMappingURL=slot-info.js.map

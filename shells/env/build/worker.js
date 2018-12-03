@@ -91,7 +91,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _runtime_ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
+/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -119,9 +119,9 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleExecutionContext", function() { return ParticleExecutionContext; });
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
-/* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(15);
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(31);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(33);
+/* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(16);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(32);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(34);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -142,7 +142,161 @@ class ParticleExecutionContext {
         this.pendingLoads = [];
         this.scheduler = new _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxyScheduler"]();
         this.keyedProxies = {};
-        this.apiPort = new _api_channel_js__WEBPACK_IMPORTED_MODULE_2__["PECInnerPort"](port);
+        const pec = this;
+        this.apiPort = new class extends _api_channel_js__WEBPACK_IMPORTED_MODULE_2__["PECInnerPort"] {
+            onDefineHandle(identifier, type, name) {
+                return _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"].newProxy(identifier, type, this, pec, pec.scheduler, name);
+            }
+            onGetBackingStoreCallback(callback, type, name, id, storageKey) {
+                const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
+                proxy.storageKey = storageKey;
+                return [proxy, () => callback(proxy, storageKey)];
+            }
+            onCreateHandleCallback(callback, type, name, id) {
+                const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"].newProxy(id, type, this, pec, pec.scheduler, name);
+                return [proxy, () => callback(proxy)];
+            }
+            onMapHandleCallback(callback, id) {
+                return [id, () => callback(id)];
+            }
+            onCreateSlotCallback(callback, hostedSlotId) {
+                return [hostedSlotId, () => callback(hostedSlotId)];
+            }
+            onInnerArcRender(transformationParticle, transformationSlotName, hostedSlotId, content) {
+                // TODO(mmandlis): this dependency on renderHostedSlot means that only TransformationDomParticles can
+                // be transformations. 
+                // tslint:disable-next-line: no-any
+                transformationParticle.renderHostedSlot(transformationSlotName, hostedSlotId, content);
+            }
+            onStop() {
+                if (global['close']) {
+                    global['close']();
+                }
+            }
+            onInstantiateParticle(id, spec, handles) {
+                return pec._instantiateParticle(id, spec, handles);
+            }
+            onSimpleCallback(callback, data) {
+                callback(data);
+            }
+            onConstructArcCallback(callback, arc) {
+                callback(arc);
+            }
+            onAwaitIdle(version) {
+                pec.idle.then(a => {
+                    // TODO: dom-particles update is async, this is a workaround to allow dom-particles to
+                    // update relevance, after handles are updated. Needs better idle signal.
+                    setTimeout(() => { this.Idle(version, pec.relevance); }, 0);
+                });
+            }
+            onUIEvent(particle, slotName, event) {
+                // TODO(mmandlis): this dependency on fireEvent means that only DomParticles can
+                // be UI particles.
+                // tslint:disable-next-line: no-any
+                particle.fireEvent(slotName, event);
+            }
+            onStartRender(particle, slotName, providedSlots, contentTypes) {
+                const apiPort = this;
+                /**
+                 * A representation of a consumed slot. Retrieved from a particle using
+                 * particle.getSlot(name)
+                 */
+                class Slotlet {
+                    constructor(pec, particle, slotName, providedSlots) {
+                        this.handlers = new Map();
+                        this.requestedContentTypes = new Set();
+                        this._isRendered = false;
+                        this.slotName = slotName;
+                        this.particle = particle;
+                        this.pec = pec;
+                        this.providedSlots = providedSlots;
+                    }
+                    get isRendered() { return this._isRendered; }
+                    /**
+                     * renders content to the slot.
+                     */
+                    render(content) {
+                        // TODO: This logic should live in dom-particle and referencing slots by name should be deprecated for the '{{$name}}' syntax.
+                        if (this.providedSlots.size > 0) {
+                            content = Object.assign({}, content);
+                            const slotIDs = {};
+                            this.providedSlots.forEach((slotId, slotName) => slotIDs[`$${slotName}`] = slotId);
+                            content.model = this.enhanceModelWithSlotIDs(content.model, slotIDs);
+                            if (content.template) {
+                                if (typeof content.template === 'string') {
+                                    content.template = this.substituteSlotNamesForIds(content.template);
+                                }
+                                else {
+                                    content.template = Object.entries(content.template).reduce((templateDictionary, [templateName, templateValue]) => {
+                                        templateDictionary[templateName] = this.substituteSlotNamesForIds(templateValue);
+                                        return templateDictionary;
+                                    }, {});
+                                }
+                            }
+                        }
+                        apiPort.Render(particle, slotName, content);
+                        Object.keys(content).forEach(key => { this.requestedContentTypes.delete(key); });
+                        // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
+                        this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
+                    }
+                    substituteSlotNamesForIds(template) {
+                        this.providedSlots.forEach((slotId, slotName) => {
+                            // TODO: This is a simple string replacement right now,
+                            // ensuring that 'slotid' is an attribute on an HTML element would be an improvement.
+                            template = template.replace(new RegExp(`slotid=\"${slotName}\"`, 'gi'), `slotid$="{{$${slotName}}}"`);
+                        });
+                        return template;
+                    }
+                    // We put slot IDs at the top-level of the model as well as in models for sub-templates.
+                    // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.          
+                    enhanceModelWithSlotIDs(model = {}, slotIDs, topLevel = true) {
+                        if (topLevel) {
+                            model = Object.assign({}, slotIDs, model);
+                        }
+                        if (model.hasOwnProperty('$template') && model.hasOwnProperty('models') && Array.isArray(model['models'])) {
+                            model['models'] = model['models'].map(m => this.enhanceModelWithSlotIDs(m, slotIDs));
+                        }
+                        for (const [key, value] of Object.entries(model)) {
+                            if (!!value && typeof value === 'object') {
+                                model[key] = this.enhanceModelWithSlotIDs(value, slotIDs, false);
+                            }
+                        }
+                        return model;
+                    }
+                    /** @method registerEventHandler(name, f)
+                     * registers a callback to be invoked when 'name' event happens.
+                     */
+                    registerEventHandler(name, f) {
+                        if (!this.handlers.has(name)) {
+                            this.handlers.set(name, []);
+                        }
+                        this.handlers.get(name).push(f);
+                    }
+                    clearEventHandlers(name) {
+                        this.handlers.set(name, []);
+                    }
+                    fireEvent(event) {
+                        for (const handler of this.handlers.get(event.handler) || []) {
+                            handler(event);
+                        }
+                    }
+                }
+                // TODO(mmandlis): these dependencies on _slotByName and renderSlot mean that only DomParticles can
+                // be UI particles.
+                // tslint:disable-next-line: no-any
+                particle._slotByName.set(slotName, new Slotlet(pec, particle, slotName, providedSlots));
+                // tslint:disable-next-line: no-any
+                particle.renderSlot(slotName, contentTypes);
+            }
+            onStopRender(particle, slotName) {
+                // TODO(mmandlis): this dependency on _slotByName and name means that only DomParticles can
+                // be UI particles.
+                // tslint:disable-next-line: no-any
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(particle._slotByName.has(slotName), `Stop render called for particle ${particle.name} slot ${slotName} without start render being called.`);
+                // tslint:disable-next-line: no-any
+                particle._slotByName.delete(slotName);
+            }
+        }(port);
         this.idBase = _id_js__WEBPACK_IMPORTED_MODULE_4__["Id"].newSessionId().fromString(idBase);
         this.loader = loader;
         loader.setParticleExecutionContext(this);
@@ -156,134 +310,6 @@ class ParticleExecutionContext {
          * specifications separated from particle classes - and
          * only keeping type information on the arc side.
          */
-        this.apiPort.onDefineHandle = ({ type, identifier, name }) => {
-            return _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"].newProxy(identifier, type, this.apiPort, this, this.scheduler, name);
-        };
-        this.apiPort.onGetBackingStoreCallback = ({ type, id, name, callback, storageKey }) => {
-            const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"].newProxy(id, type, this.apiPort, this, this.scheduler, name);
-            proxy.storageKey = storageKey;
-            return [proxy, () => callback(proxy, storageKey)];
-        };
-        this.apiPort.onCreateHandleCallback = ({ type, id, name, callback }) => {
-            const proxy = _storage_proxy_js__WEBPACK_IMPORTED_MODULE_3__["StorageProxy"].newProxy(id, type, this.apiPort, this, this.scheduler, name);
-            return [proxy, () => callback(proxy)];
-        };
-        this.apiPort.onMapHandleCallback = ({ id, callback }) => {
-            return [id, () => callback(id)];
-        };
-        this.apiPort.onCreateSlotCallback = ({ hostedSlotId, callback }) => {
-            return [hostedSlotId, () => callback(hostedSlotId)];
-        };
-        this.apiPort.onInnerArcRender = ({ transformationParticle, transformationSlotName, hostedSlotId, content }) => {
-            transformationParticle.renderHostedSlot(transformationSlotName, hostedSlotId, content);
-        };
-        this.apiPort.onStop = () => {
-            if (global['close']) {
-                global['close']();
-            }
-        };
-        this.apiPort.onInstantiateParticle =
-            ({ id, spec, handles }) => this._instantiateParticle(id, spec, handles);
-        this.apiPort.onSimpleCallback = ({ callback, data }) => callback(data);
-        this.apiPort.onConstructArcCallback = ({ callback, arc }) => callback(arc);
-        this.apiPort.onAwaitIdle = ({ version }) => this.idle.then(a => {
-            // TODO: dom-particles update is async, this is a workaround to allow dom-particles to
-            // update relevance, after handles are updated. Needs better idle signal.
-            setTimeout(() => { this.apiPort.Idle({ version, relevance: this.relevance }); }, 0);
-        });
-        this.apiPort.onUIEvent = ({ particle, slotName, event }) => particle.fireEvent(slotName, event);
-        this.apiPort.onStartRender = ({ particle, slotName, providedSlots, contentTypes }) => {
-            /**
-             * A representation of a consumed slot. Retrieved from a particle using
-             * particle.getSlot(name)
-             */
-            class Slotlet {
-                constructor(pec, particle, slotName, providedSlots) {
-                    this.handlers = new Map();
-                    this.requestedContentTypes = new Set();
-                    this._isRendered = false;
-                    this.slotName = slotName;
-                    this.particle = particle;
-                    this.pec = pec;
-                    this.providedSlots = providedSlots;
-                }
-                get isRendered() { return this._isRendered; }
-                /**
-                 * renders content to the slot.
-                 */
-                render(content) {
-                    // TODO: This logic should live in dom-particle and referencing slots by name should be deprecated for the '{{$name}}' syntax.
-                    if (this.providedSlots.size > 0) {
-                        content = Object.assign({}, content);
-                        const slotIDs = {};
-                        this.providedSlots.forEach((slotId, slotName) => slotIDs[`$${slotName}`] = slotId);
-                        content.model = this.enhanceModelWithSlotIDs(content.model, slotIDs);
-                        if (content.template) {
-                            if (typeof content.template === 'string') {
-                                content.template = this.substituteSlotNamesForModelReferences(content.template);
-                            }
-                            else {
-                                content.template = Object.entries(content.template).reduce((templateDictionary, [templateName, templateValue]) => {
-                                    templateDictionary[templateName] = this.substituteSlotNamesForModelReferences(templateValue);
-                                    return templateDictionary;
-                                }, {});
-                            }
-                        }
-                    }
-                    this.pec.apiPort.Render({ particle, slotName, content });
-                    Object.keys(content).forEach(key => { this.requestedContentTypes.delete(key); });
-                    // Slot is considered rendered, if a non-empty content was sent and all requested content types were fullfilled.
-                    this._isRendered = this.requestedContentTypes.size === 0 && (Object.keys(content).length > 0);
-                }
-                substituteSlotNamesForModelReferences(template) {
-                    this.providedSlots.forEach((slotId, slotName) => {
-                        // TODO: This is a simple string replacement right now,
-                        // ensuring that 'slotid' is an attribute on an HTML element would be an improvement.
-                        template = template.replace(new RegExp(`slotid=\"${slotName}\"`, 'gi'), `slotid$="{{$${slotName}}}"`);
-                    });
-                    return template;
-                }
-                // We put slot IDs at the top-level of the model as well as in models for sub-templates.
-                // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.
-                enhanceModelWithSlotIDs(model = {}, slotIDs, topLevel = true) {
-                    if (topLevel) {
-                        model = Object.assign({}, slotIDs, model);
-                    }
-                    if (model.hasOwnProperty('$template') && model.hasOwnProperty('models') && Array.isArray(model['models'])) {
-                        model['models'] = model['models'].map(m => this.enhanceModelWithSlotIDs(m, slotIDs));
-                    }
-                    for (const [key, value] of Object.entries(model)) {
-                        if (!!value && typeof value === 'object') {
-                            model[key] = this.enhanceModelWithSlotIDs(value, slotIDs, false);
-                        }
-                    }
-                    return model;
-                }
-                /**
-                 * registers a callback to be invoked when 'name' event happens.
-                 */
-                registerEventHandler(name, f) {
-                    if (!this.handlers.has(name)) {
-                        this.handlers.set(name, []);
-                    }
-                    this.handlers.get(name).push(f);
-                }
-                clearEventHandlers(name) {
-                    this.handlers.set(name, []);
-                }
-                fireEvent(event) {
-                    for (const handler of this.handlers.get(event.handler) || []) {
-                        handler(event);
-                    }
-                }
-            }
-            particle._slotByName.set(slotName, new Slotlet(this, particle, slotName, providedSlots));
-            particle.renderSlot(slotName, contentTypes);
-        };
-        this.apiPort.onStopRender = ({ particle, slotName }) => {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(particle._slotByName.has(slotName), `Stop render called for particle ${particle.name} slot ${slotName} without start render being called.`);
-            particle._slotByName.delete(slotName);
-        };
     }
     generateID() {
         return this.idBase.createId().toString();
@@ -292,38 +318,32 @@ class ParticleExecutionContext {
         const pec = this;
         return {
             createHandle(type, name, hostParticle) {
-                return new Promise((resolve, reject) => pec.apiPort.ArcCreateHandle({ arc: arcId, type, name, callback: proxy => {
-                        const handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, particleId);
-                        resolve(handle);
-                        if (hostParticle) {
-                            proxy.register(hostParticle, handle);
-                        }
-                    } }));
+                return new Promise((resolve, reject) => pec.apiPort.ArcCreateHandle(proxy => {
+                    const handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_0__["handleFor"])(proxy, name, particleId);
+                    resolve(handle);
+                    if (hostParticle) {
+                        proxy.register(hostParticle, handle);
+                    }
+                }, arcId, type, name));
             },
             mapHandle(handle) {
-                return new Promise((resolve, reject) => pec.apiPort.ArcMapHandle({ arc: arcId, handle, callback: id => {
-                        resolve(id);
-                    } }));
+                return new Promise((resolve, reject) => pec.apiPort.ArcMapHandle(id => {
+                    resolve(id);
+                }, arcId, handle));
             },
             createSlot(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) {
                 // handleId: the ID of a handle (returned by `createHandle` above) this slot is rendering; null - if not applicable.
                 // TODO: support multiple handle IDs.
-                return new Promise((resolve, reject) => pec.apiPort.ArcCreateSlot({ arc: arcId, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId, callback: hostedSlotId => {
-                        resolve(hostedSlotId);
-                    } }));
+                return new Promise((resolve, reject) => pec.apiPort.ArcCreateSlot(hostedSlotId => resolve(hostedSlotId), arcId, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId));
             },
             loadRecipe(recipe) {
                 // TODO: do we want to return a promise on completion?
-                return new Promise((resolve, reject) => pec.apiPort.ArcLoadRecipe({
-                    arc: arcId,
-                    recipe,
-                    callback: a => {
-                        if (a == undefined) {
-                            resolve();
-                        }
-                        else {
-                            reject(a);
-                        }
+                return new Promise((resolve, reject) => pec.apiPort.ArcLoadRecipe(arcId, recipe, a => {
+                    if (a == undefined) {
+                        resolve();
+                    }
+                    else {
+                        reject(a);
                     }
                 }));
             }
@@ -332,10 +352,10 @@ class ParticleExecutionContext {
     getStorageProxy(storageKey, type) {
         if (!this.keyedProxies[storageKey]) {
             this.keyedProxies[storageKey] = new Promise((resolve, reject) => {
-                this.apiPort.GetBackingStore({ storageKey, type, callback: (proxy, storageKey) => {
-                        this.keyedProxies[storageKey] = proxy;
-                        resolve(proxy);
-                    } });
+                this.apiPort.GetBackingStore((proxy, storageKey) => {
+                    this.keyedProxies[storageKey] = proxy;
+                    resolve(proxy);
+                }, storageKey, type);
             });
         }
         return this.keyedProxies[storageKey];
@@ -343,7 +363,7 @@ class ParticleExecutionContext {
     defaultCapabilitySet() {
         return {
             constructInnerArc: particle => {
-                return new Promise((resolve, reject) => this.apiPort.ConstructInnerArc({ callback: arcId => { resolve(this.innerArcHandle(arcId, particle.id)); }, particle }));
+                return new Promise((resolve, reject) => this.apiPort.ConstructInnerArc(arcId => resolve(this.innerArcHandle(arcId, particle.id)), particle));
             }
         };
     }
@@ -447,7 +467,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
 /* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
-/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
+/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(15);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6);
 /** @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -828,7 +848,7 @@ class BigCollection extends Handle {
         return new Cursor(this, cursorId);
     }
 }
-function handleFor(proxy, name = null, particleId = 0, canRead = true, canWrite = true) {
+function handleFor(proxy, name = null, particleId = '', canRead = true, canWrite = true) {
     let handle;
     if (proxy.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["CollectionType"]) {
         handle = new Collection(proxy, name, particleId, canRead, canWrite);
@@ -980,8 +1000,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
 /* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
 /* harmony import */ var _shape_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12);
-/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(13);
+/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
+/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8);
+/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(14);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -994,10 +1015,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 class Type {
-    constructor(tag, data) {
+    constructor(tag) {
         this.tag = tag;
-        this.data = data;
     }
     // TODO: remove these; callers can directly construct the classes now
     static newEntity(entity) {
@@ -1041,11 +1062,11 @@ class Type {
             case 'BigCollection':
                 return new BigCollectionType(Type.fromLiteral(literal.data));
             case 'Relation':
-                return new RelationType(literal.data);
+                return new RelationType(literal.data.map(t => Type.fromLiteral(t)));
             case 'Interface':
                 return new InterfaceType(_shape_js__WEBPACK_IMPORTED_MODULE_2__["Shape"].fromLiteral(literal.data));
             case 'Slot':
-                return new SlotType(literal.data);
+                return new SlotType(_slot_info_js__WEBPACK_IMPORTED_MODULE_3__["SlotInfo"].fromLiteral(literal.data));
             case 'Reference':
                 return new ReferenceType(Type.fromLiteral(literal.data));
             case 'ArcInfo':
@@ -1095,7 +1116,7 @@ class Type {
     // TODO: update call sites to use the type checker instead (since they will
     // have additional information about direction etc.)
     equals(type) {
-        return _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_3__["TypeChecker"].compareTypes({ type: this }, { type });
+        return _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_4__["TypeChecker"].compareTypes({ type: this }, { type });
     }
     isResolved() {
         // TODO: one of these should not exist.
@@ -1159,22 +1180,10 @@ class Type {
      * property, create a Map() and pass it into all clone calls in the group.
      */
     clone(variableMap) {
-        // TODO: clean this up
-        const type = this.resolvedType();
-        if (type instanceof VariableType) {
-            if (variableMap.has(type.variable)) {
-                return new VariableType(variableMap.get(type.variable));
-            }
-            else {
-                const newTypeVariable = _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"].fromLiteral(type.variable.toLiteral());
-                variableMap.set(type.variable, newTypeVariable);
-                return new VariableType(newTypeVariable);
-            }
-        }
-        if (type.data['clone']) {
-            return Type.fromLiteral({ tag: type.tag, data: type.data['clone'](variableMap) });
-        }
-        return Type.fromLiteral(type.toLiteral());
+        return this.resolvedType()._clone(variableMap);
+    }
+    _clone(variableMap) {
+        return Type.fromLiteral(this.toLiteral());
     }
     /**
      * Clone a type object, maintaining resolution information.
@@ -1184,10 +1193,6 @@ class Type {
      */
     _cloneWithResolutions(variableMap) {
         return Type.fromLiteral(this.toLiteral());
-    }
-    // tslint:disable-next-line: no-any
-    toLiteral() {
-        return this;
     }
     // TODO: is this the same as _applyExistenceTypeTest
     hasProperty(property) {
@@ -1207,10 +1212,9 @@ class Type {
     }
 }
 class EntityType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get entitySchema() { return this.data; }
     constructor(schema) {
-        super('Entity', schema);
+        super('Entity');
+        this.entitySchema = schema;
     }
     // These type identifier methods are being left in place for non-runtime code.
     get isEntity() {
@@ -1250,14 +1254,14 @@ class EntityType extends Type {
 }
 // Yes, these names need fixing.
 class VariableType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get variable() { return this.data; }
     constructor(variable) {
-        super('Variable', variable);
+        super('Variable');
+        this.variable = variable;
     }
     get isVariable() {
         return true;
     }
+    // TODO: should variableMap be Map<string, TypeVariable>?
     mergeTypeVariablesByName(variableMap) {
         const name = this.variable.name;
         let variable = variableMap.get(name);
@@ -1290,9 +1294,21 @@ class VariableType extends Type {
     get canReadSubset() {
         return this.variable.canReadSubset;
     }
+    _clone(variableMap) {
+        const name = this.variable.name;
+        if (variableMap.has(name)) {
+            return new VariableType(variableMap.get(name));
+        }
+        else {
+            const newTypeVariable = _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"].fromLiteral(this.variable.toLiteral());
+            variableMap.set(name, newTypeVariable);
+            return new VariableType(newTypeVariable);
+        }
+    }
     _cloneWithResolutions(variableMap) {
-        if (variableMap.has(this.variable)) {
-            return new VariableType(variableMap.get(this.variable));
+        const name = this.variable.name;
+        if (variableMap.has(name)) {
+            return new VariableType(variableMap.get(name));
         }
         else {
             const newTypeVariable = _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"].fromLiteral(this.variable.toLiteralIgnoringResolutions());
@@ -1305,7 +1321,7 @@ class VariableType extends Type {
             if (this.variable._canWriteSuperset) {
                 newTypeVariable.canWriteSuperset = this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
             }
-            variableMap.set(this.variable, newTypeVariable);
+            variableMap.set(name, newTypeVariable);
             return new VariableType(newTypeVariable);
         }
     }
@@ -1324,10 +1340,9 @@ class VariableType extends Type {
     }
 }
 class CollectionType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get collectionType() { return this.data; }
     constructor(collectionType) {
-        super('Collection', collectionType);
+        super('Collection');
+        this.collectionType = collectionType;
     }
     get isCollection() {
         return true;
@@ -1361,6 +1376,10 @@ class CollectionType extends Type {
     maybeEnsureResolved() {
         return this.collectionType.maybeEnsureResolved();
     }
+    _clone(variableMap) {
+        const data = this.collectionType.clone(variableMap).toLiteral();
+        return Type.fromLiteral({ tag: this.tag, data });
+    }
     _cloneWithResolutions(variableMap) {
         return new CollectionType(this.collectionType._cloneWithResolutions(variableMap));
     }
@@ -1385,10 +1404,9 @@ class CollectionType extends Type {
     }
 }
 class BigCollectionType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get bigCollectionType() { return this.data; }
     constructor(bigCollectionType) {
-        super('BigCollection', bigCollectionType);
+        super('BigCollection');
+        this.bigCollectionType = bigCollectionType;
     }
     get isBigCollection() {
         return true;
@@ -1418,6 +1436,10 @@ class BigCollectionType extends Type {
     maybeEnsureResolved() {
         return this.bigCollectionType.maybeEnsureResolved();
     }
+    _clone(variableMap) {
+        const data = this.bigCollectionType.clone(variableMap).toLiteral();
+        return Type.fromLiteral({ tag: this.tag, data });
+    }
     _cloneWithResolutions(variableMap) {
         return new BigCollectionType(this.bigCollectionType._cloneWithResolutions(variableMap));
     }
@@ -1442,23 +1464,24 @@ class BigCollectionType extends Type {
     }
 }
 class RelationType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get relationEntities() { return this.data; }
     constructor(relation) {
-        super('Relation', relation);
+        super('Relation');
+        this.relationEntities = relation;
     }
     get isRelation() {
         return true;
+    }
+    toLiteral() {
+        return { tag: this.tag, data: this.relationEntities.map(t => t.toLiteral()) };
     }
     toPrettyString() {
         return JSON.stringify(this.relationEntities);
     }
 }
 class InterfaceType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get interfaceShape() { return this.data; }
     constructor(iface) {
-        super('Interface', iface);
+        super('Interface');
+        this.interfaceShape = iface;
     }
     get isInterface() {
         return true;
@@ -1490,6 +1513,10 @@ class InterfaceType extends Type {
     _isMoreSpecificThan(type) {
         return this.interfaceShape.isMoreSpecificThan(type.interfaceShape);
     }
+    _clone(variableMap) {
+        const data = this.interfaceShape.clone(variableMap).toLiteral();
+        return Type.fromLiteral({ tag: this.tag, data });
+    }
     _cloneWithResolutions(variableMap) {
         return new InterfaceType(this.interfaceShape._cloneWithResolutions(variableMap));
     }
@@ -1504,10 +1531,9 @@ class InterfaceType extends Type {
     }
 }
 class SlotType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get slot() { return this.data; }
     constructor(slot) {
-        super('Slot', slot);
+        super('Slot');
+        this.slot = slot;
     }
     get isSlot() {
         return true;
@@ -1521,6 +1547,9 @@ class SlotType extends Type {
     _isMoreSpecificThan(type) {
         // TODO: formFactor checking, etc.
         return true;
+    }
+    toLiteral() {
+        return { tag: this.tag, data: this.slot.toLiteral() };
     }
     toString(options = undefined) {
         const fields = [];
@@ -1550,10 +1579,9 @@ class SlotType extends Type {
     }
 }
 class ReferenceType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get referredType() { return this.data; }
     constructor(reference) {
-        super('Reference', reference);
+        super('Reference');
+        this.referredType = reference;
     }
     get isReference() {
         return true;
@@ -1578,6 +1606,10 @@ class ReferenceType extends Type {
     get canReadSubset() {
         return this.referredType.canReadSubset;
     }
+    _clone(variableMap) {
+        const data = this.referredType.clone(variableMap).toLiteral();
+        return Type.fromLiteral({ tag: this.tag, data });
+    }
     _cloneWithResolutions(variableMap) {
         return new ReferenceType(this.referredType._cloneWithResolutions(variableMap));
     }
@@ -1590,21 +1622,27 @@ class ReferenceType extends Type {
 }
 class ArcInfoType extends Type {
     constructor() {
-        super('ArcInfo', null);
+        super('ArcInfo');
     }
     get isArcInfo() {
         return true;
     }
     newInstance(arcId, serialization) {
-        return new _synthetic_types_js__WEBPACK_IMPORTED_MODULE_4__["ArcInfo"](arcId, serialization);
+        return new _synthetic_types_js__WEBPACK_IMPORTED_MODULE_5__["ArcInfo"](arcId, serialization);
+    }
+    toLiteral() {
+        return { tag: this.tag };
     }
 }
 class HandleInfoType extends Type {
     constructor() {
-        super('HandleInfo', null);
+        super('HandleInfo');
     }
     get isHandleInfo() {
         return true;
+    }
+    toLiteral() {
+        return { tag: this.tag };
     }
 }
 //# sourceMappingURL=type.js.map
@@ -2580,10 +2618,9 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-// ShapeHandle {name, direction, type}
-// Slot {name, direction, isRequired, isSet}
+
 function _fromLiteral(member) {
-    if (!!member && typeof member === 'object') {
+    if (!!member && !(member instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"]) && typeof member === 'object') {
         return _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(member);
     }
     return member;
@@ -2924,12 +2961,38 @@ ${this._slotsToManifestString()}
         return this;
     }
 }
-
-
 //# sourceMappingURL=shape.js.map
 
 /***/ }),
 /* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotInfo", function() { return SlotInfo; });
+// @license
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+class SlotInfo {
+    constructor({ formFactor, handle }) {
+        this.formFactor = formFactor;
+        this.handle = handle;
+    }
+    toLiteral() {
+        return this;
+    }
+    static fromLiteral(data) {
+        return new SlotInfo(data);
+    }
+}
+//# sourceMappingURL=slot-info.js.map
+
+/***/ }),
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2966,7 +3029,7 @@ class ArcHandle {
 //# sourceMappingURL=synthetic-types.js.map
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2992,13 +3055,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+function asType(t) {
+    return (t instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"]) ? t : _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(t);
+}
+function asTypeLiteral(t) {
+    return (t instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"]) ? t.toLiteral() : t;
+}
 class ConnectionSpec {
     constructor(rawData, typeVarMap) {
         this.parentConnection = null;
         this.rawData = rawData;
         this.direction = rawData.direction;
         this.name = rawData.name;
-        this.type = rawData.type.mergeTypeVariablesByName(typeVarMap);
+        this.type = asType(rawData.type).mergeTypeVariablesByName(typeVarMap);
         this.isOptional = rawData.isOptional;
         this.tags = rawData.tags || [];
         this.dependentConnections = [];
@@ -3111,13 +3180,13 @@ class ParticleSpec {
     }
     toLiteral() {
         const { args, name, verbs, description, implFile, modality, slots } = this.model;
-        const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: type.toLiteral(), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
+        const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asTypeLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
         const argsLiteral = args.map(a => connectionToLiteral(a));
         return { args: argsLiteral, name, verbs, description, implFile, modality, slots };
     }
     static fromLiteral(literal) {
         let { args, name, verbs, description, implFile, modality, slots } = literal;
-        const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
+        const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asType(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
         args = args.map(connectionFromLiteral);
         return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, modality, slots });
     }
@@ -3136,9 +3205,9 @@ class ParticleSpec {
         return _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newInterface(this._toShape());
     }
     _toShape() {
-        const handles = this.model.args;
         // TODO: wat do?
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(!this.slots.size, 'please implement slots toShape');
+        const handles = this.model.args.map(({ type, name, direction }) => ({ type: asType(type), name, direction }));
         const slots = [];
         return new _shape_js__WEBPACK_IMPORTED_MODULE_2__["Shape"](this.name, handles, slots);
     }
@@ -3221,7 +3290,7 @@ class ParticleSpec {
 //# sourceMappingURL=particle-spec.js.map
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3230,10 +3299,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PECOuterPort", function() { return PECOuterPort; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PECInnerPort", function() { return PECInnerPort; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
-/* harmony import */ var _ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
-/* harmony import */ var _ts_build_debug_outer_port_attachment_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(16);
-/* harmony import */ var _ts_build_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(26);
+/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
+/* harmony import */ var _debug_outer_port_attachment_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(17);
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(27);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3244,368 +3313,514 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 
 
 
 
 
-
-
+var MappingType;
+(function (MappingType) {
+    MappingType[MappingType["Mapped"] = 0] = "Mapped";
+    MappingType[MappingType["LocalMapped"] = 1] = "LocalMapped";
+    MappingType[MappingType["RemoteMapped"] = 2] = "RemoteMapped";
+    MappingType[MappingType["Direct"] = 3] = "Direct";
+    MappingType[MappingType["ObjectMap"] = 4] = "ObjectMap";
+    MappingType[MappingType["List"] = 5] = "List";
+    MappingType[MappingType["ByLiteral"] = 6] = "ByLiteral";
+})(MappingType || (MappingType = {}));
+const targets = new Map();
+function setPropertyKey(target, propertyKey) {
+    if (!targets.has(target)) {
+        targets.set(target, new Map());
+    }
+    if (!targets.get(target).has(propertyKey)) {
+        targets.get(target).set(propertyKey, []);
+    }
+}
+function set(target, propertyKey, parameterIndex, info) {
+    setPropertyKey(target, propertyKey);
+    targets.get(target).get(propertyKey)[parameterIndex] = info;
+}
+function Direct(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct });
+}
+function Mapped(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Mapped });
+}
+function ByLiteral(constructor) {
+    return (target, propertyKey, parameterIndex) => {
+        const info = { type: MappingType.ByLiteral, converter: constructor };
+        set(target.constructor, propertyKey, parameterIndex, info);
+    };
+}
+function ObjectMap(key, value) {
+    return (target, propertyKey, parameterIndex) => {
+        const info = { type: MappingType.ObjectMap, key: { type: key }, value: { type: value } };
+        set(target.constructor, propertyKey, parameterIndex, info);
+    };
+}
+function List(value) {
+    return (target, propertyKey, parameterIndex) => {
+        const info = { type: MappingType.List, value: { type: value } };
+        set(target.constructor, propertyKey, parameterIndex, info);
+    };
+}
+function LocalMapped(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.LocalMapped });
+}
+function RemoteMapped(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.RemoteMapped });
+}
+function NoArgs(target, propertyKey) {
+    setPropertyKey(target.constructor, propertyKey);
+}
+function RedundantInitializer(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct, initializer: true, redundant: true });
+}
+function Initializer(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct, initializer: true });
+}
+function Identifier(target, propertyKey, parameterIndex) {
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targets.get(target.constructor));
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targets.get(target.constructor).get(propertyKey));
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targets.get(target.constructor).get(propertyKey)[parameterIndex]);
+    targets.get(target.constructor).get(propertyKey)[parameterIndex].identifier = true;
+}
+function RemoteIgnore(target, propertyKey, parameterIndex) {
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targets.get(target.constructor));
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targets.get(target.constructor).get(propertyKey));
+    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(targets.get(target.constructor).get(propertyKey)[parameterIndex]);
+    targets.get(target.constructor).get(propertyKey)[parameterIndex].ignore = true;
+}
 class ThingMapper {
-  constructor(prefix) {
-    this._prefix = prefix;
-    this._nextIdentifier = 0;
-    this._idMap = new Map();
-    this._reverseIdMap = new Map();
-  }
-
-  _newIdentifier() {
-    return this._prefix + (this._nextIdentifier++);
-  }
-
-  createMappingForThing(thing, requestedId) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._reverseIdMap.has(thing));
-    let id;
-    if (requestedId) {
-      id = requestedId;
-    } else if (thing.apiChannelMappingId) {
-      id = thing.apiChannelMappingId;
-    } else {
-      id = this._newIdentifier();
+    constructor(prefix) {
+        this._prefix = prefix;
+        this._nextIdentifier = 0;
+        this._idMap = new Map();
+        this._reverseIdMap = new Map();
     }
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._idMap.has(id), `${requestedId ? 'requestedId' : (thing.apiChannelMappingId ? 'apiChannelMappingId' : 'newIdentifier()')} ${id} already in use`);
-    this.establishThingMapping(id, thing);
-    return id;
-  }
-
-  maybeCreateMappingForThing(thing) {
-    if (this.hasMappingForThing(thing)) {
-      return this.identifierForThing(thing);
+    _newIdentifier() {
+        return this._prefix + (this._nextIdentifier++);
     }
-    return this.createMappingForThing(thing);
-  }
-
-  async establishThingMapping(id, thing) {
-    let continuation;
-    if (Array.isArray(thing)) {
-      [thing, continuation] = thing;
-    }
-    this._idMap.set(id, thing);
-    if (thing instanceof Promise) {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(continuation == null);
-      await this.establishThingMapping(id, await thing);
-    } else {
-      this._reverseIdMap.set(thing, id);
-      if (continuation) {
-        await continuation();
-      }
-    }
-  }
-
-  hasMappingForThing(thing) {
-    return this._reverseIdMap.has(thing);
-  }
-
-  identifierForThing(thing) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._reverseIdMap.has(thing), `Missing thing [${thing}]`);
-    return this._reverseIdMap.get(thing);
-  }
-
-  thingForIdentifier(id) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._idMap.has(id), `Missing id: ${id}`);
-    return this._idMap.get(id);
-  }
-}
-
-
-class APIPort {
-  constructor(messagePort, prefix) {
-    this._port = messagePort;
-    this._mapper = new ThingMapper(prefix);
-    this._messageMap = new Map();
-    this._port.onmessage = async e => this._processMessage(e);
-    this._debugAttachment = null;
-    this._attachStack = false;
-    this.messageCount = 0;
-
-    this.Direct = {
-      convert: a => a,
-      unconvert: a => a
-    };
-
-    this.LocalMapped = {
-      convert: a => this._mapper.maybeCreateMappingForThing(a),
-      unconvert: a => this._mapper.thingForIdentifier(a)
-    };
-
-    this.Mapped = {
-      convert: a => this._mapper.identifierForThing(a),
-      unconvert: a => this._mapper.thingForIdentifier(a)
-    };
-
-    this.Map = function(keyprimitive, valueprimitive) {
-      return {
-        convert: a => {
-          const r = {};
-          a.forEach((value, key) => r[keyprimitive.convert(key)] = valueprimitive.convert(value));
-          return r;
-        },
-        unconvert: a => {
-          const r = new Map();
-          for (const key in a) {
-            r.set(
-                keyprimitive.unconvert(key), valueprimitive.unconvert(a[key]));
-          }
-          return r;
+    createMappingForThing(thing, requestedId = undefined) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._reverseIdMap.has(thing));
+        let id;
+        if (requestedId) {
+            id = requestedId;
         }
-      };
-    };
-
-    this.List = function(primitive) {
-      return {
-        convert: a => a.map(v => primitive.convert(v)),
-        unconvert: a => a.map(v => primitive.unconvert(v))
-      };
-    };
-
-    this.ByLiteral = function(clazz) {
-      return {
-        convert: a => a.toLiteral(),
-        unconvert: a => clazz.fromLiteral(a)
-      };
-    };
-
-    this._testingHook();
-  }
-
-  // Overridden by unit tests.
-  _testingHook() {
-  }
-
-  close() {
-    this._port.close();
-  }
-
-  async _processMessage(e) {
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._messageMap.has(e.data.messageType));
-
-    const cnt = this.messageCount++;
-
-    const handler = this._messageMap.get(e.data.messageType);
-    let args;
-    try {
-      args = this._unprocessArguments(handler.args, e.data.messageBody);
-    } catch (exc) {
-      console.error(`Exception during unmarshaling for ${e.data.messageType}`);
-      throw exc;
+        else if (thing.apiChannelMappingId) {
+            id = thing.apiChannelMappingId;
+        }
+        else {
+            id = this._newIdentifier();
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._idMap.has(id), `${requestedId ? 'requestedId' : (thing.apiChannelMappingId ? 'apiChannelMappingId' : 'newIdentifier()')} ${id} already in use`);
+        this.establishThingMapping(id, thing);
+        return id;
     }
-    // If any of the converted arguments are still pending promises
-    // wait for them to complete before processing the message.
-    for (const arg of Object.values(args)) {
-      if (arg instanceof Promise) {
-        arg.then(() => this._processMessage(e));
-        return;
-      }
+    maybeCreateMappingForThing(thing) {
+        if (this.hasMappingForThing(thing)) {
+            return this.identifierForThing(thing);
+        }
+        return this.createMappingForThing(thing);
     }
-    const handlerName = 'on' + e.data.messageType;
-    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this[handlerName], `no handler named ${handlerName}`);
-    if (this._debugAttachment) {
-      this._debugAttachment.handlePecMessage(handlerName, e.data.messageBody, cnt, e.data.stack);
+    async establishThingMapping(id, thing) {
+        let continuation;
+        if (Array.isArray(thing)) {
+            [thing, continuation] = thing;
+        }
+        this._idMap.set(id, thing);
+        if (thing instanceof Promise) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(continuation == null);
+            await this.establishThingMapping(id, await thing);
+        }
+        else {
+            this._reverseIdMap.set(thing, id);
+            if (continuation) {
+                await continuation();
+            }
+        }
     }
-    const result = this[handlerName](args);
-    if (handler.isInitializer) {
-      Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(args.identifier);
-      await this._mapper.establishThingMapping(args.identifier, result);
+    hasMappingForThing(thing) {
+        return this._reverseIdMap.has(thing);
     }
-  }
-
-  _processArguments(argumentTypes, args) {
-    const messageBody = {};
-    for (const argument in argumentTypes) {
-      messageBody[argument] = argumentTypes[argument].convert(args[argument]);
+    identifierForThing(thing) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._reverseIdMap.has(thing), `Missing thing [${thing}]`);
+        return this._reverseIdMap.get(thing);
     }
-    return messageBody;
-  }
-
-  _unprocessArguments(argumentTypes, args) {
-    const messageBody = {};
-    for (const argument in argumentTypes) {
-      messageBody[argument] = argumentTypes[argument].unconvert(args[argument]);
+    thingForIdentifier(id) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this._idMap.has(id), `Missing id: ${id}`);
+        return this._idMap.get(id);
     }
-    return messageBody;
-  }
-
-  registerCall(name, argumentTypes) {
-    this[name] = args => {
-      const call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
-      if (this._attachStack) call.stack = new Error().stack;
-      const cnt = this.messageCount++;
-      this._port.postMessage(call);
-      if (this._debugAttachment) {
-        this._debugAttachment.handlePecMessage(name, call.messageBody, cnt, new Error().stack);
-      }
-    };
-  }
-
-  registerHandler(name, argumentTypes) {
-    this._messageMap.set(name, {args: argumentTypes});
-  }
-
-  registerInitializerHandler(name, argumentTypes) {
-    argumentTypes.identifier = this.Direct;
-    this._messageMap.set(name, {
-      isInitializer: true,
-      args: argumentTypes,
-    });
-  }
-
-  registerRedundantInitializer(name, argumentTypes, mappingIdArg) {
-    this.registerInitializer(name, argumentTypes, mappingIdArg, true /* redundant */);
-  }
-
-  registerInitializer(name, argumentTypes, mappingIdArg = null, redundant = false) {
-    this[name] = (thing, args) => {
-      if (redundant && this._mapper.hasMappingForThing(thing)) return;
-      const call = {messageType: name, messageBody: this._processArguments(argumentTypes, args)};
-      if (this._attachStack) call.stack = new Error().stack;
-      const requestedId = mappingIdArg && args[mappingIdArg];
-      call.messageBody.identifier = this._mapper.createMappingForThing(thing, requestedId);
-      const cnt = this.messageCount++;
-      this._port.postMessage(call);
-      if (this._debugAttachment) {
-        this._debugAttachment.handlePecMessage(name, call.messageBody, cnt, new Error().stack);
-      }
-    };
-  }
 }
-
+class APIPort {
+    constructor(messagePort, prefix) {
+        this._port = messagePort;
+        this._mapper = new ThingMapper(prefix);
+        this._port.onmessage = async (e) => this._processMessage(e);
+        this._debugAttachment = null;
+        this._attachStack = false;
+        this.messageCount = 0;
+        this._testingHook();
+    }
+    // Overridden by unit tests.
+    _testingHook() {
+    }
+    close() {
+        this._port.close();
+    }
+    async _processMessage(e) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this['before' + e.data.messageType] !== undefined);
+        this['before' + e.data.messageType](e.data.messageBody);
+        const count = this.messageCount++;
+        if (this._debugAttachment) {
+            this._debugAttachment.handlePecMessage('on' + e.data.messageType, e.data.messageBody, count, e.data.stack);
+        }
+    }
+    send(name, args) {
+        const call = { messageType: name, messageBody: args, stack: this._attachStack ? new Error().stack : undefined };
+        const count = this.messageCount++;
+        this._port.postMessage(call);
+        if (this._debugAttachment) {
+            this._debugAttachment.handlePecMessage(name, args, count, new Error().stack);
+        }
+    }
+}
+// The horror. From https://davidwalsh.name/javascript-arguments
+function getArgs(func) {
+    // First match everything inside the function argument parens.
+    const args = func.toString().match(/.*?\(([^)]*)\)/)[1];
+    // Split the arguments string into an array comma delimited.
+    return args.split(',').map((arg) => {
+        // Ensure no inline comments are parsed and trim the whitespace.
+        return arg.replace(/\/\*.*\*\//, '').trim();
+        // Ensure no undefined values are added.
+    }).filter((arg) => arg);
+}
+// value is covariant with info, and errors will be found
+// at start of runtime. 
+// tslint:disable-next-line: no-any
+function convert(info, value, mapper) {
+    switch (info.type) {
+        case MappingType.Mapped:
+            return mapper.identifierForThing(value);
+        case MappingType.LocalMapped:
+            return mapper.maybeCreateMappingForThing(value);
+        case MappingType.RemoteMapped:
+            // This is on the local side, so we don't do anything here.
+            return value;
+        case MappingType.Direct:
+            return value;
+        case MappingType.ObjectMap:
+            const r = {};
+            value.forEach((childvalue, key) => r[convert(info.key, key, mapper)] = convert(info.value, childvalue, mapper));
+            return r;
+        case MappingType.List:
+            return value.map(v => convert(info.value, v, mapper));
+        case MappingType.ByLiteral:
+            return value.toLiteral();
+        default:
+            throw new Error(`Can't yet send MappingType ${info.type}`);
+    }
+}
+// value is covariant with info, and errors will be found
+// at start of runtime. 
+// tslint:disable-next-line: no-any
+function unconvert(info, value, mapper) {
+    switch (info.type) {
+        case MappingType.Mapped:
+            return mapper.thingForIdentifier(value);
+        case MappingType.LocalMapped:
+            // This is on the remote side, so we don't do anything here.
+            return value;
+        case MappingType.RemoteMapped:
+            return mapper.thingForIdentifier(value);
+        case MappingType.Direct:
+            return value;
+        case MappingType.ObjectMap:
+            const r = new Map();
+            for (const key of Object.keys(value)) {
+                r.set(unconvert(info.key, key, mapper), unconvert(info.value, value[key], mapper));
+            }
+            return r;
+        case MappingType.List:
+            return value.map(v => unconvert(info.value, v, mapper));
+        case MappingType.ByLiteral:
+            return info.converter.fromLiteral(value);
+        default:
+            throw new Error(`Can't yet recieve MappingType ${info.type}`);
+    }
+}
+function AutoConstruct(target) {
+    return (constructor) => {
+        const doConstruct = (me, other) => {
+            const functions = targets.get(me);
+            for (const f of functions.keys()) {
+                const argNames = getArgs(me.prototype[f]);
+                const descriptor = functions.get(f);
+                // If this descriptor is for an initializer, record that fact and we'll process it after
+                // the rest of the arguments.
+                const initializer = descriptor.findIndex(d => d.initializer);
+                // If this descriptor records that this argument is the identifier, record it
+                // as the requestedId for mapping below.
+                const requestedId = descriptor.findIndex(d => d.identifier);
+                function impl(...args) {
+                    const messageBody = {};
+                    for (let i = 0; i < descriptor.length; i++) {
+                        if (i === initializer) {
+                            continue;
+                        }
+                        // Process this argument.
+                        messageBody[argNames[i]] = convert(descriptor[i], args[i], this._mapper);
+                    }
+                    // Process the initializer if present.
+                    if (initializer !== -1) {
+                        if (descriptor[initializer].redundant) {
+                            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(requestedId === -1);
+                            messageBody['identifier'] = this._mapper.maybeCreateMappingForThing(args[initializer]);
+                        }
+                        else {
+                            messageBody['identifier'] = this._mapper.createMappingForThing(args[initializer], args[requestedId]);
+                        }
+                    }
+                    this.send(f, messageBody);
+                }
+                async function before(messageBody) {
+                    const args = [];
+                    const promises = [];
+                    for (let i = 0; i < descriptor.length; i++) {
+                        // If there's a requestedId then the receiving end won't expect to
+                        // see the identifier as well.
+                        if (i === initializer && (requestedId !== -1 || descriptor[i].ignore)) {
+                            continue;
+                        }
+                        const argName = i === initializer ? 'identifier' : argNames[i];
+                        const result = unconvert(descriptor[i], messageBody[argName], this._mapper);
+                        if (result instanceof Promise) {
+                            promises.push({ promise: result, position: args.length });
+                            args.push(() => unconvert(descriptor[i], messageBody[argName], this._mapper));
+                        }
+                        else {
+                            args.push(result);
+                        }
+                    }
+                    if (promises.length > 0) {
+                        await Promise.all(promises.map(a => a.promise));
+                        promises.forEach(a => args[a.position] = args[a.position]());
+                    }
+                    const result = this['on' + f](...args);
+                    // If this message is an initializer, need to establish a mapping
+                    // with the result of processing the message.
+                    if (initializer > -1) {
+                        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(messageBody['identifier']);
+                        await this._mapper.establishThingMapping(messageBody['identifier'], result);
+                    }
+                }
+                Object.defineProperty(me.prototype, f, {
+                    get() {
+                        return impl;
+                    }
+                });
+                Object.defineProperty(other.prototype, 'before' + f, {
+                    get() {
+                        return before;
+                    }
+                });
+            }
+        };
+        doConstruct(constructor, target);
+        doConstruct(target, constructor);
+    };
+}
 class PECOuterPort extends APIPort {
-  constructor(messagePort, arc) {
-    super(messagePort, 'o');
-
-    this.registerCall('Stop', {});
-    this.registerRedundantInitializer('DefineHandle', {type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct});
-    this.registerInitializer('InstantiateParticle',
-      {id: this.Direct, spec: this.ByLiteral(_ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"]), handles: this.Map(this.Direct, this.Mapped)}, 'id');
-
-    this.registerCall('UIEvent', {particle: this.Mapped, slotName: this.Direct, event: this.Direct});
-    this.registerCall('SimpleCallback', {callback: this.Direct, data: this.Direct});
-    this.registerCall('AwaitIdle', {version: this.Direct});
-    this.registerCall('StartRender', {particle: this.Mapped, slotName: this.Direct, providedSlots: this.Map(this.Direct, this.Direct), contentTypes: this.List(this.Direct)});
-    this.registerCall('StopRender', {particle: this.Mapped, slotName: this.Direct});
-
-    this.registerHandler('Render', {particle: this.Mapped, slotName: this.Direct, content: this.Direct});
-    this.registerHandler('InitializeProxy', {handle: this.Mapped, callback: this.Direct});
-    this.registerHandler('SynchronizeProxy', {handle: this.Mapped, callback: this.Direct});
-    this.registerHandler('HandleGet', {handle: this.Mapped, callback: this.Direct});
-    this.registerHandler('HandleToList', {handle: this.Mapped, callback: this.Direct});
-    this.registerHandler('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
-    this.registerHandler('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
-    this.registerHandler('HandleStore', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
-    this.registerHandler('HandleRemove', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
-    this.registerHandler('HandleRemoveMultiple', {handle: this.Mapped, callback: this.Direct, data: this.Direct, particleId: this.Direct});
-    this.registerHandler('HandleStream', {handle: this.Mapped, callback: this.Direct, pageSize: this.Direct, forward: this.Direct});
-    this.registerHandler('StreamCursorNext', {handle: this.Mapped, callback: this.Direct, cursorId: this.Direct});
-    this.registerHandler('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
-
-    this.registerHandler('Idle', {version: this.Direct, relevance: this.Map(this.Mapped, this.Direct)});
-
-    this.registerHandler('GetBackingStore', {callback: this.Direct, storageKey: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"])});
-    this.registerInitializer('GetBackingStoreCallback', {callback: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct, id: this.Direct, storageKey: this.Direct});
-
-    this.registerHandler('ConstructInnerArc', {callback: this.Direct, particle: this.Mapped});
-    this.registerCall('ConstructArcCallback', {callback: this.Direct, arc: this.LocalMapped});
-
-    this.registerHandler('ArcCreateHandle', {callback: this.Direct, arc: this.LocalMapped, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct});
-    this.registerInitializer('CreateHandleCallback', {callback: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct, id: this.Direct});
-    this.registerHandler('ArcMapHandle', {callback: this.Direct, arc: this.LocalMapped, handle: this.Mapped});
-    this.registerInitializer('MapHandleCallback', {callback: this.Direct, id: this.Direct});
-    this.registerHandler('ArcCreateSlot',
-      {callback: this.Direct, arc: this.LocalMapped, transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedParticleName: this.Direct, hostedSlotName: this.Direct, handleId: this.Direct});
-    this.registerInitializer('CreateSlotCallback', {callback: this.Direct, hostedSlotId: this.Direct});
-    this.registerCall('InnerArcRender', {transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedSlotId: this.Direct, content: this.Direct});
-
-    this.registerHandler('ArcLoadRecipe', {arc: this.LocalMapped, recipe: this.Direct, callback: this.Direct});
-
-    this.registerHandler('RaiseSystemException', {exception: this.Direct, methodName: this.Direct, particleId: this.Direct});
-
+    constructor(messagePort, arc) {
+        super(messagePort, 'o');
+        _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_4__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => {
+            this.DevToolsConnected();
+            this._debugAttachment = new _debug_outer_port_attachment_js__WEBPACK_IMPORTED_MODULE_3__["OuterPortAttachment"](arc, devtoolsChannel);
+        });
+    }
+    Stop() { }
+    DefineHandle(handle, type, name) { }
+    InstantiateParticle(particle, id, spec, handles) { }
+    UIEvent(particle, slotName, event) { }
+    SimpleCallback(callback, data) { }
+    AwaitIdle(version) { }
+    StartRender(particle, slotName, providedSlots, contentTypes) { }
+    StopRender(particle, slotName) { }
+    GetBackingStoreCallback(store, callback, type, name, id, storageKey) { }
+    ConstructArcCallback(callback, arc) { }
+    CreateHandleCallback(handle, callback, type, name, id) { }
+    MapHandleCallback(newHandle, callback, id) { }
+    CreateSlotCallback(slot, callback, hostedSlotId) { }
+    InnerArcRender(transformationParticle, transformationSlotName, hostedSlotId, content) { }
     // We need an API call to tell the context side that DevTools has been connected, so it can start sending
     // stack traces attached to the API calls made from that side.
-    this.registerCall('DevToolsConnected', {});
-    _ts_build_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_4__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => {
-      this.DevToolsConnected();
-      this._debugAttachment = new _ts_build_debug_outer_port_attachment_js__WEBPACK_IMPORTED_MODULE_3__["OuterPortAttachment"](arc, devtoolsChannel);
-    });
-  }
+    DevToolsConnected() { }
 }
-
-class PECInnerPort extends APIPort {
-  constructor(messagePort) {
-    super(messagePort, 'i');
-
-    this.registerHandler('Stop', {});
-    this.registerInitializerHandler('DefineHandle', {type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct});
-    this.registerInitializerHandler('InstantiateParticle',
-      {id: this.Direct, spec: this.ByLiteral(_ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"]), handles: this.Map(this.Direct, this.Mapped)});
-
-    this.registerHandler('UIEvent', {particle: this.Mapped, slotName: this.Direct, event: this.Direct});
-    this.registerHandler('SimpleCallback', {callback: this.LocalMapped, data: this.Direct});
-    this.registerHandler('AwaitIdle', {version: this.Direct});
-    this.registerHandler('StartRender', {particle: this.Mapped, slotName: this.Direct, providedSlots: this.Map(this.Direct, this.Direct), contentTypes: this.List(this.Direct)});
-    this.registerHandler('StopRender', {particle: this.Mapped, slotName: this.Direct});
-
-    this.registerCall('Render', {particle: this.Mapped, slotName: this.Direct, content: this.Direct});
-    this.registerCall('InitializeProxy', {handle: this.Mapped, callback: this.LocalMapped});
-    this.registerCall('SynchronizeProxy', {handle: this.Mapped, callback: this.LocalMapped});
-    this.registerCall('HandleGet', {handle: this.Mapped, callback: this.LocalMapped});
-    this.registerCall('HandleToList', {handle: this.Mapped, callback: this.LocalMapped});
-    this.registerCall('HandleSet', {handle: this.Mapped, data: this.Direct, particleId: this.Direct, barrier: this.Direct});
-    this.registerCall('HandleClear', {handle: this.Mapped, particleId: this.Direct, barrier: this.Direct});
-    this.registerCall('HandleStore', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
-    this.registerCall('HandleRemove', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
-    this.registerCall('HandleRemoveMultiple', {handle: this.Mapped, callback: this.LocalMapped, data: this.Direct, particleId: this.Direct});
-    this.registerCall('HandleStream', {handle: this.Mapped, callback: this.LocalMapped, pageSize: this.Direct, forward: this.Direct});
-    this.registerCall('StreamCursorNext', {handle: this.Mapped, callback: this.LocalMapped, cursorId: this.Direct});
-    this.registerCall('StreamCursorClose', {handle: this.Mapped, cursorId: this.Direct});
-
-    this.registerCall('Idle', {version: this.Direct, relevance: this.Map(this.Mapped, this.Direct)});
-
-    this.registerCall('GetBackingStore', {callback: this.LocalMapped, storageKey: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"])});
-    this.registerInitializerHandler('GetBackingStoreCallback', {callback: this.LocalMapped, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct, id: this.Direct, storageKey: this.Direct});
-
-    this.registerCall('ConstructInnerArc', {callback: this.LocalMapped, particle: this.Mapped});
-    this.registerHandler('ConstructArcCallback', {callback: this.LocalMapped, arc: this.Direct});
-
-    this.registerCall('ArcCreateHandle', {callback: this.LocalMapped, arc: this.Direct, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct});
-    this.registerInitializerHandler('CreateHandleCallback', {callback: this.LocalMapped, type: this.ByLiteral(_ts_build_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]), name: this.Direct, id: this.Direct});
-    this.registerCall('ArcMapHandle', {callback: this.LocalMapped, arc: this.Direct, handle: this.Mapped});
-    this.registerInitializerHandler('MapHandleCallback', {callback: this.LocalMapped, id: this.Direct});
-    this.registerCall('ArcCreateSlot',
-      {callback: this.LocalMapped, arc: this.Direct, transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedParticleName: this.Direct, hostedSlotName: this.Direct, handleId: this.Direct});
-    this.registerInitializerHandler('CreateSlotCallback', {callback: this.LocalMapped, hostedSlotId: this.Direct});
-    this.registerHandler('InnerArcRender', {transformationParticle: this.Mapped, transformationSlotName: this.Direct, hostedSlotId: this.Direct, content: this.Direct});
-
-    this.registerCall('ArcLoadRecipe', {arc: this.Direct, recipe: this.Direct, callback: this.LocalMapped});
-
-    this.registerCall('RaiseSystemException', {exception: this.Direct, methodName: this.Direct, particleId: this.Direct});
-
+__decorate([
+    NoArgs
+], PECOuterPort.prototype, "Stop", null);
+__decorate([
+    __param(0, RedundantInitializer), __param(1, ByLiteral(_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"])), __param(2, Direct)
+], PECOuterPort.prototype, "DefineHandle", null);
+__decorate([
+    __param(0, Initializer), __param(1, Identifier), __param(1, Direct), __param(2, ByLiteral(_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"])), __param(3, ObjectMap(MappingType.Direct, MappingType.Mapped))
+], PECOuterPort.prototype, "InstantiateParticle", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, Direct)
+], PECOuterPort.prototype, "UIEvent", null);
+__decorate([
+    __param(0, RemoteMapped), __param(1, Direct)
+], PECOuterPort.prototype, "SimpleCallback", null);
+__decorate([
+    __param(0, Direct)
+], PECOuterPort.prototype, "AwaitIdle", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, ObjectMap(MappingType.Direct, MappingType.Direct)), __param(3, List(MappingType.Direct))
+], PECOuterPort.prototype, "StartRender", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct)
+], PECOuterPort.prototype, "StopRender", null);
+__decorate([
+    __param(0, Initializer), __param(1, RemoteMapped), __param(2, ByLiteral(_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"])), __param(3, Direct), __param(4, Identifier), __param(4, Direct), __param(5, Direct)
+], PECOuterPort.prototype, "GetBackingStoreCallback", null);
+__decorate([
+    __param(0, RemoteMapped), __param(1, LocalMapped)
+], PECOuterPort.prototype, "ConstructArcCallback", null);
+__decorate([
+    __param(0, Initializer), __param(1, RemoteMapped), __param(2, ByLiteral(_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"])), __param(3, Direct), __param(4, Identifier), __param(4, Direct)
+], PECOuterPort.prototype, "CreateHandleCallback", null);
+__decorate([
+    __param(0, RemoteIgnore), __param(0, Initializer), __param(1, RemoteMapped), __param(2, Direct)
+], PECOuterPort.prototype, "MapHandleCallback", null);
+__decorate([
+    __param(0, RemoteIgnore), __param(0, Initializer), __param(1, RemoteMapped), __param(2, Direct)
+], PECOuterPort.prototype, "CreateSlotCallback", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, Direct), __param(3, Direct)
+], PECOuterPort.prototype, "InnerArcRender", null);
+__decorate([
+    NoArgs
+], PECOuterPort.prototype, "DevToolsConnected", null);
+let PECInnerPort = class PECInnerPort extends APIPort {
+    constructor(messagePort) {
+        super(messagePort, 'i');
+    }
+    Render(particle, slotName, content) { }
+    InitializeProxy(handle, callback) { }
+    SynchronizeProxy(handle, callback) { }
+    HandleGet(handle, callback) { }
+    HandleToList(handle, callback) { }
+    HandleSet(handle, data, particleId, barrier) { }
+    HandleClear(handle, particleId, barrier) { }
+    HandleStore(handle, callback, data, particleId) { }
+    HandleRemove(handle, callback, data, particleId) { }
+    HandleRemoveMultiple(handle, callback, data, particleId) { }
+    HandleStream(handle, callback, pageSize, forward) { }
+    StreamCursorNext(handle, callback, cursorId) { }
+    StreamCursorClose(handle, cursorId) { }
+    Idle(version, relevance) { }
+    GetBackingStore(callback, storageKey, type) { }
+    ConstructInnerArc(callback, particle) { }
+    ArcCreateHandle(callback, arc, type, name) { }
+    ArcMapHandle(callback, arc, handle) { }
+    ArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) { }
+    ArcLoadRecipe(arc, recipe, callback) { }
+    RaiseSystemException(exception, methodName, particleId) { }
     // To show stack traces for calls made inside the context, we need to capture the trace at the call point and
     // send it along with the message. We only want to do this after a DevTools connection has been detected, which
     // we can't directly detect inside a worker context, so the PECOuterPort will send an API message instead.
-    this.registerHandler('DevToolsConnected', {});
-    this.onDevToolsConnected = () => this._attachStack = true;
-  }
-}
+    onDevToolsConnected() {
+        this._attachStack = true;
+    }
+};
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, Direct)
+], PECInnerPort.prototype, "Render", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped)
+], PECInnerPort.prototype, "InitializeProxy", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped)
+], PECInnerPort.prototype, "SynchronizeProxy", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped)
+], PECInnerPort.prototype, "HandleGet", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped)
+], PECInnerPort.prototype, "HandleToList", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, Direct), __param(3, Direct)
+], PECInnerPort.prototype, "HandleSet", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, Direct)
+], PECInnerPort.prototype, "HandleClear", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct), __param(3, Direct)
+], PECInnerPort.prototype, "HandleStore", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct), __param(3, Direct)
+], PECInnerPort.prototype, "HandleRemove", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct), __param(3, Direct)
+], PECInnerPort.prototype, "HandleRemoveMultiple", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct), __param(3, Direct)
+], PECInnerPort.prototype, "HandleStream", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct)
+], PECInnerPort.prototype, "StreamCursorNext", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct)
+], PECInnerPort.prototype, "StreamCursorClose", null);
+__decorate([
+    __param(0, Direct), __param(1, ObjectMap(MappingType.Mapped, MappingType.Direct))
+], PECInnerPort.prototype, "Idle", null);
+__decorate([
+    __param(0, LocalMapped), __param(1, Direct), __param(2, ByLiteral(_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"]))
+], PECInnerPort.prototype, "GetBackingStore", null);
+__decorate([
+    __param(0, LocalMapped), __param(1, Mapped)
+], PECInnerPort.prototype, "ConstructInnerArc", null);
+__decorate([
+    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, ByLiteral(_type_js__WEBPACK_IMPORTED_MODULE_2__["Type"])), __param(3, Direct)
+], PECInnerPort.prototype, "ArcCreateHandle", null);
+__decorate([
+    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped)
+], PECInnerPort.prototype, "ArcMapHandle", null);
+__decorate([
+    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped), __param(3, Direct), __param(4, Direct), __param(5, Direct), __param(6, Direct)
+], PECInnerPort.prototype, "ArcCreateSlot", null);
+__decorate([
+    __param(0, RemoteMapped), __param(1, Direct), __param(2, LocalMapped)
+], PECInnerPort.prototype, "ArcLoadRecipe", null);
+__decorate([
+    __param(0, Direct), __param(1, Direct), __param(2, Direct)
+], PECInnerPort.prototype, "RaiseSystemException", null);
+PECInnerPort = __decorate([
+    AutoConstruct(PECOuterPort)
+], PECInnerPort);
 
+//# sourceMappingURL=api-channel.js.map
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OuterPortAttachment", function() { return OuterPortAttachment; });
-/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(17);
+/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(18);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -3701,7 +3916,7 @@ class OuterPortAttachment {
 //# sourceMappingURL=outer-port-attachment.js.map
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3715,12 +3930,12 @@ __webpack_require__.r(__webpack_exports__);
 // http://polymer.github.io/PATENTS.txt
 
 // "Convert" old-style module to ES6.
-const smst = __webpack_require__(18);
+const smst = __webpack_require__(19);
 const mapStackTrace = smst.mapStackTrace;
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -3737,7 +3952,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
 
 // note we only include source-map-consumer, not the whole source-map library,
 // which includes gear for generating source maps that we don't need
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(19)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(source_map_consumer) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(20)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(source_map_consumer) {
 
   var global_mapForUri = {};
 
@@ -4001,7 +4216,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -4011,11 +4226,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(20);
-var binarySearch = __webpack_require__(21);
-var ArraySet = __webpack_require__(22).ArraySet;
-var base64VLQ = __webpack_require__(23);
-var quickSort = __webpack_require__(25).quickSort;
+var util = __webpack_require__(21);
+var binarySearch = __webpack_require__(22);
+var ArraySet = __webpack_require__(23).ArraySet;
+var base64VLQ = __webpack_require__(24);
+var quickSort = __webpack_require__(26).quickSort;
 
 function SourceMapConsumer(aSourceMap) {
   var sourceMap = aSourceMap;
@@ -5089,7 +5304,7 @@ exports.IndexedSourceMapConsumer = IndexedSourceMapConsumer;
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -5512,7 +5727,7 @@ exports.compareByGeneratedPositionsInflated = compareByGeneratedPositionsInflate
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -5629,7 +5844,7 @@ exports.search = function search(aNeedle, aHaystack, aCompare, aBias) {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -5639,7 +5854,7 @@ exports.search = function search(aNeedle, aHaystack, aCompare, aBias) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = __webpack_require__(20);
+var util = __webpack_require__(21);
 var has = Object.prototype.hasOwnProperty;
 
 /**
@@ -5739,7 +5954,7 @@ exports.ArraySet = ArraySet;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -5779,7 +5994,7 @@ exports.ArraySet = ArraySet;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var base64 = __webpack_require__(24);
+var base64 = __webpack_require__(25);
 
 // A single base 64 digit can contain 6 bits of data. For the base 64 variable
 // length quantities we use in the source map spec, the first bit is the sign,
@@ -5885,7 +6100,7 @@ exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -5958,7 +6173,7 @@ exports.decode = function (charCode) {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 /* -*- Mode: js; js-indent-level: 2; -*- */
@@ -6078,7 +6293,7 @@ exports.quickSort = function (ary, comparator) {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6086,9 +6301,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DevtoolsConnection", function() { return DevtoolsConnection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DevtoolsForTests", function() { return DevtoolsForTests; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _platform_devtools_channel_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(27);
-/* harmony import */ var _testing_devtools_channel_stub_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(29);
-/* harmony import */ var _devtools_shared_devtools_broker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(30);
+/* harmony import */ var _platform_devtools_channel_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(28);
+/* harmony import */ var _testing_devtools_channel_stub_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(30);
+/* harmony import */ var _devtools_shared_devtools_broker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(31);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -6147,13 +6362,13 @@ class DevtoolsForTests {
 //# sourceMappingURL=devtools-connection.js.map
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DevtoolsChannel", function() { return DevtoolsChannel; });
-/* harmony import */ var _runtime_ts_build_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(28);
+/* harmony import */ var _runtime_ts_build_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(29);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -6180,7 +6395,7 @@ class DevtoolsChannel extends _runtime_ts_build_debug_abstract_devtools_channel_
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6241,7 +6456,7 @@ class AbstractDevtoolsChannel {
 //# sourceMappingURL=abstract-devtools-channel.js.map
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6274,7 +6489,7 @@ class DevtoolsChannelStub {
 //# sourceMappingURL=devtools-channel-stub.js.map
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6317,7 +6532,7 @@ class DevtoolsBroker {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6328,9 +6543,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BigCollectionProxy", function() { return BigCollectionProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(32);
+/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(33);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
-/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(17);
+/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(18);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -6400,7 +6615,7 @@ class StorageProxy {
     }
     raiseSystemException(exception, methodName, particleId) {
         // TODO: Encapsulate source-mapping of the stack trace once there are more users of the port.RaiseSystemException() call.
-        Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_3__["mapStackTrace"])(exception.stack, mappedStack => this.port.RaiseSystemException({ exception: { message: exception.message, stack: mappedStack.join('\n'), name: exception.name }, methodName, particleId }));
+        Object(_platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_3__["mapStackTrace"])(exception.stack, mappedStack => this.port.RaiseSystemException({ message: exception.message, stack: mappedStack.join('\n'), name: exception.name }, methodName, particleId));
     }
     /**
      *  Called by ParticleExecutionContext to associate (potentially multiple) particle/handle pairs with this proxy.
@@ -6412,7 +6627,7 @@ class StorageProxy {
         this.observers.push({ particle, handle });
         // Attach an event listener to the backing store when the first readable handle is registered.
         if (!this.listenerAttached) {
-            this.port.InitializeProxy({ handle: this, callback: x => this._onUpdate(x) });
+            this.port.InitializeProxy(this, x => this._onUpdate(x));
             this.listenerAttached = true;
         }
         // Change to synchronized mode as soon as we get any handle configured with keepSynced and send
@@ -6420,7 +6635,7 @@ class StorageProxy {
         // TODO: drop back to non-sync mode if all handles re-configure to !keepSynced
         if (handle.options.keepSynced) {
             if (!this.keepSynced) {
-                this.port.SynchronizeProxy({ handle: this, callback: x => this._onSynchronize(x) });
+                this.port.SynchronizeProxy(this, x => this._onSynchronize(x));
                 this.keepSynced = true;
             }
             // If a handle configured for sync notifications registers after we've received the full
@@ -6513,7 +6728,7 @@ class StorageProxy {
         if (this.updates.length > 0) {
             if (this.synchronized !== SyncState.none) {
                 this.synchronized = SyncState.none;
-                this.port.SynchronizeProxy({ handle: this, callback: x => this._onSynchronize(x) });
+                this.port.SynchronizeProxy(this, x => this._onSynchronize(x));
                 for (const { handle, particle } of this.observers) {
                     if (handle.options.notifyDesync) {
                         this.scheduler.enqueue(particle, handle, ['desync', particle]);
@@ -6611,7 +6826,7 @@ class CollectionProxy extends StorageProxy {
         else {
             // TODO: in synchronized mode, this should integrate with SynchronizeProxy rather than
             //       sending a parallel request
-            return new Promise(resolve => this.port.HandleToList({ callback: resolve, handle: this }));
+            return new Promise(resolve => this.port.HandleToList(this, resolve));
         }
     }
     get(id, particleId) {
@@ -6619,13 +6834,13 @@ class CollectionProxy extends StorageProxy {
             return Promise.resolve(this.model.getValue(id));
         }
         else {
-            return new Promise((resolve, reject) => this.port.HandleToList({ callback: r => resolve(r.find(entity => entity.id === id)), handle: this, particleId }));
+            return new Promise((resolve, reject) => this.port.HandleToList(this, r => resolve(r.find(entity => entity.id === id))));
         }
     }
     store(value, keys, particleId) {
         const id = value.id;
         const data = { value, keys };
-        this.port.HandleStore({ handle: this, callback: () => { }, data, particleId });
+        this.port.HandleStore(this, () => { }, data, particleId);
         if (this.synchronized !== SyncState.full) {
             return;
         }
@@ -6637,10 +6852,10 @@ class CollectionProxy extends StorageProxy {
     }
     clear(particleId) {
         if (this.synchronized !== SyncState.full) {
-            this.port.HandleRemoveMultiple({ handle: this, callback: () => { }, data: [], particleId });
+            this.port.HandleRemoveMultiple(this, () => { }, [], particleId);
         }
         let items = this.model.toList().map(item => ({ id: item.id, keys: this.model.getKeys(item.id) }));
-        this.port.HandleRemoveMultiple({ handle: this, callback: () => { }, data: items, particleId });
+        this.port.HandleRemoveMultiple(this, () => { }, items, particleId);
         items = items.map(({ id, keys }) => ({ rawData: this.model.getValue(id).rawData, id, keys }));
         items = items.filter(item => this.model.remove(item.id, item.keys));
         if (items.length > 0) {
@@ -6650,7 +6865,7 @@ class CollectionProxy extends StorageProxy {
     remove(id, keys, particleId) {
         if (this.synchronized !== SyncState.full) {
             const data = { id, keys: [] };
-            this.port.HandleRemove({ handle: this, callback: () => { }, data, particleId });
+            this.port.HandleRemove(this, () => { }, data, particleId);
             return;
         }
         const value = this.model.getValue(id);
@@ -6661,7 +6876,7 @@ class CollectionProxy extends StorageProxy {
             keys = this.model.getKeys(id);
         }
         const data = { id, keys };
-        this.port.HandleRemove({ handle: this, callback: () => { }, data, particleId });
+        this.port.HandleRemove(this, () => { }, data, particleId);
         if (!this.model.remove(id, keys)) {
             return;
         }
@@ -6731,7 +6946,7 @@ class VariableProxy extends StorageProxy {
             return Promise.resolve(this.model);
         }
         else {
-            return new Promise(resolve => this.port.HandleGet({ callback: resolve, handle: this }));
+            return new Promise(resolve => this.port.HandleGet(this, resolve));
         }
     }
     set(entity, particleId) {
@@ -6755,7 +6970,7 @@ class VariableProxy extends StorageProxy {
         // TODO: is this already a clone?
         this.model = JSON.parse(JSON.stringify(entity));
         this.barrier = barrier;
-        this.port.HandleSet({ data: entity, handle: this, particleId, barrier });
+        this.port.HandleSet(this, entity, particleId, barrier);
         const update = { originatorId: particleId, data: entity };
         this._notify('update', update, options => options.notifyUpdate);
     }
@@ -6766,7 +6981,7 @@ class VariableProxy extends StorageProxy {
         const barrier = this.generateID( /* 'barrier' */);
         this.model = null;
         this.barrier = barrier;
-        this.port.HandleClear({ handle: this, particleId, barrier });
+        this.port.HandleClear(this, particleId, barrier);
         const update = { originatorId: particleId, data: null };
         this._notify('update', update, options => options.notifyUpdate);
     }
@@ -6791,19 +7006,19 @@ class BigCollectionProxy extends StorageProxy {
     }
     // TODO: surface get()
     async store(value, keys, particleId) {
-        return new Promise(resolve => this.port.HandleStore({ handle: this, callback: resolve, data: { value, keys }, particleId }));
+        return new Promise(resolve => this.port.HandleStore(this, resolve, { value, keys }, particleId));
     }
     async remove(id, particleId) {
-        return new Promise(resolve => this.port.HandleRemove({ handle: this, callback: resolve, data: { id, keys: [] }, particleId }));
+        return new Promise(resolve => this.port.HandleRemove(this, resolve, { id, keys: [] }, particleId));
     }
     async stream(pageSize, forward) {
-        return new Promise(resolve => this.port.HandleStream({ handle: this, callback: resolve, pageSize, forward }));
+        return new Promise(resolve => this.port.HandleStream(this, resolve, pageSize, forward));
     }
     async cursorNext(cursorId) {
-        return new Promise(resolve => this.port.StreamCursorNext({ handle: this, callback: resolve, cursorId }));
+        return new Promise(resolve => this.port.StreamCursorNext(this, resolve, cursorId));
     }
     cursorClose(cursorId) {
-        this.port.StreamCursorClose({ handle: this, cursorId });
+        this.port.StreamCursorClose(this, cursorId);
     }
 }
 class StorageProxyScheduler {
@@ -6882,7 +7097,7 @@ class StorageProxyScheduler {
 //# sourceMappingURL=storage-proxy.js.map
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7010,13 +7225,13 @@ class CrdtCollectionModel {
 //# sourceMappingURL=crdt-collection-model.js.map
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
-/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(34);
+/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(35);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7083,13 +7298,13 @@ class Id {
 //# sourceMappingURL=id.js.map
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Random", function() { return Random; });
-/* harmony import */ var mersenne_twister__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(35);
+/* harmony import */ var mersenne_twister__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(36);
 /* harmony import */ var mersenne_twister__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(mersenne_twister__WEBPACK_IMPORTED_MODULE_0__);
 /**
  * @license
@@ -7137,7 +7352,7 @@ class Random {
 //# sourceMappingURL=random.js.map
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports) {
 
 /*
@@ -7353,18 +7568,18 @@ module.exports = MersenneTwister;
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrowserLoader", function() { return BrowserLoader; });
-/* harmony import */ var _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
-/* harmony import */ var _runtime_ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(41);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(42);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(46);
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(48);
+/* harmony import */ var _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(38);
+/* harmony import */ var _runtime_ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(42);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(43);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(46);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(47);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(49);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7466,22 +7681,22 @@ class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
-/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(38);
-/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(39);
-/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
+/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(39);
+/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(40);
+/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(41);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(41);
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(45);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(42);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(43);
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(46);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(4);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(46);
-/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(47);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(47);
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(48);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7597,7 +7812,7 @@ class Loader {
 //# sourceMappingURL=loader.js.map
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7614,7 +7829,7 @@ const fs = {};
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7631,7 +7846,7 @@ const vm = {};
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7654,7 +7869,7 @@ const local_fetch = fetch;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7824,14 +8039,14 @@ class Particle {
 //# sourceMappingURL=particle.js.map
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(43);
-/* harmony import */ var _ts_build_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(44);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(44);
+/* harmony import */ var _ts_build_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8005,7 +8220,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8174,14 +8389,14 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(41);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(42);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
 /**
  * @license
@@ -8401,15 +8616,15 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(46);
+/* harmony import */ var _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(47);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8622,13 +8837,13 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(42);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(43);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8681,7 +8896,7 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8795,13 +9010,13 @@ class JsonldToManifest {
 //# sourceMappingURL=jsonldToManifest.js.map
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
-/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(49);
+/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(50);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -8819,7 +9034,7 @@ const logFactory = _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

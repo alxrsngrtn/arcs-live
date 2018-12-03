@@ -1,6 +1,6 @@
 import { SerializedModelEntry } from './storage/crdt-collection-model.js';
 import { Type } from './type.js';
-import { PECInnerPort } from '../api-channel.js';
+import { PECInnerPort, CursorNextValue } from './api-channel.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 import { Particle } from './particle.js';
 import { Handle, HandleOptions } from './handle.js';
@@ -61,10 +61,12 @@ export declare abstract class StorageProxy {
      */
     register(particle: any, handle: any): void;
     _onSynchronize({ version, model }: {
-        version: any;
-        model: any;
+        version: number;
+        model: SerializedModelEntry[];
     }): void;
-    _onUpdate(update: any): void;
+    _onUpdate(update: {
+        version: number;
+    }): void;
     _notify(kind: any, details: any, predicate?: (ignored: HandleOptions) => boolean): void;
     _processUpdates(): void;
     generateID(): string;
@@ -98,7 +100,7 @@ export declare class CollectionProxy extends StorageProxy {
         remove?: {}[];
         originatorId: string;
     };
-    toList(): Promise<{}>;
+    toList(): Promise<{}[]>;
     get(id: any, particleId: any): Promise<{}>;
     store(value: any, keys: any, particleId: any): void;
     clear(particleId: any): void;
@@ -120,7 +122,9 @@ export declare class VariableProxy extends StorageProxy {
     };
     _synchronizeModel(version: number, model: SerializedModelEntry[]): boolean;
     _processUpdate(update: any, apply?: boolean): any;
-    get(): Promise<{}>;
+    get(): Promise<{
+        id: string;
+    }>;
     set(entity: any, particleId: any): void;
     clear(particleId: any): void;
 }
@@ -130,12 +134,9 @@ export declare class BigCollectionProxy extends StorageProxy {
     _processUpdate(): {};
     _synchronizeModel(): boolean;
     store(value: any, keys: any, particleId: any): Promise<void>;
-    remove(id: any, particleId: any): Promise<{}>;
+    remove(id: any, particleId: any): Promise<void>;
     stream(pageSize: any, forward: any): Promise<{}>;
-    cursorNext(cursorId: any): Promise<{
-        done: boolean;
-        value: {}[];
-    }>;
+    cursorNext(cursorId: any): Promise<CursorNextValue>;
     cursorClose(cursorId: any): void;
 }
 export declare class StorageProxyScheduler {

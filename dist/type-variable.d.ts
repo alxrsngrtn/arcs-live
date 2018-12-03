@@ -30,13 +30,13 @@ export declare class TypeVariable {
     maybeEnsureResolved(): boolean;
     toLiteral(): {
         name: string;
-        canWriteSuperset: any;
-        canReadSubset: any;
+        canWriteSuperset: import("./type.js").TypeLiteral;
+        canReadSubset: import("./type.js").TypeLiteral;
     };
     toLiteralIgnoringResolutions(): {
         name: string;
-        canWriteSuperset: any;
-        canReadSubset: any;
+        canWriteSuperset: import("./type.js").TypeLiteral;
+        canReadSubset: import("./type.js").TypeLiteral;
     };
     static fromLiteral(data: any): TypeVariable;
     isResolved(): boolean;

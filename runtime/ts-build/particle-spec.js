@@ -11,13 +11,19 @@ import { Type } from './type.js';
 import { TypeChecker } from './recipe/type-checker.js';
 import { Shape } from './shape.js';
 import { assert } from '../../platform/assert-web.js';
+function asType(t) {
+    return (t instanceof Type) ? t : Type.fromLiteral(t);
+}
+function asTypeLiteral(t) {
+    return (t instanceof Type) ? t.toLiteral() : t;
+}
 export class ConnectionSpec {
     constructor(rawData, typeVarMap) {
         this.parentConnection = null;
         this.rawData = rawData;
         this.direction = rawData.direction;
         this.name = rawData.name;
-        this.type = rawData.type.mergeTypeVariablesByName(typeVarMap);
+        this.type = asType(rawData.type).mergeTypeVariablesByName(typeVarMap);
         this.isOptional = rawData.isOptional;
         this.tags = rawData.tags || [];
         this.dependentConnections = [];
@@ -130,13 +136,13 @@ export class ParticleSpec {
     }
     toLiteral() {
         const { args, name, verbs, description, implFile, modality, slots } = this.model;
-        const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: type.toLiteral(), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
+        const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asTypeLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
         const argsLiteral = args.map(a => connectionToLiteral(a));
         return { args: argsLiteral, name, verbs, description, implFile, modality, slots };
     }
     static fromLiteral(literal) {
         let { args, name, verbs, description, implFile, modality, slots } = literal;
-        const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: Type.fromLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
+        const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asType(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
         args = args.map(connectionFromLiteral);
         return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, modality, slots });
     }
@@ -155,9 +161,9 @@ export class ParticleSpec {
         return Type.newInterface(this._toShape());
     }
     _toShape() {
-        const handles = this.model.args;
         // TODO: wat do?
         assert(!this.slots.size, 'please implement slots toShape');
+        const handles = this.model.args.map(({ type, name, direction }) => ({ type: asType(type), name, direction }));
         const slots = [];
         return new Shape(this.name, handles, slots);
     }

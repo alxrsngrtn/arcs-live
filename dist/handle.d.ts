@@ -122,10 +122,7 @@ declare class Cursor {
      * Returns {value: [items], done: false} while there are items still available, or {done: true}
      * when the cursor has completed reading the collection.
      */
-    next(): Promise<{
-        done: boolean;
-        value: {}[];
-    }>;
+    next(): Promise<import("./api-channel.js").CursorNextValue>;
     /**
      * Terminates the streamed read. This must be called if a cursor is no longer needed but has not
      * yet completed streaming (i.e. next() hasn't returned {done: true}).
@@ -171,5 +168,5 @@ export declare class BigCollection extends Handle {
         forward?: boolean;
     }): Promise<Cursor>;
 }
-export declare function handleFor(proxy: StorageProxy, name?: string, particleId?: number, canRead?: boolean, canWrite?: boolean): any;
+export declare function handleFor(proxy: StorageProxy, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): any;
 export {};

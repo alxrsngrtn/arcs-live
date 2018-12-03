@@ -8,12 +8,12 @@
 import { Schema } from './schema.js';
 import { TypeVariable } from './type-variable.js';
 import { Shape } from './shape.js';
+import { SlotInfo } from './slot-info.js';
 import { TypeChecker } from './recipe/type-checker.js';
 import { ArcInfo } from './synthetic-types.js';
 export class Type {
-    constructor(tag, data) {
+    constructor(tag) {
         this.tag = tag;
-        this.data = data;
     }
     // TODO: remove these; callers can directly construct the classes now
     static newEntity(entity) {
@@ -57,11 +57,11 @@ export class Type {
             case 'BigCollection':
                 return new BigCollectionType(Type.fromLiteral(literal.data));
             case 'Relation':
-                return new RelationType(literal.data);
+                return new RelationType(literal.data.map(t => Type.fromLiteral(t)));
             case 'Interface':
                 return new InterfaceType(Shape.fromLiteral(literal.data));
             case 'Slot':
-                return new SlotType(literal.data);
+                return new SlotType(SlotInfo.fromLiteral(literal.data));
             case 'Reference':
                 return new ReferenceType(Type.fromLiteral(literal.data));
             case 'ArcInfo':
@@ -175,22 +175,10 @@ export class Type {
      * property, create a Map() and pass it into all clone calls in the group.
      */
     clone(variableMap) {
-        // TODO: clean this up
-        const type = this.resolvedType();
-        if (type instanceof VariableType) {
-            if (variableMap.has(type.variable)) {
-                return new VariableType(variableMap.get(type.variable));
-            }
-            else {
-                const newTypeVariable = TypeVariable.fromLiteral(type.variable.toLiteral());
-                variableMap.set(type.variable, newTypeVariable);
-                return new VariableType(newTypeVariable);
-            }
-        }
-        if (type.data['clone']) {
-            return Type.fromLiteral({ tag: type.tag, data: type.data['clone'](variableMap) });
-        }
-        return Type.fromLiteral(type.toLiteral());
+        return this.resolvedType()._clone(variableMap);
+    }
+    _clone(variableMap) {
+        return Type.fromLiteral(this.toLiteral());
     }
     /**
      * Clone a type object, maintaining resolution information.
@@ -200,10 +188,6 @@ export class Type {
      */
     _cloneWithResolutions(variableMap) {
         return Type.fromLiteral(this.toLiteral());
-    }
-    // tslint:disable-next-line: no-any
-    toLiteral() {
-        return this;
     }
     // TODO: is this the same as _applyExistenceTypeTest
     hasProperty(property) {
@@ -223,10 +207,9 @@ export class Type {
     }
 }
 export class EntityType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get entitySchema() { return this.data; }
     constructor(schema) {
-        super('Entity', schema);
+        super('Entity');
+        this.entitySchema = schema;
     }
     // These type identifier methods are being left in place for non-runtime code.
     get isEntity() {
@@ -266,14 +249,14 @@ export class EntityType extends Type {
 }
 // Yes, these names need fixing.
 export class VariableType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get variable() { return this.data; }
     constructor(variable) {
-        super('Variable', variable);
+        super('Variable');
+        this.variable = variable;
     }
     get isVariable() {
         return true;
     }
+    // TODO: should variableMap be Map<string, TypeVariable>?
     mergeTypeVariablesByName(variableMap) {
         const name = this.variable.name;
         let variable = variableMap.get(name);
@@ -306,9 +289,21 @@ export class VariableType extends Type {
     get canReadSubset() {
         return this.variable.canReadSubset;
     }
+    _clone(variableMap) {
+        const name = this.variable.name;
+        if (variableMap.has(name)) {
+            return new VariableType(variableMap.get(name));
+        }
+        else {
+            const newTypeVariable = TypeVariable.fromLiteral(this.variable.toLiteral());
+            variableMap.set(name, newTypeVariable);
+            return new VariableType(newTypeVariable);
+        }
+    }
     _cloneWithResolutions(variableMap) {
-        if (variableMap.has(this.variable)) {
-            return new VariableType(variableMap.get(this.variable));
+        const name = this.variable.name;
+        if (variableMap.has(name)) {
+            return new VariableType(variableMap.get(name));
         }
         else {
             const newTypeVariable = TypeVariable.fromLiteral(this.variable.toLiteralIgnoringResolutions());
@@ -321,7 +316,7 @@ export class VariableType extends Type {
             if (this.variable._canWriteSuperset) {
                 newTypeVariable.canWriteSuperset = this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
             }
-            variableMap.set(this.variable, newTypeVariable);
+            variableMap.set(name, newTypeVariable);
             return new VariableType(newTypeVariable);
         }
     }
@@ -340,10 +335,9 @@ export class VariableType extends Type {
     }
 }
 export class CollectionType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get collectionType() { return this.data; }
     constructor(collectionType) {
-        super('Collection', collectionType);
+        super('Collection');
+        this.collectionType = collectionType;
     }
     get isCollection() {
         return true;
@@ -377,6 +371,10 @@ export class CollectionType extends Type {
     maybeEnsureResolved() {
         return this.collectionType.maybeEnsureResolved();
     }
+    _clone(variableMap) {
+        const data = this.collectionType.clone(variableMap).toLiteral();
+        return Type.fromLiteral({ tag: this.tag, data });
+    }
     _cloneWithResolutions(variableMap) {
         return new CollectionType(this.collectionType._cloneWithResolutions(variableMap));
     }
@@ -401,10 +399,9 @@ export class CollectionType extends Type {
     }
 }
 export class BigCollectionType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get bigCollectionType() { return this.data; }
     constructor(bigCollectionType) {
-        super('BigCollection', bigCollectionType);
+        super('BigCollection');
+        this.bigCollectionType = bigCollectionType;
     }
     get isBigCollection() {
         return true;
@@ -434,6 +431,10 @@ export class BigCollectionType extends Type {
     maybeEnsureResolved() {
         return this.bigCollectionType.maybeEnsureResolved();
     }
+    _clone(variableMap) {
+        const data = this.bigCollectionType.clone(variableMap).toLiteral();
+        return Type.fromLiteral({ tag: this.tag, data });
+    }
     _cloneWithResolutions(variableMap) {
         return new BigCollectionType(this.bigCollectionType._cloneWithResolutions(variableMap));
     }
@@ -458,23 +459,24 @@ export class BigCollectionType extends Type {
     }
 }
 export class RelationType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get relationEntities() { return this.data; }
     constructor(relation) {
-        super('Relation', relation);
+        super('Relation');
+        this.relationEntities = relation;
     }
     get isRelation() {
         return true;
+    }
+    toLiteral() {
+        return { tag: this.tag, data: this.relationEntities.map(t => t.toLiteral()) };
     }
     toPrettyString() {
         return JSON.stringify(this.relationEntities);
     }
 }
 export class InterfaceType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get interfaceShape() { return this.data; }
     constructor(iface) {
-        super('Interface', iface);
+        super('Interface');
+        this.interfaceShape = iface;
     }
     get isInterface() {
         return true;
@@ -506,6 +508,10 @@ export class InterfaceType extends Type {
     _isMoreSpecificThan(type) {
         return this.interfaceShape.isMoreSpecificThan(type.interfaceShape);
     }
+    _clone(variableMap) {
+        const data = this.interfaceShape.clone(variableMap).toLiteral();
+        return Type.fromLiteral({ tag: this.tag, data });
+    }
     _cloneWithResolutions(variableMap) {
         return new InterfaceType(this.interfaceShape._cloneWithResolutions(variableMap));
     }
@@ -520,10 +526,9 @@ export class InterfaceType extends Type {
     }
 }
 export class SlotType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get slot() { return this.data; }
     constructor(slot) {
-        super('Slot', slot);
+        super('Slot');
+        this.slot = slot;
     }
     get isSlot() {
         return true;
@@ -537,6 +542,9 @@ export class SlotType extends Type {
     _isMoreSpecificThan(type) {
         // TODO: formFactor checking, etc.
         return true;
+    }
+    toLiteral() {
+        return { tag: this.tag, data: this.slot.toLiteral() };
     }
     toString(options = undefined) {
         const fields = [];
@@ -566,10 +574,9 @@ export class SlotType extends Type {
     }
 }
 export class ReferenceType extends Type {
-    // TODO: replace with a member var once data has been removed
-    get referredType() { return this.data; }
     constructor(reference) {
-        super('Reference', reference);
+        super('Reference');
+        this.referredType = reference;
     }
     get isReference() {
         return true;
@@ -594,6 +601,10 @@ export class ReferenceType extends Type {
     get canReadSubset() {
         return this.referredType.canReadSubset;
     }
+    _clone(variableMap) {
+        const data = this.referredType.clone(variableMap).toLiteral();
+        return Type.fromLiteral({ tag: this.tag, data });
+    }
     _cloneWithResolutions(variableMap) {
         return new ReferenceType(this.referredType._cloneWithResolutions(variableMap));
     }
@@ -606,7 +617,7 @@ export class ReferenceType extends Type {
 }
 export class ArcInfoType extends Type {
     constructor() {
-        super('ArcInfo', null);
+        super('ArcInfo');
     }
     get isArcInfo() {
         return true;
@@ -614,13 +625,19 @@ export class ArcInfoType extends Type {
     newInstance(arcId, serialization) {
         return new ArcInfo(arcId, serialization);
     }
+    toLiteral() {
+        return { tag: this.tag };
+    }
 }
 export class HandleInfoType extends Type {
     constructor() {
-        super('HandleInfo', null);
+        super('HandleInfo');
     }
     get isHandleInfo() {
         return true;
+    }
+    toLiteral() {
+        return { tag: this.tag };
     }
 }
 //# sourceMappingURL=type.js.map

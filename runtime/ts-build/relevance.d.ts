@@ -11,7 +11,7 @@ export declare class Relevance {
         relevanceMap: any;
     }, recipe: Recipe): Relevance;
     serialize(): {};
-    apply(relevance: any): void;
+    apply(relevance: Map<Particle, number[]>): void;
     calcRelevanceScore(): number;
     isRelevant(plan: any): boolean;
     static scaleRelevance(relevance: any): number;

@@ -27,6 +27,9 @@ class GCPDisk {
                     if (vm.metadata.metadata.items.find(x => x.key === ARCS_NODE_LABEL) !== undefined) {
                         console.log("Trying to detach " + vm.metadata.name + " from " + this.diskApi.name);
                         const [operation, apiResponse] = await vm.detachDisk(this.diskApi);
+                        if (operation.warnings) {
+                            console.log("Warnings: " + operation.warnings.join('\n'));
+                        }
                         return Promise.resolve(!apiResponse['httpErrorStatusCode'] || apiResponse['httpErrorStatusCode'] !== 200);
                     }
                 }
@@ -50,6 +53,9 @@ class GCPDisk {
                                 "rsaEncryptedKey": rewrappedKey
                             }
                         });
+                        if (operation.warnings) {
+                            console.log("Warnings: " + operation.warnings.join('\n'));
+                        }
                         return Promise.resolve(!apiResponse['httpErrorStatusCode'] || apiResponse['httpErrorStatusCode'] !== 200);
                     }
                 }

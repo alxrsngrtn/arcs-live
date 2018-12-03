@@ -10,7 +10,7 @@
 'use strict';
 import { assert } from '../../platform/assert-web.js';
 import { ParticleSpec } from './particle-spec.js';
-import { CollectionType, BigCollectionType, InterfaceType } from './type.js';
+import { EntityType, CollectionType, BigCollectionType, InterfaceType } from './type.js';
 export class Description {
     constructor(arc) {
         this.relevance = null;
@@ -412,11 +412,14 @@ export class DescriptionFormatter {
                 return await this._formatBigCollection(handleName, value[0]);
             }
         }
-        else {
+        else if (store.type instanceof EntityType) {
             const value = await store.get();
             if (value) {
-                return this._formatSingleton(handleName, value, store.type.data.description.value);
+                return this._formatSingleton(handleName, value, store.type.entitySchema.description.value);
             }
+        }
+        else {
+            throw new Error(`invalid store type ${store.type}`);
         }
     }
     _formatCollection(handleName, values) {

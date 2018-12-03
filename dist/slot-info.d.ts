@@ -1,9 +1,10 @@
-import { Handle } from './handle.js';
 export declare class SlotInfo {
     formFactor: string;
-    handle: Handle;
+    handle: string;
     constructor({ formFactor, handle }: {
         formFactor: string;
-        handle: Handle;
+        handle: string;
     });
+    toLiteral(): this;
+    static fromLiteral(data: any): SlotInfo;
 }
