@@ -1,5 +1,9 @@
-commit 82c3aa85a62318387dbfb8a88f2d1397bdcf31a2
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Dec 3 11:04:45 2018 +1100
+commit 4dc97f7610a5fb31b3094284c0881e7ff7494a0c
+Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
+Date:   Mon Dec 3 14:50:22 2018 +1100
 
-    Puts slot name -> ID mapping into the model (#2345)
+    Created a require section that can be used to replace the use fate. (#2357)
+    
+    * Created a require section that can be used to replace the use fate.
+    
+    * Fixed lint errors
