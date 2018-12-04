@@ -8,7 +8,6 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/assert-web.js';
-import { FirebaseStorage } from '../storage/firebase-storage.js';
 import { PlanConsumer } from './plan-consumer.js';
 import { PlanProducer } from './plan-producer.js';
 import { ReplanQueue } from './replan-queue.js';
@@ -137,24 +136,8 @@ export class Planificator {
         return Planificator._initStore(arc, 'search-id', type, storageKey);
     }
     static async _initStore(arc, id, type, storageKey) {
-        const providerFactory = arc.storageProviderFactory;
-        // TODO: unify initialization of suggestions storage.
-        const storageKeyStr = storageKey.toString();
-        const storage = providerFactory._storageForKey(storageKey.toString());
-        let store = null;
-        if (storage instanceof FirebaseStorage) {
-            // TODO make firebase use the standard construct/connect API
-            store = await storage._join(id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
-        }
-        else {
-            try {
-                store = await storage.construct(id, type, storageKeyStr);
-            }
-            catch (e) {
-                store = await storage.connect(id, type, storageKeyStr);
-            }
-        }
-        assert(store, `Failed initializing '${storageKeyStr}' store.`);
+        const store = await arc.storageProviderFactory.connectOrConstruct(id, type, storageKey.toString());
+        assert(store, `Failed initializing '${storageKey.toString()}' store.`);
         store.referenceMode = false;
         return store;
     }

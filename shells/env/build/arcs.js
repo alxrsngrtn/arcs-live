@@ -45809,7 +45809,7 @@ class PouchDbStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_
             return this.construct(id, type, key);
         }
         catch (err) {
-            if (err === 'not_found') {
+            if (err.name && err.name === 'not_found') {
                 return null;
             }
             throw err;
@@ -84506,12 +84506,11 @@ class PlanningResult {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planificator", function() { return Planificator; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _storage_firebase_storage_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(53);
-/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(243);
-/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(245);
-/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(248);
-/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(4);
+/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(243);
+/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(245);
+/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(248);
+/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84521,7 +84520,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -84540,12 +84538,12 @@ class Planificator {
         this.userid = userid;
         this.searchStore = searchStore;
         if (!onlyConsumer) {
-            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_3__["PlanProducer"](arc, store, searchStore, { debug });
-            this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__["ReplanQueue"](this.producer);
+            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](arc, store, searchStore, { debug });
+            this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_3__["ReplanQueue"](this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
         }
-        this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_2__["PlanConsumer"](arc, store);
+        this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](arc, store);
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
@@ -84632,8 +84630,8 @@ class Planificator {
         storageKey.location = location.includes('/arcs/')
             ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/$1`)
             : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/$1`);
-        const schema = new _schema_js__WEBPACK_IMPORTED_MODULE_5__["Schema"]({ names: ['Suggestions'], fields: { current: 'Object' } });
-        const type = _type_js__WEBPACK_IMPORTED_MODULE_6__["Type"].newEntity(schema);
+        const schema = new _schema_js__WEBPACK_IMPORTED_MODULE_4__["Schema"]({ names: ['Suggestions'], fields: { current: 'Object' } });
+        const type = _type_js__WEBPACK_IMPORTED_MODULE_5__["Type"].newEntity(schema);
         return Planificator._initStore(arc, 'suggestions-id', type, storageKey);
     }
     static async _initSearchStore(arc, { userid, storageKeyBase }) {
@@ -84646,29 +84644,13 @@ class Planificator {
         storageKey.location = location.includes('/arcs/')
             ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/search`)
             : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/search`);
-        const schema = new _schema_js__WEBPACK_IMPORTED_MODULE_5__["Schema"]({ names: ['Search'], fields: { current: 'Object' } });
-        const type = _type_js__WEBPACK_IMPORTED_MODULE_6__["Type"].newEntity(schema);
+        const schema = new _schema_js__WEBPACK_IMPORTED_MODULE_4__["Schema"]({ names: ['Search'], fields: { current: 'Object' } });
+        const type = _type_js__WEBPACK_IMPORTED_MODULE_5__["Type"].newEntity(schema);
         return Planificator._initStore(arc, 'search-id', type, storageKey);
     }
     static async _initStore(arc, id, type, storageKey) {
-        const providerFactory = arc.storageProviderFactory;
-        // TODO: unify initialization of suggestions storage.
-        const storageKeyStr = storageKey.toString();
-        const storage = providerFactory._storageForKey(storageKey.toString());
-        let store = null;
-        if (storage instanceof _storage_firebase_storage_js__WEBPACK_IMPORTED_MODULE_1__["FirebaseStorage"]) {
-            // TODO make firebase use the standard construct/connect API
-            store = await storage._join(id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
-        }
-        else {
-            try {
-                store = await storage.construct(id, type, storageKeyStr);
-            }
-            catch (e) {
-                store = await storage.connect(id, type, storageKeyStr);
-            }
-        }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${storageKeyStr}' store.`);
+        const store = await arc.storageProviderFactory.connectOrConstruct(id, type, storageKey.toString());
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${storageKey.toString()}' store.`);
         store.referenceMode = false;
         return store;
     }

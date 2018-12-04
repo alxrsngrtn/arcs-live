@@ -39285,7 +39285,7 @@ class PouchDbStorage extends StorageBase {
             return this.construct(id, type, key);
         }
         catch (err) {
-            if (err === 'not_found') {
+            if (err.name && err.name === 'not_found') {
                 return null;
             }
             throw err;
@@ -46484,24 +46484,8 @@ class Planificator {
         return Planificator._initStore(arc, 'search-id', type, storageKey);
     }
     static async _initStore(arc, id, type, storageKey) {
-        const providerFactory = arc.storageProviderFactory;
-        // TODO: unify initialization of suggestions storage.
-        const storageKeyStr = storageKey.toString();
-        const storage = providerFactory._storageForKey(storageKey.toString());
-        let store = null;
-        if (storage instanceof FirebaseStorage) {
-            // TODO make firebase use the standard construct/connect API
-            store = await storage._join(id, type, storageKeyStr, /* shoudExist= */ 'unknown', /* referenceMode= */ false);
-        }
-        else {
-            try {
-                store = await storage.construct(id, type, storageKeyStr);
-            }
-            catch (e) {
-                store = await storage.connect(id, type, storageKeyStr);
-            }
-        }
-        assert(store, `Failed initializing '${storageKeyStr}' store.`);
+        const store = await arc.storageProviderFactory.connectOrConstruct(id, type, storageKey.toString());
+        assert(store, `Failed initializing '${storageKey.toString()}' store.`);
         store.referenceMode = false;
         return store;
     }

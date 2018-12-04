@@ -1,5 +1,5 @@
-commit 5c3e1be8333a85d6d52d545a075e32d0b89ee083
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Dec 4 11:05:18 2018 -0800
+commit 3a5e4e9bea716b540e67f51158aa0e774a44a917
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Dec 4 13:52:35 2018 -0800
 
-    restore firebase-storage image repository (#2375)
+    use connectOrConstruct method in planificator (#2363)
