@@ -1,5 +1,5 @@
 import { Type } from './type.js';
-export declare class TypeVariable {
+export declare class TypeVariableInfo {
     name: string;
     _canWriteSuperset: Type | null;
     _canReadSubset: Type | null;
@@ -10,7 +10,7 @@ export declare class TypeVariable {
      * of two variables together. Use this when two separate type variables need to resolve
      * to the same value.
      */
-    maybeMergeConstraints(variable: TypeVariable): boolean;
+    maybeMergeConstraints(variable: TypeVariableInfo): boolean;
     /**
      * Merge a type variable's read subset (upper bound) constraints into this variable.
      * This is used to accumulate read constraints when resolving a handle's type.
@@ -42,6 +42,6 @@ export declare class TypeVariable {
         canWriteSuperset: import("./type.js").TypeLiteral;
         canReadSubset: import("./type.js").TypeLiteral;
     };
-    static fromLiteral(data: any): TypeVariable;
+    static fromLiteral(data: any): TypeVariableInfo;
     isResolved(): boolean;
 }

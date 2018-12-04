@@ -9,7 +9,7 @@ import { Recipe } from '../recipe/recipe.js';
 import { RecipeUtil } from '../recipe/recipe-util.js';
 import { Walker } from '../recipe/walker.js';
 import { Handle } from '../recipe/handle.js';
-import { VariableType } from '../type.js';
+import { TypeVariable } from '../type.js';
 import { assert } from '../../../platform/assert-web.js';
 // This strategy coalesces unresolved terminal recipes (i.e. those that cannot
 // be modified by any strategy apart from this one) by finding unresolved
@@ -142,7 +142,7 @@ export class CoalesceRecipes extends Strategy {
                         let resolved = otherHandle.type.resolvedType();
                         // TODO: getContainedType returns non-null for references ... is that correct here?
                         resolved = resolved.getContainedType() || resolved;
-                        if (resolved instanceof VariableType && !resolved.canReadSubset)
+                        if (resolved instanceof TypeVariable && !resolved.canReadSubset)
                             continue;
                     }
                     if (RecipeUtil.matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {

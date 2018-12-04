@@ -16,7 +16,7 @@ import fetch$1 from 'node-fetch';
 // Copyright (c) 2017 Google Inc. All rights reserved.
 
 // @license
-class TypeVariable {
+class TypeVariableInfo {
     constructor(name, canWriteSuperset, canReadSubset) {
         this.name = name;
         this._canWriteSuperset = canWriteSuperset;
@@ -98,7 +98,7 @@ class TypeVariable {
     }
     isValidResolutionCandidate(value) {
         const elementType = value.resolvedType().getContainedType();
-        if (elementType instanceof VariableType && elementType.variable === this) {
+        if (elementType instanceof TypeVariable && elementType.variable === this) {
             return { result: false, detail: 'variable cannot resolve to collection of itself' };
         }
         return { result: true };
@@ -109,7 +109,7 @@ class TypeVariable {
         assert(isValid.result, isValid.detail);
         let probe = value;
         while (probe) {
-            if (!(probe instanceof VariableType)) {
+            if (!(probe instanceof TypeVariable)) {
                 break;
             }
             if (probe.variable === this) {
@@ -124,7 +124,7 @@ class TypeVariable {
     get canWriteSuperset() {
         if (this._resolution) {
             assert(!this._canWriteSuperset);
-            if (this._resolution instanceof VariableType) {
+            if (this._resolution instanceof TypeVariable) {
                 return this._resolution.variable.canWriteSuperset;
             }
             return null;
@@ -138,7 +138,7 @@ class TypeVariable {
     get canReadSubset() {
         if (this._resolution) {
             assert(!this._canReadSubset);
-            if (this._resolution instanceof VariableType) {
+            if (this._resolution instanceof TypeVariable) {
                 return this._resolution.variable.canReadSubset;
             }
             return null;
@@ -187,7 +187,7 @@ class TypeVariable {
         };
     }
     static fromLiteral(data) {
-        return new TypeVariable(data.name, data.canWriteSuperset ? Type.fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? Type.fromLiteral(data.canReadSubset) : null);
+        return new TypeVariableInfo(data.name, data.canWriteSuperset ? Type.fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? Type.fromLiteral(data.canReadSubset) : null);
     }
     isResolved() {
         return (this._resolution && this._resolution.isResolved());
@@ -207,7 +207,7 @@ class TypeChecker {
     // NOTE: you probably don't want to call this function, if you think you
     // do, talk to shans@.
     static processTypeList(baseType, list) {
-        const newBaseTypeVariable = new TypeVariable('', null, null);
+        const newBaseTypeVariable = new TypeVariableInfo('', null, null);
         if (baseType) {
             newBaseTypeVariable.resolution = baseType;
         }
@@ -237,7 +237,7 @@ class TypeChecker {
             }
         }
         const getResolution = candidate => {
-            if (!(candidate instanceof VariableType)) {
+            if (!(candidate instanceof TypeVariable)) {
                 return candidate;
             }
             if (candidate.canReadSubset == null || candidate.canWriteSuperset == null) {
@@ -264,8 +264,8 @@ class TypeChecker {
     }
     static _tryMergeTypeVariable(base, onto) {
         const [primitiveBase, primitiveOnto] = Type.unwrapPair(base.resolvedType(), onto.resolvedType());
-        if (primitiveBase instanceof VariableType) {
-            if (primitiveOnto instanceof VariableType) {
+        if (primitiveBase instanceof TypeVariable) {
+            if (primitiveOnto instanceof TypeVariable) {
                 // base, onto both variables.
                 const result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
                 if (result === false) {
@@ -282,7 +282,7 @@ class TypeChecker {
             }
             return base;
         }
-        else if (primitiveOnto instanceof VariableType) {
+        else if (primitiveOnto instanceof TypeVariable) {
             // onto variable, base not.
             if (!primitiveOnto.variable.isValidResolutionCandidate(primitiveBase).result) {
                 return null;
@@ -306,7 +306,7 @@ class TypeChecker {
     }
     static _tryMergeConstraints(handleType, { type, direction }) {
         let [primitiveHandleType, primitiveConnectionType] = Type.unwrapPair(handleType.resolvedType(), type.resolvedType());
-        if (primitiveHandleType instanceof VariableType) {
+        if (primitiveHandleType instanceof TypeVariable) {
             while (primitiveConnectionType.isTypeContainer()) {
                 if (primitiveHandleType.variable.resolution != null
                     || primitiveHandleType.variable.canReadSubset != null
@@ -317,7 +317,7 @@ class TypeChecker {
                 // If this is an undifferentiated variable then we need to create structure to match against. That's
                 // allowed because this variable could represent anything, and it needs to represent this structure
                 // in order for type resolution to succeed.
-                const newVar = Type.newVariable(new TypeVariable('a', null, null));
+                const newVar = Type.newVariable(new TypeVariableInfo('a', null, null));
                 if (primitiveConnectionType instanceof CollectionType) {
                     primitiveHandleType.variable.resolution = Type.newCollection(newVar);
                 }
@@ -401,13 +401,13 @@ class TypeChecker {
         const resolvedRight = right.type.resolvedType();
         const [leftType, rightType] = Type.unwrapPair(resolvedLeft, resolvedRight);
         // a variable is compatible with a set only if it is unconstrained.
-        if (leftType instanceof VariableType && rightType.isTypeContainer()) {
+        if (leftType instanceof TypeVariable && rightType.isTypeContainer()) {
             return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
         }
-        if (rightType instanceof VariableType && leftType.isTypeContainer()) {
+        if (rightType instanceof TypeVariable && leftType.isTypeContainer()) {
             return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
         }
-        if (leftType instanceof VariableType || rightType instanceof VariableType) {
+        if (leftType instanceof TypeVariable || rightType instanceof TypeVariable) {
             // TODO: everything should use this, eventually. Need to implement the
             // right functionality in Shapes first, though.
             return Type.canMergeConstraints(leftType, rightType);
@@ -1604,7 +1604,7 @@ ${this._slotsToManifestString()}
         typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
     }
     static isTypeVar(reference) {
-        return (reference instanceof Type) && reference.hasProperty(r => r instanceof VariableType);
+        return (reference instanceof Type) && reference.hasProperty(r => r instanceof TypeVariable);
     }
     static mustMatch(reference) {
         return !(reference == undefined || Shape.isTypeVar(reference));
@@ -1623,7 +1623,7 @@ ${this._slotsToManifestString()}
             return true;
         }
         const [left, right] = Type.unwrapPair(shapeHandle.type, particleHandle.type);
-        if (left instanceof VariableType) {
+        if (left instanceof TypeVariable) {
             return [{ var: left, value: right, direction: shapeHandle.direction }];
         }
         else {
@@ -1696,7 +1696,7 @@ ${this._slotsToManifestString()}
             if (!constraint.var.variable.resolution) {
                 constraint.var.variable.resolution = constraint.value;
             }
-            else if (constraint.var.variable.resolution instanceof VariableType) {
+            else if (constraint.var.variable.resolution instanceof TypeVariable) {
                 // TODO(shans): revisit how this should be done,
                 // consider reusing tryMergeTypeVariablesWith(other).
                 if (!TypeChecker.processTypeList(constraint.var, [{
@@ -1771,7 +1771,7 @@ class Type {
         return new EntityType(entity);
     }
     static newVariable(variable) {
-        return new VariableType(variable);
+        return new TypeVariable(variable);
     }
     static newCollection(collection) {
         return new CollectionType(collection);
@@ -1792,17 +1792,17 @@ class Type {
         return new ReferenceType(reference);
     }
     static newArcInfo() {
-        return new ArcInfoType();
+        return new ArcType();
     }
     static newHandleInfo() {
-        return new HandleInfoType();
+        return new HandleType();
     }
     static fromLiteral(literal) {
         switch (literal.tag) {
             case 'Entity':
                 return new EntityType(Schema.fromLiteral(literal.data));
-            case 'Variable':
-                return new VariableType(TypeVariable.fromLiteral(literal.data));
+            case 'TypeVariable':
+                return new TypeVariable(TypeVariableInfo.fromLiteral(literal.data));
             case 'Collection':
                 return new CollectionType(Type.fromLiteral(literal.data));
             case 'BigCollection':
@@ -1815,10 +1815,10 @@ class Type {
                 return new SlotType(SlotInfo.fromLiteral(literal.data));
             case 'Reference':
                 return new ReferenceType(Type.fromLiteral(literal.data));
-            case 'ArcInfo':
-                return new ArcInfoType();
-            case 'HandleInfo':
-                return new HandleInfoType();
+            case 'Arc':
+                return new ArcType();
+            case 'Handle':
+                return new HandleType();
             default:
                 throw new Error(`fromLiteral: unknown type ${literal}`);
         }
@@ -1875,10 +1875,10 @@ class Type {
         return test(this);
     }
     get hasVariable() {
-        return this._applyExistenceTypeTest(type => type instanceof VariableType);
+        return this._applyExistenceTypeTest(type => type instanceof TypeVariable);
     }
     get hasUnresolvedVariable() {
-        return this._applyExistenceTypeTest(type => type instanceof VariableType && !type.variable.isResolved());
+        return this._applyExistenceTypeTest(type => type instanceof TypeVariable && !type.variable.isResolved());
     }
     primitiveType() {
         return null;
@@ -1998,16 +1998,14 @@ class EntityType extends Type {
         return JSON.stringify(this.entitySchema.toLiteral());
     }
 }
-// Yes, these names need fixing.
-class VariableType extends Type {
+class TypeVariable extends Type {
     constructor(variable) {
-        super('Variable');
+        super('TypeVariable');
         this.variable = variable;
     }
     get isVariable() {
         return true;
     }
-    // TODO: should variableMap be Map<string, TypeVariable>?
     mergeTypeVariablesByName(variableMap) {
         const name = this.variable.name;
         let variable = variableMap.get(name);
@@ -2015,7 +2013,7 @@ class VariableType extends Type {
             variable = this;
             variableMap.set(name, this);
         }
-        else if (variable instanceof VariableType) {
+        else if (variable instanceof TypeVariable) {
             if (variable.variable.hasConstraint || this.variable.hasConstraint) {
                 const mergedConstraint = variable.variable.maybeMergeConstraints(this.variable);
                 if (!mergedConstraint) {
@@ -2043,21 +2041,21 @@ class VariableType extends Type {
     _clone(variableMap) {
         const name = this.variable.name;
         if (variableMap.has(name)) {
-            return new VariableType(variableMap.get(name));
+            return new TypeVariable(variableMap.get(name));
         }
         else {
-            const newTypeVariable = TypeVariable.fromLiteral(this.variable.toLiteral());
+            const newTypeVariable = TypeVariableInfo.fromLiteral(this.variable.toLiteral());
             variableMap.set(name, newTypeVariable);
-            return new VariableType(newTypeVariable);
+            return new TypeVariable(newTypeVariable);
         }
     }
     _cloneWithResolutions(variableMap) {
         const name = this.variable.name;
         if (variableMap.has(name)) {
-            return new VariableType(variableMap.get(name));
+            return new TypeVariable(variableMap.get(name));
         }
         else {
-            const newTypeVariable = TypeVariable.fromLiteral(this.variable.toLiteralIgnoringResolutions());
+            const newTypeVariable = TypeVariableInfo.fromLiteral(this.variable.toLiteralIgnoringResolutions());
             if (this.variable.resolution) {
                 newTypeVariable.resolution = this.variable.resolution._cloneWithResolutions(variableMap);
             }
@@ -2068,7 +2066,7 @@ class VariableType extends Type {
                 newTypeVariable.canWriteSuperset = this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
             }
             variableMap.set(name, newTypeVariable);
-            return new VariableType(newTypeVariable);
+            return new TypeVariable(newTypeVariable);
         }
     }
     toLiteral() {
@@ -2366,11 +2364,11 @@ class ReferenceType extends Type {
         return 'Reference<' + this.referredType.toString() + '>';
     }
 }
-class ArcInfoType extends Type {
+class ArcType extends Type {
     constructor() {
-        super('ArcInfo');
+        super('Arc');
     }
-    get isArcInfo() {
+    get isArc() {
         return true;
     }
     newInstance(arcId, serialization) {
@@ -2380,11 +2378,11 @@ class ArcInfoType extends Type {
         return { tag: this.tag };
     }
 }
-class HandleInfoType extends Type {
+class HandleType extends Type {
     constructor() {
-        super('HandleInfo');
+        super('Handle');
     }
-    get isHandleInfo() {
+    get isHandle() {
         return true;
     }
     toLiteral() {
@@ -5224,7 +5222,7 @@ const parser = /*
                   s7 = null;
                 }
                 if (s7 !== peg$FAILED) {
-                  s8 = peg$parseVariableTypeList();
+                  s8 = peg$parseTypeVariableList();
                   if (s8 !== peg$FAILED) {
                     s9 = peg$parsewhiteSpace();
                     if (s9 === peg$FAILED) {
@@ -6497,7 +6495,7 @@ const parser = /*
     function peg$parseParticleArgumentType() {
       var s0;
 
-      s0 = peg$parseVariableType();
+      s0 = peg$parseTypeVariable();
       if (s0 === peg$FAILED) {
         s0 = peg$parseCollectionType();
         if (s0 === peg$FAILED) {
@@ -6643,7 +6641,7 @@ const parser = /*
       return s0;
     }
 
-    function peg$parseVariableType() {
+    function peg$parseTypeVariable() {
       var s0, s1, s2, s3, s4, s5, s6, s7;
 
       s0 = peg$currPos;
@@ -6924,11 +6922,11 @@ const parser = /*
       return s0;
     }
 
-    function peg$parseVariableTypeList() {
+    function peg$parseTypeVariableList() {
       var s0, s1, s2, s3, s4, s5, s6;
 
       s0 = peg$currPos;
-      s1 = peg$parseVariableType();
+      s1 = peg$parseTypeVariable();
       if (s1 !== peg$FAILED) {
         s2 = [];
         s3 = peg$currPos;
@@ -6942,7 +6940,7 @@ const parser = /*
         if (s4 !== peg$FAILED) {
           s5 = peg$parsewhiteSpace();
           if (s5 !== peg$FAILED) {
-            s6 = peg$parseVariableType();
+            s6 = peg$parseTypeVariable();
             if (s6 !== peg$FAILED) {
               s4 = [s4, s5, s6];
               s3 = s4;
@@ -6971,7 +6969,7 @@ const parser = /*
           if (s4 !== peg$FAILED) {
             s5 = peg$parsewhiteSpace();
             if (s5 !== peg$FAILED) {
-              s6 = peg$parseVariableType();
+              s6 = peg$parseTypeVariable();
               if (s6 !== peg$FAILED) {
                 s4 = [s4, s5, s6];
                 s3 = s4;
@@ -37322,8 +37320,8 @@ class FirebaseStorage extends StorageBase {
     // referenceMode is only referred to if shouldExist is false, or if shouldExist is 'unknown'
     // but this _join creates the storage location.
     async _join(id, type, keyString, shouldExist, referenceMode = false) {
-        assert(!(type instanceof VariableType));
-        assert(!type.isTypeContainer() || !(type.getContainedType() instanceof VariableType));
+        assert(!(type instanceof TypeVariable));
+        assert(!type.isTypeContainer() || !(type.getContainedType() instanceof TypeVariable));
         const fbKey = new FirebaseKey(keyString);
         // TODO: is it ever going to be possible to autoconstruct new firebase datastores?
         if (fbKey.databaseUrl == undefined || fbKey.apiKey == undefined) {
@@ -40573,7 +40571,7 @@ ${e.message}
                     }
                     case 'variable-type': {
                         const constraint = node.constraint && node.constraint.model;
-                        node.model = Type.newVariable(new TypeVariable(node.name, constraint, null));
+                        node.model = Type.newVariable(new TypeVariableInfo(node.name, constraint, null));
                         return;
                     }
                     case 'slot-type': {
@@ -45834,7 +45832,7 @@ class CoalesceRecipes extends Strategy {
                         let resolved = otherHandle.type.resolvedType();
                         // TODO: getContainedType returns non-null for references ... is that correct here?
                         resolved = resolved.getContainedType() || resolved;
-                        if (resolved instanceof VariableType && !resolved.canReadSubset)
+                        if (resolved instanceof TypeVariable && !resolved.canReadSubset)
                             continue;
                     }
                     if (RecipeUtil.matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
@@ -51499,7 +51497,7 @@ ${this.activeRecipe.toString()}`;
             // be of the 'same type' when searching by type.
             return type.shapeShape;
         }
-        else if (type instanceof VariableType && type.isResolved()) {
+        else if (type instanceof TypeVariable && type.isResolved()) {
             return Arc._typeToKey(type.resolvedType());
         }
     }
@@ -51513,13 +51511,13 @@ ${this.activeRecipe.toString()}`;
                 }
             }
             else {
-                if (type instanceof VariableType && !type.isResolved() && handle.type instanceof EntityType) {
+                if (type instanceof TypeVariable && !type.isResolved() && handle.type instanceof EntityType) {
                     return true;
                 }
                 // elementType will only be non-null if type is either Collection or BigCollection; the tag
                 // comparison ensures that handle.type is the same sort of collection.
                 const elementType = type.getContainedType();
-                if (elementType && elementType instanceof VariableType && !elementType.isResolved() && type.tag === handle.type.tag) {
+                if (elementType && elementType instanceof TypeVariable && !elementType.isResolved() && type.tag === handle.type.tag) {
                     return true;
                 }
             }

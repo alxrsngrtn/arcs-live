@@ -6,7 +6,7 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { Schema } from './schema.js';
-import { TypeVariable } from './type-variable.js';
+import { TypeVariableInfo } from './type-variable-info.js';
 import { Shape } from './shape.js';
 import { SlotInfo } from './slot-info.js';
 import { TypeChecker } from './recipe/type-checker.js';
@@ -20,7 +20,7 @@ export class Type {
         return new EntityType(entity);
     }
     static newVariable(variable) {
-        return new VariableType(variable);
+        return new TypeVariable(variable);
     }
     static newCollection(collection) {
         return new CollectionType(collection);
@@ -41,17 +41,17 @@ export class Type {
         return new ReferenceType(reference);
     }
     static newArcInfo() {
-        return new ArcInfoType();
+        return new ArcType();
     }
     static newHandleInfo() {
-        return new HandleInfoType();
+        return new HandleType();
     }
     static fromLiteral(literal) {
         switch (literal.tag) {
             case 'Entity':
                 return new EntityType(Schema.fromLiteral(literal.data));
-            case 'Variable':
-                return new VariableType(TypeVariable.fromLiteral(literal.data));
+            case 'TypeVariable':
+                return new TypeVariable(TypeVariableInfo.fromLiteral(literal.data));
             case 'Collection':
                 return new CollectionType(Type.fromLiteral(literal.data));
             case 'BigCollection':
@@ -64,10 +64,10 @@ export class Type {
                 return new SlotType(SlotInfo.fromLiteral(literal.data));
             case 'Reference':
                 return new ReferenceType(Type.fromLiteral(literal.data));
-            case 'ArcInfo':
-                return new ArcInfoType();
-            case 'HandleInfo':
-                return new HandleInfoType();
+            case 'Arc':
+                return new ArcType();
+            case 'Handle':
+                return new HandleType();
             default:
                 throw new Error(`fromLiteral: unknown type ${literal}`);
         }
@@ -124,10 +124,10 @@ export class Type {
         return test(this);
     }
     get hasVariable() {
-        return this._applyExistenceTypeTest(type => type instanceof VariableType);
+        return this._applyExistenceTypeTest(type => type instanceof TypeVariable);
     }
     get hasUnresolvedVariable() {
-        return this._applyExistenceTypeTest(type => type instanceof VariableType && !type.variable.isResolved());
+        return this._applyExistenceTypeTest(type => type instanceof TypeVariable && !type.variable.isResolved());
     }
     primitiveType() {
         return null;
@@ -247,16 +247,14 @@ export class EntityType extends Type {
         return JSON.stringify(this.entitySchema.toLiteral());
     }
 }
-// Yes, these names need fixing.
-export class VariableType extends Type {
+export class TypeVariable extends Type {
     constructor(variable) {
-        super('Variable');
+        super('TypeVariable');
         this.variable = variable;
     }
     get isVariable() {
         return true;
     }
-    // TODO: should variableMap be Map<string, TypeVariable>?
     mergeTypeVariablesByName(variableMap) {
         const name = this.variable.name;
         let variable = variableMap.get(name);
@@ -264,7 +262,7 @@ export class VariableType extends Type {
             variable = this;
             variableMap.set(name, this);
         }
-        else if (variable instanceof VariableType) {
+        else if (variable instanceof TypeVariable) {
             if (variable.variable.hasConstraint || this.variable.hasConstraint) {
                 const mergedConstraint = variable.variable.maybeMergeConstraints(this.variable);
                 if (!mergedConstraint) {
@@ -292,21 +290,21 @@ export class VariableType extends Type {
     _clone(variableMap) {
         const name = this.variable.name;
         if (variableMap.has(name)) {
-            return new VariableType(variableMap.get(name));
+            return new TypeVariable(variableMap.get(name));
         }
         else {
-            const newTypeVariable = TypeVariable.fromLiteral(this.variable.toLiteral());
+            const newTypeVariable = TypeVariableInfo.fromLiteral(this.variable.toLiteral());
             variableMap.set(name, newTypeVariable);
-            return new VariableType(newTypeVariable);
+            return new TypeVariable(newTypeVariable);
         }
     }
     _cloneWithResolutions(variableMap) {
         const name = this.variable.name;
         if (variableMap.has(name)) {
-            return new VariableType(variableMap.get(name));
+            return new TypeVariable(variableMap.get(name));
         }
         else {
-            const newTypeVariable = TypeVariable.fromLiteral(this.variable.toLiteralIgnoringResolutions());
+            const newTypeVariable = TypeVariableInfo.fromLiteral(this.variable.toLiteralIgnoringResolutions());
             if (this.variable.resolution) {
                 newTypeVariable.resolution = this.variable.resolution._cloneWithResolutions(variableMap);
             }
@@ -317,7 +315,7 @@ export class VariableType extends Type {
                 newTypeVariable.canWriteSuperset = this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
             }
             variableMap.set(name, newTypeVariable);
-            return new VariableType(newTypeVariable);
+            return new TypeVariable(newTypeVariable);
         }
     }
     toLiteral() {
@@ -615,11 +613,11 @@ export class ReferenceType extends Type {
         return 'Reference<' + this.referredType.toString() + '>';
     }
 }
-export class ArcInfoType extends Type {
+export class ArcType extends Type {
     constructor() {
-        super('ArcInfo');
+        super('Arc');
     }
-    get isArcInfo() {
+    get isArc() {
         return true;
     }
     newInstance(arcId, serialization) {
@@ -629,11 +627,11 @@ export class ArcInfoType extends Type {
         return { tag: this.tag };
     }
 }
-export class HandleInfoType extends Type {
+export class HandleType extends Type {
     constructor() {
-        super('HandleInfo');
+        super('Handle');
     }
-    get isHandleInfo() {
+    get isHandle() {
         return true;
     }
     toLiteral() {

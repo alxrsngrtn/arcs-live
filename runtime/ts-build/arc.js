@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
-import { Type, EntityType, VariableType, InterfaceType, RelationType } from './type.js';
+import { Type, EntityType, TypeVariable, InterfaceType, RelationType } from './type.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
@@ -536,7 +536,7 @@ ${this.activeRecipe.toString()}`;
             // be of the 'same type' when searching by type.
             return type.shapeShape;
         }
-        else if (type instanceof VariableType && type.isResolved()) {
+        else if (type instanceof TypeVariable && type.isResolved()) {
             return Arc._typeToKey(type.resolvedType());
         }
     }
@@ -550,13 +550,13 @@ ${this.activeRecipe.toString()}`;
                 }
             }
             else {
-                if (type instanceof VariableType && !type.isResolved() && handle.type instanceof EntityType) {
+                if (type instanceof TypeVariable && !type.isResolved() && handle.type instanceof EntityType) {
                     return true;
                 }
                 // elementType will only be non-null if type is either Collection or BigCollection; the tag
                 // comparison ensures that handle.type is the same sort of collection.
                 const elementType = type.getContainedType();
-                if (elementType && elementType instanceof VariableType && !elementType.isResolved() && type.tag === handle.type.tag) {
+                if (elementType && elementType instanceof TypeVariable && !elementType.isResolved() && type.tag === handle.type.tag) {
                     return true;
                 }
             }

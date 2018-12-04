@@ -5,10 +5,10 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Type, EntityType, VariableType, SlotType } from './type.js';
+import { Type, EntityType, TypeVariable, SlotType } from './type.js';
 import { assert } from '../../platform/assert-web.js';
 import { Schema } from './schema.js';
-export class TypeVariable {
+export class TypeVariableInfo {
     constructor(name, canWriteSuperset, canReadSubset) {
         this.name = name;
         this._canWriteSuperset = canWriteSuperset;
@@ -90,7 +90,7 @@ export class TypeVariable {
     }
     isValidResolutionCandidate(value) {
         const elementType = value.resolvedType().getContainedType();
-        if (elementType instanceof VariableType && elementType.variable === this) {
+        if (elementType instanceof TypeVariable && elementType.variable === this) {
             return { result: false, detail: 'variable cannot resolve to collection of itself' };
         }
         return { result: true };
@@ -101,7 +101,7 @@ export class TypeVariable {
         assert(isValid.result, isValid.detail);
         let probe = value;
         while (probe) {
-            if (!(probe instanceof VariableType)) {
+            if (!(probe instanceof TypeVariable)) {
                 break;
             }
             if (probe.variable === this) {
@@ -116,7 +116,7 @@ export class TypeVariable {
     get canWriteSuperset() {
         if (this._resolution) {
             assert(!this._canWriteSuperset);
-            if (this._resolution instanceof VariableType) {
+            if (this._resolution instanceof TypeVariable) {
                 return this._resolution.variable.canWriteSuperset;
             }
             return null;
@@ -130,7 +130,7 @@ export class TypeVariable {
     get canReadSubset() {
         if (this._resolution) {
             assert(!this._canReadSubset);
-            if (this._resolution instanceof VariableType) {
+            if (this._resolution instanceof TypeVariable) {
                 return this._resolution.variable.canReadSubset;
             }
             return null;
@@ -179,10 +179,10 @@ export class TypeVariable {
         };
     }
     static fromLiteral(data) {
-        return new TypeVariable(data.name, data.canWriteSuperset ? Type.fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? Type.fromLiteral(data.canReadSubset) : null);
+        return new TypeVariableInfo(data.name, data.canWriteSuperset ? Type.fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? Type.fromLiteral(data.canReadSubset) : null);
     }
     isResolved() {
         return (this._resolution && this._resolution.isResolved());
     }
 }
-//# sourceMappingURL=type-variable.js.map
+//# sourceMappingURL=type-variable-info.js.map

@@ -1,5 +1,7 @@
-commit 9fe343d99a1212e59e935f715fd068c360597c05
+commit 42e1ff9f7dc590b18d956ee2a7bcbb26f4997fa3
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Dec 4 13:10:42 2018 +1100
+Date:   Tue Dec 4 13:30:38 2018 +1100
 
-    Fix failing firebase manual test (#2370)
+    Rename TypeVariable, Arc and Handle type and info classes (#2372)
+    
+    This also cleans up some the type test files.

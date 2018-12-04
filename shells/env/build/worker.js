@@ -988,17 +988,17 @@ function assert(test, message) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Type", function() { return Type; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntityType", function() { return EntityType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VariableType", function() { return VariableType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariable", function() { return TypeVariable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CollectionType", function() { return CollectionType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BigCollectionType", function() { return BigCollectionType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RelationType", function() { return RelationType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InterfaceType", function() { return InterfaceType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotType", function() { return SlotType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceType", function() { return ReferenceType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcInfoType", function() { return ArcInfoType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleInfoType", function() { return HandleInfoType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcType", function() { return ArcType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleType", function() { return HandleType; });
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
-/* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
+/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
 /* harmony import */ var _shape_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12);
 /* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8);
@@ -1025,7 +1025,7 @@ class Type {
         return new EntityType(entity);
     }
     static newVariable(variable) {
-        return new VariableType(variable);
+        return new TypeVariable(variable);
     }
     static newCollection(collection) {
         return new CollectionType(collection);
@@ -1046,17 +1046,17 @@ class Type {
         return new ReferenceType(reference);
     }
     static newArcInfo() {
-        return new ArcInfoType();
+        return new ArcType();
     }
     static newHandleInfo() {
-        return new HandleInfoType();
+        return new HandleType();
     }
     static fromLiteral(literal) {
         switch (literal.tag) {
             case 'Entity':
                 return new EntityType(_schema_js__WEBPACK_IMPORTED_MODULE_0__["Schema"].fromLiteral(literal.data));
-            case 'Variable':
-                return new VariableType(_type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"].fromLiteral(literal.data));
+            case 'TypeVariable':
+                return new TypeVariable(_type_variable_info_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariableInfo"].fromLiteral(literal.data));
             case 'Collection':
                 return new CollectionType(Type.fromLiteral(literal.data));
             case 'BigCollection':
@@ -1069,10 +1069,10 @@ class Type {
                 return new SlotType(_slot_info_js__WEBPACK_IMPORTED_MODULE_3__["SlotInfo"].fromLiteral(literal.data));
             case 'Reference':
                 return new ReferenceType(Type.fromLiteral(literal.data));
-            case 'ArcInfo':
-                return new ArcInfoType();
-            case 'HandleInfo':
-                return new HandleInfoType();
+            case 'Arc':
+                return new ArcType();
+            case 'Handle':
+                return new HandleType();
             default:
                 throw new Error(`fromLiteral: unknown type ${literal}`);
         }
@@ -1129,10 +1129,10 @@ class Type {
         return test(this);
     }
     get hasVariable() {
-        return this._applyExistenceTypeTest(type => type instanceof VariableType);
+        return this._applyExistenceTypeTest(type => type instanceof TypeVariable);
     }
     get hasUnresolvedVariable() {
-        return this._applyExistenceTypeTest(type => type instanceof VariableType && !type.variable.isResolved());
+        return this._applyExistenceTypeTest(type => type instanceof TypeVariable && !type.variable.isResolved());
     }
     primitiveType() {
         return null;
@@ -1252,16 +1252,14 @@ class EntityType extends Type {
         return JSON.stringify(this.entitySchema.toLiteral());
     }
 }
-// Yes, these names need fixing.
-class VariableType extends Type {
+class TypeVariable extends Type {
     constructor(variable) {
-        super('Variable');
+        super('TypeVariable');
         this.variable = variable;
     }
     get isVariable() {
         return true;
     }
-    // TODO: should variableMap be Map<string, TypeVariable>?
     mergeTypeVariablesByName(variableMap) {
         const name = this.variable.name;
         let variable = variableMap.get(name);
@@ -1269,7 +1267,7 @@ class VariableType extends Type {
             variable = this;
             variableMap.set(name, this);
         }
-        else if (variable instanceof VariableType) {
+        else if (variable instanceof TypeVariable) {
             if (variable.variable.hasConstraint || this.variable.hasConstraint) {
                 const mergedConstraint = variable.variable.maybeMergeConstraints(this.variable);
                 if (!mergedConstraint) {
@@ -1297,21 +1295,21 @@ class VariableType extends Type {
     _clone(variableMap) {
         const name = this.variable.name;
         if (variableMap.has(name)) {
-            return new VariableType(variableMap.get(name));
+            return new TypeVariable(variableMap.get(name));
         }
         else {
-            const newTypeVariable = _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"].fromLiteral(this.variable.toLiteral());
+            const newTypeVariable = _type_variable_info_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariableInfo"].fromLiteral(this.variable.toLiteral());
             variableMap.set(name, newTypeVariable);
-            return new VariableType(newTypeVariable);
+            return new TypeVariable(newTypeVariable);
         }
     }
     _cloneWithResolutions(variableMap) {
         const name = this.variable.name;
         if (variableMap.has(name)) {
-            return new VariableType(variableMap.get(name));
+            return new TypeVariable(variableMap.get(name));
         }
         else {
-            const newTypeVariable = _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"].fromLiteral(this.variable.toLiteralIgnoringResolutions());
+            const newTypeVariable = _type_variable_info_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariableInfo"].fromLiteral(this.variable.toLiteralIgnoringResolutions());
             if (this.variable.resolution) {
                 newTypeVariable.resolution = this.variable.resolution._cloneWithResolutions(variableMap);
             }
@@ -1322,7 +1320,7 @@ class VariableType extends Type {
                 newTypeVariable.canWriteSuperset = this.variable.canWriteSuperset._cloneWithResolutions(variableMap);
             }
             variableMap.set(name, newTypeVariable);
-            return new VariableType(newTypeVariable);
+            return new TypeVariable(newTypeVariable);
         }
     }
     toLiteral() {
@@ -1620,11 +1618,11 @@ class ReferenceType extends Type {
         return 'Reference<' + this.referredType.toString() + '>';
     }
 }
-class ArcInfoType extends Type {
+class ArcType extends Type {
     constructor() {
-        super('ArcInfo');
+        super('Arc');
     }
-    get isArcInfo() {
+    get isArc() {
         return true;
     }
     newInstance(arcId, serialization) {
@@ -1634,11 +1632,11 @@ class ArcInfoType extends Type {
         return { tag: this.tag };
     }
 }
-class HandleInfoType extends Type {
+class HandleType extends Type {
     constructor() {
-        super('HandleInfo');
+        super('Handle');
     }
-    get isHandleInfo() {
+    get isHandle() {
         return true;
     }
     toLiteral() {
@@ -2052,7 +2050,7 @@ class Schema {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeChecker", function() { return TypeChecker; });
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
-/* harmony import */ var _type_variable_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
+/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -2073,7 +2071,7 @@ class TypeChecker {
     // NOTE: you probably don't want to call this function, if you think you
     // do, talk to shans@.
     static processTypeList(baseType, list) {
-        const newBaseTypeVariable = new _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]('', null, null);
+        const newBaseTypeVariable = new _type_variable_info_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariableInfo"]('', null, null);
         if (baseType) {
             newBaseTypeVariable.resolution = baseType;
         }
@@ -2103,7 +2101,7 @@ class TypeChecker {
             }
         }
         const getResolution = candidate => {
-            if (!(candidate instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"])) {
+            if (!(candidate instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"])) {
                 return candidate;
             }
             if (candidate.canReadSubset == null || candidate.canWriteSuperset == null) {
@@ -2130,8 +2128,8 @@ class TypeChecker {
     }
     static _tryMergeTypeVariable(base, onto) {
         const [primitiveBase, primitiveOnto] = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(base.resolvedType(), onto.resolvedType());
-        if (primitiveBase instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
-            if (primitiveOnto instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
+        if (primitiveBase instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"]) {
+            if (primitiveOnto instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"]) {
                 // base, onto both variables.
                 const result = primitiveBase.variable.maybeMergeConstraints(primitiveOnto.variable);
                 if (result === false) {
@@ -2148,7 +2146,7 @@ class TypeChecker {
             }
             return base;
         }
-        else if (primitiveOnto instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
+        else if (primitiveOnto instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"]) {
             // onto variable, base not.
             if (!primitiveOnto.variable.isValidResolutionCandidate(primitiveBase).result) {
                 return null;
@@ -2172,7 +2170,7 @@ class TypeChecker {
     }
     static _tryMergeConstraints(handleType, { type, direction }) {
         let [primitiveHandleType, primitiveConnectionType] = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(handleType.resolvedType(), type.resolvedType());
-        if (primitiveHandleType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
+        if (primitiveHandleType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"]) {
             while (primitiveConnectionType.isTypeContainer()) {
                 if (primitiveHandleType.variable.resolution != null
                     || primitiveHandleType.variable.canReadSubset != null
@@ -2183,7 +2181,7 @@ class TypeChecker {
                 // If this is an undifferentiated variable then we need to create structure to match against. That's
                 // allowed because this variable could represent anything, and it needs to represent this structure
                 // in order for type resolution to succeed.
-                const newVar = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _type_variable_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]('a', null, null));
+                const newVar = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newVariable(new _type_variable_info_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariableInfo"]('a', null, null));
                 if (primitiveConnectionType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["CollectionType"]) {
                     primitiveHandleType.variable.resolution = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newCollection(newVar);
                 }
@@ -2267,13 +2265,13 @@ class TypeChecker {
         const resolvedRight = right.type.resolvedType();
         const [leftType, rightType] = _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].unwrapPair(resolvedLeft, resolvedRight);
         // a variable is compatible with a set only if it is unconstrained.
-        if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"] && rightType.isTypeContainer()) {
+        if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"] && rightType.isTypeContainer()) {
             return !(leftType.variable.canReadSubset || leftType.variable.canWriteSuperset);
         }
-        if (rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"] && leftType.isTypeContainer()) {
+        if (rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"] && leftType.isTypeContainer()) {
             return !(rightType.variable.canReadSubset || rightType.variable.canWriteSuperset);
         }
-        if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"] || rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
+        if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"] || rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"]) {
             // TODO: everything should use this, eventually. Need to implement the
             // right functionality in Shapes first, though.
             return _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].canMergeConstraints(leftType, rightType);
@@ -2332,7 +2330,7 @@ class TypeChecker {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariable", function() { return TypeVariable; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariableInfo", function() { return TypeVariableInfo; });
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
@@ -2346,7 +2344,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class TypeVariable {
+class TypeVariableInfo {
     constructor(name, canWriteSuperset, canReadSubset) {
         this.name = name;
         this._canWriteSuperset = canWriteSuperset;
@@ -2428,7 +2426,7 @@ class TypeVariable {
     }
     isValidResolutionCandidate(value) {
         const elementType = value.resolvedType().getContainedType();
-        if (elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"] && elementType.variable === this) {
+        if (elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"] && elementType.variable === this) {
             return { result: false, detail: 'variable cannot resolve to collection of itself' };
         }
         return { result: true };
@@ -2439,7 +2437,7 @@ class TypeVariable {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(isValid.result, isValid.detail);
         let probe = value;
         while (probe) {
-            if (!(probe instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"])) {
+            if (!(probe instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"])) {
                 break;
             }
             if (probe.variable === this) {
@@ -2454,7 +2452,7 @@ class TypeVariable {
     get canWriteSuperset() {
         if (this._resolution) {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._canWriteSuperset);
-            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
+            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"]) {
                 return this._resolution.variable.canWriteSuperset;
             }
             return null;
@@ -2468,7 +2466,7 @@ class TypeVariable {
     get canReadSubset() {
         if (this._resolution) {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._canReadSubset);
-            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
+            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"]) {
                 return this._resolution.variable.canReadSubset;
             }
             return null;
@@ -2517,13 +2515,13 @@ class TypeVariable {
         };
     }
     static fromLiteral(data) {
-        return new TypeVariable(data.name, data.canWriteSuperset ? _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(data.canReadSubset) : null);
+        return new TypeVariableInfo(data.name, data.canWriteSuperset ? _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].fromLiteral(data.canReadSubset) : null);
     }
     isResolved() {
         return (this._resolution && this._resolution.isResolved());
     }
 }
-//# sourceMappingURL=type-variable.js.map
+//# sourceMappingURL=type-variable-info.js.map
 
 /***/ }),
 /* 10 */
@@ -2861,7 +2859,7 @@ ${this._slotsToManifestString()}
         typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
     }
     static isTypeVar(reference) {
-        return (reference instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"]) && reference.hasProperty(r => r instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["VariableType"]);
+        return (reference instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"]) && reference.hasProperty(r => r instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]);
     }
     static mustMatch(reference) {
         return !(reference == undefined || Shape.isTypeVar(reference));
@@ -2880,7 +2878,7 @@ ${this._slotsToManifestString()}
             return true;
         }
         const [left, right] = _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].unwrapPair(shapeHandle.type, particleHandle.type);
-        if (left instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["VariableType"]) {
+        if (left instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]) {
             return [{ var: left, value: right, direction: shapeHandle.direction }];
         }
         else {
@@ -2954,7 +2952,7 @@ ${this._slotsToManifestString()}
             if (!constraint.var.variable.resolution) {
                 constraint.var.variable.resolution = constraint.value;
             }
-            else if (constraint.var.variable.resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["VariableType"]) {
+            else if (constraint.var.variable.resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]) {
                 // TODO(shans): revisit how this should be done,
                 // consider reusing tryMergeTypeVariablesWith(other).
                 if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"].processTypeList(constraint.var, [{
