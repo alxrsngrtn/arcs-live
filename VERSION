@@ -1,7 +1,5 @@
-commit 42e1ff9f7dc590b18d956ee2a7bcbb26f4997fa3
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Dec 4 13:30:38 2018 +1100
+commit 0ff35868af01fa3e72baf233f7849791d908ebec
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Dec 4 13:57:21 2018 +1100
 
-    Rename TypeVariable, Arc and Handle type and info classes (#2372)
-    
-    This also cleans up some the type test files.
+    Moves backwards-compatibility slot code from PEC to DomParticleBase (#2373)
