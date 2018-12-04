@@ -88,12 +88,17 @@ export class TypeVariable {
         }
         return null;
     }
+    isValidResolutionCandidate(value) {
+        const elementType = value.resolvedType().getContainedType();
+        if (elementType instanceof VariableType && elementType.variable === this) {
+            return { result: false, detail: 'variable cannot resolve to collection of itself' };
+        }
+        return { result: true };
+    }
     set resolution(value) {
         assert(!this._resolution);
-        const elementType = value.resolvedType().getContainedType();
-        if (elementType instanceof VariableType) {
-            assert(elementType.variable !== this, 'variable cannot resolve to collection of itself');
-        }
+        const isValid = this.isValidResolutionCandidate(value);
+        assert(isValid.result, isValid.detail);
         let probe = value;
         while (probe) {
             if (!(probe instanceof VariableType)) {

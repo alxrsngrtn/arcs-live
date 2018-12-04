@@ -23,6 +23,10 @@ export declare class TypeVariable {
     maybeMergeCanWriteSuperset(constraint: any): boolean;
     isSatisfiedBy(type: any): boolean;
     resolution: Type;
+    isValidResolutionCandidate(value: Type): {
+        result: boolean;
+        detail?: string;
+    };
     canWriteSuperset: any;
     canReadSubset: any;
     readonly hasConstraint: boolean;

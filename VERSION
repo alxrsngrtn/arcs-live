@@ -1,5 +1,5 @@
-commit 8e39e5efbd90ee26250317b36a118e53768c831f
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Dec 3 13:59:47 2018 -0800
+commit 1197c4a4c1358ff4c80b03f372cd144e780ffb64
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Dec 4 13:03:01 2018 +1100
 
-    use es2017 target to match tsconfig (#2366)
+    Checks for a valid resolution before assigning it (#2371)

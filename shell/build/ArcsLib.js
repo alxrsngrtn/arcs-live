@@ -2196,18 +2196,22 @@ class TypeChecker {
                 if (result === false) {
                     return null;
                 }
-                // Here onto grows, one level at a time,
-                // as we assign new resolution to primitiveOnto, which is a leaf.
                 primitiveOnto.variable.resolution = primitiveBase;
             }
             else {
                 // base variable, onto not.
+                if (!primitiveBase.variable.isValidResolutionCandidate(primitiveOnto).result) {
+                    return null;
+                }
                 primitiveBase.variable.resolution = primitiveOnto;
             }
             return base;
         }
         else if (primitiveOnto instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
             // onto variable, base not.
+            if (!primitiveOnto.variable.isValidResolutionCandidate(primitiveBase).result) {
+                return null;
+            }
             primitiveOnto.variable.resolution = primitiveBase;
             return onto;
         }
@@ -2481,12 +2485,17 @@ class TypeVariable {
         }
         return null;
     }
+    isValidResolutionCandidate(value) {
+        const elementType = value.resolvedType().getContainedType();
+        if (elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"] && elementType.variable === this) {
+            return { result: false, detail: 'variable cannot resolve to collection of itself' };
+        }
+        return { result: true };
+    }
     set resolution(value) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!this._resolution);
-        const elementType = value.resolvedType().getContainedType();
-        if (elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"]) {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(elementType.variable !== this, 'variable cannot resolve to collection of itself');
-        }
+        const isValid = this.isValidResolutionCandidate(value);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(isValid.result, isValid.detail);
         let probe = value;
         while (probe) {
             if (!(probe instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["VariableType"])) {
