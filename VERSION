@@ -1,5 +1,5 @@
-commit 0ff35868af01fa3e72baf233f7849791d908ebec
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Dec 4 13:57:21 2018 +1100
+commit 5c3e1be8333a85d6d52d545a075e32d0b89ee083
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Dec 4 11:05:18 2018 -0800
 
-    Moves backwards-compatibility slot code from PEC to DomParticleBase (#2373)
+    restore firebase-storage image repository (#2375)
