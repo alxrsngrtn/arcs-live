@@ -1,5 +1,5 @@
-commit 1197c4a4c1358ff4c80b03f372cd144e780ffb64
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Dec 4 13:03:01 2018 +1100
+commit 9fe343d99a1212e59e935f715fd068c360597c05
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Dec 4 13:10:42 2018 +1100
 
-    Checks for a valid resolution before assigning it (#2371)
+    Fix failing firebase manual test (#2370)
