@@ -131,7 +131,9 @@ export declare abstract class PECInnerPort extends APIPort {
     ArcCreateSlot(callback: (value: string) => void, arc: {}, transformationParticle: Particle, transformationSlotName: string, hostedParticleName: string, hostedSlotName: string, handleId: string): void;
     abstract onCreateSlotCallback(callback: (value: string) => void, hostedSlotId: string): any;
     abstract onInnerArcRender(transformationParticle: Particle, transformationSlotName: string, hostedSlotID: string, content: string): any;
-    ArcLoadRecipe(arc: {}, recipe: string, callback: (data: {}) => void): void;
+    ArcLoadRecipe(arc: {}, recipe: string, callback: (data: {
+        error?: string;
+    }) => void): void;
     RaiseSystemException(exception: {}, methodName: string, particleId: string): void;
     onDevToolsConnected(): void;
 }

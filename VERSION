@@ -1,7 +1,14 @@
-commit 2415d020edc8cfacac53e349aa0fbdf3082f2a7c
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Dec 6 07:49:20 2018 +1100
+commit f856b6fb7b12c50c1254c0c5c8d54bc0f6e21bc4
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Dec 6 07:57:49 2018 +1100
 
-    Rename Shape to InterfaceInfo, within the type system scope. (#2374)
+    Make innerArc.loadRecipe(...) return ids of provided slots. (#2384)
     
-    This does not rename shapes in manifests, or most of the corresponding shape-related code under the recipe dir.
+    Required to iteratively build recipes inside innerArcs on top of previously loaded ones.
+    
+    (To get there fully we'll also need to return ids of instantiated handles (i.e. create handles), but that's a story for another PR.)
+    
+    Short term this will unlock CollectionRenderer (#2236) to operate on mutable collections of items.
+    
+    Proposal in slightly more detail:
+    When loading a recipe, transformation particle gets back a ids of slots provided by particles in the recipe in the format 'particleLocalName.slotConnectionName' => id. This does require the loaded recipe to put local names on particles to receive the slot IDs back - which is required to disambiguate between multiple instances of the same particle in the most particle-developer friendly way.

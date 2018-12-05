@@ -25699,6 +25699,9 @@ class ParticleExecutionHost {
             }
             async onArcLoadRecipe(arc, recipe, callback) {
                 const manifest = await Manifest.parse(recipe, { loader: pec.arc.loader, fileName: '' });
+                const successResponse = {
+                    providedSlotIds: {}
+                };
                 let error = undefined;
                 // TODO(wkorman): Consider reporting an error or at least warning if
                 // there's more than one recipe since currently we silently ignore them.
@@ -25720,6 +25723,15 @@ class ParticleExecutionHost {
                         }
                         else {
                             recipe0 = resolvedRecipe;
+                        }
+                    }
+                    for (const slot of recipe0.slots) {
+                        slot.id = slot.id || `slotid-${pec.arc.generateID()}`;
+                        if (slot.sourceConnection) {
+                            const particlelocalName = slot.sourceConnection.particle.localName;
+                            if (particlelocalName) {
+                                successResponse.providedSlotIds[`${particlelocalName}.${slot.name}`] = slot.id;
+                            }
                         }
                     }
                     if (!error) {
@@ -25745,7 +25757,7 @@ class ParticleExecutionHost {
                 else {
                     error = 'No recipe defined';
                 }
-                this.SimpleCallback(callback, error);
+                this.SimpleCallback(callback, error ? { error } : successResponse);
             }
             onRaiseSystemException(exception, methodName, particleId) {
                 const particle = pec.arc.particleHandleMaps.get(particleId).spec.name;
@@ -26502,12 +26514,12 @@ class ParticleExecutionContext {
             },
             loadRecipe(recipe) {
                 // TODO: do we want to return a promise on completion?
-                return new Promise((resolve, reject) => pec.apiPort.ArcLoadRecipe(arcId, recipe, a => {
-                    if (a == undefined) {
-                        resolve();
+                return new Promise((resolve, reject) => pec.apiPort.ArcLoadRecipe(arcId, recipe, response => {
+                    if (response.error) {
+                        reject(response.error);
                     }
                     else {
-                        reject(a);
+                        resolve(response);
                     }
                 }));
             }
