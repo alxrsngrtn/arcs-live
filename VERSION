@@ -1,5 +1,5 @@
-commit 3a5e4e9bea716b540e67f51158aa0e774a44a917
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Dec 4 13:52:35 2018 -0800
+commit bb06b0f1c13455f49b925c26b54d2b4b26ed704f
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Dec 4 16:04:16 2018 -0800
 
-    use connectOrConstruct method in planificator (#2363)
+    marshal friends' arcs via SyntheticStorage (#2376)
