@@ -1,9 +1,13 @@
-commit 819dda288c061e5252a9f61c18b90958ac10a703
+commit 533cb3e3ec150bbfa54814bb93ac29b7d2f7b250
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Dec 4 17:19:37 2018 -0800
+Date:   Tue Dec 4 17:21:57 2018 -0800
 
-    Restaurant cleanup, add reviews (#2380)
+    Profile work 2 (#2381)
     
     * Restaurant work
     
-    * remove unused imports
+    * modernize profile ui
+    
+    * persist user param in url-bar
+    
+    * fix merge problem
