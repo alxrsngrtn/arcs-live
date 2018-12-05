@@ -1,11 +1,5 @@
-commit 06c0a67e4649ce7eadd64e09bad8a4344b097dc4
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Dec 4 17:23:38 2018 -0800
+commit 4cad9eb2d0be84a835e999010888c60bb95cc5bb
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Dec 5 15:18:23 2018 +1100
 
-    Claify arc spawning 4 (#2382)
-    
-    * Restaurant work
-    
-    * clarify arc spawning
-    
-    * fix merge problem
+    sigh: minor tidy up, add tsc command (#2379)
