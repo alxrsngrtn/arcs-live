@@ -1,13 +1,11 @@
-commit 533cb3e3ec150bbfa54814bb93ac29b7d2f7b250
+commit 06c0a67e4649ce7eadd64e09bad8a4344b097dc4
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Dec 4 17:21:57 2018 -0800
+Date:   Tue Dec 4 17:23:38 2018 -0800
 
-    Profile work 2 (#2381)
+    Claify arc spawning 4 (#2382)
     
     * Restaurant work
     
-    * modernize profile ui
-    
-    * persist user param in url-bar
+    * clarify arc spawning
     
     * fix merge problem
