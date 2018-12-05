@@ -1,5 +1,9 @@
-commit 8c054fa462262e811216e704b3c6158455affeee
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Tue Dec 4 16:15:31 2018 -0800
+commit 819dda288c061e5252a9f61c18b90958ac10a703
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Dec 4 17:19:37 2018 -0800
 
-    fix hardcoded arcs-project project-id in cloud setup (#2334)
+    Restaurant cleanup, add reviews (#2380)
+    
+    * Restaurant work
+    
+    * remove unused imports
