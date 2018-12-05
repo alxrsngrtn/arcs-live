@@ -1,5 +1,5 @@
-commit bb06b0f1c13455f49b925c26b54d2b4b26ed704f
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Dec 4 16:04:16 2018 -0800
+commit 8c054fa462262e811216e704b3c6158455affeee
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Tue Dec 4 16:15:31 2018 -0800
 
-    marshal friends' arcs via SyntheticStorage (#2376)
+    fix hardcoded arcs-project project-id in cloud setup (#2334)
