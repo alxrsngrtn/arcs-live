@@ -1,6 +1,6 @@
 import { Schema } from './schema.js';
 import { TypeVariableInfo } from './type-variable-info.js';
-import { Shape } from './shape.js';
+import { InterfaceInfo } from './interface-info.js';
 import { SlotInfo } from './slot-info.js';
 import { ArcInfo } from './synthetic-types.js';
 import { Id } from './id.js';
@@ -16,7 +16,7 @@ export declare abstract class Type {
     static newCollection(collection: Type): CollectionType;
     static newBigCollection(bigCollection: Type): BigCollectionType;
     static newRelation(relation: [Type]): RelationType;
-    static newInterface(iface: Shape): InterfaceType;
+    static newInterface(iface: InterfaceInfo): InterfaceType;
     static newSlot(slot: SlotInfo): SlotType;
     static newReference(reference: Type): ReferenceType;
     static newArcInfo(): ArcType;
@@ -162,8 +162,8 @@ export declare class RelationType extends Type {
     toPrettyString(): string;
 }
 export declare class InterfaceType extends Type {
-    readonly interfaceShape: Shape;
-    constructor(iface: Shape);
+    readonly interfaceInfo: InterfaceInfo;
+    constructor(iface: InterfaceInfo);
     readonly isInterface: boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): InterfaceType;
     _applyExistenceTypeTest(test: any): boolean;

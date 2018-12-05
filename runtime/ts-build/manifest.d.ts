@@ -10,7 +10,7 @@
 import { Recipe } from './recipe/recipe.js';
 import { ParticleSpec } from './particle-spec.js';
 import { Schema } from './schema.js';
-import { Shape } from './shape.js';
+import { InterfaceInfo } from './interface-info.js';
 import { Type, EntityType, InterfaceType } from './type.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
@@ -59,7 +59,7 @@ export declare class Manifest {
     readonly fileName: string;
     readonly stores: StorageProviderBase[];
     readonly allStores: StorageProviderBase[];
-    readonly shapes: Shape[];
+    readonly shapes: InterfaceInfo[];
     readonly meta: ManifestMeta;
     readonly resources: {};
     applyMeta(section: any): void;
@@ -80,7 +80,7 @@ export declare class Manifest {
         tags: string[];
         subtype: boolean;
     }): StorageProviderBase[];
-    findShapeByName(name: any): Shape;
+    findShapeByName(name: any): InterfaceInfo;
     findRecipesByVerb(verb: any): Recipe[];
     generateID(): string;
     static load(fileName: any, loader: any, options: any): Promise<any>;
@@ -95,7 +95,7 @@ export declare class Manifest {
         schema: Schema;
         shape?: undefined;
     } | {
-        shape: Shape;
+        shape: InterfaceInfo;
         schema?: undefined;
     };
     static _processStore(manifest: any, item: any, loader: any): Promise<void>;

@@ -9,7 +9,7 @@
  */
 import { Type } from './type.js';
 import { TypeChecker } from './recipe/type-checker.js';
-import { Shape } from './shape.js';
+import { InterfaceInfo } from './interface-info.js';
 import { assert } from '../../platform/assert-web.js';
 function asType(t) {
     return (t instanceof Type) ? t : Type.fromLiteral(t);
@@ -158,14 +158,11 @@ export class ParticleSpec {
         });
     }
     toInterface() {
-        return Type.newInterface(this._toShape());
-    }
-    _toShape() {
         // TODO: wat do?
-        assert(!this.slots.size, 'please implement slots toShape');
+        assert(!this.slots.size, 'please implement slots toInterface');
         const handles = this.model.args.map(({ type, name, direction }) => ({ type: asType(type), name, direction }));
         const slots = [];
-        return new Shape(this.name, handles, slots);
+        return Type.newInterface(new InterfaceInfo(this.name, handles, slots));
     }
     toString() {
         const results = [];

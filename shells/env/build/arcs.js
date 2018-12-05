@@ -308,7 +308,7 @@ class Arc {
     async _serializeHandle(handle, context, id) {
         const type = handle.type.getContainedType() || handle.type;
         if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"]) {
-            context.interfaces += type.interfaceShape.toString() + '\n';
+            context.interfaces += type.interfaceInfo.toString() + '\n';
         }
         const key = this.storageProviderFactory.parseStringAsKey(handle.storageKey);
         const tags = this.storeTags.get(handle) || [];
@@ -416,7 +416,7 @@ class Arc {
         particleSpecs.forEach(spec => {
             for (const connection of spec.connections) {
                 if (connection.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"]) {
-                    results.push(connection.type.interfaceShape.toString());
+                    results.push(connection.type.interfaceInfo.toString());
                 }
             }
             results.push(spec.toString());
@@ -602,7 +602,7 @@ ${this.activeRecipe.toString()}`;
                 if (recipeHandle.immediateValue) {
                     const particleSpec = recipeHandle.immediateValue;
                     const type = recipeHandle.type;
-                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"] && type.interfaceShape.particleMatches(particleSpec));
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"] && type.interfaceInfo.particleMatches(particleSpec));
                     const particleClone = particleSpec.clone().toLiteral();
                     particleClone.id = newStore.id;
                     // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
@@ -728,10 +728,10 @@ ${this.activeRecipe.toString()}`;
         else if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"]) {
             return type.entitySchema.name;
         }
-        else if (type.isShape) {
-            // TODO we need to fix this too, otherwise all handles of shape type will
+        else if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceType"]) {
+            // TODO we need to fix this too, otherwise all handles of interface type will
             // be of the 'same type' when searching by type.
-            return type.shapeShape;
+            return type.interfaceInfo;
         }
         else if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"] && type.isResolved()) {
             return Arc._typeToKey(type.resolvedType());
@@ -856,7 +856,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleType", function() { return HandleType; });
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
 /* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7);
-/* harmony import */ var _shape_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
+/* harmony import */ var _interface_info_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
 /* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6);
 /* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(15);
@@ -921,7 +921,7 @@ class Type {
             case 'Relation':
                 return new RelationType(literal.data.map(t => Type.fromLiteral(t)));
             case 'Interface':
-                return new InterfaceType(_shape_js__WEBPACK_IMPORTED_MODULE_2__["Shape"].fromLiteral(literal.data));
+                return new InterfaceType(_interface_info_js__WEBPACK_IMPORTED_MODULE_2__["InterfaceInfo"].fromLiteral(literal.data));
             case 'Slot':
                 return new SlotType(_slot_info_js__WEBPACK_IMPORTED_MODULE_3__["SlotInfo"].fromLiteral(literal.data));
             case 'Reference':
@@ -1336,53 +1336,53 @@ class RelationType extends Type {
 class InterfaceType extends Type {
     constructor(iface) {
         super('Interface');
-        this.interfaceShape = iface;
+        this.interfaceInfo = iface;
     }
     get isInterface() {
         return true;
     }
     mergeTypeVariablesByName(variableMap) {
-        const shape = this.interfaceShape.clone(new Map());
-        shape.mergeTypeVariablesByName(variableMap);
+        const interfaceInfo = this.interfaceInfo.clone(new Map());
+        interfaceInfo.mergeTypeVariablesByName(variableMap);
         // TODO: only build a new type when a variable is modified
-        return new InterfaceType(shape);
+        return new InterfaceType(interfaceInfo);
     }
     _applyExistenceTypeTest(test) {
-        return this.interfaceShape._applyExistenceTypeTest(test);
+        return this.interfaceInfo._applyExistenceTypeTest(test);
     }
     resolvedType() {
-        return new InterfaceType(this.interfaceShape.resolvedType());
+        return new InterfaceType(this.interfaceInfo.resolvedType());
     }
     _canEnsureResolved() {
-        return this.interfaceShape.canEnsureResolved();
+        return this.interfaceInfo.canEnsureResolved();
     }
     maybeEnsureResolved() {
-        return this.interfaceShape.maybeEnsureResolved();
+        return this.interfaceInfo.maybeEnsureResolved();
     }
     get canWriteSuperset() {
-        return new InterfaceType(this.interfaceShape.canWriteSuperset);
+        return new InterfaceType(this.interfaceInfo.canWriteSuperset);
     }
     get canReadSubset() {
-        return new InterfaceType(this.interfaceShape.canReadSubset);
+        return new InterfaceType(this.interfaceInfo.canReadSubset);
     }
     _isMoreSpecificThan(type) {
-        return this.interfaceShape.isMoreSpecificThan(type.interfaceShape);
+        return this.interfaceInfo.isMoreSpecificThan(type.interfaceInfo);
     }
     _clone(variableMap) {
-        const data = this.interfaceShape.clone(variableMap).toLiteral();
+        const data = this.interfaceInfo.clone(variableMap).toLiteral();
         return Type.fromLiteral({ tag: this.tag, data });
     }
     _cloneWithResolutions(variableMap) {
-        return new InterfaceType(this.interfaceShape._cloneWithResolutions(variableMap));
+        return new InterfaceType(this.interfaceInfo._cloneWithResolutions(variableMap));
     }
     toLiteral() {
-        return { tag: this.tag, data: this.interfaceShape.toLiteral() };
+        return { tag: this.tag, data: this.interfaceInfo.toLiteral() };
     }
     toString(options = undefined) {
-        return this.interfaceShape.name;
+        return this.interfaceInfo.name;
     }
     toPrettyString() {
-        return this.interfaceShape.toPrettyString();
+        return this.interfaceInfo.toPrettyString();
     }
 }
 class SlotType extends Type {
@@ -2012,7 +2012,7 @@ class TypeChecker {
             return onto;
         }
         else if (primitiveBase instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"] && primitiveOnto instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"]) {
-            const result = primitiveBase.interfaceShape.tryMergeTypeVariablesWith(primitiveOnto.interfaceShape);
+            const result = primitiveBase.interfaceInfo.tryMergeTypeVariablesWith(primitiveOnto.interfaceInfo);
             if (result == null) {
                 return null;
             }
@@ -2148,7 +2148,7 @@ class TypeChecker {
         // TODO: we need a generic way to evaluate type compatibility
         //       shapes + entities + etc
         if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"] && rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"]) {
-            if (leftType.interfaceShape.equals(rightType.interfaceShape)) {
+            if (leftType.interfaceInfo.equals(rightType.interfaceInfo)) {
                 return true;
             }
         }
@@ -2978,7 +2978,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleSpec", function() { return ParticleSpec; });
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
-/* harmony import */ var _shape_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
+/* harmony import */ var _interface_info_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3);
 /**
  * @license
@@ -3140,14 +3140,11 @@ class ParticleSpec {
         });
     }
     toInterface() {
-        return _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newInterface(this._toShape());
-    }
-    _toShape() {
         // TODO: wat do?
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(!this.slots.size, 'please implement slots toShape');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(!this.slots.size, 'please implement slots toInterface');
         const handles = this.model.args.map(({ type, name, direction }) => ({ type: asType(type), name, direction }));
         const slots = [];
-        return new _shape_js__WEBPACK_IMPORTED_MODULE_2__["Shape"](this.name, handles, slots);
+        return _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].newInterface(new _interface_info_js__WEBPACK_IMPORTED_MODULE_2__["InterfaceInfo"](this.name, handles, slots));
     }
     toString() {
         const results = [];
@@ -3233,7 +3230,7 @@ class ParticleSpec {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Shape", function() { return Shape; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InterfaceInfo", function() { return InterfaceInfo; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
@@ -3263,7 +3260,7 @@ function _toLiteral(member) {
 }
 const handleFields = ['type', 'name', 'direction'];
 const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
-class Shape {
+class InterfaceInfo {
     constructor(name, handles, slots) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(name);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handles !== undefined);
@@ -3274,21 +3271,21 @@ class Shape {
         this.typeVars = [];
         for (const handle of handles) {
             for (const field of handleFields) {
-                if (Shape.isTypeVar(handle[field])) {
+                if (InterfaceInfo.isTypeVar(handle[field])) {
                     this.typeVars.push({ object: handle, field });
                 }
             }
         }
         for (const slot of slots) {
             for (const field of slotFields) {
-                if (Shape.isTypeVar(slot[field])) {
+                if (InterfaceInfo.isTypeVar(slot[field])) {
                     this.typeVars.push({ object: slot, field });
                 }
             }
         }
     }
     toPrettyString() {
-        return 'SHAAAAPE';
+        return 'InterfaceInfo';
     }
     mergeTypeVariablesByName(variableMap) {
         this.typeVars.map(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
@@ -3335,8 +3332,8 @@ class Shape {
             .map(slot => `  ${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name ? slot.name + ' ' : ''}`)
             .join('\n');
     }
-    // TODO: Include name as a property of the shape and normalize this to just
-    // toString().
+    // TODO: Include name as a property of the interface and normalize this to just toString()
+    // TODO: Update when 'shape' keyword isn't used in manifests
     toString() {
         return `shape ${this.name}
 ${this._handlesToManifestString()}
@@ -3346,7 +3343,7 @@ ${this._slotsToManifestString()}
     static fromLiteral(data) {
         const handles = data.handles.map(handle => ({ type: _fromLiteral(handle.type), name: _fromLiteral(handle.name), direction: _fromLiteral(handle.direction) }));
         const slots = data.slots.map(slot => ({ name: _fromLiteral(slot.name), direction: _fromLiteral(slot.direction), isRequired: _fromLiteral(slot.isRequired), isSet: _fromLiteral(slot.isSet) }));
-        return new Shape(data.name, handles, slots);
+        return new InterfaceInfo(data.name, handles, slots);
     }
     toLiteral() {
         const handles = this.handles.map(handle => ({ type: _toLiteral(handle.type), name: _toLiteral(handle.name), direction: _toLiteral(handle.direction) }));
@@ -3356,7 +3353,7 @@ ${this._slotsToManifestString()}
     clone(variableMap) {
         const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
         const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new Shape(this.name, handles, slots);
+        return new InterfaceInfo(this.name, handles, slots);
     }
     cloneWithResolutions(variableMap) {
         return this._cloneWithResolutions(variableMap);
@@ -3364,7 +3361,7 @@ ${this._slotsToManifestString()}
     _cloneWithResolutions(variableMap) {
         const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
         const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new Shape(this.name, handles, slots);
+        return new InterfaceInfo(this.name, handles, slots);
     }
     canEnsureResolved() {
         for (const typeVar of this.typeVars) {
@@ -3434,7 +3431,7 @@ ${this._slotsToManifestString()}
             handleList.push({ name: handle.name || otherHandle.name, direction: handle.direction || otherHandle.direction, type: resultType });
         }
         const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new Shape(this.name, handleList, slots);
+        return new InterfaceInfo(this.name, handleList, slots);
     }
     resolvedType() {
         return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
@@ -3475,7 +3472,7 @@ ${this._slotsToManifestString()}
     }
     _cloneAndUpdate(update) {
         const copy = this.clone(new Map());
-        copy.typeVars.forEach(typeVar => Shape._updateTypeVar(typeVar, update));
+        copy.typeVars.forEach(typeVar => InterfaceInfo._updateTypeVar(typeVar, update));
         return copy;
     }
     static _updateTypeVar(typeVar, update) {
@@ -3485,57 +3482,57 @@ ${this._slotsToManifestString()}
         return (reference instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"]) && reference.hasProperty(r => r instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]);
     }
     static mustMatch(reference) {
-        return !(reference == undefined || Shape.isTypeVar(reference));
+        return !(reference == undefined || InterfaceInfo.isTypeVar(reference));
     }
-    static handlesMatch(shapeHandle, particleHandle) {
-        if (Shape.mustMatch(shapeHandle.name) &&
-            shapeHandle.name !== particleHandle.name) {
+    static handlesMatch(interfaceHandle, particleHandle) {
+        if (InterfaceInfo.mustMatch(interfaceHandle.name) &&
+            interfaceHandle.name !== particleHandle.name) {
             return false;
         }
         // TODO: direction subsetting?
-        if (Shape.mustMatch(shapeHandle.direction) &&
-            shapeHandle.direction !== particleHandle.direction) {
+        if (InterfaceInfo.mustMatch(interfaceHandle.direction) &&
+            interfaceHandle.direction !== particleHandle.direction) {
             return false;
         }
-        if (shapeHandle.type == undefined) {
+        if (interfaceHandle.type == undefined) {
             return true;
         }
-        const [left, right] = _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].unwrapPair(shapeHandle.type, particleHandle.type);
+        const [left, right] = _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].unwrapPair(interfaceHandle.type, particleHandle.type);
         if (left instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]) {
-            return [{ var: left, value: right, direction: shapeHandle.direction }];
+            return [{ var: left, value: right, direction: interfaceHandle.direction }];
         }
         else {
             return left.equals(right);
         }
     }
-    static slotsMatch(shapeSlot, particleSlot) {
-        if (Shape.mustMatch(shapeSlot.name) &&
-            shapeSlot.name !== particleSlot.name) {
+    static slotsMatch(interfaceSlot, particleSlot) {
+        if (InterfaceInfo.mustMatch(interfaceSlot.name) &&
+            interfaceSlot.name !== particleSlot.name) {
             return false;
         }
-        if (Shape.mustMatch(shapeSlot.direction) &&
-            shapeSlot.direction !== particleSlot.direction) {
+        if (InterfaceInfo.mustMatch(interfaceSlot.direction) &&
+            interfaceSlot.direction !== particleSlot.direction) {
             return false;
         }
-        if (Shape.mustMatch(shapeSlot.isRequired) &&
-            shapeSlot.isRequired !== particleSlot.isRequired) {
+        if (InterfaceInfo.mustMatch(interfaceSlot.isRequired) &&
+            interfaceSlot.isRequired !== particleSlot.isRequired) {
             return false;
         }
-        if (Shape.mustMatch(shapeSlot.isSet) &&
-            shapeSlot.isSet !== particleSlot.isSet) {
+        if (InterfaceInfo.mustMatch(interfaceSlot.isSet) &&
+            interfaceSlot.isSet !== particleSlot.isSet) {
             return false;
         }
         return true;
     }
     particleMatches(particleSpec) {
-        const shape = this.cloneWithResolutions(new Map());
-        return shape.restrictType(particleSpec) !== false;
+        const interfaceInfo = this.cloneWithResolutions(new Map());
+        return interfaceInfo.restrictType(particleSpec) !== false;
     }
     restrictType(particleSpec) {
         return this._restrictThis(particleSpec);
     }
     _restrictThis(particleSpec) {
-        const handleMatches = this.handles.map(handle => particleSpec.connections.map(connection => ({ match: connection, result: Shape.handlesMatch(handle, connection) }))
+        const handleMatches = this.handles.map(h => particleSpec.connections.map(c => ({ match: c, result: InterfaceInfo.handlesMatch(h, c) }))
             .filter(a => a.result !== false));
         const particleSlots = [];
         particleSpec.slots.forEach(consumedSlot => {
@@ -3544,7 +3541,7 @@ ${this._slotsToManifestString()}
                 particleSlots.push({ name: providedSlot.name, direction: 'provide', isRequired: false, isSet: providedSlot.isSet });
             });
         });
-        let slotMatches = this.slots.map(slot => particleSlots.filter(particleSlot => Shape.slotsMatch(slot, particleSlot)));
+        let slotMatches = this.slots.map(slot => particleSlots.filter(particleSlot => InterfaceInfo.slotsMatch(slot, particleSlot)));
         slotMatches = slotMatches.map(matchList => matchList.map(slot => ({ match: slot, result: true })));
         const exclusions = [];
         // TODO: this probably doesn't deal with multiple match options.
@@ -3591,7 +3588,7 @@ ${this._slotsToManifestString()}
         return this;
     }
 }
-//# sourceMappingURL=shape.js.map
+//# sourceMappingURL=interface-info.js.map
 
 /***/ }),
 /* 14 */
@@ -7157,7 +7154,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12);
 /* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5);
 /* harmony import */ var _recipe_search_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(43);
-/* harmony import */ var _shape_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(13);
+/* harmony import */ var _interface_info_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(13);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(4);
 /* harmony import */ var _recipe_util_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(39);
 /* harmony import */ var _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(46);
@@ -7261,6 +7258,7 @@ class Manifest {
         this._particles = {};
         this._schemas = {};
         this._stores = [];
+        // TODO: rename _shapes when 'shape' isn't used as a keyword in manifests
         this._shapes = [];
         this.storeTags = new Map();
         this._fileName = null;
@@ -7790,7 +7788,7 @@ ${e.message}
             });
         }
         // TODO: move shape to recipe/ and add shape builder?
-        const shape = new _shape_js__WEBPACK_IMPORTED_MODULE_8__["Shape"](shapeItem.name, handles, slots);
+        const shape = new _interface_info_js__WEBPACK_IMPORTED_MODULE_8__["InterfaceInfo"](shapeItem.name, handles, slots);
         manifest._shapes.push(shape);
     }
     static async _processRecipe(manifest, recipeItem, loader) {
@@ -76213,7 +76211,7 @@ class RecipeUtil {
     static constructImmediateValueHandle(connection, particleSpec, id) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(connection.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["InterfaceType"]);
         if (!(connection.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["InterfaceType"]) ||
-            !connection.type.interfaceShape.restrictType(particleSpec)) {
+            !connection.type.interfaceInfo.restrictType(particleSpec)) {
             // Type of the connection does not match the ParticleSpec.
             return null;
         }
@@ -81569,7 +81567,7 @@ class FindHostedParticle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_M
                 for (const particle of arc.context.particles) {
                     // This is what shape.particleMatches() does, but we also do
                     // canEnsureResolved at the end:
-                    const shapeClone = iface.interfaceShape.cloneWithResolutions(new Map());
+                    const shapeClone = iface.interfaceInfo.cloneWithResolutions(new Map());
                     // If particle doesn't match the requested shape.
                     if (shapeClone.restrictType(particle) === false)
                         continue;

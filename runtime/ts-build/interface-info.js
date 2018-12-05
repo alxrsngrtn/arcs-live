@@ -24,7 +24,7 @@ function _toLiteral(member) {
 }
 const handleFields = ['type', 'name', 'direction'];
 const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
-export class Shape {
+export class InterfaceInfo {
     constructor(name, handles, slots) {
         assert(name);
         assert(handles !== undefined);
@@ -35,21 +35,21 @@ export class Shape {
         this.typeVars = [];
         for (const handle of handles) {
             for (const field of handleFields) {
-                if (Shape.isTypeVar(handle[field])) {
+                if (InterfaceInfo.isTypeVar(handle[field])) {
                     this.typeVars.push({ object: handle, field });
                 }
             }
         }
         for (const slot of slots) {
             for (const field of slotFields) {
-                if (Shape.isTypeVar(slot[field])) {
+                if (InterfaceInfo.isTypeVar(slot[field])) {
                     this.typeVars.push({ object: slot, field });
                 }
             }
         }
     }
     toPrettyString() {
-        return 'SHAAAAPE';
+        return 'InterfaceInfo';
     }
     mergeTypeVariablesByName(variableMap) {
         this.typeVars.map(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
@@ -96,8 +96,8 @@ export class Shape {
             .map(slot => `  ${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name ? slot.name + ' ' : ''}`)
             .join('\n');
     }
-    // TODO: Include name as a property of the shape and normalize this to just
-    // toString().
+    // TODO: Include name as a property of the interface and normalize this to just toString()
+    // TODO: Update when 'shape' keyword isn't used in manifests
     toString() {
         return `shape ${this.name}
 ${this._handlesToManifestString()}
@@ -107,7 +107,7 @@ ${this._slotsToManifestString()}
     static fromLiteral(data) {
         const handles = data.handles.map(handle => ({ type: _fromLiteral(handle.type), name: _fromLiteral(handle.name), direction: _fromLiteral(handle.direction) }));
         const slots = data.slots.map(slot => ({ name: _fromLiteral(slot.name), direction: _fromLiteral(slot.direction), isRequired: _fromLiteral(slot.isRequired), isSet: _fromLiteral(slot.isSet) }));
-        return new Shape(data.name, handles, slots);
+        return new InterfaceInfo(data.name, handles, slots);
     }
     toLiteral() {
         const handles = this.handles.map(handle => ({ type: _toLiteral(handle.type), name: _toLiteral(handle.name), direction: _toLiteral(handle.direction) }));
@@ -117,7 +117,7 @@ ${this._slotsToManifestString()}
     clone(variableMap) {
         const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
         const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new Shape(this.name, handles, slots);
+        return new InterfaceInfo(this.name, handles, slots);
     }
     cloneWithResolutions(variableMap) {
         return this._cloneWithResolutions(variableMap);
@@ -125,7 +125,7 @@ ${this._slotsToManifestString()}
     _cloneWithResolutions(variableMap) {
         const handles = this.handles.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
         const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new Shape(this.name, handles, slots);
+        return new InterfaceInfo(this.name, handles, slots);
     }
     canEnsureResolved() {
         for (const typeVar of this.typeVars) {
@@ -195,7 +195,7 @@ ${this._slotsToManifestString()}
             handleList.push({ name: handle.name || otherHandle.name, direction: handle.direction || otherHandle.direction, type: resultType });
         }
         const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new Shape(this.name, handleList, slots);
+        return new InterfaceInfo(this.name, handleList, slots);
     }
     resolvedType() {
         return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
@@ -236,7 +236,7 @@ ${this._slotsToManifestString()}
     }
     _cloneAndUpdate(update) {
         const copy = this.clone(new Map());
-        copy.typeVars.forEach(typeVar => Shape._updateTypeVar(typeVar, update));
+        copy.typeVars.forEach(typeVar => InterfaceInfo._updateTypeVar(typeVar, update));
         return copy;
     }
     static _updateTypeVar(typeVar, update) {
@@ -246,57 +246,57 @@ ${this._slotsToManifestString()}
         return (reference instanceof Type) && reference.hasProperty(r => r instanceof TypeVariable);
     }
     static mustMatch(reference) {
-        return !(reference == undefined || Shape.isTypeVar(reference));
+        return !(reference == undefined || InterfaceInfo.isTypeVar(reference));
     }
-    static handlesMatch(shapeHandle, particleHandle) {
-        if (Shape.mustMatch(shapeHandle.name) &&
-            shapeHandle.name !== particleHandle.name) {
+    static handlesMatch(interfaceHandle, particleHandle) {
+        if (InterfaceInfo.mustMatch(interfaceHandle.name) &&
+            interfaceHandle.name !== particleHandle.name) {
             return false;
         }
         // TODO: direction subsetting?
-        if (Shape.mustMatch(shapeHandle.direction) &&
-            shapeHandle.direction !== particleHandle.direction) {
+        if (InterfaceInfo.mustMatch(interfaceHandle.direction) &&
+            interfaceHandle.direction !== particleHandle.direction) {
             return false;
         }
-        if (shapeHandle.type == undefined) {
+        if (interfaceHandle.type == undefined) {
             return true;
         }
-        const [left, right] = Type.unwrapPair(shapeHandle.type, particleHandle.type);
+        const [left, right] = Type.unwrapPair(interfaceHandle.type, particleHandle.type);
         if (left instanceof TypeVariable) {
-            return [{ var: left, value: right, direction: shapeHandle.direction }];
+            return [{ var: left, value: right, direction: interfaceHandle.direction }];
         }
         else {
             return left.equals(right);
         }
     }
-    static slotsMatch(shapeSlot, particleSlot) {
-        if (Shape.mustMatch(shapeSlot.name) &&
-            shapeSlot.name !== particleSlot.name) {
+    static slotsMatch(interfaceSlot, particleSlot) {
+        if (InterfaceInfo.mustMatch(interfaceSlot.name) &&
+            interfaceSlot.name !== particleSlot.name) {
             return false;
         }
-        if (Shape.mustMatch(shapeSlot.direction) &&
-            shapeSlot.direction !== particleSlot.direction) {
+        if (InterfaceInfo.mustMatch(interfaceSlot.direction) &&
+            interfaceSlot.direction !== particleSlot.direction) {
             return false;
         }
-        if (Shape.mustMatch(shapeSlot.isRequired) &&
-            shapeSlot.isRequired !== particleSlot.isRequired) {
+        if (InterfaceInfo.mustMatch(interfaceSlot.isRequired) &&
+            interfaceSlot.isRequired !== particleSlot.isRequired) {
             return false;
         }
-        if (Shape.mustMatch(shapeSlot.isSet) &&
-            shapeSlot.isSet !== particleSlot.isSet) {
+        if (InterfaceInfo.mustMatch(interfaceSlot.isSet) &&
+            interfaceSlot.isSet !== particleSlot.isSet) {
             return false;
         }
         return true;
     }
     particleMatches(particleSpec) {
-        const shape = this.cloneWithResolutions(new Map());
-        return shape.restrictType(particleSpec) !== false;
+        const interfaceInfo = this.cloneWithResolutions(new Map());
+        return interfaceInfo.restrictType(particleSpec) !== false;
     }
     restrictType(particleSpec) {
         return this._restrictThis(particleSpec);
     }
     _restrictThis(particleSpec) {
-        const handleMatches = this.handles.map(handle => particleSpec.connections.map(connection => ({ match: connection, result: Shape.handlesMatch(handle, connection) }))
+        const handleMatches = this.handles.map(h => particleSpec.connections.map(c => ({ match: c, result: InterfaceInfo.handlesMatch(h, c) }))
             .filter(a => a.result !== false));
         const particleSlots = [];
         particleSpec.slots.forEach(consumedSlot => {
@@ -305,7 +305,7 @@ ${this._slotsToManifestString()}
                 particleSlots.push({ name: providedSlot.name, direction: 'provide', isRequired: false, isSet: providedSlot.isSet });
             });
         });
-        let slotMatches = this.slots.map(slot => particleSlots.filter(particleSlot => Shape.slotsMatch(slot, particleSlot)));
+        let slotMatches = this.slots.map(slot => particleSlots.filter(particleSlot => InterfaceInfo.slotsMatch(slot, particleSlot)));
         slotMatches = slotMatches.map(matchList => matchList.map(slot => ({ match: slot, result: true })));
         const exclusions = [];
         // TODO: this probably doesn't deal with multiple match options.
@@ -352,4 +352,4 @@ ${this._slotsToManifestString()}
         return this;
     }
 }
-//# sourceMappingURL=shape.js.map
+//# sourceMappingURL=interface-info.js.map

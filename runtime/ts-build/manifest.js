@@ -15,7 +15,7 @@ import { Handle } from './recipe/handle.js';
 import { ParticleSpec } from './particle-spec.js';
 import { Schema } from './schema.js';
 import { Search } from './recipe/search.js';
-import { Shape } from './shape.js';
+import { InterfaceInfo } from './interface-info.js';
 import { Type, EntityType, CollectionType, BigCollectionType, InterfaceType } from './type.js';
 import { compareComparables } from './recipe/util.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
@@ -92,6 +92,7 @@ export class Manifest {
         this._particles = {};
         this._schemas = {};
         this._stores = [];
+        // TODO: rename _shapes when 'shape' isn't used as a keyword in manifests
         this._shapes = [];
         this.storeTags = new Map();
         this._fileName = null;
@@ -621,7 +622,7 @@ ${e.message}
             });
         }
         // TODO: move shape to recipe/ and add shape builder?
-        const shape = new Shape(shapeItem.name, handles, slots);
+        const shape = new InterfaceInfo(shapeItem.name, handles, slots);
         manifest._shapes.push(shape);
     }
     static async _processRecipe(manifest, recipeItem, loader) {

@@ -322,7 +322,7 @@ export class RecipeUtil {
     static constructImmediateValueHandle(connection, particleSpec, id) {
         assert(connection.type instanceof InterfaceType);
         if (!(connection.type instanceof InterfaceType) ||
-            !connection.type.interfaceShape.restrictType(particleSpec)) {
+            !connection.type.interfaceInfo.restrictType(particleSpec)) {
             // Type of the connection does not match the ParticleSpec.
             return null;
         }

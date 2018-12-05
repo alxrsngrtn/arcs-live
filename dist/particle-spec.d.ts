@@ -8,7 +8,6 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Type, TypeLiteral } from './type.js';
-import { Shape } from './shape.js';
 import { Direction } from './recipe/handle-connection.js';
 declare type SerializedConnectionSpec = {
     direction: Direction;
@@ -106,7 +105,6 @@ export declare class ParticleSpec {
     equals(other: any): boolean;
     validateDescription(description: any): void;
     toInterface(): import("./type.js").InterfaceType;
-    _toShape(): Shape;
     toString(): string;
     toManifestString(): string;
 }

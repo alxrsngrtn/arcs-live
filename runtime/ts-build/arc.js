@@ -111,7 +111,7 @@ export class Arc {
     async _serializeHandle(handle, context, id) {
         const type = handle.type.getContainedType() || handle.type;
         if (type instanceof InterfaceType) {
-            context.interfaces += type.interfaceShape.toString() + '\n';
+            context.interfaces += type.interfaceInfo.toString() + '\n';
         }
         const key = this.storageProviderFactory.parseStringAsKey(handle.storageKey);
         const tags = this.storeTags.get(handle) || [];
@@ -219,7 +219,7 @@ export class Arc {
         particleSpecs.forEach(spec => {
             for (const connection of spec.connections) {
                 if (connection.type instanceof InterfaceType) {
-                    results.push(connection.type.interfaceShape.toString());
+                    results.push(connection.type.interfaceInfo.toString());
                 }
             }
             results.push(spec.toString());
@@ -405,7 +405,7 @@ ${this.activeRecipe.toString()}`;
                 if (recipeHandle.immediateValue) {
                     const particleSpec = recipeHandle.immediateValue;
                     const type = recipeHandle.type;
-                    assert(type instanceof InterfaceType && type.interfaceShape.particleMatches(particleSpec));
+                    assert(type instanceof InterfaceType && type.interfaceInfo.particleMatches(particleSpec));
                     const particleClone = particleSpec.clone().toLiteral();
                     particleClone.id = newStore.id;
                     // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
@@ -531,10 +531,10 @@ ${this.activeRecipe.toString()}`;
         else if (type instanceof EntityType) {
             return type.entitySchema.name;
         }
-        else if (type.isShape) {
-            // TODO we need to fix this too, otherwise all handles of shape type will
+        else if (type instanceof InterfaceType) {
+            // TODO we need to fix this too, otherwise all handles of interface type will
             // be of the 'same type' when searching by type.
-            return type.shapeShape;
+            return type.interfaceInfo;
         }
         else if (type instanceof TypeVariable && type.isResolved()) {
             return Arc._typeToKey(type.resolvedType());

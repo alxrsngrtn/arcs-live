@@ -19,7 +19,7 @@ interface Slot {
     isRequired: boolean;
     isSet: boolean;
 }
-export declare class Shape {
+export declare class InterfaceInfo {
     name: string;
     handles: Handle[];
     slots: Slot[];
@@ -27,14 +27,14 @@ export declare class Shape {
     constructor(name: string, handles: Handle[], slots: Slot[]);
     toPrettyString(): string;
     mergeTypeVariablesByName(variableMap: any): void;
-    readonly canReadSubset: Shape;
-    readonly canWriteSuperset: Shape;
+    readonly canReadSubset: InterfaceInfo;
+    readonly canWriteSuperset: InterfaceInfo;
     isMoreSpecificThan(other: any): boolean;
     _applyExistenceTypeTest(test: any): boolean;
     _handlesToManifestString(): string;
     _slotsToManifestString(): string;
     toString(): string;
-    static fromLiteral(data: any): Shape;
+    static fromLiteral(data: any): InterfaceInfo;
     toLiteral(): {
         name: string;
         handles: {
@@ -49,23 +49,23 @@ export declare class Shape {
             isSet: any;
         }[];
     };
-    clone(variableMap: any): Shape;
-    cloneWithResolutions(variableMap: any): Shape;
-    _cloneWithResolutions(variableMap: any): Shape;
+    clone(variableMap: any): InterfaceInfo;
+    cloneWithResolutions(variableMap: any): InterfaceInfo;
+    _cloneWithResolutions(variableMap: any): InterfaceInfo;
     canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
-    tryMergeTypeVariablesWith(other: any): Shape;
-    resolvedType(): Shape;
+    tryMergeTypeVariablesWith(other: any): InterfaceInfo;
+    resolvedType(): InterfaceInfo;
     equals(other: any): boolean;
     _equalHandle(handle: any, otherHandle: any): any;
     _equalSlot(slot: any, otherSlot: any): boolean;
     _equalItems(otherItems: any, items: any, compareItem: any): boolean;
-    _cloneAndUpdate(update: any): Shape;
+    _cloneAndUpdate(update: any): InterfaceInfo;
     static _updateTypeVar(typeVar: any, update: any): void;
     static isTypeVar(reference: any): any;
     static mustMatch(reference: any): boolean;
-    static handlesMatch(shapeHandle: any, particleHandle: any): any;
-    static slotsMatch(shapeSlot: any, particleSlot: any): boolean;
+    static handlesMatch(interfaceHandle: any, particleHandle: any): any;
+    static slotsMatch(interfaceSlot: any, particleSlot: any): boolean;
     particleMatches(particleSpec: any): boolean;
     restrictType(particleSpec: any): false | this;
     _restrictThis(particleSpec: any): false | this;

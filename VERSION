@@ -1,9 +1,7 @@
-commit 197316d3d57834d67e00d11987706a9a012570a5
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Dec 5 11:12:01 2018 -0800
+commit 2415d020edc8cfacac53e349aa0fbdf3082f2a7c
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Dec 6 07:49:20 2018 +1100
 
-    Fix server-side planning (#2385)
+    Rename Shape to InterfaceInfo, within the type system scope. (#2374)
     
-    - Adjust rollup to use commonjs due to an issue in Firebase
-      - Details: https://github.com/firebase/firebase-js-sdk/issues/1415
-    - Bump to latest version of Firebase (5.6.0), webpack and rollup.
+    This does not rename shapes in manifests, or most of the corresponding shape-related code under the recipe dir.
