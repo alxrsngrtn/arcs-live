@@ -1,9 +1,9 @@
-commit 76697c03db69f333fd938f0698ba440e30d2f0cc
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Dec 5 00:34:15 2018 -0800
+commit 197316d3d57834d67e00d11987706a9a012570a5
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Dec 5 11:12:01 2018 -0800
 
-    Example MVP PWA (#2348)
+    Fix server-side planning (#2385)
     
-    * Example MVP PWA
-    
-    * tweaks
+    - Adjust rollup to use commonjs due to an issue in Firebase
+      - Details: https://github.com/firebase/firebase-js-sdk/issues/1415
+    - Bump to latest version of Firebase (5.6.0), webpack and rollup.
