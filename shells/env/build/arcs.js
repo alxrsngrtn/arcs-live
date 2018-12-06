@@ -90,17 +90,17 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _runtime_ts_build_arc_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _runtime_ts_build_plan_planificator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(242);
-/* harmony import */ var _runtime_ts_build_slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(237);
-/* harmony import */ var _runtime_ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(226);
-/* harmony import */ var _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4);
-/* harmony import */ var _runtime_ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(33);
-/* harmony import */ var _runtime_ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(184);
-/* harmony import */ var _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(46);
-/* harmony import */ var _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(249);
-/* harmony import */ var _runtime_ts_build_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(176);
-/* harmony import */ var _runtime_firebase_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(255);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_arc_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(242);
+/* harmony import */ var _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(237);
+/* harmony import */ var _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(226);
+/* harmony import */ var _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4);
+/* harmony import */ var _build_runtime_manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(33);
+/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(184);
+/* harmony import */ var _build_runtime_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(46);
+/* harmony import */ var _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(249);
+/* harmony import */ var _build_runtime_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(176);
+/* harmony import */ var _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(255);
 /* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(256);
 /**
  * @license
@@ -127,18 +127,18 @@ __webpack_require__.r(__webpack_exports__);
 
 const Arcs = {
   version: '0.6',
-  Arc: _runtime_ts_build_arc_js__WEBPACK_IMPORTED_MODULE_0__["Arc"],
-  Manifest: _runtime_ts_build_manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"],
-  Planificator: _runtime_ts_build_plan_planificator_js__WEBPACK_IMPORTED_MODULE_1__["Planificator"],
-  SlotComposer: _runtime_ts_build_slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"],
-  SlotDomConsumer: _runtime_ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__["SlotDomConsumer"],
-  Type: _runtime_ts_build_type_js__WEBPACK_IMPORTED_MODULE_4__["Type"],
+  Arc: _build_runtime_arc_js__WEBPACK_IMPORTED_MODULE_0__["Arc"],
+  Manifest: _build_runtime_manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"],
+  Planificator: _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_1__["Planificator"],
+  SlotComposer: _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"],
+  SlotDomConsumer: _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__["SlotDomConsumer"],
+  Type: _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_4__["Type"],
   BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_11__["BrowserLoader"],
-  StorageProviderFactory: _runtime_ts_build_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_7__["StorageProviderFactory"],
-  ParticleExecutionContext: _runtime_ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_6__["ParticleExecutionContext"],
-  RecipeResolver: _runtime_ts_build_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_9__["RecipeResolver"],
-  KeyManager: _runtime_ts_build_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_8__["KeyManager"],
-  firebase: _runtime_firebase_js__WEBPACK_IMPORTED_MODULE_10__["firebase"]
+  StorageProviderFactory: _build_runtime_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_7__["StorageProviderFactory"],
+  ParticleExecutionContext: _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_6__["ParticleExecutionContext"],
+  RecipeResolver: _build_runtime_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_9__["RecipeResolver"],
+  KeyManager: _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_8__["KeyManager"],
+  firebase: _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_10__["firebase"]
 };
 
 // WebPack doesn't support `export` so make this object global
@@ -6987,7 +6987,7 @@ class DevtoolsForTests {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DevtoolsChannel", function() { return DevtoolsChannel; });
-/* harmony import */ var _runtime_ts_build_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(30);
+/* harmony import */ var _runtime_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(30);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -7001,7 +7001,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class DevtoolsChannel extends _runtime_ts_build_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__["AbstractDevtoolsChannel"] {
+class DevtoolsChannel extends _runtime_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__["AbstractDevtoolsChannel"] {
   constructor() {
     super();
     document.addEventListener('arcs-debug-in', e => this._handleMessage(e.detail));
@@ -16705,7 +16705,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Recipe", function() { return Recipe; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(34);
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(37);
 /* harmony import */ var _connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
 /* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(40);
 /* harmony import */ var _search_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(43);
@@ -17092,7 +17092,7 @@ class Recipe {
         return result;
     }
     static over(results, walker, strategy) {
-        return _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_2__["Strategizer"].over(results, walker, strategy);
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_2__["Strategizer"].over(results, walker, strategy);
     }
     _makeLocalNameMap() {
         const names = new Set();
@@ -76307,7 +76307,7 @@ class RecipeResolver {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ResolveRecipe", function() { return ResolveRecipe; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(178);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(36);
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(175);
@@ -76323,7 +76323,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class ResolveRecipe extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class ResolveRecipe extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const arc = this.arc;
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
@@ -76518,7 +76518,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WalkerTactic", function() { return WalkerTactic; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WalkerBase", function() { return WalkerBase; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -76557,7 +76557,7 @@ var WalkerTactic;
     WalkerTactic["Permuted"] = "permuted";
     WalkerTactic["Independent"] = "independent";
 })(WalkerTactic || (WalkerTactic = {}));
-class WalkerBase extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["StrategizerWalker"] {
+class WalkerBase extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["StrategizerWalker"] {
     constructor(tactic) {
         super();
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(tactic);
@@ -76649,7 +76649,7 @@ class WalkerBase extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1_
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MapSlots", function() { return MapSlots; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(178);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3);
@@ -76663,7 +76663,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class MapSlots extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class MapSlots extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const arc = this.arc;
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
@@ -78669,7 +78669,7 @@ class Particle {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
 /* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(193);
-/* harmony import */ var _ts_build_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(194);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(194);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -78688,7 +78688,7 @@ __webpack_require__.r(__webpack_exports__);
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
-class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__["XenStateMixin"])(_ts_build_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__["DomParticleBase"]) {
+class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__["XenStateMixin"])(_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__["DomParticleBase"]) {
   constructor() {
     super();
     // alias properties to remove `_`
@@ -79291,7 +79291,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 /* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(196);
 /**
  * @license
@@ -79404,7 +79404,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
           continue;
         }
         resolvedHostedParticle =
-            _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"].fromLiteral(JSON.parse(item.renderParticleSpec));
+            _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"].fromLiteral(JSON.parse(item.renderParticleSpec));
         // Re-map compatible handles and compute the connections specific
         // to this item's render particle.
         const listHandleName = 'list';
@@ -79684,7 +79684,7 @@ class JsonldToManifest {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StubLoader", function() { return StubLoader; });
-/* harmony import */ var _ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(187);
+/* harmony import */ var _loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(187);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -79701,7 +79701,7 @@ __webpack_require__.r(__webpack_exports__);
  * Value for '*' key can be specified for a response if the path did not match.
  * If '*' is not specified and path is not matched, Loader logic is invoked.
  */
-class StubLoader extends _ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
+class StubLoader extends _loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
   constructor(fileMap) {
     super();
     this._fileMap = fileMap;
@@ -79920,7 +79920,7 @@ class ArcPlannerInvoker {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planner", function() { return Planner; });
 /* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(203);
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
 /* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(204);
 /* harmony import */ var _platform_deviceinfo_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(216);
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(175);
@@ -79983,7 +79983,7 @@ class Planner {
         strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
         this._arc = arc;
         const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
-        this.strategizer = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategizer"](strategyImpls, [], ruleset);
+        this.strategizer = new _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategizer"](strategyImpls, [], ruleset);
     }
     // Specify a timeout value less than zero to disable timeouts.
     async plan(timeout, generations) {
@@ -80162,7 +80162,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Empty", function() { return Empty; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExperimentalPhased", function() { return ExperimentalPhased; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExperimentalLinear", function() { return ExperimentalLinear; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(205);
 /* harmony import */ var _assign_handles_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(206);
 /* harmony import */ var _init_population_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(207);
@@ -80197,9 +80197,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // tslint:disable-next-line: variable-name
-const Empty = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Ruleset"].Builder().build();
+const Empty = new _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Ruleset"].Builder().build();
 // tslint:disable-next-line: variable-name
-const ExperimentalPhased = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Ruleset"].Builder().order([
+const ExperimentalPhased = new _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Ruleset"].Builder().order([
     _init_population_js__WEBPACK_IMPORTED_MODULE_3__["InitPopulation"],
     _init_search_js__WEBPACK_IMPORTED_MODULE_9__["InitSearch"]
 ], _search_tokens_to_particles_js__WEBPACK_IMPORTED_MODULE_10__["SearchTokensToParticles"], [
@@ -80211,7 +80211,7 @@ const ExperimentalPhased = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MOD
     _match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_12__["MatchFreeHandlesToConnections"],
 ], _map_slots_js__WEBPACK_IMPORTED_MODULE_4__["MapSlots"], _create_description_handle_js__WEBPACK_IMPORTED_MODULE_8__["CreateDescriptionHandle"], _resolve_recipe_js__WEBPACK_IMPORTED_MODULE_13__["ResolveRecipe"]).build();
 // tslint:disable-next-line: variable-name
-const ExperimentalLinear = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Ruleset"].Builder().order(_init_population_js__WEBPACK_IMPORTED_MODULE_3__["InitPopulation"], _init_search_js__WEBPACK_IMPORTED_MODULE_9__["InitSearch"], _search_tokens_to_particles_js__WEBPACK_IMPORTED_MODULE_10__["SearchTokensToParticles"], _match_recipe_by_verb_js__WEBPACK_IMPORTED_MODULE_6__["MatchRecipeByVerb"], _match_particle_by_verb_js__WEBPACK_IMPORTED_MODULE_5__["MatchParticleByVerb"], _convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_1__["ConvertConstraintsToConnections"], _group_handle_connections_js__WEBPACK_IMPORTED_MODULE_11__["GroupHandleConnections"], _match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_12__["MatchFreeHandlesToConnections"], _add_missing_handles_js__WEBPACK_IMPORTED_MODULE_7__["AddMissingHandles"], _assign_handles_js__WEBPACK_IMPORTED_MODULE_2__["AssignHandles"], _map_slots_js__WEBPACK_IMPORTED_MODULE_4__["MapSlots"], _create_description_handle_js__WEBPACK_IMPORTED_MODULE_8__["CreateDescriptionHandle"], _resolve_recipe_js__WEBPACK_IMPORTED_MODULE_13__["ResolveRecipe"]).build();
+const ExperimentalLinear = new _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Ruleset"].Builder().order(_init_population_js__WEBPACK_IMPORTED_MODULE_3__["InitPopulation"], _init_search_js__WEBPACK_IMPORTED_MODULE_9__["InitSearch"], _search_tokens_to_particles_js__WEBPACK_IMPORTED_MODULE_10__["SearchTokensToParticles"], _match_recipe_by_verb_js__WEBPACK_IMPORTED_MODULE_6__["MatchRecipeByVerb"], _match_particle_by_verb_js__WEBPACK_IMPORTED_MODULE_5__["MatchParticleByVerb"], _convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_1__["ConvertConstraintsToConnections"], _group_handle_connections_js__WEBPACK_IMPORTED_MODULE_11__["GroupHandleConnections"], _match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_12__["MatchFreeHandlesToConnections"], _add_missing_handles_js__WEBPACK_IMPORTED_MODULE_7__["AddMissingHandles"], _assign_handles_js__WEBPACK_IMPORTED_MODULE_2__["AssignHandles"], _map_slots_js__WEBPACK_IMPORTED_MODULE_4__["MapSlots"], _create_description_handle_js__WEBPACK_IMPORTED_MODULE_8__["CreateDescriptionHandle"], _resolve_recipe_js__WEBPACK_IMPORTED_MODULE_13__["ResolveRecipe"]).build();
 //# sourceMappingURL=rulesets.js.map
 
 /***/ }),
@@ -80221,7 +80221,7 @@ const ExperimentalLinear = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MOD
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConvertConstraintsToConnections", function() { return ConvertConstraintsToConnections; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(178);
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(175);
@@ -80237,7 +80237,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     constructor(arc, args) {
         super(arc, args);
         this.modality = arc.pec.slotComposer ? arc.pec.slotComposer.modality : null;
@@ -80451,7 +80451,7 @@ class ConvertConstraintsToConnections extends _strategizer_strategizer_js__WEBPA
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AssignHandles", function() { return AssignHandles; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(178);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(36);
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(175);
@@ -80467,7 +80467,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class AssignHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const self = this;
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
@@ -80557,7 +80557,7 @@ class AssignHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InitPopulation", function() { return InitPopulation; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -80565,7 +80565,7 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-class InitPopulation extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class InitPopulation extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     constructor(arc, { contextual = false }) {
         super(arc, { contextual });
         this._contextual = contextual;
@@ -80619,7 +80619,7 @@ class InitPopulation extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODUL
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MatchParticleByVerb", function() { return MatchParticleByVerb; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(178);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -80631,7 +80631,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class MatchParticleByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class MatchParticleByVerb extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const arc = this.arc;
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
@@ -80663,7 +80663,7 @@ class MatchParticleByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MatchRecipeByVerb", function() { return MatchRecipeByVerb; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(178);
 /* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
@@ -80690,7 +80690,7 @@ __webpack_require__.r(__webpack_exports__);
 // Note that the recipe may have the slot pattern multiple times over, but
 // this strategy currently only connects the first instance of the pattern up
 // if there are multiple instances.
-class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class MatchRecipeByVerb extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const arc = this.arc;
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
@@ -80895,7 +80895,7 @@ class MatchRecipeByVerb extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddMissingHandles", function() { return AddMissingHandles; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(178);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -80907,7 +80907,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class AddMissingHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class AddMissingHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     // TODO: move generation to use an async generator.
     async generate(inputParams) {
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
@@ -80949,7 +80949,7 @@ class AddMissingHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CreateDescriptionHandle", function() { return CreateDescriptionHandle; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(178);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -80961,7 +80961,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class CreateDescriptionHandle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class CreateDescriptionHandle extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
             onHandleConnection(recipe, handleConnection) {
@@ -80990,7 +80990,7 @@ class CreateDescriptionHandle extends _strategizer_strategizer_js__WEBPACK_IMPOR
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InitSearch", function() { return InitSearch; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -81002,7 +81002,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class InitSearch extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class InitSearch extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     constructor(arc, { search }) {
         super(arc, { search });
         this._search = search;
@@ -81034,7 +81034,7 @@ class InitSearch extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SearchTokensToParticles", function() { return SearchTokensToParticles; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(36);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(178);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -81047,7 +81047,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategy"] {
+class SearchTokensToParticles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategy"] {
     constructor(arc, options) {
         super(arc, options);
         const thingByToken = {};
@@ -81165,7 +81165,7 @@ class SearchTokensToParticles extends _strategizer_strategizer_js__WEBPACK_IMPOR
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GroupHandleConnections", function() { return GroupHandleConnections; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(36);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(178);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -81178,7 +81178,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class GroupHandleConnections extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategy"] {
+class GroupHandleConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategy"] {
     constructor(arc, args) {
         super(arc, args);
         this._walker = new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"] {
@@ -81286,7 +81286,7 @@ class GroupHandleConnections extends _strategizer_strategizer_js__WEBPACK_IMPORT
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MatchFreeHandlesToConnections", function() { return MatchFreeHandlesToConnections; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(178);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(36);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -81302,7 +81302,7 @@ __webpack_require__.r(__webpack_exports__);
  * Match free handles (i.e. handles that aren't connected to any connections)
  * to connections.
  */
-class MatchFreeHandlesToConnections extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class MatchFreeHandlesToConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
             onHandle(recipe, handle) {
@@ -81357,7 +81357,7 @@ class DeviceInfo {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NameUnnamedConnections", function() { return NameUnnamedConnections; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(178);
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -81369,7 +81369,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class NameUnnamedConnections extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class NameUnnamedConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
             onHandleConnection(recipe, handleConnection) {
@@ -81406,7 +81406,7 @@ class NameUnnamedConnections extends _strategizer_strategizer_js__WEBPACK_IMPORT
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SearchTokensToHandles", function() { return SearchTokensToHandles; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(175);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(178);
@@ -81420,7 +81420,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class SearchTokensToHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class SearchTokensToHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const arc = this.arc;
         // Finds stores matching the provided token and compatible with the provided handle's type,
@@ -81471,7 +81471,7 @@ class SearchTokensToHandles extends _strategizer_strategizer_js__WEBPACK_IMPORTE
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CreateHandleGroup", function() { return CreateHandleGroup; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(178);
 /* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
@@ -81485,7 +81485,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class CreateHandleGroup extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class CreateHandleGroup extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
             onRecipe(recipe, result) {
@@ -81548,7 +81548,7 @@ class CreateHandleGroup extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MO
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FindHostedParticle", function() { return FindHostedParticle; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(178);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3);
@@ -81566,7 +81566,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class FindHostedParticle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class FindHostedParticle extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const arc = this.arc;
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
@@ -81609,7 +81609,7 @@ class FindHostedParticle extends _strategizer_strategizer_js__WEBPACK_IMPORTED_M
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CoalesceRecipes", function() { return CoalesceRecipes; });
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(36);
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(175);
 /* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(178);
@@ -81633,7 +81633,7 @@ __webpack_require__.r(__webpack_exports__);
 // be modified by any strategy apart from this one) by finding unresolved
 // use/? handle and finding a matching create/? handle in another recipe and
 // merging those.
-class CoalesceRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+class CoalesceRecipes extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     getResults(inputParams) {
         // Coalescing for terminal recipes that are either unresolved recipes or have no UI.
         return inputParams.terminal.filter(result => !result.result.isResolved() || result.result.slots.length === 0);
@@ -82033,7 +82033,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Suggestion", function() { return Suggestion; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(33);
-/* harmony import */ var _modality__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(225);
+/* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(225);
 /* harmony import */ var _relevance_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(223);
 /**
  * @license
@@ -82074,7 +82074,7 @@ class Suggestion {
         const modality = this.arc.pec.slotComposer && this.arc.pec.slotComposer.modality;
         if (modality && modality !== 'text') {
             this.descriptionByModality[modality] =
-                await description.getRecipeSuggestion(_modality__WEBPACK_IMPORTED_MODULE_2__["Modality"].forName(modality).descriptionFormatter);
+                await description.getRecipeSuggestion(_modality_js__WEBPACK_IMPORTED_MODULE_2__["Modality"].forName(modality).descriptionFormatter);
         }
     }
     isEquivalent(other) {
@@ -83295,7 +83295,7 @@ class SuggestDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MockSlotDomConsumer", function() { return MockSlotDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(226);
+/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(226);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -83310,7 +83310,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class MockSlotDomConsumer extends _ts_build_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"] {
+class MockSlotDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotDomConsumer"] {
   constructor(consumeConn) {
     super(consumeConn);
     this._content = {};
@@ -83730,7 +83730,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(33);
 /* harmony import */ var _arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(237);
-/* harmony import */ var _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(37);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(37);
 /* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(240);
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(48);
 /* harmony import */ var _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(205);
@@ -83772,7 +83772,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class RelevantContextRecipes extends _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategy"] {
+class RelevantContextRecipes extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategy"] {
     constructor(context, modality) {
         super();
         this._recipes = [];
@@ -83827,7 +83827,7 @@ class RecipeIndex {
             // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
             speculative: true
         });
-        const strategizer = new _strategizer_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"]([
+        const strategizer = new _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"]([
             new RelevantContextRecipes(context, modality),
             ...IndexStrategies.map(S => new S(arcStub))
         ], [], _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__["Empty"]);
@@ -86552,12 +86552,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrowserLoader", function() { return BrowserLoader; });
-/* harmony import */ var _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(187);
-/* harmony import */ var _runtime_ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(191);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(192);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(195);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(196);
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(246);
+/* harmony import */ var _build_runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(187);
+/* harmony import */ var _build_runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(191);
+/* harmony import */ var _build_runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(192);
+/* harmony import */ var _build_runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(195);
+/* harmony import */ var _build_runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(196);
+/* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(246);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -86579,7 +86579,7 @@ const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + stri
 
 const dumbCache = {};
 
-class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
+class BrowserLoader extends _build_runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
   constructor(urlMap) {
     super();
     this._urlMap = urlMap;
@@ -86626,7 +86626,7 @@ class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE
     };
     importScripts(path);
     delete self.defineParticle;
-    const logger = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__["logFactory"])(fileName.split('/').pop(), '#1faa00');
+    const logger = Object(_build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__["logFactory"])(fileName.split('/').pop(), '#1faa00');
     return this.unwrapParticle(result[0], logger);
   }
   mapParticleUrl(path) {
@@ -86644,11 +86644,11 @@ class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE
     // TODO(sjmiles): hack to plumb `fetch` into Particle space under node
     const _fetch = BrowserLoader.fetch || fetch;
     return particleWrapper({
-      Particle: _runtime_ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
-      DomParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
-      MultiplexerDomParticle: _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__["MultiplexerDomParticle"],
-      SimpleParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
-      TransformationDomParticle: _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__["TransformationDomParticle"],
+      Particle: _build_runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
+      DomParticle: _build_runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
+      MultiplexerDomParticle: _build_runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__["MultiplexerDomParticle"],
+      SimpleParticle: _build_runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
+      TransformationDomParticle: _build_runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__["TransformationDomParticle"],
       resolver,
       log,
       html,

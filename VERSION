@@ -1,14 +1,24 @@
-commit f856b6fb7b12c50c1254c0c5c8d54bc0f6e21bc4
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Dec 6 07:57:49 2018 +1100
+commit dc24d9931e976d86e897871ad8902be726b5030f
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Fri Dec 7 10:24:06 2018 +1100
 
-    Make innerArc.loadRecipe(...) return ids of provided slots. (#2384)
+    The Raulnarok PR of 2018 (#2389)
     
-    Required to iteratively build recipes inside innerArcs on top of previously loaded ones.
+    * Move non-shell source under src and build into build, allowing multiple
+    directories to contain .ts files.
+    Adds linking many files into build tree so imports work.
+    Adds the file tools/reducethislist listing all the files that get linked.
+    Much more refactoring will be needed to remove the need for linking, so this is
+    just a start.
     
-    (To get there fully we'll also need to return ids of instantiated handles (i.e. create handles), but that's a story for another PR.)
+    * Merge commit after merging ToT into the enormous Raulnarok PR.
     
-    Short term this will unlock CollectionRenderer (#2236) to operate on mutable collections of items.
+    * fixing accidental include of package.json and package-lock.json
     
-    Proposal in slightly more detail:
-    When loading a recipe, transformation particle gets back a ids of slots provided by particles in the recipe in the format 'particleLocalName.slotConnectionName' => id. This does require the loaded recipe to put local names on particles to receive the slot IDs back - which is required to disambiguate between multiple instances of the same particle in the most particle-developer friendly way.
+    * Fixed a few imports not caught except on Travis
+    
+    * Fixing a few more missed imports found only by Travis
+    
+    * Fixing a few things from Mick's review
+    
+    * One more tweak. Imports. It's imports all the way down.

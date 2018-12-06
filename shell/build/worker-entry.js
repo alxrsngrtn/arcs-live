@@ -90,7 +90,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _runtime_ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
 // @license
 // Copyright (c) 2017 Google Inc. All rights reserved.
@@ -109,7 +109,7 @@ self.onmessage = function(e) {
   self.onmessage = null;
   const {id, base} = e.data;
   //log('starting worker', id);
-  new _runtime_ts_build_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](e.ports[0], id, new _browser_loader_js__WEBPACK_IMPORTED_MODULE_1__["BrowserLoader"](base));
+  new _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__["ParticleExecutionContext"](e.ports[0], id, new _browser_loader_js__WEBPACK_IMPORTED_MODULE_1__["BrowserLoader"](base));
 };
 
 
@@ -6332,7 +6332,7 @@ class DevtoolsForTests {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DevtoolsChannel", function() { return DevtoolsChannel; });
-/* harmony import */ var _runtime_ts_build_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(29);
+/* harmony import */ var _runtime_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(29);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -6346,7 +6346,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class DevtoolsChannel extends _runtime_ts_build_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__["AbstractDevtoolsChannel"] {
+class DevtoolsChannel extends _runtime_debug_abstract_devtools_channel_js__WEBPACK_IMPORTED_MODULE_0__["AbstractDevtoolsChannel"] {
   constructor() {
     super();
     document.addEventListener('arcs-debug-in', e => this._handleMessage(e.detail));
@@ -7538,11 +7538,11 @@ module.exports = MersenneTwister;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrowserLoader", function() { return BrowserLoader; });
-/* harmony import */ var _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(38);
-/* harmony import */ var _runtime_ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(42);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(43);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(46);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(47);
+/* harmony import */ var _build_runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(38);
+/* harmony import */ var _build_runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(42);
+/* harmony import */ var _build_runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(43);
+/* harmony import */ var _build_runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(46);
+/* harmony import */ var _build_runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(47);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -7564,7 +7564,7 @@ const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + stri
 
 const dumbCache = {};
 
-class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
+class BrowserLoader extends _build_runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
   constructor(urlMap) {
     super();
     this._urlMap = urlMap;
@@ -7629,11 +7629,11 @@ class BrowserLoader extends _runtime_ts_build_loader_js__WEBPACK_IMPORTED_MODULE
     // TODO(sjmiles): hack to plumb `fetch` into Particle space under node
     const _fetch = BrowserLoader.fetch || fetch;
     return particleWrapper({
-      Particle: _runtime_ts_build_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
-      DomParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
-      MultiplexerDomParticle: _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__["MultiplexerDomParticle"],
-      SimpleParticle: _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
-      TransformationDomParticle: _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__["TransformationDomParticle"],
+      Particle: _build_runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
+      DomParticle: _build_runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
+      MultiplexerDomParticle: _build_runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__["MultiplexerDomParticle"],
+      SimpleParticle: _build_runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
+      TransformationDomParticle: _build_runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__["TransformationDomParticle"],
       resolver,
       log,
       html,
@@ -8009,7 +8009,7 @@ class Particle {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
 /* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(44);
-/* harmony import */ var _ts_build_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -8028,7 +8028,7 @@ __webpack_require__.r(__webpack_exports__);
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
-class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__["XenStateMixin"])(_ts_build_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__["DomParticleBase"]) {
+class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__["XenStateMixin"])(_dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__["DomParticleBase"]) {
   constructor() {
     super();
     // alias properties to remove `_`
@@ -8631,7 +8631,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
+/* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
 /* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(47);
 /**
  * @license
@@ -8744,7 +8744,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
           continue;
         }
         resolvedHostedParticle =
-            _ts_build_particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"].fromLiteral(JSON.parse(item.renderParticleSpec));
+            _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ParticleSpec"].fromLiteral(JSON.parse(item.renderParticleSpec));
         // Re-map compatible handles and compute the connections specific
         // to this item's render particle.
         const listHandleName = 'list';

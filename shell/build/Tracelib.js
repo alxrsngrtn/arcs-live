@@ -90,7 +90,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _build_tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -103,7 +103,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-window.Tracing = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__["Tracing"];
+window.Tracing = _build_tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__["Tracing"];
 
 
 /***/ }),
