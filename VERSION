@@ -1,24 +1,5 @@
-commit dc24d9931e976d86e897871ad8902be726b5030f
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Fri Dec 7 10:24:06 2018 +1100
+commit 8be90c4d791368d184edbc414961cff9159bf244
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Dec 7 10:43:55 2018 +1100
 
-    The Raulnarok PR of 2018 (#2389)
-    
-    * Move non-shell source under src and build into build, allowing multiple
-    directories to contain .ts files.
-    Adds linking many files into build tree so imports work.
-    Adds the file tools/reducethislist listing all the files that get linked.
-    Much more refactoring will be needed to remove the need for linking, so this is
-    just a start.
-    
-    * Merge commit after merging ToT into the enormous Raulnarok PR.
-    
-    * fixing accidental include of package.json and package-lock.json
-    
-    * Fixed a few imports not caught except on Travis
-    
-    * Fixing a few more missed imports found only by Travis
-    
-    * Fixing a few things from Mick's review
-    
-    * One more tweak. Imports. It's imports all the way down.
+    Updated for new file locations post-Raulnarok (#2383)
