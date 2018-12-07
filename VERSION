@@ -1,5 +1,5 @@
-commit 8be90c4d791368d184edbc414961cff9159bf244
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Dec 7 10:43:55 2018 +1100
+commit ffc77ef08c690328fce81de0e6fe8b7edb722526
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Dec 6 16:04:50 2018 -0800
 
-    Updated for new file locations post-Raulnarok (#2383)
+    Remove unused fetch files, [previously moved in 9288dae07cb6556ab28bc34e5b74b9827d88a725] (#2392)
