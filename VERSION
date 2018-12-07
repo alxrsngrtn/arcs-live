@@ -1,5 +1,9 @@
-commit ffc77ef08c690328fce81de0e6fe8b7edb722526
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Dec 6 16:04:50 2018 -0800
+commit eec07bd6d717f4b1dd50d86a989f3afd3e253481
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Dec 6 16:36:28 2018 -0800
 
-    Remove unused fetch files, [previously moved in 9288dae07cb6556ab28bc34e5b74b9827d88a725] (#2392)
+    update planificator url params in new shell (#2388)
+    
+    * update planificator url params in new shell
+    
+    * spawn context need user id is available
