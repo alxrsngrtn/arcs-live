@@ -1,7 +1,5 @@
-commit 4a1b00a535b59f61dfb14f3abebd374cd0929c73
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Fri Dec 7 13:46:50 2018 +1100
+commit 1e2a7ce4072f82f5d26335775aa163dadd35f839
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Dec 7 12:38:03 2018 -0800
 
-    Mismatched hard links are now replaced, rather than aborting the build. (#2395)
-    
-    Also removed noisy messages when making links.
+    remove hosted particle spec serialization hack from Suggestion (was fixed by #2300) (#2403)

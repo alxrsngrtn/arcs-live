@@ -82216,12 +82216,7 @@ class Suggestion {
                     plan = resolvedPlan;
                 }
             }
-            for (const store of manifest.stores) {
-                // If recipe has hosted particles, manifest will have stores with hosted
-                // particle specs. Moving these stores into the current arc's context.
-                // TODO: This is a hack, find a proper way of doing this.
-                arc.context._addStore(store, []);
-            }
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest.stores.length === 0, `Unexpected stores in suggestion manifest.`);
             return plan;
         }
         catch (e) {
