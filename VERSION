@@ -1,5 +1,5 @@
-commit bd6244fc7b4d446392a67246316077d976408509
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Dec 10 15:06:33 2018 +1100
+commit 6185252d84785b0627c35aef0f356004189bce93
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Dec 10 11:49:06 2018 -0800
 
-    Plumb ArcType into the shells environment (#2416)
+    port noto-emoji to particles/ (#2419)
