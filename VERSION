@@ -1,5 +1,9 @@
-commit 037da8950ba6e86da3cc35b0a7f26018e276fd89
+commit 9c6c65cda0964fb2167b4ca631c9b8416271ef16
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Dec 11 09:08:40 2018 +1100
+Date:   Tue Dec 11 09:36:50 2018 +1100
 
-    Restoring grammkit v0.6.3 with the updated SVG onclick behaviour (#2424)
+    Rename 'shape' to 'interface' in manifests. (#2425)
+    
+    There is still a Shape class in the recipe code, but that's a somewhat
+    different and internal concept used for matching recipes, so I've left
+    that as is.

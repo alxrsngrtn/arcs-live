@@ -2197,7 +2197,7 @@ class TypeChecker {
         }
         if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"] || rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"]) {
             // TODO: everything should use this, eventually. Need to implement the
-            // right functionality in Shapes first, though.
+            // right functionality in Interfaces first, though.
             return _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].canMergeConstraints(leftType, rightType);
         }
         if ((leftType === undefined) !== (rightType === undefined)) {
@@ -2213,7 +2213,7 @@ class TypeChecker {
             return true;
         }
         // TODO: we need a generic way to evaluate type compatibility
-        //       shapes + entities + etc
+        //       interfaces + entities + etc
         if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"] && rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"]) {
             if (leftType.interfaceInfo.equals(rightType.interfaceInfo)) {
                 return true;
@@ -2637,9 +2637,8 @@ class InterfaceInfo {
             .join('\n');
     }
     // TODO: Include name as a property of the interface and normalize this to just toString()
-    // TODO: Update when 'shape' keyword isn't used in manifests
     toString() {
-        return `shape ${this.name}
+        return `interface ${this.name}
 ${this._handlesToManifestString()}
 ${this._slotsToManifestString()}
 `;

@@ -212,19 +212,19 @@ export const parser = /*
               path,
             };
           },
-        peg$c33 = "shape",
-        peg$c34 = peg$literalExpectation("shape", false),
+        peg$c33 = "interface",
+        peg$c34 = peg$literalExpectation("interface", false),
         peg$c35 = "<",
         peg$c36 = peg$literalExpectation("<", false),
         peg$c37 = ">",
         peg$c38 = peg$literalExpectation(">", false),
         peg$c39 = function(name, typeVars, items) {
             return {
-              kind: 'shape',
+              kind: 'interface',
               location: location(),
               name,
-              args: optional(items, extractIndented, []).filter(item => item.kind == 'shape-argument'),
-              slots: optional(items, extractIndented, []).filter(item => item.kind == 'shape-slot'),
+              args: optional(items, extractIndented, []).filter(item => item.kind == 'interface-argument'),
+              slots: optional(items, extractIndented, []).filter(item => item.kind == 'interface-slot'),
             };
           },
         peg$c40 = "*",
@@ -237,10 +237,10 @@ export const parser = /*
               type = type[0]
             }
             if (direction == 'host') {
-              error(`Shape cannot have arguments with a 'host' direction.`);
+              error(`Interface cannot have arguments with a 'host' direction.`);
             }
             return {
-              kind: 'shape-argument',
+              kind: 'interface-argument',
               location: location(),
               direction,
               type,
@@ -257,7 +257,7 @@ export const parser = /*
         peg$c50 = peg$literalExpectation("set of", false),
         peg$c51 = function(isRequired, direction, isSet, name) {
             return {
-              kind: 'shape-slot',
+              kind: 'interface-slot',
               location: location(),
               name: optional(name, isRequired => name[1], null),
               isRequired: optional(isRequired, isRequired => isRequired[0] == 'must', false),
@@ -294,7 +294,7 @@ export const parser = /*
             verbs = optional(verbs, parsedOutput => parsedOutput[1], []);
             items = items ? extractIndented(items) : [];
             items.forEach(item => {
-              if (item.kind == 'interface') {
+              if (item.kind == 'particle-interface') {
                 if (/[A-Z]/.test(item.verb[0]) && item.verb != name) {
                   error(`Verb ${item.verb} must start with a lower case character or be same as particle name.`);
                 }
@@ -343,7 +343,7 @@ export const parser = /*
         peg$c69 = peg$literalExpectation(")", false),
         peg$c70 = function(verb, args) {
             return {
-              kind: 'interface',
+              kind: 'particle-interface',
               location: location(),
               verb,
               args: args || []
@@ -1305,7 +1305,7 @@ export const parser = /*
               if (s0 === peg$FAILED) {
                 s0 = peg$parseManifestStorage();
                 if (s0 === peg$FAILED) {
-                  s0 = peg$parseShape();
+                  s0 = peg$parseInterface();
                   if (s0 === peg$FAILED) {
                     s0 = peg$parseMeta();
                     if (s0 === peg$FAILED) {
@@ -2003,13 +2003,13 @@ export const parser = /*
       return s0;
     }
 
-    function peg$parseShape() {
+    function peg$parseInterface() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c33) {
+      if (input.substr(peg$currPos, 9) === peg$c33) {
         s1 = peg$c33;
-        peg$currPos += 5;
+        peg$currPos += 9;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c34); }
@@ -2092,7 +2092,7 @@ export const parser = /*
                   s9 = peg$currPos;
                   s10 = peg$parseSameIndent();
                   if (s10 !== peg$FAILED) {
-                    s11 = peg$parseShapeItem();
+                    s11 = peg$parseInterfaceItem();
                     if (s11 !== peg$FAILED) {
                       s10 = [s10, s11];
                       s9 = s10;
@@ -2109,7 +2109,7 @@ export const parser = /*
                     s9 = peg$currPos;
                     s10 = peg$parseSameIndent();
                     if (s10 !== peg$FAILED) {
-                      s11 = peg$parseShapeItem();
+                      s11 = peg$parseInterfaceItem();
                       if (s11 !== peg$FAILED) {
                         s10 = [s10, s11];
                         s9 = s10;
@@ -2177,18 +2177,18 @@ export const parser = /*
       return s0;
     }
 
-    function peg$parseShapeItem() {
+    function peg$parseInterfaceItem() {
       var s0;
 
-      s0 = peg$parseShapeSlot();
+      s0 = peg$parseInterfaceSlot();
       if (s0 === peg$FAILED) {
-        s0 = peg$parseShapeArgument();
+        s0 = peg$parseInterfaceArgument();
       }
 
       return s0;
     }
 
-    function peg$parseShapeArgument() {
+    function peg$parseInterfaceArgument() {
       var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
@@ -2266,7 +2266,7 @@ export const parser = /*
       return s0;
     }
 
-    function peg$parseShapeSlot() {
+    function peg$parseInterfaceSlot() {
       var s0, s1, s2, s3, s4, s5, s6;
 
       s0 = peg$currPos;
@@ -7592,9 +7592,9 @@ export const parser = /*
                   if (peg$silentFails === 0) { peg$fail(peg$c31); }
                 }
                 if (s1 === peg$FAILED) {
-                  if (input.substr(peg$currPos, 5) === peg$c33) {
+                  if (input.substr(peg$currPos, 9) === peg$c33) {
                     s1 = peg$c33;
-                    peg$currPos += 5;
+                    peg$currPos += 9;
                   } else {
                     s1 = peg$FAILED;
                     if (peg$silentFails === 0) { peg$fail(peg$c34); }

@@ -2291,7 +2291,7 @@ class TypeChecker {
         }
         if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"] || rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["TypeVariable"]) {
             // TODO: everything should use this, eventually. Need to implement the
-            // right functionality in Shapes first, though.
+            // right functionality in Interfaces first, though.
             return _type_js__WEBPACK_IMPORTED_MODULE_0__["Type"].canMergeConstraints(leftType, rightType);
         }
         if ((leftType === undefined) !== (rightType === undefined)) {
@@ -2307,7 +2307,7 @@ class TypeChecker {
             return true;
         }
         // TODO: we need a generic way to evaluate type compatibility
-        //       shapes + entities + etc
+        //       interfaces + entities + etc
         if (leftType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"] && rightType instanceof _type_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceType"]) {
             if (leftType.interfaceInfo.equals(rightType.interfaceInfo)) {
                 return true;
@@ -3236,9 +3236,8 @@ class InterfaceInfo {
             .join('\n');
     }
     // TODO: Include name as a property of the interface and normalize this to just toString()
-    // TODO: Update when 'shape' keyword isn't used in manifests
     toString() {
-        return `shape ${this.name}
+        return `interface ${this.name}
 ${this._handlesToManifestString()}
 ${this._slotsToManifestString()}
 `;
@@ -3674,8 +3673,7 @@ class Manifest {
         this._particles = {};
         this._schemas = {};
         this._stores = [];
-        // TODO: rename _shapes when 'shape' isn't used as a keyword in manifests
-        this._shapes = [];
+        this._interfaces = [];
         this.storeTags = new Map();
         this._fileName = null;
         this._storageProviderFactory = undefined;
@@ -3735,8 +3733,8 @@ class Manifest {
     get allStores() {
         return [...this._findAll(manifest => manifest._stores)];
     }
-    get shapes() {
-        return this._shapes;
+    get interfaces() {
+        return this._interfaces;
     }
     get meta() {
         return this._meta;
@@ -3793,9 +3791,9 @@ class Manifest {
         if (schema) {
             return new _type_js__WEBPACK_IMPORTED_MODULE_9__["EntityType"](schema);
         }
-        const shape = this.findShapeByName(name);
-        if (shape) {
-            return new _type_js__WEBPACK_IMPORTED_MODULE_9__["InterfaceType"](shape);
+        const iface = this.findInterfaceByName(name);
+        if (iface) {
+            return new _type_js__WEBPACK_IMPORTED_MODULE_9__["InterfaceType"](iface);
         }
         return null;
     }
@@ -3843,8 +3841,8 @@ class Manifest {
         // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
         return stores.filter(s => !!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__["Handle"].effectiveType(type, [{ type: s.type, direction: (s.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_9__["InterfaceType"]) ? 'host' : 'inout' }]));
     }
-    findShapeByName(name) {
-        return this._find(manifest => manifest._shapes.find(shape => shape.name === name));
+    findInterfaceByName(name) {
+        return this._find(manifest => manifest._interfaces.find(iface => iface.name === name));
     }
     findRecipesByVerb(verb) {
         return [...this._findAll(manifest => manifest._recipes.filter(recipe => recipe.verbs.includes(verb)))];
@@ -3976,7 +3974,7 @@ ${e.message}
             // similarly, resources may be referenced from other parts of the manifest.
             await processItems('resource', item => this._processResource(manifest, item));
             await processItems('schema', item => this._processSchema(manifest, item));
-            await processItems('shape', item => this._processShape(manifest, item));
+            await processItems('interface', item => this._processInterface(manifest, item));
             await processItems('particle', item => this._processParticle(manifest, item, loader));
             await processItems('store', item => this._processStore(manifest, item, loader));
             await processItems('recipe', item => this._processRecipe(manifest, item, loader));
@@ -4066,11 +4064,11 @@ ${e.message}
                         if (resolved.schema) {
                             node.model = new _type_js__WEBPACK_IMPORTED_MODULE_9__["EntityType"](resolved.schema);
                         }
-                        else if (resolved.shape) {
-                            node.model = new _type_js__WEBPACK_IMPORTED_MODULE_9__["InterfaceType"](resolved.shape);
+                        else if (resolved.iface) {
+                            node.model = new _type_js__WEBPACK_IMPORTED_MODULE_9__["InterfaceType"](resolved.iface);
                         }
                         else {
-                            throw new Error('Expected {shape} or {schema}');
+                            throw new Error('Expected {iface} or {schema}');
                         }
                         return;
                     }
@@ -4170,9 +4168,9 @@ ${e.message}
         manifest._particles[particleItem.name] = particleSpec;
     }
     // TODO: Move this to a generic pass over the AST and merge with resolveTypeName.
-    static _processShape(manifest, shapeItem) {
+    static _processInterface(manifest, interfaceItem) {
         const handles = [];
-        for (const arg of shapeItem.args) {
+        for (const arg of interfaceItem.args) {
             const handle = { name: undefined, type: undefined, direction: arg.direction };
             if (arg.name !== '*') {
                 handle.name = arg.name;
@@ -4183,7 +4181,7 @@ ${e.message}
             handles.push(handle);
         }
         const slots = [];
-        for (const slotItem of shapeItem.slots) {
+        for (const slotItem of interfaceItem.slots) {
             slots.push({
                 direction: slotItem.direction,
                 name: slotItem.name,
@@ -4191,9 +4189,9 @@ ${e.message}
                 isSet: slotItem.isSet
             });
         }
-        // TODO: move shape to recipe/ and add shape builder?
-        const shape = new _interface_info_js__WEBPACK_IMPORTED_MODULE_8__["InterfaceInfo"](shapeItem.name, handles, slots);
-        manifest._shapes.push(shape);
+        // TODO: move interface to recipe/ and add interface builder?
+        const ifaceInfo = new _interface_info_js__WEBPACK_IMPORTED_MODULE_8__["InterfaceInfo"](interfaceItem.name, handles, slots);
+        manifest._interfaces.push(ifaceInfo);
     }
     static async _processRecipe(manifest, recipeItem, loader) {
         // TODO: annotate other things too
@@ -4424,7 +4422,7 @@ ${e.message}
                     }
                     targetHandle = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_15__["RecipeUtil"].constructImmediateValueHandle(connection, hostedParticle, manifest.generateID());
                     if (!targetHandle) {
-                        throw new ManifestError(connectionItem.target.location, `Hosted particle '${hostedParticle.name}' does not match shape '${connection.name}'`);
+                        throw new ManifestError(connectionItem.target.location, `Hosted particle '${hostedParticle.name}' does not match interface '${connection.name}'`);
                     }
                 }
                 if (targetParticle) {
@@ -4496,9 +4494,9 @@ ${e.message}
         if (schema) {
             return { schema };
         }
-        const shape = this.findShapeByName(name);
-        if (shape) {
-            return { shape };
+        const iface = this.findInterfaceByName(name);
+        if (iface) {
+            return { iface };
         }
         return null;
     }
@@ -4897,19 +4895,19 @@ const parser = /*
               path,
             };
           },
-        peg$c33 = "shape",
-        peg$c34 = peg$literalExpectation("shape", false),
+        peg$c33 = "interface",
+        peg$c34 = peg$literalExpectation("interface", false),
         peg$c35 = "<",
         peg$c36 = peg$literalExpectation("<", false),
         peg$c37 = ">",
         peg$c38 = peg$literalExpectation(">", false),
         peg$c39 = function(name, typeVars, items) {
             return {
-              kind: 'shape',
+              kind: 'interface',
               location: location(),
               name,
-              args: optional(items, extractIndented, []).filter(item => item.kind == 'shape-argument'),
-              slots: optional(items, extractIndented, []).filter(item => item.kind == 'shape-slot'),
+              args: optional(items, extractIndented, []).filter(item => item.kind == 'interface-argument'),
+              slots: optional(items, extractIndented, []).filter(item => item.kind == 'interface-slot'),
             };
           },
         peg$c40 = "*",
@@ -4922,10 +4920,10 @@ const parser = /*
               type = type[0]
             }
             if (direction == 'host') {
-              error(`Shape cannot have arguments with a 'host' direction.`);
+              error(`Interface cannot have arguments with a 'host' direction.`);
             }
             return {
-              kind: 'shape-argument',
+              kind: 'interface-argument',
               location: location(),
               direction,
               type,
@@ -4942,7 +4940,7 @@ const parser = /*
         peg$c50 = peg$literalExpectation("set of", false),
         peg$c51 = function(isRequired, direction, isSet, name) {
             return {
-              kind: 'shape-slot',
+              kind: 'interface-slot',
               location: location(),
               name: optional(name, isRequired => name[1], null),
               isRequired: optional(isRequired, isRequired => isRequired[0] == 'must', false),
@@ -4979,7 +4977,7 @@ const parser = /*
             verbs = optional(verbs, parsedOutput => parsedOutput[1], []);
             items = items ? extractIndented(items) : [];
             items.forEach(item => {
-              if (item.kind == 'interface') {
+              if (item.kind == 'particle-interface') {
                 if (/[A-Z]/.test(item.verb[0]) && item.verb != name) {
                   error(`Verb ${item.verb} must start with a lower case character or be same as particle name.`);
                 }
@@ -5028,7 +5026,7 @@ const parser = /*
         peg$c69 = peg$literalExpectation(")", false),
         peg$c70 = function(verb, args) {
             return {
-              kind: 'interface',
+              kind: 'particle-interface',
               location: location(),
               verb,
               args: args || []
@@ -5990,7 +5988,7 @@ const parser = /*
               if (s0 === peg$FAILED) {
                 s0 = peg$parseManifestStorage();
                 if (s0 === peg$FAILED) {
-                  s0 = peg$parseShape();
+                  s0 = peg$parseInterface();
                   if (s0 === peg$FAILED) {
                     s0 = peg$parseMeta();
                     if (s0 === peg$FAILED) {
@@ -6688,13 +6686,13 @@ const parser = /*
       return s0;
     }
 
-    function peg$parseShape() {
+    function peg$parseInterface() {
       var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c33) {
+      if (input.substr(peg$currPos, 9) === peg$c33) {
         s1 = peg$c33;
-        peg$currPos += 5;
+        peg$currPos += 9;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c34); }
@@ -6777,7 +6775,7 @@ const parser = /*
                   s9 = peg$currPos;
                   s10 = peg$parseSameIndent();
                   if (s10 !== peg$FAILED) {
-                    s11 = peg$parseShapeItem();
+                    s11 = peg$parseInterfaceItem();
                     if (s11 !== peg$FAILED) {
                       s10 = [s10, s11];
                       s9 = s10;
@@ -6794,7 +6792,7 @@ const parser = /*
                     s9 = peg$currPos;
                     s10 = peg$parseSameIndent();
                     if (s10 !== peg$FAILED) {
-                      s11 = peg$parseShapeItem();
+                      s11 = peg$parseInterfaceItem();
                       if (s11 !== peg$FAILED) {
                         s10 = [s10, s11];
                         s9 = s10;
@@ -6862,18 +6860,18 @@ const parser = /*
       return s0;
     }
 
-    function peg$parseShapeItem() {
+    function peg$parseInterfaceItem() {
       var s0;
 
-      s0 = peg$parseShapeSlot();
+      s0 = peg$parseInterfaceSlot();
       if (s0 === peg$FAILED) {
-        s0 = peg$parseShapeArgument();
+        s0 = peg$parseInterfaceArgument();
       }
 
       return s0;
     }
 
-    function peg$parseShapeArgument() {
+    function peg$parseInterfaceArgument() {
       var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
@@ -6951,7 +6949,7 @@ const parser = /*
       return s0;
     }
 
-    function peg$parseShapeSlot() {
+    function peg$parseInterfaceSlot() {
       var s0, s1, s2, s3, s4, s5, s6;
 
       s0 = peg$currPos;
@@ -12277,9 +12275,9 @@ const parser = /*
                   if (peg$silentFails === 0) { peg$fail(peg$c31); }
                 }
                 if (s1 === peg$FAILED) {
-                  if (input.substr(peg$currPos, 5) === peg$c33) {
+                  if (input.substr(peg$currPos, 9) === peg$c33) {
                     s1 = peg$c33;
-                    peg$currPos += 5;
+                    peg$currPos += 9;
                   } else {
                     s1 = peg$FAILED;
                     if (peg$silentFails === 0) { peg$fail(peg$c34); }

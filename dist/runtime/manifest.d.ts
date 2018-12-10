@@ -34,7 +34,7 @@ export declare class Manifest {
     private _particles;
     private _schemas;
     private _stores;
-    private _shapes;
+    private _interfaces;
     storeTags: Map<StorageProviderBase, string[]>;
     private _fileName;
     private readonly _id;
@@ -59,7 +59,7 @@ export declare class Manifest {
     readonly fileName: string;
     readonly stores: StorageProviderBase[];
     readonly allStores: StorageProviderBase[];
-    readonly shapes: InterfaceInfo[];
+    readonly interfaces: InterfaceInfo[];
     readonly meta: ManifestMeta;
     readonly resources: {};
     applyMeta(section: any): void;
@@ -80,7 +80,7 @@ export declare class Manifest {
         tags: string[];
         subtype: boolean;
     }): StorageProviderBase[];
-    findShapeByName(name: any): InterfaceInfo;
+    findInterfaceByName(name: any): InterfaceInfo;
     findRecipesByVerb(verb: any): Recipe[];
     generateID(): string;
     static load(fileName: any, loader: any, options: any): Promise<any>;
@@ -89,13 +89,13 @@ export declare class Manifest {
     static _processSchema(manifest: any, schemaItem: any): void;
     static _processResource(manifest: any, schemaItem: any): void;
     static _processParticle(manifest: any, particleItem: any, loader: any): void;
-    static _processShape(manifest: any, shapeItem: any): void;
+    static _processInterface(manifest: any, interfaceItem: any): void;
     static _processRecipe(manifest: any, recipeItem: any, loader: any): Promise<void>;
     resolveTypeName(name: any): {
         schema: Schema;
-        shape?: undefined;
+        iface?: undefined;
     } | {
-        shape: InterfaceInfo;
+        iface: InterfaceInfo;
         schema?: undefined;
     };
     static _processStore(manifest: any, item: any, loader: any): Promise<void>;
