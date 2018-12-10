@@ -37,6 +37,7 @@ export declare class Planificator {
     loadSuggestions(): Promise<void>;
     setSearch(search: string): Promise<void>;
     readonly arcKey: string;
+    static getArcKey(arc: Arc): string;
     registerSuggestionsChangedCallback(callback: any): void;
     registerVisibleSuggestionsChangedCallback(callback: any): void;
     dispose(): void;
@@ -46,6 +47,9 @@ export declare class Planificator {
     private _onPlanInstantiated;
     private _listenToArcStores;
     private _unlistenToArcStores;
+    private static constructKey;
+    private static _constructSuggestionKey;
+    private static _constructSearchKey;
     private static _initSuggestStore;
     private static _initSearchStore;
     private static _initStore;

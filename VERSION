@@ -1,21 +1,9 @@
-commit 4ab5169261a01d54d00292a7a8ec0cbc8ed36765
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Dec 10 14:38:44 2018 -0800
+commit 9522e0147349bc1364b762305272e1a55b08c334
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Dec 10 15:23:39 2018 -0800
 
-    Begin porting shell/apps/remote-planner to shells/planner-shell (#2423)
+    update planificator storage keys construction (#2421)
     
-    * add exception traps for using pouchdb
+    * update planificator storage keys construction
     
-    * omnibus changes during freeze: PouchDB, planner-shell
-    
-    * trap exceptions at sources instead of sinks
-    
-    * repair Debug.level control for logFactory
-    
-    * advancing planner-shell
-    
-    * submerge ArcType
-    
-    * adapt to Type.ts
-    
-    * fix missing semi
+    * remove defaulting to volatile suggestions storage in shell

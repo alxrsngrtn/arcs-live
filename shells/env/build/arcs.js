@@ -18906,7 +18906,7 @@ class VolatileKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
         parts = parts[1] ? parts.slice(1).join('://').split('^^') : [];
         this.arcId = parts[0];
         this.location = parts[1];
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.toString() === key);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.toString() === key, `Expected ${key}, but got ${this.toString()} volatile key base.`);
     }
     childKeyForHandle(id) {
         return new VolatileKey('volatile');
@@ -84391,9 +84391,11 @@ class Planificator {
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
     static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null.');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'User id cannot be null.');
         debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
-        const store = await Planificator._initSuggestStore(arc, { userid, storageKeyBase });
-        const searchStore = await Planificator._initSearchStore(arc, { userid, storageKeyBase: null });
+        const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
+        const searchStore = await Planificator._initSearchStore(arc, userid);
         const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
         // TODO(mmandlis): Switch to always use `contextual: true` once new arc doesn't need
         // to produce a plan in order to instantiate it.
@@ -84421,7 +84423,11 @@ class Planificator {
         }
     }
     get arcKey() {
-        return this.arc.storageKey.substring(this.arc.storageKey.lastIndexOf('/') + 1);
+        return Planificator.getArcKey(this.arc);
+    }
+    static getArcKey(arc) {
+        // TODO: should this be arc's or storage-key method?
+        return arc.storageKey.substring(arc.storageKey.lastIndexOf('/') + 1);
     }
     registerSuggestionsChangedCallback(callback) {
         this.consumer.registerSuggestionsChangedCallback(callback);
@@ -84461,33 +84467,26 @@ class Planificator {
             }
         });
     }
-    static async _initSuggestStore(arc, { userid, storageKeyBase }) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'Missing user id.');
-        const location = arc.storageProviderFactory.parseStringAsKey(arc.storageKey).location;
-        // Construct a new key based on the storageKeyBase
-        // Use '/dummylocation' suffix because Volatile keys require it.
-        const storageKey = storageKeyBase
-            ? arc.storageProviderFactory.parseStringAsKey(storageKeyBase + '/dummylocation')
-            : arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
-        // Backward compatibility for shell older than 0_6_0.
-        storageKey.location = location.includes('/arcs/')
-            ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/$1`)
-            : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/$1`);
-        const type = _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"].make(['Suggestions'], { current: 'Object' });
-        return Planificator._initStore(arc, 'suggestions-id', type, storageKey);
+    static constructKey(arc, suffix, storageKeyBase) {
+        const keybase = storageKeyBase || arc.storageKey.substring(0, arc.storageKey.lastIndexOf('/'));
+        const storageKeyString = `${keybase}/${suffix}`;
+        const storageKey = arc.storageProviderFactory.parseStringAsKey(storageKeyString);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(storageKey.protocol && storageKey.location, `Cannot parse key: ${storageKeyString}`);
+        return storageKey;
     }
-    static async _initSearchStore(arc, { userid, storageKeyBase }) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'Missing user id.');
-        const location = arc.storageProviderFactory.parseStringAsKey(arc.storageKey).location;
-        // Construct a new key based on the storageKeyBase
-        const storageKey = storageKeyBase
-            ? arc.storageProviderFactory.parseStringAsKey(storageKeyBase + '/dummylocation')
-            : arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
-        storageKey.location = location.includes('/arcs/')
-            ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/search`)
-            : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/search`);
-        const type = _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"].make(['Search'], { current: 'Object' });
-        return Planificator._initStore(arc, 'search-id', type, storageKey);
+    static _constructSuggestionKey(arc, userid, storageKeyBase) {
+        return Planificator.constructKey(arc, `${userid}/suggestions/${Planificator.getArcKey(arc)}`, storageKeyBase);
+    }
+    static _constructSearchKey(arc, userid) {
+        return Planificator.constructKey(arc, `${userid}/search/`);
+    }
+    static async _initSuggestStore(arc, userid, storageKeyBase) {
+        const storageKey = Planificator._constructSuggestionKey(arc, userid, storageKeyBase);
+        return Planificator._initStore(arc, 'suggestions-id', _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"].make(['Suggestions'], { current: 'Object' }), storageKey);
+    }
+    static async _initSearchStore(arc, userid) {
+        const storageKey = Planificator._constructSearchKey(arc, userid);
+        return Planificator._initStore(arc, 'search-id', _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"].make(['Search'], { current: 'Object' }), storageKey);
     }
     static async _initStore(arc, id, type, storageKey) {
         const store = await arc.storageProviderFactory.connectOrConstruct(id, type, storageKey.toString());
