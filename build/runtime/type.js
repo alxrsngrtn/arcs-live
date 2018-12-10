@@ -15,37 +15,6 @@ export class Type {
     constructor(tag) {
         this.tag = tag;
     }
-    // TODO: remove these; callers can directly construct the classes now
-    static newEntity(entity) {
-        return new EntityType(entity);
-    }
-    static newVariable(variable) {
-        return new TypeVariable(variable);
-    }
-    static newCollection(collection) {
-        return new CollectionType(collection);
-    }
-    static newBigCollection(bigCollection) {
-        return new BigCollectionType(bigCollection);
-    }
-    static newRelation(relation) {
-        return new RelationType(relation);
-    }
-    static newInterface(iface) {
-        return new InterfaceType(iface);
-    }
-    static newSlot(slot) {
-        return new SlotType(slot);
-    }
-    static newReference(reference) {
-        return new ReferenceType(reference);
-    }
-    static newArcInfo() {
-        return new ArcType();
-    }
-    static newHandleInfo() {
-        return new HandleType();
-    }
     static fromLiteral(literal) {
         switch (literal.tag) {
             case 'Entity':
@@ -211,6 +180,9 @@ export class EntityType extends Type {
         super('Entity');
         this.entitySchema = schema;
     }
+    static make(names, fields, description) {
+        return new EntityType(new Schema(names, fields, description));
+    }
     // These type identifier methods are being left in place for non-runtime code.
     get isEntity() {
         return true;
@@ -251,6 +223,9 @@ export class TypeVariable extends Type {
     constructor(variable) {
         super('TypeVariable');
         this.variable = variable;
+    }
+    static make(name, canWriteSuperset, canReadSubset) {
+        return new TypeVariable(new TypeVariableInfo(name, canWriteSuperset, canReadSubset));
     }
     get isVariable() {
         return true;
@@ -476,6 +451,10 @@ export class InterfaceType extends Type {
         super('Interface');
         this.interfaceInfo = iface;
     }
+    // TODO: export InterfaceInfo's Handle and Slot interfaces to type check here?
+    static make(name, handles, slots) {
+        return new InterfaceType(new InterfaceInfo(name, handles, slots));
+    }
     get isInterface() {
         return true;
     }
@@ -527,6 +506,9 @@ export class SlotType extends Type {
     constructor(slot) {
         super('Slot');
         this.slot = slot;
+    }
+    static make(formFactor, handle) {
+        return new SlotType(new SlotInfo(formFactor, handle));
     }
     get isSlot() {
         return true;

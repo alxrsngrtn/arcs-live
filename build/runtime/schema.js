@@ -8,17 +8,17 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { Type } from './type.js';
+import { Type, EntityType, ReferenceType } from './type.js';
 import { TypeChecker } from './recipe/type-checker.js';
 import { Entity } from './entity.js';
 import { Reference } from './reference.js';
 export class Schema {
-    constructor(model) {
-        assert(model.fields);
-        this._model = model;
+    constructor(names, fields, description) {
+        this.names = names;
+        this.fields = fields;
         this.description = {};
-        if (model.description) {
-            model.description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
+        if (description) {
+            description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
         }
     }
     toLiteral() {
@@ -35,10 +35,10 @@ export class Schema {
                 return field;
             }
         };
-        for (const key of Object.keys(this._model.fields)) {
-            fields[key] = updateField(this._model.fields[key]);
+        for (const key of Object.keys(this.fields)) {
+            fields[key] = updateField(this.fields[key]);
         }
-        return { names: this._model.names, fields, description: this.description };
+        return { names: this.names, fields, description: this.description };
     }
     static fromLiteral(data = { fields: {}, names: [], description: {} }) {
         const fields = {};
@@ -57,15 +57,9 @@ export class Schema {
         for (const key of Object.keys(data.fields)) {
             fields[key] = updateField(data.fields[key]);
         }
-        const result = new Schema({ names: data.names, fields });
+        const result = new Schema(data.names, fields);
         result.description = data.description || {};
         return result;
-    }
-    get fields() {
-        return this._model.fields;
-    }
-    get names() {
-        return this._model.names;
     }
     // TODO: This should only be an ident used in manifest parsing.
     get name() {
@@ -109,10 +103,7 @@ export class Schema {
                 fields[field] = type;
             }
         }
-        return new Schema({
-            names,
-            fields,
-        });
+        return new Schema(names, fields);
     }
     static intersect(schema1, schema2) {
         const names = [...schema1.names].filter(name => schema2.names.includes(name));
@@ -123,10 +114,7 @@ export class Schema {
                 fields[field] = type;
             }
         }
-        return new Schema({
-            names,
-            fields,
-        });
+        return new Schema(names, fields);
     }
     equals(otherSchema) {
         return this === otherSchema || (this.name === otherSchema.name
@@ -156,7 +144,7 @@ export class Schema {
         return true;
     }
     get type() {
-        return Type.newEntity(this);
+        return new EntityType(this);
     }
     entityClass(context = null) {
         const schema = this;
@@ -226,7 +214,7 @@ export class Schema {
                     if (!(value instanceof Reference)) {
                         throw new TypeError(`Cannot ${op} reference ${name} with non-reference '${value}'`);
                     }
-                    if (!TypeChecker.compareTypes({ type: value.type }, { type: Type.newReference(fieldType.schema.model) })) {
+                    if (!TypeChecker.compareTypes({ type: value.type }, { type: new ReferenceType(fieldType.schema.model) })) {
                         throw new TypeError(`Cannot ${op} reference ${name} with value '${value}' of mismatched type`);
                     }
                     break;
@@ -293,7 +281,7 @@ export class Schema {
                         // Setting value from raw data (Channel side).
                         // TODO(shans): This can't enforce type safety here as there isn't any type data available.
                         // Maybe this is OK because there's type checking on the other side of the channel?
-                        return new Reference(value, Type.newReference(type.schema.model), context);
+                        return new Reference(value, new ReferenceType(type.schema.model), context);
                     }
                     else {
                         throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
@@ -337,13 +325,10 @@ export class Schema {
             static get type() {
                 // TODO: should the entity's key just be its type?
                 // Should it just be called type in that case?
-                return Type.newEntity(this.key.schema);
+                return new EntityType(this.key.schema);
             }
             static get key() {
-                return {
-                    tag: 'entity',
-                    schema,
-                };
+                return { tag: 'entity', schema };
             }
         };
         Object.defineProperty(clazz, 'type', { value: this.type });

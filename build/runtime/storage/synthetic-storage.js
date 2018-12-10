@@ -8,7 +8,7 @@
 import { assert } from '../../platform/assert-web.js';
 import { StorageBase, StorageProviderBase, ChangeEvent } from './storage-provider-base.js';
 import { KeyBase } from './key-base.js';
-import { Type } from '../type.js';
+import { ArcType, HandleType } from '../type.js';
 import { ArcInfo, ArcHandle } from '../synthetic-types.js';
 import { Manifest } from '../manifest.js';
 import { setDiffCustom } from '../util.js';
@@ -31,7 +31,7 @@ class SyntheticKey extends KeyBase {
         this.scope = Scope[match[1]];
         this.category = Category[match[2]];
         if (this.scope === Scope.arc) {
-            this.targetType = Type.newArcInfo();
+            this.targetType = new ArcType();
             const key = storageFactory.parseStringAsKey(match[3]).childKeyForArcInfo();
             this.targetKey = key.toString();
         }
@@ -39,7 +39,7 @@ class SyntheticKey extends KeyBase {
             throw new Error(`invalid scope '${match[1]}' for synthetic key: ${key}`);
         }
         if (this.category === Category.handles) {
-            this.syntheticType = Type.newHandleInfo();
+            this.syntheticType = new HandleType();
         }
         else {
             throw new Error(`invalid category '${match[2]}' for synthetic key: ${key}`);

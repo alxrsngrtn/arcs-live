@@ -11,16 +11,6 @@ export declare type TypeLiteral = {
 export declare abstract class Type {
     tag: 'Entity' | 'TypeVariable' | 'Collection' | 'BigCollection' | 'Relation' | 'Interface' | 'Slot' | 'Reference' | 'Arc' | 'Handle';
     protected constructor(tag: any);
-    static newEntity(entity: Schema): EntityType;
-    static newVariable(variable: TypeVariableInfo): TypeVariable;
-    static newCollection(collection: Type): CollectionType;
-    static newBigCollection(bigCollection: Type): BigCollectionType;
-    static newRelation(relation: [Type]): RelationType;
-    static newInterface(iface: InterfaceInfo): InterfaceType;
-    static newSlot(slot: SlotInfo): SlotType;
-    static newReference(reference: Type): ReferenceType;
-    static newArcInfo(): ArcType;
-    static newHandleInfo(): HandleType;
     static fromLiteral(literal: TypeLiteral): Type;
     abstract toLiteral(): TypeLiteral;
     static unwrapPair(type1: Type, type2: Type): any;
@@ -71,6 +61,7 @@ export declare abstract class Type {
 export declare class EntityType extends Type {
     readonly entitySchema: Schema;
     constructor(schema: Schema);
+    static make(names: string[], fields: {}, description?: any): EntityType;
     readonly isEntity: boolean;
     readonly canWriteSuperset: this;
     readonly canReadSubset: this;
@@ -92,6 +83,7 @@ export declare class EntityType extends Type {
 export declare class TypeVariable extends Type {
     readonly variable: TypeVariableInfo;
     constructor(variable: TypeVariableInfo);
+    static make(name: string, canWriteSuperset: Type | null, canReadSubset: Type | null): TypeVariable;
     readonly isVariable: boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): Type;
     resolvedType(): any;
@@ -164,6 +156,7 @@ export declare class RelationType extends Type {
 export declare class InterfaceType extends Type {
     readonly interfaceInfo: InterfaceInfo;
     constructor(iface: InterfaceInfo);
+    static make(name: string, handles: any, slots: any): InterfaceType;
     readonly isInterface: boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): InterfaceType;
     _applyExistenceTypeTest(test: any): boolean;
@@ -198,6 +191,7 @@ export declare class InterfaceType extends Type {
 export declare class SlotType extends Type {
     readonly slot: SlotInfo;
     constructor(slot: SlotInfo);
+    static make(formFactor: string, handle: string): SlotType;
     readonly isSlot: boolean;
     readonly canWriteSuperset: this;
     readonly canReadSubset: this;

@@ -1,5 +1,5 @@
-commit 1e2a7ce4072f82f5d26335775aa163dadd35f839
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Dec 7 12:38:03 2018 -0800
+commit bd6244fc7b4d446392a67246316077d976408509
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Dec 10 15:06:33 2018 +1100
 
-    remove hosted particle spec serialization hack from Suggestion (was fixed by #2300) (#2403)
+    Plumb ArcType into the shells environment (#2416)

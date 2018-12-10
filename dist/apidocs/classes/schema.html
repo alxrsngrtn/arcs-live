@@ -87,17 +87,16 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="schema.html#_model" class="tsd-kind-icon">_model</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="schema.html#description" class="tsd-kind-icon">description</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="schema.html#fields" class="tsd-kind-icon">fields</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="schema.html#isalias" class="tsd-kind-icon">is<wbr>Alias</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="schema.html#names" class="tsd-kind-icon">names</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="schema.html#fields-1" class="tsd-kind-icon">fields</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="schema.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="schema.html#names-1" class="tsd-kind-icon">names</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="schema.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
@@ -126,19 +125,25 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Schema<span class="tsd-signature-symbol">(</span>model<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="schema.html" class="tsd-signature-type">Schema</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Schema<span class="tsd-signature-symbol">(</span>names<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, fields<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span>, description<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="schema.html" class="tsd-signature-type">Schema</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L22">runtime/schema.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L22">runtime/schema.ts:22</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>model: <span class="tsd-signature-type">any</span></h5>
+									<h5>names: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>fields: <span class="tsd-signature-type">__type</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> description: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="schema.html" class="tsd-signature-type">Schema</a></h4>
@@ -148,39 +153,13 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="_model" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _model</h3>
-					<div class="tsd-signature tsd-kind-icon">_model<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L20">runtime/schema.ts:20</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter">
-								<h5>fields<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></h5>
-								<ul class="tsd-parameters">
-									<li class="tsd-parameter-index-signature">
-										<h5><span class="tsd-signature-symbol">[</span>index: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></h5>
-									</li>
-								</ul>
-							</li>
-							<li class="tsd-parameter">
-								<h5>names<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
-							</li>
-						</ul>
-					</div>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="description" class="tsd-anchor"></a>
 					<h3>description</h3>
 					<div class="tsd-signature tsd-kind-icon">description<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L21">runtime/schema.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L21">runtime/schema.ts:21</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -193,40 +172,38 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="fields" class="tsd-anchor"></a>
+					<h3>fields</h3>
+					<div class="tsd-signature tsd-kind-icon">fields<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">__type</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L20">runtime/schema.ts:20</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="isalias" class="tsd-anchor"></a>
 					<h3>is<wbr>Alias</h3>
 					<div class="tsd-signature tsd-kind-icon">is<wbr>Alias<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L22">runtime/schema.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L22">runtime/schema.ts:22</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="names" class="tsd-anchor"></a>
+					<h3>names</h3>
+					<div class="tsd-signature tsd-kind-icon">names<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L19">runtime/schema.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="fields-1" class="tsd-anchor"></a>
-					<h3>fields</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> fields<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L73">runtime/schema.ts:73</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
-							<ul class="tsd-parameters">
-								<li class="tsd-parameter-index-signature">
-									<h5><span class="tsd-signature-symbol">[</span>index: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="name" class="tsd-anchor"></a>
 					<h3>name</h3>
@@ -237,27 +214,10 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L82">runtime/schema.ts:82</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L74">runtime/schema.ts:74</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="names-1" class="tsd-anchor"></a>
-					<h3>names</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> names<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L77">runtime/schema.ts:77</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -271,7 +231,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L179">runtime/schema.ts:179</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L165">runtime/schema.ts:165</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="type.html" class="tsd-signature-type">Type</a></h4>
@@ -291,7 +251,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L183">runtime/schema.ts:183</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L169">runtime/schema.ts:169</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -314,7 +274,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L150">runtime/schema.ts:150</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L136">runtime/schema.ts:136</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -337,7 +297,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L157">runtime/schema.ts:157</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L143">runtime/schema.ts:143</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -360,7 +320,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L397">runtime/schema.ts:397</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L380">runtime/schema.ts:380</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -383,7 +343,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L33">runtime/schema.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L33">runtime/schema.ts:33</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
@@ -418,7 +378,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L403">runtime/schema.ts:403</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L386">runtime/schema.ts:386</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -435,7 +395,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L91">runtime/schema.ts:91</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L83">runtime/schema.ts:83</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -458,7 +418,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L52">runtime/schema.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L52">runtime/schema.ts:52</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -496,7 +456,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L133">runtime/schema.ts:133</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L122">runtime/schema.ts:122</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -522,7 +482,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L86">runtime/schema.ts:86</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L78">runtime/schema.ts:78</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -548,7 +508,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/1e2a7ce/src/runtime/schema.ts#L113">runtime/schema.ts:113</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd6244f/src/runtime/schema.ts#L105">runtime/schema.ts:105</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -584,23 +544,20 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="schema.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="schema.html#_model" class="tsd-kind-icon">_model</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="schema.html#description" class="tsd-kind-icon">description</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="schema.html#fields" class="tsd-kind-icon">fields</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="schema.html#isalias" class="tsd-kind-icon">is<wbr>Alias</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="schema.html#fields-1" class="tsd-kind-icon">fields</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="schema.html#names" class="tsd-kind-icon">names</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="schema.html#name" class="tsd-kind-icon">name</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="schema.html#names-1" class="tsd-kind-icon">names</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="schema.html#type" class="tsd-kind-icon">type</a>

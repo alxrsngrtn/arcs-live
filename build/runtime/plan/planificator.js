@@ -11,8 +11,7 @@ import { assert } from '../../platform/assert-web.js';
 import { PlanConsumer } from './plan-consumer.js';
 import { PlanProducer } from './plan-producer.js';
 import { ReplanQueue } from './replan-queue.js';
-import { Schema } from '../schema.js';
-import { Type } from '../type.js';
+import { EntityType } from '../type.js';
 export class Planificator {
     constructor(arc, userid, store, searchStore, onlyConsumer, debug) {
         this.search = null;
@@ -117,8 +116,7 @@ export class Planificator {
         storageKey.location = location.includes('/arcs/')
             ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/$1`)
             : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/$1`);
-        const schema = new Schema({ names: ['Suggestions'], fields: { current: 'Object' } });
-        const type = Type.newEntity(schema);
+        const type = EntityType.make(['Suggestions'], { current: 'Object' });
         return Planificator._initStore(arc, 'suggestions-id', type, storageKey);
     }
     static async _initSearchStore(arc, { userid, storageKeyBase }) {
@@ -131,8 +129,7 @@ export class Planificator {
         storageKey.location = location.includes('/arcs/')
             ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/search`)
             : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/search`);
-        const schema = new Schema({ names: ['Search'], fields: { current: 'Object' } });
-        const type = Type.newEntity(schema);
+        const type = EntityType.make(['Search'], { current: 'Object' });
         return Planificator._initStore(arc, 'search-id', type, storageKey);
     }
     static async _initStore(arc, id, type, storageKey) {

@@ -18,185 +18,6 @@ import fetch$1 from 'node-fetch';
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
 
-// @license
-class TypeVariableInfo {
-    constructor(name, canWriteSuperset, canReadSubset) {
-        this.name = name;
-        this._canWriteSuperset = canWriteSuperset;
-        this._canReadSubset = canReadSubset;
-        this._resolution = null;
-    }
-    /**
-     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
-     * of two variables together. Use this when two separate type variables need to resolve
-     * to the same value.
-     */
-    maybeMergeConstraints(variable) {
-        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
-            return false;
-        }
-        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
-    }
-    /**
-     * Merge a type variable's read subset (upper bound) constraints into this variable.
-     * This is used to accumulate read constraints when resolving a handle's type.
-     */
-    maybeMergeCanReadSubset(constraint) {
-        if (constraint == null) {
-            return true;
-        }
-        if (this.canReadSubset == null) {
-            this.canReadSubset = constraint;
-            return true;
-        }
-        if (this.canReadSubset instanceof SlotType && constraint instanceof SlotType) {
-            // TODO: formFactor compatibility, etc.
-            return true;
-        }
-        const mergedSchema = Schema.intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
-        if (!mergedSchema) {
-            return false;
-        }
-        this.canReadSubset = Type.newEntity(mergedSchema);
-        return true;
-    }
-    /**
-     * merge a type variable's write superset (lower bound) constraints into this variable.
-     * This is used to accumulate write constraints when resolving a handle's type.
-     */
-    maybeMergeCanWriteSuperset(constraint) {
-        if (constraint == null) {
-            return true;
-        }
-        if (this.canWriteSuperset == null) {
-            this.canWriteSuperset = constraint;
-            return true;
-        }
-        if (this.canWriteSuperset instanceof SlotType && constraint instanceof SlotType) {
-            // TODO: formFactor compatibility, etc.
-            return true;
-        }
-        const mergedSchema = Schema.union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
-        if (!mergedSchema) {
-            return false;
-        }
-        this.canWriteSuperset = Type.newEntity(mergedSchema);
-        return true;
-    }
-    isSatisfiedBy(type) {
-        const constraint = this._canWriteSuperset;
-        if (!constraint) {
-            return true;
-        }
-        if (!(constraint instanceof EntityType) || !(type instanceof EntityType)) {
-            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
-        }
-        return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
-    }
-    get resolution() {
-        if (this._resolution) {
-            return this._resolution.resolvedType();
-        }
-        return null;
-    }
-    isValidResolutionCandidate(value) {
-        const elementType = value.resolvedType().getContainedType();
-        if (elementType instanceof TypeVariable && elementType.variable === this) {
-            return { result: false, detail: 'variable cannot resolve to collection of itself' };
-        }
-        return { result: true };
-    }
-    set resolution(value) {
-        assert(!this._resolution);
-        const isValid = this.isValidResolutionCandidate(value);
-        assert(isValid.result, isValid.detail);
-        let probe = value;
-        while (probe) {
-            if (!(probe instanceof TypeVariable)) {
-                break;
-            }
-            if (probe.variable === this) {
-                return;
-            }
-            probe = probe.variable.resolution;
-        }
-        this._resolution = value;
-        this._canWriteSuperset = null;
-        this._canReadSubset = null;
-    }
-    get canWriteSuperset() {
-        if (this._resolution) {
-            assert(!this._canWriteSuperset);
-            if (this._resolution instanceof TypeVariable) {
-                return this._resolution.variable.canWriteSuperset;
-            }
-            return null;
-        }
-        return this._canWriteSuperset;
-    }
-    set canWriteSuperset(value) {
-        assert(!this._resolution);
-        this._canWriteSuperset = value;
-    }
-    get canReadSubset() {
-        if (this._resolution) {
-            assert(!this._canReadSubset);
-            if (this._resolution instanceof TypeVariable) {
-                return this._resolution.variable.canReadSubset;
-            }
-            return null;
-        }
-        return this._canReadSubset;
-    }
-    set canReadSubset(value) {
-        assert(!this._resolution);
-        this._canReadSubset = value;
-    }
-    get hasConstraint() {
-        return this._canReadSubset !== null || this._canWriteSuperset !== null;
-    }
-    canEnsureResolved() {
-        if (this._resolution) {
-            return this._resolution.canEnsureResolved();
-        }
-        if (this._canWriteSuperset || this._canReadSubset) {
-            return true;
-        }
-        return false;
-    }
-    maybeEnsureResolved() {
-        if (this._resolution) {
-            return this._resolution.maybeEnsureResolved();
-        }
-        if (this._canWriteSuperset) {
-            this.resolution = this._canWriteSuperset;
-            return true;
-        }
-        if (this._canReadSubset) {
-            this.resolution = this._canReadSubset;
-            return true;
-        }
-        return false;
-    }
-    toLiteral() {
-        assert(this.resolution == null);
-        return this.toLiteralIgnoringResolutions();
-    }
-    toLiteralIgnoringResolutions() {
-        return {
-            name: this.name,
-            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
-            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
-        };
-    }
-    static fromLiteral(data) {
-        return new TypeVariableInfo(data.name, data.canWriteSuperset ? Type.fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? Type.fromLiteral(data.canReadSubset) : null);
-    }
-    isResolved() {
-        return (this._resolution && this._resolution.isResolved());
-    }
-}
-
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class TypeChecker {
     // resolve a list of handleConnection types against a handle
@@ -210,11 +31,10 @@ class TypeChecker {
     // NOTE: you probably don't want to call this function, if you think you
     // do, talk to shans@.
     static processTypeList(baseType, list) {
-        const newBaseTypeVariable = new TypeVariableInfo('', null, null);
+        const newBaseType = TypeVariable.make('', null, null);
         if (baseType) {
-            newBaseTypeVariable.resolution = baseType;
+            newBaseType.variable.resolution = baseType;
         }
-        const newBaseType = Type.newVariable(newBaseTypeVariable);
         baseType = newBaseType;
         const concreteTypes = [];
         // baseType might be a variable (and is definitely a variable if no baseType was available).
@@ -298,7 +118,7 @@ class TypeChecker {
             if (result == null) {
                 return null;
             }
-            return Type.newInterface(result);
+            return new InterfaceType(result);
         }
         else if ((primitiveBase.isTypeContainer() && primitiveBase.hasVariable)
             || (primitiveOnto.isTypeContainer() && primitiveOnto.hasVariable)) {
@@ -320,15 +140,15 @@ class TypeChecker {
                 // If this is an undifferentiated variable then we need to create structure to match against. That's
                 // allowed because this variable could represent anything, and it needs to represent this structure
                 // in order for type resolution to succeed.
-                const newVar = Type.newVariable(new TypeVariableInfo('a', null, null));
+                const newVar = TypeVariable.make('a', null, null);
                 if (primitiveConnectionType instanceof CollectionType) {
-                    primitiveHandleType.variable.resolution = Type.newCollection(newVar);
+                    primitiveHandleType.variable.resolution = new CollectionType(newVar);
                 }
                 else if (primitiveConnectionType instanceof BigCollectionType) {
-                    primitiveHandleType.variable.resolution = Type.newBigCollection(newVar);
+                    primitiveHandleType.variable.resolution = new BigCollectionType(newVar);
                 }
                 else {
-                    primitiveHandleType.variable.resolution = Type.newReference(newVar);
+                    primitiveHandleType.variable.resolution = new ReferenceType(newVar);
                 }
                 const unwrap = Type.unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
                 [primitiveHandleType, primitiveConnectionType] = unwrap;
@@ -996,12 +816,12 @@ class Reference {
  * http://polymer.github.io/PATENTS.txt
  */
 class Schema {
-    constructor(model) {
-        assert(model.fields);
-        this._model = model;
+    constructor(names, fields, description) {
+        this.names = names;
+        this.fields = fields;
         this.description = {};
-        if (model.description) {
-            model.description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
+        if (description) {
+            description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
         }
     }
     toLiteral() {
@@ -1018,10 +838,10 @@ class Schema {
                 return field;
             }
         };
-        for (const key of Object.keys(this._model.fields)) {
-            fields[key] = updateField(this._model.fields[key]);
+        for (const key of Object.keys(this.fields)) {
+            fields[key] = updateField(this.fields[key]);
         }
-        return { names: this._model.names, fields, description: this.description };
+        return { names: this.names, fields, description: this.description };
     }
     static fromLiteral(data = { fields: {}, names: [], description: {} }) {
         const fields = {};
@@ -1040,15 +860,9 @@ class Schema {
         for (const key of Object.keys(data.fields)) {
             fields[key] = updateField(data.fields[key]);
         }
-        const result = new Schema({ names: data.names, fields });
+        const result = new Schema(data.names, fields);
         result.description = data.description || {};
         return result;
-    }
-    get fields() {
-        return this._model.fields;
-    }
-    get names() {
-        return this._model.names;
     }
     // TODO: This should only be an ident used in manifest parsing.
     get name() {
@@ -1092,10 +906,7 @@ class Schema {
                 fields[field] = type;
             }
         }
-        return new Schema({
-            names,
-            fields,
-        });
+        return new Schema(names, fields);
     }
     static intersect(schema1, schema2) {
         const names = [...schema1.names].filter(name => schema2.names.includes(name));
@@ -1106,10 +917,7 @@ class Schema {
                 fields[field] = type;
             }
         }
-        return new Schema({
-            names,
-            fields,
-        });
+        return new Schema(names, fields);
     }
     equals(otherSchema) {
         return this === otherSchema || (this.name === otherSchema.name
@@ -1139,7 +947,7 @@ class Schema {
         return true;
     }
     get type() {
-        return Type.newEntity(this);
+        return new EntityType(this);
     }
     entityClass(context = null) {
         const schema = this;
@@ -1209,7 +1017,7 @@ class Schema {
                     if (!(value instanceof Reference)) {
                         throw new TypeError(`Cannot ${op} reference ${name} with non-reference '${value}'`);
                     }
-                    if (!TypeChecker.compareTypes({ type: value.type }, { type: Type.newReference(fieldType.schema.model) })) {
+                    if (!TypeChecker.compareTypes({ type: value.type }, { type: new ReferenceType(fieldType.schema.model) })) {
                         throw new TypeError(`Cannot ${op} reference ${name} with value '${value}' of mismatched type`);
                     }
                     break;
@@ -1276,7 +1084,7 @@ class Schema {
                         // Setting value from raw data (Channel side).
                         // TODO(shans): This can't enforce type safety here as there isn't any type data available.
                         // Maybe this is OK because there's type checking on the other side of the channel?
-                        return new Reference(value, Type.newReference(type.schema.model), context);
+                        return new Reference(value, new ReferenceType(type.schema.model), context);
                     }
                     else {
                         throw new TypeError(`Cannot set reference ${name} with non-reference '${value}'`);
@@ -1320,13 +1128,10 @@ class Schema {
             static get type() {
                 // TODO: should the entity's key just be its type?
                 // Should it just be called type in that case?
-                return Type.newEntity(this.key.schema);
+                return new EntityType(this.key.schema);
             }
             static get key() {
-                return {
-                    tag: 'entity',
-                    schema,
-                };
+                return { tag: 'entity', schema };
             }
         };
         Object.defineProperty(clazz, 'type', { value: this.type });
@@ -1362,6 +1167,185 @@ class Schema {
             }
         }
         return results.join('\n');
+    }
+}
+
+// @license
+class TypeVariableInfo {
+    constructor(name, canWriteSuperset, canReadSubset) {
+        this.name = name;
+        this._canWriteSuperset = canWriteSuperset;
+        this._canReadSubset = canReadSubset;
+        this._resolution = null;
+    }
+    /**
+     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
+     * of two variables together. Use this when two separate type variables need to resolve
+     * to the same value.
+     */
+    maybeMergeConstraints(variable) {
+        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
+            return false;
+        }
+        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
+    }
+    /**
+     * Merge a type variable's read subset (upper bound) constraints into this variable.
+     * This is used to accumulate read constraints when resolving a handle's type.
+     */
+    maybeMergeCanReadSubset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canReadSubset == null) {
+            this.canReadSubset = constraint;
+            return true;
+        }
+        if (this.canReadSubset instanceof SlotType && constraint instanceof SlotType) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        const mergedSchema = Schema.intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
+        if (!mergedSchema) {
+            return false;
+        }
+        this.canReadSubset = new EntityType(mergedSchema);
+        return true;
+    }
+    /**
+     * merge a type variable's write superset (lower bound) constraints into this variable.
+     * This is used to accumulate write constraints when resolving a handle's type.
+     */
+    maybeMergeCanWriteSuperset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canWriteSuperset == null) {
+            this.canWriteSuperset = constraint;
+            return true;
+        }
+        if (this.canWriteSuperset instanceof SlotType && constraint instanceof SlotType) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        const mergedSchema = Schema.union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
+        if (!mergedSchema) {
+            return false;
+        }
+        this.canWriteSuperset = new EntityType(mergedSchema);
+        return true;
+    }
+    isSatisfiedBy(type) {
+        const constraint = this._canWriteSuperset;
+        if (!constraint) {
+            return true;
+        }
+        if (!(constraint instanceof EntityType) || !(type instanceof EntityType)) {
+            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
+        }
+        return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
+    }
+    get resolution() {
+        if (this._resolution) {
+            return this._resolution.resolvedType();
+        }
+        return null;
+    }
+    isValidResolutionCandidate(value) {
+        const elementType = value.resolvedType().getContainedType();
+        if (elementType instanceof TypeVariable && elementType.variable === this) {
+            return { result: false, detail: 'variable cannot resolve to collection of itself' };
+        }
+        return { result: true };
+    }
+    set resolution(value) {
+        assert(!this._resolution);
+        const isValid = this.isValidResolutionCandidate(value);
+        assert(isValid.result, isValid.detail);
+        let probe = value;
+        while (probe) {
+            if (!(probe instanceof TypeVariable)) {
+                break;
+            }
+            if (probe.variable === this) {
+                return;
+            }
+            probe = probe.variable.resolution;
+        }
+        this._resolution = value;
+        this._canWriteSuperset = null;
+        this._canReadSubset = null;
+    }
+    get canWriteSuperset() {
+        if (this._resolution) {
+            assert(!this._canWriteSuperset);
+            if (this._resolution instanceof TypeVariable) {
+                return this._resolution.variable.canWriteSuperset;
+            }
+            return null;
+        }
+        return this._canWriteSuperset;
+    }
+    set canWriteSuperset(value) {
+        assert(!this._resolution);
+        this._canWriteSuperset = value;
+    }
+    get canReadSubset() {
+        if (this._resolution) {
+            assert(!this._canReadSubset);
+            if (this._resolution instanceof TypeVariable) {
+                return this._resolution.variable.canReadSubset;
+            }
+            return null;
+        }
+        return this._canReadSubset;
+    }
+    set canReadSubset(value) {
+        assert(!this._resolution);
+        this._canReadSubset = value;
+    }
+    get hasConstraint() {
+        return this._canReadSubset !== null || this._canWriteSuperset !== null;
+    }
+    canEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.canEnsureResolved();
+        }
+        if (this._canWriteSuperset || this._canReadSubset) {
+            return true;
+        }
+        return false;
+    }
+    maybeEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.maybeEnsureResolved();
+        }
+        if (this._canWriteSuperset) {
+            this.resolution = this._canWriteSuperset;
+            return true;
+        }
+        if (this._canReadSubset) {
+            this.resolution = this._canReadSubset;
+            return true;
+        }
+        return false;
+    }
+    toLiteral() {
+        assert(this.resolution == null);
+        return this.toLiteralIgnoringResolutions();
+    }
+    toLiteralIgnoringResolutions() {
+        return {
+            name: this.name,
+            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
+            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
+        };
+    }
+    static fromLiteral(data) {
+        return new TypeVariableInfo(data.name, data.canWriteSuperset ? Type.fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? Type.fromLiteral(data.canReadSubset) : null);
+    }
+    isResolved() {
+        return (this._resolution && this._resolution.isResolved());
     }
 }
 
@@ -1724,7 +1708,7 @@ ${this._slotsToManifestString()}
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 class SlotInfo {
-    constructor({ formFactor, handle }) {
+    constructor(formFactor, handle) {
         this.formFactor = formFactor;
         this.handle = handle;
     }
@@ -1732,7 +1716,7 @@ class SlotInfo {
         return this;
     }
     static fromLiteral(data) {
-        return new SlotInfo(data);
+        return new SlotInfo(data.formFactor, data.handle);
     }
 }
 
@@ -1768,37 +1752,6 @@ class ArcHandle {
 class Type {
     constructor(tag) {
         this.tag = tag;
-    }
-    // TODO: remove these; callers can directly construct the classes now
-    static newEntity(entity) {
-        return new EntityType(entity);
-    }
-    static newVariable(variable) {
-        return new TypeVariable(variable);
-    }
-    static newCollection(collection) {
-        return new CollectionType(collection);
-    }
-    static newBigCollection(bigCollection) {
-        return new BigCollectionType(bigCollection);
-    }
-    static newRelation(relation) {
-        return new RelationType(relation);
-    }
-    static newInterface(iface) {
-        return new InterfaceType(iface);
-    }
-    static newSlot(slot) {
-        return new SlotType(slot);
-    }
-    static newReference(reference) {
-        return new ReferenceType(reference);
-    }
-    static newArcInfo() {
-        return new ArcType();
-    }
-    static newHandleInfo() {
-        return new HandleType();
     }
     static fromLiteral(literal) {
         switch (literal.tag) {
@@ -1965,6 +1918,9 @@ class EntityType extends Type {
         super('Entity');
         this.entitySchema = schema;
     }
+    static make(names, fields, description) {
+        return new EntityType(new Schema(names, fields, description));
+    }
     // These type identifier methods are being left in place for non-runtime code.
     get isEntity() {
         return true;
@@ -2005,6 +1961,9 @@ class TypeVariable extends Type {
     constructor(variable) {
         super('TypeVariable');
         this.variable = variable;
+    }
+    static make(name, canWriteSuperset, canReadSubset) {
+        return new TypeVariable(new TypeVariableInfo(name, canWriteSuperset, canReadSubset));
     }
     get isVariable() {
         return true;
@@ -2230,6 +2189,10 @@ class InterfaceType extends Type {
         super('Interface');
         this.interfaceInfo = iface;
     }
+    // TODO: export InterfaceInfo's Handle and Slot interfaces to type check here?
+    static make(name, handles, slots) {
+        return new InterfaceType(new InterfaceInfo(name, handles, slots));
+    }
     get isInterface() {
         return true;
     }
@@ -2281,6 +2244,9 @@ class SlotType extends Type {
     constructor(slot) {
         super('Slot');
         this.slot = slot;
+    }
+    static make(formFactor, handle) {
+        return new SlotType(new SlotInfo(formFactor, handle));
     }
     get isSlot() {
         return true;
@@ -2553,7 +2519,7 @@ class ParticleSpec {
         assert(!this.slots.size, 'please implement slots toInterface');
         const handles = this.model.args.map(({ type, name, direction }) => ({ type: asType(type), name, direction }));
         const slots = [];
-        return Type.newInterface(new InterfaceInfo(this.name, handles, slots));
+        return InterfaceType.make(this.name, handles, slots);
     }
     toString() {
         const results = [];
@@ -17011,7 +16977,7 @@ class SyntheticKey extends KeyBase {
         this.scope = Scope[match[1]];
         this.category = Category[match[2]];
         if (this.scope === Scope.arc) {
-            this.targetType = Type.newArcInfo();
+            this.targetType = new ArcType();
             const key = storageFactory.parseStringAsKey(match[3]).childKeyForArcInfo();
             this.targetKey = key.toString();
         }
@@ -17019,7 +16985,7 @@ class SyntheticKey extends KeyBase {
             throw new Error(`invalid scope '${match[1]}' for synthetic key: ${key}`);
         }
         if (this.category === Category.handles) {
-            this.syntheticType = Type.newHandleInfo();
+            this.syntheticType = new HandleType();
         }
         else {
             throw new Error(`invalid category '${match[2]}' for synthetic key: ${key}`);
@@ -17857,11 +17823,11 @@ class Manifest {
     findTypeByName(name) {
         const schema = this.findSchemaByName(name);
         if (schema) {
-            return Type.newEntity(schema);
+            return new EntityType(schema);
         }
         const shape = this.findShapeByName(name);
         if (shape) {
-            return Type.newInterface(shape);
+            return new InterfaceType(shape);
         }
         return null;
     }
@@ -18100,22 +18066,19 @@ ${e.message}
                             }
                             fields[name] = type;
                         }
-                        let schema = new Schema({
-                            names,
-                            fields,
-                        });
+                        let schema = new Schema(names, fields);
                         for (const alias of aliases) {
                             schema = Schema.union(alias, schema);
                             if (!schema) {
                                 throw new ManifestError(node.location, `Could not merge schema aliases`);
                             }
                         }
-                        node.model = Type.newEntity(schema);
+                        node.model = new EntityType(schema);
                         return;
                     }
                     case 'variable-type': {
                         const constraint = node.constraint && node.constraint.model;
-                        node.model = Type.newVariable(new TypeVariableInfo(node.name, constraint, null));
+                        node.model = TypeVariable.make(node.name, constraint, null);
                         return;
                     }
                     case 'slot-type': {
@@ -18124,9 +18087,7 @@ ${e.message}
                             const field = node.fields[fieldIndex];
                             fields[field.name] = field.value;
                         }
-                        const slotInfo = { formFactor: fields['formFactor'],
-                            handle: fields['handle'] };
-                        node.model = Type.newSlot(new SlotInfo(slotInfo));
+                        node.model = SlotType.make(fields['formFactor'], fields['handle']);
                         return;
                     }
                     case 'type-name': {
@@ -18135,10 +18096,10 @@ ${e.message}
                             throw new ManifestError(node.location, `Could not resolve type reference to type name '${node.name}'`);
                         }
                         if (resolved.schema) {
-                            node.model = Type.newEntity(resolved.schema);
+                            node.model = new EntityType(resolved.schema);
                         }
                         else if (resolved.shape) {
-                            node.model = Type.newInterface(resolved.shape);
+                            node.model = new InterfaceType(resolved.shape);
                         }
                         else {
                             throw new Error('Expected {shape} or {schema}');
@@ -18146,13 +18107,13 @@ ${e.message}
                         return;
                     }
                     case 'collection-type':
-                        node.model = Type.newCollection(node.type.model);
+                        node.model = new CollectionType(node.type.model);
                         return;
                     case 'big-collection-type':
-                        node.model = Type.newBigCollection(node.type.model);
+                        node.model = new BigCollectionType(node.type.model);
                         return;
                     case 'reference-type':
-                        node.model = Type.newReference(node.type.model);
+                        node.model = new ReferenceType(node.type.model);
                         return;
                     default:
                         return;
@@ -18204,8 +18165,7 @@ ${e.message}
         if (!name) {
             throw new ManifestError(schemaItem.location, `Schema defined without name or alias`);
         }
-        const model = { names, fields, description };
-        const schema = new Schema(model);
+        const schema = new Schema(names, fields, description);
         if (schemaItem.alias) {
             schema.isAlias = true;
         }
@@ -23215,17 +23175,17 @@ class FindHostedParticle extends Strategy {
                 const iface = connection.type;
                 const results = [];
                 for (const particle of arc.context.particles) {
-                    // This is what shape.particleMatches() does, but we also do
+                    // This is what interfaceInfo.particleMatches() does, but we also do
                     // canEnsureResolved at the end:
-                    const shapeClone = iface.interfaceInfo.cloneWithResolutions(new Map());
-                    // If particle doesn't match the requested shape.
-                    if (shapeClone.restrictType(particle) === false)
+                    const ifaceClone = iface.interfaceInfo.cloneWithResolutions(new Map());
+                    // If particle doesn't match the requested interface.
+                    if (ifaceClone.restrictType(particle) === false)
                         continue;
-                    // If we still have unresolvable shape after matching a particle.
-                    // This can happen if both shape and particle have type variables.
+                    // If we still have unresolvable interface after matching a particle.
+                    // This can happen if both interface and particle have type variables.
                     // TODO: What to do here? We need concrete type for the particle spec
                     //       handle, but we don't have one.
-                    if (!shapeClone.canEnsureResolved())
+                    if (!ifaceClone.canEnsureResolved())
                         continue;
                     results.push((recipe, hc) => {
                         const handle = RecipeUtil.constructImmediateValueHandle(hc, particle, arc.generateID());
@@ -24004,8 +23964,7 @@ class Planificator {
         storageKey.location = location.includes('/arcs/')
             ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/suggestions/$1`)
             : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/$1`);
-        const schema = new Schema({ names: ['Suggestions'], fields: { current: 'Object' } });
-        const type = Type.newEntity(schema);
+        const type = EntityType.make(['Suggestions'], { current: 'Object' });
         return Planificator._initStore(arc, 'suggestions-id', type, storageKey);
     }
     static async _initSearchStore(arc, { userid, storageKeyBase }) {
@@ -24018,8 +23977,7 @@ class Planificator {
         storageKey.location = location.includes('/arcs/')
             ? location.replace(/\/arcs\/([a-zA-Z0-9_\-]+)$/, `/users/${userid}/search`)
             : location.replace(/\/([a-zA-Z0-9_\-]+)$/, `/suggestions/${userid}/search`);
-        const schema = new Schema({ names: ['Search'], fields: { current: 'Object' } });
-        const type = Type.newEntity(schema);
+        const type = EntityType.make(['Search'], { current: 'Object' });
         return Planificator._initStore(arc, 'search-id', type, storageKey);
     }
     static async _initStore(arc, id, type, storageKey) {
@@ -28750,7 +28708,7 @@ ${this.activeRecipe.toString()}`;
     async persistSerialization(serialization) {
         const storage = this.storageProviderFactory;
         const key = storage.parseStringAsKey(this.storageKey).childKeyForArcInfo();
-        const arcInfoType = Type.newArcInfo();
+        const arcInfoType = new ArcType();
         const store = await storage.connectOrConstruct('store', arcInfoType, key.toString());
         store.referenceMode = false;
         // TODO: storage refactor: make sure set() is available here (or wrap store in a Handle-like adaptor).
@@ -28965,7 +28923,7 @@ ${this.activeRecipe.toString()}`;
     async createStore(type, name, id, tags, storageKey = undefined) {
         assert(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);
         if (type instanceof RelationType) {
-            type = Type.newCollection(type);
+            type = new CollectionType(type);
         }
         if (id == undefined) {
             id = this.generateID();

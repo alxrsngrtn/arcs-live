@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Type, TypeLiteral } from './type.js';
+import { Type, TypeLiteral, InterfaceType } from './type.js';
 import { Direction } from './recipe/handle-connection.js';
 declare type SerializedConnectionSpec = {
     direction: Direction;
@@ -104,7 +104,7 @@ export declare class ParticleSpec {
     clone(): ParticleSpec;
     equals(other: any): boolean;
     validateDescription(description: any): void;
-    toInterface(): import("./type.js").InterfaceType;
+    toInterface(): InterfaceType;
     toString(): string;
     toManifestString(): string;
 }

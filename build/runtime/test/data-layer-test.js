@@ -12,17 +12,17 @@ import {assert} from './chai-web.js';
 import {Arc} from '../arc.js';
 import {Schema} from '../schema.js';
 import {SlotComposer} from '../slot-composer.js';
-import {Type} from '../type.js';
+import {EntityType} from '../type.js';
 import {handleFor} from '../handle.js';
 
 describe('entity', async function() {
   it('can be created, stored, and restored', async () => {
-    const schema = new Schema({names: ['TestSchema'], fields: {'value': 'Text'}});
+    const schema = new Schema(['TestSchema'], {value: 'Text'});
 
     const arc = new Arc({slotComposer: new SlotComposer({rootContainer: 'test', modality: 'mock'}), id: 'test'});
     const entity = new (schema.entityClass())({value: 'hello world'});
     assert.isDefined(entity);
-    const storage = await arc.createStore(Type.newEntity(schema).collectionOf());
+    const storage = await arc.createStore(new EntityType(schema).collectionOf());
     const handle = handleFor(storage);
     await handle.store(entity);
 

@@ -10,7 +10,7 @@
 
 import {assert} from './chai-web.js';
 import {InterfaceInfo} from '../interface-info.js';
-import {Type, EntityType, TypeVariable} from '../type.js';
+import {EntityType, TypeVariable, InterfaceType} from '../type.js';
 import {Manifest} from '../manifest.js';
 import {TypeChecker} from '../recipe/type-checker.js';
 import {Schema} from '../schema.js';
@@ -18,36 +18,35 @@ import {TypeVariableInfo} from '../type-variable-info.js';
 
 describe('interface', function() {
   it('finds type variable references in handles', function() {
-    const iface = new InterfaceInfo('Test', [{type: Type.newVariable(new TypeVariableInfo('a'))}], []);
+    const iface = new InterfaceInfo('Test', [{type: TypeVariable.make('a')}], []);
     assert.lengthOf(iface.typeVars, 1);
     assert.equal(iface.typeVars[0].field, 'type');
     assert.equal(iface.typeVars[0].object[iface.typeVars[0].field].variable.name, 'a');
   });
 
   it('finds type variable references in slots', function() {
-    const iface = new InterfaceInfo('Test', [], [{name: Type.newVariable(new TypeVariableInfo('a'))}]);
+    const iface = new InterfaceInfo('Test', [], [{name: TypeVariable.make('a')}]);
     assert.lengthOf(iface.typeVars, 1);
     assert.equal(iface.typeVars[0].field, 'name');
     assert.equal(iface.typeVars[0].object[iface.typeVars[0].field].variable.name, 'a');
   });
 
   it('upgrades type variable references', function() {
-    let iface = new InterfaceInfo('Test',
+    let type = InterfaceType.make('Test',
       [
-        {name: Type.newVariable(new TypeVariableInfo('a'))},
-        {type: Type.newVariable(new TypeVariableInfo('b')), name: 'singleton'},
-        {type: Type.newVariable(new TypeVariableInfo('b')).collectionOf(), name: 'set'}
+        {name: TypeVariable.make('a')},
+        {type: TypeVariable.make('b'), name: 'singleton'},
+        {type: TypeVariable.make('b').collectionOf(), name: 'set'}
       ],
       [
-        {name: Type.newVariable(new TypeVariableInfo('a'))},
+        {name: TypeVariable.make('a')},
       ]);
-    assert.lengthOf(iface.typeVars, 4);
-    let type = Type.newInterface(iface);
+    assert.lengthOf(type.interfaceInfo.typeVars, 4);
     const map = new Map();
     type = type.mergeTypeVariablesByName(map);
     assert(map.has('a'));
     assert(map.has('b'));
-    iface = type.interfaceInfo;
+    const iface = type.interfaceInfo;
     assert.strictEqual(iface.handles[0].name.variable, iface.slots[0].name.variable);
     assert.strictEqual(iface.handles[1].type, iface.handles[2].type.collectionType);
   });
@@ -75,7 +74,7 @@ describe('interface', function() {
           out Test far
           out NotTest foo
       `);
-      const type = Type.newEntity(manifest.schemas.Test);
+      const type = new EntityType(manifest.schemas.Test);
       const iface = new InterfaceInfo('Test', [{name: 'foo'}, {direction: 'in'}, {type}], []);
       assert(!iface.particleMatches(manifest.particles[0]));
       assert(iface.particleMatches(manifest.particles[1]));
@@ -105,7 +104,7 @@ describe('interface', function() {
             provide one
             provide set of randomSlot
       `);
-      const type = Type.newEntity(manifest.schemas.Test);
+      const type = new EntityType(manifest.schemas.Test);
       const iface = new InterfaceInfo('Test',
         [{direction: 'in', type}],
         [{name: 'one'}, {direction: 'provide', isSet: true}]);
@@ -117,12 +116,12 @@ describe('interface', function() {
   });
 
   it('Cannot ensure resolved an unresolved type variable', () => {
-    const iface = new InterfaceInfo('Test', [{type: Type.newVariable(new TypeVariableInfo('a'))}], []);
+    const iface = new InterfaceInfo('Test', [{type: TypeVariable.make('a')}], []);
     assert.isFalse(iface.canEnsureResolved());
   });
 
   it('Can ensure resolved a schema type', () => {
-    const type = Type.newEntity(new Schema({names: ['Thing'], fields: {}}));
+    const type = EntityType.make(['Thing'], {});
     const iface = new InterfaceInfo('Test', [{name: 'foo'}, {direction: 'in'}, {type}], []);
     assert.isTrue(iface.canEnsureResolved());
     assert.isTrue(iface.maybeEnsureResolved());
@@ -130,20 +129,12 @@ describe('interface', function() {
 
   it('Maybe ensure resolved does not mutate on failure', () => {
     const constrainedType1 = TypeChecker.processTypeList(
-      Type.newVariable(new TypeVariableInfo('a')),
-      [{
-        type: Type.newEntity(new Schema({names: ['Thing'], fields: {}})),
-        direction: 'in'
-      }]
+      TypeVariable.make('a'), [{type: EntityType.make(['Thing'], {}), direction: 'in'}]
     );
     const constrainedType2 = TypeChecker.processTypeList(
-      Type.newVariable(new TypeVariableInfo('b')),
-      [{
-        type: Type.newEntity(new Schema({names: ['Thing'], fields: {}})),
-        direction: 'out'
-      }]
+      TypeVariable.make('b'), [{type: EntityType.make(['Thing'], {}), direction: 'out'}]
     );
-    const unconstrainedType = Type.newVariable(new TypeVariableInfo('c'));
+    const unconstrainedType = TypeVariable.make('c');
     const allTypes = [constrainedType1, constrainedType2, unconstrainedType];
 
     const allTypesIface = new InterfaceInfo('Test',

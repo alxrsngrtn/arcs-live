@@ -11,12 +11,13 @@ import { Type } from './type.js';
 import { Entity } from './entity.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 export declare class Schema {
-    private readonly _model;
+    readonly names: string[];
+    readonly fields: {};
     description: {
         [index: string]: string;
     };
     isAlias: boolean;
-    constructor(model: any);
+    constructor(names: string[], fields: {}, description?: any);
     toLiteral(): {
         names: string[];
         fields: {};
@@ -29,10 +30,6 @@ export declare class Schema {
         names: any[];
         description: {};
     }): Schema;
-    readonly fields: {
-        [index: string]: any;
-    };
-    readonly names: string[];
     readonly name: string;
     static typesEqual(fieldType1: any, fieldType2: any): boolean;
     static _typeString(type: any): string;

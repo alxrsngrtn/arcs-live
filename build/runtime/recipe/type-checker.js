@@ -4,8 +4,7 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Type, EntityType, TypeVariable, CollectionType, BigCollectionType, InterfaceType, SlotType } from '../type.js';
-import { TypeVariableInfo } from '../type-variable-info.js';
+import { Type, EntityType, TypeVariable, CollectionType, BigCollectionType, ReferenceType, InterfaceType, SlotType } from '../type.js';
 export class TypeChecker {
     // resolve a list of handleConnection types against a handle
     // base type. This is the core type resolution mechanism, but should only
@@ -18,11 +17,10 @@ export class TypeChecker {
     // NOTE: you probably don't want to call this function, if you think you
     // do, talk to shans@.
     static processTypeList(baseType, list) {
-        const newBaseTypeVariable = new TypeVariableInfo('', null, null);
+        const newBaseType = TypeVariable.make('', null, null);
         if (baseType) {
-            newBaseTypeVariable.resolution = baseType;
+            newBaseType.variable.resolution = baseType;
         }
-        const newBaseType = Type.newVariable(newBaseTypeVariable);
         baseType = newBaseType;
         const concreteTypes = [];
         // baseType might be a variable (and is definitely a variable if no baseType was available).
@@ -106,7 +104,7 @@ export class TypeChecker {
             if (result == null) {
                 return null;
             }
-            return Type.newInterface(result);
+            return new InterfaceType(result);
         }
         else if ((primitiveBase.isTypeContainer() && primitiveBase.hasVariable)
             || (primitiveOnto.isTypeContainer() && primitiveOnto.hasVariable)) {
@@ -128,15 +126,15 @@ export class TypeChecker {
                 // If this is an undifferentiated variable then we need to create structure to match against. That's
                 // allowed because this variable could represent anything, and it needs to represent this structure
                 // in order for type resolution to succeed.
-                const newVar = Type.newVariable(new TypeVariableInfo('a', null, null));
+                const newVar = TypeVariable.make('a', null, null);
                 if (primitiveConnectionType instanceof CollectionType) {
-                    primitiveHandleType.variable.resolution = Type.newCollection(newVar);
+                    primitiveHandleType.variable.resolution = new CollectionType(newVar);
                 }
                 else if (primitiveConnectionType instanceof BigCollectionType) {
-                    primitiveHandleType.variable.resolution = Type.newBigCollection(newVar);
+                    primitiveHandleType.variable.resolution = new BigCollectionType(newVar);
                 }
                 else {
-                    primitiveHandleType.variable.resolution = Type.newReference(newVar);
+                    primitiveHandleType.variable.resolution = new ReferenceType(newVar);
                 }
                 const unwrap = Type.unwrapPair(primitiveHandleType.resolvedType(), primitiveConnectionType);
                 [primitiveHandleType, primitiveConnectionType] = unwrap;

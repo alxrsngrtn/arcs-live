@@ -6,7 +6,7 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 export class SlotInfo {
-    constructor({ formFactor, handle }) {
+    constructor(formFactor, handle) {
         this.formFactor = formFactor;
         this.handle = handle;
     }
@@ -14,7 +14,7 @@ export class SlotInfo {
         return this;
     }
     static fromLiteral(data) {
-        return new SlotInfo(data);
+        return new SlotInfo(data.formFactor, data.handle);
     }
 }
 //# sourceMappingURL=slot-info.js.map

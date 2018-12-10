@@ -7,9 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Type } from './type.js';
+import { Type, InterfaceType } from './type.js';
 import { TypeChecker } from './recipe/type-checker.js';
-import { InterfaceInfo } from './interface-info.js';
 import { assert } from '../platform/assert-web.js';
 function asType(t) {
     return (t instanceof Type) ? t : Type.fromLiteral(t);
@@ -162,7 +161,7 @@ export class ParticleSpec {
         assert(!this.slots.size, 'please implement slots toInterface');
         const handles = this.model.args.map(({ type, name, direction }) => ({ type: asType(type), name, direction }));
         const slots = [];
-        return Type.newInterface(new InterfaceInfo(this.name, handles, slots));
+        return InterfaceType.make(this.name, handles, slots);
     }
     toString() {
         const results = [];

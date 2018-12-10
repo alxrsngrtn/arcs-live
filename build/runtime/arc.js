@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { Type, EntityType, TypeVariable, InterfaceType, RelationType } from './type.js';
+import { Type, EntityType, TypeVariable, CollectionType, InterfaceType, RelationType, ArcType } from './type.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
@@ -252,7 +252,7 @@ ${this.activeRecipe.toString()}`;
     async persistSerialization(serialization) {
         const storage = this.storageProviderFactory;
         const key = storage.parseStringAsKey(this.storageKey).childKeyForArcInfo();
-        const arcInfoType = Type.newArcInfo();
+        const arcInfoType = new ArcType();
         const store = await storage.connectOrConstruct('store', arcInfoType, key.toString());
         store.referenceMode = false;
         // TODO: storage refactor: make sure set() is available here (or wrap store in a Handle-like adaptor).
@@ -467,7 +467,7 @@ ${this.activeRecipe.toString()}`;
     async createStore(type, name, id, tags, storageKey = undefined) {
         assert(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);
         if (type instanceof RelationType) {
-            type = Type.newCollection(type);
+            type = new CollectionType(type);
         }
         if (id == undefined) {
             id = this.generateID();
