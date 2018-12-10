@@ -102,6 +102,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _build_runtime_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(176);
 /* harmony import */ var _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(255);
 /* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(256);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(193);
+/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(229);
+/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(247);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -125,21 +128,30 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
 const Arcs = {
   version: '0.6',
   Arc: _build_runtime_arc_js__WEBPACK_IMPORTED_MODULE_0__["Arc"],
-  ArcType: _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_4__["ArcType"],
   Manifest: _build_runtime_manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"],
   Planificator: _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_1__["Planificator"],
   SlotComposer: _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"],
   SlotDomConsumer: _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__["SlotDomConsumer"],
   Type: _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_4__["Type"],
+  ArcType: _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_4__["ArcType"],
   BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_11__["BrowserLoader"],
   StorageProviderFactory: _build_runtime_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_7__["StorageProviderFactory"],
   ParticleExecutionContext: _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_6__["ParticleExecutionContext"],
   RecipeResolver: _build_runtime_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_9__["RecipeResolver"],
   KeyManager: _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_8__["KeyManager"],
-  firebase: _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_10__["firebase"]
+  firebase: _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_10__["firebase"],
+  Xen: {
+    StateMixin: _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_12__["XenStateMixin"],
+    Template: _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_13__["Template"],
+    Debug: _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_14__["Debug"],
+    logFactory: _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_14__["logFactory"]
+  }
 };
 
 // WebPack doesn't support `export` so make this object global
@@ -75489,11 +75501,12 @@ class SyntheticCollection extends _storage_provider_base_js__WEBPACK_IMPORTED_MO
         this.storageFactory = storageFactory;
         let resolveInitialized;
         this.initialized = new Promise(resolve => resolveInitialized = resolve);
-        targetStore.get().then(async (data) => {
+        const process = async (data) => {
             await this.process(data, false);
             resolveInitialized();
             targetStore.on('change', details => this.process(details.data, true), this);
-        });
+        };
+        targetStore.get().then(data => process(data));
     }
     async process(data, fireEvent) {
         let handles;
@@ -79150,7 +79163,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
         return template;
     }
     // We put slot IDs at the top-level of the model as well as in models for sub-templates.
-    // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.          
+    // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.
     enhanceModelWithSlotIDs(model = {}, slotIDs, topLevel = true) {
         if (topLevel) {
             model = Object.assign({}, slotIDs, model);
@@ -79190,7 +79203,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
         return undefined;
     }
     /**
-     * Remove entities from named handle.
+     * Remove all entities from named handle.
      */
     async clearHandle(handleName) {
         const handle = this.handles.get(handleName);
@@ -82301,7 +82314,7 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         // TODO(sjmiles): introduce tree scope
         newContainer.attachShadow({ mode: `open` });
         // provision basic stylesheet
-        _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["default"].stamp(`<style>${_modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__["default"]}</style>`).appendTo(newContainer.shadowRoot);
+        _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["Template"].stamp(`<style>${_modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__["default"]}</style>`).appendTo(newContainer.shadowRoot);
         // TODO(sjmiles): maybe inject boilerplate styles
         return newContainer.shadowRoot;
     }
@@ -82446,7 +82459,7 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         if (!rendering.liveDom) {
             // TODO(sjmiles): hack to allow subtree elements (e.g. x-list) to marshal events
             rendering.container._eventMapper = this._eventMapper.bind(this, this.eventHandler);
-            rendering.liveDom = _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["default"]
+            rendering.liveDom = _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["Template"]
                 .stamp(template)
                 .events(rendering.container._eventMapper)
                 .appendTo(rendering.container);
@@ -82815,6 +82828,7 @@ class SlotContext {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Template", function() { return Template; });
 /*
 @license
 Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
@@ -83204,11 +83218,11 @@ const createTemplate = innerHTML => {
   return Object.assign(document.createElement('template'), {innerHTML});
 };
 
-/* harmony default export */ __webpack_exports__["default"] = ({
+const Template = {
   createTemplate,
   setBoolAttribute,
   stamp
-});
+};
 
 
 /***/ }),
@@ -85127,10 +85141,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const _nopFactory = () => () => {};
-const _logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`,
-      `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
 
-const logFactory = _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["Debug"].level < 1 ? _nopFactory : _logFactory;
+// TODO(sjmiles): problem with timing Debug.level or duplicate modules?
+const logFactory = (...args) => _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["Debug"].level < 1 ? _nopFactory() : Object(_modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(...args);
+//export const logFactory = _logFactory;
 
 
 /***/ }),

@@ -17057,11 +17057,12 @@ class SyntheticCollection extends StorageProviderBase {
         this.storageFactory = storageFactory;
         let resolveInitialized;
         this.initialized = new Promise(resolve => resolveInitialized = resolve);
-        targetStore.get().then(async (data) => {
+        const process = async (data) => {
             await this.process(data, false);
             resolveInitialized();
             targetStore.on('change', details => this.process(details.data, true), this);
-        });
+        };
+        targetStore.get().then(data => process(data));
     }
     async process(data, fireEvent) {
         let handles;
@@ -20600,7 +20601,7 @@ const createTemplate = innerHTML => {
   return Object.assign(document.createElement('template'), {innerHTML});
 };
 
-var Template = {
+const Template = {
   createTemplate,
   setBoolAttribute,
   stamp
@@ -26942,7 +26943,7 @@ class DomParticleBase extends Particle$1 {
         return template;
     }
     // We put slot IDs at the top-level of the model as well as in models for sub-templates.
-    // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.          
+    // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.
     enhanceModelWithSlotIDs(model = {}, slotIDs, topLevel = true) {
         if (topLevel) {
             model = Object.assign({}, slotIDs, model);
@@ -26982,7 +26983,7 @@ class DomParticleBase extends Particle$1 {
         return undefined;
     }
     /**
-     * Remove entities from named handle.
+     * Remove all entities from named handle.
      */
     async clearHandle(handleName) {
         const handle = this.handles.get(handleName);
@@ -29482,7 +29483,7 @@ class ShellPlanningInterface {
     if (process.argv.includes('--explore')) {
       console.log('Waiting for Arcs Explorer');
       DevtoolsConnection.ensure();
-      await DevtoolsConnection.onceConnected;  
+      await DevtoolsConnection.onceConnected;
     }
     const factory = new ArcFactory(assetsPath);
     const context = await factory.createContext(manifest);

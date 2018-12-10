@@ -97,11 +97,12 @@ class SyntheticCollection extends StorageProviderBase {
         this.storageFactory = storageFactory;
         let resolveInitialized;
         this.initialized = new Promise(resolve => resolveInitialized = resolve);
-        targetStore.get().then(async (data) => {
+        const process = async (data) => {
             await this.process(data, false);
             resolveInitialized();
             targetStore.on('change', details => this.process(details.data, true), this);
-        });
+        };
+        targetStore.get().then(data => process(data));
     }
     async process(data, fireEvent) {
         let handles;

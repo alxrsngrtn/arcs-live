@@ -36,7 +36,7 @@ export declare class DomParticleBase extends Particle {
     }): void;
     setParticleDescription(pattern: any): boolean;
     /**
-     * Remove entities from named handle.
+     * Remove all entities from named handle.
      */
     clearHandle(handleName: string): Promise<void>;
     /**

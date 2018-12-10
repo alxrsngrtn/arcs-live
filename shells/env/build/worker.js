@@ -8433,7 +8433,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
         return template;
     }
     // We put slot IDs at the top-level of the model as well as in models for sub-templates.
-    // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.          
+    // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.
     enhanceModelWithSlotIDs(model = {}, slotIDs, topLevel = true) {
         if (topLevel) {
             model = Object.assign({}, slotIDs, model);
@@ -8473,7 +8473,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
         return undefined;
     }
     /**
-     * Remove entities from named handle.
+     * Remove all entities from named handle.
      */
     async clearHandle(handleName) {
         const handle = this.handles.get(handleName);
@@ -8995,10 +8995,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const _nopFactory = () => () => {};
-const _logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`,
-      `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
 
-const logFactory = _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["Debug"].level < 1 ? _nopFactory : _logFactory;
+// TODO(sjmiles): problem with timing Debug.level or duplicate modules?
+const logFactory = (...args) => _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["Debug"].level < 1 ? _nopFactory() : Object(_modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(...args);
+//export const logFactory = _logFactory;
 
 
 /***/ }),

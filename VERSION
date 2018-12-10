@@ -1,9 +1,57 @@
-commit a359d2eeb1d7a7013049ff6010c70f375653a3b3
+commit 3e889733a1fb1b4ed309b9c7e91ddeaf2f638420
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Dec 10 13:10:33 2018 -0800
+Date:   Mon Dec 10 13:37:59 2018 -0800
 
-    Tweak pouch-db-[collection|variable] api to match firebase-* (#2420)
+    Mostly Recipe Work (#2422)
     
-    * trap failure conditions in pouch-db-*, change responses to parallel firebase-* implementation
+    * Restaurant work
     
-    * document disabled warning
+    * begin port FavoriteFood
+    
+    * fix suggestion scrolling
+    
+    * support background-image (in addition to img)
+    
+    * separable Restaurants and Reservations
+    
+    * use annotation in form, instead of duplicating it
+    
+    * fix panel sizing issue
+    
+    * style tweaks
+    
+    * increase searchRadius
+    
+    * omnibus changes
+    
+    * add exception traps for using pouchdb
+    
+    * temporarily disable logLevel checking
+    
+    * add some error reporting
+    
+    * omnibus changes during freeze: PouchDB, planner-shell
+    
+    * trap exceptions at sources instead of sinks
+    
+    * cleanup
+    
+    * improve canonicalization of xen imports
+    
+    * naming: prefer `particles` to `artifacts`
+    
+    * repair Debug.level control for logFactory
+    
+    * advancing planner-shell
+    
+    * submerge ArcType
+    
+    * move to other PR
+    
+    * move to other PR
+    
+    * wip
+    
+    * wip
+    
+    * restore ArcType

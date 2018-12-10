@@ -110,7 +110,7 @@ export class DomParticleBase extends Particle {
         return template;
     }
     // We put slot IDs at the top-level of the model as well as in models for sub-templates.
-    // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.          
+    // This is temporary and should go away when we move from sub-IDs to [(Entity, Slot)] constructs.
     enhanceModelWithSlotIDs(model = {}, slotIDs, topLevel = true) {
         if (topLevel) {
             model = Object.assign({}, slotIDs, model);
@@ -150,7 +150,7 @@ export class DomParticleBase extends Particle {
         return undefined;
     }
     /**
-     * Remove entities from named handle.
+     * Remove all entities from named handle.
      */
     async clearHandle(handleName) {
         const handle = this.handles.get(handleName);

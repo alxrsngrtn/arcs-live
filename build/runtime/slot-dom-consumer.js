@@ -9,7 +9,7 @@
  */
 import { assert } from '../platform/assert-web.js';
 import { SlotConsumer } from './slot-consumer.js';
-import Template from '../../modalities/dom/components/xen/xen-template.js';
+import { Template } from '../../modalities/dom/components/xen/xen-template.js';
 import IconStyles from '../../modalities/dom/components/icons.css.js';
 const templateByName = new Map();
 export class SlotDomConsumer extends SlotConsumer {
