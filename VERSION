@@ -1,5 +1,5 @@
-commit 66a922b20d42d7a0a39b322511a59144dea30a89
+commit 037da8950ba6e86da3cc35b0a7f26018e276fd89
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Dec 11 08:49:21 2018 +1100
+Date:   Tue Dec 11 09:08:40 2018 +1100
 
-    Remove deprecated Shape 'interface' format (#2417)
+    Restoring grammkit v0.6.3 with the updated SVG onclick behaviour (#2424)
