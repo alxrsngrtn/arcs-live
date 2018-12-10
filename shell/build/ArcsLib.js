@@ -42616,23 +42616,29 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
         this._model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_0__["CrdtCollectionModel"](model);
     }
     async _toList() {
-        if (this.referenceMode) {
-            const items = (await this.getModel()).toLiteral();
-            if (items.length === 0) {
-                return [];
+        try {
+            if (this.referenceMode) {
+                const items = (await this.getModel()).toLiteral();
+                if (items.length === 0) {
+                    return [];
+                }
+                const refSet = new Set();
+                items.forEach(item => refSet.add(item.value.storageKey));
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
+                const ref = refSet.values().next().value;
+                await this.ensureBackingStore();
+                const retrieveItem = async (item) => {
+                    const ref = item.value;
+                    return { id: ref.id, value: await this.backingStore.get(ref.id), keys: item.keys };
+                };
+                return await Promise.all(items.map(retrieveItem));
             }
-            const refSet = new Set();
-            items.forEach(item => refSet.add(item.value.storageKey));
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
-            const ref = refSet.values().next().value;
-            await this.ensureBackingStore();
-            const retrieveItem = async (item) => {
-                const ref = item.value;
-                return { id: ref.id, value: await this.backingStore.get(ref.id), keys: item.keys };
-            };
-            return await Promise.all(items.map(retrieveItem));
+            return (await this.getModel()).toLiteral();
         }
-        return (await this.getModel()).toLiteral();
+        catch (x) {
+            // TODO(sjmiles): caught for compatibility: pouchdb layer can throw, firebase layer never does
+            return [];
+        }
     }
     async toList() {
         return (await this._toList()).map(item => item.value);
@@ -42794,7 +42800,8 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
                 this._rev = undefined;
             }
             // Unexpected error
-            console.warn('PouchDbCollection.getModel err=', err);
+            // TODO(sjmiles): situation occurs frequently so squelching the log for now
+            //console.warn('PouchDbCollection.getModel err=', err);
             throw err;
         }
         return this._model;
@@ -43099,18 +43106,25 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
      * @return a promise containing the variable value or null if it does not exist.
      */
     async get() {
-        const value = await this.getStored();
-        if (this.referenceMode && value) {
-            try {
-                await this.ensureBackingStore();
-                return await this.backingStore.get(value.id);
+        try {
+            const value = await this.getStored();
+            if (this.referenceMode && value) {
+                try {
+                    await this.ensureBackingStore();
+                    return await this.backingStore.get(value.id);
+                }
+                catch (err) {
+                    // TODO(sjmiles): situation occurs frequently so squelching the log for now
+                    //console.warn('PouchDbVariable.get err=', err);
+                    throw err;
+                }
             }
-            catch (err) {
-                console.warn('PouchDbVariable.get err=', err);
-                throw err;
-            }
+            return value;
         }
-        return value;
+        catch (x) {
+            // TODO(sjmiles): caught for compatibility: pouchdb layer can throw, firebase layer never does
+            return null;
+        }
     }
     /**
      * Set the value for this variable.

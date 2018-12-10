@@ -1,5 +1,9 @@
-commit 6185252d84785b0627c35aef0f356004189bce93
+commit a359d2eeb1d7a7013049ff6010c70f375653a3b3
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Dec 10 11:49:06 2018 -0800
+Date:   Mon Dec 10 13:10:33 2018 -0800
 
-    port noto-emoji to particles/ (#2419)
+    Tweak pouch-db-[collection|variable] api to match firebase-* (#2420)
+    
+    * trap failure conditions in pouch-db-*, change responses to parallel firebase-* implementation
+    
+    * document disabled warning

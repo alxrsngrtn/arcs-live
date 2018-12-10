@@ -95,18 +95,25 @@ export class PouchDbVariable extends PouchDbStorageProvider {
      * @return a promise containing the variable value or null if it does not exist.
      */
     async get() {
-        const value = await this.getStored();
-        if (this.referenceMode && value) {
-            try {
-                await this.ensureBackingStore();
-                return await this.backingStore.get(value.id);
+        try {
+            const value = await this.getStored();
+            if (this.referenceMode && value) {
+                try {
+                    await this.ensureBackingStore();
+                    return await this.backingStore.get(value.id);
+                }
+                catch (err) {
+                    // TODO(sjmiles): situation occurs frequently so squelching the log for now
+                    //console.warn('PouchDbVariable.get err=', err);
+                    throw err;
+                }
             }
-            catch (err) {
-                console.warn('PouchDbVariable.get err=', err);
-                throw err;
-            }
+            return value;
         }
-        return value;
+        catch (x) {
+            // TODO(sjmiles): caught for compatibility: pouchdb layer can throw, firebase layer never does
+            return null;
+        }
     }
     /**
      * Set the value for this variable.
