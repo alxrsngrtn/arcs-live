@@ -1,9 +1,5 @@
-commit 9522e0147349bc1364b762305272e1a55b08c334
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Dec 10 15:23:39 2018 -0800
+commit 3dcbd6da67806b6314118df2ef581099eb5e3261
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Dec 11 15:07:26 2018 +1100
 
-    update planificator storage keys construction (#2421)
-    
-    * update planificator storage keys construction
-    
-    * remove defaulting to volatile suggestions storage in shell
+    Fix a couple of small issues in sigh (#2426)
