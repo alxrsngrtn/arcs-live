@@ -15341,11 +15341,20 @@ class VolatileKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_3__["KeyBase"] {
         this.location = parts[1];
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.toString() === key, `Expected ${key}, but got ${this.toString()} volatile key base.`);
     }
+    base() { return 'volatile'; }
+    get arcId() { return this._arcId; }
+    set arcId(arcId) { this._arcId = arcId; }
     childKeyForHandle(id) {
         return new VolatileKey('volatile');
     }
     childKeyForArcInfo() {
         return new VolatileKey(`${this.protocol}://${this.arcId}^^arc-info`);
+    }
+    childKeyForSuggestions(userId, arcId) {
+        return new VolatileKey(`${this.protocol}://${this.arcId}^^${userId}/suggestions/${arcId}`);
+    }
+    childKeyForSearch(userId) {
+        return new VolatileKey(`${this.protocol}://${this.arcId}^^${userId}/search`);
     }
     toString() {
         if (this.location !== undefined && this.arcId !== undefined) {
@@ -15383,10 +15392,10 @@ class VolatileStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE
     }
     async _construct(id, type, keyFragment) {
         const key = new VolatileKey(keyFragment);
-        if (key.arcId == undefined) {
+        if (key.arcId === undefined) {
             key.arcId = this.arcId.toString();
         }
-        if (key.location == undefined) {
+        if (key.location === undefined) {
             key.location = 'volatile-' + this.localIDBase++;
         }
         // TODO(shanestephens): should pass in factory, not 'this' here.
@@ -15405,7 +15414,7 @@ class VolatileStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE
             }
             return __storageCache[imKey.arcId].connect(id, type, key);
         }
-        if (this._memoryMap[key] == undefined) {
+        if (this._memoryMap[key] === undefined) {
             return null;
         }
         // TODO assert types match?
@@ -15432,7 +15441,11 @@ class VolatileStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE
         return storage;
     }
     parseStringAsKey(s) {
-        return new VolatileKey(s);
+        const key = new VolatileKey(s);
+        if (key.arcId === undefined) {
+            key.arcId = this.arcId.toString();
+        }
+        return key;
     }
 }
 class VolatileStorageProvider extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["StorageProviderBase"] {
@@ -16696,11 +16709,24 @@ class FirebaseKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_5__["KeyBase"] {
             this.location = '';
         }
     }
+    base() {
+        const str = this.toString();
+        return str.substring(0, str.length - this.arcId.length);
+    }
+    get arcId() {
+        return this.location.substring(this.location.lastIndexOf('/') + 1);
+    }
     childKeyForHandle(id) {
         return this.buildChildKey(`handles/${id}`);
     }
     childKeyForArcInfo() {
         return this.buildChildKey('arc-info');
+    }
+    childKeyForSuggestions(userId, arcId) {
+        return this.buildChildKey(`${userId}/suggestions/${arcId}`);
+    }
+    childKeyForSearch(userId) {
+        return this.buildChildKey(`${userId}/search`);
     }
     buildChildKey(leaf) {
         let location = '';
@@ -42319,6 +42345,13 @@ class PouchDbKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_1__["KeyBase"] {
             throw new Error('PouchDb keys must match ' + this.toString() + ' vs ' + key);
         }
     }
+    base() {
+        const str = this.toString();
+        return str.substring(0, str.length - this.arcId.length);
+    }
+    get arcId() {
+        return this.location.substring(this.location.lastIndexOf('/') + 1);
+    }
     /**
      * Creates a new child PouchDbKey relative to the current key, based on the value of id.
      */
@@ -42328,6 +42361,12 @@ class PouchDbKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_1__["KeyBase"] {
     }
     childKeyForArcInfo() {
         return this.buildChildKey('arc-info');
+    }
+    childKeyForSuggestions(userId, arcId) {
+        return this.buildChildKey(`${userId}/suggestions/${arcId}`);
+    }
+    childKeyForSearch(userId) {
+        return this.buildChildKey(`${userId}/search`);
     }
     buildChildKey(leaf) {
         let location = '';
@@ -71720,12 +71759,28 @@ class SyntheticKey extends _key_base_js__WEBPACK_IMPORTED_MODULE_2__["KeyBase"] 
     get protocol() {
         return 'synthetic';
     }
+    base() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, 'base not supported for synthetic keys');
+        return null;
+    }
+    get arcId() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, 'arcId not supported for synthetic keys');
+        return null;
+    }
     childKeyForHandle(id) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, 'childKeyForHandle not supported for synthetic keys');
         return null;
     }
     childKeyForArcInfo() {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, 'childKeyForArcInfo not supported for synthetic keys');
+        return null;
+    }
+    childKeyForSuggestions(userId, arcId) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, 'childKeyForSuggestions not supported for synthetic keys');
+        return null;
+    }
+    childKeyForSearch(userId) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(false, 'childKeyForSearch not supported for synthetic keys');
         return null;
     }
     toString() {
@@ -84466,13 +84521,6 @@ class Planificator {
             this.consumer.setSuggestFilter(showAll, filter);
         }
     }
-    get arcKey() {
-        return Planificator.getArcKey(this.arc);
-    }
-    static getArcKey(arc) {
-        // TODO: should this be arc's or storage-key method?
-        return arc.storageKey.substring(arc.storageKey.lastIndexOf('/') + 1);
-    }
     registerSuggestionsChangedCallback(callback) {
         this.consumer.registerSuggestionsChangedCallback(callback);
     }
@@ -84511,18 +84559,15 @@ class Planificator {
             }
         });
     }
-    static constructKey(arc, suffix, storageKeyBase) {
-        const keybase = storageKeyBase || arc.storageKey.substring(0, arc.storageKey.lastIndexOf('/'));
-        const storageKeyString = `${keybase}/${suffix}`;
-        const storageKey = arc.storageProviderFactory.parseStringAsKey(storageKeyString);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(storageKey.protocol && storageKey.location, `Cannot parse key: ${storageKeyString}`);
-        return storageKey;
-    }
     static _constructSuggestionKey(arc, userid, storageKeyBase) {
-        return Planificator.constructKey(arc, `${userid}/suggestions/${Planificator.getArcKey(arc)}`, storageKeyBase);
+        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        const keybase = arc.storageProviderFactory.parseStringAsKey(storageKeyBase || arcStorageKey.base());
+        return keybase.childKeyForSuggestions(userid, arcStorageKey.arcId);
     }
     static _constructSearchKey(arc, userid) {
-        return Planificator.constructKey(arc, `${userid}/search/`);
+        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        const keybase = arc.storageProviderFactory.parseStringAsKey(arcStorageKey.base());
+        return keybase.childKeyForSearch(userid);
     }
     static async _initSuggestStore(arc, userid, storageKeyBase) {
         const storageKey = Planificator._constructSuggestionKey(arc, userid, storageKeyBase);
@@ -84540,14 +84585,15 @@ class Planificator {
     }
     async _storeSearch() {
         const values = await this.searchStore['get']() || [];
+        const arcKey = this.arc.storageProviderFactory.parseStringAsKey(this.arc.storageKey).arcId;
         const newValues = [];
         for (const { arc, search } of values) {
-            if (arc !== this.arcKey) {
+            if (arc !== arcKey) {
                 newValues.push({ arc, search });
             }
         }
         if (this.search) {
-            newValues.push({ search: this.search, arc: this.arcKey });
+            newValues.push({ search: this.search, arc: arcKey });
         }
         return this.searchStore['set'](newValues);
     }

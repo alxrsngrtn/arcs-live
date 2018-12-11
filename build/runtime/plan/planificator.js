@@ -65,13 +65,6 @@ export class Planificator {
             this.consumer.setSuggestFilter(showAll, filter);
         }
     }
-    get arcKey() {
-        return Planificator.getArcKey(this.arc);
-    }
-    static getArcKey(arc) {
-        // TODO: should this be arc's or storage-key method?
-        return arc.storageKey.substring(arc.storageKey.lastIndexOf('/') + 1);
-    }
     registerSuggestionsChangedCallback(callback) {
         this.consumer.registerSuggestionsChangedCallback(callback);
     }
@@ -110,18 +103,15 @@ export class Planificator {
             }
         });
     }
-    static constructKey(arc, suffix, storageKeyBase) {
-        const keybase = storageKeyBase || arc.storageKey.substring(0, arc.storageKey.lastIndexOf('/'));
-        const storageKeyString = `${keybase}/${suffix}`;
-        const storageKey = arc.storageProviderFactory.parseStringAsKey(storageKeyString);
-        assert(storageKey.protocol && storageKey.location, `Cannot parse key: ${storageKeyString}`);
-        return storageKey;
-    }
     static _constructSuggestionKey(arc, userid, storageKeyBase) {
-        return Planificator.constructKey(arc, `${userid}/suggestions/${Planificator.getArcKey(arc)}`, storageKeyBase);
+        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        const keybase = arc.storageProviderFactory.parseStringAsKey(storageKeyBase || arcStorageKey.base());
+        return keybase.childKeyForSuggestions(userid, arcStorageKey.arcId);
     }
     static _constructSearchKey(arc, userid) {
-        return Planificator.constructKey(arc, `${userid}/search/`);
+        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        const keybase = arc.storageProviderFactory.parseStringAsKey(arcStorageKey.base());
+        return keybase.childKeyForSearch(userid);
     }
     static async _initSuggestStore(arc, userid, storageKeyBase) {
         const storageKey = Planificator._constructSuggestionKey(arc, userid, storageKeyBase);
@@ -139,14 +129,15 @@ export class Planificator {
     }
     async _storeSearch() {
         const values = await this.searchStore['get']() || [];
+        const arcKey = this.arc.storageProviderFactory.parseStringAsKey(this.arc.storageKey).arcId;
         const newValues = [];
         for (const { arc, search } of values) {
-            if (arc !== this.arcKey) {
+            if (arc !== arcKey) {
                 newValues.push({ arc, search });
             }
         }
         if (this.search) {
-            newValues.push({ search: this.search, arc: this.arcKey });
+            newValues.push({ search: this.search, arc: arcKey });
         }
         return this.searchStore['set'](newValues);
     }

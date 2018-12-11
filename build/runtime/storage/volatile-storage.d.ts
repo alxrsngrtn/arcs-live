@@ -5,10 +5,14 @@ import { Id } from '../id.js';
 import { Type } from '../type.js';
 export declare function resetVolatileStorageForTesting(): void;
 declare class VolatileKey extends KeyBase {
-    arcId: string;
+    _arcId: string;
     constructor(key: string);
+    base(): string;
+    arcId: string;
     childKeyForHandle(id: any): VolatileKey;
     childKeyForArcInfo(): VolatileKey;
+    childKeyForSuggestions(userId: any, arcId: any): KeyBase;
+    childKeyForSearch(userId: any): KeyBase;
     toString(): string;
 }
 export declare class VolatileStorage extends StorageBase {

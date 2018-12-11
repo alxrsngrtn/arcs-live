@@ -18,8 +18,12 @@ declare class SyntheticKey extends KeyBase {
     readonly syntheticType: Type;
     constructor(key: string, storageFactory: StorageProviderFactory);
     readonly protocol: string;
+    base(): string;
+    readonly arcId: string;
     childKeyForHandle(id: any): SyntheticKey;
     childKeyForArcInfo(): SyntheticKey;
+    childKeyForSuggestions(userId: any, arcId: any): KeyBase;
+    childKeyForSearch(userId: any): KeyBase;
     toString(): string;
 }
 export declare class SyntheticStorage extends StorageBase {

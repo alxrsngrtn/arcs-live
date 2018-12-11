@@ -48,12 +48,28 @@ class SyntheticKey extends KeyBase {
     get protocol() {
         return 'synthetic';
     }
+    base() {
+        assert(false, 'base not supported for synthetic keys');
+        return null;
+    }
+    get arcId() {
+        assert(false, 'arcId not supported for synthetic keys');
+        return null;
+    }
     childKeyForHandle(id) {
         assert(false, 'childKeyForHandle not supported for synthetic keys');
         return null;
     }
     childKeyForArcInfo() {
         assert(false, 'childKeyForArcInfo not supported for synthetic keys');
+        return null;
+    }
+    childKeyForSuggestions(userId, arcId) {
+        assert(false, 'childKeyForSuggestions not supported for synthetic keys');
+        return null;
+    }
+    childKeyForSearch(userId) {
+        assert(false, 'childKeyForSearch not supported for synthetic keys');
         return null;
     }
     toString() {

@@ -11,8 +11,12 @@ declare class FirebaseKey extends KeyBase {
     projectId?: string;
     apiKey?: string;
     constructor(key: string);
+    base(): string;
+    readonly arcId: string;
     childKeyForHandle(id: any): FirebaseKey;
     childKeyForArcInfo(): FirebaseKey;
+    childKeyForSuggestions(userId: any, arcId: any): KeyBase;
+    childKeyForSearch(userId: any): KeyBase;
     private buildChildKey;
     toString(): string;
 }

@@ -1,5 +1,9 @@
-commit 3dcbd6da67806b6314118df2ef581099eb5e3261
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Dec 11 15:07:26 2018 +1100
+commit 7fba9377017ef2cc6c504997c21978044b64756e
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Dec 10 23:15:54 2018 -0800
 
-    Fix a couple of small issues in sigh (#2426)
+    Helper methods for suggestion and search keys + fixes (#2427)
+    
+    * Helper methods for suggestion and search keys + fixes
+    
+    * rename arckey to arcId (consistent with volatile-key)

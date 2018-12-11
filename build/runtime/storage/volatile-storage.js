@@ -27,11 +27,20 @@ class VolatileKey extends KeyBase {
         this.location = parts[1];
         assert(this.toString() === key, `Expected ${key}, but got ${this.toString()} volatile key base.`);
     }
+    base() { return 'volatile'; }
+    get arcId() { return this._arcId; }
+    set arcId(arcId) { this._arcId = arcId; }
     childKeyForHandle(id) {
         return new VolatileKey('volatile');
     }
     childKeyForArcInfo() {
         return new VolatileKey(`${this.protocol}://${this.arcId}^^arc-info`);
+    }
+    childKeyForSuggestions(userId, arcId) {
+        return new VolatileKey(`${this.protocol}://${this.arcId}^^${userId}/suggestions/${arcId}`);
+    }
+    childKeyForSearch(userId) {
+        return new VolatileKey(`${this.protocol}://${this.arcId}^^${userId}/search`);
     }
     toString() {
         if (this.location !== undefined && this.arcId !== undefined) {
@@ -69,10 +78,10 @@ export class VolatileStorage extends StorageBase {
     }
     async _construct(id, type, keyFragment) {
         const key = new VolatileKey(keyFragment);
-        if (key.arcId == undefined) {
+        if (key.arcId === undefined) {
             key.arcId = this.arcId.toString();
         }
-        if (key.location == undefined) {
+        if (key.location === undefined) {
             key.location = 'volatile-' + this.localIDBase++;
         }
         // TODO(shanestephens): should pass in factory, not 'this' here.
@@ -91,7 +100,7 @@ export class VolatileStorage extends StorageBase {
             }
             return __storageCache[imKey.arcId].connect(id, type, key);
         }
-        if (this._memoryMap[key] == undefined) {
+        if (this._memoryMap[key] === undefined) {
             return null;
         }
         // TODO assert types match?
@@ -118,7 +127,11 @@ export class VolatileStorage extends StorageBase {
         return storage;
     }
     parseStringAsKey(s) {
-        return new VolatileKey(s);
+        const key = new VolatileKey(s);
+        if (key.arcId === undefined) {
+            key.arcId = this.arcId.toString();
+        }
+        return key;
     }
 }
 class VolatileStorageProvider extends StorageProviderBase {

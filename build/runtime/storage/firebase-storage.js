@@ -55,11 +55,24 @@ class FirebaseKey extends KeyBase {
             this.location = '';
         }
     }
+    base() {
+        const str = this.toString();
+        return str.substring(0, str.length - this.arcId.length);
+    }
+    get arcId() {
+        return this.location.substring(this.location.lastIndexOf('/') + 1);
+    }
     childKeyForHandle(id) {
         return this.buildChildKey(`handles/${id}`);
     }
     childKeyForArcInfo() {
         return this.buildChildKey('arc-info');
+    }
+    childKeyForSuggestions(userId, arcId) {
+        return this.buildChildKey(`${userId}/suggestions/${arcId}`);
+    }
+    childKeyForSearch(userId) {
+        return this.buildChildKey(`${userId}/search`);
     }
     buildChildKey(leaf) {
         let location = '';

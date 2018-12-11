@@ -23,11 +23,15 @@ export declare class PouchDbKey extends KeyBase {
     readonly dbLocation: string;
     readonly dbName: string;
     constructor(key: string);
+    base(): string;
+    readonly arcId: string;
     /**
      * Creates a new child PouchDbKey relative to the current key, based on the value of id.
      */
     childKeyForHandle(id: string): PouchDbKey;
     childKeyForArcInfo(): PouchDbKey;
+    childKeyForSuggestions(userId: any, arcId: any): KeyBase;
+    childKeyForSearch(userId: any): KeyBase;
     private buildChildKey;
     toString(): string;
     dbCacheKey(): string;
