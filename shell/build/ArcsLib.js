@@ -84778,7 +84778,8 @@ class SuggestionComposer {
         this.clear();
         const sortedSuggestions = suggestions.sort(_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_1__["Suggestion"].compare);
         for (const suggestion of sortedSuggestions) {
-            const suggestionContent = suggestion.getDescription(this._modality.name) || suggestion.descriptionText;
+            // TODO(mmandlis): use modality-appropriate description.
+            const suggestionContent = { template: suggestion.descriptionText };
             if (!suggestionContent) {
                 throw new Error('No suggestion content available');
             }

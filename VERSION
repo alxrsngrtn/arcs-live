@@ -1,9 +1,23 @@
-commit 7fba9377017ef2cc6c504997c21978044b64756e
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Dec 10 23:15:54 2018 -0800
+commit 165e604b44aa41069a38a5250197a9c83b2a8e5e
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Dec 11 15:46:52 2018 -0800
 
-    Helper methods for suggestion and search keys + fixes (#2427)
+    UserPlanner must use a separate archost for each contemporaneous arc (#2431)
     
-    * Helper methods for suggestion and search keys + fixes
+    * mark awaitState callback as async (for readability only [?[)
     
-    * rename arckey to arcId (consistent with volatile-key)
+    * simplify
+    
+    * note some example pipe usage
+    
+    * update path map
+    
+    * minimization breaks PEC mapping :(
+    
+    * Need an archost per contemporaneous arc
+    
+    * modality-description workaround (from @mmandlis)
+    
+    * remove dead code
+    
+    * Suggestion text changed, update test
