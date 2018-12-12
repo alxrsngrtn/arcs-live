@@ -10,6 +10,7 @@
 import { Arc } from '../arc.js';
 import { Planner } from '../planner.js';
 import { PlanningResult } from './planning-result.js';
+import { RecipeIndex } from '../recipe-index.js';
 import { Speculator } from '../speculator.js';
 import { StorageProviderBase } from '../storage/storage-provider-base.js';
 export declare class PlanProducer {
@@ -17,6 +18,7 @@ export declare class PlanProducer {
     result: PlanningResult;
     store: StorageProviderBase;
     planner: Planner | null;
+    recipeIndex: RecipeIndex;
     speculator: Speculator;
     needReplan: boolean;
     replanOptions: {};

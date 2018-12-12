@@ -13,7 +13,6 @@ import { Manifest } from './manifest.js';
 import { Description } from './description.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Id } from './id.js';
-import { RecipeIndex } from './recipe-index.js';
 import { Loader } from './loader.js';
 import { StorageProviderBase } from './storage/storage-provider-base.js';
 import { ParticleSpec } from './particle-spec.js';
@@ -29,7 +28,6 @@ declare type ArcOptions = {
     storageKey?: string;
     storageProviderFactory?: StorageProviderFactory;
     speculative?: boolean;
-    recipeIndex?: RecipeIndex;
 };
 export declare type PlanCallback = (recipe: Recipe) => void;
 declare type SerializeContext = {
@@ -54,7 +52,6 @@ export declare class Arc {
     private storeDescriptions;
     private readonly _description;
     private instantiatePlanCallbacks;
-    private readonly _recipeIndex;
     private waitForIdlePromise;
     private debugHandler;
     readonly id: Id;
@@ -63,10 +60,10 @@ export declare class Arc {
         handles: Map<string, StorageProviderBase>;
     }>;
     pec: ParticleExecutionHost;
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, recipeIndex }: ArcOptions);
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative }: ArcOptions);
     readonly loader: Loader;
     readonly description: Description;
-    readonly recipeIndex: RecipeIndex;
+    readonly modality: string;
     registerInstantiatePlanCallback(callback: PlanCallback): void;
     unregisterInstantiatePlanCallback(callback: PlanCallback): boolean;
     dispose(): void;

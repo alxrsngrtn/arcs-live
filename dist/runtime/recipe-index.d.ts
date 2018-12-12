@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Manifest } from './manifest.js';
+import { Arc } from './arc.js';
 import { Recipe } from './recipe/recipe.js';
 import { Slot } from './recipe/slot.js';
 import { SlotConnection } from './recipe/slot-connection.js';
@@ -18,6 +19,7 @@ export declare class RecipeIndex {
     private _recipes;
     private _isReady;
     constructor(context: Manifest, loader: Loader, modality: string);
+    static create(arc: Arc): RecipeIndex;
     readonly recipes: Recipe[];
     ensureReady(): void;
     /**

@@ -1,5 +1,5 @@
-commit cc2b46bd97f6800a7d23b6cd1a4a7e050b5551e4
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Wed Dec 12 16:08:49 2018 +1100
+commit a6cca01d73e0426da0045cfe3edb3864505f360b
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Dec 12 10:22:27 2018 -0800
 
-    Updating requirement to node v10.13.0, as mkdirSync won't work recursively without it. (#2433)
+    Move RecipeIndex from Arc to Planificator. (#2429)

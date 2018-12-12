@@ -76,13 +76,12 @@ export class RecipeIndex {
             context: new Manifest({ id: 'empty-context' }),
             loader,
             slotComposer: modality ? new SlotComposer({ modality, noRoot: true }) : null,
-            recipeIndex: this,
             // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
             speculative: true
         });
         const strategizer = new Strategizer([
             new RelevantContextRecipes(context, modality),
-            ...IndexStrategies.map(S => new S(arcStub))
+            ...IndexStrategies.map(S => new S(arcStub, { recipeIndex: this }))
         ], [], Rulesets.Empty);
         this.ready = trace.endWith(new Promise(async (resolve) => {
             const generations = [];
@@ -105,6 +104,9 @@ export class RecipeIndex {
             this._isReady = true;
             resolve(true);
         }));
+    }
+    static create(arc) {
+        return new RecipeIndex(arc.context, arc.loader, arc.modality);
     }
     get recipes() {
         if (!this._isReady)

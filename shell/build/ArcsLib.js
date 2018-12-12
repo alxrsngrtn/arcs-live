@@ -92,8 +92,8 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _build_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _build_runtime_arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(160);
-/* harmony import */ var _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(243);
-/* harmony import */ var _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(238);
+/* harmony import */ var _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(237);
+/* harmony import */ var _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(246);
 /* harmony import */ var _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5);
 /* harmony import */ var _build_runtime_manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(16);
 /* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(250);
@@ -72743,7 +72743,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(29);
 /* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(156);
 /* harmony import */ var _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(200);
-/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(237);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -72765,9 +72764,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class Arc {
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, recipeIndex }) {
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative }) {
         this._activeRecipe = new _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_4__["Recipe"]();
         this._recipes = [];
         this.dataChangeCallbacks = new Map();
@@ -72799,7 +72797,6 @@ class Arc {
         }
         this.storageProviderFactory = storageProviderFactory || new _storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__["StorageProviderFactory"](this.id);
         this._description = new _description_js__WEBPACK_IMPORTED_MODULE_6__["Description"](this);
-        this._recipeIndex = recipeIndex || new _recipe_index_js__WEBPACK_IMPORTED_MODULE_12__["RecipeIndex"](this._context, loader, slotComposer && slotComposer.modality);
         this.debugHandler = new _debug_arc_debug_handler_js__WEBPACK_IMPORTED_MODULE_11__["ArcDebugHandler"](this);
     }
     get loader() {
@@ -72808,8 +72805,8 @@ class Arc {
     get description() {
         return this._description;
     }
-    get recipeIndex() {
-        return this._recipeIndex;
+    get modality() {
+        return this.pec.slotComposer && this.pec.slotComposer.modality;
     }
     registerInstantiatePlanCallback(callback) {
         this.instantiatePlanCallbacks.push(callback);
@@ -73061,7 +73058,7 @@ ${this.activeRecipe.toString()}`;
     }
     // Makes a copy of the arc used for speculative execution.
     async cloneForSpeculativeExecution() {
-        const arc = new Arc({ id: this.generateID().toString(), pecFactory: this.pecFactory, context: this.context, loader: this._loader, recipeIndex: this._recipeIndex, speculative: true });
+        const arc = new Arc({ id: this.generateID().toString(), pecFactory: this.pecFactory, context: this.context, loader: this._loader, speculative: true });
         const storeMap = new Map();
         for (const store of this._stores) {
             const clone = await arc.storageProviderFactory.construct(store.id, store.type, 'volatile');
@@ -80285,7 +80282,7 @@ __webpack_require__.r(__webpack_exports__);
 class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     constructor(arc, args) {
         super(arc, args);
-        this.modality = arc.pec.slotComposer ? arc.pec.slotComposer.modality : null;
+        this.modality = arc.modality;
     }
     async generate(inputParams) {
         const modality = this.modality;
@@ -80611,16 +80608,17 @@ __webpack_require__.r(__webpack_exports__);
 // http://polymer.github.io/PATENTS.txt
 
 class InitPopulation extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
-    constructor(arc, { contextual = false }) {
+    constructor(arc, { contextual = false, recipeIndex }) {
         super(arc, { contextual });
         this._contextual = contextual;
+        this._recipeIndex = recipeIndex;
         this._loadedParticles = new Set(this.arc.loadedParticles().map(spec => spec.implFile));
     }
     async generate({ generation }) {
         if (generation !== 0) {
             return [];
         }
-        await this.arc.recipeIndex.ready;
+        await this._recipeIndex.ready;
         const results = this._contextual
             ? this._contextualResults()
             : this._allResults();
@@ -80635,7 +80633,7 @@ class InitPopulation extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0
     _contextualResults() {
         const results = [];
         for (const slot of this.arc.activeRecipe.slots.filter(s => s.sourceConnection)) {
-            results.push(...this.arc.recipeIndex.findConsumeSlotConnectionMatch(slot).map(({ slotConn }) => ({ recipe: slotConn.recipe })));
+            results.push(...this._recipeIndex.findConsumeSlotConnectionMatch(slot).map(({ slotConn }) => ({ recipe: slotConn.recipe })));
         }
         let innerArcHandles = [];
         for (const recipe of this.arc.recipes) {
@@ -80644,12 +80642,12 @@ class InitPopulation extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0
             }
         }
         for (const handle of this.arc.activeRecipe.handles.concat(innerArcHandles)) {
-            results.push(...this.arc.recipeIndex.findHandleMatch(handle, ['use', '?']).map(otherHandle => ({ recipe: otherHandle.recipe })));
+            results.push(...this._recipeIndex.findHandleMatch(handle, ['use', '?']).map(otherHandle => ({ recipe: otherHandle.recipe })));
         }
         return results;
     }
     _allResults() {
-        return this.arc.recipeIndex.recipes.map(recipe => ({
+        return this._recipeIndex.recipes.map(recipe => ({
             recipe,
             score: 1 - recipe.particles.filter(particle => particle.spec && this._loadedParticles.has(particle.spec.implFile)).length
         }));
@@ -80685,8 +80683,9 @@ class MatchParticleByVerb extends _planning_strategizer_js__WEBPACK_IMPORTED_MOD
                     // Particle already has explicit name.
                     return undefined;
                 }
+                const modality = arc.modality;
                 const particleSpecs = arc.context.findParticlesByVerb(particle.primaryVerb)
-                    .filter(spec => !arc.pec.slotComposer || spec.matchModality(arc.pec.slotComposer.modality));
+                    .filter(spec => !modality || spec.matchModality(modality));
                 return particleSpecs.map(spec => {
                     return (recipe, particle) => {
                         const score = 1;
@@ -81107,9 +81106,9 @@ class SearchTokensToParticles extends _planning_strategizer_js__WEBPACK_IMPORTED
             r.verbs.forEach(verb => this._addThing(verb, packaged, thingByToken, thingByPhrase));
         });
         class SearchWalker extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"] {
-            constructor(tactic, arc) {
+            constructor(tactic, arc, recipeIndex) {
                 super(tactic);
-                this.index = arc.recipeIndex;
+                this.recipeIndex = recipeIndex;
             }
             onRecipe(recipe) {
                 if (!recipe.search || !recipe.search.unresolvedTokens.length) {
@@ -81155,7 +81154,7 @@ class SearchTokensToParticles extends _planning_strategizer_js__WEBPACK_IMPORTED
                                 particle.spec = spec;
                             }
                             else {
-                                const otherToHandle = this.index.findCoalescableHandles(recipe, innerRecipe);
+                                const otherToHandle = this.recipeIndex.findCoalescableHandles(recipe, innerRecipe);
                                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(innerRecipe);
                                 const { cloneMap } = innerRecipe.mergeInto(recipe);
                                 otherToHandle.forEach((otherHandle, handle) => cloneMap.get(otherHandle).mergeInto(handle));
@@ -81166,7 +81165,7 @@ class SearchTokensToParticles extends _planning_strategizer_js__WEBPACK_IMPORTED
                 });
             }
         }
-        this._walker = new SearchWalker(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"].Permuted, arc);
+        this._walker = new SearchWalker(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"].Permuted, arc, options['recipeIndex']);
     }
     get walker() {
         return this._walker;
@@ -81196,7 +81195,7 @@ class SearchTokensToParticles extends _planning_strategizer_js__WEBPACK_IMPORTED
         }
     }
     async generate(inputParams) {
-        await this.walker.index.ready;
+        await this.walker.recipeIndex.ready;
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_2__["Recipe"].over(this.getResults(inputParams), this.walker, this);
     }
 }
@@ -81679,13 +81678,17 @@ __webpack_require__.r(__webpack_exports__);
 // use/? handle and finding a matching create/? handle in another recipe and
 // merging those.
 class CoalesceRecipes extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
+    constructor(arc, { recipeIndex }) {
+        super(arc);
+        this.recipeIndex = recipeIndex;
+    }
     getResults(inputParams) {
         // Coalescing for terminal recipes that are either unresolved recipes or have no UI.
         return inputParams.terminal.filter(result => !result.result.isResolved() || result.result.slots.length === 0);
     }
     async generate(inputParams) {
         const arc = this.arc;
-        const index = this.arc.recipeIndex;
+        const index = this.recipeIndex;
         await index.ready;
         return _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_1__["Recipe"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_3__["Walker"] {
             // Find a provided slot for unfulfilled consume connection.
@@ -82116,7 +82119,7 @@ class Suggestion {
     }
     async setDescription(description) {
         this.descriptionByModality['text'] = await description.getRecipeSuggestion();
-        const modality = this.arc.pec.slotComposer && this.arc.pec.slotComposer.modality;
+        const modality = this.arc.modality;
         if (modality && modality !== 'text') {
             this.descriptionByModality[modality] =
                 await description.getRecipeSuggestion(_modality_js__WEBPACK_IMPORTED_MODULE_2__["Modality"].forName(modality).descriptionFormatter);
@@ -83767,10 +83770,928 @@ class ArcStoresFetcher {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planificator", function() { return Planificator; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(238);
+/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(242);
+/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(249);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+class Planificator {
+    constructor(arc, userid, store, searchStore, onlyConsumer, debug) {
+        this.search = null;
+        // In <0.6 shell, this is needed to backward compatibility, in order to (1)
+        // (1) trigger replanning with a local producer and (2) notify shell of the
+        // last activated plan, to allow serialization.
+        // TODO(mmandlis): Is this really needed in the >0.6 shell?
+        this.arcCallback = this._onPlanInstantiated.bind(this);
+        this.arc = arc;
+        this.userid = userid;
+        this.searchStore = searchStore;
+        if (!onlyConsumer) {
+            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](arc, store, searchStore, { debug });
+            this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_3__["ReplanQueue"](this.producer);
+            this.dataChangeCallback = () => this.replanQueue.addChange();
+            this._listenToArcStores();
+        }
+        this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](arc, store);
+        this.lastActivatedPlan = null;
+        this.arc.registerInstantiatePlanCallback(this.arcCallback);
+    }
+    static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null.');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'User id cannot be null.');
+        debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
+        const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
+        const searchStore = await Planificator._initSearchStore(arc, userid);
+        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
+        // TODO(mmandlis): Switch to always use `contextual: true` once new arc doesn't need
+        // to produce a plan in order to instantiate it.
+        planificator.requestPlanning({ contextual: planificator.isArcPopulated() });
+        return planificator;
+    }
+    async requestPlanning(options = {}) {
+        if (!this.consumerOnly) {
+            await this.producer.produceSuggestions(options);
+        }
+    }
+    get consumerOnly() { return !Boolean(this.producer); }
+    async loadSuggestions() {
+        return this.consumer.loadSuggestions();
+    }
+    async setSearch(search) {
+        search = search ? search.toLowerCase().trim() : null;
+        search = (search !== '') ? search : null;
+        if (this.search !== search) {
+            this.search = search;
+            await this._storeSearch();
+            const showAll = this.search === '*';
+            const filter = showAll ? null : this.search;
+            this.consumer.setSuggestFilter(showAll, filter);
+        }
+    }
+    registerSuggestionsChangedCallback(callback) {
+        this.consumer.registerSuggestionsChangedCallback(callback);
+    }
+    registerVisibleSuggestionsChangedCallback(callback) {
+        this.consumer.registerVisibleSuggestionsChangedCallback(callback);
+    }
+    dispose() {
+        this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
+        if (!this.consumerOnly) {
+            this._unlistenToArcStores();
+            this.producer.dispose();
+        }
+        this.consumer.store.dispose();
+        this.consumer.dispose();
+    }
+    getLastActivatedPlan() {
+        return { plan: this.lastActivatedPlan };
+    }
+    _onPlanInstantiated(plan) {
+        this.lastActivatedPlan = plan;
+        this.requestPlanning();
+    }
+    _listenToArcStores() {
+        this.arc.onDataChange(this.dataChangeCallback, this);
+        this.arc.context.allStores.forEach(store => {
+            if (store.on) { // #2141: some are StorageStubs.
+                store.on('change', this.dataChangeCallback, this);
+            }
+        });
+    }
+    _unlistenToArcStores() {
+        this.arc.clearDataChange(this);
+        this.arc.context.allStores.forEach(store => {
+            if (store.off) { // #2141: some are StorageStubs.
+                store.off('change', this.dataChangeCallback);
+            }
+        });
+    }
+    static _constructSuggestionKey(arc, userid, storageKeyBase) {
+        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        const keybase = arc.storageProviderFactory.parseStringAsKey(storageKeyBase || arcStorageKey.base());
+        return keybase.childKeyForSuggestions(userid, arcStorageKey.arcId);
+    }
+    static _constructSearchKey(arc, userid) {
+        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        const keybase = arc.storageProviderFactory.parseStringAsKey(arcStorageKey.base());
+        return keybase.childKeyForSearch(userid);
+    }
+    static async _initSuggestStore(arc, userid, storageKeyBase) {
+        const storageKey = Planificator._constructSuggestionKey(arc, userid, storageKeyBase);
+        return Planificator._initStore(arc, 'suggestions-id', _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"].make(['Suggestions'], { current: 'Object' }), storageKey);
+    }
+    static async _initSearchStore(arc, userid) {
+        const storageKey = Planificator._constructSearchKey(arc, userid);
+        return Planificator._initStore(arc, 'search-id', _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"].make(['Search'], { current: 'Object' }), storageKey);
+    }
+    static async _initStore(arc, id, type, storageKey) {
+        const store = await arc.storageProviderFactory.connectOrConstruct(id, type, storageKey.toString());
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${storageKey.toString()}' store.`);
+        store.referenceMode = false;
+        return store;
+    }
+    async _storeSearch() {
+        const values = await this.searchStore['get']() || [];
+        const arcKey = this.arc.storageProviderFactory.parseStringAsKey(this.arc.storageKey).arcId;
+        const newValues = [];
+        for (const { arc, search } of values) {
+            if (arc !== arcKey) {
+                newValues.push({ arc, search });
+            }
+        }
+        if (this.search) {
+            newValues.push({ search: this.search, arc: arcKey });
+        }
+        return this.searchStore['set'](newValues);
+    }
+    isArcPopulated() {
+        if (this.arc.recipes.length === 0)
+            return false;
+        if (this.arc.recipes.length === 1) {
+            const [recipe] = this.arc.recipes;
+            if (recipe.particles.length === 0 ||
+                (recipe.particles.length === 1 && recipe.particles[0].name === 'Launcher')) {
+                // TODO: Check for Launcher is hacky, find a better way.
+                return false;
+            }
+        }
+        return true;
+    }
+}
+//# sourceMappingURL=planificator.js.map
+
+/***/ }),
+/* 238 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanConsumer", function() { return PlanConsumer; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(239);
+/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(240);
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(173);
+/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(241);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+class PlanConsumer {
+    constructor(arc, store) {
+        // Callback is triggered when planning results have changed.
+        this.suggestionsChangeCallbacks = [];
+        // Callback is triggered when suggestions visible to the user have changed.
+        this.visibleSuggestionsChangeCallbacks = [];
+        this.suggestionComposer = null;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'store cannot be null');
+        this.arc = arc;
+        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"](arc);
+        this.store = store;
+        this.suggestFilter = { showAll: false };
+        this.suggestionsChangeCallbacks = [];
+        this.visibleSuggestionsChangeCallbacks = [];
+        this.storeCallback = () => this.loadSuggestions();
+        this.store.on('change', this.storeCallback, this);
+        this._initSuggestionComposer();
+    }
+    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
+    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
+    setSuggestFilter(showAll, search) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!showAll || !search);
+        if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
+            return;
+        }
+        const previousSuggestions = this.getCurrentSuggestions();
+        this.suggestFilter = { showAll, search };
+        this._onMaybeSuggestionsChanged(previousSuggestions);
+    }
+    async loadSuggestions() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.store['get'], 'Unsupported getter in suggestion storage');
+        const value = await this.store['get']() || {};
+        if (!value.suggestions) {
+            return;
+        }
+        const previousSuggestions = this.getCurrentSuggestions();
+        if (await this.result.deserialize(value)) {
+            this._onSuggestionsChanged();
+            this._onMaybeSuggestionsChanged(previousSuggestions);
+            if (this.result.generations.length && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected) {
+                _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get());
+            }
+        }
+    }
+    getCurrentSuggestions() {
+        const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0);
+        // `showAll`: returns all suggestions that render into slots.
+        if (this.suggestFilter['showAll']) {
+            // Should filter out suggestions produced by search phrases?
+            return suggestions;
+        }
+        // search filter non empty: match plan search phrase or description text.
+        if (this.suggestFilter['search']) {
+            return suggestions.filter(suggestion => suggestion.descriptionText.toLowerCase().includes(this.suggestFilter['search']) ||
+                suggestion.hasSearch(this.suggestFilter['search']));
+        }
+        return suggestions.filter(suggestion => {
+            const usesHandlesFromActiveRecipe = suggestion.plan.handles.find(handle => {
+                // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
+                // either by tagging or by exploring connection directions etc.
+                return !!handle.id &&
+                    !!this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
+            });
+            const usesRemoteNonRootSlots = suggestion.plan.slots.find(slot => {
+                return !slot.name.includes('root') && !slot.tags.includes('root') &&
+                    slot.id && !slot.id.includes('root') &&
+                    Boolean(this.arc.pec.slotComposer.findContextById(slot.id));
+            });
+            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
+            return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
+        });
+    }
+    dispose() {
+        this.store.off('change', this.storeCallback);
+        this.suggestionsChangeCallbacks = [];
+        this.visibleSuggestionsChangeCallbacks = [];
+        if (this.suggestionComposer) {
+            this.suggestionComposer.clear();
+        }
+    }
+    _onSuggestionsChanged() {
+        this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
+    }
+    _onMaybeSuggestionsChanged(previousSuggestions) {
+        const suggestions = this.getCurrentSuggestions();
+        if (!_planning_result_js__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"].isEquivalent(previousSuggestions, suggestions)) {
+            this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
+        }
+    }
+    _initSuggestionComposer() {
+        const composer = this.arc.pec.slotComposer;
+        if (composer && composer.findContextById('rootslotid-suggestions')) {
+            this.suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestionComposer"](composer);
+            this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
+        }
+    }
+}
+//# sourceMappingURL=plan-consumer.js.map
+
+/***/ }),
+/* 239 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanningResult", function() { return PlanningResult; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(178);
+/* harmony import */ var _suggestion_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(225);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class PlanningResult {
+    constructor(arc, result = {}) {
+        this.contextual = true;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null');
+        this.arc = arc;
+        this._suggestions = result['suggestions'];
+        this.lastUpdated = result['lastUpdated'] || new Date(null);
+        this.generations = result['generations'] || [];
+    }
+    get suggestions() { return this._suggestions || []; }
+    set suggestions(suggestions) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(suggestions), `Cannot set uninitialized suggestions`);
+        this._suggestions = suggestions;
+    }
+    static formatSerializableGenerations(generations) {
+        // Make a copy of everything and assign IDs to recipes.
+        const idMap = new Map(); // Recipe -> ID
+        let lastID = 0;
+        const assignIdAndCopy = recipe => {
+            idMap.set(recipe, lastID);
+            const { result, score, derivation, description, hash, valid, active, irrelevant } = recipe;
+            const resultString = result.toString({ showUnresolved: true, showInvalid: false, details: '' });
+            const resolved = result.isResolved();
+            return { result: resultString, resolved, score, derivation, description, hash, valid, active, irrelevant, id: lastID++ };
+        };
+        generations = generations.map(pop => ({
+            record: pop.record,
+            generated: pop.generated.map(assignIdAndCopy)
+        }));
+        // Change recipes in derivation to IDs and compute resolved stats.
+        return generations.map(pop => {
+            const population = pop.generated;
+            const record = pop.record;
+            // Adding those here to reuse recipe resolution computation.
+            record.resolvedDerivations = 0;
+            record.resolvedDerivationsByStrategy = {};
+            population.forEach(item => {
+                item.derivation = item.derivation.map(derivItem => {
+                    let parent;
+                    let strategy;
+                    if (derivItem.parent) {
+                        parent = idMap.get(derivItem.parent);
+                    }
+                    if (derivItem.strategy) {
+                        strategy = derivItem.strategy.constructor.name;
+                    }
+                    return { parent, strategy };
+                });
+                if (item.resolved) {
+                    record.resolvedDerivations++;
+                    const strategy = item.derivation[0].strategy;
+                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
+                        record.resolvedDerivationsByStrategy[strategy] = 0;
+                    }
+                    record.resolvedDerivationsByStrategy[strategy]++;
+                }
+                const options = { showUnresolved: true, showInvalid: false, details: '' };
+            });
+            const populationMap = {};
+            population.forEach(item => {
+                if (populationMap[item.derivation[0].strategy] == undefined) {
+                    populationMap[item.derivation[0].strategy] = [];
+                }
+                populationMap[item.derivation[0].strategy].push(item);
+            });
+            const result = { population: [], record };
+            Object.keys(populationMap).forEach(strategy => {
+                result.population.push({ strategy, recipes: populationMap[strategy] });
+            });
+            return result;
+        });
+    }
+    set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
+        if (this.isEquivalent(suggestions)) {
+            return false;
+        }
+        this.suggestions = suggestions;
+        this.generations = generations;
+        this.lastUpdated = lastUpdated;
+        this.contextual = contextual;
+        return true;
+    }
+    append({ suggestions, lastUpdated = new Date(), generations = [] }) {
+        const newSuggestions = [];
+        let searchUpdated = false;
+        for (const newSuggestion of suggestions) {
+            const existingSuggestion = this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion));
+            if (existingSuggestion) {
+                searchUpdated = existingSuggestion.mergeSearch(newSuggestion);
+            }
+            else {
+                newSuggestions.push(newSuggestion);
+            }
+        }
+        if (newSuggestions.length > 0) {
+            this.suggestions = this.suggestions.concat(newSuggestions);
+        }
+        else {
+            if (!searchUpdated) {
+                return false;
+            }
+        }
+        // TODO: filter out generations of other suggestions.
+        this.generations.push(...generations);
+        this.lastUpdated = lastUpdated;
+        return true;
+    }
+    olderThan(other) {
+        return this.lastUpdated < other.lastUpdated;
+    }
+    isEquivalent(suggestions) {
+        return PlanningResult.isEquivalent(this._suggestions, suggestions);
+    }
+    static isEquivalent(oldSuggestions, newSuggestions) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(newSuggestions, `New suggestions cannot be null.`);
+        return oldSuggestions &&
+            oldSuggestions.length === newSuggestions.length &&
+            oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
+    }
+    async deserialize({ suggestions, generations, lastUpdated }) {
+        const recipeResolver = new _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_1__["RecipeResolver"](this.arc);
+        return this.set({
+            suggestions: (await Promise.all(suggestions.map(suggestion => _suggestion_js__WEBPACK_IMPORTED_MODULE_2__["Suggestion"].deserialize(suggestion, this.arc, recipeResolver)))).filter(s => s),
+            generations: JSON.parse(generations || '[]'),
+            lastUpdated: new Date(lastUpdated),
+            contextual: suggestions.contextual
+        });
+    }
+    serialize() {
+        return {
+            suggestions: this.suggestions.map(suggestion => suggestion.serialize()),
+            generations: JSON.stringify(this.generations),
+            lastUpdated: this.lastUpdated.toString(),
+            contextual: this.contextual
+        };
+    }
+}
+//# sourceMappingURL=planning-result.js.map
+
+/***/ }),
+/* 240 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestionComposer", function() { return SuggestionComposer; });
+/* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(226);
+/* harmony import */ var _plan_suggestion_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(225);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+class SuggestionComposer {
+    constructor(slotComposer) {
+        this._suggestions = [];
+        this._suggestConsumers = [];
+        this._modality = _modality_js__WEBPACK_IMPORTED_MODULE_0__["Modality"].forName(slotComposer.modality);
+        this._container = slotComposer.findContainerByName('suggestions');
+        this._slotComposer = slotComposer;
+    }
+    clear() {
+        if (this._container) {
+            this._modality.slotConsumerClass.clear(this._container);
+        }
+        this._suggestConsumers.forEach(consumer => consumer.dispose());
+        this._suggestConsumers = [];
+    }
+    setSuggestions(suggestions) {
+        this.clear();
+        const sortedSuggestions = suggestions.sort(_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_1__["Suggestion"].compare);
+        for (const suggestion of sortedSuggestions) {
+            // TODO(mmandlis): use modality-appropriate description.
+            const suggestionContent = { template: suggestion.descriptionText };
+            if (!suggestionContent) {
+                throw new Error('No suggestion content available');
+            }
+            if (this._container) {
+                this._modality.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
+            }
+            this._addInlineSuggestion(suggestion, suggestionContent);
+        }
+    }
+    _addInlineSuggestion(suggestion, suggestionContent) {
+        const remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
+        if (remoteSlots.length !== 1) {
+            return;
+        }
+        const remoteSlot = remoteSlots[0];
+        const context = this._slotComposer.findContextById(remoteSlot.id);
+        if (!context) {
+            throw new Error('Missing context for ' + remoteSlot.id);
+        }
+        if (context.spec.isSet) {
+            // TODO: Inline suggestion in a set slot is not supported yet. Implement!
+            return;
+        }
+        // Don't put suggestions in context that either (1) is a root context, (2) doesn't have
+        // an actual container or (3) is not restricted to specific handles.
+        if (!context.sourceSlotConsumer) {
+            return;
+        }
+        if (context.spec.handles.length === 0) {
+            return;
+        }
+        const handleIds = context.spec.handles.map(handleName => context.sourceSlotConsumer.consumeConn.particle.connections[handleName].handle.id);
+        if (!handleIds.find(handleId => suggestion.plan.handles.find(handle => handle.id === handleId))) {
+            // the suggestion doesn't use any of the handles that the context is restricted to.
+            return;
+        }
+        const suggestConsumer = new this._modality.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
+            const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
+            suggestConsumer.dispose();
+            if (suggestion) {
+                const index = this._suggestConsumers.findIndex(consumer => consumer === suggestConsumer);
+                if (index < 0) {
+                    throw new Error('cannot find suggest slot context');
+                }
+                this._suggestConsumers.splice(index, 1);
+                this._slotComposer.arc.instantiate(suggestion.plan);
+            }
+        });
+        context.addSlotConsumer(suggestConsumer);
+        this._suggestConsumers.push(suggestConsumer);
+    }
+}
+//# sourceMappingURL=suggestion-composer.js.map
+
+/***/ }),
+/* 241 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StrategyExplorerAdapter", function() { return StrategyExplorerAdapter; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class StrategyExplorerAdapter {
+    static processGenerations(generations, devtoolsChannel, options = {}) {
+        devtoolsChannel.send({
+            messageType: 'generations',
+            messageBody: { results: generations, options },
+        });
+    }
+}
+//# sourceMappingURL=strategy-explorer-adapter.js.map
+
+/***/ }),
+/* 242 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanProducer", function() { return PlanProducer; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _strategies_init_search_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(213);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(243);
+/* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(204);
+/* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(203);
+/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(239);
+/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(245);
+/* harmony import */ var _speculator_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(223);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+
+
+const defaultTimeoutMs = 5000;
+const log = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'log');
+const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'error');
+class PlanProducer {
+    constructor(arc, store, searchStore, { debug = false } = {}) {
+        this.planner = null;
+        this.stateChangedCallbacks = [];
+        this.debug = false;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'store cannot be null');
+        this.arc = arc;
+        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_5__["PlanningResult"](arc);
+        this.store = store;
+        this.recipeIndex = _recipe_index_js__WEBPACK_IMPORTED_MODULE_6__["RecipeIndex"].create(this.arc);
+        this.speculator = new _speculator_js__WEBPACK_IMPORTED_MODULE_7__["Speculator"](this.result);
+        this.searchStore = searchStore;
+        if (this.searchStore) {
+            this.searchStoreCallback = () => this.onSearchChanged();
+            this.searchStore.on('change', this.searchStoreCallback, this);
+        }
+        this.debug = debug;
+    }
+    get isPlanning() { return this._isPlanning; }
+    set isPlanning(isPlanning) {
+        if (this.isPlanning === isPlanning) {
+            return;
+        }
+        this._isPlanning = isPlanning;
+        this.stateChangedCallbacks.forEach(callback => callback(this.isPlanning));
+    }
+    registerStateChangedCallback(callback) {
+        this.stateChangedCallbacks.push(callback);
+    }
+    async onSearchChanged() {
+        const values = await this.searchStore['get']() || [];
+        const value = values.find(value => value.arc === this.arcKey);
+        if (!value) {
+            return;
+        }
+        if (value.search === this.search) {
+            return;
+        }
+        this.search = value.search;
+        if (!this.search) {
+            // search string turned empty, no need to replan, going back to contextual suggestions.
+            return;
+        }
+        if (this.search === '*') { // Search for ALL (including non-contextual) suggestions.
+            if (this.result.contextual) {
+                this.produceSuggestions({ contextual: false });
+            }
+        }
+        else { // Search by search term.
+            const options = {
+                cancelOngoingPlanning: this.result.suggestions.length > 0,
+                search: this.search
+            };
+            if (this.result.contextual) {
+                // If we're searching but currently only have contextual suggestions,
+                // we need get non-contextual suggestions as well.
+                options.contextual = false;
+            }
+            else {
+                // If search changed and we already how all suggestions (i.e. including
+                // non-contextual ones) then it's enough to initialize with InitSearch
+                // with a new search phrase.
+                options.append = true;
+                options.strategies = [_strategies_init_search_js__WEBPACK_IMPORTED_MODULE_1__["InitSearch"], ..._planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"].ResolutionStrategies];
+            }
+            this.produceSuggestions(options);
+        }
+    }
+    get arcKey() {
+        // TODO: this is a duplicate method of one in planificator.ts, refactor?
+        return this.arc.storageKey.substring(this.arc.storageKey.lastIndexOf('/') + 1);
+    }
+    dispose() {
+        this.searchStore.off('change', this.searchStoreCallback);
+    }
+    async produceSuggestions(options = {}) {
+        if (options['cancelOngoingPlanning'] && this.isPlanning) {
+            this._cancelPlanning();
+        }
+        this.needReplan = true;
+        this.replanOptions = options;
+        if (this.isPlanning) {
+            return;
+        }
+        this.isPlanning = true;
+        let time = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__["now"])();
+        let suggestions = [];
+        let generations = [];
+        while (this.needReplan) {
+            this.needReplan = false;
+            generations = [];
+            suggestions = await this.runPlanner(this.replanOptions, generations);
+        }
+        time = ((Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__["now"])() - time) / 1000).toFixed(2);
+        // Suggestions are null, if planning was cancelled.
+        if (suggestions) {
+            log(`Produced ${suggestions.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
+            this.isPlanning = false;
+            await this._updateResult({ suggestions, generations: this.debug ? generations : [] }, this.replanOptions);
+        }
+    }
+    async runPlanner(options, generations) {
+        let suggestions = [];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.planner, 'Planner must be null');
+        this.planner = new _planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"]();
+        this.planner.init(this.arc, {
+            strategies: options['strategies'],
+            strategyArgs: {
+                contextual: options['contextual'],
+                search: options['search'],
+                recipeIndex: this.recipeIndex
+            }
+        });
+        suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations, this.speculator);
+        if (this.planner) {
+            this.planner = null;
+            return suggestions;
+        }
+        // Planning was cancelled.
+        return null;
+    }
+    _cancelPlanning() {
+        if (this.planner) {
+            this.planner = null;
+        }
+        this.speculator.dispose();
+        this.needReplan = false;
+        this.isPlanning = false; // using the setter method to trigger callbacks.
+        log(`Cancel planning`);
+    }
+    async _updateResult({ suggestions, generations }, options) {
+        generations = _planning_result_js__WEBPACK_IMPORTED_MODULE_5__["PlanningResult"].formatSerializableGenerations(generations);
+        if (options.append) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!options['contextual'], `Cannot append to contextual options`);
+            if (!this.result.append({ suggestions, generations })) {
+                return;
+            }
+        }
+        else {
+            if (!this.result.set({ suggestions, generations, contextual: options['contextual'] })) {
+                return;
+            }
+        }
+        // Store suggestions to store.
+        try {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.store['set'], 'Unsupported setter in suggestion storage');
+            await this.store['set'](this.result.serialize());
+        }
+        catch (e) {
+            error('Failed storing suggestions: ', e);
+            throw e;
+        }
+    }
+}
+//# sourceMappingURL=plan-producer.js.map
+
+/***/ }),
+/* 243 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
+/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(244);
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+
+
+const _nopFactory = () => () => {};
+
+// TODO(sjmiles): problem with timing Debug.level or duplicate modules?
+const logFactory = (...args) => _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["Debug"].level < 1 ? _nopFactory() : Object(_modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(...args);
+//export const logFactory = _logFactory;
+
+
+/***/ }),
+/* 244 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Debug", function() { return Debug; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "walker", function() { return walker; });
+const Debug = (Base, log) => class extends Base {
+  _setProperty(name, value) {
+    if (Debug.level > 1) {
+      if (((name in this._pendingProps) && (this._pendingProps[name] !== value)) || (this._props[name] !== value)) {
+        log('props', deepishClone({[name]: value}));
+      }
+    }
+    return super._setProperty(name, value);
+  }
+  _setState(state) {
+    if (typeof state !== 'object') {
+      console.warn(`Xen::_setState argument must be an object`);
+      return false;
+    }
+    if (super._setState(state)) {
+      if (Debug.level > 1) {
+        if (Debug.lastFire) {
+          //Debug.lastFire.log('[next state change from] fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
+          //Debug.lastFire.log('fire', Debug.lastFire.name, Debug.lastFire.detail);
+          log('(fired -->) state', deepishClone(state));
+        } else {
+          log('state', deepishClone(state));
+        }
+      }
+      return true;
+    }
+  }
+  _setImmutableState(name, value) {
+    log('state [immutable]', {[name]: value});
+    super._setImmutableState(name, value);
+  }
+  _fire(name, detail, node, init) {
+    Debug.lastFire = {name, detail: deepishClone(detail), log};
+    log('fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
+    super._fire(name, detail, node, init);
+    Debug.lastFire = null;
+  }
+  _doUpdate(...args) {
+    if (Debug.level > 2) {
+      log('updating...');
+    }
+    return super._doUpdate(...args);
+  }
+  _invalidate() {
+    if (Debug.level > 2) {
+      if (!this._validator) {
+        log('invalidating...');
+      }
+    }
+    super._invalidate();
+  }
+};
+
+// TODO(sjmiles): cloning prevents console log from showing values from the future,
+// but this must be a deep clone. Circular objects are not cloned.
+const deepishClone = (obj, depth) => {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+  const clone = Object.create(null);
+  for (const n in obj) {
+    let value = obj[n];
+    //try {
+    //  value = JSON.parse(JSON.stringify(value));
+    //} catch (x) {
+      if (depth < 1) {
+        value = deepishClone(obj, (depth || 0) + 1);
+      }
+    //}
+    clone[n] = value;
+  }
+  return clone;
+};
+
+Debug.level = 0;
+
+const _logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
+const logFactory = (preamble, color, log) => (Debug.level > 0) ? _logFactory(preamble, color, log) : () => {};
+
+const walker = (node, tree) => {
+  let subtree = tree;
+  if (!subtree) {
+    subtree = {};
+  }
+  const root = node || document.body;
+  let index = 1;
+  let child = root.firstElementChild;
+  while (child) {
+    const name = child.localName;
+    const clas = customElements.get(name);
+    if (clas) {
+      const shadow = child.shadowRoot;
+      const record = {
+        node: child,
+        props: child._props,
+        state: child._state
+      };
+      const children = shadow ? walker(shadow) : {};
+      if (children) {
+        record.children = children;
+      }
+      let moniker = `${name}${child.id ? `#${child.id}` : ``} (${index++})`;
+      while (subtree[moniker]) {
+        moniker += '_';
+      }
+      subtree[moniker] = record;
+    }
+    walker(child, subtree);
+    child = child.nextElementSibling;
+  }
+  return subtree;
+};
+
+
+/***/ }),
+/* 245 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeIndex", function() { return RecipeIndex; });
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
 /* harmony import */ var _arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(160);
-/* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(238);
+/* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(246);
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(20);
 /* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(241);
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(31);
@@ -83785,7 +84706,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(159);
 /* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(28);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(3);
-/* harmony import */ var _plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(242);
+/* harmony import */ var _plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(239);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -83864,13 +84785,12 @@ class RecipeIndex {
             context: new _manifest_js__WEBPACK_IMPORTED_MODULE_0__["Manifest"]({ id: 'empty-context' }),
             loader,
             slotComposer: modality ? new _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"]({ modality, noRoot: true }) : null,
-            recipeIndex: this,
             // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
             speculative: true
         });
         const strategizer = new _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"]([
             new RelevantContextRecipes(context, modality),
-            ...IndexStrategies.map(S => new S(arcStub))
+            ...IndexStrategies.map(S => new S(arcStub, { recipeIndex: this }))
         ], [], _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__["Empty"]);
         this.ready = trace.endWith(new Promise(async (resolve) => {
             const generations = [];
@@ -83893,6 +84813,9 @@ class RecipeIndex {
             this._isReady = true;
             resolve(true);
         }));
+    }
+    static create(arc) {
+        return new RecipeIndex(arc.context, arc.loader, arc.modality);
     }
     get recipes() {
         if (!this._isReady)
@@ -84085,7 +85008,7 @@ class RecipeIndex {
 //# sourceMappingURL=recipe-index.js.map
 
 /***/ }),
-/* 238 */
+/* 246 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -84094,7 +85017,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(226);
 /* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(229);
-/* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(239);
+/* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(247);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -84256,7 +85179,7 @@ class SlotComposer {
 //# sourceMappingURL=slot-composer.js.map
 
 /***/ }),
-/* 239 */
+/* 247 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -84264,7 +85187,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotConsumer", function() { return HostedSlotConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(228);
-/* harmony import */ var _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(240);
+/* harmony import */ var _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(248);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84327,7 +85250,7 @@ class HostedSlotConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__[
 //# sourceMappingURL=hosted-slot-consumer.js.map
 
 /***/ }),
-/* 240 */
+/* 248 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -84335,7 +85258,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotContext", function() { return HostedSlotContext; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(229);
-/* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(239);
+/* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(247);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84361,920 +85284,6 @@ class HostedSlotContext extends _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["S
     }
 }
 //# sourceMappingURL=hosted-slot-context.js.map
-
-/***/ }),
-/* 241 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StrategyExplorerAdapter", function() { return StrategyExplorerAdapter; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class StrategyExplorerAdapter {
-    static processGenerations(generations, devtoolsChannel, options = {}) {
-        devtoolsChannel.send({
-            messageType: 'generations',
-            messageBody: { results: generations, options },
-        });
-    }
-}
-//# sourceMappingURL=strategy-explorer-adapter.js.map
-
-/***/ }),
-/* 242 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanningResult", function() { return PlanningResult; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(178);
-/* harmony import */ var _suggestion_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(225);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-class PlanningResult {
-    constructor(arc, result = {}) {
-        this.contextual = true;
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null');
-        this.arc = arc;
-        this._suggestions = result['suggestions'];
-        this.lastUpdated = result['lastUpdated'] || new Date(null);
-        this.generations = result['generations'] || [];
-    }
-    get suggestions() { return this._suggestions || []; }
-    set suggestions(suggestions) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(suggestions), `Cannot set uninitialized suggestions`);
-        this._suggestions = suggestions;
-    }
-    static formatSerializableGenerations(generations) {
-        // Make a copy of everything and assign IDs to recipes.
-        const idMap = new Map(); // Recipe -> ID
-        let lastID = 0;
-        const assignIdAndCopy = recipe => {
-            idMap.set(recipe, lastID);
-            const { result, score, derivation, description, hash, valid, active, irrelevant } = recipe;
-            const resultString = result.toString({ showUnresolved: true, showInvalid: false, details: '' });
-            const resolved = result.isResolved();
-            return { result: resultString, resolved, score, derivation, description, hash, valid, active, irrelevant, id: lastID++ };
-        };
-        generations = generations.map(pop => ({
-            record: pop.record,
-            generated: pop.generated.map(assignIdAndCopy)
-        }));
-        // Change recipes in derivation to IDs and compute resolved stats.
-        return generations.map(pop => {
-            const population = pop.generated;
-            const record = pop.record;
-            // Adding those here to reuse recipe resolution computation.
-            record.resolvedDerivations = 0;
-            record.resolvedDerivationsByStrategy = {};
-            population.forEach(item => {
-                item.derivation = item.derivation.map(derivItem => {
-                    let parent;
-                    let strategy;
-                    if (derivItem.parent) {
-                        parent = idMap.get(derivItem.parent);
-                    }
-                    if (derivItem.strategy) {
-                        strategy = derivItem.strategy.constructor.name;
-                    }
-                    return { parent, strategy };
-                });
-                if (item.resolved) {
-                    record.resolvedDerivations++;
-                    const strategy = item.derivation[0].strategy;
-                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
-                        record.resolvedDerivationsByStrategy[strategy] = 0;
-                    }
-                    record.resolvedDerivationsByStrategy[strategy]++;
-                }
-                const options = { showUnresolved: true, showInvalid: false, details: '' };
-            });
-            const populationMap = {};
-            population.forEach(item => {
-                if (populationMap[item.derivation[0].strategy] == undefined) {
-                    populationMap[item.derivation[0].strategy] = [];
-                }
-                populationMap[item.derivation[0].strategy].push(item);
-            });
-            const result = { population: [], record };
-            Object.keys(populationMap).forEach(strategy => {
-                result.population.push({ strategy, recipes: populationMap[strategy] });
-            });
-            return result;
-        });
-    }
-    set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
-        if (this.isEquivalent(suggestions)) {
-            return false;
-        }
-        this.suggestions = suggestions;
-        this.generations = generations;
-        this.lastUpdated = lastUpdated;
-        this.contextual = contextual;
-        return true;
-    }
-    append({ suggestions, lastUpdated = new Date(), generations = [] }) {
-        const newSuggestions = [];
-        let searchUpdated = false;
-        for (const newSuggestion of suggestions) {
-            const existingSuggestion = this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion));
-            if (existingSuggestion) {
-                searchUpdated = existingSuggestion.mergeSearch(newSuggestion);
-            }
-            else {
-                newSuggestions.push(newSuggestion);
-            }
-        }
-        if (newSuggestions.length > 0) {
-            this.suggestions = this.suggestions.concat(newSuggestions);
-        }
-        else {
-            if (!searchUpdated) {
-                return false;
-            }
-        }
-        // TODO: filter out generations of other suggestions.
-        this.generations.push(...generations);
-        this.lastUpdated = lastUpdated;
-        return true;
-    }
-    olderThan(other) {
-        return this.lastUpdated < other.lastUpdated;
-    }
-    isEquivalent(suggestions) {
-        return PlanningResult.isEquivalent(this._suggestions, suggestions);
-    }
-    static isEquivalent(oldSuggestions, newSuggestions) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(newSuggestions, `New suggestions cannot be null.`);
-        return oldSuggestions &&
-            oldSuggestions.length === newSuggestions.length &&
-            oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
-    }
-    async deserialize({ suggestions, generations, lastUpdated }) {
-        const recipeResolver = new _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_1__["RecipeResolver"](this.arc);
-        return this.set({
-            suggestions: (await Promise.all(suggestions.map(suggestion => _suggestion_js__WEBPACK_IMPORTED_MODULE_2__["Suggestion"].deserialize(suggestion, this.arc, recipeResolver)))).filter(s => s),
-            generations: JSON.parse(generations || '[]'),
-            lastUpdated: new Date(lastUpdated),
-            contextual: suggestions.contextual
-        });
-    }
-    serialize() {
-        return {
-            suggestions: this.suggestions.map(suggestion => suggestion.serialize()),
-            generations: JSON.stringify(this.generations),
-            lastUpdated: this.lastUpdated.toString(),
-            contextual: this.contextual
-        };
-    }
-}
-//# sourceMappingURL=planning-result.js.map
-
-/***/ }),
-/* 243 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planificator", function() { return Planificator; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(244);
-/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(246);
-/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(249);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class Planificator {
-    constructor(arc, userid, store, searchStore, onlyConsumer, debug) {
-        this.search = null;
-        // In <0.6 shell, this is needed to backward compatibility, in order to (1)
-        // (1) trigger replanning with a local producer and (2) notify shell of the
-        // last activated plan, to allow serialization.
-        // TODO(mmandlis): Is this really needed in the >0.6 shell?
-        this.arcCallback = this._onPlanInstantiated.bind(this);
-        this.arc = arc;
-        this.userid = userid;
-        this.searchStore = searchStore;
-        if (!onlyConsumer) {
-            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](arc, store, searchStore, { debug });
-            this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_3__["ReplanQueue"](this.producer);
-            this.dataChangeCallback = () => this.replanQueue.addChange();
-            this._listenToArcStores();
-        }
-        this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](arc, store);
-        this.lastActivatedPlan = null;
-        this.arc.registerInstantiatePlanCallback(this.arcCallback);
-    }
-    static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null.');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'User id cannot be null.');
-        debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
-        const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
-        const searchStore = await Planificator._initSearchStore(arc, userid);
-        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
-        // TODO(mmandlis): Switch to always use `contextual: true` once new arc doesn't need
-        // to produce a plan in order to instantiate it.
-        planificator.requestPlanning({ contextual: planificator.isArcPopulated() });
-        return planificator;
-    }
-    async requestPlanning(options = {}) {
-        if (!this.consumerOnly) {
-            await this.producer.produceSuggestions(options);
-        }
-    }
-    get consumerOnly() { return !Boolean(this.producer); }
-    async loadSuggestions() {
-        return this.consumer.loadSuggestions();
-    }
-    async setSearch(search) {
-        search = search ? search.toLowerCase().trim() : null;
-        search = (search !== '') ? search : null;
-        if (this.search !== search) {
-            this.search = search;
-            await this._storeSearch();
-            const showAll = this.search === '*';
-            const filter = showAll ? null : this.search;
-            this.consumer.setSuggestFilter(showAll, filter);
-        }
-    }
-    registerSuggestionsChangedCallback(callback) {
-        this.consumer.registerSuggestionsChangedCallback(callback);
-    }
-    registerVisibleSuggestionsChangedCallback(callback) {
-        this.consumer.registerVisibleSuggestionsChangedCallback(callback);
-    }
-    dispose() {
-        this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
-        if (!this.consumerOnly) {
-            this._unlistenToArcStores();
-            this.producer.dispose();
-        }
-        this.consumer.store.dispose();
-        this.consumer.dispose();
-    }
-    getLastActivatedPlan() {
-        return { plan: this.lastActivatedPlan };
-    }
-    _onPlanInstantiated(plan) {
-        this.lastActivatedPlan = plan;
-        this.requestPlanning();
-    }
-    _listenToArcStores() {
-        this.arc.onDataChange(this.dataChangeCallback, this);
-        this.arc.context.allStores.forEach(store => {
-            if (store.on) { // #2141: some are StorageStubs.
-                store.on('change', this.dataChangeCallback, this);
-            }
-        });
-    }
-    _unlistenToArcStores() {
-        this.arc.clearDataChange(this);
-        this.arc.context.allStores.forEach(store => {
-            if (store.off) { // #2141: some are StorageStubs.
-                store.off('change', this.dataChangeCallback);
-            }
-        });
-    }
-    static _constructSuggestionKey(arc, userid, storageKeyBase) {
-        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
-        const keybase = arc.storageProviderFactory.parseStringAsKey(storageKeyBase || arcStorageKey.base());
-        return keybase.childKeyForSuggestions(userid, arcStorageKey.arcId);
-    }
-    static _constructSearchKey(arc, userid) {
-        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
-        const keybase = arc.storageProviderFactory.parseStringAsKey(arcStorageKey.base());
-        return keybase.childKeyForSearch(userid);
-    }
-    static async _initSuggestStore(arc, userid, storageKeyBase) {
-        const storageKey = Planificator._constructSuggestionKey(arc, userid, storageKeyBase);
-        return Planificator._initStore(arc, 'suggestions-id', _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"].make(['Suggestions'], { current: 'Object' }), storageKey);
-    }
-    static async _initSearchStore(arc, userid) {
-        const storageKey = Planificator._constructSearchKey(arc, userid);
-        return Planificator._initStore(arc, 'search-id', _type_js__WEBPACK_IMPORTED_MODULE_4__["EntityType"].make(['Search'], { current: 'Object' }), storageKey);
-    }
-    static async _initStore(arc, id, type, storageKey) {
-        const store = await arc.storageProviderFactory.connectOrConstruct(id, type, storageKey.toString());
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${storageKey.toString()}' store.`);
-        store.referenceMode = false;
-        return store;
-    }
-    async _storeSearch() {
-        const values = await this.searchStore['get']() || [];
-        const arcKey = this.arc.storageProviderFactory.parseStringAsKey(this.arc.storageKey).arcId;
-        const newValues = [];
-        for (const { arc, search } of values) {
-            if (arc !== arcKey) {
-                newValues.push({ arc, search });
-            }
-        }
-        if (this.search) {
-            newValues.push({ search: this.search, arc: arcKey });
-        }
-        return this.searchStore['set'](newValues);
-    }
-    isArcPopulated() {
-        if (this.arc.recipes.length === 0)
-            return false;
-        if (this.arc.recipes.length === 1) {
-            const [recipe] = this.arc.recipes;
-            if (recipe.particles.length === 0 ||
-                (recipe.particles.length === 1 && recipe.particles[0].name === 'Launcher')) {
-                // TODO: Check for Launcher is hacky, find a better way.
-                return false;
-            }
-        }
-        return true;
-    }
-}
-//# sourceMappingURL=planificator.js.map
-
-/***/ }),
-/* 244 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanConsumer", function() { return PlanConsumer; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(242);
-/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(245);
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(173);
-/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(241);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class PlanConsumer {
-    constructor(arc, store) {
-        // Callback is triggered when planning results have changed.
-        this.suggestionsChangeCallbacks = [];
-        // Callback is triggered when suggestions visible to the user have changed.
-        this.visibleSuggestionsChangeCallbacks = [];
-        this.suggestionComposer = null;
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'store cannot be null');
-        this.arc = arc;
-        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"](arc);
-        this.store = store;
-        this.suggestFilter = { showAll: false };
-        this.suggestionsChangeCallbacks = [];
-        this.visibleSuggestionsChangeCallbacks = [];
-        this.storeCallback = () => this.loadSuggestions();
-        this.store.on('change', this.storeCallback, this);
-        this._initSuggestionComposer();
-    }
-    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
-    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
-    setSuggestFilter(showAll, search) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!showAll || !search);
-        if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
-            return;
-        }
-        const previousSuggestions = this.getCurrentSuggestions();
-        this.suggestFilter = { showAll, search };
-        this._onMaybeSuggestionsChanged(previousSuggestions);
-    }
-    async loadSuggestions() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.store['get'], 'Unsupported getter in suggestion storage');
-        const value = await this.store['get']() || {};
-        if (!value.suggestions) {
-            return;
-        }
-        const previousSuggestions = this.getCurrentSuggestions();
-        if (await this.result.deserialize(value)) {
-            this._onSuggestionsChanged();
-            this._onMaybeSuggestionsChanged(previousSuggestions);
-            if (this.result.generations.length && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected) {
-                _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get());
-            }
-        }
-    }
-    getCurrentSuggestions() {
-        const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0);
-        // `showAll`: returns all suggestions that render into slots.
-        if (this.suggestFilter['showAll']) {
-            // Should filter out suggestions produced by search phrases?
-            return suggestions;
-        }
-        // search filter non empty: match plan search phrase or description text.
-        if (this.suggestFilter['search']) {
-            return suggestions.filter(suggestion => suggestion.descriptionText.toLowerCase().includes(this.suggestFilter['search']) ||
-                suggestion.hasSearch(this.suggestFilter['search']));
-        }
-        return suggestions.filter(suggestion => {
-            const usesHandlesFromActiveRecipe = suggestion.plan.handles.find(handle => {
-                // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
-                // either by tagging or by exploring connection directions etc.
-                return !!handle.id &&
-                    !!this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
-            });
-            const usesRemoteNonRootSlots = suggestion.plan.slots.find(slot => {
-                return !slot.name.includes('root') && !slot.tags.includes('root') &&
-                    slot.id && !slot.id.includes('root') &&
-                    Boolean(this.arc.pec.slotComposer.findContextById(slot.id));
-            });
-            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
-            return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
-        });
-    }
-    dispose() {
-        this.store.off('change', this.storeCallback);
-        this.suggestionsChangeCallbacks = [];
-        this.visibleSuggestionsChangeCallbacks = [];
-        if (this.suggestionComposer) {
-            this.suggestionComposer.clear();
-        }
-    }
-    _onSuggestionsChanged() {
-        this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
-    }
-    _onMaybeSuggestionsChanged(previousSuggestions) {
-        const suggestions = this.getCurrentSuggestions();
-        if (!_planning_result_js__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"].isEquivalent(previousSuggestions, suggestions)) {
-            this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
-        }
-    }
-    _initSuggestionComposer() {
-        const composer = this.arc.pec.slotComposer;
-        if (composer && composer.findContextById('rootslotid-suggestions')) {
-            this.suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestionComposer"](composer);
-            this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
-        }
-    }
-}
-//# sourceMappingURL=plan-consumer.js.map
-
-/***/ }),
-/* 245 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestionComposer", function() { return SuggestionComposer; });
-/* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(226);
-/* harmony import */ var _plan_suggestion_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(225);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-class SuggestionComposer {
-    constructor(slotComposer) {
-        this._suggestions = [];
-        this._suggestConsumers = [];
-        this._modality = _modality_js__WEBPACK_IMPORTED_MODULE_0__["Modality"].forName(slotComposer.modality);
-        this._container = slotComposer.findContainerByName('suggestions');
-        this._slotComposer = slotComposer;
-    }
-    clear() {
-        if (this._container) {
-            this._modality.slotConsumerClass.clear(this._container);
-        }
-        this._suggestConsumers.forEach(consumer => consumer.dispose());
-        this._suggestConsumers = [];
-    }
-    setSuggestions(suggestions) {
-        this.clear();
-        const sortedSuggestions = suggestions.sort(_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_1__["Suggestion"].compare);
-        for (const suggestion of sortedSuggestions) {
-            // TODO(mmandlis): use modality-appropriate description.
-            const suggestionContent = { template: suggestion.descriptionText };
-            if (!suggestionContent) {
-                throw new Error('No suggestion content available');
-            }
-            if (this._container) {
-                this._modality.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
-            }
-            this._addInlineSuggestion(suggestion, suggestionContent);
-        }
-    }
-    _addInlineSuggestion(suggestion, suggestionContent) {
-        const remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
-        if (remoteSlots.length !== 1) {
-            return;
-        }
-        const remoteSlot = remoteSlots[0];
-        const context = this._slotComposer.findContextById(remoteSlot.id);
-        if (!context) {
-            throw new Error('Missing context for ' + remoteSlot.id);
-        }
-        if (context.spec.isSet) {
-            // TODO: Inline suggestion in a set slot is not supported yet. Implement!
-            return;
-        }
-        // Don't put suggestions in context that either (1) is a root context, (2) doesn't have
-        // an actual container or (3) is not restricted to specific handles.
-        if (!context.sourceSlotConsumer) {
-            return;
-        }
-        if (context.spec.handles.length === 0) {
-            return;
-        }
-        const handleIds = context.spec.handles.map(handleName => context.sourceSlotConsumer.consumeConn.particle.connections[handleName].handle.id);
-        if (!handleIds.find(handleId => suggestion.plan.handles.find(handle => handle.id === handleId))) {
-            // the suggestion doesn't use any of the handles that the context is restricted to.
-            return;
-        }
-        const suggestConsumer = new this._modality.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
-            const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
-            suggestConsumer.dispose();
-            if (suggestion) {
-                const index = this._suggestConsumers.findIndex(consumer => consumer === suggestConsumer);
-                if (index < 0) {
-                    throw new Error('cannot find suggest slot context');
-                }
-                this._suggestConsumers.splice(index, 1);
-                this._slotComposer.arc.instantiate(suggestion.plan);
-            }
-        });
-        context.addSlotConsumer(suggestConsumer);
-        this._suggestConsumers.push(suggestConsumer);
-    }
-}
-//# sourceMappingURL=suggestion-composer.js.map
-
-/***/ }),
-/* 246 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanProducer", function() { return PlanProducer; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _strategies_init_search_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(213);
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(247);
-/* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(204);
-/* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(203);
-/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(242);
-/* harmony import */ var _speculator_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(223);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-const defaultTimeoutMs = 5000;
-const log = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'log');
-const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'error');
-class PlanProducer {
-    constructor(arc, store, searchStore, { debug = false } = {}) {
-        this.planner = null;
-        this.stateChangedCallbacks = [];
-        this.debug = false;
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, 'store cannot be null');
-        this.arc = arc;
-        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_5__["PlanningResult"](arc);
-        this.store = store;
-        this.speculator = new _speculator_js__WEBPACK_IMPORTED_MODULE_6__["Speculator"](this.result);
-        this.searchStore = searchStore;
-        if (this.searchStore) {
-            this.searchStoreCallback = () => this.onSearchChanged();
-            this.searchStore.on('change', this.searchStoreCallback, this);
-        }
-        this.debug = debug;
-    }
-    get isPlanning() { return this._isPlanning; }
-    set isPlanning(isPlanning) {
-        if (this.isPlanning === isPlanning) {
-            return;
-        }
-        this._isPlanning = isPlanning;
-        this.stateChangedCallbacks.forEach(callback => callback(this.isPlanning));
-    }
-    registerStateChangedCallback(callback) {
-        this.stateChangedCallbacks.push(callback);
-    }
-    async onSearchChanged() {
-        const values = await this.searchStore['get']() || [];
-        const value = values.find(value => value.arc === this.arcKey);
-        if (!value) {
-            return;
-        }
-        if (value.search === this.search) {
-            return;
-        }
-        this.search = value.search;
-        if (!this.search) {
-            // search string turned empty, no need to replan, going back to contextual suggestions.
-            return;
-        }
-        if (this.search === '*') { // Search for ALL (including non-contextual) suggestions.
-            if (this.result.contextual) {
-                this.produceSuggestions({ contextual: false });
-            }
-        }
-        else { // Search by search term.
-            const options = {
-                cancelOngoingPlanning: this.result.suggestions.length > 0,
-                search: this.search
-            };
-            if (this.result.contextual) {
-                // If we're searching but currently only have contextual suggestions,
-                // we need get non-contextual suggestions as well.
-                options.contextual = false;
-            }
-            else {
-                // If search changed and we already how all suggestions (i.e. including
-                // non-contextual ones) then it's enough to initialize with InitSearch
-                // with a new search phrase.
-                options.append = true;
-                options.strategies = [_strategies_init_search_js__WEBPACK_IMPORTED_MODULE_1__["InitSearch"], ..._planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"].ResolutionStrategies];
-            }
-            this.produceSuggestions(options);
-        }
-    }
-    get arcKey() {
-        // TODO: this is a duplicate method of one in planificator.ts, refactor?
-        return this.arc.storageKey.substring(this.arc.storageKey.lastIndexOf('/') + 1);
-    }
-    dispose() {
-        this.searchStore.off('change', this.searchStoreCallback);
-    }
-    async produceSuggestions(options = {}) {
-        if (options['cancelOngoingPlanning'] && this.isPlanning) {
-            this._cancelPlanning();
-        }
-        this.needReplan = true;
-        this.replanOptions = options;
-        if (this.isPlanning) {
-            return;
-        }
-        this.isPlanning = true;
-        let time = Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__["now"])();
-        let suggestions = [];
-        let generations = [];
-        while (this.needReplan) {
-            this.needReplan = false;
-            generations = [];
-            suggestions = await this.runPlanner(this.replanOptions, generations);
-        }
-        time = ((Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__["now"])() - time) / 1000).toFixed(2);
-        // Suggestions are null, if planning was cancelled.
-        if (suggestions) {
-            log(`Produced ${suggestions.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
-            this.isPlanning = false;
-            await this._updateResult({ suggestions, generations: this.debug ? generations : [] }, this.replanOptions);
-        }
-    }
-    async runPlanner(options, generations) {
-        let suggestions = [];
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this.planner, 'Planner must be null');
-        this.planner = new _planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"]();
-        this.planner.init(this.arc, {
-            strategies: options['strategies'],
-            strategyArgs: {
-                contextual: options['contextual'],
-                search: options['search']
-            }
-        });
-        suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations, this.speculator);
-        if (this.planner) {
-            this.planner = null;
-            return suggestions;
-        }
-        // Planning was cancelled.
-        return null;
-    }
-    _cancelPlanning() {
-        if (this.planner) {
-            this.planner = null;
-        }
-        this.speculator.dispose();
-        this.needReplan = false;
-        this.isPlanning = false; // using the setter method to trigger callbacks.
-        log(`Cancel planning`);
-    }
-    async _updateResult({ suggestions, generations }, options) {
-        generations = _planning_result_js__WEBPACK_IMPORTED_MODULE_5__["PlanningResult"].formatSerializableGenerations(generations);
-        if (options.append) {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!options['contextual'], `Cannot append to contextual options`);
-            if (!this.result.append({ suggestions, generations })) {
-                return;
-            }
-        }
-        else {
-            if (!this.result.set({ suggestions, generations, contextual: options['contextual'] })) {
-                return;
-            }
-        }
-        // Store suggestions to store.
-        try {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.store['set'], 'Unsupported setter in suggestion storage');
-            await this.store['set'](this.result.serialize());
-        }
-        catch (e) {
-            error('Failed storing suggestions: ', e);
-            throw e;
-        }
-    }
-}
-//# sourceMappingURL=plan-producer.js.map
-
-/***/ }),
-/* 247 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
-/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(248);
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-
-const _nopFactory = () => () => {};
-
-// TODO(sjmiles): problem with timing Debug.level or duplicate modules?
-const logFactory = (...args) => _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["Debug"].level < 1 ? _nopFactory() : Object(_modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(...args);
-//export const logFactory = _logFactory;
-
-
-/***/ }),
-/* 248 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Debug", function() { return Debug; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "walker", function() { return walker; });
-const Debug = (Base, log) => class extends Base {
-  _setProperty(name, value) {
-    if (Debug.level > 1) {
-      if (((name in this._pendingProps) && (this._pendingProps[name] !== value)) || (this._props[name] !== value)) {
-        log('props', deepishClone({[name]: value}));
-      }
-    }
-    return super._setProperty(name, value);
-  }
-  _setState(state) {
-    if (typeof state !== 'object') {
-      console.warn(`Xen::_setState argument must be an object`);
-      return false;
-    }
-    if (super._setState(state)) {
-      if (Debug.level > 1) {
-        if (Debug.lastFire) {
-          //Debug.lastFire.log('[next state change from] fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
-          //Debug.lastFire.log('fire', Debug.lastFire.name, Debug.lastFire.detail);
-          log('(fired -->) state', deepishClone(state));
-        } else {
-          log('state', deepishClone(state));
-        }
-      }
-      return true;
-    }
-  }
-  _setImmutableState(name, value) {
-    log('state [immutable]', {[name]: value});
-    super._setImmutableState(name, value);
-  }
-  _fire(name, detail, node, init) {
-    Debug.lastFire = {name, detail: deepishClone(detail), log};
-    log('fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
-    super._fire(name, detail, node, init);
-    Debug.lastFire = null;
-  }
-  _doUpdate(...args) {
-    if (Debug.level > 2) {
-      log('updating...');
-    }
-    return super._doUpdate(...args);
-  }
-  _invalidate() {
-    if (Debug.level > 2) {
-      if (!this._validator) {
-        log('invalidating...');
-      }
-    }
-    super._invalidate();
-  }
-};
-
-// TODO(sjmiles): cloning prevents console log from showing values from the future,
-// but this must be a deep clone. Circular objects are not cloned.
-const deepishClone = (obj, depth) => {
-  if (!obj || typeof obj !== 'object') {
-    return obj;
-  }
-  const clone = Object.create(null);
-  for (const n in obj) {
-    let value = obj[n];
-    //try {
-    //  value = JSON.parse(JSON.stringify(value));
-    //} catch (x) {
-      if (depth < 1) {
-        value = deepishClone(obj, (depth || 0) + 1);
-      }
-    //}
-    clone[n] = value;
-  }
-  return clone;
-};
-
-Debug.level = 0;
-
-const _logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
-const logFactory = (preamble, color, log) => (Debug.level > 0) ? _logFactory(preamble, color, log) : () => {};
-
-const walker = (node, tree) => {
-  let subtree = tree;
-  if (!subtree) {
-    subtree = {};
-  }
-  const root = node || document.body;
-  let index = 1;
-  let child = root.firstElementChild;
-  while (child) {
-    const name = child.localName;
-    const clas = customElements.get(name);
-    if (clas) {
-      const shadow = child.shadowRoot;
-      const record = {
-        node: child,
-        props: child._props,
-        state: child._state
-      };
-      const children = shadow ? walker(shadow) : {};
-      if (children) {
-        record.children = children;
-      }
-      let moniker = `${name}${child.id ? `#${child.id}` : ``} (${index++})`;
-      while (subtree[moniker]) {
-        moniker += '_';
-      }
-      subtree[moniker] = record;
-    }
-    walker(child, subtree);
-    child = child.nextElementSibling;
-  }
-  return subtree;
-};
-
 
 /***/ }),
 /* 249 */

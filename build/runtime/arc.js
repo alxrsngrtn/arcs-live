@@ -19,9 +19,8 @@ import { FakePecFactory } from './fake-pec-factory.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Id } from './id.js';
 import { ArcDebugHandler } from './debug/arc-debug-handler.js';
-import { RecipeIndex } from './recipe-index.js';
 export class Arc {
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, recipeIndex }) {
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative }) {
         this._activeRecipe = new Recipe();
         this._recipes = [];
         this.dataChangeCallbacks = new Map();
@@ -53,7 +52,6 @@ export class Arc {
         }
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
         this._description = new Description(this);
-        this._recipeIndex = recipeIndex || new RecipeIndex(this._context, loader, slotComposer && slotComposer.modality);
         this.debugHandler = new ArcDebugHandler(this);
     }
     get loader() {
@@ -62,8 +60,8 @@ export class Arc {
     get description() {
         return this._description;
     }
-    get recipeIndex() {
-        return this._recipeIndex;
+    get modality() {
+        return this.pec.slotComposer && this.pec.slotComposer.modality;
     }
     registerInstantiatePlanCallback(callback) {
         this.instantiatePlanCallbacks.push(callback);
@@ -315,7 +313,7 @@ ${this.activeRecipe.toString()}`;
     }
     // Makes a copy of the arc used for speculative execution.
     async cloneForSpeculativeExecution() {
-        const arc = new Arc({ id: this.generateID().toString(), pecFactory: this.pecFactory, context: this.context, loader: this._loader, recipeIndex: this._recipeIndex, speculative: true });
+        const arc = new Arc({ id: this.generateID().toString(), pecFactory: this.pecFactory, context: this.context, loader: this._loader, speculative: true });
         const storeMap = new Map();
         for (const store of this._stores) {
             const clone = await arc.storageProviderFactory.construct(store.id, store.type, 'volatile');

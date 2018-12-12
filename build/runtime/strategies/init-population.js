@@ -6,16 +6,17 @@
 // http://polymer.github.io/PATENTS.txt
 import { Strategy } from '../../planning/strategizer.js';
 export class InitPopulation extends Strategy {
-    constructor(arc, { contextual = false }) {
+    constructor(arc, { contextual = false, recipeIndex }) {
         super(arc, { contextual });
         this._contextual = contextual;
+        this._recipeIndex = recipeIndex;
         this._loadedParticles = new Set(this.arc.loadedParticles().map(spec => spec.implFile));
     }
     async generate({ generation }) {
         if (generation !== 0) {
             return [];
         }
-        await this.arc.recipeIndex.ready;
+        await this._recipeIndex.ready;
         const results = this._contextual
             ? this._contextualResults()
             : this._allResults();
@@ -30,7 +31,7 @@ export class InitPopulation extends Strategy {
     _contextualResults() {
         const results = [];
         for (const slot of this.arc.activeRecipe.slots.filter(s => s.sourceConnection)) {
-            results.push(...this.arc.recipeIndex.findConsumeSlotConnectionMatch(slot).map(({ slotConn }) => ({ recipe: slotConn.recipe })));
+            results.push(...this._recipeIndex.findConsumeSlotConnectionMatch(slot).map(({ slotConn }) => ({ recipe: slotConn.recipe })));
         }
         let innerArcHandles = [];
         for (const recipe of this.arc.recipes) {
@@ -39,12 +40,12 @@ export class InitPopulation extends Strategy {
             }
         }
         for (const handle of this.arc.activeRecipe.handles.concat(innerArcHandles)) {
-            results.push(...this.arc.recipeIndex.findHandleMatch(handle, ['use', '?']).map(otherHandle => ({ recipe: otherHandle.recipe })));
+            results.push(...this._recipeIndex.findHandleMatch(handle, ['use', '?']).map(otherHandle => ({ recipe: otherHandle.recipe })));
         }
         return results;
     }
     _allResults() {
-        return this.arc.recipeIndex.recipes.map(recipe => ({
+        return this._recipeIndex.recipes.map(recipe => ({
             recipe,
             score: 1 - recipe.particles.filter(particle => particle.spec && this._loadedParticles.has(particle.spec.implFile)).length
         }));

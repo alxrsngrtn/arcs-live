@@ -16,13 +16,17 @@ import { assert } from '../../platform/assert-web.js';
 // use/? handle and finding a matching create/? handle in another recipe and
 // merging those.
 export class CoalesceRecipes extends Strategy {
+    constructor(arc, { recipeIndex }) {
+        super(arc);
+        this.recipeIndex = recipeIndex;
+    }
     getResults(inputParams) {
         // Coalescing for terminal recipes that are either unresolved recipes or have no UI.
         return inputParams.terminal.filter(result => !result.result.isResolved() || result.result.slots.length === 0);
     }
     async generate(inputParams) {
         const arc = this.arc;
-        const index = this.arc.recipeIndex;
+        const index = this.recipeIndex;
         await index.ready;
         return Recipe.over(this.getResults(inputParams), new class extends Walker {
             // Find a provided slot for unfulfilled consume connection.

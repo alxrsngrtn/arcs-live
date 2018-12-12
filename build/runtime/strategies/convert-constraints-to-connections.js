@@ -12,7 +12,7 @@ import { ParticleEndPoint, HandleEndPoint, TagEndPoint, InstanceEndPoint } from 
 export class ConvertConstraintsToConnections extends Strategy {
     constructor(arc, args) {
         super(arc, args);
-        this.modality = arc.pec.slotComposer ? arc.pec.slotComposer.modality : null;
+        this.modality = arc.modality;
     }
     async generate(inputParams) {
         const modality = this.modality;
