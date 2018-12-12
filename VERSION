@@ -1,13 +1,5 @@
-commit b0524d26b1cea9bdba6dc9d2a40a115f52643f38
-Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
-Date:   Wed Dec 12 16:03:39 2018 +1100
+commit cc2b46bd97f6800a7d23b6cd1a4a7e050b5551e4
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Wed Dec 12 16:08:49 2018 +1100
 
-    First updates for require/construct rework.  (#2428)
-    
-    * Parse particles in require sections. Stop the parser from caring aboute provide/consume order for Slots. Allow handle connections in recipes to have dependencies.
-    
-    * added a conditional statement to check that all dependentSlotConnections are 'provide' connections
-    
-    * added a conditional statement to check that provide slots can not have dependent connections
-    
-    * modified error messages
+    Updating requirement to node v10.13.0, as mkdirSync won't work recursively without it. (#2433)
