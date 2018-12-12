@@ -4,12 +4,21 @@ import { KeyBase } from './key-base.js';
 declare type Callback = ({}: {}) => void;
 export declare abstract class StorageBase {
     protected readonly arcId: Id;
+    protected _debug: boolean;
     protected constructor(arcId: Id);
     abstract construct(id: string, type: Type, keyFragment: string): Promise<StorageProviderBase>;
     abstract connect(id: string, type: Type, key: string): Promise<StorageProviderBase>;
     abstract baseStorageKey(type: Type, key: string): string;
     abstract baseStorageFor(type: Type, key: string): Promise<StorageProviderBase>;
     abstract parseStringAsKey(s: string): KeyBase;
+    /**
+     * Turn on debugginf for this storage provider.  Providers should
+     * subclass this and react to changes in the debug value.
+     */
+    debug: boolean;
+    /**
+     * Provides graceful shutdown for tests.
+     */
     shutdown(): void;
 }
 declare type DeltaItems = {

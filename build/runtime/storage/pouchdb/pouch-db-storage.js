@@ -14,6 +14,9 @@ import { PouchDbBigCollection } from './pouch-db-big-collection.js';
 import { PouchDbVariable } from './pouch-db-variable.js';
 import PouchDB from 'pouchdb';
 import PouchDbMemory from 'pouchdb-adapter-memory';
+import PouchDbDebug from 'pouchdb-debug';
+PouchDB.plugin(PouchDbDebug);
+PouchDB.debug.disable();
 export class PouchDbStorage extends StorageBase {
     constructor(arcId) {
         super(arcId);
@@ -25,6 +28,15 @@ export class PouchDbStorage extends StorageBase {
         // Used for reference mode
         this.baseStores = new Map();
         this.baseStorePromises = new Map();
+    }
+    set debug(d) {
+        super.debug = d;
+        if (d) {
+            PouchDB.debug.enable('*');
+        }
+        else {
+            PouchDB.debug.disable();
+        }
     }
     /**
      * Instantiates a new key for id/type stored at keyFragment.

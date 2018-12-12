@@ -64,29 +64,23 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         this._model = new CrdtCollectionModel(model);
     }
     async _toList() {
-        try {
-            if (this.referenceMode) {
-                const items = (await this.getModel()).toLiteral();
-                if (items.length === 0) {
-                    return [];
-                }
-                const refSet = new Set();
-                items.forEach(item => refSet.add(item.value.storageKey));
-                assert(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
-                const ref = refSet.values().next().value;
-                await this.ensureBackingStore();
-                const retrieveItem = async (item) => {
-                    const ref = item.value;
-                    return { id: ref.id, value: await this.backingStore.get(ref.id), keys: item.keys };
-                };
-                return await Promise.all(items.map(retrieveItem));
+        if (this.referenceMode) {
+            const items = (await this.getModel()).toLiteral();
+            if (items.length === 0) {
+                return [];
             }
-            return (await this.getModel()).toLiteral();
+            const refSet = new Set();
+            items.forEach(item => refSet.add(item.value.storageKey));
+            assert(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
+            const ref = refSet.values().next().value;
+            await this.ensureBackingStore();
+            const retrieveItem = async (item) => {
+                const ref = item.value;
+                return { id: ref.id, value: await this.backingStore.get(ref.id), keys: item.keys };
+            };
+            return await Promise.all(items.map(retrieveItem));
         }
-        catch (x) {
-            // TODO(sjmiles): caught for compatibility: pouchdb layer can throw, firebase layer never does
-            return [];
-        }
+        return (await this.getModel()).toLiteral();
     }
     async toList() {
         return (await this._toList()).map(item => item.value);
@@ -247,10 +241,10 @@ export class PouchDbCollection extends PouchDbStorageProvider {
                 this._model = new CrdtCollectionModel();
                 this._rev = undefined;
             }
-            // Unexpected error
-            // TODO(sjmiles): situation occurs frequently so squelching the log for now
-            //console.warn('PouchDbCollection.getModel err=', err);
-            throw err;
+            else {
+                console.warn('PouchDbCollection.getModel err=', err);
+                throw err;
+            }
         }
         return this._model;
     }

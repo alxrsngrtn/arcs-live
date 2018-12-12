@@ -4,6 +4,7 @@ import atob from 'atob';
 import btoa$1 from 'btoa';
 import PouchDB from 'pouchdb';
 import PouchDbMemory from 'pouchdb-adapter-memory';
+import PouchDbDebug from 'pouchdb-debug';
 import MersenneTwister from 'mersenne-twister';
 import idb from 'idb';
 import rs from 'jsrsasign';
@@ -13812,9 +13813,19 @@ var EventKind;
 class StorageBase {
     constructor(arcId) {
         this.arcId = arcId;
+        this._debug = false;
         assert(arcId !== undefined, 'Arcs with storage must have ids');
     }
-    // Provides graceful shutdown for tests.
+    /**
+     * Turn on debugginf for this storage provider.  Providers should
+     * subclass this and react to changes in the debug value.
+     */
+    set debug(d) {
+        this._debug = d;
+    }
+    /**
+     * Provides graceful shutdown for tests.
+     */
     shutdown() { }
 }
 class ChangeEvent {
@@ -16055,29 +16066,23 @@ class PouchDbCollection extends PouchDbStorageProvider {
         this._model = new CrdtCollectionModel(model);
     }
     async _toList() {
-        try {
-            if (this.referenceMode) {
-                const items = (await this.getModel()).toLiteral();
-                if (items.length === 0) {
-                    return [];
-                }
-                const refSet = new Set();
-                items.forEach(item => refSet.add(item.value.storageKey));
-                assert(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
-                const ref = refSet.values().next().value;
-                await this.ensureBackingStore();
-                const retrieveItem = async (item) => {
-                    const ref = item.value;
-                    return { id: ref.id, value: await this.backingStore.get(ref.id), keys: item.keys };
-                };
-                return await Promise.all(items.map(retrieveItem));
+        if (this.referenceMode) {
+            const items = (await this.getModel()).toLiteral();
+            if (items.length === 0) {
+                return [];
             }
-            return (await this.getModel()).toLiteral();
+            const refSet = new Set();
+            items.forEach(item => refSet.add(item.value.storageKey));
+            assert(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
+            const ref = refSet.values().next().value;
+            await this.ensureBackingStore();
+            const retrieveItem = async (item) => {
+                const ref = item.value;
+                return { id: ref.id, value: await this.backingStore.get(ref.id), keys: item.keys };
+            };
+            return await Promise.all(items.map(retrieveItem));
         }
-        catch (x) {
-            // TODO(sjmiles): caught for compatibility: pouchdb layer can throw, firebase layer never does
-            return [];
-        }
+        return (await this.getModel()).toLiteral();
     }
     async toList() {
         return (await this._toList()).map(item => item.value);
@@ -16238,10 +16243,10 @@ class PouchDbCollection extends PouchDbStorageProvider {
                 this._model = new CrdtCollectionModel();
                 this._rev = undefined;
             }
-            // Unexpected error
-            // TODO(sjmiles): situation occurs frequently so squelching the log for now
-            //console.warn('PouchDbCollection.getModel err=', err);
-            throw err;
+            else {
+                console.warn('PouchDbCollection.getModel err=', err);
+                throw err;
+            }
         }
         return this._model;
     }
@@ -16472,20 +16477,14 @@ class PouchDbVariable extends PouchDbStorageProvider {
         try {
             const value = await this.getStored();
             if (this.referenceMode && value) {
-                try {
-                    await this.ensureBackingStore();
-                    return await this.backingStore.get(value.id);
-                }
-                catch (err) {
-                    // TODO(sjmiles): situation occurs frequently so squelching the log for now
-                    //console.warn('PouchDbVariable.get err=', err);
-                    throw err;
-                }
+                await this.ensureBackingStore();
+                return await this.backingStore.get(value.id);
             }
             return value;
         }
-        catch (x) {
-            // TODO(sjmiles): caught for compatibility: pouchdb layer can throw, firebase layer never does
+        catch (err) {
+            // TODO(plindner): caught for compatibility: pouchdb layer can throw, firebase layer never does
+            console.warn('PouchDbVariable.get err=', err);
             return null;
         }
     }
@@ -16696,6 +16695,8 @@ class PouchDbVariable extends PouchDbStorageProvider {
 }
 
 // @
+PouchDB.plugin(PouchDbDebug);
+PouchDB.debug.disable();
 class PouchDbStorage extends StorageBase {
     constructor(arcId) {
         super(arcId);
@@ -16707,6 +16708,15 @@ class PouchDbStorage extends StorageBase {
         // Used for reference mode
         this.baseStores = new Map();
         this.baseStorePromises = new Map();
+    }
+    set debug(d) {
+        super.debug = d;
+        if (d) {
+            PouchDB.debug.enable('*');
+        }
+        else {
+            PouchDB.debug.disable();
+        }
     }
     /**
      * Instantiates a new key for id/type stored at keyFragment.

@@ -18,6 +18,7 @@ export declare class PouchDbStorage extends StorageBase {
     /** Tracks replication status and allows cancellation in tests */
     private static syncHandler;
     constructor(arcId: Id);
+    debug: boolean;
     /**
      * Instantiates a new key for id/type stored at keyFragment.
      */

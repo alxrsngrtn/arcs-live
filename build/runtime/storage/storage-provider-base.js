@@ -15,9 +15,19 @@ var EventKind;
 export class StorageBase {
     constructor(arcId) {
         this.arcId = arcId;
+        this._debug = false;
         assert(arcId !== undefined, 'Arcs with storage must have ids');
     }
-    // Provides graceful shutdown for tests.
+    /**
+     * Turn on debugginf for this storage provider.  Providers should
+     * subclass this and react to changes in the debug value.
+     */
+    set debug(d) {
+        this._debug = d;
+    }
+    /**
+     * Provides graceful shutdown for tests.
+     */
     shutdown() { }
 }
 export class ChangeEvent {

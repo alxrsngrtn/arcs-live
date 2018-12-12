@@ -1,5 +1,8 @@
-commit a6cca01d73e0426da0045cfe3edb3864505f360b
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Dec 12 10:22:27 2018 -0800
+commit 9960cfbee19e0371f5e7e34d5b8582d4f481c124
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Dec 12 11:53:42 2018 -0800
 
-    Move RecipeIndex from Arc to Planificator. (#2429)
+    Update PouchDB to properly create new data when not found (#2435)
+    
+    - Fixes underlying problem from the exceptions
+    - Also add debugging support into StorageBase and allow for toggling state
