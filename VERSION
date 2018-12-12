@@ -1,9 +1,13 @@
-commit 4382a551a42edd9468dc78606e4d83680c1ce060
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Tue Dec 11 17:01:30 2018 -0800
+commit b0524d26b1cea9bdba6dc9d2a40a115f52643f38
+Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
+Date:   Wed Dec 12 16:03:39 2018 +1100
 
-    Remove Greenkeeper references for now. (#2430)
+    First updates for require/construct rework.  (#2428)
     
+    * Parse particles in require sections. Stop the parser from caring aboute provide/consume order for Slots. Allow handle connections in recipes to have dependencies.
     
+    * added a conditional statement to check that all dependentSlotConnections are 'provide' connections
     
-    See also #2199 and #1799.
+    * added a conditional statement to check that provide slots can not have dependent connections
+    
+    * modified error messages

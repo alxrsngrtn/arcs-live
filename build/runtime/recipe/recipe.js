@@ -16,6 +16,7 @@ import { compareComparables } from './util.js';
 import { InterfaceType } from '../type.js';
 export class Recipe {
     constructor(name = undefined) {
+        this._requires = [];
         this._particles = [];
         this._handles = [];
         this._slots = [];
@@ -27,7 +28,7 @@ export class Recipe {
         // type to particles/handles.
         this._connectionConstraints = [];
         // Obligations are like connection constraints in that they describe
-        // required connections between particles/verbs. However, where 
+        // required connections between particles/verbs. However, where
         // connection constraints can be acted upon in order to create these
         // connections, obligations can't be. Instead, they describe requirements
         // that must be discharged before a recipe can be considered to be
@@ -61,6 +62,11 @@ export class Recipe {
     }
     clearConnectionConstraints() {
         this._connectionConstraints = [];
+    }
+    newRequireSection() {
+        const require = new Recipe();
+        this._requires.push(require);
+        return require;
     }
     newParticle(name) {
         const particle = new Particle(this, name);

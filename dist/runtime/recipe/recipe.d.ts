@@ -7,6 +7,7 @@ import { SlotConnection } from './slot-connection.js';
 import { Handle } from './handle.js';
 import { HandleConnection } from './handle-connection.js';
 export declare class Recipe {
+    private _requires;
     private _particles;
     private _handles;
     private _slots;
@@ -25,6 +26,7 @@ export declare class Recipe {
     removeObligation(obligation: any): void;
     removeConstraint(constraint: any): void;
     clearConnectionConstraints(): void;
+    newRequireSection(): Recipe;
     newParticle(name: any): Particle;
     removeParticle(particle: Particle): void;
     newHandle(): Handle;

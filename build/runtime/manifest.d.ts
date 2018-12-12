@@ -90,7 +90,8 @@ export declare class Manifest {
     static _processResource(manifest: any, schemaItem: any): void;
     static _processParticle(manifest: any, particleItem: any, loader: any): void;
     static _processInterface(manifest: any, interfaceItem: any): void;
-    static _processRecipe(manifest: any, recipeItem: any, loader: any): Promise<void>;
+    static _processRecipe(manifest: any, recipeItem: any, loader: any): void;
+    static _buildRecipe(manifest: any, recipe: any, recipeItem: any): void;
     resolveTypeName(name: any): {
         schema: Schema;
         iface?: undefined;
