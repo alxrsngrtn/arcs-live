@@ -85185,9 +85185,9 @@ __webpack_require__.r(__webpack_exports__);
 
 const _nopFactory = () => () => {};
 
-// TODO(sjmiles): problem with timing Debug.level or duplicate modules?
-const logFactory = (...args) => _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["Debug"].level < 1 ? _nopFactory() : Object(_modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(...args);
-//export const logFactory = _logFactory;
+// TODO(sjmiles): problems with timing Debug.level and duplicate modules
+//export const logFactory = (...args) => Debug.level < 1 ? _nopFactory() : _logFactory(...args);
+const logFactory = _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"];
 
 
 /***/ }),

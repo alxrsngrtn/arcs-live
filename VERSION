@@ -1,8 +1,27 @@
-commit 9960cfbee19e0371f5e7e34d5b8582d4f481c124
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Dec 12 11:53:42 2018 -0800
+commit 669c78f863eceae8ae8a1265511c1a770cee8538
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Dec 12 14:17:24 2018 -0800
 
-    Update PouchDB to properly create new data when not found (#2435)
+    Massively simplify DeviceClientPipe (thanks Berni!) (#2436)
     
-    - Fixes underlying problem from the exceptions
-    - Also add debugging support into StorageBase and allow for toggling state
+    * work
+    
+    * collate demo recipes
+    
+    * avoid TVMazeDemo responding to piped TV shows
+    
+    * provide TVMazeShowPanel recipe
+    
+    * broken attempt to fix log-web, must revisit
+    
+    * wildly simplify device-client-pipe (thanks Berni!)
+    
+    * port simplified ArtistFind/Show to Music
+    
+    * remove obsolete `_fetch` machinery
+    
+    * disable pipes-arc for now
+    
+    * use fresh database for each test
+    
+    * simplified test

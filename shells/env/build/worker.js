@@ -7585,8 +7585,6 @@ class BrowserLoader extends _build_runtime_loader_js__WEBPACK_IMPORTED_MODULE_0_
     //  _resolve method allows particles to request remapping of assets paths
     //  for use in DOM
     const resolver = this._resolve.bind(this);
-    // TODO(sjmiles): hack to plumb `fetch` into Particle space under node
-    const _fetch = BrowserLoader.fetch || fetch;
     return particleWrapper({
       Particle: _build_runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__["Particle"],
       DomParticle: _build_runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__["DomParticle"],
@@ -7595,8 +7593,7 @@ class BrowserLoader extends _build_runtime_loader_js__WEBPACK_IMPORTED_MODULE_0_
       TransformationDomParticle: _build_runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__["TransformationDomParticle"],
       resolver,
       log,
-      html,
-      _fetch
+      html
     });
   }
 }
@@ -8995,9 +8992,9 @@ __webpack_require__.r(__webpack_exports__);
 
 const _nopFactory = () => () => {};
 
-// TODO(sjmiles): problem with timing Debug.level or duplicate modules?
-const logFactory = (...args) => _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["Debug"].level < 1 ? _nopFactory() : Object(_modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"])(...args);
-//export const logFactory = _logFactory;
+// TODO(sjmiles): problems with timing Debug.level and duplicate modules
+//export const logFactory = (...args) => Debug.level < 1 ? _nopFactory() : _logFactory(...args);
+const logFactory = _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"];
 
 
 /***/ }),
