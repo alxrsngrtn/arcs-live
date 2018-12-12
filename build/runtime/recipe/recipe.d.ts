@@ -67,4 +67,6 @@ export declare class Recipe {
     static over(results: any, walker: any, strategy: Strategy): Descendant[];
     _makeLocalNameMap(): Map<any, any>;
     toString(options?: any): string;
+    getFreeHandles(): Handle[];
+    getDisconnectedConnections(): HandleConnection[];
 }

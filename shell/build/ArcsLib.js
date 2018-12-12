@@ -19962,6 +19962,12 @@ class Recipe {
         }
         return result.join('\n');
     }
+    getFreeHandles() {
+        return this.handles.filter(handle => handle.connections.length === 0);
+    }
+    getDisconnectedConnections() {
+        return this.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
+    }
 }
 //# sourceMappingURL=recipe.js.map
 
@@ -26784,13 +26790,12 @@ class AddMissingHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODUL
                     return undefined;
                 }
                 // Don't add use handles to a recipe with free handles
-                const freeHandles = recipe.handles.filter(handle => handle.connections.length === 0);
-                if (freeHandles.length > 0) {
+                if (recipe.getFreeHandles().length > 0) {
                     return undefined;
                 }
                 // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
                 // not being properly supported in arc instantiation). For now just hardcode skiping them.
-                const disconnectedConnections = recipe.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
+                const disconnectedConnections = recipe.getDisconnectedConnections();
                 if (disconnectedConnections.length === 0) {
                     return undefined;
                 }

@@ -483,5 +483,11 @@ export class Recipe {
         }
         return result.join('\n');
     }
+    getFreeHandles() {
+        return this.handles.filter(handle => handle.connections.length === 0);
+    }
+    getDisconnectedConnections() {
+        return this.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
+    }
 }
 //# sourceMappingURL=recipe.js.map

@@ -1,10 +1,9 @@
-commit 0e31905787543030d9986796857e247008aa209c
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Dec 12 14:50:42 2018 -0800
+commit bccae34f1a5a09f71f7757262a48e21b61b849ea
+Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
+Date:   Thu Dec 13 10:44:15 2018 +1100
 
-    Adds native watch support for typescript, webpack and rollup (#2438)
+    First stages of moving recipe logic from strategies to Recipe class. (#2444)
     
-    - Migrates webpack config into it's own file for ease of use. 2x speedup!
-    - Adds npm targets for build:{step} and watch:{step}
-    - Adds a top-level npm target that runs all watch items together
-    - Introduces concurrently to do useful things in parallel
+    * Move recipe logic from add-missing-handles strategy to Recipe class
+    
+    * Inlining call to getFreeHandles()
