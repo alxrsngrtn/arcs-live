@@ -1,23 +1,5 @@
-commit 165e604b44aa41069a38a5250197a9c83b2a8e5e
+commit 6dc80beb5414343bc1b187e14f13cec29689ab0d
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Dec 11 15:46:52 2018 -0800
+Date:   Tue Dec 11 16:32:31 2018 -0800
 
-    UserPlanner must use a separate archost for each contemporaneous arc (#2431)
-    
-    * mark awaitState callback as async (for readability only [?[)
-    
-    * simplify
-    
-    * note some example pipe usage
-    
-    * update path map
-    
-    * minimization breaks PEC mapping :(
-    
-    * Need an archost per contemporaneous arc
-    
-    * modality-description workaround (from @mmandlis)
-    
-    * remove dead code
-    
-    * Suggestion text changed, update test
+    more plumbing between device-client-pipe and web-planner (#2432)
