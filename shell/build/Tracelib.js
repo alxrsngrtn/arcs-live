@@ -81,33 +81,16 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = "./shell/source/Tracelib.js");
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/******/ ({
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _build_tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-window.Tracing = _build_tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__["Tracing"];
-
-
-/***/ }),
-/* 1 */
+/***/ "./build/tracelib/trace.js":
+/*!*********************************!*\
+  !*** ./build/tracelib/trace.js ***!
+  \*********************************/
+/*! exports provided: Tracing */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -393,10 +376,15 @@ function init() {
 
 init();
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
 
 /***/ }),
-/* 2 */
+
+/***/ "./node_modules/process/browser.js":
+/*!*****************************************!*\
+  !*** ./node_modules/process/browser.js ***!
+  \*****************************************/
+/*! no static exports found */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -585,6 +573,34 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 
+/***/ }),
+
+/***/ "./shell/source/Tracelib.js":
+/*!**********************************!*\
+  !*** ./shell/source/Tracelib.js ***!
+  \**********************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _build_tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../build/tracelib/trace.js */ "./build/tracelib/trace.js");
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+window.Tracing = _build_tracelib_trace_js__WEBPACK_IMPORTED_MODULE_0__["Tracing"];
+
+
 /***/ })
-/******/ ]);
+
+/******/ });
 //# sourceMappingURL=Tracelib.js.map

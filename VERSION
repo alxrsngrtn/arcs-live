@@ -1,27 +1,10 @@
-commit 669c78f863eceae8ae8a1265511c1a770cee8538
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Dec 12 14:17:24 2018 -0800
+commit 0e31905787543030d9986796857e247008aa209c
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Dec 12 14:50:42 2018 -0800
 
-    Massively simplify DeviceClientPipe (thanks Berni!) (#2436)
+    Adds native watch support for typescript, webpack and rollup (#2438)
     
-    * work
-    
-    * collate demo recipes
-    
-    * avoid TVMazeDemo responding to piped TV shows
-    
-    * provide TVMazeShowPanel recipe
-    
-    * broken attempt to fix log-web, must revisit
-    
-    * wildly simplify device-client-pipe (thanks Berni!)
-    
-    * port simplified ArtistFind/Show to Music
-    
-    * remove obsolete `_fetch` machinery
-    
-    * disable pipes-arc for now
-    
-    * use fresh database for each test
-    
-    * simplified test
+    - Migrates webpack config into it's own file for ease of use. 2x speedup!
+    - Adds npm targets for build:{step} and watch:{step}
+    - Adds a top-level npm target that runs all watch items together
+    - Introduces concurrently to do useful things in parallel
