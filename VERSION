@@ -1,5 +1,5 @@
-commit 9b769b4c25f412504cc63fadee3b9b04f0e39d83
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Dec 12 19:29:55 2018 -0800
+commit d114dd64c5d84ddf5e0ad86eb8f7a2d495480ed9
+Author: shans <shane.stephens@gmail.com>
+Date:   Thu Dec 13 15:21:54 2018 +1100
 
-    update user-planner logging to differentiate suggestions and visible suggestions (#2441)
+    Move backing stores to be relative to current version directory (#2439)

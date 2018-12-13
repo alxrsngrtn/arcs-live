@@ -121,7 +121,7 @@ export class FirebaseStorage extends StorageBase {
     }
     baseStorageKey(type, keyString) {
         const fbKey = new FirebaseKey(keyString);
-        fbKey.location = `backingStores/${type.toString()}`;
+        fbKey.location = `${fbKey.location.split('/')[0]}/backingStores/${type.toString()}`;
         return fbKey.toString();
     }
     async baseStorageFor(type, key) {
