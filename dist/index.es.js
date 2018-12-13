@@ -11,7 +11,7 @@ import rs from 'jsrsasign';
 import WebSocket from 'ws';
 import fs from 'fs';
 import vm from 'vm';
-import fetch from 'node-fetch';
+import fetch$1 from 'node-fetch';
 import os from 'os';
 import firebase from 'firebase/app';
 import 'firebase/database';
@@ -19246,6 +19246,10 @@ class KeyManager {
     }
 }
 
+var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+commonjsGlobal.debugLevel = 2;
+
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -22662,11 +22666,11 @@ class Loader {
     _loadURL(url) {
         if (/\/\/schema.org\//.test(url)) {
             if (url.endsWith('/Thing')) {
-                return fetch('https://schema.org/Product.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data, { '@id': 'schema:Thing' }));
+                return fetch$1('https://schema.org/Product.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data, { '@id': 'schema:Thing' }));
             }
-            return fetch(url + '.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data));
+            return fetch$1(url + '.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data));
         }
-        return fetch(url).then(res => res.text());
+        return fetch$1(url).then(res => res.text());
     }
     async loadParticleClass(spec) {
         const clazz = await this.requireParticle(spec.implFile);
@@ -22685,7 +22689,7 @@ class Loader {
                 result.push(particleWrapper);
             },
             console,
-            fetch,
+            fetch: fetch$1,
             setTimeout,
             importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
         };
@@ -26680,93 +26684,23 @@ ${this.activeRecipe.toString()}`;
     }
 }
 
-const Debug = (Base, log) => class extends Base {
-  _setProperty(name, value) {
-    if (Debug.level > 1) {
-      if (((name in this._pendingProps) && (this._pendingProps[name] !== value)) || (this._props[name] !== value)) {
-        log('props', deepishClone({[name]: value}));
-      }
-    }
-    return super._setProperty(name, value);
-  }
-  _setState(state) {
-    if (typeof state !== 'object') {
-      console.warn(`Xen::_setState argument must be an object`);
-      return false;
-    }
-    if (super._setState(state)) {
-      if (Debug.level > 1) {
-        if (Debug.lastFire) {
-          //Debug.lastFire.log('[next state change from] fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
-          //Debug.lastFire.log('fire', Debug.lastFire.name, Debug.lastFire.detail);
-          log('(fired -->) state', deepishClone(state));
-        } else {
-          log('state', deepishClone(state));
-        }
-      }
-      return true;
-    }
-  }
-  _setImmutableState(name, value) {
-    log('state [immutable]', {[name]: value});
-    super._setImmutableState(name, value);
-  }
-  _fire(name, detail, node, init) {
-    Debug.lastFire = {name, detail: deepishClone(detail), log};
-    log('fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
-    super._fire(name, detail, node, init);
-    Debug.lastFire = null;
-  }
-  _doUpdate(...args) {
-    if (Debug.level > 2) {
-      log('updating...');
-    }
-    return super._doUpdate(...args);
-  }
-  _invalidate() {
-    if (Debug.level > 2) {
-      if (!this._validator) {
-        log('invalidating...');
-      }
-    }
-    super._invalidate();
-  }
-};
-
-// TODO(sjmiles): cloning prevents console log from showing values from the future,
-// but this must be a deep clone. Circular objects are not cloned.
-const deepishClone = (obj, depth) => {
-  if (!obj || typeof obj !== 'object') {
-    return obj;
-  }
-  const clone = Object.create(null);
-  for (const n in obj) {
-    let value = obj[n];
-    //try {
-    //  value = JSON.parse(JSON.stringify(value));
-    //} catch (x) {
-      if (depth < 1) {
-        value = deepishClone(obj, (depth || 0) + 1);
-      }
-    //}
-    clone[n] = value;
-  }
-  return clone;
-};
-
-Debug.level = 0;
-
-const _logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
-const logFactory = (preamble, color, log) => (Debug.level > 0) ? _logFactory(preamble, color, log) : () => {};
-
 // Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
 
 // TODO(wkorman): Incorporate debug levels. Consider outputting
 // preamble in the specified color via ANSI escape codes. Consider
 // sharing with similar log factory logic in `xen.js`. See `log-web.js`.
-const logFactory$1 = (preamble, color, log='log') => {
+const _logFactory = (preamble, color, log='log') => {
   return console[log].bind(console, `(${preamble})`);
 };
+
+const factory = global.debugLevel < 1 ? () => () => {} : _logFactory;
+
+const logFactory = (...args) => factory(...args);
 
 /**
  * @license
@@ -26777,7 +26711,7 @@ const logFactory$1 = (preamble, color, log='log') => {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const error = logFactory$1('PlanningResult', '#ff0090', 'error');
+const error = logFactory('PlanningResult', '#ff0090', 'error');
 class PlanningResult {
     constructor(arc, store) {
         this.lastUpdated = new Date(null);
@@ -27680,8 +27614,8 @@ class RecipeIndex {
  * http://polymer.github.io/PATENTS.txt
  */
 const defaultTimeoutMs = 5000;
-const log = logFactory$1('PlanProducer', '#ff0090', 'log');
-const error$1 = logFactory$1('PlanProducer', '#ff0090', 'error');
+const log = logFactory('PlanProducer', '#ff0090', 'log');
+const error$1 = logFactory('PlanProducer', '#ff0090', 'error');
 class PlanProducer {
     constructor(result, searchStore, { debug = false } = {}) {
         this.planner = null;
@@ -28060,6 +27994,82 @@ class Planificator {
     }
 }
 
+const Debug = (Base, log) => class extends Base {
+  _setProperty(name, value) {
+    if (Debug.level > 1) {
+      if (((name in this._pendingProps) && (this._pendingProps[name] !== value)) || (this._props[name] !== value)) {
+        log('props', deepishClone({[name]: value}));
+      }
+    }
+    return super._setProperty(name, value);
+  }
+  _setState(state) {
+    if (typeof state !== 'object') {
+      console.warn(`Xen::_setState argument must be an object`);
+      return false;
+    }
+    if (super._setState(state)) {
+      if (Debug.level > 1) {
+        if (Debug.lastFire) {
+          //Debug.lastFire.log('[next state change from] fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
+          //Debug.lastFire.log('fire', Debug.lastFire.name, Debug.lastFire.detail);
+          log('(fired -->) state', deepishClone(state));
+        } else {
+          log('state', deepishClone(state));
+        }
+      }
+      return true;
+    }
+  }
+  _setImmutableState(name, value) {
+    log('state [immutable]', {[name]: value});
+    super._setImmutableState(name, value);
+  }
+  _fire(name, detail, node, init) {
+    Debug.lastFire = {name, detail: deepishClone(detail), log};
+    log('fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
+    super._fire(name, detail, node, init);
+    Debug.lastFire = null;
+  }
+  _doUpdate(...args) {
+    if (Debug.level > 2) {
+      log('updating...');
+    }
+    return super._doUpdate(...args);
+  }
+  _invalidate() {
+    if (Debug.level > 2) {
+      if (!this._validator) {
+        log('invalidating...');
+      }
+    }
+    super._invalidate();
+  }
+};
+
+// TODO(sjmiles): cloning prevents console log from showing values from the future,
+// but this must be a deep clone. Circular objects are not cloned.
+const deepishClone = (obj, depth) => {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+  const clone = Object.create(null);
+  for (const n in obj) {
+    let value = obj[n];
+    //try {
+    //  value = JSON.parse(JSON.stringify(value));
+    //} catch (x) {
+      if (depth < 1) {
+        value = deepishClone(obj, (depth || 0) + 1);
+      }
+    //}
+    clone[n] = value;
+  }
+  return clone;
+};
+
+Debug.level = 0;
+
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -28121,7 +28131,7 @@ class BrowserLoader extends Loader {
     };
     importScripts(path);
     delete self.defineParticle;
-    const logger = logFactory$1(fileName.split('/').pop(), '#1faa00');
+    const logger = logFactory(fileName.split('/').pop(), '#1faa00');
     return this.unwrapParticle(result[0], logger);
   }
   mapParticleUrl(path) {
@@ -28136,6 +28146,8 @@ class BrowserLoader extends Loader {
     //  _resolve method allows particles to request remapping of assets paths
     //  for use in DOM
     const resolver = this._resolve.bind(this);
+    // TODO(sjmiles): hack to plumb `fetch` into Particle space under node
+    const _fetch = BrowserLoader.fetch || fetch;
     return particleWrapper({
       Particle: Particle$1,
       DomParticle,
@@ -28144,7 +28156,8 @@ class BrowserLoader extends Loader {
       TransformationDomParticle,
       resolver,
       log,
-      html: html$1
+      html: html$1,
+      _fetch
     });
   }
 }
@@ -28174,6 +28187,7 @@ const Arcs = {
   RecipeResolver,
   KeyManager,
   firebase,
+  logFactory,
   Xen: {
     StateMixin: XenStateMixin,
     Template,
@@ -28186,28 +28200,6 @@ const Arcs = {
 
 const g = (typeof window === 'undefined') ? global : window;
 g.__ArcsLib__ = Arcs;
-
-const g$1 = (typeof window === 'undefined') ? global : window;
-
-const {
-  version,
-  Arc: Arc$1,
-  Manifest: Manifest$1,
-  Planificator: Planificator$1,
-  SlotComposer: SlotComposer$1,
-  SlotDomConsumer: SlotDomConsumer$1,
-  Type: Type$1,
-  ArcType: ArcType$1,
-  BrowserLoader: BrowserLoader$1,
-  StorageProviderFactory: StorageProviderFactory$1,
-  ParticleExecutionContext: ParticleExecutionContext$1,
-  RecipeResolver: RecipeResolver$1,
-  KeyManager: KeyManager$1,
-  firebase: firebase$1,
-  Xen
-} = g$1.__ArcsLib__;
-
-Xen.Debug.level = 2;
 
 /**
  * @license
@@ -28267,6 +28259,8 @@ class NodeLoader extends Loader {
     //  _resolve method allows particles to request remapping of assets paths
     //  for use in DOM
     const resolver = this._resolve.bind(this);
+    // TODO(sjmiles): hack to plumb `fetch` into Particle space under node
+    //const _fetch = NodeLoader.fetch || fetch;
     return particleWrapper({
       Particle: Particle$1,
       DomParticle,
@@ -28275,15 +28269,37 @@ class NodeLoader extends Loader {
       TransformationDomParticle,
       resolver,
       log: log || (() => {}),
-      html: html$2
+      html: html$2,
+      //_fetch
     });
   }
 }
 
-const log$1 = console.log.bind(console);
-const warn = console.warn.bind(console);
+const g$1 = (typeof window === 'undefined') ? global : window;
 
-class ArcsEnv {
+const {
+  version,
+  Arc: Arc$1,
+  Manifest: Manifest$1,
+  Planificator: Planificator$1,
+  SlotComposer: SlotComposer$1,
+  SlotDomConsumer: SlotDomConsumer$1,
+  Type: Type$1,
+  ArcType: ArcType$1,
+  BrowserLoader: BrowserLoader$1,
+  StorageProviderFactory: StorageProviderFactory$1,
+  ParticleExecutionContext: ParticleExecutionContext$1,
+  RecipeResolver: RecipeResolver$1,
+  KeyManager: KeyManager$1,
+  firebase: firebase$1,
+  logFactory: logFactory$2,
+  Xen,
+} = g$1.__ArcsLib__;
+
+// TODO(sjmiles): populated dynamically via env-base.js
+const Env = {};
+
+class EnvBase {
   constructor(rootPath, loaderKind) {
     if (rootPath && rootPath[rootPath.length-1] === '/') {
       // remove trailing slash
@@ -28292,6 +28308,15 @@ class ArcsEnv {
     this.rootPath = rootPath;
     this.loaderKind = loaderKind;
     this.pathMap = this.createPathMap(rootPath);
+    // publish instance methods into shared import object
+    Object.defineProperties(Env, {
+      loader: {
+        get: () => this.loader
+      },
+      pecFactory: {
+        get: () => this.pecFactory
+      }
+    });
   }
   createPathMap(root) {
     return {
@@ -28302,59 +28327,15 @@ class ArcsEnv {
       'https://$artifacts/': `${root}/particles/`, // deprecated
     };
   }
-  // pecFactory construction is lazy, so loader can be configured prior
-  //get pecFactory() // abstract
   // loader construction is lazy, so pathMap can be configured prior
   get loader() {
     return this._loader || (this._loader = new (this.loaderKind)(this.pathMap));
   }
-  async parse(content, options) {
-    const localOptions = {
-      id: 'in-memory.manifest',
-      fileName: './in-memory.manifest',
-      loader: this.loader
-    };
-    if (options) {
-      Object.assign(localOptions, options);
-    }
-    return Manifest$1.parse(content, localOptions);
-  }
-  async resolve(arc, recipe) {
-    if (recipe.normalize()) {
-      let plan = recipe;
-      if (!plan.isResolved()) {
-        const resolver = new RecipeResolver$1(arc);
-        plan = await resolver.resolve(recipe);
-        if (!plan || !plan.isResolved()) {
-          warn('failed to resolve:\n', (plan || recipe).toString({showUnresolved: true}));
-          log$1(arc.context, arc, arc.context.storeTags);
-          plan = null;
-        }
-      }
-      return plan;
-    }
-  }
-  async spawn({id, serialization, context, composer, storage}) {
-    const params = {
-      id,
-      fileName: './serialized.manifest',
-      serialization,
-      context,
-      storageKey: storage,
-      slotComposer: composer,
-      pecFactory: this.pecFactory,
-      loader: this.loader
-    };
-    Object.assign(params, this.params);
-    if (serialization) {
-      return Arc$1.deserialize(params);
-    } else {
-      return new Arc$1(params);
-    }
-  }
+  // pecFactory construction is lazy, so loader can be configured prior
+  //get pecFactory() // abstract
 }
 
-class Env extends ArcsEnv {
+class Env$1 extends EnvBase {
   constructor(rootPath) {
     super(rootPath, NodeLoader);
   }
@@ -28367,9 +28348,65 @@ class Env extends ArcsEnv {
   }
 }
 
-// TODO(sjmiles): by config, node loads log-node.js instead
+// TODO(sjmiles): use a shared import instead of a global
+const g$2 = (typeof window === 'undefined') ? global : window;
+g$2.__Env__ = Env$1;
 
-const logFactory$2 = Xen.Debug.level > 0 ? logFactory$1 : () => () => {};
+const log$1 = console.log.bind(console);
+const warn = console.warn.bind(console);
+
+const parse = async (content, options) => {
+  const localOptions = {
+    id: 'in-memory.manifest',
+    fileName: './in-memory.manifest',
+    loader: Env.loader
+  };
+  if (options) {
+    Object.assign(localOptions, options);
+  }
+  return Manifest$1.parse(content, localOptions);
+};
+
+const resolve = async (arc, recipe) =>{
+  if (recipe.normalize()) {
+    let plan = recipe;
+    if (!plan.isResolved()) {
+      const resolver = new RecipeResolver$1(arc);
+      plan = await resolver.resolve(recipe);
+      if (!plan || !plan.isResolved()) {
+        warn('failed to resolve:\n', (plan || recipe).toString({showUnresolved: true}));
+        log$1(arc.context, arc, arc.context.storeTags);
+        plan = null;
+      }
+    }
+    return plan;
+  }
+};
+
+const spawn = async ({id, serialization, context, composer, storage}) => {
+  const params = {
+    id,
+    fileName: './serialized.manifest',
+    serialization,
+    context,
+    storageKey: storage,
+    slotComposer: composer,
+    pecFactory: Env.pecFactory,
+    loader: Env.loader
+  };
+  Object.assign(params, Env.params);
+  if (serialization) {
+    return Arc$1.deserialize(params);
+  } else {
+    return new Arc$1(params);
+  }
+};
+
+const Utils = {
+  parse,
+  resolve,
+  spawn
+};
 
 class SyntheticStores {
   static init(env) {
@@ -28424,8 +28461,7 @@ const warn$1 = logFactory$2('ArcHost', '#cade57', 'warn');
 const error$2 = logFactory$2('ArcHost', '#cade57', 'error');
 
 class ArcHost {
-  constructor(env, context, storage, composer) {
-    this.env = env;
+  constructor(context, storage, composer) {
     this.context = context;
     this.storage = storage;
     this.composer = composer;
@@ -28438,11 +28474,11 @@ class ArcHost {
   async spawn(config) {
     log$2('spawning arc', config);
     this.config = config;
-    const context = this.context || await this.env.parse(``);
+    const context = this.context || await Utils.parse(``);
     const serialization = this.serialization = await this.computeSerialization(config, this.storage);
-    this.arc = await this._spawn(this.env, context, this.composer, this.storage, config.id, serialization);
+    this.arc = await this._spawn(context, this.composer, this.storage, config.id, serialization);
     if (config.manifest && !serialization) {
-      await this.instantiateDefaultRecipe(this.env, this.arc, config.manifest);
+      await this.instantiateDefaultRecipe(this.arc, config.manifest);
     }
     if (this.pendingPlan) {
       const plan = this.pendingPlan;
@@ -28452,7 +28488,7 @@ class ArcHost {
     return this.arc;
   }
   set manifest(manifest) {
-    this.instantiateDefaultRecipe(this.env, this.arc, manifest);
+    this.instantiateDefaultRecipe(this.arc, manifest);
   }
   set plan(plan) {
     if (this.arc) {
@@ -28475,15 +28511,15 @@ class ArcHost {
     }
     return serialization;
   }
-  async _spawn(env, context, composer, storage, id, serialization) {
-    return await env.spawn({id, context, composer, serialization, storage: `${storage}/${id}`});
+  async _spawn(context, composer, storage, id, serialization) {
+    return await Utils.spawn({id, context, composer, serialization, storage: `${storage}/${id}`});
   }
-  async instantiateDefaultRecipe(env, arc, manifest) {
+  async instantiateDefaultRecipe(arc, manifest) {
     log$2('instantiateDefaultRecipe');
     try {
-      manifest = await env.parse(manifest);
+      manifest = await Utils.parse(manifest);
       const recipe = manifest.allRecipes[0];
-      const plan = await env.resolve(arc, recipe);
+      const plan = await Utils.resolve(arc, recipe);
       if (plan) {
         this.instantiatePlan(arc, plan);
       }
@@ -29257,11 +29293,11 @@ class PlannerShellInterface {
     }
     //initDevTools();
     // create an arcs environment
-    const env = new Env(assetsPath);
+    const env = new Env$1(assetsPath);
     // observe user's arc list
     const userArcs = new UserArcs(env, storage, userid);
     // base context (particles & recipes) from static manifest
-    const context = await env.parse(contextManifest);
+    const context = await Utils.parse(contextManifest);
     // userContext continually updates context based on user's arcs
     const userContext = new UserContext();
     // wait for context to spin up
@@ -29276,7 +29312,7 @@ class PlannerShellInterface {
       // define a host factory
       const hostFactory = () => {
         const composer = new RamSlotComposer({rootContainer});
-        const host = new ArcHost(env, context, storage, composer);
+        const host = new ArcHost(context, storage, composer);
         return host;
       };
       // instantiate planner

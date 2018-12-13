@@ -13,6 +13,7 @@
 runtime/browser-test/browser-test-ified.js
 manifest-railroad.html
 **/*.code-workspace
+shell/build
 shell/test/errorShots
 shells/test/errorShots
 devtools/deps
