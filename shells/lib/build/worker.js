@@ -2444,9 +2444,6 @@ class ParticleExecutionContext {
                 return [hostedSlotId, () => callback(hostedSlotId)];
             }
             onInnerArcRender(transformationParticle, transformationSlotName, hostedSlotId, content) {
-                // TODO(mmandlis): this dependency on renderHostedSlot means that only TransformationDomParticles can
-                // be transformations. 
-                // tslint:disable-next-line: no-any
                 transformationParticle.renderHostedSlot(transformationSlotName, hostedSlotId, content);
             }
             onStop() {
@@ -2471,9 +2468,6 @@ class ParticleExecutionContext {
                 });
             }
             onUIEvent(particle, slotName, event) {
-                // TODO(mmandlis): this dependency on fireEvent means that only DomParticles can
-                // be UI particles.
-                // tslint:disable-next-line: no-any
                 particle.fireEvent(slotName, event);
             }
             onStartRender(particle, slotName, providedSlots, contentTypes) {
@@ -2519,20 +2513,12 @@ class ParticleExecutionContext {
                         }
                     }
                 }
-                // TODO(mmandlis): these dependencies on _slotByName and renderSlot mean that only DomParticles can
-                // be UI particles.
-                // tslint:disable-next-line: no-any
-                particle._slotByName.set(slotName, new Slotlet(particle, slotName, providedSlots));
-                // tslint:disable-next-line: no-any
+                particle.slotByName.set(slotName, new Slotlet(particle, slotName, providedSlots));
                 particle.renderSlot(slotName, contentTypes);
             }
             onStopRender(particle, slotName) {
-                // TODO(mmandlis): this dependency on _slotByName and name means that only DomParticles can
-                // be UI particles.
-                // tslint:disable-next-line: no-any
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(particle._slotByName.has(slotName), `Stop render called for particle ${particle.name} slot ${slotName} without start render being called.`);
-                // tslint:disable-next-line: no-any
-                particle._slotByName.delete(slotName);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(particle.slotByName.has(slotName), `Stop render called for particle ${particle.spec.name} slot ${slotName} without start render being called.`);
+                particle.slotByName.delete(slotName);
             }
         }(port);
         this.idBase = _id_js__WEBPACK_IMPORTED_MODULE_4__["Id"].newSessionId().fromString(idBase);
@@ -3474,7 +3460,7 @@ class Particle {
         this._busy = 0;
         // Only used by a Slotlet class in particle-execution-context
         // tslint:disable-next-line: no-any
-        this._slotByName = new Map();
+        this.slotByName = new Map();
         // Typescript only sees this.constructor as a Function type.
         // TODO(shans): move spec off the constructor
         this.spec = this.constructor['spec'];
@@ -3572,7 +3558,7 @@ class Particle {
      * Returns the slot with provided name.
      */
     getSlot(name) {
-        return this._slotByName.get(name);
+        return this.slotByName.get(name);
     }
     static buildManifest(strings, ...bits) {
         const output = [];
@@ -3611,6 +3597,10 @@ class Particle {
         }
         throw new Error('A particle needs a description handle to set a decription pattern');
     }
+    // abstract
+    renderSlot(slotName, contentTypes) { }
+    renderHostedSlot(slotName, hostedSlotId, content) { }
+    fireEvent(slotName, event) { }
 }
 //# sourceMappingURL=particle.js.map
 
@@ -4108,7 +4098,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
         return [];
     }
     forceRenderTemplate(slotName) {
-        this._slotByName.forEach((slot, name) => {
+        this.slotByName.forEach((slot, name) => {
             if (!slotName || (name === slotName)) {
                 slot.requestedContentTypes.add('template');
             }

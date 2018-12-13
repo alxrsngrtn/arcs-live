@@ -39,9 +39,6 @@ export class ParticleExecutionContext {
                 return [hostedSlotId, () => callback(hostedSlotId)];
             }
             onInnerArcRender(transformationParticle, transformationSlotName, hostedSlotId, content) {
-                // TODO(mmandlis): this dependency on renderHostedSlot means that only TransformationDomParticles can
-                // be transformations. 
-                // tslint:disable-next-line: no-any
                 transformationParticle.renderHostedSlot(transformationSlotName, hostedSlotId, content);
             }
             onStop() {
@@ -66,9 +63,6 @@ export class ParticleExecutionContext {
                 });
             }
             onUIEvent(particle, slotName, event) {
-                // TODO(mmandlis): this dependency on fireEvent means that only DomParticles can
-                // be UI particles.
-                // tslint:disable-next-line: no-any
                 particle.fireEvent(slotName, event);
             }
             onStartRender(particle, slotName, providedSlots, contentTypes) {
@@ -114,20 +108,12 @@ export class ParticleExecutionContext {
                         }
                     }
                 }
-                // TODO(mmandlis): these dependencies on _slotByName and renderSlot mean that only DomParticles can
-                // be UI particles.
-                // tslint:disable-next-line: no-any
-                particle._slotByName.set(slotName, new Slotlet(particle, slotName, providedSlots));
-                // tslint:disable-next-line: no-any
+                particle.slotByName.set(slotName, new Slotlet(particle, slotName, providedSlots));
                 particle.renderSlot(slotName, contentTypes);
             }
             onStopRender(particle, slotName) {
-                // TODO(mmandlis): this dependency on _slotByName and name means that only DomParticles can
-                // be UI particles.
-                // tslint:disable-next-line: no-any
-                assert(particle._slotByName.has(slotName), `Stop render called for particle ${particle.name} slot ${slotName} without start render being called.`);
-                // tslint:disable-next-line: no-any
-                particle._slotByName.delete(slotName);
+                assert(particle.slotByName.has(slotName), `Stop render called for particle ${particle.spec.name} slot ${slotName} without start render being called.`);
+                particle.slotByName.delete(slotName);
             }
         }(port);
         this.idBase = Id.newSessionId().fromString(idBase);

@@ -24,7 +24,7 @@ export declare class Particle {
     private _idle;
     private _idleResolver;
     private _busy;
-    protected _slotByName: Map<string, any>;
+    slotByName: Map<string, any>;
     private capabilities;
     constructor(capabilities?: {
         constructInnerArc?: Function;
@@ -95,4 +95,7 @@ export declare class Particle {
     static buildManifest(strings: string[], ...bits: any[]): string;
     setParticleDescription(pattern: any): boolean;
     setDescriptionPattern(connectionName: string, pattern: any): boolean;
+    renderSlot(slotName: string, contentTypes: string[]): void;
+    renderHostedSlot(slotName: string, hostedSlotId: string, content: string): void;
+    fireEvent(slotName: string, event: {}): void;
 }

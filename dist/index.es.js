@@ -21235,9 +21235,6 @@ class ParticleExecutionContext {
                 return [hostedSlotId, () => callback(hostedSlotId)];
             }
             onInnerArcRender(transformationParticle, transformationSlotName, hostedSlotId, content) {
-                // TODO(mmandlis): this dependency on renderHostedSlot means that only TransformationDomParticles can
-                // be transformations. 
-                // tslint:disable-next-line: no-any
                 transformationParticle.renderHostedSlot(transformationSlotName, hostedSlotId, content);
             }
             onStop() {
@@ -21262,9 +21259,6 @@ class ParticleExecutionContext {
                 });
             }
             onUIEvent(particle, slotName, event) {
-                // TODO(mmandlis): this dependency on fireEvent means that only DomParticles can
-                // be UI particles.
-                // tslint:disable-next-line: no-any
                 particle.fireEvent(slotName, event);
             }
             onStartRender(particle, slotName, providedSlots, contentTypes) {
@@ -21310,20 +21304,12 @@ class ParticleExecutionContext {
                         }
                     }
                 }
-                // TODO(mmandlis): these dependencies on _slotByName and renderSlot mean that only DomParticles can
-                // be UI particles.
-                // tslint:disable-next-line: no-any
-                particle._slotByName.set(slotName, new Slotlet(particle, slotName, providedSlots));
-                // tslint:disable-next-line: no-any
+                particle.slotByName.set(slotName, new Slotlet(particle, slotName, providedSlots));
                 particle.renderSlot(slotName, contentTypes);
             }
             onStopRender(particle, slotName) {
-                // TODO(mmandlis): this dependency on _slotByName and name means that only DomParticles can
-                // be UI particles.
-                // tslint:disable-next-line: no-any
-                assert$1(particle._slotByName.has(slotName), `Stop render called for particle ${particle.name} slot ${slotName} without start render being called.`);
-                // tslint:disable-next-line: no-any
-                particle._slotByName.delete(slotName);
+                assert$1(particle.slotByName.has(slotName), `Stop render called for particle ${particle.spec.name} slot ${slotName} without start render being called.`);
+                particle.slotByName.delete(slotName);
             }
         }(port);
         this.idBase = Id.newSessionId().fromString(idBase);
@@ -21533,7 +21519,7 @@ class Particle$1 {
         this._busy = 0;
         // Only used by a Slotlet class in particle-execution-context
         // tslint:disable-next-line: no-any
-        this._slotByName = new Map();
+        this.slotByName = new Map();
         // Typescript only sees this.constructor as a Function type.
         // TODO(shans): move spec off the constructor
         this.spec = this.constructor['spec'];
@@ -21631,7 +21617,7 @@ class Particle$1 {
      * Returns the slot with provided name.
      */
     getSlot(name) {
-        return this._slotByName.get(name);
+        return this.slotByName.get(name);
     }
     static buildManifest(strings, ...bits) {
         const output = [];
@@ -21670,6 +21656,10 @@ class Particle$1 {
         }
         throw new Error('A particle needs a description handle to set a decription pattern');
     }
+    // abstract
+    renderSlot(slotName, contentTypes) { }
+    renderHostedSlot(slotName, hostedSlotId, content) { }
+    fireEvent(slotName, event) { }
 }
 
 /**
@@ -21954,7 +21944,7 @@ class DomParticleBase extends Particle$1 {
         return [];
     }
     forceRenderTemplate(slotName) {
-        this._slotByName.forEach((slot, name) => {
+        this.slotByName.forEach((slot, name) => {
             if (!slotName || (name === slotName)) {
                 slot.requestedContentTypes.add('template');
             }

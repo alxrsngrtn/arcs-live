@@ -1,5 +1,5 @@
-commit 578ea169f1f5053077b4b4492a80ed55326fd07d
+commit 1f3118613cbb9801f2236a57fef2dd8068a6f4d8
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Dec 13 12:19:50 2018 -0800
+Date:   Thu Dec 13 12:57:09 2018 -0800
 
-    pass options to planificator and update URL params (#2459)
+    resolve UI infrastructure hidden dependency on DomParticle (#2460)

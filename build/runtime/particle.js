@@ -20,7 +20,7 @@ export class Particle {
         this._busy = 0;
         // Only used by a Slotlet class in particle-execution-context
         // tslint:disable-next-line: no-any
-        this._slotByName = new Map();
+        this.slotByName = new Map();
         // Typescript only sees this.constructor as a Function type.
         // TODO(shans): move spec off the constructor
         this.spec = this.constructor['spec'];
@@ -118,7 +118,7 @@ export class Particle {
      * Returns the slot with provided name.
      */
     getSlot(name) {
-        return this._slotByName.get(name);
+        return this.slotByName.get(name);
     }
     static buildManifest(strings, ...bits) {
         const output = [];
@@ -157,5 +157,9 @@ export class Particle {
         }
         throw new Error('A particle needs a description handle to set a decription pattern');
     }
+    // abstract
+    renderSlot(slotName, contentTypes) { }
+    renderHostedSlot(slotName, hostedSlotId, content) { }
+    fireEvent(slotName, event) { }
 }
 //# sourceMappingURL=particle.js.map
