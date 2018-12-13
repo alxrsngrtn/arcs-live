@@ -13577,9 +13577,6 @@ class Recipe {
     getFreeHandles() {
         return this.handles.filter(handle => handle.connections.length === 0);
     }
-    getDisconnectedConnections() {
-        return this.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
-    }
     getFreeConnections() {
         return this.handleConnections.filter(hc => !hc.handle && !hc.isOptional);
     }
@@ -13594,6 +13591,15 @@ class Recipe {
         return this.handleConnections.filter(c => {
             return !c.isOptional && !c.handle && type.equals(c.type) && (c.particle !== p);
         });
+    }
+    getParticlesByImplFile(files) {
+        return this.particles.filter(particle => particle.spec && files.has(particle.spec.implFile));
+    }
+    findSlotByID(id) {
+        return this.slots.find(s => s.id === id);
+    }
+    getDisconnectedConnections() {
+        return this.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
     }
 }
 
@@ -20248,7 +20254,9 @@ class MapSlots extends Strategy {
         if (!slotConnection.targetSlot) {
             let clonedSlot = recipe.updateToClone({ selectedSlot }).selectedSlot;
             if (!clonedSlot) {
-                clonedSlot = recipe.slots.find(s => selectedSlot.id && selectedSlot.id === s.id);
+                if (selectedSlot.id) {
+                    clonedSlot = recipe.findSlotByID(selectedSlot.id);
+                }
                 if (clonedSlot == undefined) {
                     clonedSlot = recipe.newSlot(selectedSlot.name);
                     clonedSlot.id = selectedSlot.id;
@@ -23181,7 +23189,7 @@ class InitPopulation extends Strategy {
     _allResults() {
         return this._recipeIndex.recipes.map(recipe => ({
             recipe,
-            score: 1 - recipe.particles.filter(particle => particle.spec && this._loadedParticles.has(particle.spec.implFile)).length
+            score: 1 - recipe.getParticlesByImplFile(this._loadedParticles).length
         }));
     }
 }
@@ -23722,7 +23730,7 @@ class MatchFreeHandlesToConnections extends Strategy {
                 if (handle.connections.length > 0) {
                     return;
                 }
-                const matchingConnections = recipe.handleConnections.filter(connection => connection.handle == undefined && connection.name !== 'descriptions');
+                const matchingConnections = recipe.getDisconnectedConnections();
                 return matchingConnections.map(connection => {
                     return (recipe, handle) => {
                         const newConnection = recipe.updateToClone({ connection }).connection;

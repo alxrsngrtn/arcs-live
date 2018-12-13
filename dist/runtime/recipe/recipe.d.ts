@@ -68,9 +68,11 @@ export declare class Recipe {
     _makeLocalNameMap(): Map<any, any>;
     toString(options?: any): string;
     getFreeHandles(): Handle[];
-    getDisconnectedConnections(): HandleConnection[];
     getFreeConnections(): HandleConnection[];
     findHandleByID(id: any): Handle;
     getUnnamedUntypedConnections(): HandleConnection;
     getTypeHandleConnections(type: any, p: any): HandleConnection[];
+    getParticlesByImplFile(files: Set<string>): Particle[];
+    findSlotByID(id: any): Slot;
+    getDisconnectedConnections(): HandleConnection[];
 }

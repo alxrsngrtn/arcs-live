@@ -47,7 +47,7 @@ export class InitPopulation extends Strategy {
     _allResults() {
         return this._recipeIndex.recipes.map(recipe => ({
             recipe,
-            score: 1 - recipe.particles.filter(particle => particle.spec && this._loadedParticles.has(particle.spec.implFile)).length
+            score: 1 - recipe.getParticlesByImplFile(this._loadedParticles).length
         }));
     }
 }
