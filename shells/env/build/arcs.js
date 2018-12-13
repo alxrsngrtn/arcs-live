@@ -10909,7 +10909,7 @@ class OuterPortAttachment {
                 frame.targetClass = 'noLink';
             }
             stack.push(frame);
-        }), { sync: true, cacheGlobally: true });
+        }), { sync: false, cacheGlobally: true });
         return stack;
     }
 }

@@ -1,5 +1,5 @@
-commit 12d4db53299ecf646ef6b996df316ab5d05bdd46
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Dec 12 18:43:14 2018 -0800
+commit c40493d375a19789ea29d9a980f8f9e4eacf43d1
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Dec 13 13:54:49 2018 +1100
 
-    Switch to using 0.6 planner for server-side planning (#2452)
+    Async stack trace mapping for no warnings in the console (#2454)
