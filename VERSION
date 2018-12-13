@@ -1,5 +1,5 @@
-commit c2a298af2e374f16e6ec9f00491b428f1b238bb1
-Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
-Date:   Thu Dec 13 13:12:56 2018 +1100
+commit 4bb537e9d67cf98ec2351393b30bd0c350d13e09
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Dec 13 13:35:31 2018 +1100
 
-    moving recipe logic from strategies 'assign handles', 'create handle group', and 'group handle connections' to Recipe class (#2450)
+    Small fix to arcs-stores in devtools (#2453)
