@@ -20,15 +20,23 @@ export class Modality {
         this.suggestionConsumerClass = suggestionConsumerClass;
         this.descriptionFormatter = descriptionFormatter;
     }
+    static addModality(name, slotConsumerClass, suggestionConsumerClass, descriptionFormatter) {
+        assert(!Modality._modalities[name], `Modality '${name}' already exists`);
+        Modality._modalities[name] = new Modality(name, slotConsumerClass, suggestionConsumerClass, descriptionFormatter);
+        Modality._modalities[`mock-${name}`] =
+            new Modality(`mock-${name}`, MockSlotDomConsumer, MockSuggestDomConsumer);
+    }
+    static init() {
+        Object.keys(Modality._modalities).forEach(key => delete Modality._modalities[key]);
+        Modality.addModality('dom', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter);
+        Modality.addModality('dom-touch', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter);
+        Modality.addModality('vr', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter);
+    }
     static forName(name) {
         assert(Modality._modalities[name], `Unsupported modality ${name}`);
         return Modality._modalities[name];
     }
 }
-Modality._modalities = {
-    'dom': new Modality('dom', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
-    'dom-touch': new Modality('dom-touch', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
-    'vr': new Modality('vr', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
-    'mock': new Modality('mock', MockSlotDomConsumer, MockSuggestDomConsumer)
-};
+Modality._modalities = {};
+Modality.init();
 //# sourceMappingURL=modality.js.map

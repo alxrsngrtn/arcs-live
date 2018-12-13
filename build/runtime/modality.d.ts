@@ -6,12 +6,9 @@ export declare class Modality {
     readonly slotConsumerClass: typeof SlotDomConsumer;
     readonly suggestionConsumerClass: typeof SuggestDomConsumer;
     readonly descriptionFormatter?: typeof DescriptionDomFormatter;
-    static _modalities: {
-        'dom': Modality;
-        'dom-touch': Modality;
-        'vr': Modality;
-        'mock': Modality;
-    };
     private constructor();
+    static _modalities: {};
+    static addModality(name: string, slotConsumerClass: typeof SlotDomConsumer, suggestionConsumerClass: typeof SuggestDomConsumer, descriptionFormatter?: typeof DescriptionDomFormatter): void;
+    static init(): void;
     static forName(name: string): any;
 }

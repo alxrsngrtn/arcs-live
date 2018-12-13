@@ -22,6 +22,7 @@ import { ArcDebugHandler } from './debug/arc-debug-handler.js';
 export class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative }) {
         this._activeRecipe = new Recipe();
+        // TODO: rename: these are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
         this._recipes = [];
         this.dataChangeCallbacks = new Map();
         // All the stores, mapped by store ID
@@ -41,7 +42,6 @@ export class Arc {
         // for now, every Arc gets its own session
         this.id = Id.newSessionId().fromString(id);
         this.speculative = !!speculative; // undefined => false
-        // TODO: rename: this are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
         this._loader = loader;
         this.storageKey = storageKey;
         const pecId = this.generateID();

@@ -1,5 +1,10 @@
-commit 1f3118613cbb9801f2236a57fef2dd8068a6f4d8
+commit ccd3d7f30d425eb736f5296854cc630e33869a93
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Dec 13 12:57:09 2018 -0800
+Date:   Thu Dec 13 12:58:53 2018 -0800
 
-    resolve UI infrastructure hidden dependency on DomParticle (#2460)
+    update mock modalities (#2456)
+    
+    * do not automatically add `mock` affordance to each particle spec.
+    use different mock-prefixed modality depending on the real one.
+    
+    * add mock modalities inside Modality (cleanup tests)
