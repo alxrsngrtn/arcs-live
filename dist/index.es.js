@@ -29215,12 +29215,16 @@ class UserPlanner {
     };
     const planificator = await Planificator$1.create(arc, options);
     planificator.setSearch('*');
-    //planificator.registerSuggestionsChangedCallback(current => this._plansChanged(current, planificator.getLastActivatedPlan()));
-    planificator.registerVisibleSuggestionsChangedCallback(suggestions => this.suggestionsChanged(key, suggestions));
+    planificator.registerSuggestionsChangedCallback(suggestions => this.suggestionsChanged(key, suggestions));
+    planificator.registerVisibleSuggestionsChangedCallback(suggestions => this.visibleSuggestionsChanged(key, suggestions));
     return planificator;
   }
-  suggestionsChanged(key, suggestions) {
-    log$6(`suggestions [${key}]:`);
+  suggestionsChanged(key, {suggestions}) {
+    log$6(`${suggestions.length} suggestions [${key}]: ${suggestions.map(({plan}) => `[${plan.name}]`).join(', ')}`);
+  }
+
+  visibleSuggestionsChanged(key, suggestions) {
+    log$6(`${suggestions.length} visible suggestions [${key}]:`);
     suggestions.forEach(({descriptionByModality, plan: {_name}}) => log$6(`\t\t[${_name}]: ${descriptionByModality.text}`));
   }
 }

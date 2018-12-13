@@ -1,5 +1,5 @@
-commit c40493d375a19789ea29d9a980f8f9e4eacf43d1
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Dec 13 13:54:49 2018 +1100
+commit 9b769b4c25f412504cc63fadee3b9b04f0e39d83
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Dec 12 19:29:55 2018 -0800
 
-    Async stack trace mapping for no warnings in the console (#2454)
+    update user-planner logging to differentiate suggestions and visible suggestions (#2441)
