@@ -29202,10 +29202,11 @@ const log$6 = logFactory$2('UserPlanner', '#4f0433');
 const warn$5 = logFactory$2('UserPlanner', '#4f0433', 'warn');
 
 class UserPlanner {
-  constructor(userid, hostFactory) {
+  constructor(userid, hostFactory, options) {
     this.runners = [];
     this.userid = userid;
     this.hostFactory = hostFactory;
+    this.options = options;
   }
   onArc({add, remove}) {
     //log(add, remove);
@@ -29244,9 +29245,9 @@ class UserPlanner {
   async createPlanificator(userid, key, arc) {
     log$6(`createPlanificator for [${key}]`);
     const options = {
-      //storageKeyBase: config.plannerStorage,
+      storageKeyBase: this.options.plannerStorage,
       //onlyConsumer: config.plannerOnlyConsumer,
-      //debug: config.plannerDebug,
+      debug: this.options.debug,
       userid
     };
     const planificator = await Planificator$1.create(arc, options);
@@ -29287,7 +29288,7 @@ class PlannerShellInterface {
    * @param storageKeyBase Plans will be stored in a key that begins with this prefix.
    *   If not specified use a key based on the Launcher Arc.
    */
-  static async start(assetsPath, storage, userid, debug) {
+  static async start(assetsPath, storage, userid, options) {
     if (!assetsPath || !userid || !storage) {
       throw new Error('assetsPath, userid, and storage required');
     }
@@ -29316,7 +29317,7 @@ class PlannerShellInterface {
         return host;
       };
       // instantiate planner
-      userPlanner = new UserPlanner(userid, hostFactory);
+      userPlanner = new UserPlanner(userid, hostFactory, options);
       // subscribe planner to changes in user arcs
       userArcs.subscribe(change => userPlanner.onArc(change));
     }, 4000);

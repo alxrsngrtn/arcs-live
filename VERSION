@@ -1,27 +1,5 @@
-commit 5e2fce6a510fc8778c47269f0e5963fc36c4da88
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Dec 12 21:39:45 2018 -0800
+commit 578ea169f1f5053077b4b4492a80ed55326fd07d
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Dec 13 12:19:50 2018 -0800
 
-    Delete shell\ and artifacts\ (0_5_0) (#2455)
-    
-    * in-progress env refactor
-    
-    * rebuild env
-    
-    * cleanups
-    
-    * punt deprecated shell, artifacts
-    
-    * restore tests
-    
-    * restore single-shell
-    
-    * continued fumbling with logFactory
-    
-    * remove old shell from tooling concerns
-    
-    * update single-shell
-    
-    * remove words-mocha-test until words returns
-    
-    * repair deployment
+    pass options to planificator and update URL params (#2459)
