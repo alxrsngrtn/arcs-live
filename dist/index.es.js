@@ -13529,6 +13529,21 @@ class Recipe {
     getDisconnectedConnections() {
         return this.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
     }
+    getFreeConnections() {
+        return this.handleConnections.filter(hc => !hc.handle && !hc.isOptional);
+    }
+    findHandleByID(id) {
+        return this.handles.find(handle => handle.id === id);
+    }
+    getUnnamedUntypedConnections() {
+        return this.handleConnections.find(hc => !hc.type || !hc.name || hc.isOptional);
+    }
+    getTypeHandleConnections(type, p) {
+        // returns the handles of type 'type' that do not belong to particle 'p'
+        return this.handleConnections.filter(c => {
+            return !c.isOptional && !c.handle && type.equals(c.type) && (c.particle !== p);
+        });
+    }
 }
 
 /*
@@ -22414,7 +22429,7 @@ class AssignHandles extends Strategy {
                 }
                 const responses = [...stores.keys()].map(store => ((recipe, clonedHandle) => {
                     assert(store.id);
-                    if (recipe.handles.find(handle => handle.id === store.id)) {
+                    if (recipe.findHandleByID(store.id)) {
                         // TODO: Why don't we link the handle connections to the existingHandle?
                         return 0;
                     }
@@ -22917,7 +22932,7 @@ class GroupHandleConnections extends Strategy {
         this._walker = new class extends Walker {
             onRecipe(recipe, result) {
                 // Only apply this strategy if ALL handle connections are named and have types.
-                if (recipe.handleConnections.find(hc => !hc.type || !hc.name || hc.isOptional)) {
+                if (recipe.getUnnamedUntypedConnections()) {
                     return undefined;
                 }
                 // Find all unique types used in the recipe that have unbound handle connections.
@@ -22941,9 +22956,7 @@ class GroupHandleConnections extends Strategy {
                     // with the most connections of the given type, and group each of them with same typed handle connections of other particles.
                     const particleWithMostConnectionsOfType = sortedParticles[0];
                     const groups = new Map();
-                    let allTypeHandleConnections = recipe.handleConnections.filter(c => {
-                        return !c.isOptional && !c.handle && type.equals(c.type) && (c.particle !== particleWithMostConnectionsOfType);
-                    });
+                    let allTypeHandleConnections = recipe.getTypeHandleConnections(type, particleWithMostConnectionsOfType);
                     let iteration = 0;
                     while (allTypeHandleConnections.length > 0) {
                         Object.values(particleWithMostConnectionsOfType.connections).forEach(handleConnection => {
@@ -23151,7 +23164,7 @@ class CreateHandleGroup extends Strategy {
                 // Resolve constraints before assuming connections are free.
                 if (recipe.connectionConstraints.length > 0)
                     return undefined;
-                const freeConnections = recipe.handleConnections.filter(hc => !hc.handle && !hc.isOptional);
+                const freeConnections = recipe.getFreeConnections();
                 let maximalGroup = null;
                 for (const writer of freeConnections.filter(hc => hc.isOutput)) {
                     const compatibleConnections = [writer];

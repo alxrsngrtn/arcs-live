@@ -69,4 +69,8 @@ export declare class Recipe {
     toString(options?: any): string;
     getFreeHandles(): Handle[];
     getDisconnectedConnections(): HandleConnection[];
+    getFreeConnections(): HandleConnection[];
+    findHandleByID(id: any): Handle;
+    getUnnamedUntypedConnections(): HandleConnection;
+    getTypeHandleConnections(type: any, p: any): HandleConnection[];
 }

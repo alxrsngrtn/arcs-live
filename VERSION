@@ -1,5 +1,5 @@
-commit 15973b7a1b826dbad4e85b2f53f84480330b6f96
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Dec 13 12:56:18 2018 +1100
+commit c2a298af2e374f16e6ec9f00491b428f1b238bb1
+Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
+Date:   Thu Dec 13 13:12:56 2018 +1100
 
-    Fix sigh watch test re-running after build (#2448)
+    moving recipe logic from strategies 'assign handles', 'create handle group', and 'group handle connections' to Recipe class (#2450)
