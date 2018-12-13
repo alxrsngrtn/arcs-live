@@ -7,53 +7,51 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-import {parser} from '../build/manifest-parser.js';
+import { parser } from '../build/manifest-parser.js';
 const parse = parser.parse;
-import {assert} from './chai-web.js';
-
-describe('manifest parser', function() {
-  it('parses an empy manifest', () => {
-    parse('');
-  });
-  it('parses a trivial recipe', () => {
-    parse(`recipe Recipe &tag1 &tag2`);
-  });
-  it('parses with indentation', () => {
-    parse(`
+import { assert } from './chai-web.js';
+describe('manifest parser', () => {
+    it('parses an empy manifest', () => {
+        parse('');
+    });
+    it('parses a trivial recipe', () => {
+        parse(`recipe Recipe &tag1 &tag2`);
+    });
+    it('parses with indentation', () => {
+        parse(`
       recipe Recipe`);
-  });
-  it('parses recipes that map handles', () => {
-    parse(`
+    });
+    it('parses recipes that map handles', () => {
+        parse(`
       recipe Thing
         map #someTag
         map 'some-id' #someTag`);
-  });
-  it('parses recipes with particles', () => {
-    parse(`
+    });
+    it('parses recipes with particles', () => {
+        parse(`
       recipe Recipe
         SomeParticle`);
-  });
-  it('parses recipes that connect particles to handles', () => {
-    parse(`
+    });
+    it('parses recipes that connect particles to handles', () => {
+        parse(`
       recipe Recipe
         SomeParticle
           a -> #something
           b <- #somethingElse
           * = #someOtherParticle`);
-  });
-  it('parses trivial particles', () => {
-    parse(`
+    });
+    it('parses trivial particles', () => {
+        parse(`
       particle SomeParticle`);
-  });
-  it('parses recipes that name handles and particles', () => {
-    parse(`
+    });
+    it('parses recipes that name handles and particles', () => {
+        parse(`
       recipe Recipe
         SomeParticle as thing
         map #thing as anotherThing`);
-  });
-  it('parses manifests with comments', () => {
-    parse(`
+    });
+    it('parses manifests with comments', () => {
+        parse(`
     // comment
       recipe // comment
         // comment
@@ -63,9 +61,9 @@ describe('manifest parser', function() {
         // comment
         B    //comment
       `);
-  });
-  it('parses recipes with recipe level connections', () => {
-    parse(`
+    });
+    it('parses recipes with recipe level connections', () => {
+        parse(`
       recipe
         X -> Y
         X.a -> Y.a
@@ -73,9 +71,9 @@ describe('manifest parser', function() {
         a = b
         a.a = b.b
         X.a #tag <- a.y`);
-  });
-  it('parses manifests with stores', () => {
-    parse(`
+    });
+    it('parses manifests with stores', () => {
+        parse(`
       schema Person
         Text lastName
         Text firstName
@@ -86,192 +84,195 @@ describe('manifest parser', function() {
         description \`my store\`
       store Store1 of Person 'some-id' @7 in 'person.json'
       store Store2 of BigCollection<Person> in 'population.json'`);
-  });
-  it('fails to parse an argument list that use a reserved word as an identifier', () => {
-    try {
-      parse(`
+    });
+    it('fails to parse an argument list that use a reserved word as an identifier', () => {
+        try {
+            parse(`
         particle MyParticle
           in MyThing consume
           out? BigCollection<MyThing> output`);
-      assert.fail('this parse should have failed, identifiers should not be reserved words!');
-    } catch (e) {
-      assert.include(e.message, 'Expected', `bad error: '${e}'`);
-    }
-  });
-  it('allows identifiers to start with reserved words', () => {
-    parse(`
+            assert.fail('this parse should have failed, identifiers should not be reserved words!');
+        }
+        catch (e) {
+            assert.include(e.message, 'Expected', `bad error: '${e}'`);
+        }
+    });
+    it('allows identifiers to start with reserved words', () => {
+        parse(`
       particle MyParticle
         in MyThing mapped
         out? BigCollection<MyThing> import_export`);
-  });
-  it('allows reserved words for schema field names', () => {
-    // Test with a non-word char following the token
-    parse(`
+    });
+    it('allows reserved words for schema field names', () => {
+        // Test with a non-word char following the token
+        parse(`
       schema Reserved
         Text schema  // comment`);
-    // Test with end-of-input following the token
-    parse(`
+        // Test with end-of-input following the token
+        parse(`
       schema Reserved
         URL map`);
-  });
-  it('allows reserved words for inline schema field names', () => {
-    parse(`
+    });
+    it('allows reserved words for inline schema field names', () => {
+        parse(`
       particle Foo
         in A {Text handle} a
         out B {Boolean import, Number particle} b`);
-  });
-  it('fails to parse a nonsense argument list', () => {
-    try {
-      parse(`
+    });
+    it('fails to parse a nonsense argument list', () => {
+        try {
+            parse(`
         particle AParticle
           Nonsense()`);
-      assert.fail('this parse should have failed, no nonsense!');
-    } catch (e) {
-      assert.include(e.message, 'Nonsense', 'bad error: '+e);
-    }
-  });
-  it('parses particles with optional handles', () => {
-    parse(`
+            assert.fail('this parse should have failed, no nonsense!');
+        }
+        catch (e) {
+            assert.include(e.message, 'Nonsense', 'bad error: ' + e);
+        }
+    });
+    it('parses particles with optional handles', () => {
+        parse(`
       particle MyParticle
         in MyThing mandatory
         in? MyThing optional1
         out? [MyThing] optional2
         out? BigCollection<MyThing> optional3`);
-  });
-  it('parses manifests with search', () => {
-    parse(`
+    });
+    it('parses manifests with search', () => {
+        parse(`
       recipe
         search \`hello World!\`
       `);
-  });
-  it('parses manifests with search and tokens', () => {
-    parse(`
+    });
+    it('parses manifests with search and tokens', () => {
+        parse(`
       recipe
         search \`Hello dear world\`
           tokens \`hello\` \`World\` // \`dear\`
       `);
-  });
-  it('parses manifests particle verbs', () => {
-    parse(`
+    });
+    it('parses manifests particle verbs', () => {
+        parse(`
       particle SomeParticle
         in Energy energy
         out Height height
         modality dom`);
-  });
-  it('parses recipe with particle verbs', () => {
-    parse(`
+    });
+    it('parses recipe with particle verbs', () => {
+        parse(`
       recipe
         &jump
           * <- energy
           * -> height`);
-  });
-  it('parses recipe with particle verb shorthand', () => {
-    parse(`
+    });
+    it('parses recipe with particle verb shorthand', () => {
+        parse(`
       recipe
         &jump
           * <- energy
           * <- height`);
-  });
-  it('parses inline schemas', () => {
-    parse(`
+    });
+    it('parses inline schemas', () => {
+        parse(`
       particle Foo
         in MySchema {Text value} mySchema
     `);
-    parse(`
+        parse(`
       particle Foo
         in [MySchema {Text value}] mySchema
     `);
-    parse(`
+        parse(`
       particle Foo
         in [* {Text value, Number num}] anonSchema
     `);
-    parse(`
+        parse(`
       particle Foo
         in * {(Text or Number) value} union
     `);
-    parse(`
+        parse(`
       particle Foo
         in * {value} optionalType
     `);
-  });
-  it('parses a schema with a bytes field', () => {
-    parse(`
+    });
+    it('parses a schema with a bytes field', () => {
+        parse(`
       schema Avatar
         Text name
         Bytes profileImage
       `);
-  });
-  it('parses a schema with a reference field', () => {
-    parse(`
+    });
+    it('parses a schema with a reference field', () => {
+        parse(`
       schema Product
         Reference<Review> review
     `);
-  });
-  it('parses a schema with a referenced inline schema', () => {
-    parse(`
+    });
+    it('parses a schema with a referenced inline schema', () => {
+        parse(`
       schema Product
         Reference<Review {Text reviewText}> review
     `);
-  });
-  it('parses an inline schema with a reference to a schema', () => {
-    parse(`
+    });
+    it('parses an inline schema with a reference to a schema', () => {
+        parse(`
       particle Foo
         in Product {Reference<Review> review} inReview
     `);
-  });
-  it('parses an inline schema with a collection of references to schemas', () => {
-    parse(`
+    });
+    it('parses an inline schema with a collection of references to schemas', () => {
+        parse(`
       particle Foo
         in Product {[Reference<Review>] review} inResult
     `);
-  });
-  it('parses an inline schema with a referenced inline schema', () => {
-    parse(`
+    });
+    it('parses an inline schema with a referenced inline schema', () => {
+        parse(`
     particle Foo
       in Product {Reference<Review {Text reviewText}> review} inReview
     `);
-  });
-  it('parses an inline schema with a collection of references to inline schemas', () => {
-    parse(`
+    });
+    it('parses an inline schema with a collection of references to inline schemas', () => {
+        parse(`
       particle Foo
         in Product {[Reference<Review {Text reviewText}>] review} productReviews
     `);
-  });
-  it('parses reference types', () => {
-    parse(`
+    });
+    it('parses reference types', () => {
+        parse(`
       particle Foo
         in Reference<Foo> inRef
         out Reference<Bar> outRef
     `);
-  });
-  it('parses require section using local name', () => {
-    parse(`
+    });
+    it('parses require section using local name', () => {
+        parse(`
       recipe
         require
           handle as thing`);
-  });
-  it('parses require section using id', () => {
-    parse(`
+    });
+    it('parses require section using id', () => {
+        parse(`
       recipe
         require
           handle 'an-id'`);
-  });
-  it('parses require section using local name and id', () => {
-    parse(`
+    });
+    it('parses require section using local name and id', () => {
+        parse(`
       recipe
         require
           handle as thing 'an-id'`);
-  });
-  it('parses require section using upperIdent', () => {
-    parse(`
+    });
+    it('parses require section using upperIdent', () => {
+        parse(`
       recipe
         require
           handle Thing`);
-  });
-  it('parses require section with tags', () => {
-    parse(`
+    });
+    it('parses require section with tags', () => {
+        parse(`
       recipe
         require
           handle as thing Thing #tag1 #tag2`);
-  });
+    });
 });
+//# sourceMappingURL=manifest-parser-test.js.map

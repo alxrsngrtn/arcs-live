@@ -1,5 +1,11 @@
-commit 6fe51130e5d56ccf2bd50d82a253a6ad67491f4d
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Dec 13 15:05:16 2018 -0800
+commit de0a07b42ba429ff9d52aa53f30c728357eab914
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Dec 13 15:19:59 2018 -0800
 
-    make web-shell the source-of-truth for search, reset search when modulating arc (#2461)
+    Convert 30 tests to typescript (#2451)
+    
+    - Add a correspondig path-web.js because original used path-node.js
+    - Added typescript types to some classes, make some params optional
+    - Use official getters instead of direct access to private vars
+    - Convert tests to use arrow notation and fix triple-equals issues.
+    - Simplify tslint usage in sigh

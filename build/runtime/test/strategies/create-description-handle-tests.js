@@ -8,14 +8,12 @@
  * http://polymer.github.io/PATENTS.txt
  */
 'use strict';
-
-import {Manifest} from '../../manifest.js';
-import {CreateDescriptionHandle} from '../../strategies/create-description-handle.js';
-import {assert} from '../chai-web.js';
-
-describe('CreateDescriptionHandle', function() {
-  it('descriptions handle created', async () => {
-    const manifest = (await Manifest.parse(`
+import { Manifest } from '../../manifest.js';
+import { CreateDescriptionHandle } from '../../strategies/create-description-handle.js';
+import { assert } from '../chai-web.js';
+describe('CreateDescriptionHandle', () => {
+    it('descriptions handle created', async () => {
+        const manifest = (await Manifest.parse(`
       schema Description
       particle DoSomething in 'AA.js'
         out [Description] descriptions
@@ -23,15 +21,15 @@ describe('CreateDescriptionHandle', function() {
       recipe
         DoSomething as particle0
     `));
-    const recipe = manifest.recipes[0];
-    const inputParams = {generated: [{result: manifest.recipes[0], score: 1}], terminal: []};
-    const strategy = new CreateDescriptionHandle();
-    const results = (await strategy.generate(inputParams));
-
-    assert.lengthOf(results, 1);
-    const plan = results[0].result;
-    assert.lengthOf(plan.handles, 1);
-    assert.equal('create', plan.handles[0].fate);
-    assert.isTrue(plan.isResolved());
-  });
+        const recipe = manifest.recipes[0];
+        const inputParams = { generated: [{ result: manifest.recipes[0], score: 1 }], terminal: [] };
+        const strategy = new CreateDescriptionHandle();
+        const results = (await strategy.generate(inputParams));
+        assert.lengthOf(results, 1);
+        const plan = results[0].result;
+        assert.lengthOf(plan.handles, 1);
+        assert.equal('create', plan.handles[0].fate);
+        assert.isTrue(plan.isResolved());
+    });
 });
+//# sourceMappingURL=create-description-handle-tests.js.map

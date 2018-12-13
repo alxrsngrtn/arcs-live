@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Type } from './type.js';
 import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Recipe } from './recipe/recipe.js';
 import { Manifest } from './manifest.js';
@@ -94,22 +95,22 @@ export declare class Arc {
     cloneForSpeculativeExecution(): Promise<Arc>;
     instantiate(recipe: Recipe, innerArc?: any): Promise<void>;
     _connectParticleToHandle(particle: any, name: any, targetHandle: any): void;
-    createStore(type: any, name: any, id: any, tags: any, storageKey?: any): Promise<StorageProviderBase>;
-    _registerStore(store: any, tags: any): void;
-    _tagStore(store: any, tags: any): void;
+    createStore(type: Type, name: any, id: any, tags?: any, storageKey?: any): Promise<StorageProviderBase>;
+    _registerStore(store: StorageProviderBase, tags?: any): void;
+    _tagStore(store: StorageProviderBase, tags: any): void;
     _onDataChange(): void;
     onDataChange(callback: any, registration: any): void;
     clearDataChange(registration: any): void;
-    static _typeToKey(type: any): any;
-    findStoresByType(type: any, options: any): StorageProviderBase[];
+    static _typeToKey(type: Type): any;
+    findStoresByType(type: Type, options?: any): StorageProviderBase[];
     findStoreById(id: any): StorageProviderBase;
-    findStoreTags(store: any): Set<string> | string[];
+    findStoreTags(store: StorageProviderBase): Set<string> | string[];
     getStoreDescription(store: any): any;
     getVersionByStore({ includeArc, includeContext }: {
         includeArc?: boolean;
         includeContext?: boolean;
     }): {};
-    keyForId(id: any): string;
+    keyForId(id: string): string;
     stop(): void;
     toContextString(options: any): string;
 }

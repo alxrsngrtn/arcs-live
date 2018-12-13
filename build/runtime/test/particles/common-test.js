@@ -7,16 +7,13 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 'use strict';
-
-import {assert} from '../chai-web.js';
-import {TestHelper} from '../../testing/test-helper.js';
-import {Manifest} from '../../manifest.js';
-
-describe('common particles test', function() {
-  it('resolves after cloning', async () => {
-    const manifest = await Manifest.parse(`
+import { assert } from '../chai-web.js';
+import { TestHelper } from '../../testing/test-helper.js';
+import { Manifest } from '../../manifest.js';
+describe('common particles test', () => {
+    it('resolves after cloning', async () => {
+        const manifest = await Manifest.parse(`
   schema Thing
     Text name
     Text description
@@ -56,27 +53,23 @@ describe('common particles test', function() {
     ]
   store Store1 of [Thing] 'smallthings' in SmallThings
     `);
-
-    const recipe = manifest.recipes[0];
-    const newRecipe = recipe.clone();
-    recipe.normalize();
-    assert(recipe.isResolved());
-    newRecipe.normalize();
-    assert(newRecipe.isResolved());
-  });
-
-
-  it('copy handle test', async () => {
-    const helper = await TestHelper.createAndPlan({
-      manifestFilename: './src/runtime/test/particles/artifacts/copy-collection-test.recipes',
-      expectedNumPlans: 1,
-      expectedSuggestions: ['Copy all things!']
+        const recipe = manifest.recipes[0];
+        const newRecipe = recipe.clone();
+        recipe.normalize();
+        assert(recipe.isResolved());
+        newRecipe.normalize();
+        assert(newRecipe.isResolved());
     });
-    assert.isEmpty(helper.arc._stores);
-
-    await helper.acceptSuggestion({particles: ['CopyCollection', 'CopyCollection']});
-
-    // Copied 2 and 3 entities from two collections.
-    assert.equal(5, helper.arc._stores[2]._model.size);
-  });
+    it('copy handle test', async () => {
+        const helper = await TestHelper.createAndPlan({
+            manifestFilename: './src/runtime/test/particles/artifacts/copy-collection-test.recipes',
+            expectedNumPlans: 1,
+            expectedSuggestions: ['Copy all things!']
+        });
+        assert.isEmpty(helper.arc._stores);
+        await helper.acceptSuggestion({ particles: ['CopyCollection', 'CopyCollection'] });
+        // Copied 2 and 3 entities from two collections.
+        assert.equal(5, helper.arc._stores[2]._model.size);
+    });
 });
+//# sourceMappingURL=common-test.js.map

@@ -8,13 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 'use strict';
-
-import {Manifest} from '../../manifest.js';
-import {GroupHandleConnections} from '../../strategies/group-handle-connections.js';
-import {assert} from '../chai-web.js';
-
-describe('GroupHandleConnections', function() {
-  const schemaAndParticlesStr = `
+import { Manifest } from '../../manifest.js';
+import { GroupHandleConnections } from '../../strategies/group-handle-connections.js';
+import { assert } from '../chai-web.js';
+describe('GroupHandleConnections', () => {
+    const schemaAndParticlesStr = `
       schema Thing
       schema OtherThing
       particle A
@@ -34,9 +32,9 @@ describe('GroupHandleConnections', function() {
       particle E
         out Thing othingE1
       `;
-  it('group in and out handle connections', async () => {
-    // TODO: add another Type handle connections to the recipe!
-    const manifest = (await Manifest.parse(`
+    it('group in and out handle connections', async () => {
+        // TODO: add another Type handle connections to the recipe!
+        const manifest = (await Manifest.parse(`
 ${schemaAndParticlesStr}
       recipe
         A
@@ -44,21 +42,20 @@ ${schemaAndParticlesStr}
         C
         D
     `));
-    const inputParams = {generated: [{result: manifest.recipes[0], score: 1}]};
-    const ghc = new GroupHandleConnections();
-
-    const results = await ghc.generate(inputParams);
-    assert.lengthOf(results, 1);
-    const recipe = results[0].result;
-    assert.lengthOf(recipe.handles, 4);
-    // Verify all connections are bound to handles.
-    assert.isUndefined(recipe.handleConnections.find(hc => !hc.handle));
-    // Verify all handles have non-empty connections list.
-    assert.isUndefined(recipe.handles.find(v => v.connections.length == 0));
-  });
-  it('does nothing if no grouping is possible', async () => {
-    // TODO: add another Type handle connections to the recipe!
-    const manifest = (await Manifest.parse(`
+        const inputParams = { generated: [{ result: manifest.recipes[0], score: 1 }] };
+        const ghc = new GroupHandleConnections();
+        const results = await ghc.generate(inputParams);
+        assert.lengthOf(results, 1);
+        const recipe = results[0].result;
+        assert.lengthOf(recipe.handles, 4);
+        // Verify all connections are bound to handles.
+        assert.isUndefined(recipe.handleConnections.find(hc => !hc.handle));
+        // Verify all handles have non-empty connections list.
+        assert.isUndefined(recipe.handles.find(v => v.connections.length === 0));
+    });
+    it('does nothing if no grouping is possible', async () => {
+        // TODO: add another Type handle connections to the recipe!
+        const manifest = (await Manifest.parse(`
       ${schemaAndParticlesStr}
       recipe
         create as thing
@@ -68,10 +65,10 @@ ${schemaAndParticlesStr}
           ithingA1 <- thing
         B
     `));
-    const inputParams = {generated: [{result: manifest.recipes[0], score: 1}]};
-    const ghc = new GroupHandleConnections();
-
-    const results = await ghc.generate(inputParams);
-    assert.isEmpty(results);
-  });
+        const inputParams = { generated: [{ result: manifest.recipes[0], score: 1 }] };
+        const ghc = new GroupHandleConnections();
+        const results = await ghc.generate(inputParams);
+        assert.isEmpty(results);
+    });
 });
+//# sourceMappingURL=group-handle-connections-tests.js.map

@@ -83,8 +83,8 @@ export declare class Manifest {
     findInterfaceByName(name: any): InterfaceInfo;
     findRecipesByVerb(verb: any): Recipe[];
     generateID(): string;
-    static load(fileName: any, loader: any, options: any): Promise<any>;
-    static parse(content: any, options: any): Promise<Manifest>;
+    static load(fileName: string, loader: any, options?: any): Promise<Manifest>;
+    static parse(content: any, options?: any): Promise<Manifest>;
     static _augmentAstWithTypes(manifest: any, items: any): void;
     static _processSchema(manifest: any, schemaItem: any): void;
     static _processResource(manifest: any, schemaItem: any): void;
@@ -102,6 +102,6 @@ export declare class Manifest {
     static _processStore(manifest: any, item: any, loader: any): Promise<void>;
     static _createStore(manifest: any, type: any, name: any, id: any, tags: any, item: any, originalId: any): Promise<any>;
     _newRecipe(name: any): Recipe;
-    toString(options: any): string;
+    toString(options?: any): string;
 }
 export {};

@@ -7,21 +7,18 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-import {assert} from '../chai-web.js';
-import * as util from '../../testing/test-util.js';
-import {StubLoader} from '../../testing/stub-loader.js';
-import {DevtoolsForTests} from '../../debug/devtools-connection.js';
-import {Random} from '../../random.js';
-import {TestHelper} from '../../testing/test-helper.js';
-
-describe('OuterPortAttachment', function() {
-  before(() => DevtoolsForTests.ensureStub());
-  after(() => DevtoolsForTests.reset());
-  it('produces PEC Log messages on devtools channel', async () => {
-    Random.seedForTests();
-    const testHelper = await TestHelper.create({
-      manifestString: `
+import { assert } from '../chai-web.js';
+import { StubLoader } from '../../testing/stub-loader.js';
+import { DevtoolsForTests } from '../../debug/devtools-connection.js';
+import { Random } from '../../random.js';
+import { TestHelper } from '../../testing/test-helper.js';
+describe('OuterPortAttachment', () => {
+    before(() => DevtoolsForTests.ensureStub());
+    after(() => DevtoolsForTests.reset());
+    it('produces PEC Log messages on devtools channel', async () => {
+        Random.seedForTests();
+        const testHelper = await TestHelper.create({
+            manifestString: `
         schema Foo
           Text value
         particle P in 'p.js'
@@ -30,52 +27,47 @@ describe('OuterPortAttachment', function() {
           use as foo
           P
             foo = foo`,
-      loader: new StubLoader({
-        'p.js': `defineParticle(({Particle}) => class P extends Particle {
+            loader: new StubLoader({
+                'p.js': `defineParticle(({Particle}) => class P extends Particle {
           async setHandles(handles) {
             let foo = handles.get('foo');
             foo.set(new foo.entityClass({value: 'FooBar'}));
           }
         });`
-      })
+            })
+        });
+        const arc = testHelper.arc;
+        const foo = arc._context.findSchemaByName('Foo').entityClass();
+        const fooStore = await arc.createStore(foo.type, undefined, 'fooStore');
+        const recipe = arc._context.recipes[0];
+        recipe.handles[0].mapToStorage(fooStore);
+        recipe.normalize();
+        await arc.instantiate(recipe);
+        const instantiateParticleCall = DevtoolsForTests.channel.messages.find(m => m.messageType === 'PecLog' && m.messageBody.name === 'InstantiateParticle').messageBody;
+        // Type is a complex object to reproduce, let's skip asserting on it.
+        delete instantiateParticleCall.pecMsgBody.spec.args[0].type;
+        assert.deepEqual(instantiateParticleCall.pecMsgBody, {
+            // IDs are stable thanks to Random.seedForTests().
+            id: '!85915497922560:demo:particle1',
+            identifier: '!85915497922560:demo:particle1',
+            handles: {
+                foo: 'fooStore'
+            },
+            spec: {
+                name: 'P',
+                description: {},
+                implFile: 'p.js',
+                modality: ['dom', 'mock-dom'],
+                slots: [],
+                verbs: [],
+                args: [{
+                        dependentConnections: [],
+                        direction: 'inout',
+                        isOptional: false,
+                        name: 'foo'
+                    }]
+            }
+        });
     });
-    const arc = testHelper.arc;
-
-    const Foo = arc._context.findSchemaByName('Foo').entityClass();
-    const fooStore = await arc.createStore(Foo.type, undefined, 'fooStore');
-
-    const recipe = arc._context.recipes[0];
-    recipe.handles[0].mapToStorage(fooStore);
-    recipe.normalize();
-    await arc.instantiate(recipe);
-
-    const instantiateParticleCall = DevtoolsForTests.channel.messages.find(m =>
-      m.messageType === 'PecLog' && m.messageBody.name === 'InstantiateParticle').messageBody;
-
-    // Type is a complex object to reproduce, let's skip asserting on it.
-    delete instantiateParticleCall.pecMsgBody.spec.args[0].type;
-
-    assert.deepEqual(instantiateParticleCall.pecMsgBody, {
-      // IDs are stable thanks to Random.seedForTests().
-      id: '!85915497922560:demo:particle1',
-      identifier: '!85915497922560:demo:particle1',
-      handles: {
-        foo: 'fooStore'
-      },
-      spec: {
-        name: 'P',
-        description: {},
-        implFile: 'p.js',
-        modality: ['dom', 'mock-dom'],
-        slots: [],
-        verbs: [],
-        args: [{
-          dependentConnections: [],
-          direction: 'inout',
-          isOptional: false,
-          name: 'foo'
-        }]
-      }
-    });
-  });
 });
+//# sourceMappingURL=outer-port-attachments-tests.js.map

@@ -19,7 +19,7 @@ export declare class Runtime {
      * Parse a textual manifest and return a Manifest object. See the Manifest
      * class for the options accepted.
      */
-    static parseManifest(content: any, options: any): Promise<Manifest>;
+    static parseManifest(content: any, options?: any): Promise<Manifest>;
     /**
      * Load and parse a manifest from a resource (not striclty a file) and return
      * a Manifest object. The loader determines the semantics of the fileName. See

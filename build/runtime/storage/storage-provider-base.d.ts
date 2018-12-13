@@ -75,7 +75,7 @@ export declare abstract class StorageProviderBase {
      * @param details details about the change
      */
     protected _fire(kindStr: 'change', details: ChangeEvent): Promise<void>;
-    _compareTo(other: any): number;
+    _compareTo(other: StorageProviderBase): number;
     toString(handleTags: string[]): string;
     readonly apiChannelMappingId: string;
     dispose(): void;

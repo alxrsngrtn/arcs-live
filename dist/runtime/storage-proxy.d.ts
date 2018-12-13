@@ -9,7 +9,7 @@ declare enum SyncState {
     pending = 1,
     full = 2
 }
-/** @class StorageProxy
+/**
  * Mediates between one or more Handles and the backing store outside the PEC.
  *
  * This can operate in two modes, based on how observing handles are configured:

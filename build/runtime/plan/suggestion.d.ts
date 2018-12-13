@@ -10,6 +10,7 @@
 import { Arc } from '../arc.js';
 import { Description } from '../description.js';
 import { Recipe } from '../recipe/recipe.js';
+import { RecipeResolver } from '../recipe/recipe-resolver.js';
 import { Relevance } from '../relevance.js';
 import { Search } from '../recipe/search.js';
 export declare class Suggestion {
@@ -32,7 +33,7 @@ export declare class Suggestion {
     mergeSearch(suggestion: Suggestion): boolean;
     _addSearch(searchGroup: string[]): boolean;
     serialize(): {
-        plan: any;
+        plan: string;
         hash: string;
         rank: number;
         relevance: {};
@@ -45,8 +46,8 @@ export declare class Suggestion {
         relevance: any;
         searchGroups: any;
         descriptionByModality: any;
-    }, arc: any, recipeResolver: any): Promise<Suggestion>;
+    }, arc: Arc, recipeResolver: RecipeResolver): Promise<Suggestion>;
     instantiate(): Promise<void>;
-    _planToString(plan: any): any;
-    static _planFromString(planString: any, arc: any, recipeResolver: any): Promise<Recipe>;
+    _planToString(plan: any): string;
+    static _planFromString(planString: string, arc: Arc, recipeResolver: RecipeResolver): Promise<Recipe>;
 }

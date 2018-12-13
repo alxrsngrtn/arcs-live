@@ -8,25 +8,22 @@
  * http://polymer.github.io/PATENTS.txt
  */
 'use strict';
-
-import {Manifest} from '../../manifest.js';
-import {StrategyTestHelper} from './strategy-test-helper.js';
-import {AddMissingHandles} from '../../strategies/add-missing-handles.js';
-import {assert} from '../chai-web.js';
-
+import { Manifest } from '../../manifest.js';
+import { StrategyTestHelper } from './strategy-test-helper.js';
+import { AddMissingHandles } from '../../strategies/add-missing-handles.js';
+import { assert } from '../chai-web.js';
 async function runStrategy(manifestStr) {
-  const manifest = await Manifest.parse(manifestStr);
-  const recipes = manifest.recipes;
-  recipes.forEach(recipe => recipe.normalize());
-  const arc = StrategyTestHelper.createTestArc('test-plan-arc', manifest, 'dom');
-  const inputParams = {generated: recipes.map(recipe => ({result: recipe, score: 1}))};
-  const strategy = new AddMissingHandles(arc);
-  return (await strategy.generate(inputParams)).map(r => r.result);
+    const manifest = await Manifest.parse(manifestStr);
+    const recipes = manifest.recipes;
+    recipes.forEach(recipe => recipe.normalize());
+    const arc = StrategyTestHelper.createTestArc('test-plan-arc', manifest, 'dom');
+    const inputParams = { generated: recipes.map(recipe => ({ result: recipe, score: 1 })) };
+    const strategy = new AddMissingHandles(arc);
+    return (await strategy.generate(inputParams)).map(r => r.result);
 }
-
-describe('AddMissingHandles', function() {
-  it(`doesn't add handles if there are constraints`, async () => {
-    assert.isEmpty(await runStrategy(`
+describe('AddMissingHandles', () => {
+    it(`doesn't add handles if there are constraints`, async () => {
+        assert.isEmpty(await runStrategy(`
       schema Thing
       particle P1
         out Thing thing
@@ -39,9 +36,9 @@ describe('AddMissingHandles', function() {
         P1
         P2
     `));
-  });
-  it(`doesn't add handles if there are free handles`, async () => {
-    assert.isEmpty(await runStrategy(`
+    });
+    it(`doesn't add handles if there are free handles`, async () => {
+        assert.isEmpty(await runStrategy(`
       schema Thing
       particle P1
         in Thing thing
@@ -50,9 +47,9 @@ describe('AddMissingHandles', function() {
         create as free
         P1
     `));
-  });
-  it(`adds handles to free connections`, async () => {
-    const results = await runStrategy(`
+    });
+    it(`adds handles to free connections`, async () => {
+        const results = await runStrategy(`
       schema Thing
       particle P1
         in Thing thing
@@ -64,13 +61,13 @@ describe('AddMissingHandles', function() {
         P1
         P2
     `);
-    assert.lengthOf(results, 1);
-    const recipe = results[0];
-    assert.lengthOf(recipe.handles, 3);
-    assert.isTrue(recipe.handles.every(h => h.fate === '?'));
-  });
-  it(`doesn't add handles to host connections`, async () => {
-    const results = await runStrategy(`
+        assert.lengthOf(results, 1);
+        const recipe = results[0];
+        assert.lengthOf(recipe.handles, 3);
+        assert.isTrue(recipe.handles.every(h => h.fate === '?'));
+    });
+    it(`doesn't add handles to host connections`, async () => {
+        const results = await runStrategy(`
       schema Thing
       interface HostedInterface
         in ~a *
@@ -80,9 +77,10 @@ describe('AddMissingHandles', function() {
       recipe
         P1
     `);
-    assert.lengthOf(results, 1);
-    const recipe = results[0];
-    assert.lengthOf(recipe.handles, 1);
-    assert.isUndefined(recipe.particles[0].connections['hosted'].handle);
-  });
+        assert.lengthOf(results, 1);
+        const recipe = results[0];
+        assert.lengthOf(recipe.handles, 1);
+        assert.isUndefined(recipe.particles[0].connections['hosted'].handle);
+    });
 });
+//# sourceMappingURL=add-missing-handles-test.js.map

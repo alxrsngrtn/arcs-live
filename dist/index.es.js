@@ -20721,7 +20721,7 @@ var SyncState;
     SyncState[SyncState["pending"] = 1] = "pending";
     SyncState[SyncState["full"] = 2] = "full";
 })(SyncState || (SyncState = {}));
-/** @class StorageProxy
+/**
  * Mediates between one or more Handles and the backing store outside the PEC.
  *
  * This can operate in two modes, based on how observing handles are configured:

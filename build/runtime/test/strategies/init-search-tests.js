@@ -8,16 +8,15 @@
  * http://polymer.github.io/PATENTS.txt
  */
 'use strict';
-
-import {InitSearch} from '../../strategies/init-search.js';
-import {assert} from '../chai-web.js';
-
+import { InitSearch } from '../../strategies/init-search.js';
+import { assert } from '../chai-web.js';
 describe('InitSearch', async () => {
-  it('initializes the search recipe', async () => {
-    const initSearch = new InitSearch(null, {search: 'search'});
-    const inputParams = {generated: [], generation: 0};
-    const results = await initSearch.generate(inputParams);
-    assert.lengthOf(results, 1);
-    assert.equal(results[0].score, 0);
-  });
+    it('initializes the search recipe', async () => {
+        const initSearch = new InitSearch(null, { search: 'search' });
+        const inputParams = { generated: [], generation: 0 };
+        const results = await initSearch.generate(inputParams);
+        assert.lengthOf(results, 1);
+        assert.equal(results[0].score, 0);
+    });
 });
+//# sourceMappingURL=init-search-tests.js.map
