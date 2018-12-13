@@ -10,6 +10,7 @@
 import { assert } from '../../platform/assert-web.js';
 import { PlanConsumer } from './plan-consumer.js';
 import { PlanProducer } from './plan-producer.js';
+import { PlanningResult } from './planning-result.js';
 import { ReplanQueue } from './replan-queue.js';
 import { EntityType } from '../type.js';
 export class Planificator {
@@ -23,13 +24,14 @@ export class Planificator {
         this.arc = arc;
         this.userid = userid;
         this.searchStore = searchStore;
+        this.result = new PlanningResult(arc, store);
         if (!onlyConsumer) {
-            this.producer = new PlanProducer(arc, store, searchStore, { debug });
+            this.producer = new PlanProducer(this.result, searchStore, { debug });
             this.replanQueue = new ReplanQueue(this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
         }
-        this.consumer = new PlanConsumer(arc, store);
+        this.consumer = new PlanConsumer(this.result);
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
@@ -52,7 +54,7 @@ export class Planificator {
     }
     get consumerOnly() { return !Boolean(this.producer); }
     async loadSuggestions() {
-        return this.consumer.loadSuggestions();
+        return this.result.load();
     }
     async setSearch(search) {
         search = search ? search.toLowerCase().trim() : null;
@@ -77,8 +79,8 @@ export class Planificator {
             this._unlistenToArcStores();
             this.producer.dispose();
         }
-        this.consumer.store.dispose();
         this.consumer.dispose();
+        this.result.dispose();
     }
     getLastActivatedPlan() {
         return { plan: this.lastActivatedPlan };

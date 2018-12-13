@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../arc.js';
+import { StorageProviderBase } from '../storage/storage-provider-base.js';
 import { Suggestion } from './suggestion.js';
 export declare class PlanningResult {
     arc: Arc;
@@ -15,7 +16,15 @@ export declare class PlanningResult {
     lastUpdated: Date;
     generations: {}[];
     contextual: boolean;
-    constructor(arc: any, result?: {});
+    store: StorageProviderBase;
+    private storeCallback;
+    private changeCallbacks;
+    constructor(arc: any, store: any);
+    registerChangeCallback(callback: any): void;
+    onChanged(): void;
+    load(): Promise<boolean>;
+    flush(): Promise<void>;
+    dispose(): void;
     suggestions: Suggestion[];
     static formatSerializableGenerations(generations: any): any;
     set({ suggestions, lastUpdated, generations, contextual }: {

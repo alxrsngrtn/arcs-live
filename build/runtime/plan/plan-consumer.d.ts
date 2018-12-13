@@ -9,28 +9,24 @@
  */
 import { Arc } from '../arc.js';
 import { PlanningResult } from './planning-result.js';
-import { StorageProviderBase } from '../storage/storage-provider-base.js';
 import { Suggestion } from './suggestion.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
-declare type Callback = ({}: {}) => void;
 export declare class PlanConsumer {
     arc: Arc;
     result: PlanningResult;
-    store: StorageProviderBase;
     suggestFilter: {};
-    suggestionsChangeCallbacks: Callback[];
-    visibleSuggestionsChangeCallbacks: Callback[];
-    storeCallback: Callback;
+    private suggestionsChangeCallbacks;
+    private visibleSuggestionsChangeCallbacks;
     suggestionComposer: SuggestionComposer | null;
-    constructor(arc: Arc, store: StorageProviderBase);
+    currentSuggestions: Suggestion[];
+    constructor(result: PlanningResult);
     registerSuggestionsChangedCallback(callback: any): void;
     registerVisibleSuggestionsChangedCallback(callback: any): void;
     setSuggestFilter(showAll: any, search: any): void;
-    loadSuggestions(): Promise<void>;
+    onSuggestionsChanged(): void;
     getCurrentSuggestions(): Suggestion[];
     dispose(): void;
     _onSuggestionsChanged(): void;
-    _onMaybeSuggestionsChanged(previousSuggestions: any): void;
+    _onMaybeSuggestionsChanged(): void;
     _initSuggestionComposer(): void;
 }
-export {};

@@ -19553,6 +19553,15 @@ const FbUser = class {
   }
 };
 
+// Copyright (c) 2018 Google Inc. All rights reserved.
+
+// TODO(wkorman): Incorporate debug levels. Consider outputting
+// preamble in the specified color via ANSI escape codes. Consider
+// sharing with similar log factory logic in `xen.js`. See `log-web.js`.
+const logFactory$1 = (preamble, color, log='log') => {
+  return console[log].bind(console, `(${preamble})`);
+};
+
 // Copyright (c) 2017 Google Inc. All rights reserved.
 /**
  * Walkers traverse an object, calling methods based on the
@@ -21571,7 +21580,7 @@ class Suggestion {
             return plan;
         }
         catch (e) {
-            console.error(`Failed to parse suggestion ${e}.`);
+            console.error(`Failed to parse suggestion ${e}\n${planString}.`);
         }
         return null;
     }
@@ -21586,14 +21595,54 @@ class Suggestion {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+const error = logFactory$1('PlanningResult', '#ff0090', 'error');
 class PlanningResult {
-    constructor(arc, result = {}) {
+    constructor(arc, store) {
+        this.lastUpdated = new Date(null);
+        this.generations = [];
         this.contextual = true;
+        this.changeCallbacks = [];
         assert(arc, 'Arc cannot be null');
         this.arc = arc;
-        this._suggestions = result['suggestions'];
-        this.lastUpdated = result['lastUpdated'] || new Date(null);
-        this.generations = result['generations'] || [];
+        this.store = store;
+        if (this.store) {
+            this.storeCallback = () => this.load();
+            this.store.on('change', this.storeCallback, this);
+        }
+    }
+    registerChangeCallback(callback) {
+        this.changeCallbacks.push(callback);
+    }
+    onChanged() {
+        for (const callback of this.changeCallbacks) {
+            callback();
+        }
+    }
+    async load() {
+        assert(this.store['get'], 'Unsupported getter in suggestion storage');
+        const value = await this.store['get']() || {};
+        if (value.suggestions) {
+            if (await this.deserialize(value)) {
+                this.onChanged();
+                return true;
+            }
+        }
+        return false;
+    }
+    async flush() {
+        try {
+            assert(this.store['set'], 'Unsupported setter in suggestion storage');
+            await this.store['set'](this.serialize());
+        }
+        catch (e) {
+            error('Failed storing suggestions: ', e);
+            throw e;
+        }
+    }
+    dispose() {
+        this.changeCallbacks = [];
+        this.store.off('change', this.storeCallback);
+        this.store.dispose();
     }
     get suggestions() { return this._suggestions || []; }
     set suggestions(suggestions) {
@@ -21665,6 +21714,7 @@ class PlanningResult {
         this.generations = generations;
         this.lastUpdated = lastUpdated;
         this.contextual = contextual;
+        this.onChanged();
         return true;
     }
     append({ suggestions, lastUpdated = new Date(), generations = [] }) {
@@ -21690,6 +21740,7 @@ class PlanningResult {
         // TODO: filter out generations of other suggestions.
         this.generations.push(...generations);
         this.lastUpdated = lastUpdated;
+        this.onChanged();
         return true;
     }
     olderThan(other) {
@@ -21996,23 +22047,22 @@ class StrategyExplorerAdapter {
  * http://polymer.github.io/PATENTS.txt
  */
 class PlanConsumer {
-    constructor(arc, store) {
+    constructor(result) {
         // Callback is triggered when planning results have changed.
         this.suggestionsChangeCallbacks = [];
         // Callback is triggered when suggestions visible to the user have changed.
         this.visibleSuggestionsChangeCallbacks = [];
         this.suggestionComposer = null;
-        assert(arc, 'arc cannot be null');
-        assert(store, 'store cannot be null');
-        this.arc = arc;
-        this.result = new PlanningResult(arc);
-        this.store = store;
+        this.currentSuggestions = [];
+        assert(result, 'result cannot be null');
+        assert(result.arc, 'arc cannot be null');
+        this.arc = result.arc;
+        this.result = result;
         this.suggestFilter = { showAll: false };
         this.suggestionsChangeCallbacks = [];
         this.visibleSuggestionsChangeCallbacks = [];
-        this.storeCallback = () => this.loadSuggestions();
-        this.store.on('change', this.storeCallback, this);
         this._initSuggestionComposer();
+        this.result.registerChangeCallback(() => this.onSuggestionsChanged());
     }
     registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
     registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
@@ -22021,23 +22071,14 @@ class PlanConsumer {
         if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
             return;
         }
-        const previousSuggestions = this.getCurrentSuggestions();
         this.suggestFilter = { showAll, search };
-        this._onMaybeSuggestionsChanged(previousSuggestions);
+        this._onMaybeSuggestionsChanged();
     }
-    async loadSuggestions() {
-        assert(this.store['get'], 'Unsupported getter in suggestion storage');
-        const value = await this.store['get']() || {};
-        if (!value.suggestions) {
-            return;
-        }
-        const previousSuggestions = this.getCurrentSuggestions();
-        if (await this.result.deserialize(value)) {
-            this._onSuggestionsChanged();
-            this._onMaybeSuggestionsChanged(previousSuggestions);
-            if (this.result.generations.length && DevtoolsConnection.isConnected) {
-                StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get());
-            }
+    onSuggestionsChanged() {
+        this._onSuggestionsChanged();
+        this._onMaybeSuggestionsChanged();
+        if (this.result.generations.length && DevtoolsConnection.isConnected) {
+            StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get());
         }
     }
     getCurrentSuggestions() {
@@ -22069,7 +22110,6 @@ class PlanConsumer {
         });
     }
     dispose() {
-        this.store.off('change', this.storeCallback);
         this.suggestionsChangeCallbacks = [];
         this.visibleSuggestionsChangeCallbacks = [];
         if (this.suggestionComposer) {
@@ -22079,10 +22119,11 @@ class PlanConsumer {
     _onSuggestionsChanged() {
         this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
     }
-    _onMaybeSuggestionsChanged(previousSuggestions) {
+    _onMaybeSuggestionsChanged() {
         const suggestions = this.getCurrentSuggestions();
-        if (!PlanningResult.isEquivalent(previousSuggestions, suggestions)) {
+        if (!PlanningResult.isEquivalent(this.currentSuggestions, suggestions)) {
             this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
+            this.currentSuggestions = suggestions;
         }
     }
     _initSuggestionComposer() {
@@ -22117,15 +22158,6 @@ class InitSearch extends Strategy {
             }];
     }
 }
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-
-// TODO(wkorman): Incorporate debug levels. Consider outputting
-// preamble in the specified color via ANSI escape codes. Consider
-// sharing with similar log factory logic in `xen.js`. See `log-web.js`.
-const logFactory$1 = (preamble, color, log='log') => {
-  return console[log].bind(console, `(${preamble})`);
-};
 
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
@@ -27879,17 +27911,16 @@ class RecipeIndex {
  */
 const defaultTimeoutMs = 5000;
 const log = logFactory$1('PlanProducer', '#ff0090', 'log');
-const error = logFactory$1('PlanProducer', '#ff0090', 'error');
+const error$1 = logFactory$1('PlanProducer', '#ff0090', 'error');
 class PlanProducer {
-    constructor(arc, store, searchStore, { debug = false } = {}) {
+    constructor(result, searchStore, { debug = false } = {}) {
         this.planner = null;
         this.stateChangedCallbacks = [];
         this.debug = false;
-        assert(arc, 'arc cannot be null');
-        assert(store, 'store cannot be null');
-        this.arc = arc;
-        this.result = new PlanningResult(arc);
-        this.store = store;
+        assert(result, 'result cannot be null');
+        assert(result.arc, 'arc cannot be null');
+        this.arc = result.arc;
+        this.result = result;
         this.recipeIndex = RecipeIndex.create(this.arc);
         this.speculator = new Speculator(this.result);
         this.searchStore = searchStore;
@@ -28025,14 +28056,7 @@ class PlanProducer {
             }
         }
         // Store suggestions to store.
-        try {
-            assert(this.store['set'], 'Unsupported setter in suggestion storage');
-            await this.store['set'](this.result.serialize());
-        }
-        catch (e) {
-            error('Failed storing suggestions: ', e);
-            throw e;
-        }
+        await this.result.flush();
     }
 }
 
@@ -28132,13 +28156,14 @@ class Planificator {
         this.arc = arc;
         this.userid = userid;
         this.searchStore = searchStore;
+        this.result = new PlanningResult(arc, store);
         if (!onlyConsumer) {
-            this.producer = new PlanProducer(arc, store, searchStore, { debug });
+            this.producer = new PlanProducer(this.result, searchStore, { debug });
             this.replanQueue = new ReplanQueue(this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
         }
-        this.consumer = new PlanConsumer(arc, store);
+        this.consumer = new PlanConsumer(this.result);
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
@@ -28161,7 +28186,7 @@ class Planificator {
     }
     get consumerOnly() { return !Boolean(this.producer); }
     async loadSuggestions() {
-        return this.consumer.loadSuggestions();
+        return this.result.load();
     }
     async setSearch(search) {
         search = search ? search.toLowerCase().trim() : null;
@@ -28186,8 +28211,8 @@ class Planificator {
             this._unlistenToArcStores();
             this.producer.dispose();
         }
-        this.consumer.store.dispose();
         this.consumer.dispose();
+        this.result.dispose();
     }
     getLastActivatedPlan() {
         return { plan: this.lastActivatedPlan };

@@ -10,6 +10,7 @@
 import { Arc } from '../arc.js';
 import { PlanConsumer } from './plan-consumer.js';
 import { PlanProducer } from './plan-producer.js';
+import { PlanningResult } from './planning-result.js';
 import { Recipe } from '../recipe/recipe.js';
 import { ReplanQueue } from './replan-queue.js';
 import { StorageProviderBase } from "../storage/storage-provider-base.js";
@@ -23,6 +24,7 @@ export declare class Planificator {
     static create(arc: Arc, { userid, storageKeyBase, onlyConsumer, debug }: PlanificatorOptions): Promise<Planificator>;
     arc: Arc;
     userid: string;
+    result: PlanningResult;
     consumer: PlanConsumer;
     producer?: PlanProducer;
     replanQueue?: ReplanQueue;
@@ -34,7 +36,7 @@ export declare class Planificator {
     constructor(arc: Arc, userid: string, store: StorageProviderBase, searchStore: StorageProviderBase, onlyConsumer: boolean, debug: boolean);
     requestPlanning(options?: {}): Promise<void>;
     readonly consumerOnly: boolean;
-    loadSuggestions(): Promise<void>;
+    loadSuggestions(): Promise<boolean>;
     setSearch(search: string): Promise<void>;
     registerSuggestionsChangedCallback(callback: any): void;
     registerVisibleSuggestionsChangedCallback(callback: any): void;

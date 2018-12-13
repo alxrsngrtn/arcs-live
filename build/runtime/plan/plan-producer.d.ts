@@ -16,7 +16,6 @@ import { StorageProviderBase } from '../storage/storage-provider-base.js';
 export declare class PlanProducer {
     arc: Arc;
     result: PlanningResult;
-    store: StorageProviderBase;
     planner: Planner | null;
     recipeIndex: RecipeIndex;
     speculator: Speculator;
@@ -28,7 +27,7 @@ export declare class PlanProducer {
     searchStore: StorageProviderBase;
     searchStoreCallback: ({}: {}) => void;
     debug: boolean;
-    constructor(arc: Arc, store: StorageProviderBase, searchStore: StorageProviderBase, { debug }?: {
+    constructor(result: PlanningResult, searchStore: StorageProviderBase, { debug }?: {
         debug?: boolean;
     });
     isPlanning: boolean;

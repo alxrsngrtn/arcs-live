@@ -8,16 +8,57 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
+import { logFactory } from '../../platform/log-web.js';
 import { RecipeResolver } from '../recipe/recipe-resolver.js';
 import { Suggestion } from './suggestion.js';
+const error = logFactory('PlanningResult', '#ff0090', 'error');
 export class PlanningResult {
-    constructor(arc, result = {}) {
+    constructor(arc, store) {
+        this.lastUpdated = new Date(null);
+        this.generations = [];
         this.contextual = true;
+        this.changeCallbacks = [];
         assert(arc, 'Arc cannot be null');
         this.arc = arc;
-        this._suggestions = result['suggestions'];
-        this.lastUpdated = result['lastUpdated'] || new Date(null);
-        this.generations = result['generations'] || [];
+        this.store = store;
+        if (this.store) {
+            this.storeCallback = () => this.load();
+            this.store.on('change', this.storeCallback, this);
+        }
+    }
+    registerChangeCallback(callback) {
+        this.changeCallbacks.push(callback);
+    }
+    onChanged() {
+        for (const callback of this.changeCallbacks) {
+            callback();
+        }
+    }
+    async load() {
+        assert(this.store['get'], 'Unsupported getter in suggestion storage');
+        const value = await this.store['get']() || {};
+        if (value.suggestions) {
+            if (await this.deserialize(value)) {
+                this.onChanged();
+                return true;
+            }
+        }
+        return false;
+    }
+    async flush() {
+        try {
+            assert(this.store['set'], 'Unsupported setter in suggestion storage');
+            await this.store['set'](this.serialize());
+        }
+        catch (e) {
+            error('Failed storing suggestions: ', e);
+            throw e;
+        }
+    }
+    dispose() {
+        this.changeCallbacks = [];
+        this.store.off('change', this.storeCallback);
+        this.store.dispose();
     }
     get suggestions() { return this._suggestions || []; }
     set suggestions(suggestions) {
@@ -90,6 +131,7 @@ export class PlanningResult {
         this.generations = generations;
         this.lastUpdated = lastUpdated;
         this.contextual = contextual;
+        this.onChanged();
         return true;
     }
     append({ suggestions, lastUpdated = new Date(), generations = [] }) {
@@ -115,6 +157,7 @@ export class PlanningResult {
         // TODO: filter out generations of other suggestions.
         this.generations.push(...generations);
         this.lastUpdated = lastUpdated;
+        this.onChanged();
         return true;
     }
     olderThan(other) {

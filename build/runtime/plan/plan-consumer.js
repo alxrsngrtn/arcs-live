@@ -13,23 +13,22 @@ import { SuggestionComposer } from '../suggestion-composer.js';
 import { DevtoolsConnection } from '../debug/devtools-connection.js';
 import { StrategyExplorerAdapter } from '../debug/strategy-explorer-adapter.js';
 export class PlanConsumer {
-    constructor(arc, store) {
+    constructor(result) {
         // Callback is triggered when planning results have changed.
         this.suggestionsChangeCallbacks = [];
         // Callback is triggered when suggestions visible to the user have changed.
         this.visibleSuggestionsChangeCallbacks = [];
         this.suggestionComposer = null;
-        assert(arc, 'arc cannot be null');
-        assert(store, 'store cannot be null');
-        this.arc = arc;
-        this.result = new PlanningResult(arc);
-        this.store = store;
+        this.currentSuggestions = [];
+        assert(result, 'result cannot be null');
+        assert(result.arc, 'arc cannot be null');
+        this.arc = result.arc;
+        this.result = result;
         this.suggestFilter = { showAll: false };
         this.suggestionsChangeCallbacks = [];
         this.visibleSuggestionsChangeCallbacks = [];
-        this.storeCallback = () => this.loadSuggestions();
-        this.store.on('change', this.storeCallback, this);
         this._initSuggestionComposer();
+        this.result.registerChangeCallback(() => this.onSuggestionsChanged());
     }
     registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
     registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
@@ -38,23 +37,14 @@ export class PlanConsumer {
         if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
             return;
         }
-        const previousSuggestions = this.getCurrentSuggestions();
         this.suggestFilter = { showAll, search };
-        this._onMaybeSuggestionsChanged(previousSuggestions);
+        this._onMaybeSuggestionsChanged();
     }
-    async loadSuggestions() {
-        assert(this.store['get'], 'Unsupported getter in suggestion storage');
-        const value = await this.store['get']() || {};
-        if (!value.suggestions) {
-            return;
-        }
-        const previousSuggestions = this.getCurrentSuggestions();
-        if (await this.result.deserialize(value)) {
-            this._onSuggestionsChanged();
-            this._onMaybeSuggestionsChanged(previousSuggestions);
-            if (this.result.generations.length && DevtoolsConnection.isConnected) {
-                StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get());
-            }
+    onSuggestionsChanged() {
+        this._onSuggestionsChanged();
+        this._onMaybeSuggestionsChanged();
+        if (this.result.generations.length && DevtoolsConnection.isConnected) {
+            StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get());
         }
     }
     getCurrentSuggestions() {
@@ -86,7 +76,6 @@ export class PlanConsumer {
         });
     }
     dispose() {
-        this.store.off('change', this.storeCallback);
         this.suggestionsChangeCallbacks = [];
         this.visibleSuggestionsChangeCallbacks = [];
         if (this.suggestionComposer) {
@@ -96,10 +85,11 @@ export class PlanConsumer {
     _onSuggestionsChanged() {
         this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
     }
-    _onMaybeSuggestionsChanged(previousSuggestions) {
+    _onMaybeSuggestionsChanged() {
         const suggestions = this.getCurrentSuggestions();
-        if (!PlanningResult.isEquivalent(previousSuggestions, suggestions)) {
+        if (!PlanningResult.isEquivalent(this.currentSuggestions, suggestions)) {
             this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
+            this.currentSuggestions = suggestions;
         }
     }
     _initSuggestionComposer() {

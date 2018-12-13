@@ -1,9 +1,5 @@
-commit bccae34f1a5a09f71f7757262a48e21b61b849ea
-Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
-Date:   Thu Dec 13 10:44:15 2018 +1100
+commit e8cf3d7150cfd0acd23edf5e46ee729f8443f6bb
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Dec 12 17:01:41 2018 -0800
 
-    First stages of moving recipe logic from strategies to Recipe class. (#2444)
-    
-    * Move recipe logic from add-missing-handles strategy to Recipe class
-    
-    * Inlining call to getFreeHandles()
+    Refactor planning-result to fetch directly from store, and consumer&producer reuse the same result object. (#2434)
