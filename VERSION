@@ -1,5 +1,5 @@
-commit 4bb537e9d67cf98ec2351393b30bd0c350d13e09
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Dec 13 13:35:31 2018 +1100
+commit 12d4db53299ecf646ef6b996df316ab5d05bdd46
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Dec 12 18:43:14 2018 -0800
 
-    Small fix to arcs-stores in devtools (#2453)
+    Switch to using 0.6 planner for server-side planning (#2452)

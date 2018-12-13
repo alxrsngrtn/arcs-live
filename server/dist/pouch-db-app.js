@@ -8,7 +8,7 @@
 import PouchDB from 'pouchdb';
 import PouchDbAdapterMemory from 'pouchdb-adapter-memory';
 import PouchDbServer from 'express-pouchdb';
-import { ShellPlanningInterface } from 'arcs';
+import { PlannerShellInterface } from 'arcs';
 import { AppBase } from './app-base';
 import { ON_DISK_DB, VM_URL_PREFIX } from "./deployment/utils";
 /**
@@ -24,7 +24,7 @@ class PouchDbApp extends AppBase {
     startBackgroundProcessing() {
         try {
             console.log("starting shell planning for " + PouchDbApp.userId + ' with storage Key ' + PouchDbApp.storageKeyBase);
-            ShellPlanningInterface.start('../', PouchDbApp.userId, PouchDbApp.storageKeyBase);
+            PlannerShellInterface.start('../', PouchDbApp.storageKeyBase, PouchDbApp.userId, process.env['DEBUG'] === 'true');
         }
         catch (err) {
             console.warn(err);
@@ -67,6 +67,6 @@ class PouchDbApp extends AppBase {
     }
 }
 PouchDbApp.storageKeyBase = process.env['STORAGE_KEY_BASE'] || 'pouchdb://localhost:8080/user/';
-PouchDbApp.userId = process.env['ARCS_USER_ID'] || ShellPlanningInterface.USER_ID_CLETUS;
+PouchDbApp.userId = process.env['ARCS_USER_ID'] || PlannerShellInterface.DEFAULT_USER_ID;
 export const app = new PouchDbApp();
 //# sourceMappingURL=pouch-db-app.js.map

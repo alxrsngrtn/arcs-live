@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert$1 from 'assert';
 import crypto$1 from 'crypto';
 import atob from 'atob';
 import btoa$1 from 'btoa';
@@ -8,14 +8,14 @@ import PouchDbDebug from 'pouchdb-debug';
 import MersenneTwister from 'mersenne-twister';
 import idb from 'idb';
 import rs from 'jsrsasign';
+import WebSocket from 'ws';
+import fs from 'fs';
+import vm from 'vm';
+import fetch from 'node-fetch';
+import os from 'os';
 import firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/storage';
-import WebSocket from 'ws';
-import os from 'os';
-import fs from 'fs';
-import vm from 'vm';
-import fetch$1 from 'node-fetch';
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
 
@@ -296,7 +296,7 @@ const Symbols = { identifier: Symbol('id') };
 // @license
 class Entity {
     constructor(userIDComponent) {
-        assert(!userIDComponent || userIDComponent.indexOf(':') === -1, 'user IDs must not contain the \':\' character');
+        assert$1(!userIDComponent || userIDComponent.indexOf(':') === -1, 'user IDs must not contain the \':\' character');
         this[Symbols.identifier] = undefined;
         this.userIDComponent = userIDComponent;
     }
@@ -311,11 +311,11 @@ class Entity {
     }
     // TODO: entity should not be exposing its IDs.
     get id() {
-        assert(!!this.isIdentified());
+        assert$1(!!this.isIdentified());
         return this[Symbols.identifier];
     }
     identify(identifier) {
-        assert(!this.isIdentified());
+        assert$1(!this.isIdentified());
         this[Symbols.identifier] = identifier;
         const components = identifier.split(':');
         if (components[components.length - 2] === 'uid') {
@@ -323,7 +323,7 @@ class Entity {
         }
     }
     createIdentity(components) {
-        assert(!this.isIdentified());
+        assert$1(!this.isIdentified());
         let id;
         if (this.userIDComponent) {
             id = `${components.base}:uid:${this.userIDComponent}`;
@@ -352,7 +352,7 @@ function cloneData(data) {
     //return JSON.parse(JSON.stringify(data));
 }
 function restore(entry, entityClass) {
-    assert(entityClass, 'Handles need entity classes for deserialization');
+    assert$1(entityClass, 'Handles need entity classes for deserialization');
     const { id, rawData } = entry;
     const entity = new entityClass(cloneData(rawData));
     if (entry.id) {
@@ -367,7 +367,7 @@ function restore(entry, entityClass) {
 class Handle {
     // TODO type particleId, marked as string, but called with number
     constructor(proxy, name, particleId, canRead, canWrite) {
-        assert(!(proxy instanceof Handle));
+        assert$1(!(proxy instanceof Handle));
         this._proxy = proxy;
         this.name = name || this._proxy.name;
         this.canRead = canRead;
@@ -389,7 +389,7 @@ class Handle {
     // - notifyUpdate (bool): call onHandleUpdate for every change event received
     // - notifyDesync (bool): if keepSynced is true, call onHandleDesync when desync is detected
     configure(options) {
-        assert(this.canRead, 'configure can only be called on readable Handles');
+        assert$1(this.canRead, 'configure can only be called on readable Handles');
         try {
             const keys = Object.keys(this.options);
             const badKeys = Object.keys(options).filter(o => !keys.includes(o));
@@ -404,7 +404,7 @@ class Handle {
         }
     }
     _serialize(entity) {
-        assert(entity, 'can\'t serialize a null entity');
+        assert$1(entity, 'can\'t serialize a null entity');
         if (!entity.isIdentified()) {
             entity.createIdentity(this._proxy.generateIDComponents());
         }
@@ -434,7 +434,7 @@ class Handle {
  */
 class Collection extends Handle {
     _notify(kind, particle, details) {
-        assert(this.canRead, '_notify should not be called for non-readable handles');
+        assert$1(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
             case 'sync':
                 particle.onHandleSync(this, this._restore(details));
@@ -532,7 +532,7 @@ class Collection extends Handle {
 class Variable extends Handle {
     // Called by StorageProxy.
     async _notify(kind, particle, details) {
-        assert(this.canRead, '_notify should not be called for non-readable handles');
+        assert$1(this.canRead, '_notify should not be called for non-readable handles');
         switch (kind) {
             case 'sync':
                 try {
@@ -589,7 +589,7 @@ class Variable extends Handle {
         if (this.type instanceof ReferenceType) {
             return new Reference(model, this.type, this._proxy.pec);
         }
-        assert(false, `Don't know how to deliver handle data of type ${this.type}`);
+        assert$1(false, `Don't know how to deliver handle data of type ${this.type}`);
     }
     /**
      * Stores a new entity into the Variable, replacing any existing entity.
@@ -660,8 +660,8 @@ class BigCollection extends Handle {
         throw new Error('BigCollections do not support sync/update configuration');
     }
     async _notify(kind, particle, details) {
-        assert(this.canRead, '_notify should not be called for non-readable handles');
-        assert(kind === 'sync', 'BigCollection._notify only supports sync events');
+        assert$1(this.canRead, '_notify should not be called for non-readable handles');
+        assert$1(kind === 'sync', 'BigCollection._notify only supports sync events');
         await particle.onHandleSync(this, []);
     }
     /**
@@ -758,7 +758,7 @@ class Reference {
             this.storageProxy = await this.context.getStorageProxy(this.storageKey, this.type.referredType);
             this.handle = handleFor(this.storageProxy);
             if (this.storageKey) {
-                assert(this.storageKey === this.storageProxy.storageKey);
+                assert$1(this.storageKey === this.storageProxy.storageKey);
             }
             else {
                 this.storageKey = this.storageProxy.storageKey;
@@ -766,7 +766,7 @@ class Reference {
         }
     }
     async dereference() {
-        assert(this.context, "Must have context to dereference");
+        assert$1(this.context, "Must have context to dereference");
         if (this.entity) {
             return this.entity;
         }
@@ -875,7 +875,7 @@ class Schema {
     }
     static _typeString(type) {
         if (typeof (type) !== 'object') {
-            assert(typeof type === 'string');
+            assert$1(typeof type === 'string');
             return type;
         }
         switch (type.kind) {
@@ -1055,7 +1055,7 @@ class Schema {
                         return true;
                     }
                 });
-                assert(data, `can't construct entity with null data`);
+                assert$1(data, `can't construct entity with null data`);
                 // TODO: figure out how to do this only on wire-created entities.
                 const sanitizedData = this.sanitizeData(data);
                 for (const [name, value] of Object.entries(sanitizedData)) {
@@ -1260,9 +1260,9 @@ class TypeVariableInfo {
         return { result: true };
     }
     set resolution(value) {
-        assert(!this._resolution);
+        assert$1(!this._resolution);
         const isValid = this.isValidResolutionCandidate(value);
-        assert(isValid.result, isValid.detail);
+        assert$1(isValid.result, isValid.detail);
         let probe = value;
         while (probe) {
             if (!(probe instanceof TypeVariable)) {
@@ -1279,7 +1279,7 @@ class TypeVariableInfo {
     }
     get canWriteSuperset() {
         if (this._resolution) {
-            assert(!this._canWriteSuperset);
+            assert$1(!this._canWriteSuperset);
             if (this._resolution instanceof TypeVariable) {
                 return this._resolution.variable.canWriteSuperset;
             }
@@ -1288,12 +1288,12 @@ class TypeVariableInfo {
         return this._canWriteSuperset;
     }
     set canWriteSuperset(value) {
-        assert(!this._resolution);
+        assert$1(!this._resolution);
         this._canWriteSuperset = value;
     }
     get canReadSubset() {
         if (this._resolution) {
-            assert(!this._canReadSubset);
+            assert$1(!this._canReadSubset);
             if (this._resolution instanceof TypeVariable) {
                 return this._resolution.variable.canReadSubset;
             }
@@ -1302,7 +1302,7 @@ class TypeVariableInfo {
         return this._canReadSubset;
     }
     set canReadSubset(value) {
-        assert(!this._resolution);
+        assert$1(!this._resolution);
         this._canReadSubset = value;
     }
     get hasConstraint() {
@@ -1332,7 +1332,7 @@ class TypeVariableInfo {
         return false;
     }
     toLiteral() {
-        assert(this.resolution == null);
+        assert$1(this.resolution == null);
         return this.toLiteralIgnoringResolutions();
     }
     toLiteralIgnoringResolutions() {
@@ -1375,9 +1375,9 @@ const handleFields = ['type', 'name', 'direction'];
 const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
 class InterfaceInfo {
     constructor(name, handles, slots) {
-        assert(name);
-        assert(handles !== undefined);
-        assert(slots !== undefined);
+        assert$1(name);
+        assert$1(handles !== undefined);
+        assert$1(slots !== undefined);
         this.name = name;
         this.handles = handles;
         this.slots = slots;
@@ -2460,7 +2460,7 @@ class ParticleSpec {
         // Verify provided slots use valid handle connection names.
         this.slots.forEach(slot => {
             slot.providedSlots.forEach(ps => {
-                ps.handles.forEach(v => assert(this.connectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ', v));
+                ps.handles.forEach(v => assert$1(this.connectionMap.has(v), 'Cannot provide slot for nonexistent handle constraint ', v));
             });
         });
     }
@@ -2511,12 +2511,12 @@ class ParticleSpec {
     }
     validateDescription(description) {
         Object.keys(description || []).forEach(d => {
-            assert(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
+            assert$1(['kind', 'location', 'pattern'].includes(d) || this.connectionMap.has(d), `Unexpected description for ${d}`);
         });
     }
     toInterface() {
         // TODO: wat do?
-        assert(!this.slots.size, 'please implement slots toInterface');
+        assert$1(!this.slots.size, 'please implement slots toInterface');
         const handles = this.model.args.map(({ type, name, direction }) => ({ type: asType(type), name, direction }));
         const slots = [];
         return InterfaceType.make(this.name, handles, slots);
@@ -2629,7 +2629,7 @@ class Description {
         return formatter._capitalizeAndPunctuate(this.arc.activeRecipe.name || Description.defaultDescription);
     }
     async getHandleDescription(recipeHandle) {
-        assert(recipeHandle.connections.length > 0, 'handle has no connections?');
+        assert$1(recipeHandle.connections.length > 0, 'handle has no connections?');
         const formatter = new DescriptionFormatter(this);
         formatter.excludeValues = true;
         return await formatter.getHandleDescription(recipeHandle);
@@ -2782,7 +2782,7 @@ class DescriptionFormatter {
         return tokens.join('');
     }
     _capitalizeAndPunctuate(sentence) {
-        assert(sentence);
+        assert$1(sentence);
         // "Capitalize, punctuate." (if the sentence doesn't end with a punctuation character).
         const last = sentence.length - 1;
         return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9()'>\]]/i) ? '.' : ''}`;
@@ -2811,7 +2811,7 @@ class DescriptionFormatter {
                 firstToken = '';
                 tokenIndex = pattern.length;
             }
-            assert(tokenIndex >= 0);
+            assert$1(tokenIndex >= 0);
             const nextToken = pattern.substring(0, tokenIndex);
             if (nextToken.length > 0) {
                 results.push({ text: nextToken });
@@ -2859,7 +2859,7 @@ class DescriptionFormatter {
         }
         const handleConn = particle.connections[handleNames[0]];
         if (handleConn) { // handle connection
-            assert(handleConn.handle && handleConn.handle.id, 'Missing id???');
+            assert$1(handleConn.handle && handleConn.handle.id, 'Missing id???');
             return [{
                     fullName: valueTokens[0],
                     handleName: handleConn.name,
@@ -2880,7 +2880,7 @@ class DescriptionFormatter {
             return [];
         }
         const providedSlotConn = particle.consumedSlotConnections[handleNames[0]].providedSlots[handleNames[1]];
-        assert(providedSlotConn, `Could not find handle ${handleNames.join('.')}`);
+        assert$1(providedSlotConn, `Could not find handle ${handleNames.join('.')}`);
         return [{
                 fullName: valueTokens[0],
                 consumeSlotName: handleNames[0],
@@ -2916,7 +2916,7 @@ class DescriptionFormatter {
             case '_name_':
                 return this._formatDescription(token._handleConn, token._store);
             default: {
-                assert(!token.extra, `Unrecognized extra ${token.extra}`);
+                assert$1(!token.extra, `Unrecognized extra ${token.extra}`);
                 // Transformation's hosted particle.
                 if (token._handleConn.type instanceof InterfaceType) {
                     const particleSpec = ParticleSpec.fromLiteral(await token._store.get());
@@ -2961,7 +2961,7 @@ class DescriptionFormatter {
                 // TODO: also return false, if the consuming particles generate an empty description.
                 return token._providedSlotConn.consumeConnections.length === 0;
             default:
-                assert(!token.extra, `Unrecognized slot extra ${token.extra}`);
+                assert$1(!token.extra, `Unrecognized slot extra ${token.extra}`);
         }
         const results = (await Promise.all(token._providedSlotConn.consumeConnections.map(async (consumeConn) => {
             const particle = consumeConn.particle;
@@ -2972,7 +2972,7 @@ class DescriptionFormatter {
         return this._joinDescriptions(results);
     }
     async _propertyTokenToString(handleName, store, properties) {
-        assert(!(store.type instanceof CollectionType) && !(store.type instanceof BigCollectionType), `Cannot return property ${properties.join(',')} for Collection or BigCollection`);
+        assert$1(!(store.type instanceof CollectionType) && !(store.type instanceof BigCollectionType), `Cannot return property ${properties.join(',')} for Collection or BigCollection`);
         // Use singleton value's property (eg. "09/15" for person's birthday)
         const valueVar = await store.get();
         if (valueVar) {
@@ -11505,7 +11505,7 @@ class Strategizer {
      * current generation.
      */
     get terminal() {
-        assert(this._terminal);
+        assert$1(this._terminal);
         return this._terminal;
     }
     async generate() {
@@ -11611,7 +11611,7 @@ class Strategizer {
             return strategy.evaluate(this, generated);
         }));
         const fitness = Strategizer._mergeEvaluations(evaluations, generated);
-        assert(fitness.length === generated.length);
+        assert$1(fitness.length === generated.length);
         for (let i = 0; i < fitness.length; i++) {
             this._internalPopulation.push({
                 fitness: fitness[i],
@@ -11674,8 +11674,8 @@ class StrategizerWalker {
         this.currentResult = result;
     }
     createDescendant(result, score, hash, valid) {
-        assert(this.currentResult, 'no current result');
-        assert(this.currentStrategy, 'no current strategy');
+        assert$1(this.currentResult, 'no current result');
+        assert$1(this.currentStrategy, 'no current strategy');
         if (this.currentResult.score) {
             score += this.currentResult.score;
         }
@@ -11768,7 +11768,7 @@ class RulesetBuilder {
         return new Ruleset(this._orderingRules);
     }
     _transitiveClosureFor(strategy, beingExpanded, alreadyExpanded) {
-        assert(!beingExpanded.has(strategy), 'Detected a loop in the ordering rules');
+        assert$1(!beingExpanded.has(strategy), 'Detected a loop in the ordering rules');
         const followingStrategies = this._orderingRules.get(strategy);
         if (alreadyExpanded.has(strategy))
             return followingStrategies || [];
@@ -11819,8 +11819,8 @@ function compareNumbers(n1, n2) {
     return n1 - n2;
 }
 function compareArrays(a1, a2, compare) {
-    assert(a1 != null);
-    assert(a2 != null);
+    assert$1(a1 != null);
+    assert$1(a2 != null);
     if (a1.length !== a2.length)
         return compareNumbers(a1.length, a2.length);
     for (let i = 0; i < a1.length; i++) {
@@ -11866,7 +11866,7 @@ class ParticleEndPoint extends EndPoint {
 class InstanceEndPoint extends EndPoint {
     constructor(instance, connection) {
         super();
-        assert(instance);
+        assert$1(instance);
         //this.recipe = instance.recipe;
         this.instance = instance;
         this.connection = connection;
@@ -11928,8 +11928,8 @@ class TagEndPoint extends EndPoint {
 //type EndPoint = ParticleEndPoint | InstanceEndPoint | HandleEndPoint | TagEndPoint;
 class ConnectionConstraint {
     constructor(fromConnection, toConnection, direction, type) {
-        assert(direction);
-        assert(type);
+        assert$1(direction);
+        assert$1(type);
         this.from = fromConnection;
         this.to = toConnection;
         this.direction = direction;
@@ -11939,7 +11939,7 @@ class ConnectionConstraint {
     _copyInto(recipe, cloneMap) {
         if (this.type === 'constraint') {
             if (this.from instanceof InstanceEndPoint || this.to instanceof InstanceEndPoint) {
-                assert(!`Can't have connection constraints of type constraint with InstanceEndPoints`);
+                assert$1(!`Can't have connection constraints of type constraint with InstanceEndPoints`);
             }
             else {
                 return recipe.newConnectionConstraint(this.from._clone(), this.to._clone(), this.direction);
@@ -11973,9 +11973,9 @@ class SlotConnection {
         this._targetSlot = undefined;
         this._providedSlots = {};
         this._tags = [];
-        assert(particle);
-        assert(particle.recipe);
-        assert(name);
+        assert$1(particle);
+        assert$1(particle.recipe);
+        assert$1(name);
         this._recipe = particle.recipe;
         this._particle = particle;
         this._name = name;
@@ -11994,7 +11994,7 @@ class SlotConnection {
     get tags() { return this._tags; }
     set tags(tags) { this._tags = tags; }
     set slotSpec(slotSpec) {
-        assert(this.name === slotSpec.name);
+        assert$1(this.name === slotSpec.name);
         this._slotSpec = slotSpec;
         slotSpec.providedSlots.forEach(providedSlot => {
             let slot = this.providedSlots[providedSlot.name];
@@ -12004,17 +12004,17 @@ class SlotConnection {
                 slot._name = providedSlot.name;
                 this.providedSlots[providedSlot.name] = slot;
             }
-            assert(slot.handleConnections.length === 0, 'Handle connections must be empty');
+            assert$1(slot.handleConnections.length === 0, 'Handle connections must be empty');
             providedSlot.handles.forEach(handle => slot.handleConnections.push(this.particle.connections[handle]));
-            assert(slot._name === providedSlot.name);
-            assert(!slot.formFactor);
+            assert$1(slot._name === providedSlot.name);
+            assert$1(!slot.formFactor);
             slot.formFactor = providedSlot.formFactor;
         });
     }
     connectToSlot(targetSlot) {
-        assert(targetSlot);
-        assert(!this.targetSlot);
-        assert(this.recipe === targetSlot.recipe, 'Cannot connect to slot from different recipe');
+        assert$1(targetSlot);
+        assert$1(!this.targetSlot);
+        assert$1(this.recipe === targetSlot.recipe, 'Cannot connect to slot from different recipe');
         this._targetSlot = targetSlot;
         targetSlot.consumeConnections.push(this);
     }
@@ -12066,7 +12066,7 @@ class SlotConnection {
         return true;
     }
     isResolved(options) {
-        assert(Object.isFrozen(this));
+        assert$1(Object.isFrozen(this));
         if (!this.name) {
             if (options) {
                 options.details = 'missing name';
@@ -12134,7 +12134,7 @@ class SlotConnection {
             // the consumed slot .. otherwise this is just a constraint.
             if (this.slotSpec) {
                 const providedSlotSpec = this.slotSpec.getProvidedSlotSpec(psName);
-                assert(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
+                assert$1(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
             }
             provideRes.push(`${psName} as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);
             result.push(provideRes.join(' '));
@@ -12151,8 +12151,8 @@ class HandleConnection {
         this._rawType = undefined;
         this._direction = undefined;
         this._handle = undefined;
-        assert(particle);
-        assert(particle.recipe);
+        assert$1(particle);
+        assert$1(particle.recipe);
         this._recipe = particle.recipe;
         this._name = name;
         this._particle = particle;
@@ -12170,7 +12170,7 @@ class HandleConnection {
         handleConnection._direction = this._direction;
         if (this._handle != undefined) {
             handleConnection._handle = cloneMap.get(this._handle);
-            assert(handleConnection._handle !== undefined);
+            assert$1(handleConnection._handle !== undefined);
             handleConnection._handle.connections.push(handleConnection);
         }
         cloneMap.set(this, handleConnection);
@@ -12266,7 +12266,7 @@ class HandleConnection {
         return true;
     }
     isResolved(options) {
-        assert(Object.isFrozen(this));
+        assert$1(Object.isFrozen(this));
         if (this.isOptional) {
             return true;
         }
@@ -12312,14 +12312,14 @@ class HandleConnection {
         }
     }
     connectToHandle(handle) {
-        assert(handle.recipe === this.recipe);
+        assert$1(handle.recipe === this.recipe);
         this._handle = handle;
         this._resetHandleType();
         this._handle.connections.push(this);
     }
     disconnectHandle() {
         const idx = this._handle.connections.indexOf(this);
-        assert(idx >= 0);
+        assert$1(idx >= 0);
         this._handle.connections.splice(idx, 1);
         this._handle = undefined;
     }
@@ -12358,7 +12358,7 @@ class Particle {
         this._unnamedConnections = [];
         // map of consumed Slot connections by slot name.
         this._consumedSlotConnections = {};
-        assert(recipe);
+        assert$1(recipe);
         this._recipe = recipe;
         this._name = name;
     }
@@ -12438,7 +12438,7 @@ class Particle {
         return true;
     }
     isResolved(options = undefined) {
-        assert(Object.isFrozen(this));
+        assert$1(Object.isFrozen(this));
         const consumedSlotConnections = Object.values(this.consumedSlotConnections);
         if (consumedSlotConnections.length > 0) {
             const fulfilledSlotConnections = consumedSlotConnections.filter(connection => connection.targetSlot !== undefined);
@@ -12473,7 +12473,7 @@ class Particle {
     get localName() { return this._localName; }
     set localName(name) { this._localName = name; }
     get id() { return this._id; } // Not resolved until we have an ID.
-    set id(id) { assert(!this._id, 'Particle ID can only be set once.'); this._id = id; }
+    set id(id) { assert$1(!this._id, 'Particle ID can only be set once.'); this._id = id; }
     get name() { return this._name; }
     set name(name) { this._name = name; }
     get spec() { return this._spec; }
@@ -12508,7 +12508,7 @@ class Particle {
         return connection;
     }
     addConnectionName(name) {
-        assert(this._connections[name] == undefined);
+        assert$1(this._connections[name] == undefined);
         this._connections[name] = new HandleConnection(name, this);
         return this._connections[name];
     }
@@ -12522,13 +12522,13 @@ class Particle {
         return this._connections[name];
     }
     nameConnection(connection, name) {
-        assert(!this._connections[name].handle, `Connection "${name}" already has a handle`);
+        assert$1(!this._connections[name].handle, `Connection "${name}" already has a handle`);
         const idx = this._unnamedConnections.indexOf(connection);
-        assert(idx >= 0, `Cannot name '${name}' nonexistent unnamed connection.`);
+        assert$1(idx >= 0, `Cannot name '${name}' nonexistent unnamed connection.`);
         connection._name = name;
         connection.type = this._connections[name].type;
         if (connection.direction !== this._connections[name].direction) {
-            assert(connection.direction === 'inout', `Unnamed connection cannot adjust direction ${connection.direction} to ${name}'s direction ${this._connections[name].direction}`);
+            assert$1(connection.direction === 'inout', `Unnamed connection cannot adjust direction ${connection.direction} to ${name}'s direction ${this._connections[name].direction}`);
             connection.direction = this._connections[name].direction;
         }
         this._connections[name] = connection;
@@ -12581,7 +12581,7 @@ class Particle {
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class Search {
     constructor(phrase, unresolvedTokens = undefined) {
-        assert(phrase);
+        assert$1(phrase);
         this._phrase = phrase;
         const tokens = this.phrase.toLowerCase().split(/[^a-z0-9]/g);
         // If unresolvedTokens not passed, consider all tokens unresolved.
@@ -12595,7 +12595,7 @@ class Search {
                 this._resolvedTokens.splice(index, 1);
             }
         }
-        assert(tokens.length === this.unresolvedTokens.length + this.resolvedTokens.length);
+        assert$1(tokens.length === this.unresolvedTokens.length + this.resolvedTokens.length);
     }
     _append(phrase, unresolvedTokens, resolvedTokens) {
         // concat phrase
@@ -12611,7 +12611,7 @@ class Search {
     get resolvedTokens() { return this._resolvedTokens; }
     resolveToken(token) {
         const index = this.unresolvedTokens.indexOf(token.toLowerCase());
-        assert(index >= 0, `Cannot resolved nonexistent token ${token}`);
+        assert$1(index >= 0, `Cannot resolved nonexistent token ${token}`);
         this._unresolvedTokens.splice(index, 1);
         this._resolvedTokens.push(token.toLowerCase());
     }
@@ -12619,7 +12619,7 @@ class Search {
         return this._unresolvedTokens.length > 0 || this._resolvedTokens.length > 0;
     }
     isResolved() {
-        assert(Object.isFrozen(this));
+        assert$1(Object.isFrozen(this));
         // Recipe is considered resolved, if at least one of the search tokens was resolved.
         // TODO: Unresolved tokens don't prevent the recipe from being resolved. For now...
         return this._resolvedTokens.length > 0;
@@ -12635,9 +12635,9 @@ class Search {
         }
         else {
             recipe.search = new Search(this.phrase, this.unresolvedTokens);
-            assert(recipe.search.resolvedTokens.length === this.resolvedTokens.length, `${recipe.search.resolvedTokens} is not same as ${this.resolvedTokens}`);
+            assert$1(recipe.search.resolvedTokens.length === this.resolvedTokens.length, `${recipe.search.resolvedTokens} is not same as ${this.resolvedTokens}`);
         }
-        assert(this.resolvedTokens.every(rt => recipe.search.resolvedTokens.indexOf(rt) >= 0) &&
+        assert$1(this.resolvedTokens.every(rt => recipe.search.resolvedTokens.indexOf(rt) >= 0) &&
             this.unresolvedTokens.every(rt => recipe.search.unresolvedTokens.indexOf(rt) >= 0));
         return recipe.search;
     }
@@ -12673,7 +12673,7 @@ class Slot {
         // can only be set if source connection is set and particle in slot connections is set
         this._handleConnections = [];
         this._consumeConnections = [];
-        assert(recipe);
+        assert$1(recipe);
         this._recipe = recipe;
         this._name = name;
     }
@@ -12729,7 +12729,7 @@ class Slot {
         // TODO(mmandlis): This was assert(Object.isFroze(this._source)) - but there is no _source.
         // Changing to _sourceConnection makes the assert fail.
         // assert(Object.isFrozen(this._sourceConnection));
-        this._consumeConnections.forEach(cc => assert(Object.isFrozen(cc)));
+        this._consumeConnections.forEach(cc => assert$1(Object.isFrozen(cc)));
         this._consumeConnections.sort(compareComparables);
         Object.freeze(this);
     }
@@ -12747,7 +12747,7 @@ class Slot {
     }
     removeConsumeConnection(slotConnection) {
         const idx = this._consumeConnections.indexOf(slotConnection);
-        assert(idx > -1);
+        assert$1(idx > -1);
         this._consumeConnections.splice(idx, 1);
         if (this._consumeConnections.length === 0) {
             this.remove();
@@ -12757,7 +12757,7 @@ class Slot {
         this._recipe.removeSlot(this);
     }
     isResolved(options = undefined) {
-        assert(Object.isFrozen(this));
+        assert$1(Object.isFrozen(this));
         if (options && options.showUnresolved) {
             options.details = [];
             if (!this._sourceConnection) {
@@ -12814,7 +12814,7 @@ class Handle$1 {
         // Value assigned in the immediate mode, E.g. hostedParticle = ShowProduct
         // Currently only supports ParticleSpec.
         this._immediateValue = undefined;
-        assert(recipe);
+        assert$1(recipe);
         this._recipe = recipe;
     }
     _copyInto(recipe) {
@@ -12842,7 +12842,7 @@ class Handle$1 {
     }
     // Merges `this` recipe handle into `handle`
     mergeInto(handle) {
-        assert(this.recipe === handle.recipe, 'Cannot merge handles from different recipes.');
+        assert$1(this.recipe === handle.recipe, 'Cannot merge handles from different recipes.');
         while (this.connections.length > 0) {
             const [connection] = this.connections;
             connection.disconnectHandle();
@@ -12854,9 +12854,9 @@ class Handle$1 {
         handle.fate = this._mergedFate([this.fate, handle.fate]);
     }
     _mergedFate(fates) {
-        assert(fates.length > 0, `Cannot merge empty fates list`);
+        assert$1(fates.length > 0, `Cannot merge empty fates list`);
         // Merging handles only used in coalesce-recipe strategy, which is only done for use/create/? fates.
-        assert(!fates.includes('map') && !fates.includes('copy'), `Merging map/copy not supported yet`);
+        assert$1(!fates.includes('map') && !fates.includes('copy'), `Merging map/copy not supported yet`);
         // If all fates were `use` keep their fate, otherwise set to `create`.
         return fates.every(fate => fate === 'use') ? 'use' : 'create';
     }
@@ -12867,7 +12867,7 @@ class Handle$1 {
     }
     _finishNormalize() {
         for (const connection of this._connections) {
-            assert(Object.isFrozen(connection), `Handle connection '${connection.name}' is not frozen.`);
+            assert$1(Object.isFrozen(connection), `Handle connection '${connection.name}' is not frozen.`);
         }
         this._connections.sort(compareComparables);
         Object.freeze(this);
@@ -12963,7 +12963,7 @@ class Handle$1 {
         return false;
     }
     isResolved(options = undefined) {
-        assert(Object.isFrozen(this));
+        assert$1(Object.isFrozen(this));
         let resolved = true;
         if (this.type) {
             let mustBeResolved = true;
@@ -13092,12 +13092,12 @@ class Recipe {
     }
     removeObligation(obligation) {
         const idx = this._obligations.indexOf(obligation);
-        assert(idx > -1);
+        assert$1(idx > -1);
         this._obligations.splice(idx, 1);
     }
     removeConstraint(constraint) {
         const idx = this._connectionConstraints.indexOf(constraint);
-        assert(idx >= 0);
+        assert$1(idx >= 0);
         this._connectionConstraints.splice(idx, 1);
     }
     clearConnectionConstraints() {
@@ -13115,7 +13115,7 @@ class Recipe {
     }
     removeParticle(particle) {
         const idx = this._particles.indexOf(particle);
-        assert(idx > -1);
+        assert$1(idx > -1);
         this._particles.splice(idx, 1);
         for (const slotConnection of Object.values(particle._consumedSlotConnections)) {
             slotConnection.remove();
@@ -13127,9 +13127,9 @@ class Recipe {
         return handle;
     }
     removeHandle(handle) {
-        assert(handle.connections.length === 0);
+        assert$1(handle.connections.length === 0);
         const idx = this._handles.indexOf(handle);
-        assert(idx > -1);
+        assert$1(idx > -1);
         this._handles.splice(idx, 1);
     }
     newSlot(name) {
@@ -13138,13 +13138,13 @@ class Recipe {
         return slot;
     }
     removeSlot(slot) {
-        assert(slot.consumeConnections.length === 0);
+        assert$1(slot.consumeConnections.length === 0);
         const idx = this._slots.indexOf(slot);
-        assert(idx > -1);
+        assert$1(idx > -1);
         this._slots.splice(idx, 1);
     }
     isResolved() {
-        assert(Object.isFrozen(this), 'Recipe must be normalized to be resolved.');
+        assert$1(Object.isFrozen(this), 'Recipe must be normalized to be resolved.');
         if (this._obligations.length > 0) {
             return false;
         }
@@ -13201,7 +13201,7 @@ class Recipe {
         this._search = search;
     }
     setSearchPhrase(phrase) {
-        assert(!this._search, 'Cannot override search phrase');
+        assert$1(!this._search, 'Cannot override search phrase');
         if (phrase) {
             this._search = new Search(phrase);
         }
@@ -13257,7 +13257,7 @@ class Recipe {
         description.forEach(desc => {
             if (desc.name !== 'pattern') {
                 const handle = this.handles.find(handle => handle.localName === desc.name);
-                assert(handle, `Cannot set description pattern for nonexistent handle ${desc.name}.`);
+                assert$1(handle, `Cannot set description pattern for nonexistent handle ${desc.name}.`);
                 handle.pattern = desc.pattern;
             }
         });
@@ -13835,7 +13835,7 @@ class StorageBase {
     constructor(arcId) {
         this.arcId = arcId;
         this._debug = false;
-        assert(arcId !== undefined, 'Arcs with storage must have ids');
+        assert$1(arcId !== undefined, 'Arcs with storage must have ids');
     }
     /**
      * Turn on debugginf for this storage provider.  Providers should
@@ -13860,8 +13860,8 @@ class ChangeEvent {
 class StorageProviderBase {
     constructor(type, name, id, key) {
         this.referenceMode = false;
-        assert(id, 'id must be provided when constructing StorageProviders');
-        assert(!type.hasUnresolvedVariable, 'Storage types must be concrete');
+        assert$1(id, 'id must be provided when constructing StorageProviders');
+        assert$1(!type.hasUnresolvedVariable, 'Storage types must be concrete');
         const trace = Tracing.start({ cat: 'handle', name: 'StorageProviderBase::constructor', args: { type: type.toString(), name } });
         this._type = type;
         this.listeners = new Map();
@@ -13890,7 +13890,7 @@ class StorageProviderBase {
     }
     // TODO: add 'once' which returns a promise.
     on(kindStr, callback, target) {
-        assert(target !== undefined, 'must provide a target to register a storage event handler');
+        assert$1(target !== undefined, 'must provide a target to register a storage event handler');
         const kind = EventKind[kindStr];
         const listeners = this.listeners.get(kind) || new Map();
         listeners.set(callback, { target });
@@ -14011,7 +14011,7 @@ class CrdtCollectionModel {
     add(id, value, keys) {
         // Ensure that keys is actually an array, not a single string.
         // TODO(shans): remove this when all callers are implemented in typeScript.
-        assert(keys.length > 0 && typeof keys === 'object', 'add requires a list of keys');
+        assert$1(keys.length > 0 && typeof keys === 'object', 'add requires a list of keys');
         let item = this.items.get(id);
         let effective = false;
         if (!item) {
@@ -14028,7 +14028,7 @@ class CrdtCollectionModel {
                 item.keys.add(key);
             }
             if (!this._equals(item.value, value)) {
-                assert(newKeys, 'cannot add without new keys. incoming=' + keys.join(',') + ' existing=' + [...item.keys].join(','));
+                assert$1(newKeys, 'cannot add without new keys. incoming=' + keys.join(',') + ' existing=' + [...item.keys].join(','));
                 item.value = value;
                 effective = true;
             }
@@ -14107,11 +14107,11 @@ class VolatileKey extends KeyBase {
         super();
         let parts = key.split('://');
         this.protocol = parts[0];
-        assert(this.protocol === 'volatile', `can't construct volatile key for protocol ${this.protocol} (input key ${key})`);
+        assert$1(this.protocol === 'volatile', `can't construct volatile key for protocol ${this.protocol} (input key ${key})`);
         parts = parts[1] ? parts.slice(1).join('://').split('^^') : [];
         this.arcId = parts[0];
         this.location = parts[1];
-        assert(this.toString() === key, `Expected ${key}, but got ${this.toString()} volatile key base.`);
+        assert$1(this.toString() === key, `Expected ${key}, but got ${this.toString()} volatile key base.`);
     }
     base() { return 'volatile'; }
     get arcId() { return this._arcId; }
@@ -14208,7 +14208,7 @@ class VolatileStorage extends StorageBase {
         const storagePromise = this._construct(type.toString(), type.collectionOf(), key);
         this.typePromiseMap[key] = storagePromise;
         const storage = await storagePromise;
-        assert(storage, `could not construct baseStorage for key ${key}`);
+        assert$1(storage, `could not construct baseStorage for key ${key}`);
         this._typeMap[key] = storage;
         return storage;
     }
@@ -14256,7 +14256,7 @@ class VolatileCollection extends VolatileStorageProvider {
         super(type, name, id, key);
         this._model = new CrdtCollectionModel();
         this.storageEngine = storageEngine;
-        assert(this.version !== null);
+        assert$1(this.version !== null);
     }
     backingType() {
         return this.type.primitiveType();
@@ -14297,7 +14297,7 @@ class VolatileCollection extends VolatileStorageProvider {
             }
             const refSet = new Set();
             items.forEach(item => refSet.add(item.value.storageKey));
-            assert(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
+            assert$1(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
             const ref = refSet.values().next().value;
             await this.ensureBackingStore();
             const ids = items.map(item => item.value.id);
@@ -14314,11 +14314,11 @@ class VolatileCollection extends VolatileStorageProvider {
         return (await this._toList()).map(item => item.value);
     }
     async getMultiple(ids) {
-        assert(!this.referenceMode, "getMultiple not implemented for referenceMode stores");
+        assert$1(!this.referenceMode, "getMultiple not implemented for referenceMode stores");
         return ids.map(id => this._model.getValue(id));
     }
     async storeMultiple(values, keys, originatorId = null) {
-        assert(!this.referenceMode, "storeMultiple not implemented for referenceMode stores");
+        assert$1(!this.referenceMode, "storeMultiple not implemented for referenceMode stores");
         values.map(value => this._model.add(value.id, value, keys));
         this.version++;
     }
@@ -14338,7 +14338,7 @@ class VolatileCollection extends VolatileStorageProvider {
         return { items: this._model.size };
     }
     async store(value, keys, originatorId = null) {
-        assert(keys != null && keys.length > 0, 'keys required');
+        assert$1(keys != null && keys.length > 0, 'keys required');
         const trace = Tracing.start({ cat: 'handle', name: 'VolatileCollection::store', args: { name: this.name } });
         const item = { value, keys, effective: undefined };
         if (this.referenceMode) {
@@ -14446,9 +14446,9 @@ class VolatileVariable extends VolatileStorageProvider {
     fromLiteral({ version, model }) {
         const value = model.length === 0 ? null : model[0].value;
         if (this.referenceMode && value && value.rawData) {
-            assert(false, `shouldn't have rawData ${JSON.stringify(value.rawData)} here`);
+            assert$1(false, `shouldn't have rawData ${JSON.stringify(value.rawData)} here`);
         }
-        assert(value !== undefined);
+        assert$1(value !== undefined);
         this._stored = value;
         this.version = version;
     }
@@ -14465,7 +14465,7 @@ class VolatileVariable extends VolatileStorageProvider {
         return this._stored;
     }
     async set(value, originatorId = null, barrier = null) {
-        assert(value !== undefined);
+        assert$1(value !== undefined);
         if (this.referenceMode && value) {
             // Even if this value is identical to the previously written one,
             // we can't suppress an event here because we don't actually have
@@ -14530,7 +14530,7 @@ class VolatileBigCollection extends VolatileStorageProvider {
         this.cursorIndex = 0;
     }
     enableReferenceMode() {
-        assert(false, 'referenceMode is not supported for BigCollection');
+        assert$1(false, 'referenceMode is not supported for BigCollection');
     }
     backingType() {
         return this.type.primitiveType();
@@ -14540,7 +14540,7 @@ class VolatileBigCollection extends VolatileStorageProvider {
         return (data !== undefined) ? data.value : null;
     }
     async store(value, keys, originatorId) {
-        assert(keys != null && keys.length > 0, 'keys required');
+        assert$1(keys != null && keys.length > 0, 'keys required');
         this.version++;
         if (!this.items.has(value.id)) {
             this.items.set(value.id, { index: null, value: null, keys: {} });
@@ -14555,7 +14555,7 @@ class VolatileBigCollection extends VolatileStorageProvider {
         this.items.delete(id);
     }
     async stream(pageSize, forward = true) {
-        assert(!isNaN(pageSize) && pageSize > 0);
+        assert$1(!isNaN(pageSize) && pageSize > 0);
         this.cursorIndex++;
         const cursor = new VolatileCursor(this.version, this.items.values(), pageSize, forward);
         this.cursors.set(this.cursorIndex, cursor);
@@ -14634,7 +14634,7 @@ function setDiff(from, to) {
             result.remove.push(item);
             continue;
         }
-        assert(toSet.has(item));
+        assert$1(toSet.has(item));
         result.add.push(item);
     }
     return result;
@@ -14666,7 +14666,7 @@ function setDiffCustom(from, to, keyFn) {
             result.remove.push(item);
             continue;
         }
-        assert(toSet.has(key));
+        assert$1(toSet.has(key));
         result.add.push(item);
     }
     return result;
@@ -14678,7 +14678,7 @@ class FirebaseKey extends KeyBase {
         super();
         let parts = key.split('://');
         this.protocol = parts[0];
-        assert(this.protocol === 'firebase', `can't construct firebase key for protocol ${this.protocol} (input key ${key})`);
+        assert$1(this.protocol === 'firebase', `can't construct firebase key for protocol ${this.protocol} (input key ${key})`);
         if (parts[1]) {
             parts = parts[1].split('/');
             this.databaseUrl = parts[0];
@@ -14777,7 +14777,7 @@ class FirebaseStorage extends StorageBase {
         const storagePromise = this._join(type.toString(), type.collectionOf(), key, 'unknown');
         this.baseStorePromises.set(type, storagePromise);
         const storage = await storagePromise;
-        assert(storage, 'baseStorageFor should not fail');
+        assert$1(storage, 'baseStorageFor should not fail');
         this.baseStores.set(type, storage);
         return storage;
     }
@@ -14787,8 +14787,8 @@ class FirebaseStorage extends StorageBase {
     // referenceMode is only referred to if shouldExist is false, or if shouldExist is 'unknown'
     // but this _join creates the storage location.
     async _join(id, type, keyString, shouldExist, referenceMode = false) {
-        assert(!(type instanceof TypeVariable));
-        assert(!type.isTypeContainer() || !(type.getContainedType() instanceof TypeVariable));
+        assert$1(!(type instanceof TypeVariable));
+        assert$1(!type.isTypeContainer() || !(type.getContainedType() instanceof TypeVariable));
         const fbKey = new FirebaseKey(keyString);
         // TODO: is it ever going to be possible to autoconstruct new firebase datastores?
         if (fbKey.databaseUrl == undefined || fbKey.apiKey == undefined) {
@@ -14895,7 +14895,7 @@ class FirebaseStorageProvider extends StorageProviderBase {
             return JSON.parse(JSON.stringify(newData));
         }, undefined, false);
         if (result.committed) {
-            assert(result.snapshot.val() !== 0);
+            assert$1(result.snapshot.val() !== 0);
         }
         return result;
     }
@@ -14981,7 +14981,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
             return;
         }
         const data = dataSnapshot.val();
-        assert(this.version == null || data.version > this.version);
+        assert$1(this.version == null || data.version > this.version);
         // NOTE that remoteStateChanged will be invoked immediately by the
         // this.reference.on(...) call in the constructor; this means that it's possible for this
         // function to receive data with storageKeys before referenceMode has been switched on (as
@@ -15008,7 +15008,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
         return this.localModified;
     }
     async _persistChangesImpl() {
-        assert(this.localModified);
+        assert$1(this.localModified);
         // Guard the specific version that we're writing. If we receive another
         // local mutation, these versions will be different when the transaction
         // completes indicating that we need to continue the process of sending
@@ -15030,17 +15030,17 @@ class FirebaseVariable extends FirebaseStorageProvider {
             await Promise.all(pendingWrites.map(pendingItem => this.backingStore.store(pendingItem.value, [this.storageKey + this.localKeyId++])));
         }
         const result = await this._transaction(data => {
-            assert(this.version >= version);
+            assert$1(this.version >= version);
             return {
                 version: Math.max(data.version + 1, version),
                 value,
                 referenceMode: this.referenceMode
             };
         });
-        assert(result.committed, 'uncommited transaction (offline?) not supported yet');
+        assert$1(result.committed, 'uncommited transaction (offline?) not supported yet');
         const data = result.snapshot.val();
-        assert(data !== 0);
-        assert(data.version >= version);
+        assert$1(data !== 0);
+        assert$1(data.version >= version);
         if (this.version !== version) {
             // A new local modification happened while we were writing the previous one.
             return this._persistChangesImpl();
@@ -15063,9 +15063,9 @@ class FirebaseVariable extends FirebaseStorageProvider {
         return this.value;
     }
     async set(value, originatorId = null, barrier = null) {
-        assert(value !== undefined);
+        assert$1(value !== undefined);
         if (this.version == null) {
-            assert(!this.localModified);
+            assert$1(!this.localModified);
             // If the first modification happens before init, this becomes
             // init. We pick the initial version which will be updated by the
             // transaction in _persistChanges.
@@ -15117,7 +15117,7 @@ class FirebaseVariable extends FirebaseStorageProvider {
     async modelForSynchronization() {
         await this.initialized;
         if (this.value && !this.referenceMode) {
-            assert(this.value.storageKey == undefined, `values in non-referenceMode stores shouldn't have storageKeys. This store is ${this.storageKey}`);
+            assert$1(this.value.storageKey == undefined, `values in non-referenceMode stores shouldn't have storageKeys. This store is ${this.storageKey}`);
         }
         if (this.referenceMode && this.value !== null) {
             const value = this.value;
@@ -15140,8 +15140,8 @@ class FirebaseVariable extends FirebaseStorageProvider {
     }
     fromLiteral({ version, model }) {
         const value = model.length === 0 ? null : model[0].value;
-        assert(value !== undefined);
-        assert(this.referenceMode || !value.storageKey);
+        assert$1(value !== undefined);
+        assert$1(this.referenceMode || !value.storageKey);
         this.value = value;
         this.version = version;
     }
@@ -15405,7 +15405,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         await this._persistChanges();
     }
     async store(value, keys, originatorId = null) {
-        assert(keys != null && keys.length > 0, 'keys required');
+        assert$1(keys != null && keys.length > 0, 'keys required');
         await this.initialized;
         const id = value.id;
         let effective;
@@ -15440,7 +15440,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
     async _persistChangesImpl() {
         if (this.pendingWrites.length > 0) {
             await this.ensureBackingStore();
-            assert(this.backingStore);
+            assert$1(this.backingStore);
             const pendingWrites = this.pendingWrites.slice();
             this.pendingWrites = [];
             // TODO(shans): mutating the storageKey here to provide unique keys is a hack
@@ -15486,7 +15486,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
                     }
                     // If we've added a key, also propagate the value. (legacy mutation).
                     if (add.length > 0) {
-                        assert(this.model.has(id));
+                        assert$1(this.model.has(id));
                         item.value = this.model.getValue(id);
                     }
                     const keys = Object.keys(item.keys);
@@ -15503,7 +15503,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             });
             // We're assuming that firebase won't deliver updates between the
             // transaction committing and the result promise resolving :/
-            assert(result.committed);
+            assert$1(result.committed);
             const data = result.snapshot.val();
             // While we were persisting changes, we may have received new ones.
             // We remove any changes that were just persisted, `changesPersisted`
@@ -15547,7 +15547,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
             const referredType = this.type.primitiveType();
             const refSet = new Set();
             items.forEach(item => refSet.add(item.value.storageKey));
-            assert(refSet.size === 1);
+            assert$1(refSet.size === 1);
             const ref = refSet.values().next().value;
             await this.ensureBackingStore();
             const retrieveItem = async (item) => {
@@ -15566,12 +15566,12 @@ class FirebaseCollection extends FirebaseStorageProvider {
         return (await this._toList()).map(item => item.value);
     }
     async getMultiple(ids) {
-        assert(!this.referenceMode, 'getMultiple not implemented for referenceMode stores');
+        assert$1(!this.referenceMode, 'getMultiple not implemented for referenceMode stores');
         await this.initialized;
         return ids.map(id => this.model.getValue(id));
     }
     async storeMultiple(values, keys, originatorId = null) {
-        assert(!this.referenceMode, 'storeMultiple not implemented for referenceMode stores');
+        assert$1(!this.referenceMode, 'storeMultiple not implemented for referenceMode stores');
         values.map(value => {
             this.model.add(value.id, value, keys);
             if (!this.localChanges.has(value.id)) {
@@ -15599,7 +15599,7 @@ class FirebaseCollection extends FirebaseStorageProvider {
         // Don't notify about the contents that have just been cloned.
         // However, do record local changes for persistence.
         for (const item of this.model.toLiteral()) {
-            assert(item.value.id !== undefined);
+            assert$1(item.value.id !== undefined);
             this.localChanges.set(item.value.id, { add: [...item.keys], remove: [] });
         }
         await this._persistChanges();
@@ -15652,7 +15652,7 @@ class FirebaseCursor {
     }
     // This must be called exactly once after construction and before any other methods are called.
     async _init() {
-        assert(this.state === CursorState.new);
+        assert$1(this.state === CursorState.new);
         // Retrieve the current last item to establish our streaming version.
         const lastEntry = await this.orderByIndex.limitToLast(1).once('value');
         lastEntry.forEach(entry => this.end = entry.val().index);
@@ -15680,7 +15680,7 @@ class FirebaseCursor {
     // Returns {value: [items], done: false} while there are items still available, or {done: true}
     // when the cursor has completed reading the collection.
     async next() {
-        assert(this.state !== CursorState.new);
+        assert$1(this.state !== CursorState.new);
         if (this.state === CursorState.done) {
             return { done: true };
         }
@@ -15690,7 +15690,7 @@ class FirebaseCursor {
             this.state = CursorState.stream;
         }
         else if (this.state === CursorState.stream) {
-            assert(this.nextBoundary !== null);
+            assert$1(this.nextBoundary !== null);
             query = this.forward
                 ? this.baseQuery.startAt(this.nextBoundary).endAt(this.end)
                 : this.baseQuery.endAt(this.nextBoundary);
@@ -15738,7 +15738,7 @@ class FirebaseCursor {
                 this.state = CursorState.done;
             }
         }
-        assert(value.length > 0);
+        assert$1(value.length > 0);
         return { value, done: false };
     }
     // Terminates the streamed read. This must be called if a cursor is no longer needed but has not
@@ -15788,7 +15788,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
         return this.type.primitiveType();
     }
     enableReferenceMode() {
-        assert(false, 'referenceMode is not supported for BigCollection');
+        assert$1(false, 'referenceMode is not supported for BigCollection');
     }
     // TODO: rename this to avoid clashing with Variable and allow particles some way to specify the id
     async get(id) {
@@ -15802,7 +15802,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
         // protocol and the mutating ops here are all pass-through (so no local CRDT management is
         // required). This may change in the future - we may well move to full CRDT support in the
         // backing stores - so it's best to keep the API in line with regular Collections.
-        assert(keys != null && keys.length > 0, 'keys required');
+        assert$1(keys != null && keys.length > 0, 'keys required');
         // Firebase does not support multi-location transactions. To modify both 'version' and a child
         // of 'items', we'd need to transact directly on this.reference, which would pull the entire
         // collection contents locally, avoiding which is the explicit intent of this class. So we have
@@ -15855,7 +15855,7 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
      * false to return items in reverse insertion order.
      */
     async stream(pageSize, forward = true) {
-        assert(!isNaN(pageSize) && pageSize > 0);
+        assert$1(!isNaN(pageSize) && pageSize > 0);
         this.cursorIndex++;
         const cursor = new FirebaseCursor(this.reference, pageSize, forward);
         await cursor._init();
@@ -15959,7 +15959,7 @@ class PouchDbKey extends KeyBase {
      * Creates a new child PouchDbKey relative to the current key, based on the value of id.
      */
     childKeyForHandle(id) {
-        assert(id && id.length > 0, 'invalid id');
+        assert$1(id && id.length > 0, 'invalid id');
         return this.buildChildKey(`handles/${id}`);
     }
     childKeyForArcInfo() {
@@ -16038,7 +16038,7 @@ class PouchDbCollection extends PouchDbStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, storageEngine, name, id, key);
         this._model = new CrdtCollectionModel();
-        assert(this.version !== null);
+        assert$1(this.version !== null);
     }
     /** @inheritDoc */
     backingType() {
@@ -16094,7 +16094,7 @@ class PouchDbCollection extends PouchDbStorageProvider {
             }
             const refSet = new Set();
             items.forEach(item => refSet.add(item.value.storageKey));
-            assert(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
+            assert$1(refSet.size === 1, `multiple storageKeys in reference set of collection not yet supported.`);
             const ref = refSet.values().next().value;
             await this.ensureBackingStore();
             const retrieveItem = async (item) => {
@@ -16115,7 +16115,7 @@ class PouchDbCollection extends PouchDbStorageProvider {
      * @return an array of values from the underlying CRDT
      */
     async getMultiple(ids) {
-        assert(!this.referenceMode, 'getMultiple not implemented for referenceMode stores');
+        assert$1(!this.referenceMode, 'getMultiple not implemented for referenceMode stores');
         const model = await this.getModel();
         return ids.map(id => model.getValue(id));
     }
@@ -16124,7 +16124,7 @@ class PouchDbCollection extends PouchDbStorageProvider {
      * TODO(lindner): document originatorId, which is unused.
      */
     async storeMultiple(values, keys, originatorId = null) {
-        assert(!this.referenceMode, 'storeMultiple not implemented for referenceMode stores');
+        assert$1(!this.referenceMode, 'storeMultiple not implemented for referenceMode stores');
         this.getModelAndUpdate(crdtmodel => {
             values.map(value => crdtmodel.add(value.id, value, keys));
             return crdtmodel;
@@ -16156,7 +16156,7 @@ class PouchDbCollection extends PouchDbStorageProvider {
      * @param originatorId TBD passed to event listeners
      */
     async store(value, keys, originatorId = null) {
-        assert(keys != null && keys.length > 0, 'keys required');
+        assert$1(keys != null && keys.length > 0, 'keys required');
         const id = value.id;
         const item = { value, keys, effective: undefined };
         if (this.referenceMode) {
@@ -16380,7 +16380,7 @@ class PouchDbBigCollection extends PouchDbStorageProvider {
         throw new Error('NotImplemented');
     }
     async store(value, keys, originatorId) {
-        assert(keys != null && keys.length > 0, 'keys required');
+        assert$1(keys != null && keys.length > 0, 'keys required');
         throw new Error('NotImplemented');
     }
     async remove(id, keys, originatorId) {
@@ -16481,9 +16481,9 @@ class PouchDbVariable extends PouchDbStorageProvider {
     async fromLiteral({ version, model }) {
         const value = model.length === 0 ? null : model[0].value;
         if (this.referenceMode && value && value.rawData) {
-            assert(false, `shouldn't have rawData ${JSON.stringify(value.rawData)} here`);
+            assert$1(false, `shouldn't have rawData ${JSON.stringify(value.rawData)} here`);
         }
-        assert(value !== undefined);
+        assert$1(value !== undefined);
         await this.getStoredAndUpdate(stored => {
             return value;
         });
@@ -16516,7 +16516,7 @@ class PouchDbVariable extends PouchDbStorageProvider {
      * @param barrier TBD
      */
     async set(value, originatorId = null, barrier = null) {
-        assert(value !== undefined);
+        assert$1(value !== undefined);
         if (this.referenceMode && value) {
             // Even if this value is identical to the previously written one,
             // we can't suppress an event here because we don't actually have
@@ -16813,7 +16813,7 @@ class PouchDbStorage extends StorageBase {
         const storagePromise = this._construct(type.toString(), type.collectionOf(), key);
         this.baseStorePromises.set(type, storagePromise);
         const storage = await storagePromise;
-        assert(storage, 'baseStorageFor should not fail');
+        assert$1(storage, 'baseStorageFor should not fail');
         this.baseStores.set(type, storage);
         return storage;
     }
@@ -16979,27 +16979,27 @@ class SyntheticKey extends KeyBase {
         return 'synthetic';
     }
     base() {
-        assert(false, 'base not supported for synthetic keys');
+        assert$1(false, 'base not supported for synthetic keys');
         return null;
     }
     get arcId() {
-        assert(false, 'arcId not supported for synthetic keys');
+        assert$1(false, 'arcId not supported for synthetic keys');
         return null;
     }
     childKeyForHandle(id) {
-        assert(false, 'childKeyForHandle not supported for synthetic keys');
+        assert$1(false, 'childKeyForHandle not supported for synthetic keys');
         return null;
     }
     childKeyForArcInfo() {
-        assert(false, 'childKeyForArcInfo not supported for synthetic keys');
+        assert$1(false, 'childKeyForArcInfo not supported for synthetic keys');
         return null;
     }
     childKeyForSuggestions(userId, arcId) {
-        assert(false, 'childKeyForSuggestions not supported for synthetic keys');
+        assert$1(false, 'childKeyForSuggestions not supported for synthetic keys');
         return null;
     }
     childKeyForSearch(userId) {
-        assert(false, 'childKeyForSearch not supported for synthetic keys');
+        assert$1(false, 'childKeyForSearch not supported for synthetic keys');
         return null;
     }
     toString() {
@@ -17015,7 +17015,7 @@ class SyntheticStorage extends StorageBase {
         throw new Error('cannot construct SyntheticStorage providers; use connect');
     }
     async connect(id, type, key) {
-        assert(type === null, 'SyntheticStorage does not accept a type parameter');
+        assert$1(type === null, 'SyntheticStorage does not accept a type parameter');
         const synthKey = new SyntheticKey(key, this.storageFactory);
         const targetStore = await this.storageFactory.connect(id, synthKey.targetType, synthKey.targetKey);
         if (targetStore === null) {
@@ -17410,8 +17410,8 @@ class RecipeUtil {
                 }
                 // clone forward and reverse mappings and establish new components.
                 const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
-                assert(!newMatch.reverse.has(recipeHC.particle) || newMatch.reverse.get(recipeHC.particle) === shapeHC.particle);
-                assert(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) === recipeHC.particle);
+                assert$1(!newMatch.reverse.has(recipeHC.particle) || newMatch.reverse.get(recipeHC.particle) === shapeHC.particle);
+                assert$1(!newMatch.forward.has(shapeHC.particle) || newMatch.forward.get(shapeHC.particle) === recipeHC.particle);
                 newMatch.forward.set(shapeHC.particle, recipeHC.particle);
                 newMatch.reverse.set(recipeHC.particle, shapeHC.particle);
                 if (shapeHC.handle) {
@@ -17481,8 +17481,8 @@ class RecipeUtil {
                     continue;
                 }
                 const newMatch = { forward: new Map(forward), reverse: new Map(reverse), score };
-                assert(!newMatch.forward.has(shapeParticle) || newMatch.forward.get(shapeParticle) === recipeParticle);
-                assert(!newMatch.reverse.has(recipeParticle) || newMatch.reverse.get(recipeParticle) === shapeParticle);
+                assert$1(!newMatch.forward.has(shapeParticle) || newMatch.forward.get(shapeParticle) === recipeParticle);
+                assert$1(!newMatch.reverse.has(recipeParticle) || newMatch.reverse.get(recipeParticle) === shapeParticle);
                 newMatch.forward.set(shapeParticle, recipeParticle);
                 newMatch.reverse.set(recipeParticle, shapeParticle);
                 newMatches.push(newMatch);
@@ -17491,11 +17491,11 @@ class RecipeUtil {
             if (matchFound === false) {
                 const newMatch = { forward: new Map(), reverse: new Map(), score: 0 };
                 forward.forEach((value, key) => {
-                    assert(!newMatch.forward.has(key) || newMatch.forward.get(key) === value);
+                    assert$1(!newMatch.forward.has(key) || newMatch.forward.get(key) === value);
                     newMatch.forward.set(key, value);
                 });
                 reverse.forEach((value, key) => {
-                    assert(!newMatch.reverse.has(key) || newMatch.reverse.get(key) === value);
+                    assert$1(!newMatch.reverse.has(key) || newMatch.reverse.get(key) === value);
                     newMatch.reverse.set(key, value);
                 });
                 if (!newMatch.forward.has(shapeParticle)) {
@@ -17589,7 +17589,7 @@ class RecipeUtil {
         });
     }
     static constructImmediateValueHandle(connection, particleSpec, id) {
-        assert(connection.type instanceof InterfaceType);
+        assert$1(connection.type instanceof InterfaceType);
         if (!(connection.type instanceof InterfaceType) ||
             !connection.type.interfaceInfo.restrictType(particleSpec)) {
             // Type of the connection does not match the ParticleSpec.
@@ -17675,8 +17675,8 @@ class ManifestVisitor {
             }
             return;
         }
-        assert(ast.location, 'expected manifest node to have `location`');
-        assert(ast.kind, 'expected manifest node to have `kind`');
+        assert$1(ast.location, 'expected manifest node to have `location`');
+        assert$1(ast.kind, 'expected manifest node to have `kind`');
         let childrenVisited = false;
         const visitChildren = () => {
             if (childrenVisited) {
@@ -17716,7 +17716,7 @@ class Manifest {
         this.storeManifestUrls = new Map();
         this.warnings = [];
         // TODO: Cleanup usage of strings as Ids.
-        assert(id instanceof Id || typeof id === 'string');
+        assert$1(id instanceof Id || typeof id === 'string');
         if (id instanceof Id) {
             this._id = id;
         }
@@ -17778,7 +17778,7 @@ class Manifest {
     }
     applyMeta(section) {
         if (this._storageProviderFactory !== undefined) {
-            assert(section.name === this._meta.name || section.name == undefined, `can't change manifest ID after storage is constructed`);
+            assert$1(section.name === this._meta.name || section.name == undefined, `can't change manifest ID after storage is constructed`);
         }
         this._meta.apply(section);
     }
@@ -17786,7 +17786,7 @@ class Manifest {
     // TODO: simplify() / isValid().
     async createStore(type, name, id, tags, storageKey) {
         const store = await this.storageProviderFactory.construct(id, type, storageKey || `volatile://${this.id}`);
-        assert(store.version !== null);
+        assert$1(store.version !== null);
         store.name = name;
         this.storeManifestUrls.set(store.id, this.fileName);
         return this._addStore(store, tags);
@@ -17895,7 +17895,7 @@ class Manifest {
         registry[fileName] = (async () => {
             const content = await loader.loadResource(fileName);
             // TODO: When does this happen? The loader should probably throw an exception here.
-            assert(content !== undefined, `${fileName} unable to be loaded by Manifest parser`);
+            assert$1(content !== undefined, `${fileName} unable to be loaded by Manifest parser`);
             return await Manifest.parse(content, {
                 id,
                 fileName,
@@ -18178,7 +18178,7 @@ ${e.message}
         // TODO: we should be producing a new particleSpec, not mutating
         //       particleItem directly.
         // TODO: we should require both of these and update failing tests...
-        assert(particleItem.implFile == null || particleItem.args !== null, 'no valid body defined for this particle');
+        assert$1(particleItem.implFile == null || particleItem.args !== null, 'no valid body defined for this particle');
         if (!particleItem.args) {
             particleItem.args = [];
         }
@@ -18265,12 +18265,12 @@ ${e.message}
             else if (ref.name) {
                 const targetStore = manifest.findStoreByName(ref.name);
                 // TODO: Error handling.
-                assert(targetStore, `Could not find handle ${ref.name}`);
+                assert$1(targetStore, `Could not find handle ${ref.name}`);
                 handle.mapToStorage(targetStore);
             }
             handle.tags = ref.tags;
             if (item.name) {
-                assert(!items.byName.has(item.name));
+                assert$1(!items.byName.has(item.name));
                 handle.localName = item.name;
                 items.byName.set(item.name, { item, handle });
             }
@@ -18324,7 +18324,7 @@ ${e.message}
                 slot.tags = item.ref.tags;
             }
             if (item.name) {
-                assert(!items.byName.has(item.name), `Duplicate slot local name ${item.name}`);
+                assert$1(!items.byName.has(item.name), `Duplicate slot local name ${item.name}`);
                 slot.localName = item.name;
                 items.byName.set(item.name, slot);
             }
@@ -18344,7 +18344,7 @@ ${e.message}
             }
             if (item.name) {
                 // TODO: errors.
-                assert(!items.byName.has(item.name));
+                assert$1(!items.byName.has(item.name));
                 particle.localName = item.name;
                 items.byName.set(item.name, { item, particle });
             }
@@ -18373,10 +18373,10 @@ ${e.message}
                                 // slots in the manifest, then as part of particle spec.
                                 // Unifying both slots, updating name and source slot connection.
                                 const theSlot = items.byName.get(ps.name);
-                                assert(theSlot !== providedSlot);
-                                assert(!theSlot.name && providedSlot);
-                                assert(!theSlot.sourceConnection && providedSlot.sourceConnection);
-                                assert(theSlot.handleConnections.length === 0);
+                                assert$1(theSlot !== providedSlot);
+                                assert$1(!theSlot.name && providedSlot);
+                                assert$1(!theSlot.sourceConnection && providedSlot.sourceConnection);
+                                assert$1(theSlot.handleConnections.length === 0);
                                 theSlot.name = providedSlot.name;
                                 theSlot.sourceConnection = providedSlot.sourceConnection;
                                 theSlot.sourceConnection.providedSlots[theSlot.name] = theSlot;
@@ -18397,7 +18397,7 @@ ${e.message}
                         providedSlot.localName = ps.name;
                         providedSlot.sourceConnection = slotConn;
                         if (ps.name) {
-                            assert(!items.byName.has(ps.name));
+                            assert$1(!items.byName.has(ps.name));
                             items.byName.set(ps.name, providedSlot);
                         }
                         items.bySlot.set(providedSlot, ps);
@@ -18517,11 +18517,11 @@ ${e.message}
                 }
                 let targetSlot = items.byName.get(slotConnectionItem.name);
                 if (targetSlot) {
-                    assert(items.bySlot.has(targetSlot));
+                    assert$1(items.bySlot.has(targetSlot));
                     if (!targetSlot.name) {
                         targetSlot.name = slotConnectionItem.param;
                     }
-                    assert(targetSlot === items.byName.get(slotConnectionItem.name), `Target slot ${targetSlot.name} doesn't match slot connection ${slotConnectionItem.param}`);
+                    assert$1(targetSlot === items.byName.get(slotConnectionItem.name), `Target slot ${targetSlot.name} doesn't match slot connection ${slotConnectionItem.param}`);
                 }
                 else if (slotConnectionItem.name) {
                     targetSlot = recipe.newSlot(slotConnectionItem.param);
@@ -19246,336 +19246,733 @@ class KeyManager {
     }
 }
 
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-const changeDebounceMs = 16;
-
-const debounce = (key, action, delay) => {
-  if (key) {
-    clearTimeout(key);
-  }
-  if (action && delay) {
-    return setTimeout(action, delay);
-  }
-};
-
-const FbGraph = Firedb => {
-
-  const Eventer = class {
-    constructor(listener) {
-      this.listener = listener;
-    }
-    _fire(type, detail) {
-      if (this.listener) {
-        this.listener({type, detail, sender: this});
-      }
-    }
-  };
-
-  const FbSet = class extends Eventer {
-    constructor(path, data, listener) {
-      super(listener);
-      this.path = path;
-      this.data = data;
-      // remember that firebase can fire events synchronously on listener attachment
-      this._tryAttach();
-    }
-    dispose() {
-      this._detach && this._detach();
-    }
-    _tryAttach() {
-      try {
-        this._attach(Firedb.child(this.path));
-      } catch (x) {
-        //
-      }
-    }
-    _attach(db) {
-      const added = db.on('child_added', (snap, prevKey) => {
-        //console.log('+*+*+*+*+*+ Firebase: child-added', snap.key);
-        this._replaceSubProperties(this.data, snap.key, snap.val());
-        this._fire('child-added', snap.key);
-      });
-      const changed = db.on('child_changed', (snap, prevKey) => {
-        //console.log('+*+*+*+*+*+ Firebase: child-changed', this.path, snap.key); //, snap.val());
-        this._replaceSubProperties(this.data, snap.key, snap.val());
-        this._fire('child-changed', snap.key);
-      });
-      const removed = db.on('child_removed', snap => {
-        //console.log('+*+*+*+*+*+ Firebase: child-removed', this.path, snap.key);
-        delete this.data[snap.key];
-        this._fire('child-removed', snap.key);
-      });
-      this._detach = () => {
-        db.off('child_added', added);
-        db.off('child_changed', changed);
-        db.off('child_removed', removed);
-      };
-      // db.once('value', snap => {
-      //   this.initialized = true;
-      //   this._replaceProperties(this.data, snap.val());
-      //   this._fire('initial', this.data);
-      // });
-    }
-    // TODO(sjmiles): These methods preserve Object identity while modulating
-    // properties. (1) Do we need this preservation still? (2) Use Map instead of Object.
-    _replaceProperties(object, neo) {
-      for (const field in neo) {
-        this._replaceSubProperties(object, field, neo[field]);
-      }
-      for (const field in object) {
-        if (!(field in neo)) {
-          delete object[field];
-        }
-      }
-    }
-    _replaceSubProperties(object, key, neo) {
-      if (typeof neo !== 'object') {
-        object[key] = neo;
-      } else {
-        const data = object[key];
-        if (data) {
-          this._replaceProperties(data, neo);
-        } else {
-          object[key] = Object.assign(Object.create(null), neo);
-        }
-      }
-    }
-  };
-
-  const Field = class extends Eventer {
-    constructor(parent, path, key, schema, onevent) {
-      super(onevent);
-      this.parent = parent;
-      this.path = path;
-      this.key = key;
-      this.schema = schema;
-      this.fields = {};
-      this.data = {};
-      this._requiredInits = 0;
-    }
-    activate() {
-      // TODO(sjmiles): create pseudo-field `$key` to map the key of this record
-      // into it's data as an affordance for joining against keys.
-      // E.g. `arcs` references are of the form `<arcid>: <>` (instead of `<arcidkey>:<arcid>`)
-      // and we use `$key` to map `<arcid>` into `data` for joining.
-      if (this.schema && this.schema.$key) {
-        this._addField('$key');
-      }
-      this.fbset = new FbSet(this.path, this.data, event => this._onSetEvent(event));
-      // TODO(sjmiles): after init?
-      this._notifySchema();
-    }
-    dispose() {
-      this.disposed = true;
-      this.fbset && this.fbset.dispose();
-      Object.values(this.fields).forEach(field => field.dispose());
-      this._notifySchema();
-    }
-    get value() {
-      const results = Object.create(null);
-      if (this.data) {
-        Object.keys(this.data).forEach(
-          key => results[key] = this.fields[key] ? this.fields[key].value : this.data[key]
-        );
-      }
-      if (this.fields.$key) {
-        results.$key = this.fields.$key.value;
-      }
-      return results;
-    }
-    _notifySchema() {
-      this._debounceNotify = debounce(this._debounceNotify, () => {
-        if (this.schema && this.schema.$changed) {
-          this.schema.$changed(this);
-        }
-      }, changeDebounceMs);
-    }
-    _onSetEvent({type, detail}) {
-      switch (type) {
-        case 'child-changed': {
-          const field = this.fields[detail];
-          field && field._notifySchema();
-        } break;
-        case 'child-added':
-          this._addField(detail);
-          break;
-        case 'child-removed':
-          this._removeField(detail);
-          break;
-      }
-      // if we are $fromJoin:
-      // 1. there is no parent to see a 'child-changed' on us
-      // 2. there is no notification to the parent that it's `value` has changed
-      // we simulate those effects here
-      if (this.$fromJoin) {
-        this._notifySchema();
-        this._fire('change');
-      }
-    }
-    _onEvent(event) {
-      // only event is 'change', propagate all the way up
-      this._notifySchema();
-      this._fire(event);
-    }
-    _addField(fieldName) {
-      if (this.schema && (fieldName === '$key' || fieldName[0] !== '$')) {
-        const datum = this.data[fieldName];
-        let fieldSchema = this.schema[fieldName] || this.schema['*'];
-        if (typeof fieldSchema === 'function') {
-          fieldSchema = fieldSchema(this.key, fieldName, datum, this);
-        }
-        if (fieldSchema) {
-          const field = this._createField(fieldName, fieldSchema, datum);
-          this.fields[fieldName] = field;
-          field.activate();
-        }
-      }
-    }
-    _removeField(key) {
-      const field = this.fields[key];
-      if (field) {
-        field.dispose();
-        delete this.fields[key];
-      }
-    }
-    _createField(fieldName, fieldSchema) {
-      let fieldPath = `${this.path}/${fieldName}`;
-      let fromJoin = false;
-      if (fieldSchema.$join) {
-        fieldPath = fieldSchema.$join.path;
-        fieldSchema = fieldSchema.$join.schema;
-        fromJoin = true;
-      }
-      const field = new Field(this, fieldPath, fieldName, fieldSchema, event => this._onEvent(event));
-      field.$fromJoin = fromJoin;
-      return field;
-    }
-  };
-
-  return {Field};
-
-};
-
-/*
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-const config = {
-  // arc data is under this child node on database root
-  version: '0_5_0-alpha',
-  server: 'arcs-storage.firebaseio.com',
-  apiKey: 'AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8',
-  authDomain: 'arcs-storage.firebaseapp.com',
-  databaseURL: 'https://arcs-storage.firebaseio.com',
-  projectId: 'arcs-storage',
-  storageBucket: 'arcs-storage.appspot.com',
-  messagingSenderId: '779656349412'
-};
-
-const storageKey = `firebase://${config.server}/${config.apiKey}/${config.version}`;
-const app = firebase.initializeApp(config);
-const database = app.database();
-const db = database.ref(config.version);
-const storage = app.storage();
-
-// collected stuff
-const Firebase = {
-  version: config.version,
-  firebase,
-  database,
-  db,
-  storage,
-  storageKey
-};
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-const {Field} = FbGraph(Firebase.db);
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-const FbUser = class {
-  constructor(listener) {
-    this._fire = (type, detail) => listener(type, detail);
-  }
-  queryUser(userid) {
-    let field = null;
-    if (userid) {
-      field = new Field(null, `/users/${userid}`, userid, this._userSchema);
-    }
-    return field;
-  }
-  get _userSchema() {
-    return {
-      info: {
-        $changed: field => this._onInfoChanged(field)
-      },
-      arcs: {
-        '*': {
-          //$changed: field => this._onArcChanged(field),
-          $key: (parent, key, datum) => ({
-            $join: {
-              path: `/arcs/${parent}`,
-              schema: {
-                serialization: {
-                  $changed: field => this._onArcChanged(field)
-                }
-              }
-            }
-          })
-        }
-      }
-    };
-  }
-  _onInfoChanged(field) {
-    //console.log('+*+*+*++ FbUser: info-changed');
-    this._fire('info-changed', field);
-  }
-  _onArcChanged(field) {
-    //console.log('+*+*+*++ FbUser: arc-changed');
-    this._fire('arc-changed', field);
-  }
-};
-
 // Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
 
-// TODO(wkorman): Incorporate debug levels. Consider outputting
-// preamble in the specified color via ANSI escape codes. Consider
-// sharing with similar log factory logic in `xen.js`. See `log-web.js`.
-const logFactory$1 = (preamble, color, log='log') => {
-  return console[log].bind(console, `(${preamble})`);
+// This is only relevant in the web devtools.
+const mapStackTrace = () => {};
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class OuterPortAttachment {
+    constructor(arc, devtoolsChannel) {
+        this._devtoolsChannel = devtoolsChannel;
+        this._arcIdString = arc.id.toString();
+        this._speculative = arc.isSpeculative;
+    }
+    handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
+        // Skip speculative and pipes arcs for now.
+        if (this._arcIdString.endsWith('-pipes') || this._speculative)
+            return;
+        const stack = this._extractStackFrames(stackString);
+        this._devtoolsChannel.send({
+            messageType: 'PecLog',
+            messageBody: { name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack },
+        });
+    }
+    _extractStackFrames(stackString) {
+        const stack = [];
+        if (!stackString)
+            return stack;
+        // File refs should appear only in stack traces generated by tests run with
+        // --explore set.
+        if (stackString.includes('(file:///')) {
+            // The slice discards the 'Error' text and the the stack frame
+            // corresponding to the API channel function, which is already being
+            // displayed in the log entry.
+            for (const frameString of stackString.split('\n    at ').slice(2)) {
+                let match = frameString.match(/^(.*) \((.*)\)$/);
+                if (match === null) {
+                    match = { 1: '<unknown>', 2: frameString };
+                }
+                let location = match[2].replace(/:[0-9]+$/, '');
+                if (location.startsWith('file')) {
+                    // 'file:///<path>/arcs.*/runtime/file.js:84'
+                    // -> location: 'runtime/file.js:150'
+                    location = location.replace(/^.*\/arcs[^/]*\//, '');
+                }
+                stack.push({ method: match[1], location, target: null, targetClass: 'noLink' });
+            }
+            return stack;
+        }
+        return stack;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class AbstractDevtoolsChannel {
+    constructor() {
+        this.debouncedMessages = [];
+        this.debouncing = false;
+        this.messageListeners = new Map();
+    }
+    send(message) {
+        this.debouncedMessages.push(message);
+        if (!this.debouncing) {
+            this.debouncing = true;
+            setTimeout(() => {
+                this._flush(this.debouncedMessages);
+                this.debouncedMessages = [];
+                this.debouncing = false;
+            }, 100);
+        }
+    }
+    listen(arcOrId, messageType, callback) {
+        assert$1(messageType);
+        assert$1(arcOrId);
+        const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
+        const key = `${arcId}/${messageType}`;
+        let listeners = this.messageListeners.get(key);
+        if (!listeners)
+            this.messageListeners.set(key, listeners = []);
+        listeners.push(callback);
+    }
+    _handleMessage(msg) {
+        const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
+        if (!listeners) {
+            console.warn(`No one is listening to ${msg.messageType} message`);
+        }
+        else {
+            for (const listener of listeners)
+                listener(msg);
+        }
+    }
+    _flush(messages) {
+        throw new Error('Not implemented in an abstract class');
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+// Debugging is initialized either by /devtools/src/run-mark-connected.js, which is
+// injected by the devtools extension content script in the browser env,
+// or used directly when debugging nodeJS.
+
+// Data needs to be referenced via a global object, otherwise extension and
+// Arcs have different instances.
+const root = typeof window === 'object' ? window : global;
+
+if (!root._arcDebugPromise) {
+  root._arcDebugPromise = new Promise(resolve => {
+    root._arcDebugPromiseResolve = resolve;
+  });
+}
+
+class DevtoolsBroker {
+  static get onceConnected() {
+    return root._arcDebugPromise;
+  }
+  static markConnected() {
+    root._arcDebugPromiseResolve();
+    return {preExistingArcs: !!root.arc};
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class DevtoolsChannel extends AbstractDevtoolsChannel {
+  constructor() {
+    super();
+    this.server = new WebSocket.Server({port: 8787});
+    this.server.on('connection', ws => {
+      this.socket = ws;
+      this.socket.on('message', msg => {
+        if (msg === 'init') {
+          DevtoolsBroker.markConnected();
+        } else {
+          this._handleMessage(JSON.parse(msg));
+        }
+      });
+    });
+  }
+
+  _flush(messages) {
+    if (this.socket) {
+      this.socket.send(JSON.stringify(messages));
+    }
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+let channel = null;
+let isConnected = false;
+let onceConnectedResolve = null;
+let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
+DevtoolsBroker.onceConnected.then(() => {
+    DevtoolsConnection.ensure();
+    onceConnectedResolve(channel);
+    isConnected = true;
+});
+class DevtoolsConnection {
+    static get isConnected() {
+        return isConnected;
+    }
+    static get onceConnected() {
+        return onceConnected;
+    }
+    static get() {
+        return channel;
+    }
+    static ensure() {
+        if (!channel)
+            channel = new DevtoolsChannel();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var MappingType;
+(function (MappingType) {
+    MappingType[MappingType["Mapped"] = 0] = "Mapped";
+    MappingType[MappingType["LocalMapped"] = 1] = "LocalMapped";
+    MappingType[MappingType["RemoteMapped"] = 2] = "RemoteMapped";
+    MappingType[MappingType["Direct"] = 3] = "Direct";
+    MappingType[MappingType["ObjectMap"] = 4] = "ObjectMap";
+    MappingType[MappingType["List"] = 5] = "List";
+    MappingType[MappingType["ByLiteral"] = 6] = "ByLiteral";
+})(MappingType || (MappingType = {}));
+const targets = new Map();
+function setPropertyKey(target, propertyKey) {
+    if (!targets.has(target)) {
+        targets.set(target, new Map());
+    }
+    if (!targets.get(target).has(propertyKey)) {
+        targets.get(target).set(propertyKey, []);
+    }
+}
+function set(target, propertyKey, parameterIndex, info) {
+    setPropertyKey(target, propertyKey);
+    targets.get(target).get(propertyKey)[parameterIndex] = info;
+}
+function Direct(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct });
+}
+function Mapped(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Mapped });
+}
+function ByLiteral(constructor) {
+    return (target, propertyKey, parameterIndex) => {
+        const info = { type: MappingType.ByLiteral, converter: constructor };
+        set(target.constructor, propertyKey, parameterIndex, info);
+    };
+}
+function ObjectMap(key, value) {
+    return (target, propertyKey, parameterIndex) => {
+        const info = { type: MappingType.ObjectMap, key: { type: key }, value: { type: value } };
+        set(target.constructor, propertyKey, parameterIndex, info);
+    };
+}
+function List(value) {
+    return (target, propertyKey, parameterIndex) => {
+        const info = { type: MappingType.List, value: { type: value } };
+        set(target.constructor, propertyKey, parameterIndex, info);
+    };
+}
+function LocalMapped(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.LocalMapped });
+}
+function RemoteMapped(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.RemoteMapped });
+}
+function NoArgs(target, propertyKey) {
+    setPropertyKey(target.constructor, propertyKey);
+}
+function RedundantInitializer(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct, initializer: true, redundant: true });
+}
+function Initializer(target, propertyKey, parameterIndex) {
+    set(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct, initializer: true });
+}
+function Identifier(target, propertyKey, parameterIndex) {
+    assert$1(targets.get(target.constructor));
+    assert$1(targets.get(target.constructor).get(propertyKey));
+    assert$1(targets.get(target.constructor).get(propertyKey)[parameterIndex]);
+    targets.get(target.constructor).get(propertyKey)[parameterIndex].identifier = true;
+}
+function RemoteIgnore(target, propertyKey, parameterIndex) {
+    assert$1(targets.get(target.constructor));
+    assert$1(targets.get(target.constructor).get(propertyKey));
+    assert$1(targets.get(target.constructor).get(propertyKey)[parameterIndex]);
+    targets.get(target.constructor).get(propertyKey)[parameterIndex].ignore = true;
+}
+class ThingMapper {
+    constructor(prefix) {
+        this._prefix = prefix;
+        this._nextIdentifier = 0;
+        this._idMap = new Map();
+        this._reverseIdMap = new Map();
+    }
+    _newIdentifier() {
+        return this._prefix + (this._nextIdentifier++);
+    }
+    createMappingForThing(thing, requestedId = undefined) {
+        assert$1(!this._reverseIdMap.has(thing));
+        let id;
+        if (requestedId) {
+            id = requestedId;
+        }
+        else if (thing.apiChannelMappingId) {
+            id = thing.apiChannelMappingId;
+        }
+        else {
+            id = this._newIdentifier();
+        }
+        assert$1(!this._idMap.has(id), `${requestedId ? 'requestedId' : (thing.apiChannelMappingId ? 'apiChannelMappingId' : 'newIdentifier()')} ${id} already in use`);
+        this.establishThingMapping(id, thing);
+        return id;
+    }
+    maybeCreateMappingForThing(thing) {
+        if (this.hasMappingForThing(thing)) {
+            return this.identifierForThing(thing);
+        }
+        return this.createMappingForThing(thing);
+    }
+    async establishThingMapping(id, thing) {
+        let continuation;
+        if (Array.isArray(thing)) {
+            [thing, continuation] = thing;
+        }
+        this._idMap.set(id, thing);
+        if (thing instanceof Promise) {
+            assert$1(continuation == null);
+            await this.establishThingMapping(id, await thing);
+        }
+        else {
+            this._reverseIdMap.set(thing, id);
+            if (continuation) {
+                await continuation();
+            }
+        }
+    }
+    hasMappingForThing(thing) {
+        return this._reverseIdMap.has(thing);
+    }
+    identifierForThing(thing) {
+        assert$1(this._reverseIdMap.has(thing), `Missing thing [${thing}]`);
+        return this._reverseIdMap.get(thing);
+    }
+    thingForIdentifier(id) {
+        assert$1(this._idMap.has(id), `Missing id: ${id}`);
+        return this._idMap.get(id);
+    }
+}
+class APIPort {
+    constructor(messagePort, prefix) {
+        this._port = messagePort;
+        this._mapper = new ThingMapper(prefix);
+        this._port.onmessage = async (e) => this._processMessage(e);
+        this._debugAttachment = null;
+        this._attachStack = false;
+        this.messageCount = 0;
+        this._testingHook();
+    }
+    // Overridden by unit tests.
+    _testingHook() {
+    }
+    close() {
+        this._port.close();
+    }
+    async _processMessage(e) {
+        assert$1(this['before' + e.data.messageType] !== undefined);
+        this['before' + e.data.messageType](e.data.messageBody);
+        const count = this.messageCount++;
+        if (this._debugAttachment) {
+            this._debugAttachment.handlePecMessage('on' + e.data.messageType, e.data.messageBody, count, e.data.stack);
+        }
+    }
+    send(name, args) {
+        const call = { messageType: name, messageBody: args, stack: this._attachStack ? new Error().stack : undefined };
+        const count = this.messageCount++;
+        this._port.postMessage(call);
+        if (this._debugAttachment) {
+            this._debugAttachment.handlePecMessage(name, args, count, new Error().stack);
+        }
+    }
+}
+// The horror. From https://davidwalsh.name/javascript-arguments
+function getArgs(func) {
+    // First match everything inside the function argument parens.
+    const args = func.toString().match(/.*?\(([^)]*)\)/)[1];
+    // Split the arguments string into an array comma delimited.
+    return args.split(',').map((arg) => {
+        // Ensure no inline comments are parsed and trim the whitespace.
+        return arg.replace(/\/\*.*\*\//, '').trim();
+        // Ensure no undefined values are added.
+    }).filter((arg) => arg);
+}
+// value is covariant with info, and errors will be found
+// at start of runtime. 
+// tslint:disable-next-line: no-any
+function convert(info, value, mapper) {
+    switch (info.type) {
+        case MappingType.Mapped:
+            return mapper.identifierForThing(value);
+        case MappingType.LocalMapped:
+            return mapper.maybeCreateMappingForThing(value);
+        case MappingType.RemoteMapped:
+            // This is on the local side, so we don't do anything here.
+            return value;
+        case MappingType.Direct:
+            return value;
+        case MappingType.ObjectMap:
+            const r = {};
+            value.forEach((childvalue, key) => r[convert(info.key, key, mapper)] = convert(info.value, childvalue, mapper));
+            return r;
+        case MappingType.List:
+            return value.map(v => convert(info.value, v, mapper));
+        case MappingType.ByLiteral:
+            return value.toLiteral();
+        default:
+            throw new Error(`Can't yet send MappingType ${info.type}`);
+    }
+}
+// value is covariant with info, and errors will be found
+// at start of runtime. 
+// tslint:disable-next-line: no-any
+function unconvert(info, value, mapper) {
+    switch (info.type) {
+        case MappingType.Mapped:
+            return mapper.thingForIdentifier(value);
+        case MappingType.LocalMapped:
+            // This is on the remote side, so we don't do anything here.
+            return value;
+        case MappingType.RemoteMapped:
+            return mapper.thingForIdentifier(value);
+        case MappingType.Direct:
+            return value;
+        case MappingType.ObjectMap:
+            const r = new Map();
+            for (const key of Object.keys(value)) {
+                r.set(unconvert(info.key, key, mapper), unconvert(info.value, value[key], mapper));
+            }
+            return r;
+        case MappingType.List:
+            return value.map(v => unconvert(info.value, v, mapper));
+        case MappingType.ByLiteral:
+            return info.converter.fromLiteral(value);
+        default:
+            throw new Error(`Can't yet recieve MappingType ${info.type}`);
+    }
+}
+function AutoConstruct(target) {
+    return (constructor) => {
+        const doConstruct = (me, other) => {
+            const functions = targets.get(me);
+            for (const f of functions.keys()) {
+                const argNames = getArgs(me.prototype[f]);
+                const descriptor = functions.get(f);
+                // If this descriptor is for an initializer, record that fact and we'll process it after
+                // the rest of the arguments.
+                const initializer = descriptor.findIndex(d => d.initializer);
+                // If this descriptor records that this argument is the identifier, record it
+                // as the requestedId for mapping below.
+                const requestedId = descriptor.findIndex(d => d.identifier);
+                function impl(...args) {
+                    const messageBody = {};
+                    for (let i = 0; i < descriptor.length; i++) {
+                        if (i === initializer) {
+                            continue;
+                        }
+                        // Process this argument.
+                        messageBody[argNames[i]] = convert(descriptor[i], args[i], this._mapper);
+                    }
+                    // Process the initializer if present.
+                    if (initializer !== -1) {
+                        if (descriptor[initializer].redundant) {
+                            assert$1(requestedId === -1);
+                            messageBody['identifier'] = this._mapper.maybeCreateMappingForThing(args[initializer]);
+                        }
+                        else {
+                            messageBody['identifier'] = this._mapper.createMappingForThing(args[initializer], args[requestedId]);
+                        }
+                    }
+                    this.send(f, messageBody);
+                }
+                async function before(messageBody) {
+                    const args = [];
+                    const promises = [];
+                    for (let i = 0; i < descriptor.length; i++) {
+                        // If there's a requestedId then the receiving end won't expect to
+                        // see the identifier as well.
+                        if (i === initializer && (requestedId !== -1 || descriptor[i].ignore)) {
+                            continue;
+                        }
+                        const argName = i === initializer ? 'identifier' : argNames[i];
+                        const result = unconvert(descriptor[i], messageBody[argName], this._mapper);
+                        if (result instanceof Promise) {
+                            promises.push({ promise: result, position: args.length });
+                            args.push(() => unconvert(descriptor[i], messageBody[argName], this._mapper));
+                        }
+                        else {
+                            args.push(result);
+                        }
+                    }
+                    if (promises.length > 0) {
+                        await Promise.all(promises.map(a => a.promise));
+                        promises.forEach(a => args[a.position] = args[a.position]());
+                    }
+                    const result = this['on' + f](...args);
+                    // If this message is an initializer, need to establish a mapping
+                    // with the result of processing the message.
+                    if (initializer > -1) {
+                        assert$1(messageBody['identifier']);
+                        await this._mapper.establishThingMapping(messageBody['identifier'], result);
+                    }
+                }
+                Object.defineProperty(me.prototype, f, {
+                    get() {
+                        return impl;
+                    }
+                });
+                Object.defineProperty(other.prototype, 'before' + f, {
+                    get() {
+                        return before;
+                    }
+                });
+            }
+        };
+        doConstruct(constructor, target);
+        doConstruct(target, constructor);
+    };
+}
+class PECOuterPort extends APIPort {
+    constructor(messagePort, arc) {
+        super(messagePort, 'o');
+        DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+            this.DevToolsConnected();
+            this._debugAttachment = new OuterPortAttachment(arc, devtoolsChannel);
+        });
+    }
+    Stop() { }
+    DefineHandle(handle, type, name) { }
+    InstantiateParticle(particle, id, spec, handles) { }
+    UIEvent(particle, slotName, event) { }
+    SimpleCallback(callback, data) { }
+    AwaitIdle(version) { }
+    StartRender(particle, slotName, providedSlots, contentTypes) { }
+    StopRender(particle, slotName) { }
+    GetBackingStoreCallback(store, callback, type, name, id, storageKey) { }
+    ConstructArcCallback(callback, arc) { }
+    CreateHandleCallback(handle, callback, type, name, id) { }
+    MapHandleCallback(newHandle, callback, id) { }
+    CreateSlotCallback(slot, callback, hostedSlotId) { }
+    InnerArcRender(transformationParticle, transformationSlotName, hostedSlotId, content) { }
+    // We need an API call to tell the context side that DevTools has been connected, so it can start sending
+    // stack traces attached to the API calls made from that side.
+    DevToolsConnected() { }
+}
+__decorate([
+    NoArgs
+], PECOuterPort.prototype, "Stop", null);
+__decorate([
+    __param(0, RedundantInitializer), __param(1, ByLiteral(Type)), __param(2, Direct)
+], PECOuterPort.prototype, "DefineHandle", null);
+__decorate([
+    __param(0, Initializer), __param(1, Identifier), __param(1, Direct), __param(2, ByLiteral(ParticleSpec)), __param(3, ObjectMap(MappingType.Direct, MappingType.Mapped))
+], PECOuterPort.prototype, "InstantiateParticle", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, Direct)
+], PECOuterPort.prototype, "UIEvent", null);
+__decorate([
+    __param(0, RemoteMapped), __param(1, Direct)
+], PECOuterPort.prototype, "SimpleCallback", null);
+__decorate([
+    __param(0, Direct)
+], PECOuterPort.prototype, "AwaitIdle", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, ObjectMap(MappingType.Direct, MappingType.Direct)), __param(3, List(MappingType.Direct))
+], PECOuterPort.prototype, "StartRender", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct)
+], PECOuterPort.prototype, "StopRender", null);
+__decorate([
+    __param(0, Initializer), __param(1, RemoteMapped), __param(2, ByLiteral(Type)), __param(3, Direct), __param(4, Identifier), __param(4, Direct), __param(5, Direct)
+], PECOuterPort.prototype, "GetBackingStoreCallback", null);
+__decorate([
+    __param(0, RemoteMapped), __param(1, LocalMapped)
+], PECOuterPort.prototype, "ConstructArcCallback", null);
+__decorate([
+    __param(0, Initializer), __param(1, RemoteMapped), __param(2, ByLiteral(Type)), __param(3, Direct), __param(4, Identifier), __param(4, Direct)
+], PECOuterPort.prototype, "CreateHandleCallback", null);
+__decorate([
+    __param(0, RemoteIgnore), __param(0, Initializer), __param(1, RemoteMapped), __param(2, Direct)
+], PECOuterPort.prototype, "MapHandleCallback", null);
+__decorate([
+    __param(0, RemoteIgnore), __param(0, Initializer), __param(1, RemoteMapped), __param(2, Direct)
+], PECOuterPort.prototype, "CreateSlotCallback", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, Direct), __param(3, Direct)
+], PECOuterPort.prototype, "InnerArcRender", null);
+__decorate([
+    NoArgs
+], PECOuterPort.prototype, "DevToolsConnected", null);
+let PECInnerPort = class PECInnerPort extends APIPort {
+    constructor(messagePort) {
+        super(messagePort, 'i');
+    }
+    Render(particle, slotName, content) { }
+    InitializeProxy(handle, callback) { }
+    SynchronizeProxy(handle, callback) { }
+    HandleGet(handle, callback) { }
+    HandleToList(handle, callback) { }
+    HandleSet(handle, data, particleId, barrier) { }
+    HandleClear(handle, particleId, barrier) { }
+    HandleStore(handle, callback, data, particleId) { }
+    HandleRemove(handle, callback, data, particleId) { }
+    HandleRemoveMultiple(handle, callback, data, particleId) { }
+    HandleStream(handle, callback, pageSize, forward) { }
+    StreamCursorNext(handle, callback, cursorId) { }
+    StreamCursorClose(handle, cursorId) { }
+    Idle(version, relevance) { }
+    GetBackingStore(callback, storageKey, type) { }
+    ConstructInnerArc(callback, particle) { }
+    ArcCreateHandle(callback, arc, type, name) { }
+    ArcMapHandle(callback, arc, handle) { }
+    ArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) { }
+    ArcLoadRecipe(arc, recipe, callback) { }
+    RaiseSystemException(exception, methodName, particleId) { }
+    // To show stack traces for calls made inside the context, we need to capture the trace at the call point and
+    // send it along with the message. We only want to do this after a DevTools connection has been detected, which
+    // we can't directly detect inside a worker context, so the PECOuterPort will send an API message instead.
+    onDevToolsConnected() {
+        this._attachStack = true;
+    }
+};
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, Direct)
+], PECInnerPort.prototype, "Render", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped)
+], PECInnerPort.prototype, "InitializeProxy", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped)
+], PECInnerPort.prototype, "SynchronizeProxy", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped)
+], PECInnerPort.prototype, "HandleGet", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped)
+], PECInnerPort.prototype, "HandleToList", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, Direct), __param(3, Direct)
+], PECInnerPort.prototype, "HandleSet", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct), __param(2, Direct)
+], PECInnerPort.prototype, "HandleClear", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct), __param(3, Direct)
+], PECInnerPort.prototype, "HandleStore", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct), __param(3, Direct)
+], PECInnerPort.prototype, "HandleRemove", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct), __param(3, Direct)
+], PECInnerPort.prototype, "HandleRemoveMultiple", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct), __param(3, Direct)
+], PECInnerPort.prototype, "HandleStream", null);
+__decorate([
+    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct)
+], PECInnerPort.prototype, "StreamCursorNext", null);
+__decorate([
+    __param(0, Mapped), __param(1, Direct)
+], PECInnerPort.prototype, "StreamCursorClose", null);
+__decorate([
+    __param(0, Direct), __param(1, ObjectMap(MappingType.Mapped, MappingType.Direct))
+], PECInnerPort.prototype, "Idle", null);
+__decorate([
+    __param(0, LocalMapped), __param(1, Direct), __param(2, ByLiteral(Type))
+], PECInnerPort.prototype, "GetBackingStore", null);
+__decorate([
+    __param(0, LocalMapped), __param(1, Mapped)
+], PECInnerPort.prototype, "ConstructInnerArc", null);
+__decorate([
+    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, ByLiteral(Type)), __param(3, Direct)
+], PECInnerPort.prototype, "ArcCreateHandle", null);
+__decorate([
+    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped)
+], PECInnerPort.prototype, "ArcMapHandle", null);
+__decorate([
+    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped), __param(3, Direct), __param(4, Direct), __param(5, Direct), __param(6, Direct)
+], PECInnerPort.prototype, "ArcCreateSlot", null);
+__decorate([
+    __param(0, RemoteMapped), __param(1, Direct), __param(2, LocalMapped)
+], PECInnerPort.prototype, "ArcLoadRecipe", null);
+__decorate([
+    __param(0, Direct), __param(1, Direct), __param(2, Direct)
+], PECInnerPort.prototype, "RaiseSystemException", null);
+PECInnerPort = __decorate([
+    AutoConstruct(PECOuterPort)
+], PECInnerPort);
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
 /**
@@ -19611,7 +20008,7 @@ var WalkerTactic;
 class WalkerBase extends StrategizerWalker {
     constructor(tactic) {
         super();
-        assert(tactic);
+        assert$1(tactic);
         this.tactic = tactic;
     }
     _runUpdateList(recipe, updateList) {
@@ -19687,7 +20084,7 @@ class WalkerBase extends StrategizerWalker {
         if (result.constructor === Array && result.length <= 0) {
             return true;
         }
-        assert(typeof result === 'function' || result.length);
+        assert$1(typeof result === 'function' || result.length);
         return false;
     }
 }
@@ -19804,7 +20201,7 @@ class MapSlots extends Strategy {
             }
             slotConnection.connectToSlot(clonedSlot);
         }
-        assert(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id === slotConnection.targetSlot.id), `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
+        assert$1(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id === slotConnection.targetSlot.id), `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
         slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
         // TODO: need to concat to existing tags and dedup?
         slotConnection.targetSlot.tags = [...selectedSlot.tags];
@@ -20004,4239 +20401,6 @@ class RecipeResolver {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-/**
- * Holds container (eg div element) and its additional info.
- * Must be initialized either with a container (for root slots provided by the shell) or
- * tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
- */
-class SlotContext {
-    constructor(id, name, tags, container, spec, sourceSlotConsumer = null) {
-        this.tags = [];
-        // The slots consumers rendered into this context.
-        this.slotConsumers = [];
-        assert(Boolean(container) !== Boolean(spec), `Exactly one of either container or slotSpec may be set`);
-        assert(Boolean(spec) === Boolean(spec), `Spec and source slot can only be set together`);
-        this.id = id;
-        this.name = name;
-        this.tags = tags || [];
-        this._container = container;
-        // The context's accompanying ProvidedSlotSpec (see particle-spec.js).
-        // Initialized to a default spec, if the container is one of the shell provided top root-contexts.
-        this.spec = spec || new ProvidedSlotSpec({ name });
-        // The slot consumer providing this container (eg div)
-        this.sourceSlotConsumer = sourceSlotConsumer;
-        if (this.sourceSlotConsumer) {
-            this.sourceSlotConsumer.providedSlotContexts.push(this);
-        }
-        // The list of handles this context is restricted to.
-        this.handles = this.spec && this.sourceSlotConsumer
-            ? this.spec.handles.map(handle => this.sourceSlotConsumer.consumeConn.particle.connections[handle].handle).filter(a => a !== undefined)
-            : [];
-    }
-    get container() { return this._container; }
-    static createContextForContainer(id, name, container, tags) {
-        return new SlotContext(id, name, tags, container, null);
-    }
-    isSameContainer(container) {
-        if (this.spec.isSet) {
-            if (Boolean(this.container) !== Boolean(container)) {
-                return false;
-            }
-            if (!this.container) {
-                return true;
-            }
-            return Object.keys(this.container).length === Object.keys(container).length &&
-                Object.keys(this.container).every(key => Object.keys(container).some(newKey => newKey === key)) &&
-                Object.values(this.container).every(currentContainer => Object.values(container).some(newContainer => newContainer === currentContainer));
-        }
-        return this.container === container;
-    }
-    set container(container) {
-        if (this.isSameContainer(container)) {
-            return;
-        }
-        const originalContainer = this.container;
-        this._container = container;
-        this.slotConsumers.forEach(slotConsumer => slotConsumer.onContainerUpdate(this.container, originalContainer));
-    }
-    addSlotConsumer(slotConsumer) {
-        this.slotConsumers.push(slotConsumer);
-        slotConsumer.slotContext = this;
-        if (this.container) {
-            slotConsumer.onContainerUpdate(this.container, null);
-        }
-    }
-    clearSlotConsumers() {
-        this.slotConsumers.forEach(slotConsumer => slotConsumer.slotContext = null);
-        this.slotConsumers = [];
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class SlotConsumer {
-    constructor(consumeConn, containerKind) {
-        this.providedSlotContexts = [];
-        // Contains `container` and other modality specific rendering information
-        // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
-        this._renderingBySubId = new Map();
-        this.innerContainerBySlotId = {};
-        this._consumeConn = consumeConn;
-        this.containerKind = containerKind;
-    }
-    get consumeConn() { return this._consumeConn; }
-    getRendering(subId) { return this._renderingBySubId.get(subId); }
-    get renderings() { return [...this._renderingBySubId.entries()]; }
-    addRenderingBySubId(subId, rendering) {
-        this._renderingBySubId.set(subId, rendering);
-    }
-    onContainerUpdate(newContainer, originalContainer) {
-        if (Boolean(newContainer) !== Boolean(originalContainer)) {
-            if (newContainer) {
-                this.startRender();
-            }
-            else {
-                this.stopRender();
-            }
-        }
-        if (newContainer !== originalContainer) {
-            const contextContainerBySubId = new Map();
-            if (this.slotContext && this.slotContext.spec.isSet) {
-                Object.keys(this.slotContext.container || {}).forEach(subId => contextContainerBySubId.set(subId, this.slotContext.container[subId]));
-            }
-            else {
-                contextContainerBySubId.set(undefined, this.slotContext.container);
-            }
-            for (const [subId, container] of contextContainerBySubId) {
-                if (!this._renderingBySubId.has(subId)) {
-                    this._renderingBySubId.set(subId, {});
-                }
-                const rendering = this.getRendering(subId);
-                if (!rendering.container || !this.isSameContainer(rendering.container, container)) {
-                    if (rendering.container) {
-                        // The rendering already had a container, but it's changed. The original container needs to be cleared.
-                        this.clearContainer(rendering);
-                    }
-                    rendering.container = this.createNewContainer(container, subId);
-                }
-            }
-            for (const [subId, rendering] of this.renderings) {
-                if (!contextContainerBySubId.has(subId)) {
-                    this.deleteContainer(rendering.container);
-                    this._renderingBySubId.delete(subId);
-                }
-            }
-        }
-    }
-    createProvidedContexts() {
-        return this.consumeConn.slotSpec.providedSlots.map(spec => new SlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
-    }
-    updateProvidedContexts() {
-        this.providedSlotContexts.forEach(providedContext => {
-            providedContext.container = this.getInnerContainer(providedContext.id);
-        });
-    }
-    startRender() {
-        if (this.consumeConn && this.startRenderCallback) {
-            this.startRenderCallback({
-                particle: this.consumeConn.particle,
-                slotName: this.consumeConn.name,
-                providedSlots: new Map(this.providedSlotContexts.map(context => [context.name, context.id])),
-                contentTypes: this.constructRenderRequest()
-            });
-        }
-    }
-    stopRender() {
-        if (this.consumeConn && this.stopRenderCallback) {
-            this.stopRenderCallback({ particle: this.consumeConn.particle, slotName: this.consumeConn.name });
-        }
-    }
-    async setContent(content, handler, arc) {
-        if (content && Object.keys(content).length > 0) {
-            if (arc) {
-                content.descriptions = await this.populateHandleDescriptions(arc);
-            }
-        }
-        this.eventHandler = handler;
-        for (const [subId, rendering] of this.renderings) {
-            this.setContainerContent(rendering, this.formatContent(content, subId), subId);
-        }
-    }
-    async populateHandleDescriptions(arc) {
-        const descriptions = {};
-        await Promise.all(Object.values(this.consumeConn.particle.connections).map(async (handleConn) => {
-            // TODO(mmandlis): convert back to .handle and .name after all recipe files converted to typescript.
-            if (handleConn['handle']) {
-                descriptions[`${handleConn['name']}.description`] = (await arc.description.getHandleDescription(handleConn['handle'])).toString();
-            }
-        }));
-        return descriptions;
-    }
-    getInnerContainer(slotId) {
-        return this.innerContainerBySlotId[slotId];
-    }
-    _initInnerSlotContainer(slotId, subId, container) {
-        if (subId) {
-            if (!this.innerContainerBySlotId[slotId]) {
-                this.innerContainerBySlotId[slotId] = {};
-            }
-            assert(!this.innerContainerBySlotId[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
-            this.innerContainerBySlotId[slotId][subId] = container;
-        }
-        else {
-            this.innerContainerBySlotId[slotId] = container;
-        }
-    }
-    _clearInnerSlotContainers(subIds) {
-        subIds.forEach(subId => {
-            if (subId) {
-                Object.values(this.innerContainerBySlotId).forEach(inner => delete inner[subId]);
-            }
-            else {
-                this.innerContainerBySlotId = {};
-            }
-        });
-    }
-    isSameContainer(container, contextContainer) { return container === contextContainer; }
-    get hostedConsumers() {
-        return this.providedSlotContexts
-            .filter(context => context.constructor.name === 'HostedSlotContext')
-            .map(context => context.sourceSlotConsumer)
-            .filter(consumer => consumer !== this);
-    }
-    // abstract
-    constructRenderRequest(hostedSlotConsumer = null) { return []; }
-    dispose() { }
-    createNewContainer(contextContainer, subId) { return null; }
-    deleteContainer(container) { }
-    clearContainer(rendering) { }
-    setContainerContent(rendering, content, subId) { }
-    formatContent(content, subId) { return null; }
-    formatHostedContent(hostedSlot, content) { return null; }
-    static clear(container) { }
-}
-
-/*
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-// HTMLImports compatibility stuff, delete soonish
-if (typeof document !== 'undefined' && !('currentImport' in document)) {
-  Object.defineProperty(document, 'currentImport', {
-    get() {
-      const script = this.currentScript;
-      let doc = script.ownerDocument || this;
-      // this code for CEv1 compatible HTMLImports polyfill (aka modern)
-      if (window['HTMLImports']) {
-        doc = window.HTMLImports.importForElement(script);
-        doc.URL = script.parentElement.href;
-      }
-      return doc;
-    }
-  });
-}
-
-/* Annotator */
-// tree walker that generates arbitrary data using visitor function `cb`
-// `cb` is called as `cb(node, key, notes)`
-// where
-//   `node` is a visited node.
-//   `key` is a handle which identifies the node in a map generated by `Annotator.locateNodes`.
-class Annotator {
-  constructor(cb) {
-    this.cb = cb;
-  }
-  // For subtree at `node`, produce annotation object `notes`.
-  // the content of `notes` is completely determined by the behavior of the
-  // annotator callback function supplied at the constructor.
-  annotate(node, notes, opts) {
-    this.notes = notes;
-    this.opts = opts || 0;
-    this.key = this.opts.key || 0;
-    notes.locator = this._annotateSubtree(node);
-    return notes;
-  }
-  // walking subtree at `node`
-  _annotateSubtree(node) {
-    let childLocators;
-    for (let i = 0, child = node.firstChild, previous = null, neo; child; i++) {
-      // returns a locator only if a node in the subtree requires one
-      const childLocator = this._annotateNode(child);
-      // only when necessary, maintain a sparse array of locators
-      if (childLocator) {
-        (childLocators = childLocators || {})[i] = childLocator;
-      }
-      // `child` may have been evacipated by visitor
-      neo = previous ? previous.nextSibling : node.firstChild;
-      if (neo === child) {
-        previous = child;
-        child = child.nextSibling;
-      } else {
-        child = neo;
-        i--;
-      }
-    }
-    // is falsey unless there was at least one childLocator
-    return childLocators;
-  }
-  _annotateNode(node) {
-    // visit node
-    const key = this.key++;
-    const shouldLocate = this.cb(node, key, this.notes, this.opts);
-    // recurse
-    const locators = this._annotateSubtree(node);
-    if (shouldLocate || locators) {
-      const cl = Object.create(null);
-      cl.key = key;
-      if (locators) {
-        cl.sub = locators;
-      }
-      return cl;
-    }
-  }
-}
-
-const locateNodes = function(root, locator, map) {
-  map = map || [];
-  for (const n in locator) {
-    const loc = locator[n];
-    if (loc) {
-      const node = root.childNodes[n];
-      // TODO(sjmiles): text-nodes sometimes evacipate when stamped, so map to the parentElement instead
-      map[loc.key] = (node.nodeType === Node.TEXT_NODE) ? node.parentElement : node;
-      if (loc.sub) {
-        // recurse
-        locateNodes(node, loc.sub, map);
-      }
-    }
-  }
-  return map;
-};
-
-/* Annotation Producer */
-// must return `true` for any node whose key we wish to track
-const annotatorImpl = function(node, key, notes, opts) {
-  // hook
-  if (opts.annotator && opts.annotator(node, key, notes, opts)) {
-    return true;
-  }
-  // default
-  switch (node.nodeType) {
-    case Node.DOCUMENT_FRAGMENT_NODE:
-      return;
-    case Node.ELEMENT_NODE:
-      return annotateElementNode(node, key, notes);
-    case Node.TEXT_NODE:
-      return annotateTextNode(node, key, notes);
-  }
-};
-
-const annotateTextNode = function(node, key, notes) {
-  if (annotateMustache(node, key, notes, 'textContent', node.textContent)) {
-    node.textContent = '';
-    return true;
-  }
-};
-
-const annotateElementNode = function(node, key, notes) {
-  if (node.hasAttributes()) {
-    let noted = false;
-    for (let a$ = node.attributes, i = a$.length - 1, a; i >= 0 && (a = a$[i]); i--) {
-      if (
-        annotateEvent(node, key, notes, a.name, a.value) ||
-        annotateMustache(node, key, notes, a.name, a.value)
-      ) {
-        node.removeAttribute(a.name);
-        noted = true;
-      }
-    }
-    return noted;
-  }
-};
-
-const annotateMustache = function(node, key, notes, property, mustache) {
-  if (mustache.slice(0, 2) === '{{') {
-    if (property === 'class') {
-      property = 'className';
-    }
-    let value = mustache.slice(2, -2);
-    const override = value.split(':');
-    if (override.length === 2) {
-      property = override[0];
-      value = override[1];
-    }
-    takeNote(notes, key, 'mustaches', property, value);
-    if (value[0] === '$') {
-      takeNote(notes, 'xlate', value, true);
-    }
-    return true;
-  }
-};
-
-const annotateEvent = function(node, key, notes, name, value) {
-  if (name.slice(0, 3) === 'on-') {
-    if (value.slice(0, 2) === '{{') {
-      value = value.slice(2, -2);
-      console.warn(
-        `Xen: event handler for '${name}' expressed as a mustache, which is not supported. Using literal value '${value}' instead.`
-      );
-    }
-    takeNote(notes, key, 'events', name.slice(3), value);
-    return true;
-  }
-};
-
-const takeNote = function(notes, key, group, name, note) {
-  const n$ = notes[key] || (notes[key] = Object.create(null));
-  (n$[group] || (n$[group] = {}))[name] = note;
-};
-
-const annotator = new Annotator(annotatorImpl);
-
-const annotate = function(root, key, opts) {
-  return (root._notes ||
-    (root._notes = annotator.annotate(root.content, {/*ids:{}*/}, key, opts))
-  );
-};
-
-/* Annotation Consumer */
-const mapEvents = function(notes, map, mapper) {
-  // add event listeners
-  for (const key in notes) {
-    const node = map[key];
-    const events = notes[key] && notes[key].events;
-    if (node && events) {
-      for (const name in events) {
-        mapper(node, name, events[name]);
-      }
-    }
-  }
-};
-
-const listen = function(controller, node, eventName, handlerName) {
-  node.addEventListener(eventName, function(e) {
-    if (controller[handlerName]) {
-      return controller[handlerName](e, e.detail);
-    }
-  });
-};
-
-const set = function(notes, map, scope, controller) {
-  if (scope) {
-    for (const key in notes) {
-      const node = map[key];
-      if (node) {
-        // everybody gets a scope
-        node.scope = scope;
-        // now get your regularly scheduled bindings
-        const mustaches = notes[key].mustaches;
-        for (const name in mustaches) {
-          const property = mustaches[name];
-          if (property in scope) {
-            _set(node, name, scope[property], controller);
-          }
-        }
-      }
-    }
-  }
-};
-
-const _set = function(node, property, value, controller) {
-  // TODO(sjmiles): the property conditionals here could be precompiled
-  const modifier = property.slice(-1);
-  if (property === 'style%' || property === 'style' || property === 'xen:style') {
-    if (typeof value === 'string') {
-      node.style.cssText = value;
-    } else {
-      Object.assign(node.style, value);
-    }
-  } else if (modifier == '$') {
-    const n = property.slice(0, -1);
-    if (typeof value === 'boolean' || value === undefined) {
-      setBoolAttribute(node, n, Boolean(value));
-    } else {
-      node.setAttribute(n, value);
-    }
-  } else if (property === 'textContent') {
-    if (value && (value.$template || value.template)) {
-      _setSubTemplate(node, value, controller);
-    } else {
-      node.textContent = (value || '');
-    }
-  } else if (property === 'unsafe-html') {
-    node.innerHTML = value || '';
-  } else if (property === 'value') {
-    // TODO(sjmiles): specifically dirty-check `value` to avoid resetting input elements
-    if (node.value !== value) {
-      node.value = value;
-    }
-  } else {
-    node[property] = value;
-  }
-};
-
-const setBoolAttribute = function(node, attr, state) {
-  node[
-    (state === undefined ? !node.hasAttribute(attr) : state)
-      ? 'setAttribute'
-      : 'removeAttribute'
-  ](attr, '');
-};
-
-const _setSubTemplate = function(node, value, controller) {
-  // TODO(sjmiles): subtemplate iteration ability specially implemented to support arcs (serialization boundary)
-  // TODO(sjmiles): Aim to re-implement as a plugin.
-  let {template, models} = value;
-  if (!template) {
-    const container = node.getRootNode();
-    template = container.querySelector(`template[${value.$template}]`);
-  } else {
-    template = maybeStringToTemplate(template);
-  }
-  _renderSubtemplates(node, controller, template, models);
-};
-
-const _renderSubtemplates = function(container, controller, template, models) {
-  //console.log('XList::_renderList:', props);
-  let child = container.firstElementChild;
-  let next;
-  if (template && models) {
-    models && models.forEach((model, i)=>{
-      next = child && child.nextElementSibling;
-      // use existing node if possible
-      if (!child) {
-        const dom = stamp(template).events(controller);
-        child = dom.root.firstElementChild;
-        if (child) {
-          child._subtreeDom = dom;
-          container.appendChild(child);
-          if (!template._shapeWarning && dom.root.firstElementChild) {
-            template._shapeWarning = true;
-            console.warn(`xen-template: subtemplate has multiple root nodes: only the first is used.`, template);
-          }
-        }
-      }
-      if (child) {
-        child._subtreeDom.set(model);
-        child = next;
-      }
-    });
-  }
-  // remove extra nodes
-  while (child) {
-    next = child.nextElementSibling;
-    child.remove();
-    child = next;
-  }
-};
-
-//window.stampCount = 0;
-//window.stampTime = 0;
-
-const stamp = function(template, opts) {
-  //const startTime = performance.now();
-  //window.stampCount++;
-  template = maybeStringToTemplate(template);
-  // construct (or use memoized) notes
-  const notes = annotate(template, opts);
-  // CRITICAL TIMING ISSUE #1:
-  // importNode can have side-effects, like CustomElement callbacks (before we
-  // can do any work on the imported subtree, before we can mapEvents, e.g.).
-  // we could clone into an inert document (say a new template) and process the nodes
-  // before importing if necessary.
-  const root = document.importNode(template.content, true);
-  // map DOM to keys
-  const map = locateNodes(root, notes.locator);
-  // return dom manager
-  const dom = {
-    root,
-    notes,
-    map,
-    $(slctr) {
-      return this.root.querySelector(slctr);
-    },
-    set: function(scope) {
-      scope && set(notes, map, scope, this.controller);
-      return this;
-    },
-    events: function(controller) {
-      // TODO(sjmiles): originally `controller` was expected to be an Object with event handler
-      // methods on it (typically a custom-element stamping a template).
-      // In Arcs, we want to attach a generic handler (Function) for any event on this node.
-      // Subtemplate stamping gets involved because they need to reuse whichever controller.
-      // I suspect this can be simplified, but right now I'm just making it go.
-      if (controller && typeof controller !== 'function') {
-        controller = listen.bind(this, controller);
-      }
-      this.controller = controller;
-      if (controller) {
-        mapEvents(notes, map, controller);
-      }
-      return this;
-    },
-    appendTo: function(node) {
-      if (this.root) {
-        // TODO(sjmiles): assumes this.root is a fragment
-        node.appendChild(this.root);
-      } else {
-        console.warn('Xen: cannot appendTo, template stamped no DOM');
-      }
-      // TODO(sjmiles): this.root is no longer a fragment
-      this.root = node;
-      return this;
-    }
-  };
-  //window.stampTime += performance.now() - startTime;
-  return dom;
-};
-
-const maybeStringToTemplate = template => {
-  // TODO(sjmiles): need to memoize this somehow
-  return (typeof template === 'string') ? createTemplate(template) : template;
-};
-
-const createTemplate = innerHTML => {
-  return Object.assign(document.createElement('template'), {innerHTML});
-};
-
-const Template = {
-  createTemplate,
-  setBoolAttribute,
-  stamp
-};
-
-var IconStyles = `
-  icon {
-    font-family: "Material Icons";
-    font-size: 24px;
-    font-style: normal;
-    -webkit-font-feature-settings: "liga";
-    -webkit-font-smoothing: antialiased;
-    cursor: pointer;
-    user-select: none;
-    flex-shrink: 0;
-    /* partial FOUC prevention */
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    overflow: hidden;
-  }
-  icon[hidden] {
-    /* required because of display rule above,
-    display rule required for overflow: hidden */
-    display: none;
-  }
-`;
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const templateByName = new Map();
-class SlotDomConsumer extends SlotConsumer {
-    constructor(consumeConn, containerKind) {
-        super(consumeConn, containerKind);
-        this._observer = this._initMutationObserver();
-    }
-    constructRenderRequest(hostedSlotConsumer) {
-        const request = ['model'];
-        const prefixes = [this.templatePrefix];
-        if (hostedSlotConsumer) {
-            prefixes.push(hostedSlotConsumer.consumeConn.particle.name);
-            prefixes.push(hostedSlotConsumer.consumeConn.name);
-        }
-        if (!SlotDomConsumer.hasTemplate(prefixes.join('::'))) {
-            request.push('template');
-        }
-        return request;
-    }
-    static hasTemplate(templatePrefix) {
-        return [...templateByName.keys()].find(key => key.startsWith(templatePrefix));
-    }
-    isSameContainer(container, contextContainer) {
-        return container.parentNode === contextContainer;
-    }
-    createNewContainer(contextContainer, subId) {
-        assert(contextContainer, 'contextContainer cannot be null');
-        const newContainer = document.createElement(this.containerKind || 'div');
-        if (this.consumeConn) {
-            newContainer.setAttribute('particle-host', this.consumeConn.getQualifiedName());
-        }
-        contextContainer.appendChild(newContainer);
-        //return newContainer;
-        // TODO(sjmiles): introduce tree scope
-        newContainer.attachShadow({ mode: `open` });
-        // provision basic stylesheet
-        Template.stamp(`<style>${IconStyles}</style>`).appendTo(newContainer.shadowRoot);
-        // TODO(sjmiles): maybe inject boilerplate styles
-        return newContainer.shadowRoot;
-    }
-    deleteContainer(container) {
-        // step out of shadowDOM if container is a shadowRoot
-        container = container.host || container;
-        if (container.parentNode) {
-            container.parentNode.removeChild(container);
-        }
-    }
-    formatContent(content, subId) {
-        const newContent = {};
-        // Format model.
-        if (Object.keys(content).indexOf('model') >= 0) {
-            if (content.model) {
-                let formattedModel;
-                if (this.slotContext.spec.isSet && this.consumeConn.slotSpec.isSet) {
-                    formattedModel = this._modelForSetSlotConsumedAsSetSlot(content.model, subId);
-                }
-                else if (this.slotContext.spec.isSet && !this.consumeConn.slotSpec.isSet) {
-                    formattedModel = this._modelForSetSlotConsumedAsSingletonSlot(content.model, subId);
-                }
-                else {
-                    formattedModel = this._modelForSingletonSlot(content.model, subId);
-                }
-                if (!formattedModel)
-                    return null;
-                // Merge descriptions into model.
-                newContent.model = Object.assign({}, formattedModel, content.descriptions);
-            }
-            else {
-                newContent.model = undefined;
-            }
-        }
-        // Format template name and template.
-        if (content.templateName) {
-            newContent.templateName = typeof content.templateName === 'string' ? content.templateName : content.templateName[subId];
-            if (content.template) {
-                newContent.template = typeof content.template === 'string' ? content.template : content.template[newContent.templateName];
-            }
-        }
-        return newContent;
-    }
-    _modelForSingletonSlot(model, subId) {
-        assert(!subId, 'subId should be absent for a Singleton Slot');
-        return model;
-    }
-    _modelForSetSlotConsumedAsSetSlot(model, subId) {
-        assert(model.items && model.items.every(item => item.subId), 'model for a Set Slot consumed as a Set Slot needs to have items array, with every element having subId');
-        return model.items.find(item => item.subId === subId);
-    }
-    _modelForSetSlotConsumedAsSingletonSlot(model, subId) {
-        assert(model.subId, 'model for a Set Slot consumed as a Singleton Slot needs to have subId');
-        return subId === model.subId ? model : null;
-    }
-    setContainerContent(rendering, content, subId) {
-        if (!rendering.container) {
-            return;
-        }
-        if (!content || Object.keys(content).length === 0) {
-            this.clearContainer(rendering);
-            rendering.model = null;
-            return;
-        }
-        this._setTemplate(rendering, this.templatePrefix, content.templateName, content.template);
-        rendering.model = content.model;
-        this._onUpdate(rendering);
-    }
-    clearContainer(rendering) {
-        if (rendering.liveDom) {
-            rendering.liveDom.root.textContent = '';
-        }
-        rendering.liveDom = null;
-    }
-    dispose() {
-        if (this._observer) {
-            this._observer.disconnect();
-        }
-        this.renderings.forEach(([subId, { container }]) => this.deleteContainer(container));
-    }
-    static clear(container) {
-        container.textContent = '';
-    }
-    static dispose() {
-        // TODO(sjmiles): dumping the template cache causes errors when running parallel arcs
-        // in shell. Disable for now, the corpus of templates is static at this time.
-        // empty template cache
-        if (!SlotDomConsumer['multitenant']) {
-            templateByName.clear();
-        }
-    }
-    static findRootContainers(topContainer) {
-        const containerBySlotId = {};
-        Array.from(topContainer.querySelectorAll('[slotid]')).forEach(container => {
-            //assert(this.isDirectInnerSlot(container), 'Unexpected inner slot');
-            const slotId = container.getAttribute('slotid');
-            assert(!containerBySlotId[slotId], `Duplicate root slot ${slotId}`);
-            containerBySlotId[slotId] = container;
-        });
-        return containerBySlotId;
-    }
-    createTemplateElement(template) {
-        return Object.assign(document.createElement('template'), { innerHTML: template });
-    }
-    get templatePrefix() {
-        return this.consumeConn.getQualifiedName();
-    }
-    _setTemplate(rendering, templatePrefix, templateName, template) {
-        if (templateName) {
-            rendering.templateName = [templatePrefix, templateName].filter(s => s).join('::');
-            if (template) {
-                if (templateByName.has(rendering.templateName)) {
-                    // TODO: check whether the new template is different from the one that was previously used.
-                    // Template is being replaced.
-                    this.clearContainer(rendering);
-                }
-                templateByName.set(rendering.templateName, this.createTemplateElement(template));
-            }
-        }
-    }
-    _onUpdate(rendering) {
-        this._observe(rendering.container);
-        if (rendering.templateName) {
-            const template = templateByName.get(rendering.templateName);
-            assert(template, `No template for ${rendering.templateName}`);
-            this._stampTemplate(rendering, template);
-        }
-        this._updateModel(rendering);
-    }
-    _observe(container) {
-        assert(container, 'Cannot observe without a container');
-        if (this._observer) {
-            this._observer.observe(container, {
-                childList: true,
-                subtree: true,
-                attributes: true,
-                attributeFilter: ['subid']
-            });
-        }
-    }
-    _stampTemplate(rendering, template) {
-        if (!rendering.liveDom) {
-            // TODO(sjmiles): hack to allow subtree elements (e.g. x-list) to marshal events
-            rendering.container._eventMapper = this._eventMapper.bind(this, this.eventHandler);
-            rendering.liveDom = Template
-                .stamp(template)
-                .events(rendering.container._eventMapper)
-                .appendTo(rendering.container);
-        }
-    }
-    _updateModel(rendering) {
-        if (rendering.liveDom) {
-            rendering.liveDom.set(rendering.model);
-        }
-    }
-    initInnerContainers(container) {
-        Array.from(container.querySelectorAll('[slotid]')).forEach(innerContainer => {
-            if (!this.isDirectInnerSlot(container, innerContainer)) {
-                // Skip inner slots of an inner slot of the given slot.
-                return;
-            }
-            const slotId = this.getNodeValue(innerContainer, 'slotid');
-            const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
-            if (!providedContext) {
-                console.warn(`Slot ${this.consumeConn.slotSpec.name} has unexpected inner slot ${slotId}`);
-                return;
-            }
-            const subId = this.getNodeValue(innerContainer, 'subid');
-            assert(Boolean(subId) === providedContext.spec.isSet, `Sub-id ${subId} for slot ${providedContext.name} doesn't match set spec: ${providedContext.spec.isSet}`);
-            this._initInnerSlotContainer(slotId, subId, innerContainer);
-        });
-    }
-    // get a value from node that could be an attribute, if not a property
-    getNodeValue(node, name) {
-        // TODO(sjmiles): remember that attribute names from HTML are lower-case
-        return node[name] || node.getAttribute(name);
-    }
-    isDirectInnerSlot(container, innerContainer) {
-        if (innerContainer === container) {
-            return true;
-        }
-        const parentOf = elt => elt.parentNode;
-        let parentNode = parentOf(innerContainer);
-        while (parentNode) {
-            if (parentNode === container) {
-                return true;
-            }
-            // only some HTMLNodes have `getAttribute` (i.e. HTMLElement)
-            if (parentNode.getAttribute && parentNode.getAttribute('slotid')) {
-                // this is an inner slot of an inner slot.
-                return false;
-            }
-            parentNode = parentOf(parentNode);
-        }
-        // innerContainer won't be a child node of container if the method is triggered
-        // by mutation observer record and innerContainer was removed.
-        return false;
-    }
-    _initMutationObserver() {
-        if (this.consumeConn) {
-            return new MutationObserver(async (records) => {
-                this._observer.disconnect();
-                const updateContainersBySubId = new Map();
-                for (const [subId, { container }] of this.renderings) {
-                    if (records.some(r => this.isDirectInnerSlot(container, r.target))) {
-                        updateContainersBySubId.set(subId, container);
-                    }
-                }
-                const containers = [...updateContainersBySubId.values()];
-                if (containers.length > 0) {
-                    this._clearInnerSlotContainers([...updateContainersBySubId.keys()]);
-                    containers.forEach(container => this.initInnerContainers(container));
-                    this.updateProvidedContexts();
-                    // Reactivate the observer.
-                    containers.forEach(container => this._observe(container));
-                }
-            });
-        }
-        return null;
-    }
-    _eventMapper(eventHandler, node, eventName, handlerName) {
-        node.addEventListener(eventName, event => {
-            // TODO(sjmiles): we have an extremely minimalist approach to events here, this is useful IMO for
-            // finding the smallest set of features that we are going to need.
-            // First problem: click event firing multiple times as it bubbles up the tree, minimalist solution
-            // is to enforce a 'first listener' rule by executing `stopPropagation`.
-            event.stopPropagation();
-            // propagate keyboard information
-            const { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat } = event;
-            eventHandler({
-                handler: handlerName,
-                data: {
-                    // TODO(sjmiles): this is a data-key (as in key-value pair), may be confusing vs `keys`
-                    key: node.key,
-                    value: node.value,
-                    keys: { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat }
-                }
-            });
-        });
-    }
-    formatHostedContent(hostedSlot, content) {
-        if (content.templateName) {
-            if (typeof content.templateName === 'string') {
-                content.templateName = `${hostedSlot.consumeConn.particle.name}::${hostedSlot.consumeConn.name}::${content.templateName}`;
-            }
-            else {
-                // TODO(mmandlis): add support for hosted particle rendering set slot.
-                throw new Error('TODO: Implement this!');
-            }
-        }
-        return content;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class SuggestDomConsumer extends SlotDomConsumer {
-    constructor(containerKind, suggestion, suggestionContent, eventHandler) {
-        super(/* consumeConn= */ null, containerKind);
-        this._suggestion = suggestion;
-        this._suggestionContent = suggestionContent;
-        this._eventHandler = eventHandler;
-    }
-    get suggestion() {
-        return this._suggestion;
-    }
-    get templatePrefix() {
-        return 'suggest';
-    }
-    formatContent(content) {
-        return {
-            template: `<suggestion-element inline key="{{hash}}" on-click="">${content.template}</suggestion-element>`,
-            templateName: 'suggestion',
-            model: Object.assign({ hash: this.suggestion.hash }, content.model)
-        };
-    }
-    onContainerUpdate(container, originalContainer) {
-        super.onContainerUpdate(container, originalContainer);
-        if (container) {
-            this.setContent(this._suggestionContent, this._eventHandler);
-        }
-    }
-    static render(container, plan, content) {
-        const suggestionContainer = Object.assign(document.createElement('suggestion-element'), { plan });
-        container.appendChild(suggestionContainer, container.firstElementChild);
-        const rendering = { container: suggestionContainer, model: content.model };
-        const consumer = new SlotDomConsumer();
-        consumer.addRenderingBySubId(undefined, rendering);
-        consumer.eventHandler = (() => { });
-        consumer._stampTemplate(rendering, consumer.createTemplateElement(content.template));
-        consumer._onUpdate(rendering);
-        return consumer;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class MockSlotDomConsumer extends SlotDomConsumer {
-  constructor(consumeConn) {
-    super(consumeConn);
-    this._content = {};
-    this.contentAvailable = new Promise(resolve => this._contentAvailableResolve = resolve);
-  }
-
-  async setContent(content, handler) {
-    await super.setContent(content, handler);
-
-    // Mimics the behaviour of DomSlotConsumer::setContent, where template is only set at first,
-    // and model is overriden every time.
-    if (content) {
-      this._content.templateName = content.templateName;
-      if (content.template) {
-        this._content.template = content.template;
-      }
-      this._content.model = content.model;
-      this._contentAvailableResolve();
-    } else {
-      this._content = {};
-    }
-  }
-
-  createNewContainer(container, subId) {
-    return container;
-  }
-
-  isSameContainer(container, contextContainer) {
-    return container == contextContainer;
-  }
-
-  getInnerContainer(slotId) {
-    const model = this.renderings.map(([subId, {model}]) => model)[0];
-    const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
-    if (!providedContext) {
-      console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);
-      return;
-    }
-    if (providedContext.spec.isSet && model && model.items && model.items.models) {
-      const innerContainers = {};
-      for (const itemModel of model.items.models) {
-        assert(itemModel.id);
-        innerContainers[itemModel.id] = itemModel.id;
-      }
-      return innerContainers;
-    }
-    return slotId;
-  }
-
-  createTemplateElement(template) {
-    return template;
-  }
-
-  static findRootContainers(container) {
-    return container;
-  }
-
-  static clear(container) {}
-  _onUpdate(rendering) {}
-  _stampTemplate(template) {}
-  _initMutationObserver() {}
-  _observe() {}
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-// Should this class instead extend SuggestDomConsumer?
-class MockSuggestDomConsumer extends MockSlotDomConsumer {
-  constructor(containerKind, suggestion, suggestionContent, eventHandler) {
-    super(/* consumeConn= */null, containerKind);
-    this._suggestion = suggestion;
-    this._suggestionContent = suggestionContent.template ? suggestionContent : {
-      template: `<dummy-suggestion>${suggestionContent}</dummy-element>`,
-      templateName: 'dummy-suggestion',
-      model: {}
-    };
-    this._setContentPromise = null;
-  }
-
-  get suggestion() { return this._suggestion; }
-  get templatePrefix() { return 'suggest'; }
-
-  onContainerUpdate(container, originalContainer) {
-    super.onContainerUpdate(container, originalContainer);
-
-    if (container) {
-      this._setContentPromise = this.setContent(this._suggestionContent, this._eventHandler);
-    }
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class DescriptionDomFormatter extends DescriptionFormatter {
-    constructor() {
-        super(...arguments);
-        this.nextID = 0;
-    }
-    _isSelectedDescription(desc) {
-        return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
-    }
-    _populateParticleDescription(particle, descriptionByName) {
-        const result = super._populateParticleDescription(particle, descriptionByName);
-        if (descriptionByName['_template_']) {
-            return Object.assign({}, result, { template: descriptionByName['_template_'], model: JSON.parse(descriptionByName['_model_']) });
-        }
-        return result;
-    }
-    async _combineSelectedDescriptions(selectedDescriptions, options) {
-        const suggestionByParticleDesc = new Map();
-        for (const particleDesc of selectedDescriptions) {
-            if (this.seenParticles.has(particleDesc._particle)) {
-                continue;
-            }
-            let { template, model } = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
-            const success = await Promise.all(Object.keys(model).map(async (tokenKey) => {
-                const tokens = this._initSubTokens(model[tokenKey], particleDesc);
-                return (await Promise.all(tokens.map(async (token) => {
-                    const tokenValue = await this.tokenToString(token);
-                    if (tokenValue == undefined) {
-                        return false;
-                    }
-                    else if (tokenValue && tokenValue.template && tokenValue.model) {
-                        // Dom token.
-                        template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
-                        delete model[tokenKey];
-                        model = Object.assign({}, model, tokenValue.model);
-                    }
-                    else { // Text token.
-                        // Replace tokenKey, in case multiple selected suggestions use the same key.
-                        const newTokenKey = `${tokenKey}${++this.nextID}`;
-                        template = template.replace(`{{${tokenKey}}}`, `{{${newTokenKey}}}`);
-                        delete model[tokenKey];
-                        model[newTokenKey] = tokenValue;
-                    }
-                    return true;
-                }))).every(t => !!t);
-            }));
-            if (success.every(s => !!s)) {
-                suggestionByParticleDesc.set(particleDesc, { template, model });
-            }
-        }
-        // Populate suggestions list while maintaining original particles order.
-        const suggestions = [];
-        selectedDescriptions.forEach(desc => {
-            if (suggestionByParticleDesc.has(desc)) {
-                suggestions.push(suggestionByParticleDesc.get(desc));
-            }
-        });
-        if (suggestions.length > 0) {
-            const result = this._joinDescriptions(suggestions);
-            if (!options || !options.skipFormatting) {
-                result.template += '.';
-            }
-            return result;
-        }
-    }
-    _retrieveTemplateAndModel(particleDesc, index, options) {
-        if (particleDesc.template && particleDesc.model) {
-            return { template: particleDesc.template, model: particleDesc.model };
-        }
-        assert(particleDesc.pattern, 'Description must contain template and model, or pattern');
-        let template = '';
-        const model = {};
-        const tokens = this._initTokens(particleDesc.pattern, particleDesc);
-        tokens.forEach((token, i) => {
-            if (token.text) {
-                template = template.concat(`${(index === 0 && i === 0 && !options.skipFormatting) ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
-            }
-            else { // handle or slot handle.
-                const sanitizedFullName = token.fullName.replace(/[.{}_$]/g, '');
-                let attribute = '';
-                // TODO(mmandlis): capitalize the data in the model instead.
-                if (i === 0 && !options.skipFormatting) {
-                    // Capitalize the first letter in the token.
-                    template = template.concat(`<style>
-            [firstletter]::first-letter { text-transform: capitalize; }
-            [firstletter] {display: inline-block}
-            </style>`);
-                    attribute = ' firstletter';
-                }
-                template = template.concat(`<span${attribute}>{{${sanitizedFullName}}}</span>`);
-                model[sanitizedFullName] = token.fullName;
-            }
-        });
-        return { template, model };
-    }
-    _capitalizeAndPunctuate(sentence) {
-        if (typeof sentence === 'string') {
-            return { template: super._capitalizeAndPunctuate(sentence), model: {} };
-        }
-        // Capitalize the first element in the DOM template.
-        const tokens = sentence.template.match(/<[a-zA-Z0-9]+>{{([a-zA-Z0-9]*)}}<\/[a-zA-Z0-9]+>/);
-        if (tokens && tokens.length > 1 && sentence.model[tokens[1]]) {
-            const modelToken = sentence.model[tokens[1]];
-            if (modelToken.length > 0) {
-                sentence.model[tokens[1]] = `${modelToken[0].toUpperCase()}${modelToken.substr(1)}`;
-            }
-        }
-        sentence.template += '.';
-        return sentence;
-    }
-    _joinDescriptions(descs) {
-        // // If all tokens are strings, just join them.
-        if (descs.every(desc => typeof desc === 'string')) {
-            return super._joinDescriptions(descs);
-        }
-        const result = { template: '', model: {} };
-        const count = descs.length;
-        descs.forEach((desc, i) => {
-            if (typeof desc === 'string') {
-                desc = { template: desc, model: {} };
-            }
-            result.template += desc.template;
-            result.model = Object.assign({}, result.model, desc.model);
-            let delim;
-            if (i < count - 2) {
-                delim = ', ';
-            }
-            else if (i === count - 2) {
-                delim = ['', '', ' and ', ', and '][Math.min(3, count)];
-            }
-            if (delim) {
-                result.template += delim;
-            }
-        });
-        return result;
-    }
-    _joinTokens(tokens) {
-        // If all tokens are strings, just join them.
-        if (tokens.every(token => typeof token === 'string')) {
-            return super._joinTokens(tokens);
-        }
-        tokens = tokens.map(token => {
-            if (typeof token !== 'object') {
-                return {
-                    template: `<span>{{text${++this.nextID}}}</span>`,
-                    model: { [`text${this.nextID}`]: token }
-                };
-            }
-            return token;
-        });
-        const nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
-        return {
-            template: nonEmptyTokens.map(token => token.template).join(''),
-            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => (Object.assign({}, prev, curr)), {})
-        };
-    }
-    _combineDescriptionAndValue(token, description, storeValue) {
-        if (!!description.template && !!description.model) {
-            return {
-                template: `${description.template} (${storeValue.template})`,
-                model: Object.assign({}, description.model, storeValue.model)
-            };
-        }
-        const descKey = `${token.handleName}Description${++this.nextID}`;
-        return {
-            template: `<span>{{${descKey}}}</span> (${storeValue.template})`,
-            model: Object.assign({ [descKey]: description }, storeValue.model)
-        };
-    }
-    _formatEntityProperty(handleName, properties, value) {
-        const key = `${handleName}${properties.join('')}Value${++this.nextID}`;
-        return {
-            template: `<b>{{${key}}}</b>`,
-            model: { [`${key}`]: value }
-        };
-    }
-    _formatCollection(handleName, values) {
-        const handleKey = `${handleName}${++this.nextID}`;
-        if (values[0].rawData.name) {
-            if (values.length > 2) {
-                return {
-                    template: `<b>{{${handleKey}FirstName}}</b> plus <b>{{${handleKey}OtherCount}}</b> other items`,
-                    model: { [`${handleKey}FirstName`]: values[0].rawData.name, [`${handleKey}OtherCount`]: values.length - 1 }
-                };
-            }
-            return {
-                template: values.map((v, i) => `<b>{{${handleKey}${i}}}</b>`).join(', '),
-                model: Object.assign({}, ...values.map((v, i) => ({ [`${handleKey}${i}`]: v.rawData.name })))
-            };
-        }
-        return {
-            template: `<b>{{${handleKey}Length}}</b> items`,
-            model: { [`${handleKey}Length`]: values.length }
-        };
-    }
-    _formatBigCollection(handleName, firstValue) {
-        return {
-            template: `collection of items like {{${handleName}FirstName}}`,
-            model: { [`${handleName}FirstName`]: firstValue.rawData.name }
-        };
-    }
-    _formatSingleton(handleName, value, handleDescription) {
-        const formattedValue = super._formatSingleton(handleName, value, handleDescription);
-        if (formattedValue) {
-            return {
-                template: `<b>{{${handleName}Var}}</b>`,
-                model: { [`${handleName}Var`]: formattedValue }
-            };
-        }
-        return undefined;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Modality {
-    constructor(name, slotConsumerClass, suggestionConsumerClass, descriptionFormatter) {
-        this.name = name;
-        this.slotConsumerClass = slotConsumerClass;
-        this.suggestionConsumerClass = suggestionConsumerClass;
-        this.descriptionFormatter = descriptionFormatter;
-    }
-    static forName(name) {
-        assert(Modality._modalities[name], `Unsupported modality ${name}`);
-        return Modality._modalities[name];
-    }
-}
-Modality._modalities = {
-    'dom': new Modality('dom', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
-    'dom-touch': new Modality('dom-touch', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
-    'vr': new Modality('vr', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
-    'mock': new Modality('mock', MockSlotDomConsumer, MockSuggestDomConsumer)
-};
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Relevance {
-    constructor() {
-        // stores a copy of arc.getVersionByStore
-        this.versionByStore = {};
-        this.relevanceMap = new Map();
-    }
-    static create(arc, recipe) {
-        const relevance = new Relevance();
-        const versionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
-        recipe.handles.forEach(handle => {
-            if (handle.id) {
-                relevance.versionByStore[handle.id] = versionByStore[handle.id];
-            }
-        });
-        return relevance;
-    }
-    static deserialize({ versionByStore, relevanceMap }, recipe) {
-        const relevance = new Relevance();
-        Object.assign(relevance.versionByStore, JSON.parse(versionByStore));
-        Object.keys(relevanceMap).forEach(particleName => {
-            const particle = recipe.particles.find(particle => particle.name === particleName);
-            assert(particle, `Cannot find particle ${particleName} in ${recipe.toString()}`);
-            if (relevance.relevanceMap.has(particle)) {
-                console.warn(`Multiple particles with name ${particleName}, relevance may be incorrect.`);
-            }
-            relevance.relevanceMap.set(particle, relevanceMap[particleName]);
-        });
-        return relevance;
-    }
-    serialize() {
-        const serializedRelevanceMap = {};
-        this.relevanceMap.forEach((relevances, particle) => {
-            // TODO(mmandlis): Should use particle ID or some other unique identifier instead,
-            // as recipe may contain multiple particles with the same name.
-            serializedRelevanceMap[particle.name] = relevances;
-        });
-        return {
-            // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
-            versionByStore: JSON.stringify(this.versionByStore),
-            relevanceMap: serializedRelevanceMap
-        };
-    }
-    apply(relevance) {
-        for (const key of relevance.keys()) {
-            if (this.relevanceMap.has(key)) {
-                this.relevanceMap.set(key, this.relevanceMap.get(key).concat(relevance.get(key)));
-            }
-            else {
-                this.relevanceMap.set(key, relevance.get(key));
-            }
-        }
-    }
-    calcRelevanceScore() {
-        let relevance = 1;
-        let hasNegative = false;
-        for (const rList of this.relevanceMap.values()) {
-            const particleRelevance = Relevance.particleRelevance(rList);
-            if (particleRelevance < 0) {
-                hasNegative = true;
-            }
-            relevance *= Math.abs(particleRelevance);
-        }
-        return relevance * (hasNegative ? -1 : 1);
-    }
-    // Returns false, if at least one of the particles relevance lists ends with a negative score.
-    isRelevant(plan) {
-        const hasUi = plan.particles.some(p => Object.keys(p.consumedSlotConnections).length > 0);
-        let rendersUi = false;
-        for (const [particle, rList] of this.relevanceMap) {
-            if (rList[rList.length - 1] < 0) {
-                continue;
-            }
-            else if (Object.keys(particle.consumedSlotConnections).length) {
-                rendersUi = true;
-                break;
-            }
-        }
-        // If the recipe has UI rendering particles, at least one of the particles must render UI.
-        return hasUi === rendersUi;
-    }
-    static scaleRelevance(relevance) {
-        if (relevance == undefined) {
-            relevance = 5;
-        }
-        relevance = Math.max(-1, Math.min(relevance, 10));
-        // TODO: might want to make this geometric or something instead;
-        return relevance / 5;
-    }
-    static particleRelevance(relevanceList) {
-        let relevance = 1;
-        let hasNegative = false;
-        relevanceList.forEach(r => {
-            const scaledRelevance = Relevance.scaleRelevance(r);
-            if (scaledRelevance < 0) {
-                hasNegative = true;
-            }
-            relevance *= Math.abs(scaledRelevance);
-        });
-        return relevance * (hasNegative ? -1 : 1);
-    }
-    calcParticleRelevance(particle) {
-        if (this.relevanceMap.has(particle)) {
-            return Relevance.particleRelevance(this.relevanceMap.get(particle));
-        }
-        return -1;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Suggestion {
-    constructor(plan, hash, relevance, arc) {
-        // TODO: update Description class to be serializable.
-        this.descriptionByModality = {};
-        // List of search resolved token groups, this suggestion corresponds to.
-        this.searchGroups = [];
-        assert(plan, `plan cannot be null`);
-        assert(hash, `hash cannot be null`);
-        this.plan = plan;
-        this.hash = hash;
-        this.rank = relevance.calcRelevanceScore();
-        this.relevance = relevance;
-        this.arc = arc;
-    }
-    get descriptionText() {
-        return this.getDescription('text');
-    }
-    getDescription(modality) {
-        assert(this.descriptionByModality[modality], `No description for modality '${modality}'`);
-        return this.descriptionByModality[modality];
-    }
-    async setDescription(description) {
-        this.descriptionByModality['text'] = await description.getRecipeSuggestion();
-        const modality = this.arc.modality;
-        if (modality && modality !== 'text') {
-            this.descriptionByModality[modality] =
-                await description.getRecipeSuggestion(Modality.forName(modality).descriptionFormatter);
-        }
-    }
-    isEquivalent(other) {
-        return (this.hash === other.hash) && (this.descriptionText === other.descriptionText);
-    }
-    static compare(s1, s2) {
-        return s2.rank - s1.rank;
-    }
-    hasSearch(search) {
-        const tokens = search.split(' ');
-        return this.searchGroups.some(group => tokens.every(token => group.includes(token)));
-    }
-    setSearch(search) {
-        this.searchGroups = [];
-        if (search) {
-            this._addSearch(search.resolvedTokens);
-        }
-    }
-    mergeSearch(suggestion) {
-        let updated = false;
-        for (const other of suggestion.searchGroups) {
-            if (this._addSearch(other)) {
-                if (this.searchGroups.length === 1) {
-                    this.searchGroups.push(['']);
-                }
-                updated = true;
-            }
-        }
-        this.searchGroups.sort();
-        return updated;
-    }
-    _addSearch(searchGroup) {
-        const equivalentGroup = (group, otherGroup) => {
-            return group.length === otherGroup.length &&
-                group.every(token => otherGroup.includes(token));
-        };
-        if (!this.searchGroups.find(group => equivalentGroup(group, searchGroup))) {
-            this.searchGroups.push(searchGroup);
-            return true;
-        }
-        return false;
-    }
-    serialize() {
-        return {
-            plan: this._planToString(this.plan),
-            hash: this.hash,
-            rank: this.rank,
-            relevance: this.relevance.serialize(),
-            searchGroups: this.searchGroups,
-            descriptionByModality: this.descriptionByModality
-        };
-    }
-    static async deserialize({ plan, hash, relevance, searchGroups, descriptionByModality }, arc, recipeResolver) {
-        const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
-        if (deserializedPlan) {
-            const suggestion = new Suggestion(deserializedPlan, hash, Relevance.deserialize(relevance, deserializedPlan), arc);
-            suggestion.searchGroups = searchGroups || [];
-            suggestion.descriptionByModality = descriptionByModality;
-            return suggestion;
-        }
-        return undefined;
-    }
-    async instantiate() {
-        // For now shell is responsible for creating and setting the new arc.
-        assert(this.arc, `Cannot instantiate suggestion without and arc`);
-        if (this.arc) {
-            return this.arc.instantiate(this.plan);
-        }
-    }
-    _planToString(plan) {
-        if (plan.slots.every(slot => Boolean(slot.id))) {
-            return plan.toString();
-        }
-        // Special handling needed for plans with local slot (ie missing slot IDs).
-        const planClone = plan.clone();
-        planClone.slots.forEach(slot => slot.id = slot.id || `slotid-${this.arc.generateID()}`);
-        return planClone.toString();
-    }
-    static async _planFromString(planString, arc, recipeResolver) {
-        try {
-            const manifest = await Manifest.parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
-            assert(manifest.recipes.length === 1);
-            let plan = manifest.recipes[0];
-            assert(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
-            if (!plan.isResolved()) {
-                const resolvedPlan = await recipeResolver.resolve(plan);
-                assert(resolvedPlan, `can't resolve plan: ${plan.toString({ showUnresolved: true })}`);
-                if (resolvedPlan) {
-                    plan = resolvedPlan;
-                }
-            }
-            assert(manifest.stores.length === 0, `Unexpected stores in suggestion manifest.`);
-            return plan;
-        }
-        catch (e) {
-            console.error(`Failed to parse suggestion ${e}\n${planString}.`);
-        }
-        return null;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const error = logFactory$1('PlanningResult', '#ff0090', 'error');
-class PlanningResult {
-    constructor(arc, store) {
-        this.lastUpdated = new Date(null);
-        this.generations = [];
-        this.contextual = true;
-        this.changeCallbacks = [];
-        assert(arc, 'Arc cannot be null');
-        this.arc = arc;
-        this.store = store;
-        if (this.store) {
-            this.storeCallback = () => this.load();
-            this.store.on('change', this.storeCallback, this);
-        }
-    }
-    registerChangeCallback(callback) {
-        this.changeCallbacks.push(callback);
-    }
-    onChanged() {
-        for (const callback of this.changeCallbacks) {
-            callback();
-        }
-    }
-    async load() {
-        assert(this.store['get'], 'Unsupported getter in suggestion storage');
-        const value = await this.store['get']() || {};
-        if (value.suggestions) {
-            if (await this.deserialize(value)) {
-                this.onChanged();
-                return true;
-            }
-        }
-        return false;
-    }
-    async flush() {
-        try {
-            assert(this.store['set'], 'Unsupported setter in suggestion storage');
-            await this.store['set'](this.serialize());
-        }
-        catch (e) {
-            error('Failed storing suggestions: ', e);
-            throw e;
-        }
-    }
-    dispose() {
-        this.changeCallbacks = [];
-        this.store.off('change', this.storeCallback);
-        this.store.dispose();
-    }
-    get suggestions() { return this._suggestions || []; }
-    set suggestions(suggestions) {
-        assert(Boolean(suggestions), `Cannot set uninitialized suggestions`);
-        this._suggestions = suggestions;
-    }
-    static formatSerializableGenerations(generations) {
-        // Make a copy of everything and assign IDs to recipes.
-        const idMap = new Map(); // Recipe -> ID
-        let lastID = 0;
-        const assignIdAndCopy = recipe => {
-            idMap.set(recipe, lastID);
-            const { result, score, derivation, description, hash, valid, active, irrelevant } = recipe;
-            const resultString = result.toString({ showUnresolved: true, showInvalid: false, details: '' });
-            const resolved = result.isResolved();
-            return { result: resultString, resolved, score, derivation, description, hash, valid, active, irrelevant, id: lastID++ };
-        };
-        generations = generations.map(pop => ({
-            record: pop.record,
-            generated: pop.generated.map(assignIdAndCopy)
-        }));
-        // Change recipes in derivation to IDs and compute resolved stats.
-        return generations.map(pop => {
-            const population = pop.generated;
-            const record = pop.record;
-            // Adding those here to reuse recipe resolution computation.
-            record.resolvedDerivations = 0;
-            record.resolvedDerivationsByStrategy = {};
-            population.forEach(item => {
-                item.derivation = item.derivation.map(derivItem => {
-                    let parent;
-                    let strategy;
-                    if (derivItem.parent) {
-                        parent = idMap.get(derivItem.parent);
-                    }
-                    if (derivItem.strategy) {
-                        strategy = derivItem.strategy.constructor.name;
-                    }
-                    return { parent, strategy };
-                });
-                if (item.resolved) {
-                    record.resolvedDerivations++;
-                    const strategy = item.derivation[0].strategy;
-                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
-                        record.resolvedDerivationsByStrategy[strategy] = 0;
-                    }
-                    record.resolvedDerivationsByStrategy[strategy]++;
-                }
-            });
-            const populationMap = {};
-            population.forEach(item => {
-                if (populationMap[item.derivation[0].strategy] == undefined) {
-                    populationMap[item.derivation[0].strategy] = [];
-                }
-                populationMap[item.derivation[0].strategy].push(item);
-            });
-            const result = { population: [], record };
-            Object.keys(populationMap).forEach(strategy => {
-                result.population.push({ strategy, recipes: populationMap[strategy] });
-            });
-            return result;
-        });
-    }
-    set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
-        if (this.isEquivalent(suggestions)) {
-            return false;
-        }
-        this.suggestions = suggestions;
-        this.generations = generations;
-        this.lastUpdated = lastUpdated;
-        this.contextual = contextual;
-        this.onChanged();
-        return true;
-    }
-    append({ suggestions, lastUpdated = new Date(), generations = [] }) {
-        const newSuggestions = [];
-        let searchUpdated = false;
-        for (const newSuggestion of suggestions) {
-            const existingSuggestion = this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion));
-            if (existingSuggestion) {
-                searchUpdated = existingSuggestion.mergeSearch(newSuggestion);
-            }
-            else {
-                newSuggestions.push(newSuggestion);
-            }
-        }
-        if (newSuggestions.length > 0) {
-            this.suggestions = this.suggestions.concat(newSuggestions);
-        }
-        else {
-            if (!searchUpdated) {
-                return false;
-            }
-        }
-        // TODO: filter out generations of other suggestions.
-        this.generations.push(...generations);
-        this.lastUpdated = lastUpdated;
-        this.onChanged();
-        return true;
-    }
-    olderThan(other) {
-        return this.lastUpdated < other.lastUpdated;
-    }
-    isEquivalent(suggestions) {
-        return PlanningResult.isEquivalent(this._suggestions, suggestions);
-    }
-    static isEquivalent(oldSuggestions, newSuggestions) {
-        assert(newSuggestions, `New suggestions cannot be null.`);
-        return oldSuggestions &&
-            oldSuggestions.length === newSuggestions.length &&
-            oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
-    }
-    async deserialize({ suggestions, generations, lastUpdated }) {
-        const recipeResolver = new RecipeResolver(this.arc);
-        return this.set({
-            suggestions: (await Promise.all(suggestions.map(suggestion => Suggestion.deserialize(suggestion, this.arc, recipeResolver)))).filter(s => s),
-            generations: JSON.parse(generations || '[]'),
-            lastUpdated: new Date(lastUpdated),
-            contextual: suggestions.contextual
-        });
-    }
-    serialize() {
-        return {
-            suggestions: this.suggestions.map(suggestion => suggestion.serialize()),
-            generations: JSON.stringify(this.generations),
-            lastUpdated: this.lastUpdated.toString(),
-            contextual: this.contextual
-        };
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class SuggestionComposer {
-    constructor(slotComposer) {
-        this._suggestions = [];
-        this._suggestConsumers = [];
-        this._modality = Modality.forName(slotComposer.modality);
-        this._container = slotComposer.findContainerByName('suggestions');
-        this._slotComposer = slotComposer;
-    }
-    clear() {
-        if (this._container) {
-            this._modality.slotConsumerClass.clear(this._container);
-        }
-        this._suggestConsumers.forEach(consumer => consumer.dispose());
-        this._suggestConsumers = [];
-    }
-    setSuggestions(suggestions) {
-        this.clear();
-        const sortedSuggestions = suggestions.sort(Suggestion.compare);
-        for (const suggestion of sortedSuggestions) {
-            // TODO(mmandlis): use modality-appropriate description.
-            const suggestionContent = { template: suggestion.descriptionText };
-            if (!suggestionContent) {
-                throw new Error('No suggestion content available');
-            }
-            if (this._container) {
-                this._modality.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
-            }
-            this._addInlineSuggestion(suggestion, suggestionContent);
-        }
-    }
-    _addInlineSuggestion(suggestion, suggestionContent) {
-        const remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
-        if (remoteSlots.length !== 1) {
-            return;
-        }
-        const remoteSlot = remoteSlots[0];
-        const context = this._slotComposer.findContextById(remoteSlot.id);
-        if (!context) {
-            throw new Error('Missing context for ' + remoteSlot.id);
-        }
-        if (context.spec.isSet) {
-            // TODO: Inline suggestion in a set slot is not supported yet. Implement!
-            return;
-        }
-        // Don't put suggestions in context that either (1) is a root context, (2) doesn't have
-        // an actual container or (3) is not restricted to specific handles.
-        if (!context.sourceSlotConsumer) {
-            return;
-        }
-        if (context.spec.handles.length === 0) {
-            return;
-        }
-        const handleIds = context.spec.handles.map(handleName => context.sourceSlotConsumer.consumeConn.particle.connections[handleName].handle.id);
-        if (!handleIds.find(handleId => suggestion.plan.handles.find(handle => handle.id === handleId))) {
-            // the suggestion doesn't use any of the handles that the context is restricted to.
-            return;
-        }
-        const suggestConsumer = new this._modality.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
-            const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
-            suggestConsumer.dispose();
-            if (suggestion) {
-                const index = this._suggestConsumers.findIndex(consumer => consumer === suggestConsumer);
-                if (index < 0) {
-                    throw new Error('cannot find suggest slot context');
-                }
-                this._suggestConsumers.splice(index, 1);
-                this._slotComposer.arc.instantiate(suggestion.plan);
-            }
-        });
-        context.addSlotConsumer(suggestConsumer);
-        this._suggestConsumers.push(suggestConsumer);
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class AbstractDevtoolsChannel {
-    constructor() {
-        this.debouncedMessages = [];
-        this.debouncing = false;
-        this.messageListeners = new Map();
-    }
-    send(message) {
-        this.debouncedMessages.push(message);
-        if (!this.debouncing) {
-            this.debouncing = true;
-            setTimeout(() => {
-                this._flush(this.debouncedMessages);
-                this.debouncedMessages = [];
-                this.debouncing = false;
-            }, 100);
-        }
-    }
-    listen(arcOrId, messageType, callback) {
-        assert(messageType);
-        assert(arcOrId);
-        const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
-        const key = `${arcId}/${messageType}`;
-        let listeners = this.messageListeners.get(key);
-        if (!listeners)
-            this.messageListeners.set(key, listeners = []);
-        listeners.push(callback);
-    }
-    _handleMessage(msg) {
-        const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
-        if (!listeners) {
-            console.warn(`No one is listening to ${msg.messageType} message`);
-        }
-        else {
-            for (const listener of listeners)
-                listener(msg);
-        }
-    }
-    _flush(messages) {
-        throw new Error('Not implemented in an abstract class');
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-// Debugging is initialized either by /devtools/src/run-mark-connected.js, which is
-// injected by the devtools extension content script in the browser env,
-// or used directly when debugging nodeJS.
-
-// Data needs to be referenced via a global object, otherwise extension and
-// Arcs have different instances.
-const root = typeof window === 'object' ? window : global;
-
-if (!root._arcDebugPromise) {
-  root._arcDebugPromise = new Promise(resolve => {
-    root._arcDebugPromiseResolve = resolve;
-  });
-}
-
-class DevtoolsBroker {
-  static get onceConnected() {
-    return root._arcDebugPromise;
-  }
-  static markConnected() {
-    root._arcDebugPromiseResolve();
-    return {preExistingArcs: !!root.arc};
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-class DevtoolsChannel extends AbstractDevtoolsChannel {
-  constructor() {
-    super();
-    this.server = new WebSocket.Server({port: 8787});
-    this.server.on('connection', ws => {
-      this.socket = ws;
-      this.socket.on('message', msg => {
-        if (msg === 'init') {
-          DevtoolsBroker.markConnected();
-        } else {
-          this._handleMessage(JSON.parse(msg));
-        }
-      });
-    });
-  }
-
-  _flush(messages) {
-    if (this.socket) {
-      this.socket.send(JSON.stringify(messages));
-    }
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-let channel = null;
-let isConnected = false;
-let onceConnectedResolve = null;
-let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
-DevtoolsBroker.onceConnected.then(() => {
-    DevtoolsConnection.ensure();
-    onceConnectedResolve(channel);
-    isConnected = true;
-});
-class DevtoolsConnection {
-    static get isConnected() {
-        return isConnected;
-    }
-    static get onceConnected() {
-        return onceConnected;
-    }
-    static get() {
-        return channel;
-    }
-    static ensure() {
-        if (!channel)
-            channel = new DevtoolsChannel();
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class StrategyExplorerAdapter {
-    static processGenerations(generations, devtoolsChannel, options = {}) {
-        devtoolsChannel.send({
-            messageType: 'generations',
-            messageBody: { results: generations, options },
-        });
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class PlanConsumer {
-    constructor(result) {
-        // Callback is triggered when planning results have changed.
-        this.suggestionsChangeCallbacks = [];
-        // Callback is triggered when suggestions visible to the user have changed.
-        this.visibleSuggestionsChangeCallbacks = [];
-        this.suggestionComposer = null;
-        this.currentSuggestions = [];
-        assert(result, 'result cannot be null');
-        assert(result.arc, 'arc cannot be null');
-        this.arc = result.arc;
-        this.result = result;
-        this.suggestFilter = { showAll: false };
-        this.suggestionsChangeCallbacks = [];
-        this.visibleSuggestionsChangeCallbacks = [];
-        this._initSuggestionComposer();
-        this.result.registerChangeCallback(() => this.onSuggestionsChanged());
-    }
-    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
-    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
-    setSuggestFilter(showAll, search) {
-        assert(!showAll || !search);
-        if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
-            return;
-        }
-        this.suggestFilter = { showAll, search };
-        this._onMaybeSuggestionsChanged();
-    }
-    onSuggestionsChanged() {
-        this._onSuggestionsChanged();
-        this._onMaybeSuggestionsChanged();
-        if (this.result.generations.length && DevtoolsConnection.isConnected) {
-            StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get());
-        }
-    }
-    getCurrentSuggestions() {
-        const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0);
-        // `showAll`: returns all suggestions that render into slots.
-        if (this.suggestFilter['showAll']) {
-            // Should filter out suggestions produced by search phrases?
-            return suggestions;
-        }
-        // search filter non empty: match plan search phrase or description text.
-        if (this.suggestFilter['search']) {
-            return suggestions.filter(suggestion => suggestion.descriptionText.toLowerCase().includes(this.suggestFilter['search']) ||
-                suggestion.hasSearch(this.suggestFilter['search']));
-        }
-        return suggestions.filter(suggestion => {
-            const usesHandlesFromActiveRecipe = suggestion.plan.handles.find(handle => {
-                // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
-                // either by tagging or by exploring connection directions etc.
-                return !!handle.id &&
-                    !!this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
-            });
-            const usesRemoteNonRootSlots = suggestion.plan.slots.find(slot => {
-                return !slot.name.includes('root') && !slot.tags.includes('root') &&
-                    slot.id && !slot.id.includes('root') &&
-                    Boolean(this.arc.pec.slotComposer.findContextById(slot.id));
-            });
-            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
-            return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
-        });
-    }
-    dispose() {
-        this.suggestionsChangeCallbacks = [];
-        this.visibleSuggestionsChangeCallbacks = [];
-        if (this.suggestionComposer) {
-            this.suggestionComposer.clear();
-        }
-    }
-    _onSuggestionsChanged() {
-        this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
-    }
-    _onMaybeSuggestionsChanged() {
-        const suggestions = this.getCurrentSuggestions();
-        if (!PlanningResult.isEquivalent(this.currentSuggestions, suggestions)) {
-            this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
-            this.currentSuggestions = suggestions;
-        }
-    }
-    _initSuggestionComposer() {
-        const composer = this.arc.pec.slotComposer;
-        if (composer && composer.findContextById('rootslotid-suggestions')) {
-            this.suggestionComposer = new SuggestionComposer(composer);
-            this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
-        }
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class InitSearch extends Strategy {
-    constructor(arc, { search }) {
-        super(arc, { search });
-        this._search = search;
-    }
-    async generate({ generation }) {
-        if (this._search == null || generation !== 0) {
-            return [];
-        }
-        const recipe = new Recipe();
-        recipe.setSearchPhrase(this._search);
-        assert(recipe.normalize());
-        assert(!recipe.isResolved());
-        return [{
-                result: recipe,
-                score: 0,
-                derivation: [{ strategy: this, parent: undefined }],
-                hash: recipe.digest(),
-                valid: true
-            }];
-    }
-}
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-function now$1() {
-  const time = process.hrtime();
-  return time[0] * 1000 + time[1] / 1000000;
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class ConvertConstraintsToConnections extends Strategy {
-    constructor(arc, args) {
-        super(arc, args);
-        this.modality = arc.modality;
-    }
-    async generate(inputParams) {
-        const modality = this.modality;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
-            onRecipe(recipe) {
-                // The particles & handles Sets are used as input to RecipeUtil's shape functionality
-                // (this is the algorithm that "finds" the constraint set in the recipe).
-                // They track which particles/handles need to be found/created.
-                const particles = new Set();
-                const handles = new Set();
-                // The map object tracks the connections between particles that need to be found/created.
-                // It's another input to RecipeUtil.makeShape.
-                // tslint:disable-next-line: no-any
-                const map = {};
-                const particlesByName = {};
-                let handleCount = 0;
-                const obligations = [];
-                if (recipe.connectionConstraints.length === 0) {
-                    return undefined;
-                }
-                for (const constraint of recipe.connectionConstraints) {
-                    const from = constraint.from;
-                    const to = constraint.to;
-                    // Don't process constraints if their listed particles don't match the current modality.
-                    if (modality
-                        && from instanceof ParticleEndPoint
-                        && to instanceof ParticleEndPoint
-                        && (!from.particle.matchModality(modality) || !to.particle.matchModality(modality))) {
-                        return undefined;
-                    }
-                    const reverse = { '->': '<-', '=': '=', '<-': '->' };
-                    // Set up initial mappings & input to RecipeUtil.
-                    let handle;
-                    let handleIsConcrete = false;
-                    let createObligation = false;
-                    if (from instanceof ParticleEndPoint) {
-                        particles.add(from.particle.name);
-                        if (map[from.particle.name] == undefined) {
-                            map[from.particle.name] = {};
-                            particlesByName[from.particle.name] = from.particle;
-                        }
-                        if (from.connection) {
-                            handleIsConcrete = true;
-                            handle = map[from.particle.name][from.connection];
-                        }
-                        else {
-                            createObligation = true;
-                        }
-                    }
-                    if (from instanceof HandleEndPoint) {
-                        handle = { handle: from.handle, direction: reverse[constraint.direction] };
-                        handles.add(handle.handle);
-                    }
-                    if (to instanceof ParticleEndPoint) {
-                        particles.add(to.particle.name);
-                        if (map[to.particle.name] == undefined) {
-                            map[to.particle.name] = {};
-                            particlesByName[to.particle.name] = to.particle;
-                        }
-                        if (to.connection) {
-                            handleIsConcrete = true;
-                            if (!handle) {
-                                handle =
-                                    map[to.particle.name][to.connection];
-                            }
-                        }
-                        else {
-                            createObligation = true;
-                        }
-                    }
-                    if (to instanceof HandleEndPoint) {
-                        handle = { handle: to.handle, direction: constraint.direction };
-                        handles.add(handle.handle);
-                    }
-                    if (handle == undefined) {
-                        handle = { handle: 'v' + handleCount++, direction: constraint.direction };
-                        if (handleIsConcrete) {
-                            handles.add(handle.handle);
-                        }
-                    }
-                    if (from instanceof TagEndPoint) {
-                        handle.tags = from.tags;
-                    }
-                    else if (to instanceof TagEndPoint) {
-                        handle.tags = to.tags;
-                    }
-                    if (createObligation) {
-                        obligations.push({
-                            from: from._clone(),
-                            to: to._clone(),
-                            direction: constraint.direction
-                        });
-                    }
-                    const unionDirections = (a, b) => {
-                        if (a === '=') {
-                            return '=';
-                        }
-                        if (b === '=') {
-                            return '=';
-                        }
-                        if (a !== b) {
-                            return '=';
-                        }
-                        return a;
-                    };
-                    let direction = constraint.direction;
-                    if (from instanceof ParticleEndPoint) {
-                        const connection = from.connection;
-                        if (connection) {
-                            const existingHandle = map[from.particle.name][connection];
-                            if (existingHandle) {
-                                direction = unionDirections(direction, existingHandle.direction);
-                                if (direction == null) {
-                                    return undefined;
-                                }
-                            }
-                            map[from.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags };
-                        }
-                    }
-                    direction = reverse[constraint.direction];
-                    if (to instanceof ParticleEndPoint) {
-                        const connection = to.connection;
-                        if (connection) {
-                            const existingHandle = map[to.particle.name][connection];
-                            if (existingHandle) {
-                                direction = unionDirections(direction, existingHandle.direction);
-                                if (direction == null) {
-                                    return undefined;
-                                }
-                            }
-                            map[to.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags };
-                        }
-                    }
-                }
-                const shape = RecipeUtil.makeShape([...particles.values()], [...handles.values()], map);
-                const matches = RecipeUtil.find(recipe, shape);
-                const results = RecipeUtil.find(recipe, shape);
-                const processedResults = results.filter(match => {
-                    // Ensure that every handle is either matched, or an input of at least one
-                    // connected particle in the constraints.
-                    const resolvedHandles = {};
-                    for (const particle of Object.keys(map)) {
-                        for (const connection of Object.keys(map[particle])) {
-                            const handle = map[particle][connection].handle;
-                            if (resolvedHandles[handle]) {
-                                continue;
-                            }
-                            if (match.match[handle]) {
-                                resolvedHandles[handle] = true;
-                            }
-                            else {
-                                const spec = particlesByName[particle];
-                                resolvedHandles[handle] = spec.isOutput(connection);
-                            }
-                        }
-                    }
-                    return Object.values(resolvedHandles).every(value => value);
-                }).map(match => {
-                    return (recipe) => {
-                        const score = recipe.connectionConstraints.length + match.score;
-                        const recipeMap = recipe.updateToClone(match.match);
-                        for (const particle of Object.keys(map)) {
-                            let recipeParticle = recipeMap[particle];
-                            if (!recipeParticle) {
-                                recipeParticle = recipe.newParticle(particle);
-                                recipeParticle.spec = particlesByName[particle];
-                                recipeMap[particle] = recipeParticle;
-                            }
-                            for (const connection of Object.keys(map[particle])) {
-                                const handle = map[particle][connection];
-                                let recipeHandleConnection = recipeParticle.connections[connection];
-                                if (recipeHandleConnection == undefined) {
-                                    recipeHandleConnection =
-                                        recipeParticle.addConnectionName(connection);
-                                }
-                                let recipeHandle = recipeMap[handle.handle];
-                                if (recipeHandle == null && recipeHandleConnection.handle == null) {
-                                    recipeHandle = recipe.newHandle();
-                                    recipeHandle.fate = 'create';
-                                    recipeHandle.tags = handle.tags || [];
-                                    recipeMap[handle.handle] = recipeHandle;
-                                }
-                                if (recipeHandleConnection.handle == null) {
-                                    recipeHandleConnection.connectToHandle(recipeHandle);
-                                }
-                            }
-                        }
-                        recipe.clearConnectionConstraints();
-                        for (const obligation of obligations) {
-                            const from = new InstanceEndPoint(recipeMap[obligation.from.particle.name], obligation.from.connection);
-                            const to = new InstanceEndPoint(recipeMap[obligation.to.particle.name], obligation.to.connection);
-                            recipe.newObligation(from, to, obligation.direction);
-                        }
-                        return score;
-                    };
-                });
-                return processedResults;
-            }
-        }(Walker.Independent), this);
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class AssignHandles extends Strategy {
-    async generate(inputParams) {
-        const self = this;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
-            onHandle(recipe, handle) {
-                if (!['?', 'use', 'copy', 'map'].includes(handle.fate)) {
-                    return undefined;
-                }
-                if (handle.connections.length === 0) {
-                    return undefined;
-                }
-                if (handle.id) {
-                    return undefined;
-                }
-                if (!handle.type) {
-                    return undefined;
-                }
-                // TODO: using the connection to retrieve type information is wrong.
-                // Once validation of recipes generates type information on the handle
-                // we should switch to using that instead.
-                const counts = RecipeUtil.directionCounts(handle);
-                if (counts.unknown > 0) {
-                    return undefined;
-                }
-                const score = this._getScore(counts, handle.tags);
-                if (counts.out > 0 && handle.fate === 'map') {
-                    return undefined;
-                }
-                const stores = self.getMappableStores(handle.fate, handle.type, handle.tags, counts);
-                if (handle.fate !== '?' && stores.size < 2) {
-                    // These handles are mapped by resolve-recipe strategy.
-                    return undefined;
-                }
-                const responses = [...stores.keys()].map(store => ((recipe, clonedHandle) => {
-                    assert(store.id);
-                    if (recipe.findHandleByID(store.id)) {
-                        // TODO: Why don't we link the handle connections to the existingHandle?
-                        return 0;
-                    }
-                    clonedHandle.mapToStorage(store);
-                    if (clonedHandle.fate === '?') {
-                        clonedHandle.fate = stores.get(store);
-                    }
-                    else {
-                        assert(clonedHandle.fate, stores.get(store));
-                    }
-                    return score;
-                }));
-                return responses;
-            }
-            _getScore(counts, tags) {
-                let score = -1;
-                if (counts.in === 0 || counts.out === 0) {
-                    if (counts.out === 0) {
-                        score = 1;
-                    }
-                    else {
-                        score = 0;
-                    }
-                }
-                // TODO: Why is score negative, where there are both - in and out?
-                if (tags.length > 0) {
-                    score += 4;
-                }
-                return score;
-            }
-        }(Walker.Permuted), this);
-    }
-    getMappableStores(fate, type, tags, counts) {
-        const stores = new Map();
-        if (fate === 'use' || fate === '?') {
-            const subtype = counts.out === 0;
-            // TODO: arc.findStoresByType doesn't use `subtype`. Shall it be removed?
-            this.arc.findStoresByType(type, { tags, subtype }).forEach(store => stores.set(store, 'use'));
-        }
-        if (fate === 'map' || fate === 'copy' || fate === '?') {
-            this.arc.context.findStoreByType(type, { tags, subtype: true }).forEach(store => stores.set(store, fate === '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));
-        }
-        return stores;
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class InitPopulation extends Strategy {
-    constructor(arc, { contextual = false, recipeIndex }) {
-        super(arc, { contextual });
-        this._contextual = contextual;
-        this._recipeIndex = recipeIndex;
-        this._loadedParticles = new Set(this.arc.loadedParticles().map(spec => spec.implFile));
-    }
-    async generate({ generation }) {
-        if (generation !== 0) {
-            return [];
-        }
-        await this._recipeIndex.ready;
-        const results = this._contextual
-            ? this._contextualResults()
-            : this._allResults();
-        return results.map(({ recipe, score = 1 }) => ({
-            result: recipe,
-            score,
-            derivation: [{ strategy: this, parent: undefined }],
-            hash: recipe.digest(),
-            valid: Object.isFrozen(recipe)
-        }));
-    }
-    _contextualResults() {
-        const results = [];
-        for (const slot of this.arc.activeRecipe.slots.filter(s => s.sourceConnection)) {
-            results.push(...this._recipeIndex.findConsumeSlotConnectionMatch(slot).map(({ slotConn }) => ({ recipe: slotConn.recipe })));
-        }
-        let innerArcHandles = [];
-        for (const recipe of this.arc.recipes) {
-            for (const innerArc of [...recipe.innerArcs.values()]) {
-                innerArcHandles = innerArcHandles.concat(innerArc.activeRecipe.handles);
-            }
-        }
-        for (const handle of this.arc.activeRecipe.handles.concat(innerArcHandles)) {
-            results.push(...this._recipeIndex.findHandleMatch(handle, ['use', '?']).map(otherHandle => ({ recipe: otherHandle.recipe })));
-        }
-        return results;
-    }
-    _allResults() {
-        return this._recipeIndex.recipes.map(recipe => ({
-            recipe,
-            score: 1 - recipe.particles.filter(particle => particle.spec && this._loadedParticles.has(particle.spec.implFile)).length
-        }));
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class MatchParticleByVerb extends Strategy {
-    async generate(inputParams) {
-        const arc = this.arc;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
-            onParticle(recipe, particle) {
-                if (particle.name) {
-                    // Particle already has explicit name.
-                    return undefined;
-                }
-                const modality = arc.modality;
-                const particleSpecs = arc.context.findParticlesByVerb(particle.primaryVerb)
-                    .filter(spec => !modality || spec.matchModality(modality));
-                return particleSpecs.map(spec => {
-                    return (recipe, particle) => {
-                        const score = 1;
-                        particle.name = spec.name;
-                        particle.spec = spec;
-                        return score;
-                    };
-                });
-            }
-        }(Walker.Permuted), this);
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This strategy substitutes '&verb' declarations with recipes,
-// according to the following conditions:
-// 1) the recipe is named by the verb described in the particle
-// 2) the recipe has the slot pattern (if any) owned by the particle
-//
-// The strategy also reconnects any slots that were connected to the
-// particle, so that the substituted recipe fully takes the particle's place.
-//
-// Note that the recipe may have the slot pattern multiple times over, but
-// this strategy currently only connects the first instance of the pattern up
-// if there are multiple instances.
-class MatchRecipeByVerb extends Strategy {
-    async generate(inputParams) {
-        const arc = this.arc;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
-            onParticle(recipe, particle) {
-                if (particle.name) {
-                    // Particle already has explicit name.
-                    return undefined;
-                }
-                let recipes = arc.context.findRecipesByVerb(particle.primaryVerb);
-                // Extract slot information from recipe. This is extracted in the form:
-                // {consume-slot-name: targetSlot: <slot>, providedSlots: {provide-slot-name: <slot>}}
-                //
-                // Note that slots are only included if connected to other components of the recipe - e.g.
-                // the target slot has a source connection.
-                const slotConstraints = {};
-                for (const consumeSlot of Object.values(particle.consumedSlotConnections)) {
-                    const targetSlot = consumeSlot.targetSlot && consumeSlot.targetSlot.sourceConnection ? consumeSlot.targetSlot : null;
-                    slotConstraints[consumeSlot.name] = { targetSlot, providedSlots: {} };
-                    for (const providedSlot of Object.keys(consumeSlot.providedSlots)) {
-                        const sourceSlot = consumeSlot.providedSlots[providedSlot].consumeConnections.length > 0 ? consumeSlot.providedSlots[providedSlot] : null;
-                        slotConstraints[consumeSlot.name].providedSlots[providedSlot] = sourceSlot;
-                    }
-                }
-                const handleConstraints = { named: {}, unnamed: [] };
-                for (const handleConnection of Object.values(particle.connections)) {
-                    handleConstraints.named[handleConnection.name] = { direction: handleConnection.direction, handle: handleConnection.handle };
-                }
-                for (const unnamedConnection of particle.unnamedConnections) {
-                    handleConstraints.unnamed.push({ direction: unnamedConnection.direction, handle: unnamedConnection.handle });
-                }
-                recipes = recipes.filter(recipe => MatchRecipeByVerb.satisfiesSlotConstraints(recipe, slotConstraints))
-                    .filter(recipe => MatchRecipeByVerb.satisfiesHandleConstraints(recipe, handleConstraints));
-                return recipes.map(recipe => {
-                    return (outputRecipe, particleForReplacing) => {
-                        const { handles, particles, slots } = recipe.mergeInto(outputRecipe);
-                        particleForReplacing.remove();
-                        for (const consumeSlot in slotConstraints) {
-                            if (slotConstraints[consumeSlot].targetSlot || Object.values(slotConstraints[consumeSlot].providedSlots).filter(a => a != null).length > 0) {
-                                let slotMapped = false;
-                                for (const particle of particles) {
-                                    if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, consumeSlot, slotConstraints[consumeSlot].providedSlots)) {
-                                        if (slotConstraints[consumeSlot].targetSlot) {
-                                            const { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slotConstraints[consumeSlot].targetSlot });
-                                            particle.consumedSlotConnections[consumeSlot].targetSlot = mappedSlot;
-                                            mappedSlot.consumeConnections.push(particle.consumedSlotConnections[consumeSlot]);
-                                        }
-                                        for (const slotName of Object.keys(slotConstraints[consumeSlot].providedSlots)) {
-                                            const slot = slotConstraints[consumeSlot].providedSlots[slotName];
-                                            if (slot == null) {
-                                                continue;
-                                            }
-                                            const { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slot });
-                                            const oldSlot = particle.consumedSlotConnections[consumeSlot].providedSlots[slotName];
-                                            oldSlot.remove();
-                                            particle.consumedSlotConnections[consumeSlot].providedSlots[slotName] = mappedSlot;
-                                            mappedSlot._sourceConnection = particle.consumedSlotConnections[consumeSlot];
-                                        }
-                                        slotMapped = true;
-                                        break;
-                                    }
-                                }
-                                assert(slotMapped);
-                            }
-                        }
-                        function tryApplyHandleConstraint(name, connection, constraint, handle) {
-                            if (connection.handle != null) {
-                                return false;
-                            }
-                            if (!MatchRecipeByVerb.connectionMatchesConstraint(connection, constraint)) {
-                                return false;
-                            }
-                            for (let i = 0; i < handle.connections.length; i++) {
-                                const candidate = handle.connections[i];
-                                // TODO candidate.name === name triggers test failures
-                                // tslint:disable-next-line: triple-equals
-                                if (candidate.particle === particleForReplacing && candidate.name == name) {
-                                    connection._handle = handle;
-                                    handle.connections[i] = connection;
-                                    return true;
-                                }
-                            }
-                            return false;
-                        }
-                        function applyHandleConstraint(name, constraint, handle) {
-                            const { mappedHandle } = outputRecipe.updateToClone({ mappedHandle: handle });
-                            for (const particle of particles) {
-                                if (name) {
-                                    if (tryApplyHandleConstraint(name, particle.connections[name], constraint, mappedHandle)) {
-                                        return true;
-                                    }
-                                }
-                                else {
-                                    for (const connection of Object.values(particle.connections)) {
-                                        if (tryApplyHandleConstraint(name, connection, constraint, mappedHandle)) {
-                                            return true;
-                                        }
-                                    }
-                                }
-                            }
-                            return false;
-                        }
-                        for (const name in handleConstraints.named) {
-                            if (handleConstraints.named[name].handle) {
-                                assert(applyHandleConstraint(name, handleConstraints.named[name], handleConstraints.named[name].handle));
-                            }
-                        }
-                        for (const connection of handleConstraints.unnamed) {
-                            if (connection.handle) {
-                                assert(applyHandleConstraint(null, connection, connection.handle));
-                            }
-                        }
-                        return 1;
-                    };
-                });
-            }
-        }(Walker.Permuted), this);
-    }
-    static satisfiesHandleConstraints(recipe, handleConstraints) {
-        for (const handleName in handleConstraints.named) {
-            if (!MatchRecipeByVerb.satisfiesHandleConnection(recipe, handleName, handleConstraints.named[handleName])) {
-                return false;
-            }
-        }
-        for (const handleData of handleConstraints.unnamed) {
-            if (!MatchRecipeByVerb.satisfiesUnnamedHandleConnection(recipe, handleData)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    static satisfiesUnnamedHandleConnection(recipe, handleData) {
-        // refuse to match unnamed handle connections unless some type information is present.
-        if (!handleData.handle) {
-            return false;
-        }
-        for (const particle of recipe.particles) {
-            for (const connection of Object.values(particle.connections)) {
-                if (MatchRecipeByVerb.connectionMatchesConstraint(connection, handleData)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    static satisfiesHandleConnection(recipe, handleName, handleData) {
-        for (const particle of recipe.particles) {
-            if (particle.connections[handleName]) {
-                if (MatchRecipeByVerb.connectionMatchesConstraint(particle.connections[handleName], handleData)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    static connectionMatchesConstraint(connection, handleData) {
-        if (connection.direction !== handleData.direction) {
-            return false;
-        }
-        if (!handleData.handle) {
-            return true;
-        }
-        return Handle$1.effectiveType(handleData.handle._mappedType, handleData.handle.connections.concat(connection)) != null;
-    }
-    static satisfiesSlotConstraints(recipe, slotConstraints) {
-        for (const slotName in slotConstraints) {
-            if (!MatchRecipeByVerb.satisfiesSlotConnection(recipe, slotName, slotConstraints[slotName])) {
-                return false;
-            }
-        }
-        return true;
-    }
-    static satisfiesSlotConnection(recipe, slotName, constraints) {
-        for (const particle of recipe.particles) {
-            if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, slotName, constraints)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    static slotsMatchConstraint(connections, name, constraints) {
-        if (connections[name] == null) {
-            return false;
-        }
-        if (connections[name]._targetSlot != null &&
-            constraints.targetSlot != null) {
-            return false;
-        }
-        for (const provideName in constraints.providedSlots) {
-            if (connections[name].providedSlots[provideName] == null) {
-                return false;
-            }
-        }
-        return true;
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class AddMissingHandles extends Strategy {
-    // TODO: move generation to use an async generator.
-    async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
-            onRecipe(recipe) {
-                // Don't add use handles while there are outstanding constraints
-                if (recipe.connectionConstraints.length > 0) {
-                    return undefined;
-                }
-                // Don't add use handles to a recipe with free handles
-                if (recipe.getFreeHandles().length > 0) {
-                    return undefined;
-                }
-                // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
-                // not being properly supported in arc instantiation). For now just hardcode skiping them.
-                const disconnectedConnections = recipe.getDisconnectedConnections();
-                if (disconnectedConnections.length === 0) {
-                    return undefined;
-                }
-                return recipe => {
-                    disconnectedConnections.forEach(hc => {
-                        const clonedHC = recipe.updateToClone({ hc }).hc;
-                        const handle = recipe.newHandle();
-                        handle.fate = '?';
-                        clonedHC.connectToHandle(handle);
-                    });
-                    return 0;
-                };
-            }
-        }(Walker.Permuted), this);
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class CreateDescriptionHandle extends Strategy {
-    async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
-            onHandleConnection(recipe, handleConnection) {
-                if (handleConnection.handle) {
-                    return undefined;
-                }
-                if (handleConnection.name !== 'descriptions') {
-                    return undefined;
-                }
-                return (recipe, handleConnection) => {
-                    const handle = recipe.newHandle();
-                    handle.fate = 'create';
-                    handleConnection.connectToHandle(handle);
-                    return 1;
-                };
-            }
-        }(Walker.Permuted), this);
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class SearchTokensToParticles extends Strategy {
-    constructor(arc, options) {
-        super(arc, options);
-        const thingByToken = {};
-        const thingByPhrase = {};
-        arc.context.particles.forEach(p => {
-            this._addThing(p.name, { spec: p }, thingByToken, thingByPhrase);
-            p.verbs.forEach(verb => this._addThing(verb, { spec: p }, thingByToken, thingByPhrase));
-        });
-        arc.context.allRecipes.forEach(r => {
-            const packaged = { innerRecipe: r };
-            this._addThing(r.name, packaged, thingByToken, thingByPhrase);
-            r.verbs.forEach(verb => this._addThing(verb, packaged, thingByToken, thingByPhrase));
-        });
-        class SearchWalker extends Walker {
-            constructor(tactic, arc, recipeIndex) {
-                super(tactic);
-                this.recipeIndex = recipeIndex;
-            }
-            onRecipe(recipe) {
-                if (!recipe.search || !recipe.search.unresolvedTokens.length) {
-                    return undefined;
-                }
-                const byToken = {};
-                const resolvedTokens = new Set();
-                const _addThingsByToken = (token, things) => {
-                    things.forEach(thing => {
-                        byToken[token] = byToken[token] || [];
-                        byToken[token].push(thing);
-                        token.split(' ').forEach(t => resolvedTokens.add(t));
-                    });
-                };
-                for (const [phrase, things] of Object.entries(thingByPhrase)) {
-                    const tokens = phrase.split(' ');
-                    if (tokens.every(token => recipe.search.unresolvedTokens.includes(token)) &&
-                        recipe.search.phrase.includes(phrase)) {
-                        _addThingsByToken(phrase, things);
-                    }
-                }
-                for (const token of recipe.search.unresolvedTokens) {
-                    if (resolvedTokens.has(token)) {
-                        continue;
-                    }
-                    const things = thingByToken[token];
-                    if (things) {
-                        _addThingsByToken(token, things);
-                    }
-                }
-                if (resolvedTokens.size === 0) {
-                    return undefined;
-                }
-                const flatten = (arr) => [].concat(...arr);
-                const product = (...sets) => sets.reduce((acc, set) => flatten(acc.map(x => set.map(y => [...x, y]))), [[]]);
-                const possibleCombinations = product(...Object.values(byToken).map(v => flatten(v)));
-                return possibleCombinations.map(combination => {
-                    return recipe => {
-                        resolvedTokens.forEach(token => recipe.search.resolveToken(token));
-                        combination.forEach(({ spec, innerRecipe }) => {
-                            if (spec) {
-                                const particle = recipe.newParticle(spec.name);
-                                particle.spec = spec;
-                            }
-                            else {
-                                const otherToHandle = this.recipeIndex.findCoalescableHandles(recipe, innerRecipe);
-                                assert(innerRecipe);
-                                const { cloneMap } = innerRecipe.mergeInto(recipe);
-                                otherToHandle.forEach((otherHandle, handle) => cloneMap.get(otherHandle).mergeInto(handle));
-                            }
-                        });
-                        return resolvedTokens.size;
-                    };
-                });
-            }
-        }
-        this._walker = new SearchWalker(Walker.Permuted, arc, options['recipeIndex']);
-    }
-    get walker() {
-        return this._walker;
-    }
-    getResults(inputParams) {
-        assert(inputParams);
-        const generated = super.getResults(inputParams).filter(result => !result.result.isResolved());
-        const terminal = inputParams.terminal;
-        return [...generated, ...terminal];
-    }
-    _addThing(token, thing, thingByToken, thingByPhrase) {
-        if (!token) {
-            return;
-        }
-        this._addThingByToken(token.toLowerCase(), thing, thingByToken);
-        // split DoSomething into "do something" and add the phrase
-        const phrase = token.replace(/([^A-Z])([A-Z])/g, '$1 $2').replace(/([A-Z][^A-Z])/g, ' $1').replace(/[\s]+/g, ' ').trim();
-        if (phrase !== token) {
-            this._addThingByToken(phrase.toLowerCase(), thing, thingByPhrase);
-        }
-    }
-    _addThingByToken(key, thing, thingByKey) {
-        assert(key === key.toLowerCase());
-        thingByKey[key] = thingByKey[key] || [];
-        if (!thingByKey[key].find(t => t === thing)) {
-            thingByKey[key].push(thing);
-        }
-    }
-    async generate(inputParams) {
-        await this.walker.recipeIndex.ready;
-        return Recipe.over(this.getResults(inputParams), this.walker, this);
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class GroupHandleConnections extends Strategy {
-    constructor(arc, args) {
-        super(arc, args);
-        this._walker = new class extends Walker {
-            onRecipe(recipe, result) {
-                // Only apply this strategy if ALL handle connections are named and have types.
-                if (recipe.getUnnamedUntypedConnections()) {
-                    return undefined;
-                }
-                // Find all unique types used in the recipe that have unbound handle connections.
-                const types = new Set();
-                recipe.handleConnections.forEach(hc => {
-                    if (!hc.isOptional && !hc.handle && !Array.from(types).find(t => t.equals(hc.type))) {
-                        types.add(hc.type);
-                    }
-                });
-                const groupsByType = new Map();
-                types.forEach(type => {
-                    // Find the particle with the largest number of unbound connections of the same type.
-                    const countConnectionsByType = (connections) => Object.values(connections).filter(conn => {
-                        return !conn.isOptional && !conn.handle && type.equals(conn.type);
-                    }).length;
-                    const sortedParticles = [...recipe.particles].sort((p1, p2) => {
-                        return countConnectionsByType(p2.connections) - countConnectionsByType(p1.connections);
-                    }).filter(p => countConnectionsByType(p.connections) > 0);
-                    assert(sortedParticles.length > 0);
-                    // Handle connections of the same particle cannot be bound to the same handle. Iterate on handle connections of the particle
-                    // with the most connections of the given type, and group each of them with same typed handle connections of other particles.
-                    const particleWithMostConnectionsOfType = sortedParticles[0];
-                    const groups = new Map();
-                    let allTypeHandleConnections = recipe.getTypeHandleConnections(type, particleWithMostConnectionsOfType);
-                    let iteration = 0;
-                    while (allTypeHandleConnections.length > 0) {
-                        Object.values(particleWithMostConnectionsOfType.connections).forEach(handleConnection => {
-                            if (!type.equals(handleConnection.type)) {
-                                return;
-                            }
-                            if (!groups.has(handleConnection)) {
-                                groups.set(handleConnection, []);
-                            }
-                            const group = groups.get(handleConnection);
-                            // filter all connections where this particle is already in a group.
-                            const possibleConnections = allTypeHandleConnections.filter(c => !group.find(gc => gc.particle === c.particle));
-                            let selectedConn = possibleConnections.find(c => handleConnection.isInput !== c.isInput || handleConnection.isOutput !== c.isOutput);
-                            // TODO: consider tags.
-                            // TODO: Slots handle restrictions should also be accounted for when grouping.
-                            if (!selectedConn) {
-                                if (possibleConnections.length === 0 || iteration === 0) {
-                                    // During first iteration only bind opposite direction connections ("in" with "out" and vice versa)
-                                    // to ensure each group has both direction connections as much as possible.
-                                    return;
-                                }
-                                selectedConn = possibleConnections[0];
-                            }
-                            group.push(selectedConn);
-                            allTypeHandleConnections = allTypeHandleConnections.filter(c => c !== selectedConn);
-                        });
-                        iteration++;
-                    }
-                    // Remove groups where no connections were bound together.
-                    groups.forEach((otherConns, conn) => {
-                        if (otherConns.length === 0) {
-                            groups.delete(conn);
-                        }
-                        else {
-                            otherConns.push(conn);
-                        }
-                    });
-                    if (groups.size !== 0) {
-                        groupsByType.set(type, groups);
-                    }
-                });
-                if (groupsByType.size > 0) {
-                    return recipe => {
-                        groupsByType.forEach((groups, type) => {
-                            groups.forEach(group => {
-                                const recipeHandle = recipe.newHandle();
-                                group.forEach(conn => {
-                                    const cloneConn = recipe.updateToClone({ conn }).conn;
-                                    cloneConn.connectToHandle(recipeHandle);
-                                });
-                            });
-                        });
-                        // TODO: score!
-                    };
-                }
-                return undefined;
-            }
-        }(Walker.Permuted);
-    }
-    get walker() {
-        return this._walker;
-    }
-    async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), this.walker, this);
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-/*
- * Match free handles (i.e. handles that aren't connected to any connections)
- * to connections.
- */
-class MatchFreeHandlesToConnections extends Strategy {
-    async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
-            onHandle(recipe, handle) {
-                if (handle.connections.length > 0) {
-                    return;
-                }
-                const matchingConnections = recipe.handleConnections.filter(connection => connection.handle == undefined && connection.name !== 'descriptions');
-                return matchingConnections.map(connection => {
-                    return (recipe, handle) => {
-                        const newConnection = recipe.updateToClone({ connection }).connection;
-                        newConnection.connectToHandle(handle);
-                        return 1;
-                    };
-                });
-            }
-        }(Walker.Permuted), this);
-    }
-}
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// tslint:disable-next-line: variable-name
-const Empty = new Ruleset.Builder().build();
-// tslint:disable-next-line: variable-name
-const ExperimentalPhased = new Ruleset.Builder().order([
-    InitPopulation,
-    InitSearch
-], SearchTokensToParticles, [
-    MatchRecipeByVerb,
-    MatchParticleByVerb
-], ConvertConstraintsToConnections, GroupHandleConnections, [
-    AddMissingHandles,
-    AssignHandles,
-    MatchFreeHandlesToConnections,
-], MapSlots, CreateDescriptionHandle, ResolveRecipe).build();
-// tslint:disable-next-line: variable-name
-const ExperimentalLinear = new Ruleset.Builder().order(InitPopulation, InitSearch, SearchTokensToParticles, MatchRecipeByVerb, MatchParticleByVerb, ConvertConstraintsToConnections, GroupHandleConnections, MatchFreeHandlesToConnections, AddMissingHandles, AssignHandles, MapSlots, CreateDescriptionHandle, ResolveRecipe).build();
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-
-// Provides access to device hardware resource metrics for a node process.
-class DeviceInfo {
-  // Returns the number of logical cores.
-  static hardwareConcurrency() {
-    return os.cpus().length;
-  }
-  // Returns the device memory in gigabytes.
-  static deviceMemory() {
-    // Convert bytes to gigabytes.
-    return os.totalmem() / Math.pow(1024, 3);
-  }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class NameUnnamedConnections extends Strategy {
-    async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
-            onHandleConnection(recipe, handleConnection) {
-                if (handleConnection.name) {
-                    // it is already named.
-                    return;
-                }
-                if (!handleConnection.particle.spec) {
-                    // the particle doesn't have spec yet.
-                    return;
-                }
-                const possibleSpecConns = handleConnection.particle.spec.connections.filter(specConn => {
-                    // filter specs with matching types that don't have handles bound to the corresponding handle connection.
-                    return !specConn.isOptional &&
-                        handleConnection.handle.type.equals(specConn.type) &&
-                        !handleConnection.particle.getConnectionByName(specConn.name).handle;
-                });
-                return possibleSpecConns.map(specConn => {
-                    return (recipe, handleConnection) => {
-                        handleConnection.particle.nameConnection(handleConnection, specConn.name);
-                        return 1;
-                    };
-                });
-            }
-        }(Walker.Permuted), this);
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class SearchTokensToHandles extends Strategy {
-    async generate(inputParams) {
-        const arc = this.arc;
-        // Finds stores matching the provided token and compatible with the provided handle's type,
-        // which are not already mapped into the provided handle's recipe
-        const findMatchingStores = (token, handle) => {
-            const counts = RecipeUtil.directionCounts(handle);
-            let stores = arc.findStoresByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
-            let fate = 'use';
-            if (stores.length === 0) {
-                stores = arc.context.findStoreByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
-                fate = counts.out === 0 ? 'map' : 'copy';
-            }
-            stores = stores.filter(store => !handle.recipe.handles.find(handle => handle.id === store.id));
-            return stores.map(store => ({ store, fate, token }));
-        };
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
-            onHandle(recipe, handle) {
-                if (!recipe.search || recipe.search.unresolvedTokens.length === 0) {
-                    return undefined;
-                }
-                if (handle.isResolved() || handle.connections.length === 0) {
-                    return undefined;
-                }
-                const possibleMatches = [];
-                for (const token of recipe.search.unresolvedTokens) {
-                    possibleMatches.push(...findMatchingStores(token, handle));
-                }
-                if (possibleMatches.length === 0) {
-                    return undefined;
-                }
-                return possibleMatches.map(match => {
-                    return (recipe, handle) => {
-                        handle.fate = match.fate;
-                        handle.mapToStorage(match.store);
-                        recipe.search.resolveToken(match.token);
-                    };
-                });
-            }
-        }(Walker.Permuted), this);
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class CreateHandleGroup extends Strategy {
-    async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
-            onRecipe(recipe, result) {
-                // Resolve constraints before assuming connections are free.
-                if (recipe.connectionConstraints.length > 0)
-                    return undefined;
-                const freeConnections = recipe.getFreeConnections();
-                let maximalGroup = null;
-                for (const writer of freeConnections.filter(hc => hc.isOutput)) {
-                    const compatibleConnections = [writer];
-                    let effectiveType = Handle$1.effectiveType(null, compatibleConnections);
-                    let typeCandidate = null;
-                    const involvedParticles = new Set([writer.particle]);
-                    let foundSomeReader = false;
-                    for (const reader of freeConnections.filter(hc => hc.isInput)) {
-                        if (!involvedParticles.has(reader.particle) &&
-                            (typeCandidate = Handle$1.effectiveType(effectiveType, [reader])) !== null) {
-                            compatibleConnections.push(reader);
-                            involvedParticles.add(reader.particle);
-                            effectiveType = typeCandidate;
-                            foundSomeReader = true;
-                        }
-                    }
-                    // Only make a 'create' group for a writer->reader case.
-                    if (!foundSomeReader)
-                        continue;
-                    for (const otherWriter of freeConnections.filter(hc => hc.isOutput)) {
-                        if (!involvedParticles.has(otherWriter.particle) &&
-                            (typeCandidate = Handle$1.effectiveType(effectiveType, [otherWriter])) !== null) {
-                            compatibleConnections.push(otherWriter);
-                            involvedParticles.add(otherWriter.particle);
-                            effectiveType = typeCandidate;
-                        }
-                    }
-                    if (!maximalGroup || compatibleConnections.length > maximalGroup.length) {
-                        maximalGroup = compatibleConnections;
-                    }
-                }
-                if (maximalGroup) {
-                    return recipe => {
-                        const newHandle = recipe.newHandle();
-                        newHandle.fate = 'create';
-                        for (const conn of maximalGroup) {
-                            const cloneConn = recipe.updateToClone({ conn }).conn;
-                            cloneConn.connectToHandle(newHandle);
-                        }
-                    };
-                }
-                return undefined;
-            }
-        }(Walker.Independent), this);
-    }
-}
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-class FindHostedParticle extends Strategy {
-    async generate(inputParams) {
-        const arc = this.arc;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
-            onHandleConnection(recipe, connection) {
-                if (connection.direction !== 'host' || connection.handle)
-                    return undefined;
-                assert(connection.type instanceof InterfaceType);
-                const iface = connection.type;
-                const results = [];
-                for (const particle of arc.context.particles) {
-                    // This is what interfaceInfo.particleMatches() does, but we also do
-                    // canEnsureResolved at the end:
-                    const ifaceClone = iface.interfaceInfo.cloneWithResolutions(new Map());
-                    // If particle doesn't match the requested interface.
-                    if (ifaceClone.restrictType(particle) === false)
-                        continue;
-                    // If we still have unresolvable interface after matching a particle.
-                    // This can happen if both interface and particle have type variables.
-                    // TODO: What to do here? We need concrete type for the particle spec
-                    //       handle, but we don't have one.
-                    if (!ifaceClone.canEnsureResolved())
-                        continue;
-                    results.push((recipe, hc) => {
-                        const handle = RecipeUtil.constructImmediateValueHandle(hc, particle, arc.generateID());
-                        assert(handle); // Type matching should have been ensure by the checks above;
-                        hc.connectToHandle(handle);
-                    });
-                }
-                return results;
-            }
-        }(Walker.Permuted), this);
-    }
-}
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This strategy coalesces unresolved terminal recipes (i.e. those that cannot
-// be modified by any strategy apart from this one) by finding unresolved
-// use/? handle and finding a matching create/? handle in another recipe and
-// merging those.
-class CoalesceRecipes extends Strategy {
-    constructor(arc, { recipeIndex }) {
-        super(arc);
-        this.recipeIndex = recipeIndex;
-    }
-    getResults(inputParams) {
-        // Coalescing for terminal recipes that are either unresolved recipes or have no UI.
-        return inputParams.terminal.filter(result => !result.result.isResolved() || result.result.slots.length === 0);
-    }
-    async generate(inputParams) {
-        const arc = this.arc;
-        const index = this.recipeIndex;
-        await index.ready;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
-            // Find a provided slot for unfulfilled consume connection.
-            onSlotConnection(recipe, slotConnection) {
-                if (slotConnection.isResolved()) {
-                    return undefined;
-                }
-                if (!slotConnection.name || !slotConnection.particle) {
-                    return undefined;
-                }
-                if (slotConnection.targetSlot) {
-                    return undefined;
-                }
-                // TODO: also support a consume slot connection that is NOT required,
-                // but no other connections are resolved.
-                const results = [];
-                // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
-                // these handles are coalescable? Add support for this.
-                for (const providedSlot of index.findProvidedSlot(slotConnection)) {
-                    // Don't grow recipes above 10 particles, otherwise we might never stop.
-                    if (recipe.particles.length + providedSlot.recipe.particles.length > 10)
-                        continue;
-                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
-                        // skip candidate recipe, if matches the shape of the arc's active recipe
-                        continue;
-                    }
-                    results.push((recipe, slotConnection) => {
-                        const otherToHandle = index.findCoalescableHandles(recipe, providedSlot.recipe);
-                        const { cloneMap } = providedSlot.recipe.mergeInto(slotConnection.recipe);
-                        const mergedSlot = cloneMap.get(providedSlot);
-                        slotConnection.connectToSlot(mergedSlot);
-                        this._connectOtherHandles(otherToHandle, cloneMap, false);
-                        // Clear verbs and recipe name after coalescing two recipes.
-                        recipe.verbs.splice(0);
-                        recipe.name = null;
-                        return 1;
-                    });
-                }
-                if (results.length > 0) {
-                    return results;
-                }
-                return undefined;
-            }
-            onSlot(recipe, slot) {
-                // Find slots that according to their provided-spec must be consumed, but have no consume connection.
-                if (slot.consumeConnections.length > 0) {
-                    return undefined; // slot has consume connections.
-                }
-                if (!slot.sourceConnection || !slot.sourceConnection.slotSpec.getProvidedSlotSpec(slot.name).isRequired) {
-                    return undefined; // either a remote slot (no source connection), or a not required one.
-                }
-                const results = [];
-                for (const { slotConn, matchingHandles } of index.findConsumeSlotConnectionMatch(slot)) {
-                    // Don't grow recipes above 10 particles, otherwise we might never stop.
-                    if (recipe.particles.length + slotConn.recipe.particles.length > 10)
-                        continue;
-                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, slotConn.recipe)) {
-                        // skip candidate recipe, if matches the shape of the arc's active recipe
-                        continue;
-                    }
-                    if (RecipeUtil.matchesRecipe(recipe, slotConn.recipe)) {
-                        // skip candidate recipe, if matches the shape of the currently explored recipe
-                        continue;
-                    }
-                    results.push((recipe, slot) => {
-                        // Find other handles that may be merged, as recipes are being coalesced.
-                        const otherToHandle = index.findCoalescableHandles(recipe, slotConn.recipe, new Set(slot.handleConnections.map(hc => hc.handle).concat(matchingHandles.map(({ handle, matchingConn }) => matchingConn.handle))));
-                        const { cloneMap } = slotConn.recipe.mergeInto(slot.recipe);
-                        const mergedSlotConn = cloneMap.get(slotConn);
-                        mergedSlotConn.connectToSlot(slot);
-                        for (const { handle, matchingConn } of matchingHandles) {
-                            // matchingConn in the mergedSlotConnection's recipe should be connected to `handle` in the slot's recipe.
-                            const mergedMatchingConn = cloneMap.get(matchingConn);
-                            const disconnectedHandle = mergedMatchingConn.handle;
-                            const clonedHandle = slot.handleConnections.find(handleConn => handleConn.handle && handleConn.handle.id === handle.id).handle;
-                            if (disconnectedHandle === clonedHandle) {
-                                continue; // this handle was already reconnected
-                            }
-                            while (disconnectedHandle.connections.length > 0) {
-                                const conn = disconnectedHandle.connections[0];
-                                conn.disconnectHandle();
-                                conn.connectToHandle(clonedHandle);
-                            }
-                            recipe.removeHandle(disconnectedHandle);
-                        }
-                        this._connectOtherHandles(otherToHandle, cloneMap, false);
-                        // Clear verbs and recipe name after coalescing two recipes.
-                        recipe.verbs.splice(0);
-                        recipe.name = null;
-                        // TODO: Merge description/patterns of both recipes.
-                        // TODO: Unify common code in slot and handle recipe coalescing.
-                        return 1;
-                    });
-                }
-                if (results.length > 0) {
-                    return results;
-                }
-                return undefined;
-            }
-            onHandle(recipe, handle) {
-                if (!index.coalescableFates.includes(handle.fate)
-                    || handle.id
-                    || handle.connections.length === 0
-                    || handle.name === 'descriptions')
-                    return undefined;
-                const results = [];
-                for (const otherHandle of index.findHandleMatch(handle, index.coalescableFates)) {
-                    // Don't grow recipes above 10 particles, otherwise we might never stop.
-                    if (recipe.particles.length + otherHandle.recipe.particles.length > 10)
-                        continue;
-                    // This is a poor man's proxy for the other handle being an output of a recipe.
-                    if (otherHandle.connections.find(conn => conn.direction === 'in'))
-                        continue;
-                    // We ignore type variables not constrained for reading, otherwise
-                    // generic recipes would apply - which we currently don't want here.
-                    if (otherHandle.type.hasVariable) {
-                        let resolved = otherHandle.type.resolvedType();
-                        // TODO: getContainedType returns non-null for references ... is that correct here?
-                        resolved = resolved.getContainedType() || resolved;
-                        if (resolved instanceof TypeVariable && !resolved.canReadSubset)
-                            continue;
-                    }
-                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
-                        // skip candidate recipe, if matches the shape of the arc's active recipe
-                        continue;
-                    }
-                    if (RecipeUtil.matchesRecipe(recipe, otherHandle.recipe)) {
-                        // skip candidate recipe, if matches the shape of the currently explored recipe
-                        continue;
-                    }
-                    results.push((recipe, handle) => {
-                        // Find other handles in the original recipe that could be coalesced with handles in otherHandle's recipe.
-                        const otherToHandle = index.findCoalescableHandles(recipe, otherHandle.recipe, new Set([handle, otherHandle]));
-                        const { cloneMap } = otherHandle.recipe.mergeInto(handle.recipe);
-                        // Connect the handle that the recipes are being coalesced on.
-                        cloneMap.get(otherHandle).mergeInto(handle);
-                        // Connect all other connectable handles.
-                        this._connectOtherHandles(otherToHandle, cloneMap, true);
-                        // Clear verbs and recipe name after coalescing two recipes.
-                        recipe.verbs.splice(0);
-                        recipe.name = null;
-                        // TODO: Merge description/patterns of both recipes.
-                        return 1;
-                    });
-                }
-                return results;
-            }
-            _connectOtherHandles(otherToHandle, cloneMap, verifyTypes) {
-                otherToHandle.forEach((otherHandle, handle) => {
-                    const otherHandleClone = cloneMap.get(otherHandle);
-                    // For coalescing that was triggered by handle coalescing (vs slot or slot connection)
-                    // once the main handle (one that triggered coalescing) was coalesced, types may have changed.
-                    // Need to verify all the type information for the "other" coalescable handles is still valid.
-                    // TODO(mmandlis): This is relying on only ever considering a single "other" handles to coalesce,
-                    // so the handle either is still a valid match or not.
-                    // In order to do it right for multiple handles, we need to try ALL handles,
-                    // then fallback to all valid N-1 combinations, then N-2 etc.
-                    if (verifyTypes) {
-                        if (!this._reverifyHandleTypes(handle, otherHandleClone)) {
-                            return;
-                        }
-                    }
-                    otherHandleClone.mergeInto(handle);
-                });
-            }
-            // Returns true, if both handles have types that can be coalesced.
-            _reverifyHandleTypes(handle, otherHandle) {
-                assert(handle.recipe === otherHandle.recipe);
-                const cloneMap = new Map();
-                const recipeClone = handle.recipe.clone(cloneMap);
-                recipeClone.normalize();
-                return Handle$1.effectiveType(cloneMap.get(handle).type, [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
-            }
-        }(Walker.Independent), this);
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Speculator {
-    constructor(planningResult) {
-        this.suggestionByHash = {};
-        this.speculativeArcs = [];
-        if (planningResult) {
-            for (const suggestion of planningResult.suggestions) {
-                this.suggestionByHash[suggestion.hash] = suggestion;
-            }
-        }
-    }
-    async speculate(arc, plan, hash) {
-        assert(plan.isResolved(), `Cannot speculate on an unresolved plan: ${plan.toString({ showUnresolved: true })}`);
-        let suggestion = this.suggestionByHash[hash];
-        if (suggestion) {
-            const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
-            const relevanceVersionByStoreId = suggestion.relevance.versionByStore;
-            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === relevanceVersionByStoreId[handle.id])) {
-                return suggestion;
-            }
-        }
-        const speculativeArc = await arc.cloneForSpeculativeExecution();
-        this.speculativeArcs.push(speculativeArc);
-        const relevance = Relevance.create(arc, plan);
-        await speculativeArc.instantiate(plan);
-        await this.awaitCompletion(relevance, speculativeArc);
-        if (!relevance.isRelevant(plan)) {
-            return null;
-        }
-        speculativeArc.description.relevance = relevance;
-        suggestion = new Suggestion(plan, hash, relevance, arc);
-        suggestion.setSearch(plan.search);
-        await suggestion.setDescription(speculativeArc.description);
-        this.suggestionByHash[hash] = suggestion;
-        return suggestion;
-    }
-    async awaitCompletion(relevance, speculativeArc) {
-        const messageCount = speculativeArc.pec.messageCount;
-        relevance.apply(await speculativeArc.pec.idle);
-        // We expect two messages here, one requesting the idle status, and one answering it.
-        if (speculativeArc.pec.messageCount !== messageCount + 2) {
-            return this.awaitCompletion(relevance, speculativeArc);
-        }
-        else {
-            speculativeArc.stop();
-            this.speculativeArcs.splice(this.speculativeArcs.indexOf(speculativeArc, 1));
-            return relevance;
-        }
-    }
-    dispose() {
-        for (const arc of this.speculativeArcs) {
-            arc.dispose();
-        }
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class Planner {
-    // TODO: Use context.arc instead of arc
-    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {} } = {}) {
-        strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
-        this._arc = arc;
-        const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
-        this.strategizer = new Strategizer(strategyImpls, [], ruleset);
-    }
-    // Specify a timeout value less than zero to disable timeouts.
-    async plan(timeout, generations) {
-        const trace = Tracing.start({ cat: 'planning', name: 'Planner::plan', overview: true, args: { timeout } });
-        timeout = timeout || -1;
-        const allResolved = [];
-        const start = now$1();
-        do {
-            const record = await trace.wait(this.strategizer.generate());
-            const generated = this.strategizer.generated;
-            trace.addArgs({
-                generated: generated.length,
-                generation: this.strategizer.generation
-            });
-            if (generations) {
-                generations.push({ generated, record });
-            }
-            const resolved = this.strategizer.generated
-                .map(individual => individual.result)
-                .filter(recipe => recipe.isResolved());
-            allResolved.push(...resolved);
-            const elapsed = now$1() - start;
-            if (timeout >= 0 && elapsed > timeout) {
-                console.warn(`Planner.plan timed out [elapsed=${Math.floor(elapsed)}ms, timeout=${timeout}ms].`);
-                break;
-            }
-        } while (this.strategizer.generated.length + this.strategizer.terminal.length > 0);
-        trace.end();
-        return allResolved;
-    }
-    _speculativeThreadCount() {
-        // TODO(wkorman): We'll obviously have to rework the below when we do
-        // speculation in the cloud.
-        const cores = DeviceInfo.hardwareConcurrency();
-        const memory = DeviceInfo.deviceMemory();
-        // For now, allow occupying half of the available cores while constraining
-        // total memory used to at most a quarter of what's available. In the
-        // absence of resource information we just run two in parallel as a
-        // perhaps-low-end-device-oriented balancing act.
-        const minCores = 2;
-        if (!cores || !memory) {
-            return minCores;
-        }
-        // A rough estimate of memory used per thread in gigabytes.
-        const memoryPerThread = 0.125;
-        const quarterMemory = memory / 4;
-        const maxThreadsByMemory = quarterMemory / memoryPerThread;
-        const maxThreadsByCores = cores / 2;
-        return Math.max(minCores, Math.min(maxThreadsByMemory, maxThreadsByCores));
-    }
-    _splitToGroups(items, groupCount) {
-        const groups = [];
-        if (!items || items.length === 0)
-            return groups;
-        const groupItemSize = Math.max(1, Math.floor(items.length / groupCount));
-        let startIndex = 0;
-        for (let i = 0; i < groupCount && startIndex < items.length; i++) {
-            groups.push(items.slice(startIndex, startIndex + groupItemSize));
-            startIndex += groupItemSize;
-        }
-        // Add any remaining items to the end of the last group.
-        if (startIndex < items.length) {
-            groups[groups.length - 1].push(...items.slice(startIndex, items.length));
-        }
-        return groups;
-    }
-    async suggest(timeout, generations = [], speculator) {
-        const trace = Tracing.start({ cat: 'planning', name: 'Planner::suggest', overview: true, args: { timeout } });
-        if (!generations && DevtoolsConnection.isConnected)
-            generations = [];
-        const plans = await trace.wait(this.plan(timeout, generations));
-        speculator = speculator || new Speculator();
-        // We don't actually know how many threads the VM will decide to use to
-        // handle the parallel speculation, but at least we know we won't kick off
-        // more than this number and so can somewhat limit resource utilization.
-        // TODO(wkorman): Rework this to use a fixed size 'thread' pool for more
-        // efficient work distribution.
-        const threadCount = this._speculativeThreadCount();
-        const planGroups = this._splitToGroups(plans, threadCount);
-        let results = await trace.wait(Promise.all(planGroups.map(async (group, groupIndex) => {
-            const results = [];
-            for (const plan of group) {
-                const hash = ((hash) => hash.substring(hash.length - 4))(await plan.digest());
-                if (RecipeUtil.matchesRecipe(this._arc.activeRecipe, plan)) {
-                    this._updateGeneration(generations, hash, (g) => g.active = true);
-                    continue;
-                }
-                const planTrace = Tracing.start({
-                    cat: 'speculating',
-                    sequence: `speculator_${groupIndex}`,
-                    overview: true,
-                    args: { groupIndex }
-                });
-                const suggestion = await speculator.speculate(this._arc, plan, hash);
-                if (!suggestion) {
-                    this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
-                    planTrace.end({ name: '[Irrelevant suggestion]', hash, groupIndex });
-                    continue;
-                }
-                this._updateGeneration(generations, hash, async (g) => g.description = suggestion.descriptionText);
-                suggestion.groupIndex = groupIndex;
-                results.push(suggestion);
-                planTrace.end({ name: suggestion.descriptionText, args: { rank: suggestion.rank, hash, groupIndex } });
-            }
-            return results;
-        })));
-        results = [].concat(...results);
-        return trace.endWith(results);
-    }
-    _updateGeneration(generations, hash, handler) {
-        if (generations) {
-            generations.forEach(g => {
-                g.generated.forEach(gg => {
-                    if (gg.hash.endsWith(hash)) {
-                        handler(gg);
-                    }
-                });
-            });
-        }
-    }
-}
-// tslint:disable-next-line: variable-name
-Planner.InitializationStrategies = [
-    InitPopulation,
-    InitSearch
-];
-// tslint:disable-next-line: variable-name
-Planner.ResolutionStrategies = [
-    SearchTokensToParticles,
-    SearchTokensToHandles,
-    GroupHandleConnections,
-    CreateHandleGroup,
-    ConvertConstraintsToConnections,
-    MapSlots,
-    AssignHandles,
-    MatchParticleByVerb,
-    MatchRecipeByVerb,
-    NameUnnamedConnections,
-    AddMissingHandles,
-    CreateDescriptionHandle,
-    MatchFreeHandlesToConnections,
-    ResolveRecipe,
-    FindHostedParticle,
-    CoalesceRecipes
-];
-// tslint:disable-next-line: variable-name
-Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.ResolutionStrategies);
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-// This is only relevant in the web devtools.
-const mapStackTrace = () => {};
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class OuterPortAttachment {
-    constructor(arc, devtoolsChannel) {
-        this._devtoolsChannel = devtoolsChannel;
-        this._arcIdString = arc.id.toString();
-        this._speculative = arc.isSpeculative;
-    }
-    handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
-        // Skip speculative and pipes arcs for now.
-        if (this._arcIdString.endsWith('-pipes') || this._speculative)
-            return;
-        const stack = this._extractStackFrames(stackString);
-        this._devtoolsChannel.send({
-            messageType: 'PecLog',
-            messageBody: { name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack },
-        });
-    }
-    _extractStackFrames(stackString) {
-        const stack = [];
-        if (!stackString)
-            return stack;
-        // File refs should appear only in stack traces generated by tests run with
-        // --explore set.
-        if (stackString.includes('(file:///')) {
-            // The slice discards the 'Error' text and the the stack frame
-            // corresponding to the API channel function, which is already being
-            // displayed in the log entry.
-            for (const frameString of stackString.split('\n    at ').slice(2)) {
-                let match = frameString.match(/^(.*) \((.*)\)$/);
-                if (match === null) {
-                    match = { 1: '<unknown>', 2: frameString };
-                }
-                let location = match[2].replace(/:[0-9]+$/, '');
-                if (location.startsWith('file')) {
-                    // 'file:///<path>/arcs.*/runtime/file.js:84'
-                    // -> location: 'runtime/file.js:150'
-                    location = location.replace(/^.*\/arcs[^/]*\//, '');
-                }
-                stack.push({ method: match[1], location, target: null, targetClass: 'noLink' });
-            }
-            return stack;
-        }
-        return stack;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-var MappingType;
-(function (MappingType) {
-    MappingType[MappingType["Mapped"] = 0] = "Mapped";
-    MappingType[MappingType["LocalMapped"] = 1] = "LocalMapped";
-    MappingType[MappingType["RemoteMapped"] = 2] = "RemoteMapped";
-    MappingType[MappingType["Direct"] = 3] = "Direct";
-    MappingType[MappingType["ObjectMap"] = 4] = "ObjectMap";
-    MappingType[MappingType["List"] = 5] = "List";
-    MappingType[MappingType["ByLiteral"] = 6] = "ByLiteral";
-})(MappingType || (MappingType = {}));
-const targets = new Map();
-function setPropertyKey(target, propertyKey) {
-    if (!targets.has(target)) {
-        targets.set(target, new Map());
-    }
-    if (!targets.get(target).has(propertyKey)) {
-        targets.get(target).set(propertyKey, []);
-    }
-}
-function set$1(target, propertyKey, parameterIndex, info) {
-    setPropertyKey(target, propertyKey);
-    targets.get(target).get(propertyKey)[parameterIndex] = info;
-}
-function Direct(target, propertyKey, parameterIndex) {
-    set$1(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct });
-}
-function Mapped(target, propertyKey, parameterIndex) {
-    set$1(target.constructor, propertyKey, parameterIndex, { type: MappingType.Mapped });
-}
-function ByLiteral(constructor) {
-    return (target, propertyKey, parameterIndex) => {
-        const info = { type: MappingType.ByLiteral, converter: constructor };
-        set$1(target.constructor, propertyKey, parameterIndex, info);
-    };
-}
-function ObjectMap(key, value) {
-    return (target, propertyKey, parameterIndex) => {
-        const info = { type: MappingType.ObjectMap, key: { type: key }, value: { type: value } };
-        set$1(target.constructor, propertyKey, parameterIndex, info);
-    };
-}
-function List(value) {
-    return (target, propertyKey, parameterIndex) => {
-        const info = { type: MappingType.List, value: { type: value } };
-        set$1(target.constructor, propertyKey, parameterIndex, info);
-    };
-}
-function LocalMapped(target, propertyKey, parameterIndex) {
-    set$1(target.constructor, propertyKey, parameterIndex, { type: MappingType.LocalMapped });
-}
-function RemoteMapped(target, propertyKey, parameterIndex) {
-    set$1(target.constructor, propertyKey, parameterIndex, { type: MappingType.RemoteMapped });
-}
-function NoArgs(target, propertyKey) {
-    setPropertyKey(target.constructor, propertyKey);
-}
-function RedundantInitializer(target, propertyKey, parameterIndex) {
-    set$1(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct, initializer: true, redundant: true });
-}
-function Initializer(target, propertyKey, parameterIndex) {
-    set$1(target.constructor, propertyKey, parameterIndex, { type: MappingType.Direct, initializer: true });
-}
-function Identifier(target, propertyKey, parameterIndex) {
-    assert(targets.get(target.constructor));
-    assert(targets.get(target.constructor).get(propertyKey));
-    assert(targets.get(target.constructor).get(propertyKey)[parameterIndex]);
-    targets.get(target.constructor).get(propertyKey)[parameterIndex].identifier = true;
-}
-function RemoteIgnore(target, propertyKey, parameterIndex) {
-    assert(targets.get(target.constructor));
-    assert(targets.get(target.constructor).get(propertyKey));
-    assert(targets.get(target.constructor).get(propertyKey)[parameterIndex]);
-    targets.get(target.constructor).get(propertyKey)[parameterIndex].ignore = true;
-}
-class ThingMapper {
-    constructor(prefix) {
-        this._prefix = prefix;
-        this._nextIdentifier = 0;
-        this._idMap = new Map();
-        this._reverseIdMap = new Map();
-    }
-    _newIdentifier() {
-        return this._prefix + (this._nextIdentifier++);
-    }
-    createMappingForThing(thing, requestedId = undefined) {
-        assert(!this._reverseIdMap.has(thing));
-        let id;
-        if (requestedId) {
-            id = requestedId;
-        }
-        else if (thing.apiChannelMappingId) {
-            id = thing.apiChannelMappingId;
-        }
-        else {
-            id = this._newIdentifier();
-        }
-        assert(!this._idMap.has(id), `${requestedId ? 'requestedId' : (thing.apiChannelMappingId ? 'apiChannelMappingId' : 'newIdentifier()')} ${id} already in use`);
-        this.establishThingMapping(id, thing);
-        return id;
-    }
-    maybeCreateMappingForThing(thing) {
-        if (this.hasMappingForThing(thing)) {
-            return this.identifierForThing(thing);
-        }
-        return this.createMappingForThing(thing);
-    }
-    async establishThingMapping(id, thing) {
-        let continuation;
-        if (Array.isArray(thing)) {
-            [thing, continuation] = thing;
-        }
-        this._idMap.set(id, thing);
-        if (thing instanceof Promise) {
-            assert(continuation == null);
-            await this.establishThingMapping(id, await thing);
-        }
-        else {
-            this._reverseIdMap.set(thing, id);
-            if (continuation) {
-                await continuation();
-            }
-        }
-    }
-    hasMappingForThing(thing) {
-        return this._reverseIdMap.has(thing);
-    }
-    identifierForThing(thing) {
-        assert(this._reverseIdMap.has(thing), `Missing thing [${thing}]`);
-        return this._reverseIdMap.get(thing);
-    }
-    thingForIdentifier(id) {
-        assert(this._idMap.has(id), `Missing id: ${id}`);
-        return this._idMap.get(id);
-    }
-}
-class APIPort {
-    constructor(messagePort, prefix) {
-        this._port = messagePort;
-        this._mapper = new ThingMapper(prefix);
-        this._port.onmessage = async (e) => this._processMessage(e);
-        this._debugAttachment = null;
-        this._attachStack = false;
-        this.messageCount = 0;
-        this._testingHook();
-    }
-    // Overridden by unit tests.
-    _testingHook() {
-    }
-    close() {
-        this._port.close();
-    }
-    async _processMessage(e) {
-        assert(this['before' + e.data.messageType] !== undefined);
-        this['before' + e.data.messageType](e.data.messageBody);
-        const count = this.messageCount++;
-        if (this._debugAttachment) {
-            this._debugAttachment.handlePecMessage('on' + e.data.messageType, e.data.messageBody, count, e.data.stack);
-        }
-    }
-    send(name, args) {
-        const call = { messageType: name, messageBody: args, stack: this._attachStack ? new Error().stack : undefined };
-        const count = this.messageCount++;
-        this._port.postMessage(call);
-        if (this._debugAttachment) {
-            this._debugAttachment.handlePecMessage(name, args, count, new Error().stack);
-        }
-    }
-}
-// The horror. From https://davidwalsh.name/javascript-arguments
-function getArgs(func) {
-    // First match everything inside the function argument parens.
-    const args = func.toString().match(/.*?\(([^)]*)\)/)[1];
-    // Split the arguments string into an array comma delimited.
-    return args.split(',').map((arg) => {
-        // Ensure no inline comments are parsed and trim the whitespace.
-        return arg.replace(/\/\*.*\*\//, '').trim();
-        // Ensure no undefined values are added.
-    }).filter((arg) => arg);
-}
-// value is covariant with info, and errors will be found
-// at start of runtime. 
-// tslint:disable-next-line: no-any
-function convert(info, value, mapper) {
-    switch (info.type) {
-        case MappingType.Mapped:
-            return mapper.identifierForThing(value);
-        case MappingType.LocalMapped:
-            return mapper.maybeCreateMappingForThing(value);
-        case MappingType.RemoteMapped:
-            // This is on the local side, so we don't do anything here.
-            return value;
-        case MappingType.Direct:
-            return value;
-        case MappingType.ObjectMap:
-            const r = {};
-            value.forEach((childvalue, key) => r[convert(info.key, key, mapper)] = convert(info.value, childvalue, mapper));
-            return r;
-        case MappingType.List:
-            return value.map(v => convert(info.value, v, mapper));
-        case MappingType.ByLiteral:
-            return value.toLiteral();
-        default:
-            throw new Error(`Can't yet send MappingType ${info.type}`);
-    }
-}
-// value is covariant with info, and errors will be found
-// at start of runtime. 
-// tslint:disable-next-line: no-any
-function unconvert(info, value, mapper) {
-    switch (info.type) {
-        case MappingType.Mapped:
-            return mapper.thingForIdentifier(value);
-        case MappingType.LocalMapped:
-            // This is on the remote side, so we don't do anything here.
-            return value;
-        case MappingType.RemoteMapped:
-            return mapper.thingForIdentifier(value);
-        case MappingType.Direct:
-            return value;
-        case MappingType.ObjectMap:
-            const r = new Map();
-            for (const key of Object.keys(value)) {
-                r.set(unconvert(info.key, key, mapper), unconvert(info.value, value[key], mapper));
-            }
-            return r;
-        case MappingType.List:
-            return value.map(v => unconvert(info.value, v, mapper));
-        case MappingType.ByLiteral:
-            return info.converter.fromLiteral(value);
-        default:
-            throw new Error(`Can't yet recieve MappingType ${info.type}`);
-    }
-}
-function AutoConstruct(target) {
-    return (constructor) => {
-        const doConstruct = (me, other) => {
-            const functions = targets.get(me);
-            for (const f of functions.keys()) {
-                const argNames = getArgs(me.prototype[f]);
-                const descriptor = functions.get(f);
-                // If this descriptor is for an initializer, record that fact and we'll process it after
-                // the rest of the arguments.
-                const initializer = descriptor.findIndex(d => d.initializer);
-                // If this descriptor records that this argument is the identifier, record it
-                // as the requestedId for mapping below.
-                const requestedId = descriptor.findIndex(d => d.identifier);
-                function impl(...args) {
-                    const messageBody = {};
-                    for (let i = 0; i < descriptor.length; i++) {
-                        if (i === initializer) {
-                            continue;
-                        }
-                        // Process this argument.
-                        messageBody[argNames[i]] = convert(descriptor[i], args[i], this._mapper);
-                    }
-                    // Process the initializer if present.
-                    if (initializer !== -1) {
-                        if (descriptor[initializer].redundant) {
-                            assert(requestedId === -1);
-                            messageBody['identifier'] = this._mapper.maybeCreateMappingForThing(args[initializer]);
-                        }
-                        else {
-                            messageBody['identifier'] = this._mapper.createMappingForThing(args[initializer], args[requestedId]);
-                        }
-                    }
-                    this.send(f, messageBody);
-                }
-                async function before(messageBody) {
-                    const args = [];
-                    const promises = [];
-                    for (let i = 0; i < descriptor.length; i++) {
-                        // If there's a requestedId then the receiving end won't expect to
-                        // see the identifier as well.
-                        if (i === initializer && (requestedId !== -1 || descriptor[i].ignore)) {
-                            continue;
-                        }
-                        const argName = i === initializer ? 'identifier' : argNames[i];
-                        const result = unconvert(descriptor[i], messageBody[argName], this._mapper);
-                        if (result instanceof Promise) {
-                            promises.push({ promise: result, position: args.length });
-                            args.push(() => unconvert(descriptor[i], messageBody[argName], this._mapper));
-                        }
-                        else {
-                            args.push(result);
-                        }
-                    }
-                    if (promises.length > 0) {
-                        await Promise.all(promises.map(a => a.promise));
-                        promises.forEach(a => args[a.position] = args[a.position]());
-                    }
-                    const result = this['on' + f](...args);
-                    // If this message is an initializer, need to establish a mapping
-                    // with the result of processing the message.
-                    if (initializer > -1) {
-                        assert(messageBody['identifier']);
-                        await this._mapper.establishThingMapping(messageBody['identifier'], result);
-                    }
-                }
-                Object.defineProperty(me.prototype, f, {
-                    get() {
-                        return impl;
-                    }
-                });
-                Object.defineProperty(other.prototype, 'before' + f, {
-                    get() {
-                        return before;
-                    }
-                });
-            }
-        };
-        doConstruct(constructor, target);
-        doConstruct(target, constructor);
-    };
-}
-class PECOuterPort extends APIPort {
-    constructor(messagePort, arc) {
-        super(messagePort, 'o');
-        DevtoolsConnection.onceConnected.then(devtoolsChannel => {
-            this.DevToolsConnected();
-            this._debugAttachment = new OuterPortAttachment(arc, devtoolsChannel);
-        });
-    }
-    Stop() { }
-    DefineHandle(handle, type, name) { }
-    InstantiateParticle(particle, id, spec, handles) { }
-    UIEvent(particle, slotName, event) { }
-    SimpleCallback(callback, data) { }
-    AwaitIdle(version) { }
-    StartRender(particle, slotName, providedSlots, contentTypes) { }
-    StopRender(particle, slotName) { }
-    GetBackingStoreCallback(store, callback, type, name, id, storageKey) { }
-    ConstructArcCallback(callback, arc) { }
-    CreateHandleCallback(handle, callback, type, name, id) { }
-    MapHandleCallback(newHandle, callback, id) { }
-    CreateSlotCallback(slot, callback, hostedSlotId) { }
-    InnerArcRender(transformationParticle, transformationSlotName, hostedSlotId, content) { }
-    // We need an API call to tell the context side that DevTools has been connected, so it can start sending
-    // stack traces attached to the API calls made from that side.
-    DevToolsConnected() { }
-}
-__decorate([
-    NoArgs
-], PECOuterPort.prototype, "Stop", null);
-__decorate([
-    __param(0, RedundantInitializer), __param(1, ByLiteral(Type)), __param(2, Direct)
-], PECOuterPort.prototype, "DefineHandle", null);
-__decorate([
-    __param(0, Initializer), __param(1, Identifier), __param(1, Direct), __param(2, ByLiteral(ParticleSpec)), __param(3, ObjectMap(MappingType.Direct, MappingType.Mapped))
-], PECOuterPort.prototype, "InstantiateParticle", null);
-__decorate([
-    __param(0, Mapped), __param(1, Direct), __param(2, Direct)
-], PECOuterPort.prototype, "UIEvent", null);
-__decorate([
-    __param(0, RemoteMapped), __param(1, Direct)
-], PECOuterPort.prototype, "SimpleCallback", null);
-__decorate([
-    __param(0, Direct)
-], PECOuterPort.prototype, "AwaitIdle", null);
-__decorate([
-    __param(0, Mapped), __param(1, Direct), __param(2, ObjectMap(MappingType.Direct, MappingType.Direct)), __param(3, List(MappingType.Direct))
-], PECOuterPort.prototype, "StartRender", null);
-__decorate([
-    __param(0, Mapped), __param(1, Direct)
-], PECOuterPort.prototype, "StopRender", null);
-__decorate([
-    __param(0, Initializer), __param(1, RemoteMapped), __param(2, ByLiteral(Type)), __param(3, Direct), __param(4, Identifier), __param(4, Direct), __param(5, Direct)
-], PECOuterPort.prototype, "GetBackingStoreCallback", null);
-__decorate([
-    __param(0, RemoteMapped), __param(1, LocalMapped)
-], PECOuterPort.prototype, "ConstructArcCallback", null);
-__decorate([
-    __param(0, Initializer), __param(1, RemoteMapped), __param(2, ByLiteral(Type)), __param(3, Direct), __param(4, Identifier), __param(4, Direct)
-], PECOuterPort.prototype, "CreateHandleCallback", null);
-__decorate([
-    __param(0, RemoteIgnore), __param(0, Initializer), __param(1, RemoteMapped), __param(2, Direct)
-], PECOuterPort.prototype, "MapHandleCallback", null);
-__decorate([
-    __param(0, RemoteIgnore), __param(0, Initializer), __param(1, RemoteMapped), __param(2, Direct)
-], PECOuterPort.prototype, "CreateSlotCallback", null);
-__decorate([
-    __param(0, Mapped), __param(1, Direct), __param(2, Direct), __param(3, Direct)
-], PECOuterPort.prototype, "InnerArcRender", null);
-__decorate([
-    NoArgs
-], PECOuterPort.prototype, "DevToolsConnected", null);
-let PECInnerPort = class PECInnerPort extends APIPort {
-    constructor(messagePort) {
-        super(messagePort, 'i');
-    }
-    Render(particle, slotName, content) { }
-    InitializeProxy(handle, callback) { }
-    SynchronizeProxy(handle, callback) { }
-    HandleGet(handle, callback) { }
-    HandleToList(handle, callback) { }
-    HandleSet(handle, data, particleId, barrier) { }
-    HandleClear(handle, particleId, barrier) { }
-    HandleStore(handle, callback, data, particleId) { }
-    HandleRemove(handle, callback, data, particleId) { }
-    HandleRemoveMultiple(handle, callback, data, particleId) { }
-    HandleStream(handle, callback, pageSize, forward) { }
-    StreamCursorNext(handle, callback, cursorId) { }
-    StreamCursorClose(handle, cursorId) { }
-    Idle(version, relevance) { }
-    GetBackingStore(callback, storageKey, type) { }
-    ConstructInnerArc(callback, particle) { }
-    ArcCreateHandle(callback, arc, type, name) { }
-    ArcMapHandle(callback, arc, handle) { }
-    ArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) { }
-    ArcLoadRecipe(arc, recipe, callback) { }
-    RaiseSystemException(exception, methodName, particleId) { }
-    // To show stack traces for calls made inside the context, we need to capture the trace at the call point and
-    // send it along with the message. We only want to do this after a DevTools connection has been detected, which
-    // we can't directly detect inside a worker context, so the PECOuterPort will send an API message instead.
-    onDevToolsConnected() {
-        this._attachStack = true;
-    }
-};
-__decorate([
-    __param(0, Mapped), __param(1, Direct), __param(2, Direct)
-], PECInnerPort.prototype, "Render", null);
-__decorate([
-    __param(0, Mapped), __param(1, LocalMapped)
-], PECInnerPort.prototype, "InitializeProxy", null);
-__decorate([
-    __param(0, Mapped), __param(1, LocalMapped)
-], PECInnerPort.prototype, "SynchronizeProxy", null);
-__decorate([
-    __param(0, Mapped), __param(1, LocalMapped)
-], PECInnerPort.prototype, "HandleGet", null);
-__decorate([
-    __param(0, Mapped), __param(1, LocalMapped)
-], PECInnerPort.prototype, "HandleToList", null);
-__decorate([
-    __param(0, Mapped), __param(1, Direct), __param(2, Direct), __param(3, Direct)
-], PECInnerPort.prototype, "HandleSet", null);
-__decorate([
-    __param(0, Mapped), __param(1, Direct), __param(2, Direct)
-], PECInnerPort.prototype, "HandleClear", null);
-__decorate([
-    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct), __param(3, Direct)
-], PECInnerPort.prototype, "HandleStore", null);
-__decorate([
-    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct), __param(3, Direct)
-], PECInnerPort.prototype, "HandleRemove", null);
-__decorate([
-    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct), __param(3, Direct)
-], PECInnerPort.prototype, "HandleRemoveMultiple", null);
-__decorate([
-    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct), __param(3, Direct)
-], PECInnerPort.prototype, "HandleStream", null);
-__decorate([
-    __param(0, Mapped), __param(1, LocalMapped), __param(2, Direct)
-], PECInnerPort.prototype, "StreamCursorNext", null);
-__decorate([
-    __param(0, Mapped), __param(1, Direct)
-], PECInnerPort.prototype, "StreamCursorClose", null);
-__decorate([
-    __param(0, Direct), __param(1, ObjectMap(MappingType.Mapped, MappingType.Direct))
-], PECInnerPort.prototype, "Idle", null);
-__decorate([
-    __param(0, LocalMapped), __param(1, Direct), __param(2, ByLiteral(Type))
-], PECInnerPort.prototype, "GetBackingStore", null);
-__decorate([
-    __param(0, LocalMapped), __param(1, Mapped)
-], PECInnerPort.prototype, "ConstructInnerArc", null);
-__decorate([
-    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, ByLiteral(Type)), __param(3, Direct)
-], PECInnerPort.prototype, "ArcCreateHandle", null);
-__decorate([
-    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped)
-], PECInnerPort.prototype, "ArcMapHandle", null);
-__decorate([
-    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped), __param(3, Direct), __param(4, Direct), __param(5, Direct), __param(6, Direct)
-], PECInnerPort.prototype, "ArcCreateSlot", null);
-__decorate([
-    __param(0, RemoteMapped), __param(1, Direct), __param(2, LocalMapped)
-], PECInnerPort.prototype, "ArcLoadRecipe", null);
-__decorate([
-    __param(0, Direct), __param(1, Direct), __param(2, Direct)
-], PECInnerPort.prototype, "RaiseSystemException", null);
-PECInnerPort = __decorate([
-    AutoConstruct(PECOuterPort)
-], PECInnerPort);
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 const systemHandlers = [];
 function reportSystemException(exception, methodName, particle) {
     for (const handler of systemHandlers) {
@@ -24371,7 +20535,7 @@ class ParticleExecutionHost {
                 this.CreateHandleCallback(store, callback, type, name, store.id);
             }
             onArcMapHandle(callback, arc, handle) {
-                assert(pec.arc.findStoreById(handle.id), `Cannot map nonexistent handle ${handle.id}`);
+                assert$1(pec.arc.findStoreById(handle.id), `Cannot map nonexistent handle ${handle.id}`);
                 // TODO: create hosted handles map with specially generated ids instead of returning the real ones?
                 this.MapHandleCallback({}, callback, handle.id);
             }
@@ -24843,11 +21007,11 @@ class VariableProxy extends StorageProxy {
         }
         this.version = version;
         this.model = model.length === 0 ? null : model[0].value;
-        assert(this.model !== undefined);
+        assert$1(this.model !== undefined);
         return true;
     }
     _processUpdate(update, apply = true) {
-        assert('data' in update);
+        assert$1('data' in update);
         if (!apply) {
             return update;
         }
@@ -24886,7 +21050,7 @@ class VariableProxy extends StorageProxy {
         }
     }
     set(entity, particleId) {
-        assert(entity !== undefined);
+        assert$1(entity !== undefined);
         if (JSON.stringify(this.model) === JSON.stringify(entity)) {
             return;
         }
@@ -25153,7 +21317,7 @@ class ParticleExecutionContext {
                 // TODO(mmandlis): this dependency on _slotByName and name means that only DomParticles can
                 // be UI particles.
                 // tslint:disable-next-line: no-any
-                assert(particle._slotByName.has(slotName), `Stop render called for particle ${particle.name} slot ${slotName} without start render being called.`);
+                assert$1(particle._slotByName.has(slotName), `Stop render called for particle ${particle.name} slot ${slotName} without start render being called.`);
                 // tslint:disable-next-line: no-any
                 particle._slotByName.delete(slotName);
             }
@@ -25516,7 +21680,7 @@ class Particle$1 {
 
 const nob = () => Object.create(null);
 
-const debounce$1 = (key, action, delay) => {
+const debounce = (key, action, delay) => {
   if (key) {
     clearTimeout(key);
   }
@@ -25657,7 +21821,7 @@ const XenStateMixin = Base => class extends Base {
   }
   _debounce(key, func, delay) {
     key = `_debounce_${key}`;
-    this._state[key] = debounce$1(this._state[key], func, delay != null ? delay : 16);
+    this._state[key] = debounce(this._state[key], func, delay != null ? delay : 16);
   }
 };
 
@@ -25801,7 +21965,7 @@ class DomParticleBase extends Particle$1 {
         if (typeof pattern === 'string') {
             return super.setParticleDescription(pattern);
         }
-        assert(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
+        assert$1(!!pattern.template && !!pattern.model, 'Description pattern must either be string or have template and model');
         super.setDescriptionPattern('_template_', pattern.template);
         super.setDescriptionPattern('_model_', JSON.stringify(pattern.model));
         return undefined;
@@ -26294,7 +22458,7 @@ class MultiplexerDomParticle extends TransformationDomParticle {
     if (!subId) {
       return;
     }
-    assert(content.templateName, `Template name is missing for slot '${slotName}' (hosted slot ID: '${hostedSlotId}')`);
+    assert$1(content.templateName, `Template name is missing for slot '${slotName}' (hosted slot ID: '${hostedSlotId}')`);
     this._setState({templateName: Object.assign(this._state.templateName || {}, {[subId]: `${content.templateName}`})});
 
     if (content.template) {
@@ -26498,11 +22662,11 @@ class Loader {
     _loadURL(url) {
         if (/\/\/schema.org\//.test(url)) {
             if (url.endsWith('/Thing')) {
-                return fetch$1('https://schema.org/Product.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data, { '@id': 'schema:Thing' }));
+                return fetch('https://schema.org/Product.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data, { '@id': 'schema:Thing' }));
             }
-            return fetch$1(url + '.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data));
+            return fetch(url + '.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data));
         }
-        return fetch$1(url).then(res => res.text());
+        return fetch(url).then(res => res.text());
     }
     async loadParticleClass(spec) {
         const clazz = await this.requireParticle(spec.implFile);
@@ -26521,19 +22685,19 @@ class Loader {
                 result.push(particleWrapper);
             },
             console,
-            fetch: fetch$1,
+            fetch,
             setTimeout,
             importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
         };
         script.runInNewContext(self, { filename: fileName, displayErrors: true });
-        assert(result.length > 0 && typeof result[0] === 'function', `Error while instantiating particle implementation from ${fileName}`);
+        assert$1(result.length > 0 && typeof result[0] === 'function', `Error while instantiating particle implementation from ${fileName}`);
         return this.unwrapParticle(result[0]);
     }
     setParticleExecutionContext(pec) {
         this.pec = pec;
     }
     unwrapParticle(particleWrapper) {
-        assert(this.pec);
+        assert$1(this.pec);
         return particleWrapper({ Particle: Particle$1, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: Reference.newClientReference(this.pec), html });
     }
 }
@@ -26626,6 +22790,3124 @@ function enableTracingAdapter(devtoolsChannel) {
         streamingToDevtools = true;
     }
 }
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+function now$1() {
+  const time = process.hrtime();
+  return time[0] * 1000 + time[1] / 1000000;
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class ConvertConstraintsToConnections extends Strategy {
+    constructor(arc, args) {
+        super(arc, args);
+        this.modality = arc.modality;
+    }
+    async generate(inputParams) {
+        const modality = this.modality;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onRecipe(recipe) {
+                // The particles & handles Sets are used as input to RecipeUtil's shape functionality
+                // (this is the algorithm that "finds" the constraint set in the recipe).
+                // They track which particles/handles need to be found/created.
+                const particles = new Set();
+                const handles = new Set();
+                // The map object tracks the connections between particles that need to be found/created.
+                // It's another input to RecipeUtil.makeShape.
+                // tslint:disable-next-line: no-any
+                const map = {};
+                const particlesByName = {};
+                let handleCount = 0;
+                const obligations = [];
+                if (recipe.connectionConstraints.length === 0) {
+                    return undefined;
+                }
+                for (const constraint of recipe.connectionConstraints) {
+                    const from = constraint.from;
+                    const to = constraint.to;
+                    // Don't process constraints if their listed particles don't match the current modality.
+                    if (modality
+                        && from instanceof ParticleEndPoint
+                        && to instanceof ParticleEndPoint
+                        && (!from.particle.matchModality(modality) || !to.particle.matchModality(modality))) {
+                        return undefined;
+                    }
+                    const reverse = { '->': '<-', '=': '=', '<-': '->' };
+                    // Set up initial mappings & input to RecipeUtil.
+                    let handle;
+                    let handleIsConcrete = false;
+                    let createObligation = false;
+                    if (from instanceof ParticleEndPoint) {
+                        particles.add(from.particle.name);
+                        if (map[from.particle.name] == undefined) {
+                            map[from.particle.name] = {};
+                            particlesByName[from.particle.name] = from.particle;
+                        }
+                        if (from.connection) {
+                            handleIsConcrete = true;
+                            handle = map[from.particle.name][from.connection];
+                        }
+                        else {
+                            createObligation = true;
+                        }
+                    }
+                    if (from instanceof HandleEndPoint) {
+                        handle = { handle: from.handle, direction: reverse[constraint.direction] };
+                        handles.add(handle.handle);
+                    }
+                    if (to instanceof ParticleEndPoint) {
+                        particles.add(to.particle.name);
+                        if (map[to.particle.name] == undefined) {
+                            map[to.particle.name] = {};
+                            particlesByName[to.particle.name] = to.particle;
+                        }
+                        if (to.connection) {
+                            handleIsConcrete = true;
+                            if (!handle) {
+                                handle =
+                                    map[to.particle.name][to.connection];
+                            }
+                        }
+                        else {
+                            createObligation = true;
+                        }
+                    }
+                    if (to instanceof HandleEndPoint) {
+                        handle = { handle: to.handle, direction: constraint.direction };
+                        handles.add(handle.handle);
+                    }
+                    if (handle == undefined) {
+                        handle = { handle: 'v' + handleCount++, direction: constraint.direction };
+                        if (handleIsConcrete) {
+                            handles.add(handle.handle);
+                        }
+                    }
+                    if (from instanceof TagEndPoint) {
+                        handle.tags = from.tags;
+                    }
+                    else if (to instanceof TagEndPoint) {
+                        handle.tags = to.tags;
+                    }
+                    if (createObligation) {
+                        obligations.push({
+                            from: from._clone(),
+                            to: to._clone(),
+                            direction: constraint.direction
+                        });
+                    }
+                    const unionDirections = (a, b) => {
+                        if (a === '=') {
+                            return '=';
+                        }
+                        if (b === '=') {
+                            return '=';
+                        }
+                        if (a !== b) {
+                            return '=';
+                        }
+                        return a;
+                    };
+                    let direction = constraint.direction;
+                    if (from instanceof ParticleEndPoint) {
+                        const connection = from.connection;
+                        if (connection) {
+                            const existingHandle = map[from.particle.name][connection];
+                            if (existingHandle) {
+                                direction = unionDirections(direction, existingHandle.direction);
+                                if (direction == null) {
+                                    return undefined;
+                                }
+                            }
+                            map[from.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags };
+                        }
+                    }
+                    direction = reverse[constraint.direction];
+                    if (to instanceof ParticleEndPoint) {
+                        const connection = to.connection;
+                        if (connection) {
+                            const existingHandle = map[to.particle.name][connection];
+                            if (existingHandle) {
+                                direction = unionDirections(direction, existingHandle.direction);
+                                if (direction == null) {
+                                    return undefined;
+                                }
+                            }
+                            map[to.particle.name][connection] = { handle: handle.handle, direction, tags: handle.tags };
+                        }
+                    }
+                }
+                const shape = RecipeUtil.makeShape([...particles.values()], [...handles.values()], map);
+                const matches = RecipeUtil.find(recipe, shape);
+                const results = RecipeUtil.find(recipe, shape);
+                const processedResults = results.filter(match => {
+                    // Ensure that every handle is either matched, or an input of at least one
+                    // connected particle in the constraints.
+                    const resolvedHandles = {};
+                    for (const particle of Object.keys(map)) {
+                        for (const connection of Object.keys(map[particle])) {
+                            const handle = map[particle][connection].handle;
+                            if (resolvedHandles[handle]) {
+                                continue;
+                            }
+                            if (match.match[handle]) {
+                                resolvedHandles[handle] = true;
+                            }
+                            else {
+                                const spec = particlesByName[particle];
+                                resolvedHandles[handle] = spec.isOutput(connection);
+                            }
+                        }
+                    }
+                    return Object.values(resolvedHandles).every(value => value);
+                }).map(match => {
+                    return (recipe) => {
+                        const score = recipe.connectionConstraints.length + match.score;
+                        const recipeMap = recipe.updateToClone(match.match);
+                        for (const particle of Object.keys(map)) {
+                            let recipeParticle = recipeMap[particle];
+                            if (!recipeParticle) {
+                                recipeParticle = recipe.newParticle(particle);
+                                recipeParticle.spec = particlesByName[particle];
+                                recipeMap[particle] = recipeParticle;
+                            }
+                            for (const connection of Object.keys(map[particle])) {
+                                const handle = map[particle][connection];
+                                let recipeHandleConnection = recipeParticle.connections[connection];
+                                if (recipeHandleConnection == undefined) {
+                                    recipeHandleConnection =
+                                        recipeParticle.addConnectionName(connection);
+                                }
+                                let recipeHandle = recipeMap[handle.handle];
+                                if (recipeHandle == null && recipeHandleConnection.handle == null) {
+                                    recipeHandle = recipe.newHandle();
+                                    recipeHandle.fate = 'create';
+                                    recipeHandle.tags = handle.tags || [];
+                                    recipeMap[handle.handle] = recipeHandle;
+                                }
+                                if (recipeHandleConnection.handle == null) {
+                                    recipeHandleConnection.connectToHandle(recipeHandle);
+                                }
+                            }
+                        }
+                        recipe.clearConnectionConstraints();
+                        for (const obligation of obligations) {
+                            const from = new InstanceEndPoint(recipeMap[obligation.from.particle.name], obligation.from.connection);
+                            const to = new InstanceEndPoint(recipeMap[obligation.to.particle.name], obligation.to.connection);
+                            recipe.newObligation(from, to, obligation.direction);
+                        }
+                        return score;
+                    };
+                });
+                return processedResults;
+            }
+        }(Walker.Independent), this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class AssignHandles extends Strategy {
+    async generate(inputParams) {
+        const self = this;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandle(recipe, handle) {
+                if (!['?', 'use', 'copy', 'map'].includes(handle.fate)) {
+                    return undefined;
+                }
+                if (handle.connections.length === 0) {
+                    return undefined;
+                }
+                if (handle.id) {
+                    return undefined;
+                }
+                if (!handle.type) {
+                    return undefined;
+                }
+                // TODO: using the connection to retrieve type information is wrong.
+                // Once validation of recipes generates type information on the handle
+                // we should switch to using that instead.
+                const counts = RecipeUtil.directionCounts(handle);
+                if (counts.unknown > 0) {
+                    return undefined;
+                }
+                const score = this._getScore(counts, handle.tags);
+                if (counts.out > 0 && handle.fate === 'map') {
+                    return undefined;
+                }
+                const stores = self.getMappableStores(handle.fate, handle.type, handle.tags, counts);
+                if (handle.fate !== '?' && stores.size < 2) {
+                    // These handles are mapped by resolve-recipe strategy.
+                    return undefined;
+                }
+                const responses = [...stores.keys()].map(store => ((recipe, clonedHandle) => {
+                    assert$1(store.id);
+                    if (recipe.findHandleByID(store.id)) {
+                        // TODO: Why don't we link the handle connections to the existingHandle?
+                        return 0;
+                    }
+                    clonedHandle.mapToStorage(store);
+                    if (clonedHandle.fate === '?') {
+                        clonedHandle.fate = stores.get(store);
+                    }
+                    else {
+                        assert$1(clonedHandle.fate, stores.get(store));
+                    }
+                    return score;
+                }));
+                return responses;
+            }
+            _getScore(counts, tags) {
+                let score = -1;
+                if (counts.in === 0 || counts.out === 0) {
+                    if (counts.out === 0) {
+                        score = 1;
+                    }
+                    else {
+                        score = 0;
+                    }
+                }
+                // TODO: Why is score negative, where there are both - in and out?
+                if (tags.length > 0) {
+                    score += 4;
+                }
+                return score;
+            }
+        }(Walker.Permuted), this);
+    }
+    getMappableStores(fate, type, tags, counts) {
+        const stores = new Map();
+        if (fate === 'use' || fate === '?') {
+            const subtype = counts.out === 0;
+            // TODO: arc.findStoresByType doesn't use `subtype`. Shall it be removed?
+            this.arc.findStoresByType(type, { tags, subtype }).forEach(store => stores.set(store, 'use'));
+        }
+        if (fate === 'map' || fate === 'copy' || fate === '?') {
+            this.arc.context.findStoreByType(type, { tags, subtype: true }).forEach(store => stores.set(store, fate === '?' ? (counts.out > 0 ? 'copy' : 'map') : fate));
+        }
+        return stores;
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class InitPopulation extends Strategy {
+    constructor(arc, { contextual = false, recipeIndex }) {
+        super(arc, { contextual });
+        this._contextual = contextual;
+        this._recipeIndex = recipeIndex;
+        this._loadedParticles = new Set(this.arc.loadedParticles().map(spec => spec.implFile));
+    }
+    async generate({ generation }) {
+        if (generation !== 0) {
+            return [];
+        }
+        await this._recipeIndex.ready;
+        const results = this._contextual
+            ? this._contextualResults()
+            : this._allResults();
+        return results.map(({ recipe, score = 1 }) => ({
+            result: recipe,
+            score,
+            derivation: [{ strategy: this, parent: undefined }],
+            hash: recipe.digest(),
+            valid: Object.isFrozen(recipe)
+        }));
+    }
+    _contextualResults() {
+        const results = [];
+        for (const slot of this.arc.activeRecipe.slots.filter(s => s.sourceConnection)) {
+            results.push(...this._recipeIndex.findConsumeSlotConnectionMatch(slot).map(({ slotConn }) => ({ recipe: slotConn.recipe })));
+        }
+        let innerArcHandles = [];
+        for (const recipe of this.arc.recipes) {
+            for (const innerArc of [...recipe.innerArcs.values()]) {
+                innerArcHandles = innerArcHandles.concat(innerArc.activeRecipe.handles);
+            }
+        }
+        for (const handle of this.arc.activeRecipe.handles.concat(innerArcHandles)) {
+            results.push(...this._recipeIndex.findHandleMatch(handle, ['use', '?']).map(otherHandle => ({ recipe: otherHandle.recipe })));
+        }
+        return results;
+    }
+    _allResults() {
+        return this._recipeIndex.recipes.map(recipe => ({
+            recipe,
+            score: 1 - recipe.particles.filter(particle => particle.spec && this._loadedParticles.has(particle.spec.implFile)).length
+        }));
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class MatchParticleByVerb extends Strategy {
+    async generate(inputParams) {
+        const arc = this.arc;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onParticle(recipe, particle) {
+                if (particle.name) {
+                    // Particle already has explicit name.
+                    return undefined;
+                }
+                const modality = arc.modality;
+                const particleSpecs = arc.context.findParticlesByVerb(particle.primaryVerb)
+                    .filter(spec => !modality || spec.matchModality(modality));
+                return particleSpecs.map(spec => {
+                    return (recipe, particle) => {
+                        const score = 1;
+                        particle.name = spec.name;
+                        particle.spec = spec;
+                        return score;
+                    };
+                });
+            }
+        }(Walker.Permuted), this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This strategy substitutes '&verb' declarations with recipes,
+// according to the following conditions:
+// 1) the recipe is named by the verb described in the particle
+// 2) the recipe has the slot pattern (if any) owned by the particle
+//
+// The strategy also reconnects any slots that were connected to the
+// particle, so that the substituted recipe fully takes the particle's place.
+//
+// Note that the recipe may have the slot pattern multiple times over, but
+// this strategy currently only connects the first instance of the pattern up
+// if there are multiple instances.
+class MatchRecipeByVerb extends Strategy {
+    async generate(inputParams) {
+        const arc = this.arc;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onParticle(recipe, particle) {
+                if (particle.name) {
+                    // Particle already has explicit name.
+                    return undefined;
+                }
+                let recipes = arc.context.findRecipesByVerb(particle.primaryVerb);
+                // Extract slot information from recipe. This is extracted in the form:
+                // {consume-slot-name: targetSlot: <slot>, providedSlots: {provide-slot-name: <slot>}}
+                //
+                // Note that slots are only included if connected to other components of the recipe - e.g.
+                // the target slot has a source connection.
+                const slotConstraints = {};
+                for (const consumeSlot of Object.values(particle.consumedSlotConnections)) {
+                    const targetSlot = consumeSlot.targetSlot && consumeSlot.targetSlot.sourceConnection ? consumeSlot.targetSlot : null;
+                    slotConstraints[consumeSlot.name] = { targetSlot, providedSlots: {} };
+                    for (const providedSlot of Object.keys(consumeSlot.providedSlots)) {
+                        const sourceSlot = consumeSlot.providedSlots[providedSlot].consumeConnections.length > 0 ? consumeSlot.providedSlots[providedSlot] : null;
+                        slotConstraints[consumeSlot.name].providedSlots[providedSlot] = sourceSlot;
+                    }
+                }
+                const handleConstraints = { named: {}, unnamed: [] };
+                for (const handleConnection of Object.values(particle.connections)) {
+                    handleConstraints.named[handleConnection.name] = { direction: handleConnection.direction, handle: handleConnection.handle };
+                }
+                for (const unnamedConnection of particle.unnamedConnections) {
+                    handleConstraints.unnamed.push({ direction: unnamedConnection.direction, handle: unnamedConnection.handle });
+                }
+                recipes = recipes.filter(recipe => MatchRecipeByVerb.satisfiesSlotConstraints(recipe, slotConstraints))
+                    .filter(recipe => MatchRecipeByVerb.satisfiesHandleConstraints(recipe, handleConstraints));
+                return recipes.map(recipe => {
+                    return (outputRecipe, particleForReplacing) => {
+                        const { handles, particles, slots } = recipe.mergeInto(outputRecipe);
+                        particleForReplacing.remove();
+                        for (const consumeSlot in slotConstraints) {
+                            if (slotConstraints[consumeSlot].targetSlot || Object.values(slotConstraints[consumeSlot].providedSlots).filter(a => a != null).length > 0) {
+                                let slotMapped = false;
+                                for (const particle of particles) {
+                                    if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, consumeSlot, slotConstraints[consumeSlot].providedSlots)) {
+                                        if (slotConstraints[consumeSlot].targetSlot) {
+                                            const { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slotConstraints[consumeSlot].targetSlot });
+                                            particle.consumedSlotConnections[consumeSlot].targetSlot = mappedSlot;
+                                            mappedSlot.consumeConnections.push(particle.consumedSlotConnections[consumeSlot]);
+                                        }
+                                        for (const slotName of Object.keys(slotConstraints[consumeSlot].providedSlots)) {
+                                            const slot = slotConstraints[consumeSlot].providedSlots[slotName];
+                                            if (slot == null) {
+                                                continue;
+                                            }
+                                            const { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slot });
+                                            const oldSlot = particle.consumedSlotConnections[consumeSlot].providedSlots[slotName];
+                                            oldSlot.remove();
+                                            particle.consumedSlotConnections[consumeSlot].providedSlots[slotName] = mappedSlot;
+                                            mappedSlot._sourceConnection = particle.consumedSlotConnections[consumeSlot];
+                                        }
+                                        slotMapped = true;
+                                        break;
+                                    }
+                                }
+                                assert$1(slotMapped);
+                            }
+                        }
+                        function tryApplyHandleConstraint(name, connection, constraint, handle) {
+                            if (connection.handle != null) {
+                                return false;
+                            }
+                            if (!MatchRecipeByVerb.connectionMatchesConstraint(connection, constraint)) {
+                                return false;
+                            }
+                            for (let i = 0; i < handle.connections.length; i++) {
+                                const candidate = handle.connections[i];
+                                // TODO candidate.name === name triggers test failures
+                                // tslint:disable-next-line: triple-equals
+                                if (candidate.particle === particleForReplacing && candidate.name == name) {
+                                    connection._handle = handle;
+                                    handle.connections[i] = connection;
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                        function applyHandleConstraint(name, constraint, handle) {
+                            const { mappedHandle } = outputRecipe.updateToClone({ mappedHandle: handle });
+                            for (const particle of particles) {
+                                if (name) {
+                                    if (tryApplyHandleConstraint(name, particle.connections[name], constraint, mappedHandle)) {
+                                        return true;
+                                    }
+                                }
+                                else {
+                                    for (const connection of Object.values(particle.connections)) {
+                                        if (tryApplyHandleConstraint(name, connection, constraint, mappedHandle)) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+                            return false;
+                        }
+                        for (const name in handleConstraints.named) {
+                            if (handleConstraints.named[name].handle) {
+                                assert$1(applyHandleConstraint(name, handleConstraints.named[name], handleConstraints.named[name].handle));
+                            }
+                        }
+                        for (const connection of handleConstraints.unnamed) {
+                            if (connection.handle) {
+                                assert$1(applyHandleConstraint(null, connection, connection.handle));
+                            }
+                        }
+                        return 1;
+                    };
+                });
+            }
+        }(Walker.Permuted), this);
+    }
+    static satisfiesHandleConstraints(recipe, handleConstraints) {
+        for (const handleName in handleConstraints.named) {
+            if (!MatchRecipeByVerb.satisfiesHandleConnection(recipe, handleName, handleConstraints.named[handleName])) {
+                return false;
+            }
+        }
+        for (const handleData of handleConstraints.unnamed) {
+            if (!MatchRecipeByVerb.satisfiesUnnamedHandleConnection(recipe, handleData)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    static satisfiesUnnamedHandleConnection(recipe, handleData) {
+        // refuse to match unnamed handle connections unless some type information is present.
+        if (!handleData.handle) {
+            return false;
+        }
+        for (const particle of recipe.particles) {
+            for (const connection of Object.values(particle.connections)) {
+                if (MatchRecipeByVerb.connectionMatchesConstraint(connection, handleData)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    static satisfiesHandleConnection(recipe, handleName, handleData) {
+        for (const particle of recipe.particles) {
+            if (particle.connections[handleName]) {
+                if (MatchRecipeByVerb.connectionMatchesConstraint(particle.connections[handleName], handleData)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    static connectionMatchesConstraint(connection, handleData) {
+        if (connection.direction !== handleData.direction) {
+            return false;
+        }
+        if (!handleData.handle) {
+            return true;
+        }
+        return Handle$1.effectiveType(handleData.handle._mappedType, handleData.handle.connections.concat(connection)) != null;
+    }
+    static satisfiesSlotConstraints(recipe, slotConstraints) {
+        for (const slotName in slotConstraints) {
+            if (!MatchRecipeByVerb.satisfiesSlotConnection(recipe, slotName, slotConstraints[slotName])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    static satisfiesSlotConnection(recipe, slotName, constraints) {
+        for (const particle of recipe.particles) {
+            if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, slotName, constraints)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    static slotsMatchConstraint(connections, name, constraints) {
+        if (connections[name] == null) {
+            return false;
+        }
+        if (connections[name]._targetSlot != null &&
+            constraints.targetSlot != null) {
+            return false;
+        }
+        for (const provideName in constraints.providedSlots) {
+            if (connections[name].providedSlots[provideName] == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class AddMissingHandles extends Strategy {
+    // TODO: move generation to use an async generator.
+    async generate(inputParams) {
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onRecipe(recipe) {
+                // Don't add use handles while there are outstanding constraints
+                if (recipe.connectionConstraints.length > 0) {
+                    return undefined;
+                }
+                // Don't add use handles to a recipe with free handles
+                if (recipe.getFreeHandles().length > 0) {
+                    return undefined;
+                }
+                // TODO: "description" handles are always created, and in the future they need to be "optional" (blocked by optional handles
+                // not being properly supported in arc instantiation). For now just hardcode skiping them.
+                const disconnectedConnections = recipe.getDisconnectedConnections();
+                if (disconnectedConnections.length === 0) {
+                    return undefined;
+                }
+                return recipe => {
+                    disconnectedConnections.forEach(hc => {
+                        const clonedHC = recipe.updateToClone({ hc }).hc;
+                        const handle = recipe.newHandle();
+                        handle.fate = '?';
+                        clonedHC.connectToHandle(handle);
+                    });
+                    return 0;
+                };
+            }
+        }(Walker.Permuted), this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class CreateDescriptionHandle extends Strategy {
+    async generate(inputParams) {
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandleConnection(recipe, handleConnection) {
+                if (handleConnection.handle) {
+                    return undefined;
+                }
+                if (handleConnection.name !== 'descriptions') {
+                    return undefined;
+                }
+                return (recipe, handleConnection) => {
+                    const handle = recipe.newHandle();
+                    handle.fate = 'create';
+                    handleConnection.connectToHandle(handle);
+                    return 1;
+                };
+            }
+        }(Walker.Permuted), this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class InitSearch extends Strategy {
+    constructor(arc, { search }) {
+        super(arc, { search });
+        this._search = search;
+    }
+    async generate({ generation }) {
+        if (this._search == null || generation !== 0) {
+            return [];
+        }
+        const recipe = new Recipe();
+        recipe.setSearchPhrase(this._search);
+        assert$1(recipe.normalize());
+        assert$1(!recipe.isResolved());
+        return [{
+                result: recipe,
+                score: 0,
+                derivation: [{ strategy: this, parent: undefined }],
+                hash: recipe.digest(),
+                valid: true
+            }];
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class SearchTokensToParticles extends Strategy {
+    constructor(arc, options) {
+        super(arc, options);
+        const thingByToken = {};
+        const thingByPhrase = {};
+        arc.context.particles.forEach(p => {
+            this._addThing(p.name, { spec: p }, thingByToken, thingByPhrase);
+            p.verbs.forEach(verb => this._addThing(verb, { spec: p }, thingByToken, thingByPhrase));
+        });
+        arc.context.allRecipes.forEach(r => {
+            const packaged = { innerRecipe: r };
+            this._addThing(r.name, packaged, thingByToken, thingByPhrase);
+            r.verbs.forEach(verb => this._addThing(verb, packaged, thingByToken, thingByPhrase));
+        });
+        class SearchWalker extends Walker {
+            constructor(tactic, arc, recipeIndex) {
+                super(tactic);
+                this.recipeIndex = recipeIndex;
+            }
+            onRecipe(recipe) {
+                if (!recipe.search || !recipe.search.unresolvedTokens.length) {
+                    return undefined;
+                }
+                const byToken = {};
+                const resolvedTokens = new Set();
+                const _addThingsByToken = (token, things) => {
+                    things.forEach(thing => {
+                        byToken[token] = byToken[token] || [];
+                        byToken[token].push(thing);
+                        token.split(' ').forEach(t => resolvedTokens.add(t));
+                    });
+                };
+                for (const [phrase, things] of Object.entries(thingByPhrase)) {
+                    const tokens = phrase.split(' ');
+                    if (tokens.every(token => recipe.search.unresolvedTokens.includes(token)) &&
+                        recipe.search.phrase.includes(phrase)) {
+                        _addThingsByToken(phrase, things);
+                    }
+                }
+                for (const token of recipe.search.unresolvedTokens) {
+                    if (resolvedTokens.has(token)) {
+                        continue;
+                    }
+                    const things = thingByToken[token];
+                    if (things) {
+                        _addThingsByToken(token, things);
+                    }
+                }
+                if (resolvedTokens.size === 0) {
+                    return undefined;
+                }
+                const flatten = (arr) => [].concat(...arr);
+                const product = (...sets) => sets.reduce((acc, set) => flatten(acc.map(x => set.map(y => [...x, y]))), [[]]);
+                const possibleCombinations = product(...Object.values(byToken).map(v => flatten(v)));
+                return possibleCombinations.map(combination => {
+                    return recipe => {
+                        resolvedTokens.forEach(token => recipe.search.resolveToken(token));
+                        combination.forEach(({ spec, innerRecipe }) => {
+                            if (spec) {
+                                const particle = recipe.newParticle(spec.name);
+                                particle.spec = spec;
+                            }
+                            else {
+                                const otherToHandle = this.recipeIndex.findCoalescableHandles(recipe, innerRecipe);
+                                assert$1(innerRecipe);
+                                const { cloneMap } = innerRecipe.mergeInto(recipe);
+                                otherToHandle.forEach((otherHandle, handle) => cloneMap.get(otherHandle).mergeInto(handle));
+                            }
+                        });
+                        return resolvedTokens.size;
+                    };
+                });
+            }
+        }
+        this._walker = new SearchWalker(Walker.Permuted, arc, options['recipeIndex']);
+    }
+    get walker() {
+        return this._walker;
+    }
+    getResults(inputParams) {
+        assert$1(inputParams);
+        const generated = super.getResults(inputParams).filter(result => !result.result.isResolved());
+        const terminal = inputParams.terminal;
+        return [...generated, ...terminal];
+    }
+    _addThing(token, thing, thingByToken, thingByPhrase) {
+        if (!token) {
+            return;
+        }
+        this._addThingByToken(token.toLowerCase(), thing, thingByToken);
+        // split DoSomething into "do something" and add the phrase
+        const phrase = token.replace(/([^A-Z])([A-Z])/g, '$1 $2').replace(/([A-Z][^A-Z])/g, ' $1').replace(/[\s]+/g, ' ').trim();
+        if (phrase !== token) {
+            this._addThingByToken(phrase.toLowerCase(), thing, thingByPhrase);
+        }
+    }
+    _addThingByToken(key, thing, thingByKey) {
+        assert$1(key === key.toLowerCase());
+        thingByKey[key] = thingByKey[key] || [];
+        if (!thingByKey[key].find(t => t === thing)) {
+            thingByKey[key].push(thing);
+        }
+    }
+    async generate(inputParams) {
+        await this.walker.recipeIndex.ready;
+        return Recipe.over(this.getResults(inputParams), this.walker, this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class GroupHandleConnections extends Strategy {
+    constructor(arc, args) {
+        super(arc, args);
+        this._walker = new class extends Walker {
+            onRecipe(recipe, result) {
+                // Only apply this strategy if ALL handle connections are named and have types.
+                if (recipe.getUnnamedUntypedConnections()) {
+                    return undefined;
+                }
+                // Find all unique types used in the recipe that have unbound handle connections.
+                const types = new Set();
+                recipe.handleConnections.forEach(hc => {
+                    if (!hc.isOptional && !hc.handle && !Array.from(types).find(t => t.equals(hc.type))) {
+                        types.add(hc.type);
+                    }
+                });
+                const groupsByType = new Map();
+                types.forEach(type => {
+                    // Find the particle with the largest number of unbound connections of the same type.
+                    const countConnectionsByType = (connections) => Object.values(connections).filter(conn => {
+                        return !conn.isOptional && !conn.handle && type.equals(conn.type);
+                    }).length;
+                    const sortedParticles = [...recipe.particles].sort((p1, p2) => {
+                        return countConnectionsByType(p2.connections) - countConnectionsByType(p1.connections);
+                    }).filter(p => countConnectionsByType(p.connections) > 0);
+                    assert$1(sortedParticles.length > 0);
+                    // Handle connections of the same particle cannot be bound to the same handle. Iterate on handle connections of the particle
+                    // with the most connections of the given type, and group each of them with same typed handle connections of other particles.
+                    const particleWithMostConnectionsOfType = sortedParticles[0];
+                    const groups = new Map();
+                    let allTypeHandleConnections = recipe.getTypeHandleConnections(type, particleWithMostConnectionsOfType);
+                    let iteration = 0;
+                    while (allTypeHandleConnections.length > 0) {
+                        Object.values(particleWithMostConnectionsOfType.connections).forEach(handleConnection => {
+                            if (!type.equals(handleConnection.type)) {
+                                return;
+                            }
+                            if (!groups.has(handleConnection)) {
+                                groups.set(handleConnection, []);
+                            }
+                            const group = groups.get(handleConnection);
+                            // filter all connections where this particle is already in a group.
+                            const possibleConnections = allTypeHandleConnections.filter(c => !group.find(gc => gc.particle === c.particle));
+                            let selectedConn = possibleConnections.find(c => handleConnection.isInput !== c.isInput || handleConnection.isOutput !== c.isOutput);
+                            // TODO: consider tags.
+                            // TODO: Slots handle restrictions should also be accounted for when grouping.
+                            if (!selectedConn) {
+                                if (possibleConnections.length === 0 || iteration === 0) {
+                                    // During first iteration only bind opposite direction connections ("in" with "out" and vice versa)
+                                    // to ensure each group has both direction connections as much as possible.
+                                    return;
+                                }
+                                selectedConn = possibleConnections[0];
+                            }
+                            group.push(selectedConn);
+                            allTypeHandleConnections = allTypeHandleConnections.filter(c => c !== selectedConn);
+                        });
+                        iteration++;
+                    }
+                    // Remove groups where no connections were bound together.
+                    groups.forEach((otherConns, conn) => {
+                        if (otherConns.length === 0) {
+                            groups.delete(conn);
+                        }
+                        else {
+                            otherConns.push(conn);
+                        }
+                    });
+                    if (groups.size !== 0) {
+                        groupsByType.set(type, groups);
+                    }
+                });
+                if (groupsByType.size > 0) {
+                    return recipe => {
+                        groupsByType.forEach((groups, type) => {
+                            groups.forEach(group => {
+                                const recipeHandle = recipe.newHandle();
+                                group.forEach(conn => {
+                                    const cloneConn = recipe.updateToClone({ conn }).conn;
+                                    cloneConn.connectToHandle(recipeHandle);
+                                });
+                            });
+                        });
+                        // TODO: score!
+                    };
+                }
+                return undefined;
+            }
+        }(Walker.Permuted);
+    }
+    get walker() {
+        return this._walker;
+    }
+    async generate(inputParams) {
+        return Recipe.over(this.getResults(inputParams), this.walker, this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+/*
+ * Match free handles (i.e. handles that aren't connected to any connections)
+ * to connections.
+ */
+class MatchFreeHandlesToConnections extends Strategy {
+    async generate(inputParams) {
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandle(recipe, handle) {
+                if (handle.connections.length > 0) {
+                    return;
+                }
+                const matchingConnections = recipe.handleConnections.filter(connection => connection.handle == undefined && connection.name !== 'descriptions');
+                return matchingConnections.map(connection => {
+                    return (recipe, handle) => {
+                        const newConnection = recipe.updateToClone({ connection }).connection;
+                        newConnection.connectToHandle(handle);
+                        return 1;
+                    };
+                });
+            }
+        }(Walker.Permuted), this);
+    }
+}
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// tslint:disable-next-line: variable-name
+const Empty = new Ruleset.Builder().build();
+// tslint:disable-next-line: variable-name
+const ExperimentalPhased = new Ruleset.Builder().order([
+    InitPopulation,
+    InitSearch
+], SearchTokensToParticles, [
+    MatchRecipeByVerb,
+    MatchParticleByVerb
+], ConvertConstraintsToConnections, GroupHandleConnections, [
+    AddMissingHandles,
+    AssignHandles,
+    MatchFreeHandlesToConnections,
+], MapSlots, CreateDescriptionHandle, ResolveRecipe).build();
+// tslint:disable-next-line: variable-name
+const ExperimentalLinear = new Ruleset.Builder().order(InitPopulation, InitSearch, SearchTokensToParticles, MatchRecipeByVerb, MatchParticleByVerb, ConvertConstraintsToConnections, GroupHandleConnections, MatchFreeHandlesToConnections, AddMissingHandles, AssignHandles, MapSlots, CreateDescriptionHandle, ResolveRecipe).build();
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+
+// Provides access to device hardware resource metrics for a node process.
+class DeviceInfo {
+  // Returns the number of logical cores.
+  static hardwareConcurrency() {
+    return os.cpus().length;
+  }
+  // Returns the device memory in gigabytes.
+  static deviceMemory() {
+    // Convert bytes to gigabytes.
+    return os.totalmem() / Math.pow(1024, 3);
+  }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class NameUnnamedConnections extends Strategy {
+    async generate(inputParams) {
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandleConnection(recipe, handleConnection) {
+                if (handleConnection.name) {
+                    // it is already named.
+                    return;
+                }
+                if (!handleConnection.particle.spec) {
+                    // the particle doesn't have spec yet.
+                    return;
+                }
+                const possibleSpecConns = handleConnection.particle.spec.connections.filter(specConn => {
+                    // filter specs with matching types that don't have handles bound to the corresponding handle connection.
+                    return !specConn.isOptional &&
+                        handleConnection.handle.type.equals(specConn.type) &&
+                        !handleConnection.particle.getConnectionByName(specConn.name).handle;
+                });
+                return possibleSpecConns.map(specConn => {
+                    return (recipe, handleConnection) => {
+                        handleConnection.particle.nameConnection(handleConnection, specConn.name);
+                        return 1;
+                    };
+                });
+            }
+        }(Walker.Permuted), this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class SearchTokensToHandles extends Strategy {
+    async generate(inputParams) {
+        const arc = this.arc;
+        // Finds stores matching the provided token and compatible with the provided handle's type,
+        // which are not already mapped into the provided handle's recipe
+        const findMatchingStores = (token, handle) => {
+            const counts = RecipeUtil.directionCounts(handle);
+            let stores = arc.findStoresByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
+            let fate = 'use';
+            if (stores.length === 0) {
+                stores = arc.context.findStoreByType(handle.type, { tags: [`${token}`], subtype: counts.out === 0 });
+                fate = counts.out === 0 ? 'map' : 'copy';
+            }
+            stores = stores.filter(store => !handle.recipe.handles.find(handle => handle.id === store.id));
+            return stores.map(store => ({ store, fate, token }));
+        };
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandle(recipe, handle) {
+                if (!recipe.search || recipe.search.unresolvedTokens.length === 0) {
+                    return undefined;
+                }
+                if (handle.isResolved() || handle.connections.length === 0) {
+                    return undefined;
+                }
+                const possibleMatches = [];
+                for (const token of recipe.search.unresolvedTokens) {
+                    possibleMatches.push(...findMatchingStores(token, handle));
+                }
+                if (possibleMatches.length === 0) {
+                    return undefined;
+                }
+                return possibleMatches.map(match => {
+                    return (recipe, handle) => {
+                        handle.fate = match.fate;
+                        handle.mapToStorage(match.store);
+                        recipe.search.resolveToken(match.token);
+                    };
+                });
+            }
+        }(Walker.Permuted), this);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class CreateHandleGroup extends Strategy {
+    async generate(inputParams) {
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onRecipe(recipe, result) {
+                // Resolve constraints before assuming connections are free.
+                if (recipe.connectionConstraints.length > 0)
+                    return undefined;
+                const freeConnections = recipe.getFreeConnections();
+                let maximalGroup = null;
+                for (const writer of freeConnections.filter(hc => hc.isOutput)) {
+                    const compatibleConnections = [writer];
+                    let effectiveType = Handle$1.effectiveType(null, compatibleConnections);
+                    let typeCandidate = null;
+                    const involvedParticles = new Set([writer.particle]);
+                    let foundSomeReader = false;
+                    for (const reader of freeConnections.filter(hc => hc.isInput)) {
+                        if (!involvedParticles.has(reader.particle) &&
+                            (typeCandidate = Handle$1.effectiveType(effectiveType, [reader])) !== null) {
+                            compatibleConnections.push(reader);
+                            involvedParticles.add(reader.particle);
+                            effectiveType = typeCandidate;
+                            foundSomeReader = true;
+                        }
+                    }
+                    // Only make a 'create' group for a writer->reader case.
+                    if (!foundSomeReader)
+                        continue;
+                    for (const otherWriter of freeConnections.filter(hc => hc.isOutput)) {
+                        if (!involvedParticles.has(otherWriter.particle) &&
+                            (typeCandidate = Handle$1.effectiveType(effectiveType, [otherWriter])) !== null) {
+                            compatibleConnections.push(otherWriter);
+                            involvedParticles.add(otherWriter.particle);
+                            effectiveType = typeCandidate;
+                        }
+                    }
+                    if (!maximalGroup || compatibleConnections.length > maximalGroup.length) {
+                        maximalGroup = compatibleConnections;
+                    }
+                }
+                if (maximalGroup) {
+                    return recipe => {
+                        const newHandle = recipe.newHandle();
+                        newHandle.fate = 'create';
+                        for (const conn of maximalGroup) {
+                            const cloneConn = recipe.updateToClone({ conn }).conn;
+                            cloneConn.connectToHandle(newHandle);
+                        }
+                    };
+                }
+                return undefined;
+            }
+        }(Walker.Independent), this);
+    }
+}
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+class FindHostedParticle extends Strategy {
+    async generate(inputParams) {
+        const arc = this.arc;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            onHandleConnection(recipe, connection) {
+                if (connection.direction !== 'host' || connection.handle)
+                    return undefined;
+                assert$1(connection.type instanceof InterfaceType);
+                const iface = connection.type;
+                const results = [];
+                for (const particle of arc.context.particles) {
+                    // This is what interfaceInfo.particleMatches() does, but we also do
+                    // canEnsureResolved at the end:
+                    const ifaceClone = iface.interfaceInfo.cloneWithResolutions(new Map());
+                    // If particle doesn't match the requested interface.
+                    if (ifaceClone.restrictType(particle) === false)
+                        continue;
+                    // If we still have unresolvable interface after matching a particle.
+                    // This can happen if both interface and particle have type variables.
+                    // TODO: What to do here? We need concrete type for the particle spec
+                    //       handle, but we don't have one.
+                    if (!ifaceClone.canEnsureResolved())
+                        continue;
+                    results.push((recipe, hc) => {
+                        const handle = RecipeUtil.constructImmediateValueHandle(hc, particle, arc.generateID());
+                        assert$1(handle); // Type matching should have been ensure by the checks above;
+                        hc.connectToHandle(handle);
+                    });
+                }
+                return results;
+            }
+        }(Walker.Permuted), this);
+    }
+}
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This strategy coalesces unresolved terminal recipes (i.e. those that cannot
+// be modified by any strategy apart from this one) by finding unresolved
+// use/? handle and finding a matching create/? handle in another recipe and
+// merging those.
+class CoalesceRecipes extends Strategy {
+    constructor(arc, { recipeIndex }) {
+        super(arc);
+        this.recipeIndex = recipeIndex;
+    }
+    getResults(inputParams) {
+        // Coalescing for terminal recipes that are either unresolved recipes or have no UI.
+        return inputParams.terminal.filter(result => !result.result.isResolved() || result.result.slots.length === 0);
+    }
+    async generate(inputParams) {
+        const arc = this.arc;
+        const index = this.recipeIndex;
+        await index.ready;
+        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+            // Find a provided slot for unfulfilled consume connection.
+            onSlotConnection(recipe, slotConnection) {
+                if (slotConnection.isResolved()) {
+                    return undefined;
+                }
+                if (!slotConnection.name || !slotConnection.particle) {
+                    return undefined;
+                }
+                if (slotConnection.targetSlot) {
+                    return undefined;
+                }
+                // TODO: also support a consume slot connection that is NOT required,
+                // but no other connections are resolved.
+                const results = [];
+                // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
+                // these handles are coalescable? Add support for this.
+                for (const providedSlot of index.findProvidedSlot(slotConnection)) {
+                    // Don't grow recipes above 10 particles, otherwise we might never stop.
+                    if (recipe.particles.length + providedSlot.recipe.particles.length > 10)
+                        continue;
+                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
+                        // skip candidate recipe, if matches the shape of the arc's active recipe
+                        continue;
+                    }
+                    results.push((recipe, slotConnection) => {
+                        const otherToHandle = index.findCoalescableHandles(recipe, providedSlot.recipe);
+                        const { cloneMap } = providedSlot.recipe.mergeInto(slotConnection.recipe);
+                        const mergedSlot = cloneMap.get(providedSlot);
+                        slotConnection.connectToSlot(mergedSlot);
+                        this._connectOtherHandles(otherToHandle, cloneMap, false);
+                        // Clear verbs and recipe name after coalescing two recipes.
+                        recipe.verbs.splice(0);
+                        recipe.name = null;
+                        return 1;
+                    });
+                }
+                if (results.length > 0) {
+                    return results;
+                }
+                return undefined;
+            }
+            onSlot(recipe, slot) {
+                // Find slots that according to their provided-spec must be consumed, but have no consume connection.
+                if (slot.consumeConnections.length > 0) {
+                    return undefined; // slot has consume connections.
+                }
+                if (!slot.sourceConnection || !slot.sourceConnection.slotSpec.getProvidedSlotSpec(slot.name).isRequired) {
+                    return undefined; // either a remote slot (no source connection), or a not required one.
+                }
+                const results = [];
+                for (const { slotConn, matchingHandles } of index.findConsumeSlotConnectionMatch(slot)) {
+                    // Don't grow recipes above 10 particles, otherwise we might never stop.
+                    if (recipe.particles.length + slotConn.recipe.particles.length > 10)
+                        continue;
+                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, slotConn.recipe)) {
+                        // skip candidate recipe, if matches the shape of the arc's active recipe
+                        continue;
+                    }
+                    if (RecipeUtil.matchesRecipe(recipe, slotConn.recipe)) {
+                        // skip candidate recipe, if matches the shape of the currently explored recipe
+                        continue;
+                    }
+                    results.push((recipe, slot) => {
+                        // Find other handles that may be merged, as recipes are being coalesced.
+                        const otherToHandle = index.findCoalescableHandles(recipe, slotConn.recipe, new Set(slot.handleConnections.map(hc => hc.handle).concat(matchingHandles.map(({ handle, matchingConn }) => matchingConn.handle))));
+                        const { cloneMap } = slotConn.recipe.mergeInto(slot.recipe);
+                        const mergedSlotConn = cloneMap.get(slotConn);
+                        mergedSlotConn.connectToSlot(slot);
+                        for (const { handle, matchingConn } of matchingHandles) {
+                            // matchingConn in the mergedSlotConnection's recipe should be connected to `handle` in the slot's recipe.
+                            const mergedMatchingConn = cloneMap.get(matchingConn);
+                            const disconnectedHandle = mergedMatchingConn.handle;
+                            const clonedHandle = slot.handleConnections.find(handleConn => handleConn.handle && handleConn.handle.id === handle.id).handle;
+                            if (disconnectedHandle === clonedHandle) {
+                                continue; // this handle was already reconnected
+                            }
+                            while (disconnectedHandle.connections.length > 0) {
+                                const conn = disconnectedHandle.connections[0];
+                                conn.disconnectHandle();
+                                conn.connectToHandle(clonedHandle);
+                            }
+                            recipe.removeHandle(disconnectedHandle);
+                        }
+                        this._connectOtherHandles(otherToHandle, cloneMap, false);
+                        // Clear verbs and recipe name after coalescing two recipes.
+                        recipe.verbs.splice(0);
+                        recipe.name = null;
+                        // TODO: Merge description/patterns of both recipes.
+                        // TODO: Unify common code in slot and handle recipe coalescing.
+                        return 1;
+                    });
+                }
+                if (results.length > 0) {
+                    return results;
+                }
+                return undefined;
+            }
+            onHandle(recipe, handle) {
+                if (!index.coalescableFates.includes(handle.fate)
+                    || handle.id
+                    || handle.connections.length === 0
+                    || handle.name === 'descriptions')
+                    return undefined;
+                const results = [];
+                for (const otherHandle of index.findHandleMatch(handle, index.coalescableFates)) {
+                    // Don't grow recipes above 10 particles, otherwise we might never stop.
+                    if (recipe.particles.length + otherHandle.recipe.particles.length > 10)
+                        continue;
+                    // This is a poor man's proxy for the other handle being an output of a recipe.
+                    if (otherHandle.connections.find(conn => conn.direction === 'in'))
+                        continue;
+                    // We ignore type variables not constrained for reading, otherwise
+                    // generic recipes would apply - which we currently don't want here.
+                    if (otherHandle.type.hasVariable) {
+                        let resolved = otherHandle.type.resolvedType();
+                        // TODO: getContainedType returns non-null for references ... is that correct here?
+                        resolved = resolved.getContainedType() || resolved;
+                        if (resolved instanceof TypeVariable && !resolved.canReadSubset)
+                            continue;
+                    }
+                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
+                        // skip candidate recipe, if matches the shape of the arc's active recipe
+                        continue;
+                    }
+                    if (RecipeUtil.matchesRecipe(recipe, otherHandle.recipe)) {
+                        // skip candidate recipe, if matches the shape of the currently explored recipe
+                        continue;
+                    }
+                    results.push((recipe, handle) => {
+                        // Find other handles in the original recipe that could be coalesced with handles in otherHandle's recipe.
+                        const otherToHandle = index.findCoalescableHandles(recipe, otherHandle.recipe, new Set([handle, otherHandle]));
+                        const { cloneMap } = otherHandle.recipe.mergeInto(handle.recipe);
+                        // Connect the handle that the recipes are being coalesced on.
+                        cloneMap.get(otherHandle).mergeInto(handle);
+                        // Connect all other connectable handles.
+                        this._connectOtherHandles(otherToHandle, cloneMap, true);
+                        // Clear verbs and recipe name after coalescing two recipes.
+                        recipe.verbs.splice(0);
+                        recipe.name = null;
+                        // TODO: Merge description/patterns of both recipes.
+                        return 1;
+                    });
+                }
+                return results;
+            }
+            _connectOtherHandles(otherToHandle, cloneMap, verifyTypes) {
+                otherToHandle.forEach((otherHandle, handle) => {
+                    const otherHandleClone = cloneMap.get(otherHandle);
+                    // For coalescing that was triggered by handle coalescing (vs slot or slot connection)
+                    // once the main handle (one that triggered coalescing) was coalesced, types may have changed.
+                    // Need to verify all the type information for the "other" coalescable handles is still valid.
+                    // TODO(mmandlis): This is relying on only ever considering a single "other" handles to coalesce,
+                    // so the handle either is still a valid match or not.
+                    // In order to do it right for multiple handles, we need to try ALL handles,
+                    // then fallback to all valid N-1 combinations, then N-2 etc.
+                    if (verifyTypes) {
+                        if (!this._reverifyHandleTypes(handle, otherHandleClone)) {
+                            return;
+                        }
+                    }
+                    otherHandleClone.mergeInto(handle);
+                });
+            }
+            // Returns true, if both handles have types that can be coalesced.
+            _reverifyHandleTypes(handle, otherHandle) {
+                assert$1(handle.recipe === otherHandle.recipe);
+                const cloneMap = new Map();
+                const recipeClone = handle.recipe.clone(cloneMap);
+                recipeClone.normalize();
+                return Handle$1.effectiveType(cloneMap.get(handle).type, [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
+            }
+        }(Walker.Independent), this);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Relevance {
+    constructor() {
+        // stores a copy of arc.getVersionByStore
+        this.versionByStore = {};
+        this.relevanceMap = new Map();
+    }
+    static create(arc, recipe) {
+        const relevance = new Relevance();
+        const versionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        recipe.handles.forEach(handle => {
+            if (handle.id) {
+                relevance.versionByStore[handle.id] = versionByStore[handle.id];
+            }
+        });
+        return relevance;
+    }
+    static deserialize({ versionByStore, relevanceMap }, recipe) {
+        const relevance = new Relevance();
+        Object.assign(relevance.versionByStore, JSON.parse(versionByStore));
+        Object.keys(relevanceMap).forEach(particleName => {
+            const particle = recipe.particles.find(particle => particle.name === particleName);
+            assert$1(particle, `Cannot find particle ${particleName} in ${recipe.toString()}`);
+            if (relevance.relevanceMap.has(particle)) {
+                console.warn(`Multiple particles with name ${particleName}, relevance may be incorrect.`);
+            }
+            relevance.relevanceMap.set(particle, relevanceMap[particleName]);
+        });
+        return relevance;
+    }
+    serialize() {
+        const serializedRelevanceMap = {};
+        this.relevanceMap.forEach((relevances, particle) => {
+            // TODO(mmandlis): Should use particle ID or some other unique identifier instead,
+            // as recipe may contain multiple particles with the same name.
+            serializedRelevanceMap[particle.name] = relevances;
+        });
+        return {
+            // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
+            versionByStore: JSON.stringify(this.versionByStore),
+            relevanceMap: serializedRelevanceMap
+        };
+    }
+    apply(relevance) {
+        for (const key of relevance.keys()) {
+            if (this.relevanceMap.has(key)) {
+                this.relevanceMap.set(key, this.relevanceMap.get(key).concat(relevance.get(key)));
+            }
+            else {
+                this.relevanceMap.set(key, relevance.get(key));
+            }
+        }
+    }
+    calcRelevanceScore() {
+        let relevance = 1;
+        let hasNegative = false;
+        for (const rList of this.relevanceMap.values()) {
+            const particleRelevance = Relevance.particleRelevance(rList);
+            if (particleRelevance < 0) {
+                hasNegative = true;
+            }
+            relevance *= Math.abs(particleRelevance);
+        }
+        return relevance * (hasNegative ? -1 : 1);
+    }
+    // Returns false, if at least one of the particles relevance lists ends with a negative score.
+    isRelevant(plan) {
+        const hasUi = plan.particles.some(p => Object.keys(p.consumedSlotConnections).length > 0);
+        let rendersUi = false;
+        for (const [particle, rList] of this.relevanceMap) {
+            if (rList[rList.length - 1] < 0) {
+                continue;
+            }
+            else if (Object.keys(particle.consumedSlotConnections).length) {
+                rendersUi = true;
+                break;
+            }
+        }
+        // If the recipe has UI rendering particles, at least one of the particles must render UI.
+        return hasUi === rendersUi;
+    }
+    static scaleRelevance(relevance) {
+        if (relevance == undefined) {
+            relevance = 5;
+        }
+        relevance = Math.max(-1, Math.min(relevance, 10));
+        // TODO: might want to make this geometric or something instead;
+        return relevance / 5;
+    }
+    static particleRelevance(relevanceList) {
+        let relevance = 1;
+        let hasNegative = false;
+        relevanceList.forEach(r => {
+            const scaledRelevance = Relevance.scaleRelevance(r);
+            if (scaledRelevance < 0) {
+                hasNegative = true;
+            }
+            relevance *= Math.abs(scaledRelevance);
+        });
+        return relevance * (hasNegative ? -1 : 1);
+    }
+    calcParticleRelevance(particle) {
+        if (this.relevanceMap.has(particle)) {
+            return Relevance.particleRelevance(this.relevanceMap.get(particle));
+        }
+        return -1;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * Holds container (eg div element) and its additional info.
+ * Must be initialized either with a container (for root slots provided by the shell) or
+ * tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
+ */
+class SlotContext {
+    constructor(id, name, tags, container, spec, sourceSlotConsumer = null) {
+        this.tags = [];
+        // The slots consumers rendered into this context.
+        this.slotConsumers = [];
+        assert$1(Boolean(container) !== Boolean(spec), `Exactly one of either container or slotSpec may be set`);
+        assert$1(Boolean(spec) === Boolean(spec), `Spec and source slot can only be set together`);
+        this.id = id;
+        this.name = name;
+        this.tags = tags || [];
+        this._container = container;
+        // The context's accompanying ProvidedSlotSpec (see particle-spec.js).
+        // Initialized to a default spec, if the container is one of the shell provided top root-contexts.
+        this.spec = spec || new ProvidedSlotSpec({ name });
+        // The slot consumer providing this container (eg div)
+        this.sourceSlotConsumer = sourceSlotConsumer;
+        if (this.sourceSlotConsumer) {
+            this.sourceSlotConsumer.providedSlotContexts.push(this);
+        }
+        // The list of handles this context is restricted to.
+        this.handles = this.spec && this.sourceSlotConsumer
+            ? this.spec.handles.map(handle => this.sourceSlotConsumer.consumeConn.particle.connections[handle].handle).filter(a => a !== undefined)
+            : [];
+    }
+    get container() { return this._container; }
+    static createContextForContainer(id, name, container, tags) {
+        return new SlotContext(id, name, tags, container, null);
+    }
+    isSameContainer(container) {
+        if (this.spec.isSet) {
+            if (Boolean(this.container) !== Boolean(container)) {
+                return false;
+            }
+            if (!this.container) {
+                return true;
+            }
+            return Object.keys(this.container).length === Object.keys(container).length &&
+                Object.keys(this.container).every(key => Object.keys(container).some(newKey => newKey === key)) &&
+                Object.values(this.container).every(currentContainer => Object.values(container).some(newContainer => newContainer === currentContainer));
+        }
+        return this.container === container;
+    }
+    set container(container) {
+        if (this.isSameContainer(container)) {
+            return;
+        }
+        const originalContainer = this.container;
+        this._container = container;
+        this.slotConsumers.forEach(slotConsumer => slotConsumer.onContainerUpdate(this.container, originalContainer));
+    }
+    addSlotConsumer(slotConsumer) {
+        this.slotConsumers.push(slotConsumer);
+        slotConsumer.slotContext = this;
+        if (this.container) {
+            slotConsumer.onContainerUpdate(this.container, null);
+        }
+    }
+    clearSlotConsumers() {
+        this.slotConsumers.forEach(slotConsumer => slotConsumer.slotContext = null);
+        this.slotConsumers = [];
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SlotConsumer {
+    constructor(consumeConn, containerKind) {
+        this.providedSlotContexts = [];
+        // Contains `container` and other modality specific rendering information
+        // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
+        this._renderingBySubId = new Map();
+        this.innerContainerBySlotId = {};
+        this._consumeConn = consumeConn;
+        this.containerKind = containerKind;
+    }
+    get consumeConn() { return this._consumeConn; }
+    getRendering(subId) { return this._renderingBySubId.get(subId); }
+    get renderings() { return [...this._renderingBySubId.entries()]; }
+    addRenderingBySubId(subId, rendering) {
+        this._renderingBySubId.set(subId, rendering);
+    }
+    onContainerUpdate(newContainer, originalContainer) {
+        if (Boolean(newContainer) !== Boolean(originalContainer)) {
+            if (newContainer) {
+                this.startRender();
+            }
+            else {
+                this.stopRender();
+            }
+        }
+        if (newContainer !== originalContainer) {
+            const contextContainerBySubId = new Map();
+            if (this.slotContext && this.slotContext.spec.isSet) {
+                Object.keys(this.slotContext.container || {}).forEach(subId => contextContainerBySubId.set(subId, this.slotContext.container[subId]));
+            }
+            else {
+                contextContainerBySubId.set(undefined, this.slotContext.container);
+            }
+            for (const [subId, container] of contextContainerBySubId) {
+                if (!this._renderingBySubId.has(subId)) {
+                    this._renderingBySubId.set(subId, {});
+                }
+                const rendering = this.getRendering(subId);
+                if (!rendering.container || !this.isSameContainer(rendering.container, container)) {
+                    if (rendering.container) {
+                        // The rendering already had a container, but it's changed. The original container needs to be cleared.
+                        this.clearContainer(rendering);
+                    }
+                    rendering.container = this.createNewContainer(container, subId);
+                }
+            }
+            for (const [subId, rendering] of this.renderings) {
+                if (!contextContainerBySubId.has(subId)) {
+                    this.deleteContainer(rendering.container);
+                    this._renderingBySubId.delete(subId);
+                }
+            }
+        }
+    }
+    createProvidedContexts() {
+        return this.consumeConn.slotSpec.providedSlots.map(spec => new SlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
+    }
+    updateProvidedContexts() {
+        this.providedSlotContexts.forEach(providedContext => {
+            providedContext.container = this.getInnerContainer(providedContext.id);
+        });
+    }
+    startRender() {
+        if (this.consumeConn && this.startRenderCallback) {
+            this.startRenderCallback({
+                particle: this.consumeConn.particle,
+                slotName: this.consumeConn.name,
+                providedSlots: new Map(this.providedSlotContexts.map(context => [context.name, context.id])),
+                contentTypes: this.constructRenderRequest()
+            });
+        }
+    }
+    stopRender() {
+        if (this.consumeConn && this.stopRenderCallback) {
+            this.stopRenderCallback({ particle: this.consumeConn.particle, slotName: this.consumeConn.name });
+        }
+    }
+    async setContent(content, handler, arc) {
+        if (content && Object.keys(content).length > 0) {
+            if (arc) {
+                content.descriptions = await this.populateHandleDescriptions(arc);
+            }
+        }
+        this.eventHandler = handler;
+        for (const [subId, rendering] of this.renderings) {
+            this.setContainerContent(rendering, this.formatContent(content, subId), subId);
+        }
+    }
+    async populateHandleDescriptions(arc) {
+        const descriptions = {};
+        await Promise.all(Object.values(this.consumeConn.particle.connections).map(async (handleConn) => {
+            // TODO(mmandlis): convert back to .handle and .name after all recipe files converted to typescript.
+            if (handleConn['handle']) {
+                descriptions[`${handleConn['name']}.description`] = (await arc.description.getHandleDescription(handleConn['handle'])).toString();
+            }
+        }));
+        return descriptions;
+    }
+    getInnerContainer(slotId) {
+        return this.innerContainerBySlotId[slotId];
+    }
+    _initInnerSlotContainer(slotId, subId, container) {
+        if (subId) {
+            if (!this.innerContainerBySlotId[slotId]) {
+                this.innerContainerBySlotId[slotId] = {};
+            }
+            assert$1(!this.innerContainerBySlotId[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
+            this.innerContainerBySlotId[slotId][subId] = container;
+        }
+        else {
+            this.innerContainerBySlotId[slotId] = container;
+        }
+    }
+    _clearInnerSlotContainers(subIds) {
+        subIds.forEach(subId => {
+            if (subId) {
+                Object.values(this.innerContainerBySlotId).forEach(inner => delete inner[subId]);
+            }
+            else {
+                this.innerContainerBySlotId = {};
+            }
+        });
+    }
+    isSameContainer(container, contextContainer) { return container === contextContainer; }
+    get hostedConsumers() {
+        return this.providedSlotContexts
+            .filter(context => context.constructor.name === 'HostedSlotContext')
+            .map(context => context.sourceSlotConsumer)
+            .filter(consumer => consumer !== this);
+    }
+    // abstract
+    constructRenderRequest(hostedSlotConsumer = null) { return []; }
+    dispose() { }
+    createNewContainer(contextContainer, subId) { return null; }
+    deleteContainer(container) { }
+    clearContainer(rendering) { }
+    setContainerContent(rendering, content, subId) { }
+    formatContent(content, subId) { return null; }
+    formatHostedContent(hostedSlot, content) { return null; }
+    static clear(container) { }
+}
+
+/*
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+// HTMLImports compatibility stuff, delete soonish
+if (typeof document !== 'undefined' && !('currentImport' in document)) {
+  Object.defineProperty(document, 'currentImport', {
+    get() {
+      const script = this.currentScript;
+      let doc = script.ownerDocument || this;
+      // this code for CEv1 compatible HTMLImports polyfill (aka modern)
+      if (window['HTMLImports']) {
+        doc = window.HTMLImports.importForElement(script);
+        doc.URL = script.parentElement.href;
+      }
+      return doc;
+    }
+  });
+}
+
+/* Annotator */
+// tree walker that generates arbitrary data using visitor function `cb`
+// `cb` is called as `cb(node, key, notes)`
+// where
+//   `node` is a visited node.
+//   `key` is a handle which identifies the node in a map generated by `Annotator.locateNodes`.
+class Annotator {
+  constructor(cb) {
+    this.cb = cb;
+  }
+  // For subtree at `node`, produce annotation object `notes`.
+  // the content of `notes` is completely determined by the behavior of the
+  // annotator callback function supplied at the constructor.
+  annotate(node, notes, opts) {
+    this.notes = notes;
+    this.opts = opts || 0;
+    this.key = this.opts.key || 0;
+    notes.locator = this._annotateSubtree(node);
+    return notes;
+  }
+  // walking subtree at `node`
+  _annotateSubtree(node) {
+    let childLocators;
+    for (let i = 0, child = node.firstChild, previous = null, neo; child; i++) {
+      // returns a locator only if a node in the subtree requires one
+      const childLocator = this._annotateNode(child);
+      // only when necessary, maintain a sparse array of locators
+      if (childLocator) {
+        (childLocators = childLocators || {})[i] = childLocator;
+      }
+      // `child` may have been evacipated by visitor
+      neo = previous ? previous.nextSibling : node.firstChild;
+      if (neo === child) {
+        previous = child;
+        child = child.nextSibling;
+      } else {
+        child = neo;
+        i--;
+      }
+    }
+    // is falsey unless there was at least one childLocator
+    return childLocators;
+  }
+  _annotateNode(node) {
+    // visit node
+    const key = this.key++;
+    const shouldLocate = this.cb(node, key, this.notes, this.opts);
+    // recurse
+    const locators = this._annotateSubtree(node);
+    if (shouldLocate || locators) {
+      const cl = Object.create(null);
+      cl.key = key;
+      if (locators) {
+        cl.sub = locators;
+      }
+      return cl;
+    }
+  }
+}
+
+const locateNodes = function(root, locator, map) {
+  map = map || [];
+  for (const n in locator) {
+    const loc = locator[n];
+    if (loc) {
+      const node = root.childNodes[n];
+      // TODO(sjmiles): text-nodes sometimes evacipate when stamped, so map to the parentElement instead
+      map[loc.key] = (node.nodeType === Node.TEXT_NODE) ? node.parentElement : node;
+      if (loc.sub) {
+        // recurse
+        locateNodes(node, loc.sub, map);
+      }
+    }
+  }
+  return map;
+};
+
+/* Annotation Producer */
+// must return `true` for any node whose key we wish to track
+const annotatorImpl = function(node, key, notes, opts) {
+  // hook
+  if (opts.annotator && opts.annotator(node, key, notes, opts)) {
+    return true;
+  }
+  // default
+  switch (node.nodeType) {
+    case Node.DOCUMENT_FRAGMENT_NODE:
+      return;
+    case Node.ELEMENT_NODE:
+      return annotateElementNode(node, key, notes);
+    case Node.TEXT_NODE:
+      return annotateTextNode(node, key, notes);
+  }
+};
+
+const annotateTextNode = function(node, key, notes) {
+  if (annotateMustache(node, key, notes, 'textContent', node.textContent)) {
+    node.textContent = '';
+    return true;
+  }
+};
+
+const annotateElementNode = function(node, key, notes) {
+  if (node.hasAttributes()) {
+    let noted = false;
+    for (let a$ = node.attributes, i = a$.length - 1, a; i >= 0 && (a = a$[i]); i--) {
+      if (
+        annotateEvent(node, key, notes, a.name, a.value) ||
+        annotateMustache(node, key, notes, a.name, a.value)
+      ) {
+        node.removeAttribute(a.name);
+        noted = true;
+      }
+    }
+    return noted;
+  }
+};
+
+const annotateMustache = function(node, key, notes, property, mustache) {
+  if (mustache.slice(0, 2) === '{{') {
+    if (property === 'class') {
+      property = 'className';
+    }
+    let value = mustache.slice(2, -2);
+    const override = value.split(':');
+    if (override.length === 2) {
+      property = override[0];
+      value = override[1];
+    }
+    takeNote(notes, key, 'mustaches', property, value);
+    if (value[0] === '$') {
+      takeNote(notes, 'xlate', value, true);
+    }
+    return true;
+  }
+};
+
+const annotateEvent = function(node, key, notes, name, value) {
+  if (name.slice(0, 3) === 'on-') {
+    if (value.slice(0, 2) === '{{') {
+      value = value.slice(2, -2);
+      console.warn(
+        `Xen: event handler for '${name}' expressed as a mustache, which is not supported. Using literal value '${value}' instead.`
+      );
+    }
+    takeNote(notes, key, 'events', name.slice(3), value);
+    return true;
+  }
+};
+
+const takeNote = function(notes, key, group, name, note) {
+  const n$ = notes[key] || (notes[key] = Object.create(null));
+  (n$[group] || (n$[group] = {}))[name] = note;
+};
+
+const annotator = new Annotator(annotatorImpl);
+
+const annotate = function(root, key, opts) {
+  return (root._notes ||
+    (root._notes = annotator.annotate(root.content, {/*ids:{}*/}, key, opts))
+  );
+};
+
+/* Annotation Consumer */
+const mapEvents = function(notes, map, mapper) {
+  // add event listeners
+  for (const key in notes) {
+    const node = map[key];
+    const events = notes[key] && notes[key].events;
+    if (node && events) {
+      for (const name in events) {
+        mapper(node, name, events[name]);
+      }
+    }
+  }
+};
+
+const listen = function(controller, node, eventName, handlerName) {
+  node.addEventListener(eventName, function(e) {
+    if (controller[handlerName]) {
+      return controller[handlerName](e, e.detail);
+    }
+  });
+};
+
+const set$1 = function(notes, map, scope, controller) {
+  if (scope) {
+    for (const key in notes) {
+      const node = map[key];
+      if (node) {
+        // everybody gets a scope
+        node.scope = scope;
+        // now get your regularly scheduled bindings
+        const mustaches = notes[key].mustaches;
+        for (const name in mustaches) {
+          const property = mustaches[name];
+          if (property in scope) {
+            _set(node, name, scope[property], controller);
+          }
+        }
+      }
+    }
+  }
+};
+
+const _set = function(node, property, value, controller) {
+  // TODO(sjmiles): the property conditionals here could be precompiled
+  const modifier = property.slice(-1);
+  if (property === 'style%' || property === 'style' || property === 'xen:style') {
+    if (typeof value === 'string') {
+      node.style.cssText = value;
+    } else {
+      Object.assign(node.style, value);
+    }
+  } else if (modifier == '$') {
+    const n = property.slice(0, -1);
+    if (typeof value === 'boolean' || value === undefined) {
+      setBoolAttribute(node, n, Boolean(value));
+    } else {
+      node.setAttribute(n, value);
+    }
+  } else if (property === 'textContent') {
+    if (value && (value.$template || value.template)) {
+      _setSubTemplate(node, value, controller);
+    } else {
+      node.textContent = (value || '');
+    }
+  } else if (property === 'unsafe-html') {
+    node.innerHTML = value || '';
+  } else if (property === 'value') {
+    // TODO(sjmiles): specifically dirty-check `value` to avoid resetting input elements
+    if (node.value !== value) {
+      node.value = value;
+    }
+  } else {
+    node[property] = value;
+  }
+};
+
+const setBoolAttribute = function(node, attr, state) {
+  node[
+    (state === undefined ? !node.hasAttribute(attr) : state)
+      ? 'setAttribute'
+      : 'removeAttribute'
+  ](attr, '');
+};
+
+const _setSubTemplate = function(node, value, controller) {
+  // TODO(sjmiles): subtemplate iteration ability specially implemented to support arcs (serialization boundary)
+  // TODO(sjmiles): Aim to re-implement as a plugin.
+  let {template, models} = value;
+  if (!template) {
+    const container = node.getRootNode();
+    template = container.querySelector(`template[${value.$template}]`);
+  } else {
+    template = maybeStringToTemplate(template);
+  }
+  _renderSubtemplates(node, controller, template, models);
+};
+
+const _renderSubtemplates = function(container, controller, template, models) {
+  //console.log('XList::_renderList:', props);
+  let child = container.firstElementChild;
+  let next;
+  if (template && models) {
+    models && models.forEach((model, i)=>{
+      next = child && child.nextElementSibling;
+      // use existing node if possible
+      if (!child) {
+        const dom = stamp(template).events(controller);
+        child = dom.root.firstElementChild;
+        if (child) {
+          child._subtreeDom = dom;
+          container.appendChild(child);
+          if (!template._shapeWarning && dom.root.firstElementChild) {
+            template._shapeWarning = true;
+            console.warn(`xen-template: subtemplate has multiple root nodes: only the first is used.`, template);
+          }
+        }
+      }
+      if (child) {
+        child._subtreeDom.set(model);
+        child = next;
+      }
+    });
+  }
+  // remove extra nodes
+  while (child) {
+    next = child.nextElementSibling;
+    child.remove();
+    child = next;
+  }
+};
+
+//window.stampCount = 0;
+//window.stampTime = 0;
+
+const stamp = function(template, opts) {
+  //const startTime = performance.now();
+  //window.stampCount++;
+  template = maybeStringToTemplate(template);
+  // construct (or use memoized) notes
+  const notes = annotate(template, opts);
+  // CRITICAL TIMING ISSUE #1:
+  // importNode can have side-effects, like CustomElement callbacks (before we
+  // can do any work on the imported subtree, before we can mapEvents, e.g.).
+  // we could clone into an inert document (say a new template) and process the nodes
+  // before importing if necessary.
+  const root = document.importNode(template.content, true);
+  // map DOM to keys
+  const map = locateNodes(root, notes.locator);
+  // return dom manager
+  const dom = {
+    root,
+    notes,
+    map,
+    $(slctr) {
+      return this.root.querySelector(slctr);
+    },
+    set: function(scope) {
+      scope && set$1(notes, map, scope, this.controller);
+      return this;
+    },
+    events: function(controller) {
+      // TODO(sjmiles): originally `controller` was expected to be an Object with event handler
+      // methods on it (typically a custom-element stamping a template).
+      // In Arcs, we want to attach a generic handler (Function) for any event on this node.
+      // Subtemplate stamping gets involved because they need to reuse whichever controller.
+      // I suspect this can be simplified, but right now I'm just making it go.
+      if (controller && typeof controller !== 'function') {
+        controller = listen.bind(this, controller);
+      }
+      this.controller = controller;
+      if (controller) {
+        mapEvents(notes, map, controller);
+      }
+      return this;
+    },
+    appendTo: function(node) {
+      if (this.root) {
+        // TODO(sjmiles): assumes this.root is a fragment
+        node.appendChild(this.root);
+      } else {
+        console.warn('Xen: cannot appendTo, template stamped no DOM');
+      }
+      // TODO(sjmiles): this.root is no longer a fragment
+      this.root = node;
+      return this;
+    }
+  };
+  //window.stampTime += performance.now() - startTime;
+  return dom;
+};
+
+const maybeStringToTemplate = template => {
+  // TODO(sjmiles): need to memoize this somehow
+  return (typeof template === 'string') ? createTemplate(template) : template;
+};
+
+const createTemplate = innerHTML => {
+  return Object.assign(document.createElement('template'), {innerHTML});
+};
+
+const Template = {
+  createTemplate,
+  setBoolAttribute,
+  stamp
+};
+
+var IconStyles = `
+  icon {
+    font-family: "Material Icons";
+    font-size: 24px;
+    font-style: normal;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    /* partial FOUC prevention */
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+  }
+  icon[hidden] {
+    /* required because of display rule above,
+    display rule required for overflow: hidden */
+    display: none;
+  }
+`;
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const templateByName = new Map();
+class SlotDomConsumer extends SlotConsumer {
+    constructor(consumeConn, containerKind) {
+        super(consumeConn, containerKind);
+        this._observer = this._initMutationObserver();
+    }
+    constructRenderRequest(hostedSlotConsumer) {
+        const request = ['model'];
+        const prefixes = [this.templatePrefix];
+        if (hostedSlotConsumer) {
+            prefixes.push(hostedSlotConsumer.consumeConn.particle.name);
+            prefixes.push(hostedSlotConsumer.consumeConn.name);
+        }
+        if (!SlotDomConsumer.hasTemplate(prefixes.join('::'))) {
+            request.push('template');
+        }
+        return request;
+    }
+    static hasTemplate(templatePrefix) {
+        return [...templateByName.keys()].find(key => key.startsWith(templatePrefix));
+    }
+    isSameContainer(container, contextContainer) {
+        return container.parentNode === contextContainer;
+    }
+    createNewContainer(contextContainer, subId) {
+        assert$1(contextContainer, 'contextContainer cannot be null');
+        const newContainer = document.createElement(this.containerKind || 'div');
+        if (this.consumeConn) {
+            newContainer.setAttribute('particle-host', this.consumeConn.getQualifiedName());
+        }
+        contextContainer.appendChild(newContainer);
+        //return newContainer;
+        // TODO(sjmiles): introduce tree scope
+        newContainer.attachShadow({ mode: `open` });
+        // provision basic stylesheet
+        Template.stamp(`<style>${IconStyles}</style>`).appendTo(newContainer.shadowRoot);
+        // TODO(sjmiles): maybe inject boilerplate styles
+        return newContainer.shadowRoot;
+    }
+    deleteContainer(container) {
+        // step out of shadowDOM if container is a shadowRoot
+        container = container.host || container;
+        if (container.parentNode) {
+            container.parentNode.removeChild(container);
+        }
+    }
+    formatContent(content, subId) {
+        const newContent = {};
+        // Format model.
+        if (Object.keys(content).indexOf('model') >= 0) {
+            if (content.model) {
+                let formattedModel;
+                if (this.slotContext.spec.isSet && this.consumeConn.slotSpec.isSet) {
+                    formattedModel = this._modelForSetSlotConsumedAsSetSlot(content.model, subId);
+                }
+                else if (this.slotContext.spec.isSet && !this.consumeConn.slotSpec.isSet) {
+                    formattedModel = this._modelForSetSlotConsumedAsSingletonSlot(content.model, subId);
+                }
+                else {
+                    formattedModel = this._modelForSingletonSlot(content.model, subId);
+                }
+                if (!formattedModel)
+                    return null;
+                // Merge descriptions into model.
+                newContent.model = Object.assign({}, formattedModel, content.descriptions);
+            }
+            else {
+                newContent.model = undefined;
+            }
+        }
+        // Format template name and template.
+        if (content.templateName) {
+            newContent.templateName = typeof content.templateName === 'string' ? content.templateName : content.templateName[subId];
+            if (content.template) {
+                newContent.template = typeof content.template === 'string' ? content.template : content.template[newContent.templateName];
+            }
+        }
+        return newContent;
+    }
+    _modelForSingletonSlot(model, subId) {
+        assert$1(!subId, 'subId should be absent for a Singleton Slot');
+        return model;
+    }
+    _modelForSetSlotConsumedAsSetSlot(model, subId) {
+        assert$1(model.items && model.items.every(item => item.subId), 'model for a Set Slot consumed as a Set Slot needs to have items array, with every element having subId');
+        return model.items.find(item => item.subId === subId);
+    }
+    _modelForSetSlotConsumedAsSingletonSlot(model, subId) {
+        assert$1(model.subId, 'model for a Set Slot consumed as a Singleton Slot needs to have subId');
+        return subId === model.subId ? model : null;
+    }
+    setContainerContent(rendering, content, subId) {
+        if (!rendering.container) {
+            return;
+        }
+        if (!content || Object.keys(content).length === 0) {
+            this.clearContainer(rendering);
+            rendering.model = null;
+            return;
+        }
+        this._setTemplate(rendering, this.templatePrefix, content.templateName, content.template);
+        rendering.model = content.model;
+        this._onUpdate(rendering);
+    }
+    clearContainer(rendering) {
+        if (rendering.liveDom) {
+            rendering.liveDom.root.textContent = '';
+        }
+        rendering.liveDom = null;
+    }
+    dispose() {
+        if (this._observer) {
+            this._observer.disconnect();
+        }
+        this.renderings.forEach(([subId, { container }]) => this.deleteContainer(container));
+    }
+    static clear(container) {
+        container.textContent = '';
+    }
+    static dispose() {
+        // TODO(sjmiles): dumping the template cache causes errors when running parallel arcs
+        // in shell. Disable for now, the corpus of templates is static at this time.
+        // empty template cache
+        if (!SlotDomConsumer['multitenant']) {
+            templateByName.clear();
+        }
+    }
+    static findRootContainers(topContainer) {
+        const containerBySlotId = {};
+        Array.from(topContainer.querySelectorAll('[slotid]')).forEach(container => {
+            //assert(this.isDirectInnerSlot(container), 'Unexpected inner slot');
+            const slotId = container.getAttribute('slotid');
+            assert$1(!containerBySlotId[slotId], `Duplicate root slot ${slotId}`);
+            containerBySlotId[slotId] = container;
+        });
+        return containerBySlotId;
+    }
+    createTemplateElement(template) {
+        return Object.assign(document.createElement('template'), { innerHTML: template });
+    }
+    get templatePrefix() {
+        return this.consumeConn.getQualifiedName();
+    }
+    _setTemplate(rendering, templatePrefix, templateName, template) {
+        if (templateName) {
+            rendering.templateName = [templatePrefix, templateName].filter(s => s).join('::');
+            if (template) {
+                if (templateByName.has(rendering.templateName)) {
+                    // TODO: check whether the new template is different from the one that was previously used.
+                    // Template is being replaced.
+                    this.clearContainer(rendering);
+                }
+                templateByName.set(rendering.templateName, this.createTemplateElement(template));
+            }
+        }
+    }
+    _onUpdate(rendering) {
+        this._observe(rendering.container);
+        if (rendering.templateName) {
+            const template = templateByName.get(rendering.templateName);
+            assert$1(template, `No template for ${rendering.templateName}`);
+            this._stampTemplate(rendering, template);
+        }
+        this._updateModel(rendering);
+    }
+    _observe(container) {
+        assert$1(container, 'Cannot observe without a container');
+        if (this._observer) {
+            this._observer.observe(container, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['subid']
+            });
+        }
+    }
+    _stampTemplate(rendering, template) {
+        if (!rendering.liveDom) {
+            // TODO(sjmiles): hack to allow subtree elements (e.g. x-list) to marshal events
+            rendering.container._eventMapper = this._eventMapper.bind(this, this.eventHandler);
+            rendering.liveDom = Template
+                .stamp(template)
+                .events(rendering.container._eventMapper)
+                .appendTo(rendering.container);
+        }
+    }
+    _updateModel(rendering) {
+        if (rendering.liveDom) {
+            rendering.liveDom.set(rendering.model);
+        }
+    }
+    initInnerContainers(container) {
+        Array.from(container.querySelectorAll('[slotid]')).forEach(innerContainer => {
+            if (!this.isDirectInnerSlot(container, innerContainer)) {
+                // Skip inner slots of an inner slot of the given slot.
+                return;
+            }
+            const slotId = this.getNodeValue(innerContainer, 'slotid');
+            const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
+            if (!providedContext) {
+                console.warn(`Slot ${this.consumeConn.slotSpec.name} has unexpected inner slot ${slotId}`);
+                return;
+            }
+            const subId = this.getNodeValue(innerContainer, 'subid');
+            assert$1(Boolean(subId) === providedContext.spec.isSet, `Sub-id ${subId} for slot ${providedContext.name} doesn't match set spec: ${providedContext.spec.isSet}`);
+            this._initInnerSlotContainer(slotId, subId, innerContainer);
+        });
+    }
+    // get a value from node that could be an attribute, if not a property
+    getNodeValue(node, name) {
+        // TODO(sjmiles): remember that attribute names from HTML are lower-case
+        return node[name] || node.getAttribute(name);
+    }
+    isDirectInnerSlot(container, innerContainer) {
+        if (innerContainer === container) {
+            return true;
+        }
+        const parentOf = elt => elt.parentNode;
+        let parentNode = parentOf(innerContainer);
+        while (parentNode) {
+            if (parentNode === container) {
+                return true;
+            }
+            // only some HTMLNodes have `getAttribute` (i.e. HTMLElement)
+            if (parentNode.getAttribute && parentNode.getAttribute('slotid')) {
+                // this is an inner slot of an inner slot.
+                return false;
+            }
+            parentNode = parentOf(parentNode);
+        }
+        // innerContainer won't be a child node of container if the method is triggered
+        // by mutation observer record and innerContainer was removed.
+        return false;
+    }
+    _initMutationObserver() {
+        if (this.consumeConn) {
+            return new MutationObserver(async (records) => {
+                this._observer.disconnect();
+                const updateContainersBySubId = new Map();
+                for (const [subId, { container }] of this.renderings) {
+                    if (records.some(r => this.isDirectInnerSlot(container, r.target))) {
+                        updateContainersBySubId.set(subId, container);
+                    }
+                }
+                const containers = [...updateContainersBySubId.values()];
+                if (containers.length > 0) {
+                    this._clearInnerSlotContainers([...updateContainersBySubId.keys()]);
+                    containers.forEach(container => this.initInnerContainers(container));
+                    this.updateProvidedContexts();
+                    // Reactivate the observer.
+                    containers.forEach(container => this._observe(container));
+                }
+            });
+        }
+        return null;
+    }
+    _eventMapper(eventHandler, node, eventName, handlerName) {
+        node.addEventListener(eventName, event => {
+            // TODO(sjmiles): we have an extremely minimalist approach to events here, this is useful IMO for
+            // finding the smallest set of features that we are going to need.
+            // First problem: click event firing multiple times as it bubbles up the tree, minimalist solution
+            // is to enforce a 'first listener' rule by executing `stopPropagation`.
+            event.stopPropagation();
+            // propagate keyboard information
+            const { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat } = event;
+            eventHandler({
+                handler: handlerName,
+                data: {
+                    // TODO(sjmiles): this is a data-key (as in key-value pair), may be confusing vs `keys`
+                    key: node.key,
+                    value: node.value,
+                    keys: { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat }
+                }
+            });
+        });
+    }
+    formatHostedContent(hostedSlot, content) {
+        if (content.templateName) {
+            if (typeof content.templateName === 'string') {
+                content.templateName = `${hostedSlot.consumeConn.particle.name}::${hostedSlot.consumeConn.name}::${content.templateName}`;
+            }
+            else {
+                // TODO(mmandlis): add support for hosted particle rendering set slot.
+                throw new Error('TODO: Implement this!');
+            }
+        }
+        return content;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SuggestDomConsumer extends SlotDomConsumer {
+    constructor(containerKind, suggestion, suggestionContent, eventHandler) {
+        super(/* consumeConn= */ null, containerKind);
+        this._suggestion = suggestion;
+        this._suggestionContent = suggestionContent;
+        this._eventHandler = eventHandler;
+    }
+    get suggestion() {
+        return this._suggestion;
+    }
+    get templatePrefix() {
+        return 'suggest';
+    }
+    formatContent(content) {
+        return {
+            template: `<suggestion-element inline key="{{hash}}" on-click="">${content.template}</suggestion-element>`,
+            templateName: 'suggestion',
+            model: Object.assign({ hash: this.suggestion.hash }, content.model)
+        };
+    }
+    onContainerUpdate(container, originalContainer) {
+        super.onContainerUpdate(container, originalContainer);
+        if (container) {
+            this.setContent(this._suggestionContent, this._eventHandler);
+        }
+    }
+    static render(container, plan, content) {
+        const suggestionContainer = Object.assign(document.createElement('suggestion-element'), { plan });
+        container.appendChild(suggestionContainer, container.firstElementChild);
+        const rendering = { container: suggestionContainer, model: content.model };
+        const consumer = new SlotDomConsumer();
+        consumer.addRenderingBySubId(undefined, rendering);
+        consumer.eventHandler = (() => { });
+        consumer._stampTemplate(rendering, consumer.createTemplateElement(content.template));
+        consumer._onUpdate(rendering);
+        return consumer;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class MockSlotDomConsumer extends SlotDomConsumer {
+  constructor(consumeConn) {
+    super(consumeConn);
+    this._content = {};
+    this.contentAvailable = new Promise(resolve => this._contentAvailableResolve = resolve);
+  }
+
+  async setContent(content, handler) {
+    await super.setContent(content, handler);
+
+    // Mimics the behaviour of DomSlotConsumer::setContent, where template is only set at first,
+    // and model is overriden every time.
+    if (content) {
+      this._content.templateName = content.templateName;
+      if (content.template) {
+        this._content.template = content.template;
+      }
+      this._content.model = content.model;
+      this._contentAvailableResolve();
+    } else {
+      this._content = {};
+    }
+  }
+
+  createNewContainer(container, subId) {
+    return container;
+  }
+
+  isSameContainer(container, contextContainer) {
+    return container == contextContainer;
+  }
+
+  getInnerContainer(slotId) {
+    const model = this.renderings.map(([subId, {model}]) => model)[0];
+    const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
+    if (!providedContext) {
+      console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);
+      return;
+    }
+    if (providedContext.spec.isSet && model && model.items && model.items.models) {
+      const innerContainers = {};
+      for (const itemModel of model.items.models) {
+        assert$1(itemModel.id);
+        innerContainers[itemModel.id] = itemModel.id;
+      }
+      return innerContainers;
+    }
+    return slotId;
+  }
+
+  createTemplateElement(template) {
+    return template;
+  }
+
+  static findRootContainers(container) {
+    return container;
+  }
+
+  static clear(container) {}
+  _onUpdate(rendering) {}
+  _stampTemplate(template) {}
+  _initMutationObserver() {}
+  _observe() {}
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+// Should this class instead extend SuggestDomConsumer?
+class MockSuggestDomConsumer extends MockSlotDomConsumer {
+  constructor(containerKind, suggestion, suggestionContent, eventHandler) {
+    super(/* consumeConn= */null, containerKind);
+    this._suggestion = suggestion;
+    this._suggestionContent = suggestionContent.template ? suggestionContent : {
+      template: `<dummy-suggestion>${suggestionContent}</dummy-element>`,
+      templateName: 'dummy-suggestion',
+      model: {}
+    };
+    this._setContentPromise = null;
+  }
+
+  get suggestion() { return this._suggestion; }
+  get templatePrefix() { return 'suggest'; }
+
+  onContainerUpdate(container, originalContainer) {
+    super.onContainerUpdate(container, originalContainer);
+
+    if (container) {
+      this._setContentPromise = this.setContent(this._suggestionContent, this._eventHandler);
+    }
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class DescriptionDomFormatter extends DescriptionFormatter {
+    constructor() {
+        super(...arguments);
+        this.nextID = 0;
+    }
+    _isSelectedDescription(desc) {
+        return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
+    }
+    _populateParticleDescription(particle, descriptionByName) {
+        const result = super._populateParticleDescription(particle, descriptionByName);
+        if (descriptionByName['_template_']) {
+            return Object.assign({}, result, { template: descriptionByName['_template_'], model: JSON.parse(descriptionByName['_model_']) });
+        }
+        return result;
+    }
+    async _combineSelectedDescriptions(selectedDescriptions, options) {
+        const suggestionByParticleDesc = new Map();
+        for (const particleDesc of selectedDescriptions) {
+            if (this.seenParticles.has(particleDesc._particle)) {
+                continue;
+            }
+            let { template, model } = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
+            const success = await Promise.all(Object.keys(model).map(async (tokenKey) => {
+                const tokens = this._initSubTokens(model[tokenKey], particleDesc);
+                return (await Promise.all(tokens.map(async (token) => {
+                    const tokenValue = await this.tokenToString(token);
+                    if (tokenValue == undefined) {
+                        return false;
+                    }
+                    else if (tokenValue && tokenValue.template && tokenValue.model) {
+                        // Dom token.
+                        template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
+                        delete model[tokenKey];
+                        model = Object.assign({}, model, tokenValue.model);
+                    }
+                    else { // Text token.
+                        // Replace tokenKey, in case multiple selected suggestions use the same key.
+                        const newTokenKey = `${tokenKey}${++this.nextID}`;
+                        template = template.replace(`{{${tokenKey}}}`, `{{${newTokenKey}}}`);
+                        delete model[tokenKey];
+                        model[newTokenKey] = tokenValue;
+                    }
+                    return true;
+                }))).every(t => !!t);
+            }));
+            if (success.every(s => !!s)) {
+                suggestionByParticleDesc.set(particleDesc, { template, model });
+            }
+        }
+        // Populate suggestions list while maintaining original particles order.
+        const suggestions = [];
+        selectedDescriptions.forEach(desc => {
+            if (suggestionByParticleDesc.has(desc)) {
+                suggestions.push(suggestionByParticleDesc.get(desc));
+            }
+        });
+        if (suggestions.length > 0) {
+            const result = this._joinDescriptions(suggestions);
+            if (!options || !options.skipFormatting) {
+                result.template += '.';
+            }
+            return result;
+        }
+    }
+    _retrieveTemplateAndModel(particleDesc, index, options) {
+        if (particleDesc.template && particleDesc.model) {
+            return { template: particleDesc.template, model: particleDesc.model };
+        }
+        assert$1(particleDesc.pattern, 'Description must contain template and model, or pattern');
+        let template = '';
+        const model = {};
+        const tokens = this._initTokens(particleDesc.pattern, particleDesc);
+        tokens.forEach((token, i) => {
+            if (token.text) {
+                template = template.concat(`${(index === 0 && i === 0 && !options.skipFormatting) ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
+            }
+            else { // handle or slot handle.
+                const sanitizedFullName = token.fullName.replace(/[.{}_$]/g, '');
+                let attribute = '';
+                // TODO(mmandlis): capitalize the data in the model instead.
+                if (i === 0 && !options.skipFormatting) {
+                    // Capitalize the first letter in the token.
+                    template = template.concat(`<style>
+            [firstletter]::first-letter { text-transform: capitalize; }
+            [firstletter] {display: inline-block}
+            </style>`);
+                    attribute = ' firstletter';
+                }
+                template = template.concat(`<span${attribute}>{{${sanitizedFullName}}}</span>`);
+                model[sanitizedFullName] = token.fullName;
+            }
+        });
+        return { template, model };
+    }
+    _capitalizeAndPunctuate(sentence) {
+        if (typeof sentence === 'string') {
+            return { template: super._capitalizeAndPunctuate(sentence), model: {} };
+        }
+        // Capitalize the first element in the DOM template.
+        const tokens = sentence.template.match(/<[a-zA-Z0-9]+>{{([a-zA-Z0-9]*)}}<\/[a-zA-Z0-9]+>/);
+        if (tokens && tokens.length > 1 && sentence.model[tokens[1]]) {
+            const modelToken = sentence.model[tokens[1]];
+            if (modelToken.length > 0) {
+                sentence.model[tokens[1]] = `${modelToken[0].toUpperCase()}${modelToken.substr(1)}`;
+            }
+        }
+        sentence.template += '.';
+        return sentence;
+    }
+    _joinDescriptions(descs) {
+        // // If all tokens are strings, just join them.
+        if (descs.every(desc => typeof desc === 'string')) {
+            return super._joinDescriptions(descs);
+        }
+        const result = { template: '', model: {} };
+        const count = descs.length;
+        descs.forEach((desc, i) => {
+            if (typeof desc === 'string') {
+                desc = { template: desc, model: {} };
+            }
+            result.template += desc.template;
+            result.model = Object.assign({}, result.model, desc.model);
+            let delim;
+            if (i < count - 2) {
+                delim = ', ';
+            }
+            else if (i === count - 2) {
+                delim = ['', '', ' and ', ', and '][Math.min(3, count)];
+            }
+            if (delim) {
+                result.template += delim;
+            }
+        });
+        return result;
+    }
+    _joinTokens(tokens) {
+        // If all tokens are strings, just join them.
+        if (tokens.every(token => typeof token === 'string')) {
+            return super._joinTokens(tokens);
+        }
+        tokens = tokens.map(token => {
+            if (typeof token !== 'object') {
+                return {
+                    template: `<span>{{text${++this.nextID}}}</span>`,
+                    model: { [`text${this.nextID}`]: token }
+                };
+            }
+            return token;
+        });
+        const nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
+        return {
+            template: nonEmptyTokens.map(token => token.template).join(''),
+            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => (Object.assign({}, prev, curr)), {})
+        };
+    }
+    _combineDescriptionAndValue(token, description, storeValue) {
+        if (!!description.template && !!description.model) {
+            return {
+                template: `${description.template} (${storeValue.template})`,
+                model: Object.assign({}, description.model, storeValue.model)
+            };
+        }
+        const descKey = `${token.handleName}Description${++this.nextID}`;
+        return {
+            template: `<span>{{${descKey}}}</span> (${storeValue.template})`,
+            model: Object.assign({ [descKey]: description }, storeValue.model)
+        };
+    }
+    _formatEntityProperty(handleName, properties, value) {
+        const key = `${handleName}${properties.join('')}Value${++this.nextID}`;
+        return {
+            template: `<b>{{${key}}}</b>`,
+            model: { [`${key}`]: value }
+        };
+    }
+    _formatCollection(handleName, values) {
+        const handleKey = `${handleName}${++this.nextID}`;
+        if (values[0].rawData.name) {
+            if (values.length > 2) {
+                return {
+                    template: `<b>{{${handleKey}FirstName}}</b> plus <b>{{${handleKey}OtherCount}}</b> other items`,
+                    model: { [`${handleKey}FirstName`]: values[0].rawData.name, [`${handleKey}OtherCount`]: values.length - 1 }
+                };
+            }
+            return {
+                template: values.map((v, i) => `<b>{{${handleKey}${i}}}</b>`).join(', '),
+                model: Object.assign({}, ...values.map((v, i) => ({ [`${handleKey}${i}`]: v.rawData.name })))
+            };
+        }
+        return {
+            template: `<b>{{${handleKey}Length}}</b> items`,
+            model: { [`${handleKey}Length`]: values.length }
+        };
+    }
+    _formatBigCollection(handleName, firstValue) {
+        return {
+            template: `collection of items like {{${handleName}FirstName}}`,
+            model: { [`${handleName}FirstName`]: firstValue.rawData.name }
+        };
+    }
+    _formatSingleton(handleName, value, handleDescription) {
+        const formattedValue = super._formatSingleton(handleName, value, handleDescription);
+        if (formattedValue) {
+            return {
+                template: `<b>{{${handleName}Var}}</b>`,
+                model: { [`${handleName}Var`]: formattedValue }
+            };
+        }
+        return undefined;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Modality {
+    constructor(name, slotConsumerClass, suggestionConsumerClass, descriptionFormatter) {
+        this.name = name;
+        this.slotConsumerClass = slotConsumerClass;
+        this.suggestionConsumerClass = suggestionConsumerClass;
+        this.descriptionFormatter = descriptionFormatter;
+    }
+    static forName(name) {
+        assert$1(Modality._modalities[name], `Unsupported modality ${name}`);
+        return Modality._modalities[name];
+    }
+}
+Modality._modalities = {
+    'dom': new Modality('dom', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
+    'dom-touch': new Modality('dom-touch', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
+    'vr': new Modality('vr', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter),
+    'mock': new Modality('mock', MockSlotDomConsumer, MockSuggestDomConsumer)
+};
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Suggestion {
+    constructor(plan, hash, relevance, arc) {
+        // TODO: update Description class to be serializable.
+        this.descriptionByModality = {};
+        // List of search resolved token groups, this suggestion corresponds to.
+        this.searchGroups = [];
+        assert$1(plan, `plan cannot be null`);
+        assert$1(hash, `hash cannot be null`);
+        this.plan = plan;
+        this.hash = hash;
+        this.rank = relevance.calcRelevanceScore();
+        this.relevance = relevance;
+        this.arc = arc;
+    }
+    get descriptionText() {
+        return this.getDescription('text');
+    }
+    getDescription(modality) {
+        assert$1(this.descriptionByModality[modality], `No description for modality '${modality}'`);
+        return this.descriptionByModality[modality];
+    }
+    async setDescription(description) {
+        this.descriptionByModality['text'] = await description.getRecipeSuggestion();
+        const modality = this.arc.modality;
+        if (modality && modality !== 'text') {
+            this.descriptionByModality[modality] =
+                await description.getRecipeSuggestion(Modality.forName(modality).descriptionFormatter);
+        }
+    }
+    isEquivalent(other) {
+        return (this.hash === other.hash) && (this.descriptionText === other.descriptionText);
+    }
+    static compare(s1, s2) {
+        return s2.rank - s1.rank;
+    }
+    hasSearch(search) {
+        const tokens = search.split(' ');
+        return this.searchGroups.some(group => tokens.every(token => group.includes(token)));
+    }
+    setSearch(search) {
+        this.searchGroups = [];
+        if (search) {
+            this._addSearch(search.resolvedTokens);
+        }
+    }
+    mergeSearch(suggestion) {
+        let updated = false;
+        for (const other of suggestion.searchGroups) {
+            if (this._addSearch(other)) {
+                if (this.searchGroups.length === 1) {
+                    this.searchGroups.push(['']);
+                }
+                updated = true;
+            }
+        }
+        this.searchGroups.sort();
+        return updated;
+    }
+    _addSearch(searchGroup) {
+        const equivalentGroup = (group, otherGroup) => {
+            return group.length === otherGroup.length &&
+                group.every(token => otherGroup.includes(token));
+        };
+        if (!this.searchGroups.find(group => equivalentGroup(group, searchGroup))) {
+            this.searchGroups.push(searchGroup);
+            return true;
+        }
+        return false;
+    }
+    serialize() {
+        return {
+            plan: this._planToString(this.plan),
+            hash: this.hash,
+            rank: this.rank,
+            relevance: this.relevance.serialize(),
+            searchGroups: this.searchGroups,
+            descriptionByModality: this.descriptionByModality
+        };
+    }
+    static async deserialize({ plan, hash, relevance, searchGroups, descriptionByModality }, arc, recipeResolver) {
+        const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
+        if (deserializedPlan) {
+            const suggestion = new Suggestion(deserializedPlan, hash, Relevance.deserialize(relevance, deserializedPlan), arc);
+            suggestion.searchGroups = searchGroups || [];
+            suggestion.descriptionByModality = descriptionByModality;
+            return suggestion;
+        }
+        return undefined;
+    }
+    async instantiate() {
+        // For now shell is responsible for creating and setting the new arc.
+        assert$1(this.arc, `Cannot instantiate suggestion without and arc`);
+        if (this.arc) {
+            return this.arc.instantiate(this.plan);
+        }
+    }
+    _planToString(plan) {
+        if (plan.slots.every(slot => Boolean(slot.id))) {
+            return plan.toString();
+        }
+        // Special handling needed for plans with local slot (ie missing slot IDs).
+        const planClone = plan.clone();
+        planClone.slots.forEach(slot => slot.id = slot.id || `slotid-${this.arc.generateID()}`);
+        return planClone.toString();
+    }
+    static async _planFromString(planString, arc, recipeResolver) {
+        try {
+            const manifest = await Manifest.parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
+            assert$1(manifest.recipes.length === 1);
+            let plan = manifest.recipes[0];
+            assert$1(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
+            if (!plan.isResolved()) {
+                const resolvedPlan = await recipeResolver.resolve(plan);
+                assert$1(resolvedPlan, `can't resolve plan: ${plan.toString({ showUnresolved: true })}`);
+                if (resolvedPlan) {
+                    plan = resolvedPlan;
+                }
+            }
+            assert$1(manifest.stores.length === 0, `Unexpected stores in suggestion manifest.`);
+            return plan;
+        }
+        catch (e) {
+            console.error(`Failed to parse suggestion ${e}\n${planString}.`);
+        }
+        return null;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Speculator {
+    constructor(planningResult) {
+        this.suggestionByHash = {};
+        this.speculativeArcs = [];
+        if (planningResult) {
+            for (const suggestion of planningResult.suggestions) {
+                this.suggestionByHash[suggestion.hash] = suggestion;
+            }
+        }
+    }
+    async speculate(arc, plan, hash) {
+        assert$1(plan.isResolved(), `Cannot speculate on an unresolved plan: ${plan.toString({ showUnresolved: true })}`);
+        let suggestion = this.suggestionByHash[hash];
+        if (suggestion) {
+            const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
+            const relevanceVersionByStoreId = suggestion.relevance.versionByStore;
+            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === relevanceVersionByStoreId[handle.id])) {
+                return suggestion;
+            }
+        }
+        const speculativeArc = await arc.cloneForSpeculativeExecution();
+        this.speculativeArcs.push(speculativeArc);
+        const relevance = Relevance.create(arc, plan);
+        await speculativeArc.instantiate(plan);
+        await this.awaitCompletion(relevance, speculativeArc);
+        if (!relevance.isRelevant(plan)) {
+            return null;
+        }
+        speculativeArc.description.relevance = relevance;
+        suggestion = new Suggestion(plan, hash, relevance, arc);
+        suggestion.setSearch(plan.search);
+        await suggestion.setDescription(speculativeArc.description);
+        this.suggestionByHash[hash] = suggestion;
+        return suggestion;
+    }
+    async awaitCompletion(relevance, speculativeArc) {
+        const messageCount = speculativeArc.pec.messageCount;
+        relevance.apply(await speculativeArc.pec.idle);
+        // We expect two messages here, one requesting the idle status, and one answering it.
+        if (speculativeArc.pec.messageCount !== messageCount + 2) {
+            return this.awaitCompletion(relevance, speculativeArc);
+        }
+        else {
+            speculativeArc.stop();
+            this.speculativeArcs.splice(this.speculativeArcs.indexOf(speculativeArc, 1));
+            return relevance;
+        }
+    }
+    dispose() {
+        for (const arc of this.speculativeArcs) {
+            arc.dispose();
+        }
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class Planner {
+    // TODO: Use context.arc instead of arc
+    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {} } = {}) {
+        strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
+        this._arc = arc;
+        const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
+        this.strategizer = new Strategizer(strategyImpls, [], ruleset);
+    }
+    // Specify a timeout value less than zero to disable timeouts.
+    async plan(timeout, generations) {
+        const trace = Tracing.start({ cat: 'planning', name: 'Planner::plan', overview: true, args: { timeout } });
+        timeout = timeout || -1;
+        const allResolved = [];
+        const start = now$1();
+        do {
+            const record = await trace.wait(this.strategizer.generate());
+            const generated = this.strategizer.generated;
+            trace.addArgs({
+                generated: generated.length,
+                generation: this.strategizer.generation
+            });
+            if (generations) {
+                generations.push({ generated, record });
+            }
+            const resolved = this.strategizer.generated
+                .map(individual => individual.result)
+                .filter(recipe => recipe.isResolved());
+            allResolved.push(...resolved);
+            const elapsed = now$1() - start;
+            if (timeout >= 0 && elapsed > timeout) {
+                console.warn(`Planner.plan timed out [elapsed=${Math.floor(elapsed)}ms, timeout=${timeout}ms].`);
+                break;
+            }
+        } while (this.strategizer.generated.length + this.strategizer.terminal.length > 0);
+        trace.end();
+        return allResolved;
+    }
+    _speculativeThreadCount() {
+        // TODO(wkorman): We'll obviously have to rework the below when we do
+        // speculation in the cloud.
+        const cores = DeviceInfo.hardwareConcurrency();
+        const memory = DeviceInfo.deviceMemory();
+        // For now, allow occupying half of the available cores while constraining
+        // total memory used to at most a quarter of what's available. In the
+        // absence of resource information we just run two in parallel as a
+        // perhaps-low-end-device-oriented balancing act.
+        const minCores = 2;
+        if (!cores || !memory) {
+            return minCores;
+        }
+        // A rough estimate of memory used per thread in gigabytes.
+        const memoryPerThread = 0.125;
+        const quarterMemory = memory / 4;
+        const maxThreadsByMemory = quarterMemory / memoryPerThread;
+        const maxThreadsByCores = cores / 2;
+        return Math.max(minCores, Math.min(maxThreadsByMemory, maxThreadsByCores));
+    }
+    _splitToGroups(items, groupCount) {
+        const groups = [];
+        if (!items || items.length === 0)
+            return groups;
+        const groupItemSize = Math.max(1, Math.floor(items.length / groupCount));
+        let startIndex = 0;
+        for (let i = 0; i < groupCount && startIndex < items.length; i++) {
+            groups.push(items.slice(startIndex, startIndex + groupItemSize));
+            startIndex += groupItemSize;
+        }
+        // Add any remaining items to the end of the last group.
+        if (startIndex < items.length) {
+            groups[groups.length - 1].push(...items.slice(startIndex, items.length));
+        }
+        return groups;
+    }
+    async suggest(timeout, generations = [], speculator) {
+        const trace = Tracing.start({ cat: 'planning', name: 'Planner::suggest', overview: true, args: { timeout } });
+        if (!generations && DevtoolsConnection.isConnected)
+            generations = [];
+        const plans = await trace.wait(this.plan(timeout, generations));
+        speculator = speculator || new Speculator();
+        // We don't actually know how many threads the VM will decide to use to
+        // handle the parallel speculation, but at least we know we won't kick off
+        // more than this number and so can somewhat limit resource utilization.
+        // TODO(wkorman): Rework this to use a fixed size 'thread' pool for more
+        // efficient work distribution.
+        const threadCount = this._speculativeThreadCount();
+        const planGroups = this._splitToGroups(plans, threadCount);
+        let results = await trace.wait(Promise.all(planGroups.map(async (group, groupIndex) => {
+            const results = [];
+            for (const plan of group) {
+                const hash = ((hash) => hash.substring(hash.length - 4))(await plan.digest());
+                if (RecipeUtil.matchesRecipe(this._arc.activeRecipe, plan)) {
+                    this._updateGeneration(generations, hash, (g) => g.active = true);
+                    continue;
+                }
+                const planTrace = Tracing.start({
+                    cat: 'speculating',
+                    sequence: `speculator_${groupIndex}`,
+                    overview: true,
+                    args: { groupIndex }
+                });
+                const suggestion = await speculator.speculate(this._arc, plan, hash);
+                if (!suggestion) {
+                    this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
+                    planTrace.end({ name: '[Irrelevant suggestion]', hash, groupIndex });
+                    continue;
+                }
+                this._updateGeneration(generations, hash, async (g) => g.description = suggestion.descriptionText);
+                suggestion.groupIndex = groupIndex;
+                results.push(suggestion);
+                planTrace.end({ name: suggestion.descriptionText, args: { rank: suggestion.rank, hash, groupIndex } });
+            }
+            return results;
+        })));
+        results = [].concat(...results);
+        return trace.endWith(results);
+    }
+    _updateGeneration(generations, hash, handler) {
+        if (generations) {
+            generations.forEach(g => {
+                g.generated.forEach(gg => {
+                    if (gg.hash.endsWith(hash)) {
+                        handler(gg);
+                    }
+                });
+            });
+        }
+    }
+}
+// tslint:disable-next-line: variable-name
+Planner.InitializationStrategies = [
+    InitPopulation,
+    InitSearch
+];
+// tslint:disable-next-line: variable-name
+Planner.ResolutionStrategies = [
+    SearchTokensToParticles,
+    SearchTokensToHandles,
+    GroupHandleConnections,
+    CreateHandleGroup,
+    ConvertConstraintsToConnections,
+    MapSlots,
+    AssignHandles,
+    MatchParticleByVerb,
+    MatchRecipeByVerb,
+    NameUnnamedConnections,
+    AddMissingHandles,
+    CreateDescriptionHandle,
+    MatchFreeHandlesToConnections,
+    ResolveRecipe,
+    FindHostedParticle,
+    CoalesceRecipes
+];
+// tslint:disable-next-line: variable-name
+Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.ResolutionStrategies);
 
 /**
  * @license
@@ -27059,7 +26341,7 @@ ${this.activeRecipe.toString()}`;
         }));
         const recipe = manifest.activeRecipe.clone();
         const options = { errors: new Map() };
-        assert(recipe.normalize(options), `Couldn't normalize recipe ${recipe.toString()}:\n${[...options.errors.values()].join('\n')}`);
+        assert$1(recipe.normalize(options), `Couldn't normalize recipe ${recipe.toString()}:\n${[...options.errors.values()].join('\n')}`);
         await arc.instantiate(recipe);
         return arc;
     }
@@ -27077,15 +26359,15 @@ ${this.activeRecipe.toString()}`;
         this.particleHandleMaps.set(recipeParticle.id, handleMap);
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {
             if (!connection.handle) {
-                assert(connection.isOptional);
+                assert$1(connection.isOptional);
                 continue;
             }
             const handle = this.findStoreById(connection.handle.id);
-            assert(handle, `can't find handle of id ${connection.handle.id}`);
+            assert$1(handle, `can't find handle of id ${connection.handle.id}`);
             this._connectParticleToHandle(recipeParticle, name, handle);
         }
         // At least all non-optional connections must be resolved
-        assert(handleMap.handles.size >= handleMap.spec.connections.filter(c => !c.isOptional).length, `Not all mandatory connections are resolved for {$particle}`);
+        assert$1(handleMap.handles.size >= handleMap.spec.connections.filter(c => !c.isOptional).length, `Not all mandatory connections are resolved for {$particle}`);
         this.pec.instantiate(recipeParticle, handleMap.spec, handleMap.handles);
     }
     generateID(component = '') {
@@ -27160,7 +26442,7 @@ ${this.activeRecipe.toString()}`;
         return arc;
     }
     async instantiate(recipe, innerArc = undefined) {
-        assert(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({ showUnresolved: true })}`);
+        assert$1(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({ showUnresolved: true })}`);
         let currentArc = { activeRecipe: this._activeRecipe, recipes: this._recipes };
         if (innerArc) {
             const innerArcs = this._recipes.find(r => !!r.particles.find(p => p === innerArc.particle)).innerArcs;
@@ -27178,15 +26460,15 @@ ${this.activeRecipe.toString()}`;
             if (['copy', 'create'].includes(recipeHandle.fate)) {
                 let type = recipeHandle.type;
                 if (recipeHandle.fate === 'create') {
-                    assert(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);
+                    assert$1(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);
                 }
                 type = type.resolvedType();
-                assert(type.isResolved(), `Can't create handle for unresolved type ${type}`);
+                assert$1(type.isResolved(), `Can't create handle for unresolved type ${type}`);
                 const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags, recipeHandle.immediateValue ? 'volatile' : null);
                 if (recipeHandle.immediateValue) {
                     const particleSpec = recipeHandle.immediateValue;
                     const type = recipeHandle.type;
-                    assert(type instanceof InterfaceType && type.interfaceInfo.particleMatches(particleSpec));
+                    assert$1(type instanceof InterfaceType && type.interfaceInfo.particleMatches(particleSpec));
                     const particleClone = particleSpec.clone().toLiteral();
                     particleClone.id = newStore.id;
                     // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
@@ -27195,8 +26477,8 @@ ${this.activeRecipe.toString()}`;
                 }
                 else if (recipeHandle.fate === 'copy') {
                     const copiedStore = this.findStoreById(recipeHandle.id);
-                    assert(copiedStore, `Cannot find store ${recipeHandle.id}`);
-                    assert(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
+                    assert$1(copiedStore, `Cannot find store ${recipeHandle.id}`);
+                    assert$1(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
                     await newStore.cloneFrom(copiedStore);
                     this._tagStore(newStore, this.findStoreTags(copiedStore));
                     const copiedStoreDesc = this.getStoreDescription(copiedStore);
@@ -27221,11 +26503,11 @@ ${this.activeRecipe.toString()}`;
             if (!storageKey) {
                 storageKey = this.keyForId(recipeHandle.id);
             }
-            assert(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
+            assert$1(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
             const type = recipeHandle.type.resolvedType();
-            assert(type.isResolved());
+            assert$1(type.isResolved());
             const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
-            assert(store, `store '${recipeHandle.id}' was not found`);
+            assert$1(store, `store '${recipeHandle.id}' was not found`);
             this._registerStore(store, recipeHandle.tags);
         }
         particles.forEach(recipeParticle => this._instantiateParticle(recipeParticle));
@@ -27240,13 +26522,13 @@ ${this.activeRecipe.toString()}`;
         this.debugHandler.recipeInstantiated({ particles });
     }
     _connectParticleToHandle(particle, name, targetHandle) {
-        assert(targetHandle, 'no target handle provided');
+        assert$1(targetHandle, 'no target handle provided');
         const handleMap = this.particleHandleMaps.get(particle.id);
-        assert(handleMap.spec.connectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
+        assert$1(handleMap.spec.connectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
         handleMap.handles.set(name, targetHandle);
     }
     async createStore(type, name, id, tags, storageKey = undefined) {
-        assert(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);
+        assert$1(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);
         if (type instanceof RelationType) {
             type = new CollectionType(type);
         }
@@ -27265,13 +26547,13 @@ ${this.activeRecipe.toString()}`;
             storageKey = 'volatile';
         }
         const store = await this.storageProviderFactory.construct(id, type, storageKey);
-        assert(store, `failed to create store with id [${id}]`);
+        assert$1(store, `failed to create store with id [${id}]`);
         store.name = name;
         this._registerStore(store, tags);
         return store;
     }
     _registerStore(store, tags) {
-        assert(!this.storesById.has(store.id), `Store already registered '${store.id}'`);
+        assert$1(!this.storesById.has(store.id), `Store already registered '${store.id}'`);
         tags = tags || [];
         tags = Array.isArray(tags) ? tags : [tags];
         this.storesById.set(store.id, store);
@@ -27280,7 +26562,7 @@ ${this.activeRecipe.toString()}`;
         store.on('change', () => this._onDataChange(), this);
     }
     _tagStore(store, tags) {
-        assert(this.storesById.has(store.id) && this.storeTags.has(store), `Store not registered '${store.id}'`);
+        assert$1(this.storesById.has(store.id) && this.storeTags.has(store), `Store not registered '${store.id}'`);
         const storeTags = this.storeTags.get(store);
         (tags || []).forEach(tag => storeTags.add(tag));
     }
@@ -27364,7 +26646,7 @@ ${this.activeRecipe.toString()}`;
         return this._context.findStoreTags(store);
     }
     getStoreDescription(store) {
-        assert(store, 'Cannot fetch description for nonexistent store');
+        assert$1(store, 'Cannot fetch description for nonexistent store');
         return this.storeDescriptions.get(store) || store.description;
     }
     getVersionByStore({ includeArc = true, includeContext = false }) {
@@ -27398,6 +26680,481 @@ ${this.activeRecipe.toString()}`;
     }
 }
 
+const Debug = (Base, log) => class extends Base {
+  _setProperty(name, value) {
+    if (Debug.level > 1) {
+      if (((name in this._pendingProps) && (this._pendingProps[name] !== value)) || (this._props[name] !== value)) {
+        log('props', deepishClone({[name]: value}));
+      }
+    }
+    return super._setProperty(name, value);
+  }
+  _setState(state) {
+    if (typeof state !== 'object') {
+      console.warn(`Xen::_setState argument must be an object`);
+      return false;
+    }
+    if (super._setState(state)) {
+      if (Debug.level > 1) {
+        if (Debug.lastFire) {
+          //Debug.lastFire.log('[next state change from] fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
+          //Debug.lastFire.log('fire', Debug.lastFire.name, Debug.lastFire.detail);
+          log('(fired -->) state', deepishClone(state));
+        } else {
+          log('state', deepishClone(state));
+        }
+      }
+      return true;
+    }
+  }
+  _setImmutableState(name, value) {
+    log('state [immutable]', {[name]: value});
+    super._setImmutableState(name, value);
+  }
+  _fire(name, detail, node, init) {
+    Debug.lastFire = {name, detail: deepishClone(detail), log};
+    log('fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
+    super._fire(name, detail, node, init);
+    Debug.lastFire = null;
+  }
+  _doUpdate(...args) {
+    if (Debug.level > 2) {
+      log('updating...');
+    }
+    return super._doUpdate(...args);
+  }
+  _invalidate() {
+    if (Debug.level > 2) {
+      if (!this._validator) {
+        log('invalidating...');
+      }
+    }
+    super._invalidate();
+  }
+};
+
+// TODO(sjmiles): cloning prevents console log from showing values from the future,
+// but this must be a deep clone. Circular objects are not cloned.
+const deepishClone = (obj, depth) => {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+  const clone = Object.create(null);
+  for (const n in obj) {
+    let value = obj[n];
+    //try {
+    //  value = JSON.parse(JSON.stringify(value));
+    //} catch (x) {
+      if (depth < 1) {
+        value = deepishClone(obj, (depth || 0) + 1);
+      }
+    //}
+    clone[n] = value;
+  }
+  return clone;
+};
+
+Debug.level = 0;
+
+const _logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
+const logFactory = (preamble, color, log) => (Debug.level > 0) ? _logFactory(preamble, color, log) : () => {};
+
+// Copyright (c) 2018 Google Inc. All rights reserved.
+
+// TODO(wkorman): Incorporate debug levels. Consider outputting
+// preamble in the specified color via ANSI escape codes. Consider
+// sharing with similar log factory logic in `xen.js`. See `log-web.js`.
+const logFactory$1 = (preamble, color, log='log') => {
+  return console[log].bind(console, `(${preamble})`);
+};
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const error = logFactory$1('PlanningResult', '#ff0090', 'error');
+class PlanningResult {
+    constructor(arc, store) {
+        this.lastUpdated = new Date(null);
+        this.generations = [];
+        this.contextual = true;
+        this.changeCallbacks = [];
+        assert$1(arc, 'Arc cannot be null');
+        this.arc = arc;
+        this.store = store;
+        if (this.store) {
+            this.storeCallback = () => this.load();
+            this.store.on('change', this.storeCallback, this);
+        }
+    }
+    registerChangeCallback(callback) {
+        this.changeCallbacks.push(callback);
+    }
+    onChanged() {
+        for (const callback of this.changeCallbacks) {
+            callback();
+        }
+    }
+    async load() {
+        assert$1(this.store['get'], 'Unsupported getter in suggestion storage');
+        const value = await this.store['get']() || {};
+        if (value.suggestions) {
+            if (await this.deserialize(value)) {
+                this.onChanged();
+                return true;
+            }
+        }
+        return false;
+    }
+    async flush() {
+        try {
+            assert$1(this.store['set'], 'Unsupported setter in suggestion storage');
+            await this.store['set'](this.serialize());
+        }
+        catch (e) {
+            error('Failed storing suggestions: ', e);
+            throw e;
+        }
+    }
+    dispose() {
+        this.changeCallbacks = [];
+        this.store.off('change', this.storeCallback);
+        this.store.dispose();
+    }
+    get suggestions() { return this._suggestions || []; }
+    set suggestions(suggestions) {
+        assert$1(Boolean(suggestions), `Cannot set uninitialized suggestions`);
+        this._suggestions = suggestions;
+    }
+    static formatSerializableGenerations(generations) {
+        // Make a copy of everything and assign IDs to recipes.
+        const idMap = new Map(); // Recipe -> ID
+        let lastID = 0;
+        const assignIdAndCopy = recipe => {
+            idMap.set(recipe, lastID);
+            const { result, score, derivation, description, hash, valid, active, irrelevant } = recipe;
+            const resultString = result.toString({ showUnresolved: true, showInvalid: false, details: '' });
+            const resolved = result.isResolved();
+            return { result: resultString, resolved, score, derivation, description, hash, valid, active, irrelevant, id: lastID++ };
+        };
+        generations = generations.map(pop => ({
+            record: pop.record,
+            generated: pop.generated.map(assignIdAndCopy)
+        }));
+        // Change recipes in derivation to IDs and compute resolved stats.
+        return generations.map(pop => {
+            const population = pop.generated;
+            const record = pop.record;
+            // Adding those here to reuse recipe resolution computation.
+            record.resolvedDerivations = 0;
+            record.resolvedDerivationsByStrategy = {};
+            population.forEach(item => {
+                item.derivation = item.derivation.map(derivItem => {
+                    let parent;
+                    let strategy;
+                    if (derivItem.parent) {
+                        parent = idMap.get(derivItem.parent);
+                    }
+                    if (derivItem.strategy) {
+                        strategy = derivItem.strategy.constructor.name;
+                    }
+                    return { parent, strategy };
+                });
+                if (item.resolved) {
+                    record.resolvedDerivations++;
+                    const strategy = item.derivation[0].strategy;
+                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
+                        record.resolvedDerivationsByStrategy[strategy] = 0;
+                    }
+                    record.resolvedDerivationsByStrategy[strategy]++;
+                }
+            });
+            const populationMap = {};
+            population.forEach(item => {
+                if (populationMap[item.derivation[0].strategy] == undefined) {
+                    populationMap[item.derivation[0].strategy] = [];
+                }
+                populationMap[item.derivation[0].strategy].push(item);
+            });
+            const result = { population: [], record };
+            Object.keys(populationMap).forEach(strategy => {
+                result.population.push({ strategy, recipes: populationMap[strategy] });
+            });
+            return result;
+        });
+    }
+    set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
+        if (this.isEquivalent(suggestions)) {
+            return false;
+        }
+        this.suggestions = suggestions;
+        this.generations = generations;
+        this.lastUpdated = lastUpdated;
+        this.contextual = contextual;
+        this.onChanged();
+        return true;
+    }
+    append({ suggestions, lastUpdated = new Date(), generations = [] }) {
+        const newSuggestions = [];
+        let searchUpdated = false;
+        for (const newSuggestion of suggestions) {
+            const existingSuggestion = this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion));
+            if (existingSuggestion) {
+                searchUpdated = existingSuggestion.mergeSearch(newSuggestion);
+            }
+            else {
+                newSuggestions.push(newSuggestion);
+            }
+        }
+        if (newSuggestions.length > 0) {
+            this.suggestions = this.suggestions.concat(newSuggestions);
+        }
+        else {
+            if (!searchUpdated) {
+                return false;
+            }
+        }
+        // TODO: filter out generations of other suggestions.
+        this.generations.push(...generations);
+        this.lastUpdated = lastUpdated;
+        this.onChanged();
+        return true;
+    }
+    olderThan(other) {
+        return this.lastUpdated < other.lastUpdated;
+    }
+    isEquivalent(suggestions) {
+        return PlanningResult.isEquivalent(this._suggestions, suggestions);
+    }
+    static isEquivalent(oldSuggestions, newSuggestions) {
+        assert$1(newSuggestions, `New suggestions cannot be null.`);
+        return oldSuggestions &&
+            oldSuggestions.length === newSuggestions.length &&
+            oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
+    }
+    async deserialize({ suggestions, generations, lastUpdated }) {
+        const recipeResolver = new RecipeResolver(this.arc);
+        return this.set({
+            suggestions: (await Promise.all(suggestions.map(suggestion => Suggestion.deserialize(suggestion, this.arc, recipeResolver)))).filter(s => s),
+            generations: JSON.parse(generations || '[]'),
+            lastUpdated: new Date(lastUpdated),
+            contextual: suggestions.contextual
+        });
+    }
+    serialize() {
+        return {
+            suggestions: this.suggestions.map(suggestion => suggestion.serialize()),
+            generations: JSON.stringify(this.generations),
+            lastUpdated: this.lastUpdated.toString(),
+            contextual: this.contextual
+        };
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SuggestionComposer {
+    constructor(slotComposer) {
+        this._suggestions = [];
+        this._suggestConsumers = [];
+        this._modality = Modality.forName(slotComposer.modality);
+        this._container = slotComposer.findContainerByName('suggestions');
+        this._slotComposer = slotComposer;
+    }
+    clear() {
+        if (this._container) {
+            this._modality.slotConsumerClass.clear(this._container);
+        }
+        this._suggestConsumers.forEach(consumer => consumer.dispose());
+        this._suggestConsumers = [];
+    }
+    setSuggestions(suggestions) {
+        this.clear();
+        const sortedSuggestions = suggestions.sort(Suggestion.compare);
+        for (const suggestion of sortedSuggestions) {
+            // TODO(mmandlis): use modality-appropriate description.
+            const suggestionContent = { template: suggestion.descriptionText };
+            if (!suggestionContent) {
+                throw new Error('No suggestion content available');
+            }
+            if (this._container) {
+                this._modality.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
+            }
+            this._addInlineSuggestion(suggestion, suggestionContent);
+        }
+    }
+    _addInlineSuggestion(suggestion, suggestionContent) {
+        const remoteSlots = suggestion.plan.slots.filter(s => !!s.id);
+        if (remoteSlots.length !== 1) {
+            return;
+        }
+        const remoteSlot = remoteSlots[0];
+        const context = this._slotComposer.findContextById(remoteSlot.id);
+        if (!context) {
+            throw new Error('Missing context for ' + remoteSlot.id);
+        }
+        if (context.spec.isSet) {
+            // TODO: Inline suggestion in a set slot is not supported yet. Implement!
+            return;
+        }
+        // Don't put suggestions in context that either (1) is a root context, (2) doesn't have
+        // an actual container or (3) is not restricted to specific handles.
+        if (!context.sourceSlotConsumer) {
+            return;
+        }
+        if (context.spec.handles.length === 0) {
+            return;
+        }
+        const handleIds = context.spec.handles.map(handleName => context.sourceSlotConsumer.consumeConn.particle.connections[handleName].handle.id);
+        if (!handleIds.find(handleId => suggestion.plan.handles.find(handle => handle.id === handleId))) {
+            // the suggestion doesn't use any of the handles that the context is restricted to.
+            return;
+        }
+        const suggestConsumer = new this._modality.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
+            const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
+            suggestConsumer.dispose();
+            if (suggestion) {
+                const index = this._suggestConsumers.findIndex(consumer => consumer === suggestConsumer);
+                if (index < 0) {
+                    throw new Error('cannot find suggest slot context');
+                }
+                this._suggestConsumers.splice(index, 1);
+                this._slotComposer.arc.instantiate(suggestion.plan);
+            }
+        });
+        context.addSlotConsumer(suggestConsumer);
+        this._suggestConsumers.push(suggestConsumer);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class StrategyExplorerAdapter {
+    static processGenerations(generations, devtoolsChannel, options = {}) {
+        devtoolsChannel.send({
+            messageType: 'generations',
+            messageBody: { results: generations, options },
+        });
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class PlanConsumer {
+    constructor(result) {
+        // Callback is triggered when planning results have changed.
+        this.suggestionsChangeCallbacks = [];
+        // Callback is triggered when suggestions visible to the user have changed.
+        this.visibleSuggestionsChangeCallbacks = [];
+        this.suggestionComposer = null;
+        this.currentSuggestions = [];
+        assert$1(result, 'result cannot be null');
+        assert$1(result.arc, 'arc cannot be null');
+        this.arc = result.arc;
+        this.result = result;
+        this.suggestFilter = { showAll: false };
+        this.suggestionsChangeCallbacks = [];
+        this.visibleSuggestionsChangeCallbacks = [];
+        this._initSuggestionComposer();
+        this.result.registerChangeCallback(() => this.onSuggestionsChanged());
+    }
+    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
+    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
+    setSuggestFilter(showAll, search) {
+        assert$1(!showAll || !search);
+        if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
+            return;
+        }
+        this.suggestFilter = { showAll, search };
+        this._onMaybeSuggestionsChanged();
+    }
+    onSuggestionsChanged() {
+        this._onSuggestionsChanged();
+        this._onMaybeSuggestionsChanged();
+        if (this.result.generations.length && DevtoolsConnection.isConnected) {
+            StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get());
+        }
+    }
+    getCurrentSuggestions() {
+        const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0);
+        // `showAll`: returns all suggestions that render into slots.
+        if (this.suggestFilter['showAll']) {
+            // Should filter out suggestions produced by search phrases?
+            return suggestions;
+        }
+        // search filter non empty: match plan search phrase or description text.
+        if (this.suggestFilter['search']) {
+            return suggestions.filter(suggestion => suggestion.descriptionText.toLowerCase().includes(this.suggestFilter['search']) ||
+                suggestion.hasSearch(this.suggestFilter['search']));
+        }
+        return suggestions.filter(suggestion => {
+            const usesHandlesFromActiveRecipe = suggestion.plan.handles.find(handle => {
+                // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
+                // either by tagging or by exploring connection directions etc.
+                return !!handle.id &&
+                    !!this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
+            });
+            const usesRemoteNonRootSlots = suggestion.plan.slots.find(slot => {
+                return !slot.name.includes('root') && !slot.tags.includes('root') &&
+                    slot.id && !slot.id.includes('root') &&
+                    Boolean(this.arc.pec.slotComposer.findContextById(slot.id));
+            });
+            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
+            return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
+        });
+    }
+    dispose() {
+        this.suggestionsChangeCallbacks = [];
+        this.visibleSuggestionsChangeCallbacks = [];
+        if (this.suggestionComposer) {
+            this.suggestionComposer.clear();
+        }
+    }
+    _onSuggestionsChanged() {
+        this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
+    }
+    _onMaybeSuggestionsChanged() {
+        const suggestions = this.getCurrentSuggestions();
+        if (!PlanningResult.isEquivalent(this.currentSuggestions, suggestions)) {
+            this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
+            this.currentSuggestions = suggestions;
+        }
+    }
+    _initSuggestionComposer() {
+        const composer = this.arc.pec.slotComposer;
+        if (composer && composer.findContextById('rootslotid-suggestions')) {
+            this.suggestionComposer = new SuggestionComposer(composer);
+            this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
+        }
+    }
+}
+
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -27411,7 +27168,7 @@ class HostedSlotContext extends SlotContext {
     // This is a context of a hosted slot, can only contain a hosted slot.
     constructor(id, providedSpec, hostedSlotConsumer) {
         super(id, providedSpec.name, providedSpec.tags, /* container= */ null, providedSpec, hostedSlotConsumer);
-        assert(this.sourceSlotConsumer instanceof HostedSlotConsumer);
+        assert$1(this.sourceSlotConsumer instanceof HostedSlotConsumer);
         const hostedSourceSlotConsumer = this.sourceSlotConsumer;
         if (hostedSourceSlotConsumer.storeId) {
             // TODO(mmandlis): This up-cast is dangerous. Why do we need to fake a Handle here?
@@ -27443,10 +27200,10 @@ class HostedSlotConsumer extends SlotConsumer {
     get arc() { return this._arc; }
     get consumeConn() { return this._consumeConn; }
     set consumeConn(consumeConn) {
-        assert(!this._consumeConn, 'Consume connection can be set only once');
-        assert(this.hostedSlotId === consumeConn.targetSlot.id, `Expected target slot ${this.hostedSlotId}, but got ${consumeConn.targetSlot.id}`);
-        assert(this.hostedParticleName === consumeConn.particle.name, `Expected particle ${this.hostedParticleName} for slot ${this.hostedSlotId}, but got ${consumeConn.particle.name}`);
-        assert(this.hostedSlotName === consumeConn.name, `Expected slot ${this.hostedSlotName} for slot ${this.hostedSlotId}, but got ${consumeConn.name}`);
+        assert$1(!this._consumeConn, 'Consume connection can be set only once');
+        assert$1(this.hostedSlotId === consumeConn.targetSlot.id, `Expected target slot ${this.hostedSlotId}, but got ${consumeConn.targetSlot.id}`);
+        assert$1(this.hostedParticleName === consumeConn.particle.name, `Expected particle ${this.hostedParticleName} for slot ${this.hostedSlotId}, but got ${consumeConn.particle.name}`);
+        assert$1(this.hostedSlotName === consumeConn.name, `Expected slot ${this.hostedSlotName} for slot ${this.hostedSlotId}, but got ${consumeConn.name}`);
         this._consumeConn = consumeConn;
     }
     async setContent(content, handler, arc) {
@@ -27469,7 +27226,7 @@ class HostedSlotConsumer extends SlotConsumer {
         return innerContainer;
     }
     createProvidedContexts() {
-        assert(this.consumeConn, `Cannot create provided context without consume connection for hosted slot ${this.hostedSlotId}`);
+        assert$1(this.consumeConn, `Cannot create provided context without consume connection for hosted slot ${this.hostedSlotId}`);
         return this.consumeConn.slotSpec.providedSlots.map(providedSpec => new HostedSlotContext(this.consumeConn.providedSlots[providedSpec.name].id, providedSpec, this));
     }
     updateProvidedContexts() {
@@ -27497,15 +27254,15 @@ class SlotComposer {
     constructor(options) {
         this._consumers = [];
         this._contexts = [];
-        assert(options.modality, 'Modality is mandatory');
+        assert$1(options.modality, 'Modality is mandatory');
         // TODO: Support rootContext for backward compatibility, remove when unused.
         options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
-        assert((options.rootContainer !== undefined)
+        assert$1((options.rootContainer !== undefined)
             !==
                 (options.noRoot === true), 'Root container is mandatory unless it is explicitly skipped');
         this._containerKind = options.containerKind;
         this._modality = Modality.forName(options.modality);
-        assert(this._modality.slotConsumerClass);
+        assert$1(this._modality.slotConsumerClass);
         if (options.noRoot) {
             return;
         }
@@ -27542,7 +27299,7 @@ class SlotComposer {
     createHostedSlot(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, storeId) {
         const hostedSlotId = this.arc.generateID();
         const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
-        assert(transformationSlotConsumer, `Unexpected transformation slot particle ${transformationParticle.name}:${transformationSlotName}, hosted particle ${hostedParticleName}, slot name ${hostedSlotName}`);
+        assert$1(transformationSlotConsumer, `Unexpected transformation slot particle ${transformationParticle.name}:${transformationSlotName}, hosted particle ${hostedParticleName}, slot name ${hostedSlotName}`);
         const hostedSlotConsumer = new HostedSlotConsumer(transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId, this.arc);
         hostedSlotConsumer.renderCallback = this.arc.pec.innerArcRender.bind(this.arc.pec);
         this._addSlotConsumer(hostedSlotConsumer);
@@ -27561,7 +27318,7 @@ class SlotComposer {
         recipeParticles.forEach(p => {
             Object.values(p.consumedSlotConnections).forEach(cs => {
                 if (!cs.targetSlot) {
-                    assert(!cs.slotSpec.isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
+                    assert$1(!cs.slotSpec.isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
                     return;
                 }
                 let slotConsumer = this.consumers.find(slot => slot instanceof HostedSlotConsumer && slot.hostedSlotId === cs.targetSlot.id);
@@ -27589,13 +27346,13 @@ class SlotComposer {
         newConsumers.forEach(consumer => {
             this._addSlotConsumer(consumer);
             const context = this.findContextById(consumer.consumeConn.targetSlot.id);
-            assert(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
+            assert$1(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
             context.addSlotConsumer(consumer);
         });
     }
     async renderSlot(particle, slotName, content) {
         const slotConsumer = this.getSlotConsumer(particle, slotName);
-        assert(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
+        assert$1(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
         await slotConsumer.setContent(content, async (eventlet) => {
             this.arc.pec.sendEvent(particle, slotName, eventlet);
             if (eventlet.data && eventlet.data.key) {
@@ -27603,7 +27360,7 @@ class SlotComposer {
                 for (const hostedConsumer of hostedConsumers) {
                     if (hostedConsumer instanceof HostedSlotConsumer && hostedConsumer.storeId) {
                         const store = this.arc.findStoreById(hostedConsumer.storeId);
-                        assert(store);
+                        assert$1(store);
                         // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc
                         // tslint:disable-next-line: no-any
                         const value = await store.get();
@@ -27730,7 +27487,7 @@ class RecipeIndex {
         return this._recipes;
     }
     ensureReady() {
-        assert(this._isReady, 'await on recipeIndex.ready before accessing');
+        assert$1(this._isReady, 'await on recipeIndex.ready before accessing');
     }
     /**
      * Given provided handle and requested fates, finds handles with
@@ -27891,7 +27648,7 @@ class RecipeIndex {
         return ['create', 'use', '?'];
     }
     findCoalescableHandles(recipe, otherRecipe, usedHandles) {
-        assert(recipe !== otherRecipe, 'Cannot coalesce handles in the same recipe');
+        assert$1(recipe !== otherRecipe, 'Cannot coalesce handles in the same recipe');
         const otherToHandle = new Map();
         usedHandles = usedHandles || new Set();
         for (const handle of recipe.handles) {
@@ -27930,8 +27687,8 @@ class PlanProducer {
         this.planner = null;
         this.stateChangedCallbacks = [];
         this.debug = false;
-        assert(result, 'result cannot be null');
-        assert(result.arc, 'arc cannot be null');
+        assert$1(result, 'result cannot be null');
+        assert$1(result.arc, 'arc cannot be null');
         this.arc = result.arc;
         this.result = result;
         this.recipeIndex = RecipeIndex.create(this.arc);
@@ -28028,7 +27785,7 @@ class PlanProducer {
     }
     async runPlanner(options, generations) {
         let suggestions = [];
-        assert(!this.planner, 'Planner must be null');
+        assert$1(!this.planner, 'Planner must be null');
         this.planner = new Planner();
         this.planner.init(this.arc, {
             strategies: options['strategies'],
@@ -28058,7 +27815,7 @@ class PlanProducer {
     async _updateResult({ suggestions, generations }, options) {
         generations = PlanningResult.formatSerializableGenerations(generations);
         if (options.append) {
-            assert(!options['contextual'], `Cannot append to contextual options`);
+            assert$1(!options['contextual'], `Cannot append to contextual options`);
             if (!this.result.append({ suggestions, generations })) {
                 return;
             }
@@ -28181,8 +27938,8 @@ class Planificator {
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
     static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
-        assert(arc, 'Arc cannot be null.');
-        assert(userid, 'User id cannot be null.');
+        assert$1(arc, 'Arc cannot be null.');
+        assert$1(userid, 'User id cannot be null.');
         debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
         const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
         const searchStore = await Planificator._initSearchStore(arc, userid);
@@ -28270,7 +28027,7 @@ class Planificator {
     }
     static async _initStore(arc, id, type, storageKey) {
         const store = await arc.storageProviderFactory.connectOrConstruct(id, type, storageKey.toString());
-        assert(store, `Failed initializing '${storageKey.toString()}' store.`);
+        assert$1(store, `Failed initializing '${storageKey.toString()}' store.`);
         store.referenceMode = false;
         return store;
     }
@@ -28303,812 +28060,92 @@ class Planificator {
     }
 }
 
-class UserPlanner {
-  constructor(factory, context, userid, storageKeyBase, debug) {
-    this.factory = factory;
-    this.context = context;
-    this.userid = userid;
-    this.debug = debug;
-    this.runners = {};
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 
-    const fbuser = new FbUser((type, detail) => this.onEvent(type, detail));
-    this.field = fbuser.queryUser(userid);
-    this.field.activate();
+const html$1 = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 
-    // Create the launcher arc and planificator.
-    const launcherArc = this.factory.spawn(this.context);
-    const launcherKey = `launcher`;
-    launcherArc.storageKey = `${Firebase.storageKey}/arcs/${launcherKey}`;
-    const launcherPlanificator = this.createPlanificator(userid, storageKeyBase, launcherKey, launcherArc);
-    this.runners[launcherKey] = {arc: launcherArc, planificator: launcherPlanificator};
-  }
-  dispose() {
-    this.field.dispose();
-  }
-  onEvent(type, detail) {
-    switch (type) {
-      case 'info-changed':
-        this.onInfoChanged(detail);
-        break;
-      case 'arc-changed':
-        this.onArcChanged(detail);
-        break;
-    }
-  }
-  onInfoChanged(field) {
-    if (!field.disposed) {
-      console.log(`User[${this.userid}] has`, field.value);
-    }
-  }
-  onArcChanged(field) {
-    // TODO(sjmiles): this is really `serializationChanged`, but the fields are weird
-    const key = field.parent.parent.key;
-    const serialization = field.parent.data.serialization;
-    //console.log(key, serialization, field);
-    this.disposeArc(key);
-    if (field.disposed) {
-      console.log(`Arc ${key} was deleted`);
-      Firebase.db.child(`users/${this.userid}/suggestions/${key}`).set(null);
-    } else {
-      if (serialization) {
-        this.marshalArc(key, this.userid, serialization);
-      } else {
-        console.log(`Arc[${field.key}] has no serialization, skipping`);
-      }
-    }
-  }
-  disposeArc(key) {
-    const runner = this.runners[key];
-    if (runner) {
-      runner.planificator.dispose();
-      runner.arc.dispose();
-      delete this.runners[key];
-    }
-  }
-  async marshalArc(key, userid, serialization) {
-    // TODO(sjmiles): we'll need a queue to handle change notifications that arrive while we are 'await'ing
-    console.log(`Arc[${key}]: marshaling for user [${userid}]`);
-    try {
-      const arc = await this.deserializeArc(serialization);
-      const planificator = await this.createPlanificator(userid, key, arc);
-      this.runners[key] = {arc, planificator};
-    } catch (x) {
-      // console.log('exception under: ==============================================');
-      // console.log(serialization);
-      // console.log('==============================================');
-      throw x;
-    }
-  }
-  async deserializeArc(serialization) {
-    // console.log('==============================================');
-    // console.log(serialization);
-    // console.log('==============================================');
-    // TODO(sjmiles): elide attempt to import ephemeral manifest
-    const contextManifest = `import './in-memory.manifest'`;
-    if (serialization.includes(contextManifest)) {
-      serialization = serialization.replace(contextManifest, '');
-    }
-    return await this.factory.deserialize(this.context, serialization);
-  }
-  async createPlanificator(userid, storageKeyBase, key, arc) {
-    const planificator = await Planificator.create(arc, {userid, storageKeyBase, debug: this.debug});
-    planificator.registerSuggestionsChangedCallback(current => this.showPlansForArc(key, current.suggestions));
-    // planificator.registerVisibleSuggestionsChangedCallback(suggestions => this.showSuggestionsForArc(key, suggestions));
-    return planificator;
-  }
+const dumbCache = {};
 
-  showPlansForArc(key, metaplans) {
-    console.log(`======= Arc[${key}] ${metaplans.length} plans ======================================`);
-    console.log(metaplans.map(plan => `${plan.descriptionText}    [${plan.plan.particles.map(p => p.name).join(', ')}]`));
-    console.log(`====================================================================================`);
+class BrowserLoader extends Loader {
+  constructor(urlMap) {
+    super();
+    this._urlMap = urlMap;
   }
-  // showSuggestionsForArc(key, suggestions) {
-  //   console.log(`Arc[${key}] suggestions\n`, suggestions.map(plan => plan.descriptionText));
-  // }
-}
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-class Stores {
-  static async createContextStore(context, options) {
-    const schemaType = Type.fromLiteral(options.schema);
-    const typeOf = options.isCollection ? schemaType.collectionOf() : schemaType;
-    const store = await this._requireStore(context, typeOf, options);
-    return store;
+  _loadURL(url) {
+    const resolved = this._resolve(url);
+    // use URL to normalize the path for deduping
+    const cacheKey = new URL(resolved, document.URL).href;
+    // console.log(`browser-loader::_loadURL`);
+    // console.log(`    ${url}`);
+    // console.log(`    ${resolved}`);
+    // console.log(`    ${cacheKey}`);
+    const resource = dumbCache[cacheKey];
+    return resource || (dumbCache[cacheKey] = super._loadURL(resolved));
   }
-  static async _requireStore(context, type, {name, id, tags, storageKey}) {
-    const store = context.findStoreById(id);
-    return store || await context.createStore(type, name, id, tags, storageKey);
+  loadResource(name) {
+    // subclass impl differentiates paths and URLs,
+    // for browser env we can feed both kinds into _loadURL
+    return this._loadURL(name);
   }
-}
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-const schemas = {
-  UserName: {
-    tag: 'Entity',
-    data: {
-      names: ['UserName'],
-      fields: {
-        userName: 'Text'
+  _resolve(path) {
+    //return new URL(path, this._base).href;
+    let url = this._urlMap[path];
+    if (!url && path) {
+      // TODO(sjmiles): inefficient!
+      const macro = Object.keys(this._urlMap).sort((a, b) => b.length - a.length).find(k => path.slice(0, k.length) == k);
+      if (macro) {
+        url = this._urlMap[macro] + path.slice(macro.length);
       }
     }
-  },
-  Avatar: {
-    tag: 'Entity',
-    data: {
-      names: ['Avatar'],
-      fields: {
-        url: 'URL'
-      }
-    }
-  },
-  User: {
-    tag: 'Entity',
-    data: {
-      names: ['User'],
-      fields: {
-        'id': 'Text',
-        'name': 'Text',
-        'location': 'Object'
-      }
-    }
-  },
-  Person: {
-    tag: 'Entity',
-    data: {
-      names: ['Person', 'Thing'],
-      fields: {
-        active: 'Text',
-        arcs: 'Object',
-        avatar: 'Text',
-        date: 'Text',
-        description: 'Text',
-        foods: 'Text',
-        friends: 'Text',
-        id: 'Text',
-        identifier: 'Text',
-        image: 'URL',
-        location: 'Object',
-        name: 'Text',
-        occasion: 'Text',
-        profiles: 'Object',
-        shares: 'Object',
-        url: 'URL'
-      }
-    }
-  },
-  ArcMetadata: {
-    tag: 'Entity',
-    data: {
-      names: ['ArcMetadata'],
-      fields: {
-        description: 'Text',
-        icon: 'Text',
-        key: 'Text',
-        href: 'Text',
-        bg: 'Text',
-        color: 'Text',
-        profile: 'Text',
-        blurb: 'Text',
-        share: 'Number',
-        touched: 'Number',
-        deleted: 'Boolean',
-        starred: 'Boolean',
-        externalManifest: 'URL'
-      }
-    }
-  },
-  TVMazeQuery: {
-    tag: 'Entity',
-    data: {
-      names: ['TVMazeQuery'],
-      fields: {
-        'type': 'Text',
-        'query': 'Text'
-      }
-    }
-  },
-  TVMazeFind: {
-    tag: 'Entity',
-    data: {
-      names: ['TVMazeFind'],
-      fields: {
-        'type': 'Text',
-        'name': 'Text'
-      }
-    }
-  },
-  TVMazeShow: {
-    tag: 'Entity',
-    data: {
-      names: ['TVMazeShow'],
-      fields: {
-        'showid': 'Text',
-        'name': 'Text',
-        'description': 'Text',
-        'image': 'Text',
-        'network': 'Text',
-        'day': 'Text',
-        'time': 'Text',
-        'suggestion': 'Text',
-        'extra': 'Text',
-        'favorite': 'Boolean',
-        'delete': 'Boolean'
-      }
-    }
-  },
-  ShowcaseArtistFind: {
-    tag: 'Entity',
-    data: {
-      names: ['ShowcaseArtistFind'],
-      fields: {
-        'type': 'Text',
-        'name': 'Text'
-      }
-    }
-  },
-  ShowcaseArtist: {
-    tag: 'Entity',
-    data: {
-      names: ['ShowcaseArtist'],
-      fields: {
-        'artistid': 'Text',
-        'type': 'Text',
-        'name': 'Text',
-        'url': 'URL',
-        'imageUrl': 'URL',
-        'description': 'Text',
-        'detailedDescription': 'Text'
-      }
-    }
-  },
-  ShowcasePlayRecord: {
-    tag: 'Entity',
-    data: {
-      names: ['ShowcasePlayRecord'],
-      fields: {
-        'type': 'Text',
-        'artist': 'Text',
-        'song': 'Text',
-        'dateTime': 'Text'
-      },
-      description: {
-        pattern: '${song} from ${artist}'
-      }
-    }
+    url = url || path;
+    //console.log(`browser-loader: resolve(${path}) = ${url}`);
+    return url;
   }
-};
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-//const log = Xen.logFactory('SingleUserContext', '#6f2453');
-const log$1 = () => {}; //console.log.bind(console);
-
-const storage$1 = new StorageProviderFactory('shell');
-//
-const getSyntheticArcsStorageKey = arcid =>
-  `synthetic://arc/handles/${Firebase.storageKey}/arcs/${arcid}/serialization`;
-//
-const makeId = () => `id${Math.random()}`;
-const syntheticConnect = async storageKey =>
-  storage$1.connect(makeId(), null, getSyntheticArcsStorageKey(storageKey));
-const storeConnect = async (type, storageKey) =>
-  storage$1.connect(`id${Math.random()}`, type, storageKey);
-//
-const stores = {};
-const getSyntheticStore = async storageKey =>
-  stores[storageKey] || (stores[storageKey] = await syntheticConnect(storageKey));
-const getHandleStore = async ({type, storageKey}) =>
-  stores[storageKey] || (stores[storageKey] = await storeConnect(type, storageKey));
-//
-const snarfId = key => {
-  return key.split('/').pop();
-};
-
-const SingleUserContext = class {
-  constructor(context, userid, isProfile) {
-    this.isProfile = isProfile;
-    this.context = context;
-    this.userid = userid;
-    // we observe `arcid`s and `storageKey`s
-    this.observers = {};
-    // when we remove an arc from consideration, we have to unobserve storageKeys from that arc
-    // `handles` maps an arcid to an array of storageKeys to unobserve
-    this.handles = {};
-    this.field = new Field(null, `/users/${userid}`, userid, this._userSchema).activate();
-  }
-  async dispose() {
-    // chuck all observers
-    Object.values(this.observers).forEach(({key}) => this._unobserve(key));
-    // chuck all data
-    await this._removeUserEntities(this.context, this.userid, this.isProfile);
-  }
-  get _userSchema() {
-    return {
-      arcs: {
-        '*': {
-          $key: (parent, key, datum) => ({
-            $join: {
-              path: `/arcs/${parent}`,
-              schema: {
-                $changed: field => this._onShareChanged(field)
-              }
-            }
-          })
-        }
-      }
+  requireParticle(fileName) {
+    const path = this._resolve(fileName);
+    //console.log(`requireParticle [${path}]`);
+    // inject path to this particle into the UrlMap,
+    // allows "foo.js" particle to invoke `importScripts(resolver('foo/othermodule.js'))`
+    this.mapParticleUrl(path);
+    const result = [];
+    self.defineParticle = function(particleWrapper) {
+      result.push(particleWrapper);
     };
+    importScripts(path);
+    delete self.defineParticle;
+    const logger = logFactory$1(fileName.split('/').pop(), '#1faa00');
+    return this.unwrapParticle(result[0], logger);
   }
-  _onShareChanged(share) {
-    // TODO(sjmiles): schedule field processing to avoid re-entrancy
-    //log('SingleUserContext:onShareChanged', share);
-    const arcid = share.parent.key;
-    const userid = share.parent.path.split('/')[2];
-    const meta = share.data.metadata || Object;
-    if (share.disposed || meta.share < 2) {
-      //log(`removing arc [${arcid}] from [${userid}] sharing (share level: ${meta.share})`);
-      this._removeArc(arcid);
-    }
-    if (meta.share > 1) {
-      if (!share.disposed) {
-        log$1(`found shared arc [${arcid}] from [${userid}] (share level: ${meta.share})`);
-        this._addArc(arcid);
-      }
-    }
+  mapParticleUrl(path) {
+    const parts = path.split('/');
+    const suffix = parts.pop();
+    const folder = parts.join('/');
+    const name = suffix.split('.').shift();
+    this._urlMap[name] = folder;
   }
-  _removeArc(arcid) {
-    this._unobserve(arcid);
-    const handles = this.handles[arcid];
-    if (handles) {
-      handles.forEach(({storageKey}) => this._unobserve(storageKey));
-    }
-  }
-  async _addArc(arcid) {
-    const store = await getSyntheticStore(arcid);
-    await this._observeStore(store, arcid, info => this._onArcStoreChanged(arcid, info));
-  }
-  _onArcStoreChanged(arcid, info) {
-    // TODO(sjmiles): synthesize add/remove records from data record
-    this._patchArcDataInfo(arcid, info);
-    // process add/remove stream
-    if (info.add) {
-      info.add.forEach(async add => {
-        const handle = add.value;
-        const store = await getHandleStore(handle);
-        await this._observeStore(store, handle.storageKey, info => this._updateHandle(arcid, handle, info));
-      });
-    }
-    if (info.remove) {
-      info.remove.forEach(async remove => {
-        const handle = remove.value;
-        this._unobserve(handle.storageKey);
-      });
-    }
-  }
-  _patchArcDataInfo(arcid, info) {
-    const old = this.handles[arcid] || [];
-    const handles = this.handles[arcid] = [];
-    // TODO(sjmiles): synthesize add/remove records from data record
-    if (info.data) {
-      const matchKey = handle => ({storageKey}) => storageKey === handle.storageKey;
-      info.add = [];
-      info.data.forEach(handle => {
-        handles.push(handle);
-        if (!old.find(matchKey(handle))) {
-          info.add.push({value: handle});
-        }
-      });
-      info.remove = [];
-      old.forEach(handle => {
-        if (!handles.find(matchKey(handle))) {
-          info.remove.push(handle);
-        }
-      });
-    }
-  }
-  async _observeStore(store, key, cb) {
-    if (!store) {
-      console.warn('uninitialized store');
-      return;
-    }
-    // SyntheticCollection has `toList` but is `!type.isCollection`,
-    if (store.toList) {
-    //if (store.type.isCollection) {
-      const data = await store.toList();
-      if (data && data.length) {
-        const add = data.map(value => ({value}));
-        cb({add});
-      }
-    }
-    if (store.type.isEntity) {
-      const data = await store.get();
-      if (data) {
-        cb({data});
-      }
-    }
-    // TODO(sjmiles): go async because cb can be re-entrant while waiting on `createStore`
-    // which can lead to multiple stores being created with the same id
-    // ... instead, fix this by building a wrapper for `createStore` that can deal with pending requests.
-    setTimeout(() => {
-      this._observe(store, key, info => cb(info));
-    }, 1);
-  }
-  _observe(store, key, cb) {
-    if (!this.observers[key]) {
-      this.observers[key] = {key, store, cb: store.on('change', cb, this)};
-    }
-  }
-  _unobserve(key) {
-    const observer = this.observers[key];
-    if (observer) {
-      this.observers[key] = null;
-      observer.store.off('change', observer.cb);
-    }
-  }
-  async _updateHandle(arcid, handle, info) {
-    const {context, userid, isProfile} = this;
-    const tags = handle.tags ? handle.tags.join('-') : '';
-    if (tags) {
-      const type = handle.type.isCollection ? handle.type : handle.type.collectionOf();
-      //
-      //const id = handle.type.isEntity ? 'entity' : snarfId(handle.storageKey);
-      const id = snarfId(handle.storageKey);
-      //
-      const shareid = `${tags}|${id}|from|${userid}|${arcid}`;
-      const shortid = `${(isProfile ? `PROFILE` : `FRIEND`)}_${tags}`;
-      //
-      const storeName = shortid;
-      const storeId = isProfile ? shortid : shareid;
-      const store = await this._getShareStore(context, type, storeName, storeId, handle.tags, userid);
-      //
-      const boxStoreId = `BOXED_${tags}`;
-      const boxDataId = `${userid}|${arcid}`;
-      const boxStore = await this._getShareStore(context, type, boxStoreId, boxStoreId, [boxStoreId], userid);
-      //
-      // TODO(sjmiles): no mutation
-      if (handle.type.isEntity) {
-        if (info.data) {
-          // TODO(sjmiles): in the absence of data mutation, when entity changes
-          // it gets an entirely new id, so we cannot use entity id to track this
-          // entity in boxed stores. However as this entity is a Highlander for this
-          // user and arc (by virtue of not being a Collection) we can synthesize
-          // a stable id.
-          info.data.id = boxDataId;
-          this._removeEntities(userid, store, boxStore, info.data);
-          this._shareEntities(userid, store, boxStore, info.data);
-        }
-      } else if (info.add || info.remove) {
-        info.add && info.add.forEach(add => this._shareEntities(userid, store, boxStore, [add.value]));
-        info.remove && info.remove.forEach(remove => this._removeEntities(userid, store, boxStore, [remove.value]));
-      } else if (info.data) {
-        this._shareEntities(userid, store, boxStore, info.data);
-      }
-    }
-  }
-  async _getShareStore(context, type, name, id, tags, ownerid) {
-    return (await context.findStoreById(id)) || (await context.createStore(type, name, id, tags));
-  }
-  async _shareEntities(userid, shareStore, boxStore, data) {
-    if (data) {
-      this._storeEntitiesWithUid(shareStore, data, userid);
-      boxStore.idMap = this._storeEntitiesWithUid(boxStore, data, userid);
-    }
-  }
-  async _removeEntities(userid, shareStore, boxStore, data) {
-    if (data) {
-      this._removeEntitiesWithUid(shareStore, data, userid);
-      this._removeEntitiesWithUid(boxStore, data, userid);
-    }
-  }
-  _storeEntitiesWithUid(store, data, uid) {
-    const ids = [];
-    const storeDecoratedEntity = ({id, rawData}, uid) => {
-      const decoratedId = `${id}:uid:${uid}`;
-      ids.push({id: decoratedId, rawData});
-      if (store.type.isCollection) {
-        // FIXME: store.generateID may not be safe (session scoped)?
-        store.store({id: decoratedId, rawData}, [store.generateID()]);
-      } else {
-        store.set({id: decoratedId, rawData});
-      }
-    };
-    if (data.id) {
-      storeDecoratedEntity(data, uid);
-    } else {
-      Object.values(data).forEach(entity => storeDecoratedEntity(entity, uid));
-    }
-    return ids;
-  }
-  _removeEntitiesWithUid(store, data, uid) {
-    const removeDecoratedEntity = ({id, rawData}, uid) => {
-      const decoratedId = `${id}:uid:${uid}`;
-      if (store.type.isCollection) {
-        store.remove(decoratedId);
-      }
-    };
-    if (store.type.isCollection) {
-      if (Array.isArray(data)) {
-        data.forEach(entity => removeDecoratedEntity(entity, uid));
-      } else {
-        removeDecoratedEntity(data, uid);
-      }
-    } else {
-      store.clear();
-    }
-  }
-  async _removeUserEntities(context, userid, isProfile) {
-    const jobs = [];
-    for (let i=0, store; (store=context.stores[i]); i++) {
-      // SYSTEM_users persists across users
-      if (store.id !== 'SYSTEM_users') {
-        jobs.push(this._removeUserStoreEntities(userid, store, isProfile));
-      }
-    }
-    await Promise.all(jobs);
-  }
-  async _removeUserStoreEntities(userid, store, isProfile) {
-    if (!store) {
-      console.warn('uninitialized store');
-      return;
-    }
-    log$1(`scanning [${userid}] [${store.id}] (${store.toList ? 'collection' : 'variable'})`);
-    //const tags = context.findStoreTags(store);
-    if (store.toList) {
-      const entities = await store.toList();
-      entities.forEach(entity => {
-        const uid = entity.id.split('uid:').pop().split('|').shift();
-        if (isProfile || uid === userid) {
-          log$1(`  REMOVE `, entity.id);
-          // TODO(sjmiles): _removeUserStoreEntities is strangely re-entering
-          //  (1) `remove` fires synchronous change events
-          //  (2) looks like there are double `remove` events in the queue. Bug?
-          // In general, to avoid interleaving we'll probably need to
-          // use a stack to process changes async to receiving them.
-          // Parallel processing works as of now ... feature?
-          store.remove(entity.id);
-        }
-      });
-    }
-    else {
-      const uid = store.id.split('|').slice(-2, -1).pop();
-      if (isProfile || uid === userid) {
-        store.clear();
-      }
-    }
-  }
-};
-
-/*
-@license
-Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-
-class Empty$1 {}
-
-//class UserContext extends Xen.Debug(XenStateMixin(Empty), log) {
-class UserContext extends XenStateMixin(Empty$1) {
-  _getInitialState() {
-    return {
-      // maps userid to SingleUserContext for friends
-      friends: {},
-      // maps entityid's to userid's for friends to workaround missing data
-      // in `remove` records
-      friendEntityIds: {},
-      // snapshot of BOXED_avatar for use by shell
-      avatars: {},
-    };
-  }
-  _update(props, state) {
-    const {context, userid, coords, users} = props;
-    const {user, userStore, usersStore} = state;
-    if (context && !state.initStores) {
-      state.initStores = true;
-      this._requireStores(context);
-    }
-    if (users && usersStore && state.users !== users) {
-      state.users = users;
-      // TODO(sjmiles): clear usersStore first, or modify _updateSystemStores to avoid
-      // duplication ... as of now this never happens since `users` is only generated
-      // once.
-      this._updateSystemUsers(users, usersStore);
-    }
-    if (user && userStore && userid !== state.userid) {
-      state.userid = userid;
-      this._updateSystemUser(props, state);
-    }
-    if (user && userStore && coords && coords !== user.rawData.location) {
-      user.rawData.location = coords;
-      userStore.set({user});
-    }
-  }
-  async _requireStores(context) {
-    await Promise.all([
-      this._requireProfileFriends(context),
-      this._requireProfileUserName(context),
-      this._requireProfileAvatar(context),
-      this._requireBoxedAvatar(context),
-      this._requireSystemUsers(context),
-      this._requireSystemUser(context)
-    ]);
-    this._fire('stores');
-  }
-  async _requireProfileFriends(context) {
-    const options = {
-      schema: schemas.Person,
-      name: 'PROFILE_friends',
-      id: 'PROFILE_friends',
-      tags: ['friends'],
-      isCollection: true
-    };
-    const change = info => this._onFriendChange(context, info);
-    return await this._requireStore(context, 'friends', options, change);
-  }
-  async _requireProfileUserName(context) {
-    const options = {
-      schema: schemas.UserName,
-      name: 'PROFILE_userName',
-      id: 'PROFILE_userName',
-      tags: ['userName'],
-      isCollection: true
-    };
-    const store = await this._requireStore(context, 'profileUserName', options);
-    return store;
-  }
-  async _requireProfileAvatar(context) {
-    const options = {
-      schema: schemas.Avatar,
-      name: 'PROFILE_avatar',
-      id: 'PROFILE_avatar',
-      tags: ['PROFILE_avatar'],
-      isCollection: true
-    };
-    const store = await this._requireStore(context, 'profileAvatar', options);
-    return store;
-  }
-  async _requireBoxedAvatar(context) {
-    const options = {
-      schema: schemas.Avatar,
-      name: 'BOXED_avatar',
-      id: 'BOXED_avatar',
-      tags: ['BOXED_avatar'],
-      isCollection: true
-    };
-    const store = await this._requireStore(context, 'boxedAvatar', options);
-    store.on('change', () => this._boxedAvatarChanged(store), this);
-    return store;
-  }
-  async _requireSystemUsers(context) {
-    const options = {
-      schema: schemas.User,
-      name: 'SYSTEM_users',
-      id: 'SYSTEM_users',
-      tags: ['SYSTEM_users'],
-      isCollection: true
-    };
-    const usersStore = await this._requireStore(context, 'systemUsers', options);
-    this._setState({usersStore});
-  }
-  async _requireSystemUser(context) {
-    const options = {
-      schema: schemas.User,
-      name: 'SYSTEM_user',
-      id: 'SYSTEM_user',
-      tags: ['SYSTEM_user']
-    };
-    const userStore = await this._requireStore(context, 'systemUser', options);
-    const user = {
-      id: userStore.generateID(),
-      rawData: {
-        id: null,
-        name: 'User',
-        location: 'Object'
-      }
-    };
-    this._setState({userStore, user});
-  }
-  async _requireStore(context, eventName, options, onchange) {
-    const store = await Stores.createContextStore(context, options);
-    if (onchange) {
-      store.on('change', onchange, this);
-    }
-    this._fire(eventName, store);
-    return store;
-  }
-  _updateSystemUsers(users, usersStore) {
-    Object.values(users).forEach(user => usersStore.store({
-      id: usersStore.generateID(),
-      rawData: {
-        id: user.id,
-        name: user.name
-      }
-    }, ['users-stores-keys']));
-  }
-  async _updateSystemUser(props, state) {
-    if (!state.disposingUser) {
-      const {user, userStore, userContext} = state;
-      if (userContext) {
-        state.disposingUser = true;
-        state.userContext = null;
-        try {
-          await userContext.dispose();
-        } catch (x) {
-          //
-        }
-        state.disposingUser = false;
-      }
-      const {context, coords, userid} = props;
-      if (userid) {
-        state.userContext = new SingleUserContext(context, userid, true);
-      }
-      user.rawData.id = userid;
-      user.rawData.location = coords;
-      userStore.set(user);
-    }
-  }
-  _onFriendChange(context, info) {
-    const {friends, friendEntityIds} = this._state;
-    if (info.add) {
-      info.add.forEach(add => {
-        const friendid = add.value.rawData.id;
-        friendEntityIds[add.value.id] = friendid;
-        if (!friends[friendid]) {
-          friends[friendid] = new SingleUserContext(context, friendid, false);
-        }
-      });
-    }
-    if (info.remove) {
-      info.remove.forEach(remove => {
-        const friendid = friendEntityIds[remove.value.id];
-        const friend = friends[friendid];
-        if (friend) {
-          friend.dispose();
-          friends[friendid] = null;
-        }
-      });
-    }
-  }
-  async _boxedAvatarChanged(store) {
-    const avatars = await store.toList();
-    this._fire('avatars', avatars);
-    avatars.get = id => {
-      const avatar = avatars.find(avatar => {
-        const uid = avatar.id.split(':uid:').pop();
-        return uid === id;
-      });
-      return avatar && avatar.rawData;
-    };
-  }
-  _fire() {
+  unwrapParticle(particleWrapper, log) {
+    // TODO(sjmiles): regarding `resolver`:
+    //  _resolve method allows particles to request remapping of assets paths
+    //  for use in DOM
+    const resolver = this._resolve.bind(this);
+    return particleWrapper({
+      Particle: Particle$1,
+      DomParticle,
+      MultiplexerDomParticle,
+      SimpleParticle: DomParticle,
+      TransformationDomParticle,
+      resolver,
+      log,
+      html: html$1
+    });
   }
 }
 
@@ -29122,102 +28159,55 @@ class UserContext extends XenStateMixin(Empty$1) {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const html$1 = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
-
-class Loader$1 {
-  path(fileName) {
-    const path = fileName.replace(/[/][^/]+$/, '/');
-    return path;
+const Arcs = {
+  version: '0.6',
+  Arc,
+  Manifest,
+  Planificator,
+  SlotComposer,
+  SlotDomConsumer,
+  Type,
+  ArcType,
+  BrowserLoader,
+  StorageProviderFactory,
+  ParticleExecutionContext,
+  RecipeResolver,
+  KeyManager,
+  firebase,
+  Xen: {
+    StateMixin: XenStateMixin,
+    Template,
+    Debug,
+    logFactory
   }
+};
 
-  join(prefix, path) {
-    if (/^https?:\/\//.test(path)) {
-      return path;
-    }
-    // TODO: replace this with something that isn't hacky
-    if (path[0] == '/' || path[1] == ':') {
-      return path;
-    }
-    prefix = this.path(prefix);
-    path = this.normalizeDots(`${prefix}${path}`);
-    return path;
-  }
+// WebPack doesn't support `export` so make this object global
 
-  // convert `././foo/bar/../baz` to `./foo/baz`
-  normalizeDots(path) {
-    // only unix slashes
-    path = path.replace(/\\/g, '/');
-    // remove './'
-    path = path.replace(/\/\.\//g, '/');
-    // remove 'foo/..'
-    const norm = s => s.replace(/(?:^|\/)[^./]*\/\.\./g, '');
-    for (let n = norm(path); n !== path; path = n, n = norm(path));
-    return path;
-  }
+const g = (typeof window === 'undefined') ? global : window;
+g.__ArcsLib__ = Arcs;
 
-  loadResource(file) {
-    if (/^https?:\/\//.test(file)) {
-      return this._loadURL(file);
-    }
-    return this._loadFile(file);
-  }
+const g$1 = (typeof window === 'undefined') ? global : window;
 
-  _loadFile(file) {
-    return new Promise((resolve, reject) => {
-      fs.readFile(file, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data.toString('utf-8'));
-        }
-      });
-    });
-  }
+const {
+  version,
+  Arc: Arc$1,
+  Manifest: Manifest$1,
+  Planificator: Planificator$1,
+  SlotComposer: SlotComposer$1,
+  SlotDomConsumer: SlotDomConsumer$1,
+  Type: Type$1,
+  ArcType: ArcType$1,
+  BrowserLoader: BrowserLoader$1,
+  StorageProviderFactory: StorageProviderFactory$1,
+  ParticleExecutionContext: ParticleExecutionContext$1,
+  RecipeResolver: RecipeResolver$1,
+  KeyManager: KeyManager$1,
+  firebase: firebase$1,
+  Xen
+} = g$1.__ArcsLib__;
 
-  _loadURL(url) {
-    if (/\/\/schema.org\//.test(url)) {
-      if (url.endsWith('/Thing')) {
-        return fetch$1('https://schema.org/Product.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data, {'@id': 'schema:Thing'}));
-      }
-      return fetch$1(url + '.jsonld').then(res => res.text()).then(data => JsonldToManifest.convert(data));
-    }
-    return fetch$1(url).then(res => res.text());
-  }
-
-  async loadParticleClass(spec) {
-    const clazz = await this.requireParticle(spec.implFile);
-    clazz.spec = spec;
-    return clazz;
-  }
-
-  async requireParticle(fileName) {
-    if (fileName === null) fileName = '';
-    const src = await this.loadResource(fileName);
-    // Note. This is not real isolation.
-    const script = new vm.Script(src, {filename: fileName, displayErrors: true});
-    const result = [];
-    const self = {
-      defineParticle(particleWrapper) {
-        result.push(particleWrapper);
-      },
-      console,
-      importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
-    };
-    script.runInNewContext(self, {filename: fileName, displayErrors: true});
-    assert(result.length > 0 && typeof result[0] == 'function', `Error while instantiating particle implementation from ${fileName}`);
-    return this.unwrapParticle(result[0]);
-  }
-
-  setParticleExecutionContext(pec) {
-    this._pec = pec;
-  }
-
-  unwrapParticle(particleWrapper) {
-    assert(this._pec);
-    return particleWrapper({Particle: Particle$1, DomParticle, TransformationDomParticle, MultiplexerDomParticle, Reference: Reference.newClientReference(this._pec), html: html$1});
-  }
-
-}
+Xen.Debug.level = 2;
 
 /**
  * @license
@@ -29231,9 +28221,9 @@ class Loader$1 {
 
 const html$2 = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 
-const dumbCache = {};
+const dumbCache$1 = {};
 
-class BrowserLoader extends Loader$1 {
+class NodeLoader extends Loader {
   constructor(urlMap) {
     super();
     this._urlMap = urlMap;
@@ -29241,8 +28231,8 @@ class BrowserLoader extends Loader$1 {
   loadResource(name) {
     const path = this._resolve(name);
     const cacheKey = path; //new URL(url, document.URL).href;
-    const resource = dumbCache[cacheKey];
-    return resource || (dumbCache[cacheKey] = super.loadResource(path));
+    const resource = dumbCache$1[cacheKey];
+    return resource || (dumbCache$1[cacheKey] = super.loadResource(path));
   }
   _resolve(path) {
     //return new URL(path, this._base).href;
@@ -29277,8 +28267,6 @@ class BrowserLoader extends Loader$1 {
     //  _resolve method allows particles to request remapping of assets paths
     //  for use in DOM
     const resolver = this._resolve.bind(this);
-    // TODO(sjmiles): hack to plumb `fetch` into Particle space under node
-    const _fetch = BrowserLoader.fetch || fetch;
     return particleWrapper({
       Particle: Particle$1,
       DomParticle,
@@ -29287,9 +28275,247 @@ class BrowserLoader extends Loader$1 {
       TransformationDomParticle,
       resolver,
       log: log || (() => {}),
-      html: html$2,
-      _fetch
+      html: html$2
     });
+  }
+}
+
+const log$1 = console.log.bind(console);
+const warn = console.warn.bind(console);
+
+class ArcsEnv {
+  constructor(rootPath, loaderKind) {
+    if (rootPath && rootPath[rootPath.length-1] === '/') {
+      // remove trailing slash
+      rootPath = rootPath.slice(0, -1);
+    }
+    this.rootPath = rootPath;
+    this.loaderKind = loaderKind;
+    this.pathMap = this.createPathMap(rootPath);
+  }
+  createPathMap(root) {
+    return {
+      'https://$cdn/': `${root}/`,
+      'https://$shell/': `${root}/shells/`, // deprecated
+      'https://$shells/': `${root}/shells/`,
+      'https://$particles/': `${root}/particles/`,
+      'https://$artifacts/': `${root}/particles/`, // deprecated
+    };
+  }
+  // pecFactory construction is lazy, so loader can be configured prior
+  //get pecFactory() // abstract
+  // loader construction is lazy, so pathMap can be configured prior
+  get loader() {
+    return this._loader || (this._loader = new (this.loaderKind)(this.pathMap));
+  }
+  async parse(content, options) {
+    const localOptions = {
+      id: 'in-memory.manifest',
+      fileName: './in-memory.manifest',
+      loader: this.loader
+    };
+    if (options) {
+      Object.assign(localOptions, options);
+    }
+    return Manifest$1.parse(content, localOptions);
+  }
+  async resolve(arc, recipe) {
+    if (recipe.normalize()) {
+      let plan = recipe;
+      if (!plan.isResolved()) {
+        const resolver = new RecipeResolver$1(arc);
+        plan = await resolver.resolve(recipe);
+        if (!plan || !plan.isResolved()) {
+          warn('failed to resolve:\n', (plan || recipe).toString({showUnresolved: true}));
+          log$1(arc.context, arc, arc.context.storeTags);
+          plan = null;
+        }
+      }
+      return plan;
+    }
+  }
+  async spawn({id, serialization, context, composer, storage}) {
+    const params = {
+      id,
+      fileName: './serialized.manifest',
+      serialization,
+      context,
+      storageKey: storage,
+      slotComposer: composer,
+      pecFactory: this.pecFactory,
+      loader: this.loader
+    };
+    Object.assign(params, this.params);
+    if (serialization) {
+      return Arc$1.deserialize(params);
+    } else {
+      return new Arc$1(params);
+    }
+  }
+}
+
+class Env extends ArcsEnv {
+  constructor(rootPath) {
+    super(rootPath, NodeLoader);
+  }
+  get pecFactory() {
+    return id => {
+      const channel = new MessageChannel();
+      new ParticleExecutionContext(channel.port1, `${id}:inner`, this.loader);
+      return channel.port2;
+    };
+  }
+}
+
+// TODO(sjmiles): by config, node loads log-node.js instead
+
+const logFactory$2 = Xen.Debug.level > 0 ? logFactory$1 : () => () => {};
+
+class SyntheticStores {
+  static init(env) {
+    if (!SyntheticStores.providerFactory) {
+      SyntheticStores.providerFactory = new StorageProviderFactory$1('shell');
+    }
+  }
+  static async getArcsStore(storage, name) {
+    const handleStore = await SyntheticStores.getStore(storage, name);
+    if (handleStore) {
+      const handles = await handleStore.toList();
+      const handle = handles[0];
+      if (handle) {
+        return await SyntheticStores.getHandleStore(handle);
+      }
+    }
+  }
+  static async getStore(storage, id) {
+    // cached stores can be incorrect?
+    //return stores[id] || (stores[id] = await SyntheticStores.syntheticConnectKind('handles', storage, id));
+    return await SyntheticStores.connectToKind('handles', storage, id);
+  }
+  static async connectToKind(kind, storage, arcid) {
+    return SyntheticStores.storeConnect(null, `synthetic://arc/${kind}/${storage}/${arcid}`);
+  }
+  static async getHandleStore(handle) {
+    return await SyntheticStores.storeConnect(handle.type, handle.storageKey);
+  }
+  static async storeConnect(type, storageKey) {
+    return SyntheticStores.providerFactory.connect(SyntheticStores.makeId(), type, storageKey);
+  }
+  static makeId() {
+    return `id${Math.random()}`;
+  }
+  static snarfId(key) {
+    return key.split('/').pop();
+  }
+}
+
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+const log$2 = logFactory$2('ArcHost', '#cade57');
+const warn$1 = logFactory$2('ArcHost', '#cade57', 'warn');
+const error$2 = logFactory$2('ArcHost', '#cade57', 'error');
+
+class ArcHost {
+  constructor(env, context, storage, composer) {
+    this.env = env;
+    this.context = context;
+    this.storage = storage;
+    this.composer = composer;
+  }
+  disposeArc() {
+    this.arc && this.arc.dispose();
+    this.arc = null;
+  }
+  // config = {id, [serialization], [manifest]}
+  async spawn(config) {
+    log$2('spawning arc', config);
+    this.config = config;
+    const context = this.context || await this.env.parse(``);
+    const serialization = this.serialization = await this.computeSerialization(config, this.storage);
+    this.arc = await this._spawn(this.env, context, this.composer, this.storage, config.id, serialization);
+    if (config.manifest && !serialization) {
+      await this.instantiateDefaultRecipe(this.env, this.arc, config.manifest);
+    }
+    if (this.pendingPlan) {
+      const plan = this.pendingPlan;
+      this.pendingPlan = null;
+      await this.instantiatePlan(this.arc, plan);
+    }
+    return this.arc;
+  }
+  set manifest(manifest) {
+    this.instantiateDefaultRecipe(this.env, this.arc, manifest);
+  }
+  set plan(plan) {
+    if (this.arc) {
+      this.instantiatePlan(this.arc, plan);
+    } else {
+      this.pendingPlan = plan;
+    }
+  }
+  async computeSerialization(config, storage) {
+    let serialization;
+    if (config.serialization != null) {
+      serialization = config.serialization;
+    }
+    if (serialization == null) {
+      if (storage.includes('volatile')) {
+        serialization = '';
+      } else {
+        serialization = await this.fetchSerialization(storage, config.id) || '';
+      }
+    }
+    return serialization;
+  }
+  async _spawn(env, context, composer, storage, id, serialization) {
+    return await env.spawn({id, context, composer, serialization, storage: `${storage}/${id}`});
+  }
+  async instantiateDefaultRecipe(env, arc, manifest) {
+    log$2('instantiateDefaultRecipe');
+    try {
+      manifest = await env.parse(manifest);
+      const recipe = manifest.allRecipes[0];
+      const plan = await env.resolve(arc, recipe);
+      if (plan) {
+        this.instantiatePlan(arc, plan);
+      }
+    } catch (x) {
+      error$2(x);
+    }
+  }
+  async instantiatePlan(arc, plan) {
+    log$2('instantiatePlan');
+    try {
+      await arc.instantiate(plan);
+    } catch (x) {
+      error$2(x);
+      //console.error(plan.toString());
+    }
+    await this.persistSerialization();
+  }
+  async fetchSerialization(storage, arcid) {
+    const key = `${storage}/${arcid}/arc-info`;
+    const store = await SyntheticStores.providerFactory.connect('id', new ArcType$1(), key);
+    if (store) {
+      const info = await store.get();
+      return info && info.serialization;
+    }
+  }
+  async persistSerialization() {
+    const {arc, config: {id}, storage} = this;
+    if (!storage.includes('volatile')) {
+      log$2(`persisting serialization to [${id}/serialization]`);
+      const serialization = await arc.serialize();
+      await arc.persistSerialization(serialization);
+    }
   }
 }
 
@@ -29303,194 +28529,716 @@ class BrowserLoader extends Loader$1 {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const assert$1 = (value, msg) => {}; //value || console.log('ASSERT failed: ', msg);
-assert$1.isAbove = () => {};
-
-/** @class MockSlotComposer
- * Helper class to test with slot composer.
- */
-class MockSlotComposer extends SlotComposer {
-  /**
-   * |options| may contain:
-   * - strict: whether unexpected render slot requests cause an assert or a warning log (default: true)
-   */
+class RamSlotComposer extends SlotComposer$1 {
   constructor(options) {
     options = options || {};
     super({rootContainer: options.rootContainer || {'root': 'root-context'}, modality: 'mock'});
-    this.expectQueue = [];
-    this.onExpectationsComplete = () => undefined;
-    this.strict = options.strict != undefined ? options.strict : true;
-    this.logging = options.logging;
-    this.debugMessages = [];
-
-    // Clear all cached templates
-    SlotDomConsumer.dispose();
   }
 
-   // Overriding this method to investigate AppVeyor failures.
-   // TODO: get rid of it once the problem is fixed.
-  _addSlotConsumer(slot) {
-    super._addSlotConsumer(slot);
-    const startCallback = slot.startRenderCallback;
-    slot.startRenderCallback = ({particle, slotName, providedSlots, contentTypes}) => {
-      startCallback({particle, slotName, providedSlots, contentTypes});
-    };
-  }
-
-  /** @method sendEvent(particleName, slotName, event, data)
-   * Sends an event to the given particle and slot.
-   */
   sendEvent(particleName, slotName, event, data) {
     const particles = this.consumers.filter(s => s.consumeConn.particle.name == particleName).map(s => s.consumeConn.particle);
-    assert$1(1 == particles.length, `Multiple particles with name ${particleName} - cannot send event.`);
+    assert(1 == particles.length, `Multiple particles with name ${particleName} - cannot send event.`);
     this.pec.sendEvent(particles[0], slotName, {handler: event, data});
   }
 
-  //TODO: reaching directly into data objects like this is super dodgy and we should
-  // fix. It's particularly bad here as there's no guarantee that the backingStore
-  // exists - should await ensureBackingStore() before accessing it.
-  _getHostedParticleNames(particle) {
-    return Object.values(particle.connections)
-        .filter(conn => conn.type.isInterface)
-        .map(conn => {
-          const store = this.arc.findStoreById(conn.handle.id);
-          if (store.referenceMode) {
-            return store.backingStore._model.getValue(store._stored.id).name;
-          }
-          return store._stored.name;
-        });
-  }
-
   async renderSlot(particle, slotName, content) {
-    // this._addDebugMessages(`    renderSlot ${particle.name} ${((names) => names.length > 0 ? `(${names.join(',')}) ` : '')(this._getHostedParticleNames(particle))}: ${slotName} - ${Object.keys(content).join(', ')}`);
-    // assert.isAbove(this.expectQueue.length, 0,
-    //   `Got a renderSlot from ${particle.name}:${slotName} (content types: ${Object.keys(content).join(', ')}), but not expecting anything further.`);
-
-    // renderSlot must happen before _verifyRenderContent, because the latter removes this call from expectations,
-    // and potentially making mock-slot-composer idle before the renderSlot has actualy complete.
-    // TODO: split _verifyRenderContent to separate method for checking and then resolving expectations.
     await super.renderSlot(particle, slotName, content);
-
-    // let found = this._verifyRenderContent(particle, slotName, content);
-    // if (!found) {
-    //   let canIgnore = this._canIgnore(particle.name, slotName, content);
-    //   if (canIgnore) {
-    //     console.log(`Skipping unexpected render slot request: ${particle.name}:${slotName} (content types: ${Object.keys(content).join(', ')})`);
-    //   }
-    //   assert(canIgnore, `Unexpected render slot ${slotName} for particle ${particle.name} (content types: ${Object.keys(content).join(',')})`);
-    // }
-
-    //this._expectationsMet();
-
     const slotConsumer = this.getSlotConsumer(particle, slotName);
     if (slotConsumer) {
       slotConsumer.updateProvidedContexts();
     }
-
-    //this.detailedLogDebug();
   }
-
-  _expectationsMet() {
-    if (this.expectQueue.length == 0 || this.expectQueue.every(e => e.isOptional)) {
-      this.onExpectationsComplete();
-    }
-  }
-
 }
 
-// @license
+const version$1 = '0_6_0';
 
-//const LoaderKind = Loader;
-const LoaderKind = BrowserLoader;
-// TODO(sjmiles): hack to plumb `fetch` into Particle space under node
-LoaderKind.fetch = fetch$1;
-
-//const ComposerKind = SlotComposer;
-const ComposerKind = MockSlotComposer;
-
-const ArcFactory = class {
-
-  /**
-   * @param pathPrefix specifies the path prefix (often relative) to
-   * load assets
-   */
-  constructor(pathPrefix) {
-    // Allow caller to specify where to find assets
-    this.loader = new LoaderKind({
-      'https://$cdn/': pathPrefix,
-      'https://$shell/': pathPrefix,
-      'https://$artifacts/': pathPrefix + 'artifacts/',
-      // 'https://sjmiles.github.io/': path + '../'
-    });
-    //console.log(loader);
-    //console.log(slotComposer);
-    this.pecFactory = function(id) {
-      const channel = new MessageChannel();
-      new ParticleExecutionContext(channel.port1, `${id}:inner`, this.loader);
-      return channel.port2;
-    };
-    //console.log(pecFactory);
-    //const arcsPath = '../../arcs';
-    //const arcsURL = 'http://localhost/projects/arcs/arcs';
+const Const = {
+  version: version$1,
+  defaultUserId: 'user',
+  defaultStorageKey: `firebase://arcs-storage.firebaseio.com/AIzaSyBme42moeI-2k8WgXh-6YK_wYyjEXo4Oz8/${version$1}`,
+  defaultManifest: `https://$particles/canonical.manifest`,
+  launcherSuffix: `-launcher`,
+  LOCALSTORAGE: {
+    user: `${version$1}-user`,
+    storage: `${version$1}-storage`
+  },
+  SHARE: {
+    private: 1,
+    self: 2,
+    friends: 3
+  },
+  STORES: {
+    boxed: 'BOXED',
+    my: 'PROFILE',
+    shared: 'FRIEND'
   }
-  getParams(context) {
-    const {pecFactory, loader} = this;
-    return {
-      id: `server-arc`,
-      pecFactory,
-      loader,
-      context,
-      storageKey: null,
-      slotComposer: this.createComposer()
-    };
+};
+
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+const log$3 = logFactory$2('UserArcs', '#4f0433');
+const warn$2 = logFactory$2('UserArcs', '#4f0433', 'warn');
+
+class UserArcs {
+  constructor(env, storage, userid) {
+    this.values = [];
+    this.listeners = [];
+    this.contextWait = 3000;
+    SyntheticStores.init(env);
+    this.updateArcsStore(storage, userid);
   }
-  createComposer() {
-    return new ComposerKind({
-      modality: 'mock',
-      rootContainer: {
-        toproot: 'toproot-context',
-        root: 'root-context',
-        modal: 'modal-context'
+  async subscribe(listener) {
+    if (this.listeners.indexOf(listener) < 0) {
+      await this.publishInitialChanges([listener]);
+      this.listeners.push(listener);
+      this.publish(this.values, [listener]);
+    }
+  }
+  publish(changes, listeners) {
+    // convert {add:[], remove:[]} to [{add, remove}]
+    if (changes.add) {
+      changes.add.forEach(add => this._publish({add: add.value}, listeners));
+    }
+    if (changes.remove) {
+      changes.remove.forEach(remove => this._publish({remove: remove.value}, listeners));
+    }
+  }
+  async publishInitialChanges(listeners) {
+    const changes = {add: []};
+    if (this.store) {
+      const values = await this.store.toList();
+      values.forEach(value => this._publish({add: value}, listeners));
+    }
+    return changes;
+  }
+  _publish(change, listeners) {
+    if (!change.add || !change.add.rawData.deleted) {
+      listeners.forEach(listener => listener(change));
+    }
+  }
+  async updateArcsStore(storage, userid) {
+    // attempt to marshal arcs-store for this user
+    this.store = await this.fetchArcsStore(storage, userid);
+    if (this.store) {
+      // TODO(sjmiles): plop arcsStore into state early for updateUserContext, usage is weird
+      this.foundArcsStore(this.store);
+    } else {
+      // retry after a bit
+      setTimeout(() => this.updateArcsStore(storage, userid), this.contextWait);
+    }
+  }
+  async fetchArcsStore(storage, userid) {
+    // TODO(sjmiles): marshalling of arcs-store arc id from userid should be elsewhere
+    const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.launcherSuffix}`);
+    if (store) {
+      log$3(`marshalled arcsStore for [${userid}]`);
+      return store;
+    }
+    warn$2(`failed to marshal arcsStore for [${userid}][${storage}]`);
+  }
+  async foundArcsStore(store) {
+    log$3('foundArcsStore', Boolean(store));
+    await this.publishInitialChanges(this.listeners);
+    store.on('change', changes => this.arcsStoreChange(changes), this);
+  }
+  arcsStoreChange(changes) {
+    this.publish(changes, this.listeners);
+  }
+}
+
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+const log$4 = logFactory$2('SingleUserContext', '#f2ce14');
+const warn$3 = logFactory$2('SingleUserContext', '#f2ce14', 'warn');
+const error$3 = logFactory$2('SingleUserContext', '#f2ce14', 'error');
+
+// SoloContext (?)
+const SingleUserContext = class {
+  constructor(storage, context, userid, arcstore, isProfile) {
+    this.storage = storage;
+    this.context = context;
+    this.userid = userid;
+    this.arcstore = arcstore;
+    this.isProfile = isProfile;
+    // we observe `arcid`s and `storageKey`s
+    this.observers = {};
+    // when we remove an arc from consideration, we have to unobserve storageKeys from that arc
+    // `handles` maps an arcid to an array of storageKeys to unobserve
+    this.handles = {};
+    // promises for async store marshaling
+    this.pendingStores = [];
+    if (arcstore) {
+      this.attachArcStore(storage, arcstore);
+    }
+  }
+  async attachArcStore(storage, arcstore) {
+    this.observeStore(arcstore, arcstore.id, info => {
+      log$4('arcstore::observer', info);
+      if (info.add) {
+        info.add.forEach(({value}) => this._addArc(storage, value.rawData));
+      } else if (info.remove) {
+        info.remove.forEach(({value}) => {
+          // TODO(sjmiles): value should contain `rawData.key`, but sometimes there is no `rawData`
+          this.removeArc(value.id);
+        });
+      } else {
+        log$4('arcstore::observer info type not supported: ', info);
       }
     });
   }
-  spawn(context) {
-    const params = this.getParams(context);
-    const arc = new Arc(params);
-    // TODO(sjmiles): no analog in shell?
-    params.slotComposer.pec = arc.pec;
-    return arc;
+  async dispose() {
+    // chuck all observers
+    Object.values(this.observers).forEach(({key}) => this.unobserve(key));
+    // chuck all data
+    await this.removeUserEntities(this.context, this.userid, this.isProfile);
   }
-  deserialize(context, serialization) {
-    const params = this.getParams(context);
-    params.serialization = serialization;
-    params.fileName = './serialized.manifest';
-    //console.log(params);
-    const arc = Arc.deserialize(params);
-    // TODO(sjmiles): no analog in shell?
-    params.slotComposer.pec = arc.pec;
-    return arc;
+  removeArc(arcid) {
+    this.unobserve(arcid);
+    const handles = this.handles[arcid];
+    if (handles) {
+      handles.forEach(({storageKey}) => this.unobserve(storageKey));
+      this.handles[arcid] = null;
+    }
   }
-  async createContext(serialization) {
-    const loader = this.loader;
-    // TODO(sjmiles): do we need to be able to `config` this value?
-    const fileName = './in-memory.manifest';
-    try {
-      return await Runtime.parseManifest(serialization || '', {loader, fileName});
-    } catch (x) {
-      console.warn(x);
-      return await Runtime.parseManifest('', {loader, fileName});
+  async _addArc(storage, arcmeta) {
+    const {deleted, key} = arcmeta;
+    if (!deleted) {
+      const store = await SyntheticStores.getStore(storage, key);
+      if (store) {
+        await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
+      } else {
+        warn$3(`failed to get SyntheticStore for arc at [${storage}, ${key}]\nhttps://github.com/PolymerLabs/arcs/issues/2304`);
+      }
+    }
+  }
+  async addArc(key) {
+    //if (!deleted) {
+      const store = await SyntheticStores.getStore(this.storage, key);
+      if (store) {
+        await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
+      } else {
+        warn$3(`failed to get SyntheticStore for arc at [${this.storage}, ${key}]\nhttps://github.com/PolymerLabs/arcs/issues/2304`);
+      }
+    //}
+  }
+  unobserve(key) {
+    const observer = this.observers[key];
+    if (observer) {
+      this.observers[key] = null;
+      //log(`UNobserving [${key}]`);
+      observer.store.off('change', observer.cb);
+    }
+  }
+  async observeStore(store, key, cb) {
+   if (!store) {
+      console.warn(`observeStore: store is null for [${key}]`);
+    } else {
+      if (!this.observers[key]) {
+        log$4(`observing [${key}]`);
+        // TODO(sjmiles): create synthetic store `change` records from the initial state
+        // SyntheticCollection has `toList` but is `!type.isCollection`,
+        if (store.toList) {
+          const data = await store.toList();
+          if (data && data.length) {
+            const add = data.map(value => ({value}));
+            cb({add});
+          } else log$4('...store is empty collection');
+        } else if (store.type.isEntity) {
+          const data = await store.get();
+          if (data) {
+            cb({data});
+          }
+        }
+        this.observers[key] = {key, store, cb: store.on('change', cb, this)};
+      }
+    }
+  }
+   onArcStoreChanged(arcid, info) {
+    log$4('Synthetic-store change event (onArcStoreChanged):', info);
+    // TODO(sjmiles): synthesize add/remove records from data record
+    //   this._patchArcDataInfo(arcid, info);
+    // process add/remove stream
+    if (info.add) {
+      info.add.forEach(async add => {
+        let handle = add.value;
+        if (!handle) {
+          error$3('`add` record has no `value`, applying workaround', add);
+          handle = add;
+        }
+        if (handle) { //} && handle.tags.length) {
+          //handle.tags.length && log('observing handle', handle.tags);
+          //log('fetching handle store', handle);
+          const store = await SyntheticStores.getHandleStore(handle);
+          await this.observeStore(store, handle.storageKey, info => this.updateHandle(arcid, handle, info));
+        }
+      });
+    }
+    if (info.remove) {
+      info.remove.forEach(async remove => {
+        const handle = remove.value;
+        if (handle) {
+          //log('UNobserving handle', handle);
+          this.unobserve(handle.storageKey);
+        }
+      });
+    }
+  }
+  async updateHandle(arcid, handle, info) {
+    const {context, userid, isProfile} = this;
+    const tags = handle.tags ? handle.tags.join('-') : '';
+    if (tags) {
+      log$4('updateHandle', tags/*, info*/);
+      const type = handle.type.isCollection ? handle.type : handle.type.collectionOf();
+      const id = SyntheticStores.snarfId(handle.storageKey);
+      //
+      const shareid = `${tags}|${id}|from|${userid}|${arcid}`;
+      const shortid = `${(isProfile ? `PROFILE` : `FRIEND`)}_${tags}`;
+      const storeName = shortid;
+      const storeId = isProfile ? shortid : shareid;
+      log$4('share id:', storeId);
+      const store = await this.getShareStore(context, type, storeName, storeId, ['shared']); //handle.tags);
+      //
+      const boxStoreId = `BOXED_${tags}`;
+      const boxDataId = `${userid}|${arcid}`;
+      //const boxId = `${tags}|${boxDataId}`;
+      log$4('box ids:', boxStoreId, boxDataId/*, boxId*/);
+      const boxStore = await this.getShareStore(context, type, boxStoreId, boxStoreId, ['shared']); //[boxStoreId]);
+      //
+      // TODO(sjmiles): no mutation
+      if (handle.type.isEntity) {
+        if (info.data) {
+          // TODO(sjmiles): in the absence of data mutation, when entity changes
+          // it gets an entirely new id, so we cannot use entity id to track this
+          // entity in boxed stores. However as this entity is a Highlander for this
+          // user and arc (by virtue of not being in a Collection) we can synthesize
+          // a stable id.
+          info.data.id = boxDataId;
+          this.unshareEntities(userid, store, boxStore, info.data);
+          this.shareEntities(userid, store, boxStore, info.data);
+        }
+      } else if (info.add || info.remove) {
+        info.remove && info.remove.forEach(remove => this.unshareEntities(userid, store, boxStore, [remove.value]));
+        info.add && info.add.forEach(add => this.shareEntities(userid, store, boxStore, [add.value]));
+      } else if (info.data) {
+        this.shareEntities(userid, store, boxStore, info.data);
+      }
+    }
+  }
+  async getShareStore(context, type, name, id, tags) {
+    // TODO(sjmiles): cache and return promises in case of re-entrancy
+    let promise = this.pendingStores[id];
+    if (!promise) {
+      promise = new Promise(async (resolve) => {
+        const store = await context.findStoreById(id);
+        if (store) {
+          resolve(store);
+        } else {
+          const store = await context.createStore(type, name, id, tags);
+          resolve(store);
+        }
+      });
+      this.pendingStores[id] = promise;
+    }
+    return promise;
+  }
+  async shareEntities(userid, shareStore, boxStore, data) {
+    if (data) {
+      this.storeEntitiesWithUid(shareStore, data, userid);
+      boxStore.idMap = this.storeEntitiesWithUid(boxStore, data, userid);
+    }
+  }
+  async unshareEntities(userid, shareStore, boxStore, data) {
+    if (data) {
+      this.removeEntitiesWithUid(shareStore, data, userid);
+      this.removeEntitiesWithUid(boxStore, data, userid);
+    }
+  }
+  storeEntitiesWithUid(store, data, uid) {
+    const ids = [];
+    const storeDecoratedEntity = ({id, rawData}, uid) => {
+      const decoratedId = `${id}:uid:${uid}`;
+      ids.push({id: decoratedId, rawData});
+      //console.log('pushing data to store');
+      if (store.type.isCollection) {
+        // FIXME: store.generateID may not be safe (session scoped)?
+        store.store({id: decoratedId, rawData}, [store.generateID()]);
+      } else {
+        store.set({id: decoratedId, rawData});
+      }
+    };
+    if (data && data.id) {
+      storeDecoratedEntity(data, uid);
+    } else {
+      Object.values(data).forEach(entity => entity && storeDecoratedEntity(entity, uid));
+    }
+    return ids;
+  }
+  removeEntitiesWithUid(store, data, uid) {
+    const removeDecoratedEntity = ({id, rawData}, uid) => {
+      const decoratedId = `${id}:uid:${uid}`;
+      if (store.type.isCollection) {
+        store.remove(decoratedId);
+      }
+    };
+    if (store.type.isCollection) {
+      if (Array.isArray(data)) {
+        data.forEach(entity => entity && removeDecoratedEntity(entity, uid));
+      } else if (data && data.id) {
+        removeDecoratedEntity(data, uid);
+      }
+    } else {
+      store.clear();
+    }
+  }
+  async removeEntities(context) {
+    this.removeUserEntities(context, 'all', true);
+  }
+  async removeUserEntities(context, userid, isProfile) {
+    log$4(`removing entities for [${userid}]`);
+    const jobs = [];
+    for (let i=0, store; (store=context.stores[i]); i++) {
+      // SYSTEM_users persists across users
+      if (store.id !== 'SYSTEM_users') {
+        jobs.push(this.removeUserStoreEntities(userid, store, isProfile));
+      }
+    }
+    await Promise.all(jobs);
+  }
+  async removeUserStoreEntities(userid, store, isProfile) {
+   if (!store) {
+      console.warn(`removeUserStoreEntities: store is null for [${userid}]`);
+    } else {
+      log$4(`scanning [${userid}] [${store.id}] (${store.toList ? 'collection' : 'variable'})`);
+      //const tags = context.findStoreTags(store);
+      if (store.toList) {
+        const entities = await store.toList();
+        entities.forEach(entity => {
+          const uid = entity.id.split('uid:').pop().split('|').shift();
+          if (isProfile || uid === userid) {
+            log$4(`  REMOVE `, entity.id);
+            // TODO(sjmiles): _removeUserStoreEntities is strangely re-entering
+            //  (1) `remove` fires synchronous change events
+            //  (2) looks like there are double `remove` events in the queue. Bug?
+            // In general, to avoid interleaving we'll probably need to
+            // use a stack to process changes async to receiving them.
+            // Parallel processing works as of now ... feature?
+            store.remove(entity.id);
+          }
+        });
+      }
+      else {
+        const uid = store.id.split('|').slice(-2, -1).pop();
+        if (isProfile || uid === userid) {
+          log$4(`  CLEAR store`);
+          store.clear();
+        }
+      }
     }
   }
 };
 
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+const log$5 = logFactory$2('UserContext', '#4f0433');
+const warn$4 = logFactory$2('UserContext', '#4f0433', 'warn');
+
+class UserContext {
+  constructor() {
+  }
+  async init(storage, userid, context) {
+    await this.disposeUserContext(this.userContext);
+    const isProfile = true;
+    this.userContext = new SingleUserContext(storage, context, userid, null, isProfile);
+  }
+  async disposeUserContext(userContext) {
+    if (userContext) {
+      try {
+        await userContext.dispose();
+      } catch (x) {
+        //
+      }
+    }
+  }
+  onArc({add, remove}) {
+    if (add) {
+      this.userContext.addArc(add.id);
+    }
+    if (remove) {
+      this.userContext.removeArc(remove.id);
+    }
+  }
+  // _getInitialState() {
+  //   return {
+  //     // ms to wait until we think there is probably some context
+  //     contextWait: 3000,
+  //     // maps userid to SingleUserContext for friends
+  //     friends: {},
+  //     // TODO(sjmiles): workaround for missing data in `remove` records
+  //     // maps entityids to userids for friends
+  //     friendEntityIds: {},
+  //     // snapshot of BOXED_avatar for use by shell
+  //     avatars: {},
+  //   };
+  // }
+  // update(props, state) {
+  //   if (!state.env && props.env) {
+  //     state.env = props.env;
+  //     SyntheticStores.init(props.env);
+  //   }
+  //   if (props.context && state.context !== props.context) {
+  //     state.context = props.context;
+  //     this.updateFriends(props, state);
+  //   }
+  //   if (props.storage && props.context && props.userid !== state.userid) {
+  //     state.userid = props.userid;
+  //     this.awaitState('arcsStore', () => this.updateArcsStore(props, state));
+  //   }
+  // }
+  // async updateArcsStore(props, state) {
+  //   const {storage, userid} = props;
+  //   const arcsStore = await this.fetchArcsStore(storage, userid);
+  //   if (arcsStore) {
+  //     // TODO(sjmiles): plop arcsStore into state early for updateUserContext, usage is weird
+  //     state.arcsStore = arcsStore;
+  //     // TODO(sjmiles): props and state are suspect after await
+  //     await this.updateUserContext(props, state);
+  //   } else {
+  //     // retry after a bit
+  //     setTimeout(() => this.state = {userid: null}, state.contextWait);
+  //   }
+  //   // signal when user-decorated context is `ready`
+  //   // TODO(sjmiles): ideally we have a better signal than a timeout
+  //   setTimeout(() => this.fire('context', props.context), state.contextWait);
+  //   return arcsStore;
+  // }
+  // async fetchArcsStore(storage, userid) {
+  //   const store = await SyntheticStores.getArcsStore(storage, `${userid}${Const.launcherSuffix}`);
+  //   if (store) {
+  //     log(`marshalled arcsStore for [${userid}]`); //[${storage}]`, store);
+  //     return store;
+  //   }
+  //   warn(`failed to marshal arcsStore for [${userid}][${storage}]`);
+  // }
+  // async updateSystemUser({userid, context}) {
+  //   const store = await context.findStoreById('SYSTEM_user');
+  //   if (store) {
+  //     const user = {
+  //       id: store.generateID(),
+  //       rawData: {
+  //         id: userid,
+  //       }
+  //     };
+  //     store.set(user);
+  //     log('installed SYSTEM_user');
+  //   }
+  // }
+  // async updateUserContext({storage, userid, context}, {userContext, arcsStore}) {
+  //   await this.disposeUserContext(userContext);
+  //   // do not operate on stale userid
+  //   if (!this.state.userContext && userid === this.state.userid) {
+  //     const isProfile = true;
+  //     this.state = {
+  //       userContext: new SingleUserContext(storage, context, userid, arcsStore, isProfile)
+  //     };
+  //   }
+  // }
+  // async disposeUserContext(userContext) {
+  //   if (userContext) {
+  //     this.state = {userContext: null};
+  //     try {
+  //       await userContext.dispose();
+  //     } catch (x) {
+  //       //
+  //     }
+  //   }
+  // }
+  // async updateFriends({storage, userid, context}, state) {
+  //   if (state.friendsStore) {
+  //     log('discarding old PROFILE_friends');
+  //     state.friendsStore.off('change', state.friendsStoreCb);
+  //     state.friendsStore = null;
+  //   }
+  //   const friendsStore = await context.findStoreById('PROFILE_friends');
+  //   if (friendsStore) {
+  //     log('found PROFILE_friends');
+  //     const friendsStoreCb = info => this.onFriendsChange(storage, context, info);
+  //     // get current data
+  //     const friends = await friendsStore.toList();
+  //     // listen for changes
+  //     friendsStore.on('change', friendsStoreCb, this);
+  //     // process friends already in store
+  //     this.onFriendsChange(storage, context, {add: friends.map(f => ({value: f}))});
+  //     this.state = {friendsStore, friendsStoreCb};
+  //   } else {
+  //     warn('PROFILE_friends missing');
+  //   }
+  // }
+  // onFriendsChange(storage, context, info) {
+  //   const {friends, friendEntityIds} = this._state;
+  //   if (info.add) {
+  //     info.add.forEach(({value}) => {
+  //       const entityId = value.id;
+  //       const friendId = value.rawData.id;
+  //       // TODO(sjmiles): friendEntityIds is a hack to workaround missing rawData in removal records
+  //       friendEntityIds[entityId] = friendId;
+  //       this.addFriend(storage, context, friends, friendId);
+  //     });
+  //   }
+  //   if (info.remove) {
+  //     info.remove.forEach(remove => this.removeFriend(friends, friendEntityIds[remove.value.id]));
+  //   }
+  // }
+  // async addFriend(storage, context, friends, friendId, attempts) {
+  //   log(`trying to addFriend [${friendId}]`);
+  //   if (!friends[friendId]) {
+  //     friends[friendId] = true;
+  //     const arcsStore = await this.fetchArcsStore(storage, friendId);
+  //     if (arcsStore) {
+  //       friends[friendId] = new SingleUserContext(storage, context, friendId, arcsStore, false);
+  //     } else {
+  //       friends[friendId] = null;
+  //       // retry a bit
+  //       attempts = (attempts || 0) + 1;
+  //       if (attempts < 11) {
+  //         const timeout = 1000*Math.pow(2.9076, attempts);
+  //         console.warn(`retry [${attempts}/10] to addFriend [${friendId}] in ${(timeout/1000/60).toFixed(2)}m`);
+  //         setTimeout(() => this.addFriend(storage, context, friends, friendId, attempts), timeout);
+  //       }
+  //     }
+  //   }
+  // }
+  // removeFriend(friends, friendId) {
+  //   log('removeFriend', friendId);
+  //   const friend = friends[friendId];
+  //   if (friend) {
+  //     friend.dispose && friend.dispose();
+  //     friends[friendId] = null;
+  //   }
+  // }
+  //async _boxedAvatarChanged(store) {
+  //   const avatars = await store.toList();
+  //   this._fire('avatars', avatars);
+  //   avatars.get = id => {
+  //     const avatar = avatars.find(avatar => {
+  //       const uid = avatar.id.split(':uid:').pop();
+  //       return uid === id;
+  //     });
+  //     return avatar && avatar.rawData;
+  //   };
+  // }
+}
+
+/*
+@license
+Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+const log$6 = logFactory$2('UserPlanner', '#4f0433');
+const warn$5 = logFactory$2('UserPlanner', '#4f0433', 'warn');
+
+class UserPlanner {
+  constructor(userid, hostFactory) {
+    this.runners = [];
+    this.userid = userid;
+    this.hostFactory = hostFactory;
+  }
+  onArc({add, remove}) {
+    //log(add, remove);
+    if (add) {
+      this.addArc(add.id);
+    }
+    if (remove) {
+      this.removeArc(remove.id);
+    }
+  }
+  async addArc(key) {
+    if (this.runners[key]) {
+      warn$5(`marshalArc: already marshaled [${key}]`);
+      return;
+    }
+    this.runners[key] = true;
+    // TODO(sjmiles): we'll need a queue to handle change notifications that arrive while we are 'await'ing
+    log$6(`marshalArc [${key}]`);
+    try {
+      const host = await this.hostFactory();
+      const arc = await host.spawn({id: key});
+      const planificator = await this.createPlanificator(this.userid, key, arc);
+      this.runners[key] = {host, arc, planificator};
+    } catch (x) {
+      warn$5(`marshalArc [${key}] failed: `, x);
+      //
+    }
+  }
+  removeArc(key) {
+    const runner = this.runners[key];
+    if (runner) {
+      runner.arc && runner.arc.dispose();
+      this.runners[key] = null;
+    }
+  }
+  async createPlanificator(userid, key, arc) {
+    log$6(`createPlanificator for [${key}]`);
+    const options = {
+      //storageKeyBase: config.plannerStorage,
+      //onlyConsumer: config.plannerOnlyConsumer,
+      //debug: config.plannerDebug,
+      userid
+    };
+    const planificator = await Planificator$1.create(arc, options);
+    planificator.setSearch('*');
+    //planificator.registerSuggestionsChangedCallback(current => this._plansChanged(current, planificator.getLastActivatedPlan()));
+    planificator.registerVisibleSuggestionsChangedCallback(suggestions => this.suggestionsChanged(key, suggestions));
+    return planificator;
+  }
+  suggestionsChanged(key, suggestions) {
+    log$6(`suggestions [${key}]:`);
+    suggestions.forEach(({descriptionByModality, plan: {_name}}) => log$6(`\t\t[${_name}]: ${descriptionByModality.text}`));
+  }
+}
+
 // @license
 
-const manifest = `
-  import 'https://$artifacts/canonical.manifest'
+const contextManifest = `
+  import 'https://$particles/canonical.manifest'
+  import 'https://$particles/Profile/Sharing.recipe'
 `;
 
-class ShellPlanningInterface {
+const rootContainer = {
+  root: 'root-context',
+  toproot: 'toproot-context',
+  modal: 'modal-context'
+};
+
+class PlannerShellInterface {
   /**
    * Starts a continuous shell planning import.
    *
@@ -29499,29 +29247,55 @@ class ShellPlanningInterface {
    * @param storageKeyBase Plans will be stored in a key that begins with this prefix.
    *   If not specified use a key based on the Launcher Arc.
    */
-  static async start(assetsPath, userid, storageKeyBase, debug) {
-    if (!assetsPath || !userid) {
-      throw new Error('assetsPath, userid, and storageKeyBase required');
+  static async start(assetsPath, storage, userid, debug) {
+    if (!assetsPath || !userid || !storage) {
+      throw new Error('assetsPath, userid, and storage required');
     }
-
-    if (process.argv.includes('--explore')) {
-      console.log('Waiting for Arcs Explorer');
-      DevtoolsConnection.ensure();
-      await DevtoolsConnection.onceConnected;
-    }
-    const factory = new ArcFactory(assetsPath);
-    const context = await factory.createContext(manifest);
-    const user = new UserContext();
-    user._setProps({userid, context});
-    const planner = new UserPlanner(factory, context, userid, storageKeyBase, debug);
+    //initDevTools();
+    // create an arcs environment
+    const env = new Env(assetsPath);
+    // observe user's arc list
+    const userArcs = new UserArcs(env, storage, userid);
+    // base context (particles & recipes) from static manifest
+    const context = await env.parse(contextManifest);
+    // userContext continually updates context based on user's arcs
+    const userContext = new UserContext();
+    // wait for context to spin up
+    await userContext.init(storage, userid, context);
+    // subscribe context to changes in user arcs
+    userArcs.subscribe(change => userContext.onArc(change));
+    // wait for context to bloom before planning
+    let userPlanner;
+    setTimeout(() => {
+      // visualize context
+      visualizeContext(context);
+      // define a host factory
+      const hostFactory = () => {
+        const composer = new RamSlotComposer({rootContainer});
+        const host = new ArcHost(env, context, storage, composer);
+        return host;
+      };
+      // instantiate planner
+      userPlanner = new UserPlanner(userid, hostFactory);
+      // subscribe planner to changes in user arcs
+      userArcs.subscribe(change => userPlanner.onArc(change));
+    }, 4000);
   }
 }
 
 // These are sample users for testing.
-ShellPlanningInterface.USER_ID_DOUG = '-LMtek9Mdy1iAc3MAkNx';
-ShellPlanningInterface.USER_ID_MARIA = '-LMtek9Nzp8f5pwiLuF6';
-ShellPlanningInterface.USER_ID_CLETUS = '-LMtek9LSN6eSMg97nXV';
-ShellPlanningInterface.USER_ID_BERNI = '-LMtek9Mdy1iAc3MAkNw';
+PlannerShellInterface.DEFAULT_USER_ID = Const.defaultUserId;
+PlannerShellInterface.DEFAULT_STORAGE = Const.defaultStorageKey;
+PlannerShellInterface.DEFAULT_MANIFEST = Const.defaultManifest;
 
-export { Runtime, KeyManager, ShellPlanningInterface };
+const visualizeContext = context => {
+  console.log('== context ===========================');
+  console.log('recipes:');
+  console.log(context.allRecipes.map(recipe => recipe._name));
+  console.log('stores:');
+  console.log(context.allStores.map(store => store.name));
+  console.log('======================================');
+};
+
+export { Runtime, KeyManager, PlannerShellInterface };
 //# sourceMappingURL=index.es.js.map
