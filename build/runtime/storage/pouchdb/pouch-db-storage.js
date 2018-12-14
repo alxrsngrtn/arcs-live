@@ -145,6 +145,15 @@ export class PouchDbStorage extends StorageBase {
             });
         }
     }
+    static async dumpDB() {
+        for (const db of PouchDbStorage.dbLocationToInstance.values()) {
+            await db
+                .allDocs({ include_docs: true })
+                .then(allDocs => {
+                console.log(allDocs);
+            });
+        }
+    }
     /**
      * Returns a database for the specific dbLocation/dbName of PouchDbKey and caches it.
      * @param key the PouchDbKey used to obtain the cache key.

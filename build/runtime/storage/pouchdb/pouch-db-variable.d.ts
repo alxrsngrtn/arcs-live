@@ -62,9 +62,7 @@ export declare class PouchDbVariable extends PouchDbStorageProvider {
      * @param originatorId TBD
      * @param barrier TBD
      */
-    set(value: {
-        id: string;
-    }, originatorId?: any, barrier?: any): Promise<void>;
+    set(value: {}, originatorId?: any, barrier?: any): Promise<void>;
     /**
      * Clear a variable from storage.
      * @param originatorId TBD

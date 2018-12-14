@@ -1,5 +1,10 @@
-commit 559dd7b597bdabff046d1d56dd116349a9eea4b1
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Dec 14 08:52:52 2018 -0800
+commit 5575f2df24d834ead3d0eb0fdbccfae533502140
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Fri Dec 14 11:52:31 2018 -0800
 
-    properly deserialize empty relevance (#2469)
+    Migrate pouchdb tests from manual and to typescript (#2470)
+    
+    - uses in-memory storage adapter so safe to include in unit tests
+    - adjust variable/collection APIs
+    - port over addRemoveMulti tests from volatile
+    - add a mechanism to dump the entire databases

@@ -16611,7 +16611,7 @@ class PouchDbVariable extends PouchDbStorageProvider {
             // Store the indirect pointer to the storageKey
             // Do this *after* the write to backing store, otherwise null responses could occur
             await this.getStoredAndUpdate(stored => {
-                return { id: value.id, storageKey };
+                return { id: value['id'], storageKey };
             });
         }
         else {
@@ -16921,6 +16921,15 @@ class PouchDbStorage extends StorageBase {
             })
                 .then(deleteDocs => {
                 return db.bulkDocs(deleteDocs);
+            });
+        }
+    }
+    static async dumpDB() {
+        for (const db of PouchDbStorage.dbLocationToInstance.values()) {
+            await db
+                .allDocs({ include_docs: true })
+                .then(allDocs => {
+                console.log(allDocs);
             });
         }
     }

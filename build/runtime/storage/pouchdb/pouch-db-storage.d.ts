@@ -41,6 +41,7 @@ export declare class PouchDbStorage extends StorageBase {
     newProvider(type: Type, name: any, id: any, key: any): PouchDbStorageProvider;
     /** Removes everything that a test could have created. */
     static resetPouchDbStorageForTesting(): Promise<void>;
+    static dumpDB(): Promise<void>;
     /**
      * Returns a database for the specific dbLocation/dbName of PouchDbKey and caches it.
      * @param key the PouchDbKey used to obtain the cache key.

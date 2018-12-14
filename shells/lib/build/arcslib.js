@@ -45967,6 +45967,15 @@ class PouchDbStorage extends _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_
             });
         }
     }
+    static async dumpDB() {
+        for (const db of PouchDbStorage.dbLocationToInstance.values()) {
+            await db
+                .allDocs({ include_docs: true })
+                .then(allDocs => {
+                console.log(allDocs);
+            });
+        }
+    }
     /**
      * Returns a database for the specific dbLocation/dbName of PouchDbKey and caches it.
      * @param key the PouchDbKey used to obtain the cache key.
@@ -46757,7 +46766,7 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
             // Store the indirect pointer to the storageKey
             // Do this *after* the write to backing store, otherwise null responses could occur
             await this.getStoredAndUpdate(stored => {
-                return { id: value.id, storageKey };
+                return { id: value['id'], storageKey };
             });
         }
         else {

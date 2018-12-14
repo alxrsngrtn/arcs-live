@@ -133,7 +133,7 @@ export class PouchDbVariable extends PouchDbStorageProvider {
             // Store the indirect pointer to the storageKey
             // Do this *after* the write to backing store, otherwise null responses could occur
             await this.getStoredAndUpdate(stored => {
-                return { id: value.id, storageKey };
+                return { id: value['id'], storageKey };
             });
         }
         else {
