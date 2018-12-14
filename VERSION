@@ -1,9 +1,5 @@
-commit 28cc892c06fa281c7fe62d9c0372001877b95a71
+commit 259eea499c8b66fe63cbea7310878c16d0c317f7
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Dec 14 12:35:19 2018 -0800
+Date:   Fri Dec 14 12:34:46 2018 -0800
 
-    add README for planning (#2464)
-    
-    * add README for planning
-    
-    * consistent plannerOnlyConsumer url param and link to server/readme
+    add `id` to Chooser data model (#2472)
