@@ -1,5 +1,11 @@
-commit b8a52f4c978cbb7db2b9970442be5900dba1410a
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Dec 13 16:05:01 2018 -0800
+commit 0402febadb5b25b111d7c0af1428824b02ed10e5
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Dec 13 19:15:15 2018 -0800
 
-    plannerDebug and plannerOnlyConsumer are boolean (#2462)
+    Modality validation (#2463)
+    
+    * Verify particles modality in recipe.isResolved
+    
+    * Verify arc's modality compatibility with the instantiated recipe
+    
+    * test arc modality compatibility

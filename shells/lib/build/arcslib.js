@@ -590,6 +590,7 @@ ${this.activeRecipe.toString()}`;
     }
     async instantiate(recipe, innerArc = undefined) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({ showUnresolved: true })}`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe.isCompatibleWithModality(this.modality), `Cannot instantiate recipe ${recipe.toString()} with [${recipe.getSupportedModalities()}] modalities in '${this.modality}' arc`);
         let currentArc = { activeRecipe: this._activeRecipe, recipes: this._recipes };
         if (innerArc) {
             const innerArcs = this._recipes.find(r => !!r.particles.find(p => p === innerArc.particle)).innerArcs;
@@ -2853,7 +2854,7 @@ class ParticleSpec {
             connectionSpec.pattern = model.description[connectionSpec.name];
         });
         this.implFile = model.implFile;
-        this.modality = model.modality;
+        this.modality = model.modality || [];
         this.slots = new Map();
         if (model.slots) {
             model.slots.forEach(s => this.slots.set(s.name, new SlotSpec(s)));
@@ -16803,10 +16804,31 @@ class Recipe {
             && (this._search === null || this._search.isResolved())
             && this._handles.every(handle => handle.isResolved())
             && this._particles.every(particle => particle.isResolved())
+            && this.isModalityResolved()
             && this._slots.every(slot => slot.isResolved())
             && this.handleConnections.every(connection => connection.isResolved())
             && this.slotConnections.every(slotConnection => slotConnection.isResolved());
         // TODO: check recipe level resolution requirements, eg there is no slot loops.
+    }
+    get uiParticles() {
+        return this.particles.filter(p => Object.keys(p.consumedSlotConnections).length > 0);
+    }
+    getSupportedModalities() {
+        const uiParticles = this.uiParticles;
+        return (uiParticles.length === 0 ? [] : uiParticles[0].spec.modality).filter(modality => uiParticles.every(particle => particle.spec.modality.indexOf(modality) >= 0));
+    }
+    isModalityResolved() {
+        // Either no particles with consumed slots, or non-empty intersection of modalities.
+        return this.uiParticles.length === 0 || this.getSupportedModalities().length > 0;
+    }
+    isCompatibleWithModality(modality) {
+        if (!modality) { // modality is unknown.
+            return true;
+        }
+        if (this.uiParticles.length === 0) {
+            return true;
+        }
+        return this.getSupportedModalities().indexOf(modality) >= 0;
     }
     _findDuplicate(items, options) {
         const seenHandles = new Set();

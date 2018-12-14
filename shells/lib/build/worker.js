@@ -636,7 +636,7 @@ class ParticleSpec {
             connectionSpec.pattern = model.description[connectionSpec.name];
         });
         this.implFile = model.implFile;
-        this.modality = model.modality;
+        this.modality = model.modality || [];
         this.slots = new Map();
         if (model.slots) {
             model.slots.forEach(s => this.slots.set(s.name, new SlotSpec(s)));
