@@ -1,10 +1,9 @@
-commit 5575f2df24d834ead3d0eb0fdbccfae533502140
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Fri Dec 14 11:52:31 2018 -0800
+commit 28cc892c06fa281c7fe62d9c0372001877b95a71
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Dec 14 12:35:19 2018 -0800
 
-    Migrate pouchdb tests from manual and to typescript (#2470)
+    add README for planning (#2464)
     
-    - uses in-memory storage adapter so safe to include in unit tests
-    - adjust variable/collection APIs
-    - port over addRemoveMulti tests from volatile
-    - add a mechanism to dump the entire databases
+    * add README for planning
+    
+    * consistent plannerOnlyConsumer url param and link to server/readme
