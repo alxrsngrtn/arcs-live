@@ -1,9 +1,5 @@
-commit c9f1f5f0085af12a952004e72b08ec54a5b62ae1
-Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
-Date:   Fri Dec 14 10:41:33 2018 +1100
+commit b8a52f4c978cbb7db2b9970442be5900dba1410a
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Dec 13 16:05:01 2018 -0800
 
-    Move recipe logic from strategies to Recipe class pt.3 (#2457)
-    
-    * move recipe logic from three more strategies to Recipe class
-    
-    * changed names
+    plannerDebug and plannerOnlyConsumer are boolean (#2462)
