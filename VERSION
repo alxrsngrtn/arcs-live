@@ -1,11 +1,5 @@
-commit 0402febadb5b25b111d7c0af1428824b02ed10e5
+commit 559dd7b597bdabff046d1d56dd116349a9eea4b1
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Dec 13 19:15:15 2018 -0800
+Date:   Fri Dec 14 08:52:52 2018 -0800
 
-    Modality validation (#2463)
-    
-    * Verify particles modality in recipe.isResolved
-    
-    * Verify arc's modality compatibility with the instantiated recipe
-    
-    * test arc modality compatibility
+    properly deserialize empty relevance (#2469)

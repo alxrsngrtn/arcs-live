@@ -7,8 +7,8 @@ export declare class Relevance {
     private constructor();
     static create(arc: Arc, recipe: Recipe): Relevance;
     static deserialize({ versionByStore, relevanceMap }: {
-        versionByStore: any;
-        relevanceMap: any;
+        versionByStore?: string;
+        relevanceMap?: {};
     }, recipe: Recipe): Relevance;
     serialize(): {};
     apply(relevance: Map<Particle, number[]>): void;

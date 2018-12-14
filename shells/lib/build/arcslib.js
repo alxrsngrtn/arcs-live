@@ -82658,7 +82658,7 @@ class Relevance {
         });
         return relevance;
     }
-    static deserialize({ versionByStore, relevanceMap }, recipe) {
+    static deserialize({ versionByStore = '{}', relevanceMap = {} }, recipe) {
         const relevance = new Relevance();
         Object.assign(relevance.versionByStore, JSON.parse(versionByStore));
         Object.keys(relevanceMap).forEach(particleName => {
@@ -82857,7 +82857,7 @@ class Suggestion {
     static async deserialize({ plan, hash, relevance, searchGroups, descriptionByModality }, arc, recipeResolver) {
         const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
         if (deserializedPlan) {
-            const suggestion = new Suggestion(deserializedPlan, hash, _relevance_js__WEBPACK_IMPORTED_MODULE_3__["Relevance"].deserialize(relevance, deserializedPlan), arc);
+            const suggestion = new Suggestion(deserializedPlan, hash, _relevance_js__WEBPACK_IMPORTED_MODULE_3__["Relevance"].deserialize(relevance || {}, deserializedPlan), arc);
             suggestion.searchGroups = searchGroups || [];
             suggestion.descriptionByModality = descriptionByModality;
             return suggestion;

@@ -24,7 +24,7 @@ export class Relevance {
         });
         return relevance;
     }
-    static deserialize({ versionByStore, relevanceMap }, recipe) {
+    static deserialize({ versionByStore = '{}', relevanceMap = {} }, recipe) {
         const relevance = new Relevance();
         Object.assign(relevance.versionByStore, JSON.parse(versionByStore));
         Object.keys(relevanceMap).forEach(particleName => {
