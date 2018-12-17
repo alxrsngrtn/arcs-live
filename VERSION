@@ -1,11 +1,5 @@
-commit c56470fe9573e983b73a97cfeaee35a75ced9242
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Mon Dec 17 09:54:10 2018 -0800
+commit 1faccc7b574d6eb1640680b1e6998539f94e151d
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Dec 18 08:24:46 2018 +1100
 
-    Port Words to v6 (#2474)
-    
-    * port Words to v6
-    
-    * remove accidental file
-    
-    * temporarily remove test corpus
+    Proposal: Enable web planner debug unless explicitly disabled (#2476)
