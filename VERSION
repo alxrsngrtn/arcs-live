@@ -1,5 +1,5 @@
-commit 259eea499c8b66fe63cbea7310878c16d0c317f7
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Dec 14 12:34:46 2018 -0800
+commit a903c25c721f97fe499c5329bd303e2e7e1b2932
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Dec 17 16:49:53 2018 +1100
 
-    add `id` to Chooser data model (#2472)
+    Reorder method execution and devtools logging in API Channel (#2475)
