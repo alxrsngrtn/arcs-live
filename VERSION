@@ -1,5 +1,11 @@
-commit d868929fcb3210e75d2b0ae486d04c57d575e40e
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Dec 17 09:37:22 2018 -0800
+commit c56470fe9573e983b73a97cfeaee35a75ced9242
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Mon Dec 17 09:54:10 2018 -0800
 
-    remove planificator special handling of the launcher arc (#2465)
+    Port Words to v6 (#2474)
+    
+    * port Words to v6
+    
+    * remove accidental file
+    
+    * temporarily remove test corpus
