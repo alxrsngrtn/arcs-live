@@ -53,5 +53,4 @@ export declare class Planificator {
     private static _initSearchStore;
     private static _initStore;
     _storeSearch(): Promise<void>;
-    isArcPopulated(): boolean;
 }

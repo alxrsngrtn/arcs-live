@@ -1,9 +1,5 @@
-commit b44d9824a246a4d959a92c4dd55180e5164efd93
+commit d868929fcb3210e75d2b0ae486d04c57d575e40e
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Dec 17 09:15:36 2018 -0800
+Date:   Mon Dec 17 09:37:22 2018 -0800
 
-    rename mock- modalities and use real object in composers (#2468)
-    
-    * rename mock- modalities and use real object in composers
-    
-    * clean up TestHelper manifest parsing
+    remove planificator special handling of the launcher arc (#2465)
