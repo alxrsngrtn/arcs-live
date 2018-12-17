@@ -273,7 +273,7 @@ class Arc {
         return this._description;
     }
     get modality() {
-        return this.pec.slotComposer && this.pec.slotComposer.modality;
+        return this.pec.slotComposer && this.pec.slotComposer.modality.name;
     }
     registerInstantiatePlanCallback(callback) {
         this.instantiatePlanCallbacks.push(callback);
@@ -82952,7 +82952,7 @@ class Modality {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!Modality._modalities[name], `Modality '${name}' already exists`);
         Modality._modalities[name] = new Modality(name, slotConsumerClass, suggestionConsumerClass, descriptionFormatter);
         Modality._modalities[`mock-${name}`] =
-            new Modality(`mock-${name}`, _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__["MockSlotDomConsumer"], _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__["MockSuggestDomConsumer"]);
+            new Modality(name, _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__["MockSlotDomConsumer"], _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__["MockSuggestDomConsumer"]);
     }
     static init() {
         Object.keys(Modality._modalities).forEach(key => delete Modality._modalities[key]);
@@ -85107,37 +85107,26 @@ const walker = (node, tree) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestionComposer", function() { return SuggestionComposer; });
-/* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(229);
-/* harmony import */ var _plan_suggestion_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(228);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
+/* harmony import */ var _plan_suggestion_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(228);
 
 class SuggestionComposer {
     constructor(slotComposer) {
         this._suggestions = [];
         this._suggestConsumers = [];
-        this._modality = _modality_js__WEBPACK_IMPORTED_MODULE_0__["Modality"].forName(slotComposer.modality);
         this._container = slotComposer.findContainerByName('suggestions');
         this._slotComposer = slotComposer;
     }
+    get modality() { return this._slotComposer.modality; }
     clear() {
         if (this._container) {
-            this._modality.slotConsumerClass.clear(this._container);
+            this.modality.slotConsumerClass.clear(this._container);
         }
         this._suggestConsumers.forEach(consumer => consumer.dispose());
         this._suggestConsumers = [];
     }
     setSuggestions(suggestions) {
         this.clear();
-        const sortedSuggestions = suggestions.sort(_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_1__["Suggestion"].compare);
+        const sortedSuggestions = suggestions.sort(_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_0__["Suggestion"].compare);
         for (const suggestion of sortedSuggestions) {
             // TODO(mmandlis): use modality-appropriate description.
             const suggestionContent = { template: suggestion.descriptionText };
@@ -85145,7 +85134,7 @@ class SuggestionComposer {
                 throw new Error('No suggestion content available');
             }
             if (this._container) {
-                this._modality.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
+                this.modality.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
             }
             this._addInlineSuggestion(suggestion, suggestionContent);
         }
@@ -85177,7 +85166,7 @@ class SuggestionComposer {
             // the suggestion doesn't use any of the handles that the context is restricted to.
             return;
         }
-        const suggestConsumer = new this._modality.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
+        const suggestConsumer = new this.modality.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
             const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
             suggestConsumer.dispose();
             if (suggestion) {
@@ -85786,7 +85775,7 @@ class SlotComposer {
             this._contexts.push(_slot_context_js__WEBPACK_IMPORTED_MODULE_2__["SlotContext"].createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
         });
     }
-    get modality() { return this._modality.name; }
+    get modality() { return this._modality; }
     get consumers() { return this._consumers; }
     get containerKind() { return this._containerKind; }
     getSlotConsumer(particle, slotName) {

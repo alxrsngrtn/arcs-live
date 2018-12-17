@@ -61,7 +61,7 @@ export class Arc {
         return this._description;
     }
     get modality() {
-        return this.pec.slotComposer && this.pec.slotComposer.modality;
+        return this.pec.slotComposer && this.pec.slotComposer.modality.name;
     }
     registerInstantiatePlanCallback(callback) {
         this.instantiatePlanCallbacks.push(callback);

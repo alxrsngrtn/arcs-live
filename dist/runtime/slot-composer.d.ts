@@ -7,6 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Modality } from './modality.js';
 import { Arc } from './arc.js';
 import { SlotContext } from './slot-context.js';
 import { SlotConsumer } from './slot-consumer.js';
@@ -26,7 +27,7 @@ export declare class SlotComposer {
      * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
      */
     constructor(options: any);
-    readonly modality: string;
+    readonly modality: Modality;
     readonly consumers: SlotConsumer[];
     readonly containerKind: string;
     getSlotConsumer(particle: Particle, slotName: string): SlotConsumer;

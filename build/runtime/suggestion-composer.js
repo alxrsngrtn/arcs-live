@@ -1,25 +1,15 @@
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-import { Modality } from './modality.js';
 import { Suggestion } from './plan/suggestion.js';
 export class SuggestionComposer {
     constructor(slotComposer) {
         this._suggestions = [];
         this._suggestConsumers = [];
-        this._modality = Modality.forName(slotComposer.modality);
         this._container = slotComposer.findContainerByName('suggestions');
         this._slotComposer = slotComposer;
     }
+    get modality() { return this._slotComposer.modality; }
     clear() {
         if (this._container) {
-            this._modality.slotConsumerClass.clear(this._container);
+            this.modality.slotConsumerClass.clear(this._container);
         }
         this._suggestConsumers.forEach(consumer => consumer.dispose());
         this._suggestConsumers = [];
@@ -34,7 +24,7 @@ export class SuggestionComposer {
                 throw new Error('No suggestion content available');
             }
             if (this._container) {
-                this._modality.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
+                this.modality.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
             }
             this._addInlineSuggestion(suggestion, suggestionContent);
         }
@@ -66,7 +56,7 @@ export class SuggestionComposer {
             // the suggestion doesn't use any of the handles that the context is restricted to.
             return;
         }
-        const suggestConsumer = new this._modality.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
+        const suggestConsumer = new this.modality.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
             const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
             suggestConsumer.dispose();
             if (suggestion) {

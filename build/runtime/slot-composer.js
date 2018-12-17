@@ -43,7 +43,7 @@ export class SlotComposer {
             this._contexts.push(SlotContext.createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
         });
     }
-    get modality() { return this._modality.name; }
+    get modality() { return this._modality; }
     get consumers() { return this._consumers; }
     get containerKind() { return this._containerKind; }
     getSlotConsumer(particle, slotName) {

@@ -25627,7 +25627,7 @@ class Modality {
         assert$1(!Modality._modalities[name], `Modality '${name}' already exists`);
         Modality._modalities[name] = new Modality(name, slotConsumerClass, suggestionConsumerClass, descriptionFormatter);
         Modality._modalities[`mock-${name}`] =
-            new Modality(`mock-${name}`, MockSlotDomConsumer, MockSuggestDomConsumer);
+            new Modality(name, MockSlotDomConsumer, MockSuggestDomConsumer);
     }
     static init() {
         Object.keys(Modality._modalities).forEach(key => delete Modality._modalities[key]);
@@ -26217,7 +26217,7 @@ class Arc {
         return this._description;
     }
     get modality() {
-        return this.pec.slotComposer && this.pec.slotComposer.modality;
+        return this.pec.slotComposer && this.pec.slotComposer.modality.name;
     }
     registerInstantiatePlanCallback(callback) {
         this.instantiatePlanCallbacks.push(callback);
@@ -26978,26 +26978,17 @@ class PlanningResult {
     }
 }
 
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 class SuggestionComposer {
     constructor(slotComposer) {
         this._suggestions = [];
         this._suggestConsumers = [];
-        this._modality = Modality.forName(slotComposer.modality);
         this._container = slotComposer.findContainerByName('suggestions');
         this._slotComposer = slotComposer;
     }
+    get modality() { return this._slotComposer.modality; }
     clear() {
         if (this._container) {
-            this._modality.slotConsumerClass.clear(this._container);
+            this.modality.slotConsumerClass.clear(this._container);
         }
         this._suggestConsumers.forEach(consumer => consumer.dispose());
         this._suggestConsumers = [];
@@ -27012,7 +27003,7 @@ class SuggestionComposer {
                 throw new Error('No suggestion content available');
             }
             if (this._container) {
-                this._modality.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
+                this.modality.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
             }
             this._addInlineSuggestion(suggestion, suggestionContent);
         }
@@ -27044,7 +27035,7 @@ class SuggestionComposer {
             // the suggestion doesn't use any of the handles that the context is restricted to.
             return;
         }
-        const suggestConsumer = new this._modality.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
+        const suggestConsumer = new this.modality.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
             const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
             suggestConsumer.dispose();
             if (suggestion) {
@@ -27297,7 +27288,7 @@ class SlotComposer {
             this._contexts.push(SlotContext.createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
         });
     }
-    get modality() { return this._modality.name; }
+    get modality() { return this._modality; }
     get consumers() { return this._consumers; }
     get containerKind() { return this._containerKind; }
     getSlotConsumer(particle, slotName) {
