@@ -4428,16 +4428,15 @@ __webpack_require__.r(__webpack_exports__);
 
 class OuterPortAttachment {
     constructor(arc, devtoolsChannel) {
-        this._devtoolsChannel = devtoolsChannel;
-        this._arcIdString = arc.id.toString();
-        this._speculative = arc.isSpeculative;
+        this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
+        this.speculative = arc.isSpeculative;
     }
     handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
-        // Skip speculative and pipes arcs for now.
-        if (this._arcIdString.endsWith('-pipes') || this._speculative)
+        // Skip speculative arcs for now.
+        if (this.speculative)
             return;
         const stack = this._extractStackFrames(stackString);
-        this._devtoolsChannel.send({
+        this.arcDevtoolsChannel.send({
             messageType: 'PecLog',
             messageBody: { name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack },
         });
@@ -6995,6 +6994,7 @@ class DevtoolsChannel extends _runtime_debug_abstract_devtools_channel_js__WEBPA
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AbstractDevtoolsChannel", function() { return AbstractDevtoolsChannel; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcDevtoolsChannel", function() { return ArcDevtoolsChannel; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /**
  * @license
@@ -7033,6 +7033,9 @@ class AbstractDevtoolsChannel {
             this.messageListeners.set(key, listeners = []);
         listeners.push(callback);
     }
+    forArc(arc) {
+        return new ArcDevtoolsChannel(arc, this);
+    }
     _handleMessage(msg) {
         const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
         if (!listeners) {
@@ -7045,6 +7048,18 @@ class AbstractDevtoolsChannel {
     }
     _flush(messages) {
         throw new Error('Not implemented in an abstract class');
+    }
+}
+class ArcDevtoolsChannel {
+    constructor(arc, channel) {
+        this.channel = channel;
+        this.arcId = arc.id.toString();
+    }
+    send(message) {
+        this.channel.send(Object.assign({ meta: { arcId: this.arcId } }, message));
+    }
+    listen(messageType, callback) {
+        this.channel.listen(this.arcId, messageType, callback);
     }
 }
 //# sourceMappingURL=abstract-devtools-channel.js.map
@@ -7078,6 +7093,9 @@ class DevtoolsChannelStub {
     listen(arcOrId, messageType, callback) { }
     clear() {
         this._messages.length = 0;
+    }
+    forArc(arc) {
+        return this;
     }
 }
 //# sourceMappingURL=devtools-channel-stub.js.map
@@ -80495,39 +80513,31 @@ _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].onceC
 });
 class ArcDebugHandler {
     constructor(arc) {
-        this._devtoolsChannel = null;
-        this._arcId = arc.id.toString();
-        this._isSpeculative = arc.isSpeculative;
+        this.arcDevtoolsChannel = null;
+        // Currently no support for speculative arcs.
+        if (arc.isSpeculative)
+            return;
         _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => {
-            this._devtoolsChannel = devtoolsChannel;
-            if (!arc.isSpeculative) {
-                // Message handles go here.
-                const arcPlannerInvoker = new _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__["ArcPlannerInvoker"](arc, devtoolsChannel);
-                const arcStoresFetcher = new _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__["ArcStoresFetcher"](arc, devtoolsChannel);
-            }
-            this._devtoolsChannel.send({
-                messageType: 'arc-available',
-                messageBody: {
-                    id: arc.id.toString(),
-                    isSpeculative: arc.isSpeculative
-                }
-            });
+            this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
+            // Message handles go here.
+            const arcPlannerInvoker = new _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__["ArcPlannerInvoker"](arc, this.arcDevtoolsChannel);
+            const arcStoresFetcher = new _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__["ArcStoresFetcher"](arc, this.arcDevtoolsChannel);
+            this.arcDevtoolsChannel.send({ messageType: 'arc-available' });
         });
     }
     recipeInstantiated({ particles }) {
-        if (!this._devtoolsChannel || this._isSpeculative)
+        if (!this.arcDevtoolsChannel)
             return;
         const truncate = ({ id, name }) => ({ id, name });
         const slotConnections = [];
         particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
             slotConnections.push({
-                arcId: this._arcId,
                 particleId: cs.particle.id,
                 consumed: truncate(cs.targetSlot),
                 provided: Object.values(cs.providedSlots).map(slot => truncate(slot)),
             });
         }));
-        this._devtoolsChannel.send({
+        this.arcDevtoolsChannel.send({
             messageType: 'recipe-instantiated',
             messageBody: { slotConnections }
         });
@@ -80596,15 +80606,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class ArcPlannerInvoker {
-    constructor(arc, devtoolsChannel) {
+    constructor(arc, arcDevtoolsChannel) {
         this.arc = arc;
         this.planner = new _planner_js__WEBPACK_IMPORTED_MODULE_0__["Planner"]();
         this.planner.init(arc);
-        devtoolsChannel.listen(arc, 'fetch-strategies', () => devtoolsChannel.send({
+        arcDevtoolsChannel.listen('fetch-strategies', () => arcDevtoolsChannel.send({
             messageType: 'fetch-strategies-result',
             messageBody: this.planner.strategizer._strategies.map(a => a.constructor.name)
         }));
-        devtoolsChannel.listen(arc, 'invoke-planner', async (msg) => devtoolsChannel.send({
+        arcDevtoolsChannel.listen('invoke-planner', async (msg) => arcDevtoolsChannel.send({
             messageType: 'invoke-planner-result',
             messageBody: await this.invokePlanner(msg.messageBody)
         }));
@@ -84415,9 +84425,9 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 class ArcStoresFetcher {
-    constructor(arc, devtoolsChannel) {
-        this._arc = arc;
-        devtoolsChannel.listen(arc, 'fetch-stores', async () => devtoolsChannel.send({
+    constructor(arc, arcDevtoolsChannel) {
+        this.arc = arc;
+        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
             messageType: 'fetch-stores-result',
             messageBody: await this._listStores()
         }));
@@ -84431,8 +84441,8 @@ class ArcStoresFetcher {
             return tags;
         };
         return {
-            arcStores: await this._digestStores(this._arc.storeTags),
-            contextStores: await this._digestStores(find(this._arc.context))
+            arcStores: await this._digestStores(this.arc.storeTags),
+            contextStores: await this._digestStores(find(this.arc.context))
         };
     }
     async _digestStores(stores) {
@@ -84677,7 +84687,7 @@ class PlanConsumer {
         this._onSuggestionsChanged();
         this._onMaybeSuggestionsChanged();
         if (this.result.generations.length && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected) {
-            _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get());
+            _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get().forArc(this.arc));
         }
     }
     getCurrentSuggestions() {
@@ -85474,19 +85484,19 @@ const IndexStrategies = [
     _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__["CreateHandleGroup"]
 ];
 class RecipeIndex {
-    constructor(context, loader, modality) {
+    constructor(arc) {
         this._isReady = false;
         const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__["Tracing"].start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
         const arcStub = new _arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"]({
             id: 'index-stub',
             context: new _manifest_js__WEBPACK_IMPORTED_MODULE_0__["Manifest"]({ id: 'empty-context' }),
-            loader,
-            slotComposer: modality ? new _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"]({ modality, noRoot: true }) : null,
+            loader: arc.loader,
+            slotComposer: arc.modality ? new _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"]({ modality: arc.modality, noRoot: true }) : null,
             // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
             speculative: true
         });
         const strategizer = new _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"]([
-            new RelevantContextRecipes(context, modality),
+            new RelevantContextRecipes(arc.context, arc.modality),
             ...IndexStrategies.map(S => new S(arcStub, { recipeIndex: this }))
         ], [], _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__["Empty"]);
         this.ready = trace.endWith(new Promise(async (resolve) => {
@@ -85496,7 +85506,7 @@ class RecipeIndex {
                 generations.push({ record, generated: strategizer.generated });
             } while (strategizer.generated.length + strategizer.terminal.length > 0);
             if (_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].isConnected) {
-                _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(_plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__["PlanningResult"].formatSerializableGenerations(generations), _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].get(), { label: 'Index', keep: true });
+                _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(_plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__["PlanningResult"].formatSerializableGenerations(generations), _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].get().forArc(arc), { label: 'Index', keep: true });
             }
             const population = strategizer.population;
             const candidates = new Set(population);
@@ -85512,7 +85522,7 @@ class RecipeIndex {
         }));
     }
     static create(arc) {
-        return new RecipeIndex(arc.context, arc.loader, arc.modality);
+        return new RecipeIndex(arc);
     }
     get recipes() {
         if (!this._isReady)

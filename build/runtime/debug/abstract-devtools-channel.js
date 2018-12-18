@@ -35,6 +35,9 @@ export class AbstractDevtoolsChannel {
             this.messageListeners.set(key, listeners = []);
         listeners.push(callback);
     }
+    forArc(arc) {
+        return new ArcDevtoolsChannel(arc, this);
+    }
     _handleMessage(msg) {
         const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
         if (!listeners) {
@@ -47,6 +50,18 @@ export class AbstractDevtoolsChannel {
     }
     _flush(messages) {
         throw new Error('Not implemented in an abstract class');
+    }
+}
+export class ArcDevtoolsChannel {
+    constructor(arc, channel) {
+        this.channel = channel;
+        this.arcId = arc.id.toString();
+    }
+    send(message) {
+        this.channel.send(Object.assign({ meta: { arcId: this.arcId } }, message));
+    }
+    listen(messageType, callback) {
+        this.channel.listen(this.arcId, messageType, callback);
     }
 }
 //# sourceMappingURL=abstract-devtools-channel.js.map

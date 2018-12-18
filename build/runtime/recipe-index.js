@@ -68,19 +68,19 @@ const IndexStrategies = [
     CreateHandleGroup
 ];
 export class RecipeIndex {
-    constructor(context, loader, modality) {
+    constructor(arc) {
         this._isReady = false;
         const trace = Tracing.start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
         const arcStub = new Arc({
             id: 'index-stub',
             context: new Manifest({ id: 'empty-context' }),
-            loader,
-            slotComposer: modality ? new SlotComposer({ modality, noRoot: true }) : null,
+            loader: arc.loader,
+            slotComposer: arc.modality ? new SlotComposer({ modality: arc.modality, noRoot: true }) : null,
             // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
             speculative: true
         });
         const strategizer = new Strategizer([
-            new RelevantContextRecipes(context, modality),
+            new RelevantContextRecipes(arc.context, arc.modality),
             ...IndexStrategies.map(S => new S(arcStub, { recipeIndex: this }))
         ], [], Rulesets.Empty);
         this.ready = trace.endWith(new Promise(async (resolve) => {
@@ -90,7 +90,7 @@ export class RecipeIndex {
                 generations.push({ record, generated: strategizer.generated });
             } while (strategizer.generated.length + strategizer.terminal.length > 0);
             if (DevtoolsConnection.isConnected) {
-                StrategyExplorerAdapter.processGenerations(PlanningResult.formatSerializableGenerations(generations), DevtoolsConnection.get(), { label: 'Index', keep: true });
+                StrategyExplorerAdapter.processGenerations(PlanningResult.formatSerializableGenerations(generations), DevtoolsConnection.get().forArc(arc), { label: 'Index', keep: true });
             }
             const population = strategizer.population;
             const candidates = new Set(population);
@@ -106,7 +106,7 @@ export class RecipeIndex {
         }));
     }
     static create(arc) {
-        return new RecipeIndex(arc.context, arc.loader, arc.modality);
+        return new RecipeIndex(arc);
     }
     get recipes() {
         if (!this._isReady)

@@ -2309,16 +2309,15 @@ __webpack_require__.r(__webpack_exports__);
 
 class OuterPortAttachment {
     constructor(arc, devtoolsChannel) {
-        this._devtoolsChannel = devtoolsChannel;
-        this._arcIdString = arc.id.toString();
-        this._speculative = arc.isSpeculative;
+        this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
+        this.speculative = arc.isSpeculative;
     }
     handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
-        // Skip speculative and pipes arcs for now.
-        if (this._arcIdString.endsWith('-pipes') || this._speculative)
+        // Skip speculative arcs for now.
+        if (this.speculative)
             return;
         const stack = this._extractStackFrames(stackString);
-        this._devtoolsChannel.send({
+        this.arcDevtoolsChannel.send({
             messageType: 'PecLog',
             messageBody: { name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack },
         });
@@ -7415,6 +7414,7 @@ function assert(test, message) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AbstractDevtoolsChannel", function() { return AbstractDevtoolsChannel; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcDevtoolsChannel", function() { return ArcDevtoolsChannel; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /**
  * @license
@@ -7453,6 +7453,9 @@ class AbstractDevtoolsChannel {
             this.messageListeners.set(key, listeners = []);
         listeners.push(callback);
     }
+    forArc(arc) {
+        return new ArcDevtoolsChannel(arc, this);
+    }
     _handleMessage(msg) {
         const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
         if (!listeners) {
@@ -7465,6 +7468,18 @@ class AbstractDevtoolsChannel {
     }
     _flush(messages) {
         throw new Error('Not implemented in an abstract class');
+    }
+}
+class ArcDevtoolsChannel {
+    constructor(arc, channel) {
+        this.channel = channel;
+        this.arcId = arc.id.toString();
+    }
+    send(message) {
+        this.channel.send(Object.assign({ meta: { arcId: this.arcId } }, message));
+    }
+    listen(messageType, callback) {
+        this.channel.listen(this.arcId, messageType, callback);
     }
 }
 //# sourceMappingURL=abstract-devtools-channel.js.map
@@ -7499,6 +7514,9 @@ class DevtoolsChannelStub {
     listen(arcOrId, messageType, callback) { }
     clear() {
         this._messages.length = 0;
+    }
+    forArc(arc) {
+        return this;
     }
 }
 //# sourceMappingURL=devtools-channel-stub.js.map

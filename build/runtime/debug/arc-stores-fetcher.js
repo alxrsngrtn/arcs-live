@@ -8,9 +8,9 @@
  * http://polymer.github.io/PATENTS.txt
  */
 export class ArcStoresFetcher {
-    constructor(arc, devtoolsChannel) {
-        this._arc = arc;
-        devtoolsChannel.listen(arc, 'fetch-stores', async () => devtoolsChannel.send({
+    constructor(arc, arcDevtoolsChannel) {
+        this.arc = arc;
+        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
             messageType: 'fetch-stores-result',
             messageBody: await this._listStores()
         }));
@@ -24,8 +24,8 @@ export class ArcStoresFetcher {
             return tags;
         };
         return {
-            arcStores: await this._digestStores(this._arc.storeTags),
-            contextStores: await this._digestStores(find(this._arc.context))
+            arcStores: await this._digestStores(this.arc.storeTags),
+            contextStores: await this._digestStores(find(this.arc.context))
         };
     }
     async _digestStores(stores) {

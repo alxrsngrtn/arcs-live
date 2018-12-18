@@ -21,5 +21,8 @@ export class DevtoolsChannelStub {
     clear() {
         this._messages.length = 0;
     }
+    forArc(arc) {
+        return this;
+    }
 }
 //# sourceMappingURL=devtools-channel-stub.js.map

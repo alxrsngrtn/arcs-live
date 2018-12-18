@@ -1,5 +1,5 @@
-commit 1faccc7b574d6eb1640680b1e6998539f94e151d
+commit 17d2c55616d18915b803e133b69f6f118bb324bb
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Dec 18 08:24:46 2018 +1100
+Date:   Tue Dec 18 14:26:03 2018 +1100
 
-    Proposal: Enable web planner debug unless explicitly disabled (#2476)
+    Ability for per-arc inspection in Arcs Explorer (#2477)

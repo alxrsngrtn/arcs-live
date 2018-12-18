@@ -7,10 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Arc } from '../arc.js';
 export declare class ArcStoresFetcher {
-    _arc: Arc;
-    constructor(arc: any, devtoolsChannel: any);
+    private arc;
+    constructor(arc: any, arcDevtoolsChannel: any);
     _listStores(): Promise<{
         arcStores: any[];
         contextStores: any[];

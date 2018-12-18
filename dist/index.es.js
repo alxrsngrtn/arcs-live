@@ -19358,16 +19358,15 @@ const mapStackTrace = () => {};
  */
 class OuterPortAttachment {
     constructor(arc, devtoolsChannel) {
-        this._devtoolsChannel = devtoolsChannel;
-        this._arcIdString = arc.id.toString();
-        this._speculative = arc.isSpeculative;
+        this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
+        this.speculative = arc.isSpeculative;
     }
     handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
-        // Skip speculative and pipes arcs for now.
-        if (this._arcIdString.endsWith('-pipes') || this._speculative)
+        // Skip speculative arcs for now.
+        if (this.speculative)
             return;
         const stack = this._extractStackFrames(stackString);
-        this._devtoolsChannel.send({
+        this.arcDevtoolsChannel.send({
             messageType: 'PecLog',
             messageBody: { name, pecMsgBody, pecMsgCount, timestamp: Date.now(), stack },
         });
@@ -19437,6 +19436,9 @@ class AbstractDevtoolsChannel {
             this.messageListeners.set(key, listeners = []);
         listeners.push(callback);
     }
+    forArc(arc) {
+        return new ArcDevtoolsChannel(arc, this);
+    }
     _handleMessage(msg) {
         const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
         if (!listeners) {
@@ -19449,6 +19451,18 @@ class AbstractDevtoolsChannel {
     }
     _flush(messages) {
         throw new Error('Not implemented in an abstract class');
+    }
+}
+class ArcDevtoolsChannel {
+    constructor(arc, channel) {
+        this.channel = channel;
+        this.arcId = arc.id.toString();
+    }
+    send(message) {
+        this.channel.send(Object.assign({ meta: { arcId: this.arcId } }, message));
+    }
+    listen(messageType, callback) {
+        this.channel.listen(this.arcId, messageType, callback);
     }
 }
 
@@ -26010,15 +26024,15 @@ Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.Resoluti
  * http://polymer.github.io/PATENTS.txt
  */
 class ArcPlannerInvoker {
-    constructor(arc, devtoolsChannel) {
+    constructor(arc, arcDevtoolsChannel) {
         this.arc = arc;
         this.planner = new Planner();
         this.planner.init(arc);
-        devtoolsChannel.listen(arc, 'fetch-strategies', () => devtoolsChannel.send({
+        arcDevtoolsChannel.listen('fetch-strategies', () => arcDevtoolsChannel.send({
             messageType: 'fetch-strategies-result',
             messageBody: this.planner.strategizer._strategies.map(a => a.constructor.name)
         }));
-        devtoolsChannel.listen(arc, 'invoke-planner', async (msg) => devtoolsChannel.send({
+        arcDevtoolsChannel.listen('invoke-planner', async (msg) => arcDevtoolsChannel.send({
             messageType: 'invoke-planner-result',
             messageBody: await this.invokePlanner(msg.messageBody)
         }));
@@ -26068,9 +26082,9 @@ class ArcPlannerInvoker {
  * http://polymer.github.io/PATENTS.txt
  */
 class ArcStoresFetcher {
-    constructor(arc, devtoolsChannel) {
-        this._arc = arc;
-        devtoolsChannel.listen(arc, 'fetch-stores', async () => devtoolsChannel.send({
+    constructor(arc, arcDevtoolsChannel) {
+        this.arc = arc;
+        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
             messageType: 'fetch-stores-result',
             messageBody: await this._listStores()
         }));
@@ -26084,8 +26098,8 @@ class ArcStoresFetcher {
             return tags;
         };
         return {
-            arcStores: await this._digestStores(this._arc.storeTags),
-            contextStores: await this._digestStores(find(this._arc.context))
+            arcStores: await this._digestStores(this.arc.storeTags),
+            contextStores: await this._digestStores(find(this.arc.context))
         };
     }
     async _digestStores(stores) {
@@ -26127,39 +26141,31 @@ DevtoolsConnection.onceConnected.then(devtoolsChannel => {
 });
 class ArcDebugHandler {
     constructor(arc) {
-        this._devtoolsChannel = null;
-        this._arcId = arc.id.toString();
-        this._isSpeculative = arc.isSpeculative;
+        this.arcDevtoolsChannel = null;
+        // Currently no support for speculative arcs.
+        if (arc.isSpeculative)
+            return;
         DevtoolsConnection.onceConnected.then(devtoolsChannel => {
-            this._devtoolsChannel = devtoolsChannel;
-            if (!arc.isSpeculative) {
-                // Message handles go here.
-                const arcPlannerInvoker = new ArcPlannerInvoker(arc, devtoolsChannel);
-                const arcStoresFetcher = new ArcStoresFetcher(arc, devtoolsChannel);
-            }
-            this._devtoolsChannel.send({
-                messageType: 'arc-available',
-                messageBody: {
-                    id: arc.id.toString(),
-                    isSpeculative: arc.isSpeculative
-                }
-            });
+            this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
+            // Message handles go here.
+            const arcPlannerInvoker = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
+            const arcStoresFetcher = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
+            this.arcDevtoolsChannel.send({ messageType: 'arc-available' });
         });
     }
     recipeInstantiated({ particles }) {
-        if (!this._devtoolsChannel || this._isSpeculative)
+        if (!this.arcDevtoolsChannel)
             return;
         const truncate = ({ id, name }) => ({ id, name });
         const slotConnections = [];
         particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
             slotConnections.push({
-                arcId: this._arcId,
                 particleId: cs.particle.id,
                 consumed: truncate(cs.targetSlot),
                 provided: Object.values(cs.providedSlots).map(slot => truncate(slot)),
             });
         }));
-        this._devtoolsChannel.send({
+        this.arcDevtoolsChannel.send({
             messageType: 'recipe-instantiated',
             messageBody: { slotConnections }
         });
@@ -27111,7 +27117,7 @@ class PlanConsumer {
         this._onSuggestionsChanged();
         this._onMaybeSuggestionsChanged();
         if (this.result.generations.length && DevtoolsConnection.isConnected) {
-            StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get());
+            StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get().forArc(this.arc));
         }
     }
     getCurrentSuggestions() {
@@ -27454,19 +27460,19 @@ const IndexStrategies = [
     CreateHandleGroup
 ];
 class RecipeIndex {
-    constructor(context, loader, modality) {
+    constructor(arc) {
         this._isReady = false;
         const trace = Tracing.start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
         const arcStub = new Arc({
             id: 'index-stub',
             context: new Manifest({ id: 'empty-context' }),
-            loader,
-            slotComposer: modality ? new SlotComposer({ modality, noRoot: true }) : null,
+            loader: arc.loader,
+            slotComposer: arc.modality ? new SlotComposer({ modality: arc.modality, noRoot: true }) : null,
             // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
             speculative: true
         });
         const strategizer = new Strategizer([
-            new RelevantContextRecipes(context, modality),
+            new RelevantContextRecipes(arc.context, arc.modality),
             ...IndexStrategies.map(S => new S(arcStub, { recipeIndex: this }))
         ], [], Empty);
         this.ready = trace.endWith(new Promise(async (resolve) => {
@@ -27476,7 +27482,7 @@ class RecipeIndex {
                 generations.push({ record, generated: strategizer.generated });
             } while (strategizer.generated.length + strategizer.terminal.length > 0);
             if (DevtoolsConnection.isConnected) {
-                StrategyExplorerAdapter.processGenerations(PlanningResult.formatSerializableGenerations(generations), DevtoolsConnection.get(), { label: 'Index', keep: true });
+                StrategyExplorerAdapter.processGenerations(PlanningResult.formatSerializableGenerations(generations), DevtoolsConnection.get().forArc(arc), { label: 'Index', keep: true });
             }
             const population = strategizer.population;
             const candidates = new Set(population);
@@ -27492,7 +27498,7 @@ class RecipeIndex {
         }));
     }
     static create(arc) {
-        return new RecipeIndex(arc.context, arc.loader, arc.modality);
+        return new RecipeIndex(arc);
     }
     get recipes() {
         if (!this._isReady)

@@ -8,12 +8,9 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../arc.js';
-import { DevtoolsChannel } from '../../platform/devtools-channel-web.js';
 import { Particle } from '../recipe/particle.js';
 export declare class ArcDebugHandler {
-    _devtoolsChannel: DevtoolsChannel;
-    _arcId: string;
-    _isSpeculative: boolean;
+    private arcDevtoolsChannel;
     constructor(arc: Arc);
     recipeInstantiated({ particles }: {
         particles: Particle[];

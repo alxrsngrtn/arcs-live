@@ -14,4 +14,5 @@ export declare class DevtoolsChannelStub {
     send(message: any): void;
     listen(arcOrId: any, messageType: any, callback: any): void;
     clear(): void;
+    forArc(arc: any): this;
 }

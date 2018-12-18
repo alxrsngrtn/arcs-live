@@ -7,9 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { DevtoolsChannel } from '../../platform/devtools-channel-web.js';
 export declare class DevtoolsConnection {
     static readonly isConnected: boolean;
-    static readonly onceConnected: Promise<{}>;
+    static readonly onceConnected: Promise<DevtoolsChannel>;
     static get(): any;
     static ensure(): void;
 }

@@ -12,7 +12,7 @@ import { Planner } from '../planner.js';
 export declare class ArcPlannerInvoker {
     arc: Arc;
     planner: Planner;
-    constructor(arc: Arc, devtoolsChannel: any);
+    constructor(arc: Arc, arcDevtoolsChannel: any);
     invokePlanner(msg: any): Promise<{
         error: any;
         results?: undefined;
