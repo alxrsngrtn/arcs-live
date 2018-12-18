@@ -36,7 +36,7 @@ export class Slot {
     set sourceConnection(sourceConnection) { this._sourceConnection = sourceConnection; }
     get consumeConnections() { return this._consumeConnections; }
     get spec() {
-        // TODO: should this return something that indicates this isn't available yet instead of 
+        // TODO: should this return something that indicates this isn't available yet instead of
         // the constructed {isSet: false, tags: []}?
         return (this.sourceConnection && this.sourceConnection.slotSpec) ? this.sourceConnection.slotSpec.getProvidedSlotSpec(this.name) : { isSet: false, tags: [] };
     }
@@ -87,6 +87,10 @@ export class Slot {
         if ((cmp = compareArrays(this._tags, other._tags, compareStrings)) !== 0)
             return cmp;
         return 0;
+    }
+    findHandleByID(id) {
+        const connection = this.handleConnections.find(handleConn => handleConn.handle && handleConn.handle.id === id);
+        return connection && connection.handle;
     }
     removeConsumeConnection(slotConnection) {
         const idx = this._consumeConnections.indexOf(slotConnection);

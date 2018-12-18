@@ -1,9 +1,11 @@
-commit d2e5e02ab9592ec79dc2d5e579b842250271379e
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Dec 17 19:28:06 2018 -0800
+commit 458434612fc9001329ed41ad6539b473b19f4b35
+Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
+Date:   Tue Dec 18 14:58:00 2018 +1100
 
-    basic remote planning unit tests (#2479)
+    Moved slot/handle/recipe logic from strategies to appropriate class. (#2480)
     
-    * basic remote planning unit tests
+    * Moved handle/particle/connection logic away from strategies
     
-    * address comments
+    * fix lint error
+    
+    * renamed methods

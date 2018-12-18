@@ -43,5 +43,6 @@ export declare class Handle {
     _isValid(options: any): boolean;
     isResolved(options?: any): boolean;
     toString(nameMap: any, options: any): string;
+    findConnectionByDirection(dir: string): HandleConnection;
 }
 export {};

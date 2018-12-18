@@ -18299,7 +18299,7 @@ class HandleConnection {
         handleConnection._tags = [...this._tags];
         // Note that _rawType will be cloned later by the particle that references this connection.
         // Doing it there allows the particle to maintain variable associations across the particle
-        // scope.    
+        // scope.
         handleConnection._rawType = this._rawType;
         handleConnection._direction = this._direction;
         if (this._handle != undefined) {
@@ -18478,6 +18478,15 @@ class HandleConnection {
         }
         return result.join(' ');
     }
+    // TODO: the logic is wrong :)
+    findSpecsForUnnamedHandles() {
+        return this.particle.spec.connections.filter(specConn => {
+            // filter specs with matching types that don't have handles bound to the corresponding handle connection.
+            return !specConn.isOptional &&
+                this.handle.type.equals(specConn.type) &&
+                !this.particle.getConnectionByName(specConn.name).handle;
+        });
+    }
 }
 //# sourceMappingURL=handle-connection.js.map
 
@@ -18627,7 +18636,7 @@ class Slot {
     set sourceConnection(sourceConnection) { this._sourceConnection = sourceConnection; }
     get consumeConnections() { return this._consumeConnections; }
     get spec() {
-        // TODO: should this return something that indicates this isn't available yet instead of 
+        // TODO: should this return something that indicates this isn't available yet instead of
         // the constructed {isSet: false, tags: []}?
         return (this.sourceConnection && this.sourceConnection.slotSpec) ? this.sourceConnection.slotSpec.getProvidedSlotSpec(this.name) : { isSet: false, tags: [] };
     }
@@ -18678,6 +18687,10 @@ class Slot {
         if ((cmp = Object(_util_js__WEBPACK_IMPORTED_MODULE_1__["compareArrays"])(this._tags, other._tags, _util_js__WEBPACK_IMPORTED_MODULE_1__["compareStrings"])) !== 0)
             return cmp;
         return 0;
+    }
+    findHandleByID(id) {
+        const connection = this.handleConnections.find(handleConn => handleConn.handle && handleConn.handle.id === id);
+        return connection && connection.handle;
     }
     removeConsumeConnection(slotConnection) {
         const idx = this._consumeConnections.indexOf(slotConnection);
@@ -18883,7 +18896,7 @@ class Handle {
     set immediateValue(value) { this._immediateValue = value; }
     static effectiveType(handleType, connections) {
         const variableMap = new Map();
-        // It's OK to use _cloneWithResolutions here as for the purpose of this test, the handle set + handleType 
+        // It's OK to use _cloneWithResolutions here as for the purpose of this test, the handle set + handleType
         // contain the full set of type variable information that needs to be maintained across the clone.
         const typeSet = connections.filter(connection => connection.type != null).map(connection => ({ type: connection.type._cloneWithResolutions(variableMap), direction: connection.direction }));
         return _type_checker_js__WEBPACK_IMPORTED_MODULE_2__["TypeChecker"].processTypeList(handleType ? handleType._cloneWithResolutions(variableMap) : null, typeSet);
@@ -19005,6 +19018,9 @@ class Handle {
             }
         }
         return result.join(' ');
+    }
+    findConnectionByDirection(dir) {
+        return this._connections.find(conn => conn.direction === dir);
     }
 }
 //# sourceMappingURL=handle.js.map
@@ -81934,8 +81950,8 @@ class GroupHandleConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_
                 }
                 // Find all unique types used in the recipe that have unbound handle connections.
                 const types = new Set();
-                recipe.handleConnections.forEach(hc => {
-                    if (!hc.isOptional && !hc.handle && !Array.from(types).find(t => t.equals(hc.type))) {
+                recipe.getFreeConnections().forEach(hc => {
+                    if (!Array.from(types).find(t => t.equals(hc.type))) {
                         types.add(hc.type);
                     }
                 });
@@ -82124,12 +82140,7 @@ class NameUnnamedConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_
                     // the particle doesn't have spec yet.
                     return;
                 }
-                const possibleSpecConns = handleConnection.particle.spec.connections.filter(specConn => {
-                    // filter specs with matching types that don't have handles bound to the corresponding handle connection.
-                    return !specConn.isOptional &&
-                        handleConnection.handle.type.equals(specConn.type) &&
-                        !handleConnection.particle.getConnectionByName(specConn.name).handle;
-                });
+                const possibleSpecConns = handleConnection.findSpecsForUnnamedHandles();
                 return possibleSpecConns.map(specConn => {
                     return (recipe, handleConnection) => {
                         handleConnection.particle.nameConnection(handleConnection, specConn.name);
@@ -82462,7 +82473,7 @@ class CoalesceRecipes extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_
                             // matchingConn in the mergedSlotConnection's recipe should be connected to `handle` in the slot's recipe.
                             const mergedMatchingConn = cloneMap.get(matchingConn);
                             const disconnectedHandle = mergedMatchingConn.handle;
-                            const clonedHandle = slot.handleConnections.find(handleConn => handleConn.handle && handleConn.handle.id === handle.id).handle;
+                            const clonedHandle = slot.findHandleByID(handle.id);
                             if (disconnectedHandle === clonedHandle) {
                                 continue; // this handle was already reconnected
                             }
@@ -82499,7 +82510,7 @@ class CoalesceRecipes extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_
                     if (recipe.particles.length + otherHandle.recipe.particles.length > 10)
                         continue;
                     // This is a poor man's proxy for the other handle being an output of a recipe.
-                    if (otherHandle.connections.find(conn => conn.direction === 'in'))
+                    if (otherHandle.findConnectionByDirection('in'))
                         continue;
                     // We ignore type variables not constrained for reading, otherwise
                     // generic recipes would apply - which we currently don't want here.

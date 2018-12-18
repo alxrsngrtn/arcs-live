@@ -36,4 +36,5 @@ export declare class HandleConnection {
     connectToHandle(handle: any): void;
     disconnectHandle(): void;
     toString(nameMap: any, options: any): string;
+    findSpecsForUnnamedHandles(): ConnectionSpec[];
 }

@@ -30,6 +30,7 @@ export declare class Slot {
     _startNormalize(): void;
     _finishNormalize(): void;
     _compareTo(other: any): any;
+    findHandleByID(id: any): import("./handle.js").Handle;
     removeConsumeConnection(slotConnection: any): void;
     remove(): void;
     isResolved(options?: any): boolean;
