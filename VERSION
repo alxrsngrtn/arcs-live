@@ -1,5 +1,12 @@
-commit f577c72281c9a96cac46a05e0a2a46775b6421f3
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Dec 18 15:53:50 2018 +1100
+commit de391bdd8a500f8756ca67ef90344880f704d98d
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Dec 18 12:19:36 2018 -0800
 
-    Fixes errors in the Tracing panel of Arcs Explorer (#2483)
+    Add dynamic referenceMode for PouchDbVariable (#2488)
+    
+    - Root cause: persistSerialization in arc.ts disables referenceMode manually
+    - PouchDbVariable now stores the referenceMode in the stored variable data.
+    - Adjusted tests to also test for Pouch in addition to volatile
+    - Added comments on how to reproduce the issue until better testing is available.
+    
+    Fixes #2407

@@ -10,7 +10,7 @@ interface ValueStorage {
     id: string;
     /** A reference to another storage key, used for reference mode */
     storageKey?: string;
-    /** A the actual value of the data */
+    /** The actual value of the data */
     rawData?: {};
 }
 /**
@@ -20,6 +20,8 @@ interface ValueStorage {
 interface VariableStorage {
     value: ValueStorage;
     version: number;
+    /** ReferenceMode state for this data */
+    referenceMode: boolean;
 }
 /**
  * The PouchDB-based implementation of a Variable.

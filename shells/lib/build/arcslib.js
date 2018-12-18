@@ -46858,6 +46858,7 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
         // Store locally
         this._stored = value;
         this._rev = doc._rev;
+        this.referenceMode = doc.referenceMode;
         this.version++;
         // Skip if value == null, which is what happens when docs are deleted..
         if (this.referenceMode && value) {
@@ -46893,6 +46894,7 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
                 // remote revision is different, update local copy.
                 this._stored = result['value'];
                 this._rev = result._rev;
+                this.referenceMode = result.referenceMode;
                 this.version++;
             }
         }
@@ -46935,7 +46937,7 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
                 // TODO(lindner): refactor with getStored above.
                 if (this._rev !== doc._rev) {
                     // remote revision is different, update local copy.
-                    this._stored = doc['value'];
+                    this._stored = doc.value;
                     this._rev = doc._rev;
                     this.version++;
                 }
@@ -46945,10 +46947,6 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
                     throw err;
                 }
                 notFound = true;
-                // setup basic doc, model/version updated below.
-                doc = {
-                    _id: this.pouchDbKey.location
-                };
             }
             // Run the mutator on a copy of the existing model
             const newValue = variableStorageMutator(Object.assign({}, this._stored));
@@ -46959,8 +46957,13 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
                 return this._stored;
             }
             // Apply changes made by the mutator
-            doc['value'] = newValue;
-            doc['version'] = this.version;
+            doc = {
+                _id: this.pouchDbKey.location,
+                _rev: this._rev,
+                value: newValue,
+                version: this.version,
+                referenceMode: this.referenceMode
+            };
             // Update on pouchdb
             try {
                 const putResult = await this.db.put(doc);
