@@ -48,7 +48,8 @@ export class PlanConsumer {
         }
     }
     getCurrentSuggestions() {
-        const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0);
+        const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0
+            && suggestion.plan.getSupportedModalities().includes(this.arc.modality));
         // `showAll`: returns all suggestions that render into slots.
         if (this.suggestFilter['showAll']) {
             // Should filter out suggestions produced by search phrases?
