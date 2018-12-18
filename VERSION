@@ -1,5 +1,7 @@
-commit 28f80538b4cbb6ab7970c73ac81a186500ddb86d
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Dec 18 13:21:55 2018 -0800
+commit 98a18c93b132e57e494f55dddc3daf69b9406426
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Wed Dec 19 09:41:16 2018 +1100
 
-    use FakeSlotComposer everywhere in tests (#2489)
+    Remove FoodPicker stuff from src/runtime/test, where it isn't used. (#2487)
+    
+    This removes all the noto-emojis from reducethislist.
