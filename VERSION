@@ -1,12 +1,5 @@
-commit de391bdd8a500f8756ca67ef90344880f704d98d
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Dec 18 12:19:36 2018 -0800
+commit 28f80538b4cbb6ab7970c73ac81a186500ddb86d
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Dec 18 13:21:55 2018 -0800
 
-    Add dynamic referenceMode for PouchDbVariable (#2488)
-    
-    - Root cause: persistSerialization in arc.ts disables referenceMode manually
-    - PouchDbVariable now stores the referenceMode in the stored variable data.
-    - Adjusted tests to also test for Pouch in addition to volatile
-    - Added comments on how to reproduce the issue until better testing is available.
-    
-    Fixes #2407
+    use FakeSlotComposer everywhere in tests (#2489)

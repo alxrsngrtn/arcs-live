@@ -31,7 +31,7 @@ describe('SearchTokensToHandles', () => {
         start
         [{}]
     `));
-        const arc = StrategyTestHelper.createTestArc('test-plan-arc', manifest, 'dom');
+        const arc = StrategyTestHelper.createTestArc(manifest);
         arc._registerStore(arc._context.stores[0], ['mything']);
         const recipe = manifest.recipes[0];
         assert(recipe.normalize());
@@ -67,7 +67,7 @@ recipe
     inFoos <- h0
     outFoo -> h1
     `, { loader, fileName: '' }));
-        const arc = StrategyTestHelper.createTestArc('test-plan-arc', manifest, 'dom');
+        const arc = StrategyTestHelper.createTestArc(manifest);
         arc._context.imports.push(storeManifest);
         const recipe = manifest.recipes[0];
         assert(recipe.normalize());
