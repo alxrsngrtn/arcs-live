@@ -48,6 +48,7 @@ export declare class Arc {
     private storesById;
     private storageKeys;
     readonly storageKey: string;
+    readonly arcId: string;
     storageProviderFactory: StorageProviderFactory;
     storeTags: Map<StorageProviderBase, Set<string>>;
     private storeDescriptions;

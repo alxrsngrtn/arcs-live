@@ -33,7 +33,6 @@ export declare class PlanProducer {
     isPlanning: boolean;
     registerStateChangedCallback(callback: any): void;
     onSearchChanged(): Promise<void>;
-    readonly arcKey: string;
     dispose(): void;
     produceSuggestions(options?: {}): Promise<void>;
     runPlanner(options: any, generations: any): Promise<any[]>;

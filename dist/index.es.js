@@ -26213,6 +26213,7 @@ class Arc {
             slotComposer.arc = this;
         }
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
+        this.arcId = this.storageKey ? this.storageProviderFactory.parseStringAsKey(this.storageKey).arcId : '';
         this._description = new Description(this);
         this.debugHandler = new ArcDebugHandler(this);
     }
@@ -27732,7 +27733,8 @@ class PlanProducer {
     }
     async onSearchChanged() {
         const values = await this.searchStore['get']() || [];
-        const value = values.find(value => value.arc === this.arcKey);
+        const arcId = this.arc.arcId;
+        const value = values.find(value => value.arc === arcId);
         if (!value) {
             return;
         }
@@ -27768,10 +27770,6 @@ class PlanProducer {
             }
             this.produceSuggestions(options);
         }
-    }
-    get arcKey() {
-        // TODO: this is a duplicate method of one in planificator.ts, refactor?
-        return this.arc.storageKey.substring(this.arc.storageKey.lastIndexOf('/') + 1);
     }
     dispose() {
         this.searchStore.off('change', this.searchStoreCallback);
@@ -28050,7 +28048,7 @@ class Planificator {
     }
     async _storeSearch() {
         const values = await this.searchStore['get']() || [];
-        const arcKey = this.arc.storageProviderFactory.parseStringAsKey(this.arc.storageKey).arcId;
+        const arcKey = this.arc.arcId;
         const newValues = [];
         for (const { arc, search } of values) {
             if (arc !== arcKey) {

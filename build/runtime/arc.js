@@ -51,6 +51,7 @@ export class Arc {
             slotComposer.arc = this;
         }
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
+        this.arcId = this.storageKey ? this.storageProviderFactory.parseStringAsKey(this.storageKey).arcId : '';
         this._description = new Description(this);
         this.debugHandler = new ArcDebugHandler(this);
     }

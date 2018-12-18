@@ -1,5 +1,9 @@
-commit 17d2c55616d18915b803e133b69f6f118bb324bb
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Dec 18 14:26:03 2018 +1100
+commit d2e5e02ab9592ec79dc2d5e579b842250271379e
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Dec 17 19:28:06 2018 -0800
 
-    Ability for per-arc inspection in Arcs Explorer (#2477)
+    basic remote planning unit tests (#2479)
+    
+    * basic remote planning unit tests
+    
+    * address comments

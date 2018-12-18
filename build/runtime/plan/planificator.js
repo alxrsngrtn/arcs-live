@@ -129,7 +129,7 @@ export class Planificator {
     }
     async _storeSearch() {
         const values = await this.searchStore['get']() || [];
-        const arcKey = this.arc.storageProviderFactory.parseStringAsKey(this.arc.storageKey).arcId;
+        const arcKey = this.arc.arcId;
         const newValues = [];
         for (const { arc, search } of values) {
             if (arc !== arcKey) {
