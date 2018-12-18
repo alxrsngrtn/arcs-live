@@ -1,5 +1,5 @@
-commit 4ba6710fb504858ff457d8703197444beca99788
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Dec 17 20:11:26 2018 -0800
+commit f577c72281c9a96cac46a05e0a2a46775b6421f3
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Dec 18 15:53:50 2018 +1100
 
-    filter plan consumer current suggestions by modality (#2481)
+    Fixes errors in the Tracing panel of Arcs Explorer (#2483)
