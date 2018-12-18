@@ -7154,7 +7154,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Manifest", function() { return Manifest; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _platform_digest_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(34);
-/* harmony import */ var _build_manifest_parser_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(35);
+/* harmony import */ var _build_runtime_manifest_parser_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(35);
 /* harmony import */ var _recipe_recipe_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(36);
 /* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(45);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(11);
@@ -7520,7 +7520,7 @@ ${e.message}
         }
         let items = [];
         try {
-            items = _build_manifest_parser_js__WEBPACK_IMPORTED_MODULE_2__["parser"].parse(content);
+            items = _build_runtime_manifest_parser_js__WEBPACK_IMPORTED_MODULE_2__["parser"].parse(content);
         }
         catch (e) {
             throw processError(e, true);

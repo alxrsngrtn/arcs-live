@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { parser } from '../build/manifest-parser.js';
+import { parser } from '../../../build/runtime/manifest-parser.js';
 const parse = parser.parse;
 import { assert } from './chai-web.js';
 describe('manifest parser', () => {
