@@ -55,6 +55,9 @@ export class PlanningResult {
             throw e;
         }
     }
+    async clear() {
+        return this.store['clear']();
+    }
     dispose() {
         this.changeCallbacks = [];
         this.store.off('change', this.storeCallback);

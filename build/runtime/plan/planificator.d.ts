@@ -41,6 +41,7 @@ export declare class Planificator {
     registerSuggestionsChangedCallback(callback: any): void;
     registerVisibleSuggestionsChangedCallback(callback: any): void;
     dispose(): void;
+    deleteAll(): Promise<void>;
     getLastActivatedPlan(): {
         plan: Recipe;
     };

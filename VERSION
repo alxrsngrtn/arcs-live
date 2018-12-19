@@ -1,7 +1,5 @@
-commit 98a18c93b132e57e494f55dddc3daf69b9406426
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Wed Dec 19 09:41:16 2018 +1100
+commit 1c8bf3e1ffda0baac8160cf9e114db4c448ab541
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Dec 18 19:46:24 2018 -0800
 
-    Remove FoodPicker stuff from src/runtime/test, where it isn't used. (#2487)
-    
-    This removes all the noto-emojis from reducethislist.
+    remote planning deletes suggestions of a deleted arc (#2486)

@@ -24,6 +24,7 @@ export declare class PlanningResult {
     onChanged(): void;
     load(): Promise<boolean>;
     flush(): Promise<void>;
+    clear(): Promise<any>;
     dispose(): void;
     suggestions: Suggestion[];
     static formatSerializableGenerations(generations: any): any;

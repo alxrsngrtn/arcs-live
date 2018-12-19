@@ -80,6 +80,10 @@ export class Planificator {
         this.consumer.dispose();
         this.result.dispose();
     }
+    async deleteAll() {
+        await this.producer.result.clear();
+        this.setSearch(null);
+    }
     getLastActivatedPlan() {
         return { plan: this.lastActivatedPlan };
     }

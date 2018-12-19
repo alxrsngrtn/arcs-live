@@ -26864,6 +26864,9 @@ class PlanningResult {
             throw e;
         }
     }
+    async clear() {
+        return this.store['clear']();
+    }
     dispose() {
         this.changeCallbacks = [];
         this.store.off('change', this.storeCallback);
@@ -28013,6 +28016,10 @@ class Planificator {
         }
         this.consumer.dispose();
         this.result.dispose();
+    }
+    async deleteAll() {
+        await this.producer.result.clear();
+        this.setSearch(null);
     }
     getLastActivatedPlan() {
         return { plan: this.lastActivatedPlan };
@@ -29322,6 +29329,10 @@ class UserPlanner {
     const runner = this.runners[key];
     if (runner) {
       runner.arc && runner.arc.dispose();
+      if (runner.planificator) {
+        runner.planificator.dispose();
+        runner.planificator.deleteAll();
+      }
       this.runners[key] = null;
     }
   }
