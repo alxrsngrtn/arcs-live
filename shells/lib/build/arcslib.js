@@ -82880,7 +82880,7 @@ class Suggestion {
     }
     serialize() {
         return {
-            plan: this._planToString(this.plan),
+            plan: this.plan.toString(),
             hash: this.hash,
             rank: this.rank,
             relevance: this.relevance.serialize(),
@@ -82904,15 +82904,6 @@ class Suggestion {
         if (this.arc) {
             return this.arc.instantiate(this.plan);
         }
-    }
-    _planToString(plan) {
-        if (plan.slots.every(slot => Boolean(slot.id))) {
-            return plan.toString();
-        }
-        // Special handling needed for plans with local slot (ie missing slot IDs).
-        const planClone = plan.clone();
-        planClone.slots.forEach(slot => slot.id = slot.id || `slotid-${this.arc.generateID()}`);
-        return planClone.toString();
     }
     static async _planFromString(planString, arc, recipeResolver) {
         try {

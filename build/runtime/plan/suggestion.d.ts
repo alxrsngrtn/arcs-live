@@ -48,6 +48,5 @@ export declare class Suggestion {
         descriptionByModality: any;
     }, arc: Arc, recipeResolver: RecipeResolver): Promise<Suggestion>;
     instantiate(): Promise<void>;
-    _planToString(plan: any): string;
     static _planFromString(planString: string, arc: Arc, recipeResolver: RecipeResolver): Promise<Recipe>;
 }

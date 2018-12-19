@@ -1,5 +1,9 @@
-commit 1c8bf3e1ffda0baac8160cf9e114db4c448ab541
+commit 577a330f22ba835385fa4ffcf1f3ac53ca0fc1e8
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Dec 18 19:46:24 2018 -0800
+Date:   Wed Dec 19 00:51:51 2018 -0800
 
-    remote planning deletes suggestions of a deleted arc (#2486)
+    remove assigning slot IDs in suggestion serialization (#2493)
+    
+    * remove assigning slot IDs in suggestion serialization
+    
+    * fix planificator test
