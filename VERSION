@@ -1,9 +1,5 @@
-commit b9586bb9f0d6e7c5b4d80c904fb14f27e71bd6d7
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Dec 19 19:51:48 2018 -0800
+commit f0f7ded3a3c2c1366d4febf66fc13a6d83707152
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Dec 20 16:03:31 2018 +1100
 
-    use Modality as object everywhere (#2496)
-    
-    * use Modality as object everywhere
-    
-    * fix tests
+    Serve standalone DevTools from devtools/ path (#2504)
