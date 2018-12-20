@@ -1,9 +1,5 @@
-commit 577a330f22ba835385fa4ffcf1f3ac53ca0fc1e8
+commit 796660f3ef4ca5011192896ebf09417dd64eb7dd
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Dec 19 00:51:51 2018 -0800
+Date:   Wed Dec 19 16:01:19 2018 -0800
 
-    remove assigning slot IDs in suggestion serialization (#2493)
-    
-    * remove assigning slot IDs in suggestion serialization
-    
-    * fix planificator test
+    Add PouchDB to remote planificator tests (#2497)
