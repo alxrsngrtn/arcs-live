@@ -1,5 +1,13 @@
-commit decff633363034592c6e70881f38f9693ea25c04
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Dec 20 16:03:18 2018 +1100
+commit 8d78d0a807376618657618c6616aff013661e48f
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Dec 19 21:11:03 2018 -0800
 
-    Display full arc ID with DevTools arc selector (#2502)
+    Only deserialize suggestion's plan when instantiating. (#2494)
+    
+    * Only deserialize suggestion's plan when instantiating.
+    
+    * remove Arc from planning-result
+    
+    * rename de/serialize to from/toLiteral, remove async
+    
+    * post merge fixes

@@ -27,7 +27,7 @@ export declare class PlanProducer {
     searchStore: StorageProviderBase;
     searchStoreCallback: ({}: {}) => void;
     debug: boolean;
-    constructor(result: PlanningResult, searchStore: StorageProviderBase, { debug }?: {
+    constructor(arc: Arc, result: PlanningResult, searchStore: StorageProviderBase, { debug }?: {
         debug?: boolean;
     });
     isPlanning: boolean;

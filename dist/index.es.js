@@ -24197,15 +24197,6 @@ class CoalesceRecipes extends Strategy {
     }
 }
 
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 class Relevance {
     constructor() {
         // stores a copy of arc.getVersionByStore
@@ -24221,32 +24212,6 @@ class Relevance {
             }
         });
         return relevance;
-    }
-    static deserialize({ versionByStore = '{}', relevanceMap = {} }, recipe) {
-        const relevance = new Relevance();
-        Object.assign(relevance.versionByStore, JSON.parse(versionByStore));
-        Object.keys(relevanceMap).forEach(particleName => {
-            const particle = recipe.particles.find(particle => particle.name === particleName);
-            assert$1(particle, `Cannot find particle ${particleName} in ${recipe.toString()}`);
-            if (relevance.relevanceMap.has(particle)) {
-                console.warn(`Multiple particles with name ${particleName}, relevance may be incorrect.`);
-            }
-            relevance.relevanceMap.set(particle, relevanceMap[particleName]);
-        });
-        return relevance;
-    }
-    serialize() {
-        const serializedRelevanceMap = {};
-        this.relevanceMap.forEach((relevances, particle) => {
-            // TODO(mmandlis): Should use particle ID or some other unique identifier instead,
-            // as recipe may contain multiple particles with the same name.
-            serializedRelevanceMap[particle.name] = relevances;
-        });
-        return {
-            // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
-            versionByStore: JSON.stringify(this.versionByStore),
-            relevanceMap: serializedRelevanceMap
-        };
     }
     apply(relevance) {
         for (const key of relevance.keys()) {
@@ -24311,1118 +24276,6 @@ class Relevance {
             return Relevance.particleRelevance(this.relevanceMap.get(particle));
         }
         return -1;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Suggestion {
-    constructor(plan, hash, relevance, arc) {
-        // TODO: update Description class to be serializable.
-        this.descriptionByModality = {};
-        // List of search resolved token groups, this suggestion corresponds to.
-        this.searchGroups = [];
-        assert$1(plan, `plan cannot be null`);
-        assert$1(hash, `hash cannot be null`);
-        this.plan = plan;
-        this.hash = hash;
-        this.rank = relevance.calcRelevanceScore();
-        this.relevance = relevance;
-        this.arc = arc;
-    }
-    get descriptionText() {
-        return this.getDescription('text');
-    }
-    getDescription(modality) {
-        assert$1(this.descriptionByModality[modality], `No description for modality '${modality}'`);
-        return this.descriptionByModality[modality];
-    }
-    async setDescription(description) {
-        this.descriptionByModality['text'] = await description.getRecipeSuggestion();
-        if (this.arc.modality && this.arc.modality.name !== 'text') {
-            this.descriptionByModality[this.arc.modality.name] =
-                await description.getRecipeSuggestion(this.arc.modality.descriptionFormatter);
-        }
-    }
-    isEquivalent(other) {
-        return (this.hash === other.hash) && (this.descriptionText === other.descriptionText);
-    }
-    static compare(s1, s2) {
-        return s2.rank - s1.rank;
-    }
-    hasSearch(search) {
-        const tokens = search.split(' ');
-        return this.searchGroups.some(group => tokens.every(token => group.includes(token)));
-    }
-    setSearch(search) {
-        this.searchGroups = [];
-        if (search) {
-            this._addSearch(search.resolvedTokens);
-        }
-    }
-    mergeSearch(suggestion) {
-        let updated = false;
-        for (const other of suggestion.searchGroups) {
-            if (this._addSearch(other)) {
-                if (this.searchGroups.length === 1) {
-                    this.searchGroups.push(['']);
-                }
-                updated = true;
-            }
-        }
-        this.searchGroups.sort();
-        return updated;
-    }
-    _addSearch(searchGroup) {
-        const equivalentGroup = (group, otherGroup) => {
-            return group.length === otherGroup.length &&
-                group.every(token => otherGroup.includes(token));
-        };
-        if (!this.searchGroups.find(group => equivalentGroup(group, searchGroup))) {
-            this.searchGroups.push(searchGroup);
-            return true;
-        }
-        return false;
-    }
-    serialize() {
-        return {
-            plan: this.plan.toString(),
-            hash: this.hash,
-            rank: this.rank,
-            relevance: this.relevance.serialize(),
-            searchGroups: this.searchGroups,
-            descriptionByModality: this.descriptionByModality
-        };
-    }
-    static async deserialize({ plan, hash, relevance, searchGroups, descriptionByModality }, arc, recipeResolver) {
-        const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
-        if (deserializedPlan) {
-            const suggestion = new Suggestion(deserializedPlan, hash, Relevance.deserialize(relevance || {}, deserializedPlan), arc);
-            suggestion.searchGroups = searchGroups || [];
-            suggestion.descriptionByModality = descriptionByModality;
-            return suggestion;
-        }
-        return undefined;
-    }
-    async instantiate() {
-        // For now shell is responsible for creating and setting the new arc.
-        assert$1(this.arc, `Cannot instantiate suggestion without and arc`);
-        if (this.arc) {
-            return this.arc.instantiate(this.plan);
-        }
-    }
-    static async _planFromString(planString, arc, recipeResolver) {
-        try {
-            const manifest = await Manifest.parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
-            assert$1(manifest.recipes.length === 1);
-            let plan = manifest.recipes[0];
-            assert$1(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
-            if (!plan.isResolved()) {
-                const resolvedPlan = await recipeResolver.resolve(plan);
-                assert$1(resolvedPlan, `can't resolve plan: ${plan.toString({ showUnresolved: true })}`);
-                if (resolvedPlan) {
-                    plan = resolvedPlan;
-                }
-            }
-            assert$1(manifest.stores.length === 0, `Unexpected stores in suggestion manifest.`);
-            return plan;
-        }
-        catch (e) {
-            console.error(`Failed to parse suggestion ${e}\n${planString}.`);
-        }
-        return null;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Speculator {
-    constructor(planningResult) {
-        this.suggestionByHash = {};
-        this.speculativeArcs = [];
-        if (planningResult) {
-            for (const suggestion of planningResult.suggestions) {
-                this.suggestionByHash[suggestion.hash] = suggestion;
-            }
-        }
-    }
-    async speculate(arc, plan, hash) {
-        assert$1(plan.isResolved(), `Cannot speculate on an unresolved plan: ${plan.toString({ showUnresolved: true })}`);
-        let suggestion = this.suggestionByHash[hash];
-        if (suggestion) {
-            const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
-            const relevanceVersionByStoreId = suggestion.relevance.versionByStore;
-            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === relevanceVersionByStoreId[handle.id])) {
-                return suggestion;
-            }
-        }
-        const speculativeArc = await arc.cloneForSpeculativeExecution();
-        this.speculativeArcs.push(speculativeArc);
-        const relevance = Relevance.create(arc, plan);
-        await speculativeArc.instantiate(plan);
-        await this.awaitCompletion(relevance, speculativeArc);
-        if (!relevance.isRelevant(plan)) {
-            return null;
-        }
-        speculativeArc.description.relevance = relevance;
-        suggestion = new Suggestion(plan, hash, relevance, arc);
-        suggestion.setSearch(plan.search);
-        await suggestion.setDescription(speculativeArc.description);
-        this.suggestionByHash[hash] = suggestion;
-        return suggestion;
-    }
-    async awaitCompletion(relevance, speculativeArc) {
-        const messageCount = speculativeArc.pec.messageCount;
-        relevance.apply(await speculativeArc.pec.idle);
-        // We expect two messages here, one requesting the idle status, and one answering it.
-        if (speculativeArc.pec.messageCount !== messageCount + 2) {
-            return this.awaitCompletion(relevance, speculativeArc);
-        }
-        else {
-            speculativeArc.stop();
-            this.speculativeArcs.splice(this.speculativeArcs.indexOf(speculativeArc, 1));
-            return relevance;
-        }
-    }
-    dispose() {
-        for (const arc of this.speculativeArcs) {
-            arc.dispose();
-        }
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class Planner {
-    // TODO: Use context.arc instead of arc
-    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {} } = {}) {
-        strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
-        this._arc = arc;
-        const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
-        this.strategizer = new Strategizer(strategyImpls, [], ruleset);
-    }
-    // Specify a timeout value less than zero to disable timeouts.
-    async plan(timeout, generations) {
-        const trace = Tracing.start({ cat: 'planning', name: 'Planner::plan', overview: true, args: { timeout } });
-        timeout = timeout || -1;
-        const allResolved = [];
-        const start = now$1();
-        do {
-            const record = await trace.wait(this.strategizer.generate());
-            const generated = this.strategizer.generated;
-            trace.addArgs({
-                generated: generated.length,
-                generation: this.strategizer.generation
-            });
-            if (generations) {
-                generations.push({ generated, record });
-            }
-            const resolved = this.strategizer.generated
-                .map(individual => individual.result)
-                .filter(recipe => recipe.isResolved());
-            allResolved.push(...resolved);
-            const elapsed = now$1() - start;
-            if (timeout >= 0 && elapsed > timeout) {
-                console.warn(`Planner.plan timed out [elapsed=${Math.floor(elapsed)}ms, timeout=${timeout}ms].`);
-                break;
-            }
-        } while (this.strategizer.generated.length + this.strategizer.terminal.length > 0);
-        trace.end();
-        return allResolved;
-    }
-    _speculativeThreadCount() {
-        // TODO(wkorman): We'll obviously have to rework the below when we do
-        // speculation in the cloud.
-        const cores = DeviceInfo.hardwareConcurrency();
-        const memory = DeviceInfo.deviceMemory();
-        // For now, allow occupying half of the available cores while constraining
-        // total memory used to at most a quarter of what's available. In the
-        // absence of resource information we just run two in parallel as a
-        // perhaps-low-end-device-oriented balancing act.
-        const minCores = 2;
-        if (!cores || !memory) {
-            return minCores;
-        }
-        // A rough estimate of memory used per thread in gigabytes.
-        const memoryPerThread = 0.125;
-        const quarterMemory = memory / 4;
-        const maxThreadsByMemory = quarterMemory / memoryPerThread;
-        const maxThreadsByCores = cores / 2;
-        return Math.max(minCores, Math.min(maxThreadsByMemory, maxThreadsByCores));
-    }
-    _splitToGroups(items, groupCount) {
-        const groups = [];
-        if (!items || items.length === 0)
-            return groups;
-        const groupItemSize = Math.max(1, Math.floor(items.length / groupCount));
-        let startIndex = 0;
-        for (let i = 0; i < groupCount && startIndex < items.length; i++) {
-            groups.push(items.slice(startIndex, startIndex + groupItemSize));
-            startIndex += groupItemSize;
-        }
-        // Add any remaining items to the end of the last group.
-        if (startIndex < items.length) {
-            groups[groups.length - 1].push(...items.slice(startIndex, items.length));
-        }
-        return groups;
-    }
-    async suggest(timeout, generations = [], speculator) {
-        const trace = Tracing.start({ cat: 'planning', name: 'Planner::suggest', overview: true, args: { timeout } });
-        if (!generations && DevtoolsConnection.isConnected)
-            generations = [];
-        const plans = await trace.wait(this.plan(timeout, generations));
-        speculator = speculator || new Speculator();
-        // We don't actually know how many threads the VM will decide to use to
-        // handle the parallel speculation, but at least we know we won't kick off
-        // more than this number and so can somewhat limit resource utilization.
-        // TODO(wkorman): Rework this to use a fixed size 'thread' pool for more
-        // efficient work distribution.
-        const threadCount = this._speculativeThreadCount();
-        const planGroups = this._splitToGroups(plans, threadCount);
-        let results = await trace.wait(Promise.all(planGroups.map(async (group, groupIndex) => {
-            const results = [];
-            for (const plan of group) {
-                const hash = ((hash) => hash.substring(hash.length - 4))(await plan.digest());
-                if (RecipeUtil.matchesRecipe(this._arc.activeRecipe, plan)) {
-                    this._updateGeneration(generations, hash, (g) => g.active = true);
-                    continue;
-                }
-                const planTrace = Tracing.start({
-                    cat: 'speculating',
-                    sequence: `speculator_${groupIndex}`,
-                    overview: true,
-                    args: { groupIndex }
-                });
-                const suggestion = await speculator.speculate(this._arc, plan, hash);
-                if (!suggestion) {
-                    this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
-                    planTrace.end({ name: '[Irrelevant suggestion]', hash, groupIndex });
-                    continue;
-                }
-                this._updateGeneration(generations, hash, async (g) => g.description = suggestion.descriptionText);
-                suggestion.groupIndex = groupIndex;
-                results.push(suggestion);
-                planTrace.end({ name: suggestion.descriptionText, args: { rank: suggestion.rank, hash, groupIndex } });
-            }
-            return results;
-        })));
-        results = [].concat(...results);
-        return trace.endWith(results);
-    }
-    _updateGeneration(generations, hash, handler) {
-        if (generations) {
-            generations.forEach(g => {
-                g.generated.forEach(gg => {
-                    if (gg.hash.endsWith(hash)) {
-                        handler(gg);
-                    }
-                });
-            });
-        }
-    }
-}
-// tslint:disable-next-line: variable-name
-Planner.InitializationStrategies = [
-    InitPopulation,
-    InitSearch
-];
-// tslint:disable-next-line: variable-name
-Planner.ResolutionStrategies = [
-    SearchTokensToParticles,
-    SearchTokensToHandles,
-    GroupHandleConnections,
-    CreateHandleGroup,
-    ConvertConstraintsToConnections,
-    MapSlots,
-    AssignHandles,
-    MatchParticleByVerb,
-    MatchRecipeByVerb,
-    NameUnnamedConnections,
-    AddMissingHandles,
-    CreateDescriptionHandle,
-    MatchFreeHandlesToConnections,
-    ResolveRecipe,
-    FindHostedParticle,
-    CoalesceRecipes
-];
-// tslint:disable-next-line: variable-name
-Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.ResolutionStrategies);
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class ArcPlannerInvoker {
-    constructor(arc, arcDevtoolsChannel) {
-        this.arc = arc;
-        this.planner = new Planner();
-        this.planner.init(arc);
-        arcDevtoolsChannel.listen('fetch-strategies', () => arcDevtoolsChannel.send({
-            messageType: 'fetch-strategies-result',
-            messageBody: this.planner.strategizer._strategies.map(a => a.constructor.name)
-        }));
-        arcDevtoolsChannel.listen('invoke-planner', async (msg) => arcDevtoolsChannel.send({
-            messageType: 'invoke-planner-result',
-            messageBody: await this.invokePlanner(msg.messageBody)
-        }));
-    }
-    async invokePlanner(msg) {
-        const strategy = this.planner.strategizer._strategies.find(s => s.constructor.name === msg.strategy);
-        if (!strategy)
-            return { error: 'could not find strategy' };
-        let manifest;
-        try {
-            manifest = await Manifest.parse(msg.recipe, { loader: this.arc._loader, fileName: 'manifest.manifest' });
-        }
-        catch (error) {
-            return { error: error.message };
-        }
-        const recipe = manifest.recipes[0];
-        recipe.normalize();
-        const results = await strategy.generate({
-            generation: 0,
-            generated: [{ result: recipe, score: 1 }],
-            population: [{ result: recipe, score: 1 }],
-            terminal: []
-        });
-        for (const result of results) {
-            result.hash = await result.hash;
-            result.derivation = undefined;
-            const recipe = result.result;
-            result.result = recipe.toString({ showUnresolved: true });
-            if (!Object.isFrozen(recipe)) {
-                const errors = new Map();
-                recipe.normalize({ errors });
-                result.errors = [...errors.keys()].map(thing => ({ id: thing.id, error: errors.get(thing) }));
-                result.normalized = recipe.toString();
-            }
-        }
-        return { results };
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class ArcStoresFetcher {
-    constructor(arc, arcDevtoolsChannel) {
-        this.arc = arc;
-        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
-            messageType: 'fetch-stores-result',
-            messageBody: await this._listStores()
-        }));
-    }
-    async _listStores() {
-        const find = manifest => {
-            let tags = [...manifest.storeTags];
-            if (manifest.imports) {
-                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
-            }
-            return tags;
-        };
-        return {
-            arcStores: await this._digestStores(this.arc.storeTags),
-            contextStores: await this._digestStores(find(this.arc.context))
-        };
-    }
-    async _digestStores(stores) {
-        const result = [];
-        for (const [store, tags] of stores) {
-            let value = `(don't know how to dereference)`;
-            if (store.toList) {
-                value = await store.toList();
-            }
-            else if (store.get) {
-                value = await store.get();
-            }
-            result.push({
-                name: store.name,
-                tags: tags ? [...tags] : [],
-                id: store.id,
-                storage: store.storageKey,
-                type: store.type,
-                description: store.description,
-                value
-            });
-        }
-        return result;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// Arc-independent handlers for devtools logic.
-DevtoolsConnection.onceConnected.then(devtoolsChannel => {
-    enableTracingAdapter(devtoolsChannel);
-});
-class ArcDebugHandler {
-    constructor(arc) {
-        this.arcDevtoolsChannel = null;
-        // Currently no support for speculative arcs.
-        if (arc.isSpeculative)
-            return;
-        DevtoolsConnection.onceConnected.then(devtoolsChannel => {
-            this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
-            // Message handles go here.
-            const arcPlannerInvoker = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
-            const arcStoresFetcher = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
-            this.arcDevtoolsChannel.send({ messageType: 'arc-available' });
-        });
-    }
-    recipeInstantiated({ particles }) {
-        if (!this.arcDevtoolsChannel)
-            return;
-        const truncate = ({ id, name }) => ({ id, name });
-        const slotConnections = [];
-        particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
-            slotConnections.push({
-                particleId: cs.particle.id,
-                consumed: truncate(cs.targetSlot),
-                provided: Object.values(cs.providedSlots).map(slot => truncate(slot)),
-            });
-        }));
-        this.arcDevtoolsChannel.send({
-            messageType: 'recipe-instantiated',
-            messageBody: { slotConnections }
-        });
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Arc {
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative }) {
-        this._activeRecipe = new Recipe();
-        // TODO: rename: these are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
-        this._recipes = [];
-        this.dataChangeCallbacks = new Map();
-        // All the stores, mapped by store ID
-        this.storesById = new Map();
-        // storage keys for referenced handles
-        this.storageKeys = {};
-        // Map from each store to a set of tags. public for debug access
-        this.storeTags = new Map();
-        // Map from each store to its description (originating in the manifest).
-        this.storeDescriptions = new Map();
-        this.instantiatePlanCallbacks = [];
-        this.particleHandleMaps = new Map();
-        // TODO: context should not be optional.
-        this._context = context || new Manifest({ id });
-        // TODO: pecFactory should not be optional. update all callers and fix here.
-        this.pecFactory = pecFactory || FakePecFactory(loader).bind(null);
-        // for now, every Arc gets its own session
-        this.id = Id.newSessionId().fromString(id);
-        this.speculative = !!speculative; // undefined => false
-        this._loader = loader;
-        this.storageKey = storageKey;
-        const pecId = this.generateID();
-        const innerPecPort = this.pecFactory(pecId);
-        this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
-        if (slotComposer) {
-            slotComposer.arc = this;
-        }
-        this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
-        this.arcId = this.storageKey ? this.storageProviderFactory.parseStringAsKey(this.storageKey).arcId : '';
-        this._description = new Description(this);
-        this.debugHandler = new ArcDebugHandler(this);
-    }
-    get loader() {
-        return this._loader;
-    }
-    get description() {
-        return this._description;
-    }
-    get modality() {
-        return this.pec.slotComposer && this.pec.slotComposer.modality;
-    }
-    registerInstantiatePlanCallback(callback) {
-        this.instantiatePlanCallbacks.push(callback);
-    }
-    unregisterInstantiatePlanCallback(callback) {
-        const index = this.instantiatePlanCallbacks.indexOf(callback);
-        if (index >= 0) {
-            this.instantiatePlanCallbacks.splice(index, 1);
-            return true;
-        }
-        return false;
-    }
-    dispose() {
-        this.instantiatePlanCallbacks = [];
-        // TODO: disconnect all assocated store event handlers
-        this.pec.close();
-        if (this.pec.slotComposer) {
-            this.pec.slotComposer.dispose();
-        }
-    }
-    // Returns a promise that spins sending a single `AwaitIdle` message until it
-    // sees no other messages were sent.
-    async _waitForIdle() {
-        let messageCount;
-        do {
-            messageCount = this.pec.messageCount;
-            await this.pec.idle;
-            // We expect two messages here, one requesting the idle status, and one answering it.
-        } while (this.pec.messageCount !== messageCount + 2);
-    }
-    get idle() {
-        if (!this.waitForIdlePromise) {
-            // Store one active completion promise for use by any subsequent callers.
-            // We explicitly want to avoid, for example, multiple simultaneous
-            // attempts to identify idle state each sending their own `AwaitIdle`
-            // message and expecting settlement that will never arrive.
-            this.waitForIdlePromise =
-                this._waitForIdle().then(() => this.waitForIdlePromise = null);
-        }
-        return this.waitForIdlePromise;
-    }
-    get isSpeculative() {
-        return this.speculative;
-    }
-    async _serializeHandle(handle, context, id) {
-        const type = handle.type.getContainedType() || handle.type;
-        if (type instanceof InterfaceType) {
-            context.interfaces += type.interfaceInfo.toString() + '\n';
-        }
-        const key = this.storageProviderFactory.parseStringAsKey(handle.storageKey);
-        const tags = this.storeTags.get(handle) || [];
-        const handleTags = [...tags].map(a => `#${a}`).join(' ');
-        const actualHandle = this.activeRecipe.findHandle(handle.id);
-        const originalId = actualHandle ? actualHandle.originalId : null;
-        let combinedId = `'${handle.id}'`;
-        if (originalId) {
-            combinedId += `!!'${originalId}'`;
-        }
-        switch (key.protocol) {
-            case 'firebase':
-            case 'pouchdb':
-                context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version === null ? 0 : handle.version} ${handleTags} at '${handle.storageKey}'\n`;
-                break;
-            case 'volatile': {
-                // TODO(sjmiles): emit empty data for stores marked `nosync`: shell will supply data
-                const nosync = handleTags.includes('nosync');
-                let serializedData = [];
-                if (!nosync) {
-                    // TODO: include keys in serialized [big]collections?
-                    serializedData = (await handle.toLiteral()).model.map(({ id, value, index }) => {
-                        if (value == null) {
-                            return null;
-                        }
-                        let result;
-                        if (value.rawData) {
-                            result = { $id: id };
-                            for (const field of Object.keys(value.rawData)) {
-                                result[field] = value.rawData[field];
-                            }
-                        }
-                        else {
-                            result = value;
-                        }
-                        if (index !== undefined) {
-                            result.$index = index;
-                        }
-                        return result;
-                    });
-                }
-                if (handle.referenceMode && serializedData.length > 0) {
-                    const storageKey = serializedData[0].storageKey;
-                    if (!context.dataResources.has(storageKey)) {
-                        const storeId = `${id}_Data`;
-                        context.dataResources.set(storageKey, storeId);
-                        // TODO: can't just reach into the store for the backing Store like this, should be an
-                        // accessor that loads-on-demand in the storage objects.
-                        await handle.ensureBackingStore();
-                        await this._serializeHandle(handle.backingStore, context, storeId);
-                    }
-                    const storeId = context.dataResources.get(storageKey);
-                    serializedData.forEach(a => { a.storageKey = storeId; });
-                }
-                context.resources += `resource ${id}Resource\n`;
-                const indent = '  ';
-                context.resources += indent + 'start\n';
-                const data = JSON.stringify(serializedData);
-                context.resources += data.split('\n').map(line => indent + line).join('\n');
-                context.resources += '\n';
-                context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version || 0} ${handleTags} in ${id}Resource\n`;
-                break;
-            }
-            default:
-                throw new Error(`unknown storageKey protocol ${key.protocol}`);
-        }
-    }
-    async _serializeHandles() {
-        const context = { handles: '', resources: '', interfaces: '', dataResources: new Map() };
-        let id = 0;
-        const importSet = new Set();
-        const handlesToSerialize = new Set();
-        const contextSet = new Set(this.context.stores.map(store => store.id));
-        for (const handle of this._activeRecipe.handles) {
-            if (handle.fate === 'map') {
-                importSet.add(this.context.findManifestUrlForHandleId(handle.id));
-            }
-            else {
-                // Immediate value handles have values inlined in the recipe and are not serialized.
-                if (handle.immediateValue)
-                    continue;
-                handlesToSerialize.add(handle.id);
-            }
-        }
-        for (const url of importSet.values()) {
-            context.resources += `import '${url}'\n`;
-        }
-        for (const handle of this._stores) {
-            if (!handlesToSerialize.has(handle.id) || contextSet.has(handle.id)) {
-                continue;
-            }
-            await this._serializeHandle(handle, context, `Store${id++}`);
-        }
-        return context.resources + context.interfaces + context.handles;
-    }
-    _serializeParticles() {
-        const particleSpecs = [];
-        // Particles used directly.
-        particleSpecs.push(...this._activeRecipe.particles.map(entry => entry.spec));
-        // Particles referenced in an immediate mode.
-        particleSpecs.push(...this._activeRecipe.handles
-            .filter(h => h.immediateValue)
-            .map(h => h.immediateValue));
-        const results = [];
-        particleSpecs.forEach(spec => {
-            for (const connection of spec.connections) {
-                if (connection.type instanceof InterfaceType) {
-                    results.push(connection.type.interfaceInfo.toString());
-                }
-            }
-            results.push(spec.toString());
-        });
-        return results.join('\n');
-    }
-    _serializeStorageKey() {
-        if (this.storageKey) {
-            return `storageKey: '${this.storageKey}'\n`;
-        }
-        return '';
-    }
-    async serialize() {
-        await this.idle;
-        return `
-meta
-  name: '${this.id}'
-  ${this._serializeStorageKey()}
-
-${await this._serializeHandles()}
-
-${this._serializeParticles()}
-
-@active
-${this.activeRecipe.toString()}`;
-    }
-    // Writes `serialization` to the ArcInfo child key under the Arc's storageKey.
-    // This does not directly use serialize() as callers may want to modify the
-    // contents of the serialized arc before persisting.
-    async persistSerialization(serialization) {
-        const storage = this.storageProviderFactory;
-        const key = storage.parseStringAsKey(this.storageKey).childKeyForArcInfo();
-        const arcInfoType = new ArcType();
-        const store = await storage.connectOrConstruct('store', arcInfoType, key.toString());
-        store.referenceMode = false;
-        // TODO: storage refactor: make sure set() is available here (or wrap store in a Handle-like adaptor).
-        await store['set'](arcInfoType.newInstance(this.id, serialization));
-    }
-    static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context }) {
-        const manifest = await Manifest.parse(serialization, { loader, fileName, context });
-        const arc = new Arc({
-            id: manifest.meta.name,
-            storageKey: manifest.meta.storageKey,
-            slotComposer,
-            pecFactory,
-            loader,
-            storageProviderFactory: manifest.storageProviderFactory,
-            context
-        });
-        await Promise.all(manifest.stores.map(async (store) => {
-            const tags = manifest.storeTags.get(store);
-            if (store instanceof StorageStub) {
-                store = await store.inflate();
-            }
-            arc._registerStore(store, tags);
-        }));
-        const recipe = manifest.activeRecipe.clone();
-        const options = { errors: new Map() };
-        assert$1(recipe.normalize(options), `Couldn't normalize recipe ${recipe.toString()}:\n${[...options.errors.values()].join('\n')}`);
-        await arc.instantiate(recipe);
-        return arc;
-    }
-    get context() {
-        return this._context;
-    }
-    get activeRecipe() { return this._activeRecipe; }
-    get recipes() { return this._recipes; }
-    loadedParticles() {
-        return [...this.particleHandleMaps.values()].map(({ spec }) => spec);
-    }
-    _instantiateParticle(recipeParticle) {
-        recipeParticle.id = this.generateID('particle');
-        const handleMap = { spec: recipeParticle.spec, handles: new Map() };
-        this.particleHandleMaps.set(recipeParticle.id, handleMap);
-        for (const [name, connection] of Object.entries(recipeParticle.connections)) {
-            if (!connection.handle) {
-                assert$1(connection.isOptional);
-                continue;
-            }
-            const handle = this.findStoreById(connection.handle.id);
-            assert$1(handle, `can't find handle of id ${connection.handle.id}`);
-            this._connectParticleToHandle(recipeParticle, name, handle);
-        }
-        // At least all non-optional connections must be resolved
-        assert$1(handleMap.handles.size >= handleMap.spec.connections.filter(c => !c.isOptional).length, `Not all mandatory connections are resolved for {$particle}`);
-        this.pec.instantiate(recipeParticle, handleMap.spec, handleMap.handles);
-    }
-    generateID(component = '') {
-        return this.id.createId(component).toString();
-    }
-    get _stores() {
-        return [...this.storesById.values()];
-    }
-    // Makes a copy of the arc used for speculative execution.
-    async cloneForSpeculativeExecution() {
-        const arc = new Arc({ id: this.generateID().toString(), pecFactory: this.pecFactory, context: this.context, loader: this._loader, speculative: true });
-        const storeMap = new Map();
-        for (const store of this._stores) {
-            const clone = await arc.storageProviderFactory.construct(store.id, store.type, 'volatile');
-            await clone.cloneFrom(store);
-            storeMap.set(store, clone);
-            if (this.storeDescriptions.has(store)) {
-                arc.storeDescriptions.set(clone, this.storeDescriptions.get(store));
-            }
-        }
-        this.particleHandleMaps.forEach((value, key) => {
-            arc.particleHandleMaps.set(key, {
-                spec: value.spec,
-                handles: new Map()
-            });
-            value.handles.forEach(handle => arc.particleHandleMaps.get(key).handles.set(handle.name, storeMap.get(handle)));
-        });
-        const { particles, handles, slots } = this._activeRecipe.mergeInto(arc._activeRecipe);
-        let particleIndex = 0;
-        let handleIndex = 0;
-        let slotIndex = 0;
-        this._recipes.forEach(recipe => {
-            const arcRecipe = { particles: [], handles: [], slots: [], innerArcs: new Map(), patterns: recipe.patterns };
-            recipe.particles.forEach(p => {
-                arcRecipe.particles.push(particles[particleIndex++]);
-                if (recipe.innerArcs.has(p)) {
-                    const thisInnerArc = recipe.innerArcs.get(p);
-                    const transformationParticle = arcRecipe.particles[arcRecipe.particles.length - 1];
-                    const innerArc = { activeRecipe: new Recipe(), recipes: [] };
-                    const innerTuples = thisInnerArc.activeRecipe.mergeInto(innerArc.activeRecipe);
-                    thisInnerArc.recipes.forEach(thisInnerArcRecipe => {
-                        const innerArcRecipe = { particles: [], handles: [], slots: [], innerArcs: new Map() };
-                        let innerIndex = 0;
-                        thisInnerArcRecipe.particles.forEach(thisInnerArcRecipeParticle => {
-                            innerArcRecipe.particles.push(innerTuples.particles[innerIndex++]);
-                        });
-                        innerIndex = 0;
-                        thisInnerArcRecipe.handles.forEach(thisInnerArcRecipeParticle => {
-                            innerArcRecipe.handles.push(innerTuples.handles[innerIndex++]);
-                        });
-                        innerIndex = 0;
-                        thisInnerArcRecipe.slots.forEach(thisInnerArcRecipeParticle => {
-                            innerArcRecipe.slots.push(innerTuples.slots[innerIndex++]);
-                        });
-                        innerArc.recipes.push(innerArcRecipe);
-                    });
-                    arcRecipe.innerArcs.set(transformationParticle, innerArc);
-                }
-            });
-            recipe.handles.forEach(p => {
-                arcRecipe.handles.push(handles[handleIndex++]);
-            });
-            recipe.slots.forEach(p => {
-                arcRecipe.slots.push(slots[slotIndex++]);
-            });
-            arc._recipes.push(arcRecipe);
-        });
-        for (const v of storeMap.values()) {
-            // FIXME: Tags
-            arc._registerStore(v, []);
-        }
-        return arc;
-    }
-    async instantiate(recipe, innerArc = undefined) {
-        assert$1(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({ showUnresolved: true })}`);
-        assert$1(recipe.isCompatibleWithModality(this.modality), `Cannot instantiate recipe ${recipe.toString()} with [${recipe.getSupportedModalities()}] modalities in '${this.modality}' arc`);
-        let currentArc = { activeRecipe: this._activeRecipe, recipes: this._recipes };
-        if (innerArc) {
-            const innerArcs = this._recipes.find(r => !!r.particles.find(p => p === innerArc.particle)).innerArcs;
-            if (!innerArcs.has(innerArc.particle)) {
-                innerArcs.set(innerArc.particle, { activeRecipe: new Recipe(), recipes: [] });
-            }
-            currentArc = innerArcs.get(innerArc.particle);
-        }
-        const { handles, particles, slots } = recipe.mergeInto(currentArc.activeRecipe);
-        currentArc.recipes.push({ particles, handles, slots, innerArcs: new Map(), patterns: recipe.patterns });
-        // TODO(mmandlis): Get rid of populating the missing local slot IDs here,
-        // it should be done at planning stage.
-        slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
-        for (const recipeHandle of handles) {
-            if (['copy', 'create'].includes(recipeHandle.fate)) {
-                let type = recipeHandle.type;
-                if (recipeHandle.fate === 'create') {
-                    assert$1(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);
-                }
-                type = type.resolvedType();
-                assert$1(type.isResolved(), `Can't create handle for unresolved type ${type}`);
-                const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags, recipeHandle.immediateValue ? 'volatile' : null);
-                if (recipeHandle.immediateValue) {
-                    const particleSpec = recipeHandle.immediateValue;
-                    const type = recipeHandle.type;
-                    assert$1(type instanceof InterfaceType && type.interfaceInfo.particleMatches(particleSpec));
-                    const particleClone = particleSpec.clone().toLiteral();
-                    particleClone.id = newStore.id;
-                    // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
-                    // tslint:disable-next-line: no-any
-                    await newStore.set(particleClone);
-                }
-                else if (recipeHandle.fate === 'copy') {
-                    const copiedStore = this.findStoreById(recipeHandle.id);
-                    assert$1(copiedStore, `Cannot find store ${recipeHandle.id}`);
-                    assert$1(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
-                    await newStore.cloneFrom(copiedStore);
-                    this._tagStore(newStore, this.findStoreTags(copiedStore));
-                    const copiedStoreDesc = this.getStoreDescription(copiedStore);
-                    if (copiedStoreDesc) {
-                        this.storeDescriptions.set(newStore, copiedStoreDesc);
-                    }
-                }
-                recipeHandle.id = newStore.id;
-                recipeHandle.fate = 'use';
-                recipeHandle.storageKey = newStore.storageKey;
-                continue;
-                // TODO: move the call to ParticleExecutionHost's DefineHandle to here
-            }
-            // TODO(shans/sjmiles): This shouldn't be possible, but at the moment the
-            // shell pre-populates all arcs with a set of handles so if a recipe explicitly
-            // asks for one of these there's a conflict. Ideally these will end up as a
-            // part of the context and will be populated on-demand like everything else.
-            if (this.storesById.has(recipeHandle.id)) {
-                continue;
-            }
-            let storageKey = recipeHandle.storageKey;
-            if (!storageKey) {
-                storageKey = this.keyForId(recipeHandle.id);
-            }
-            assert$1(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
-            const type = recipeHandle.type.resolvedType();
-            assert$1(type.isResolved());
-            const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
-            assert$1(store, `store '${recipeHandle.id}' was not found`);
-            this._registerStore(store, recipeHandle.tags);
-        }
-        particles.forEach(recipeParticle => this._instantiateParticle(recipeParticle));
-        if (this.pec.slotComposer) {
-            // TODO: pass slot-connections instead
-            this.pec.slotComposer.initializeRecipe(particles);
-        }
-        if (!this.isSpeculative && !innerArc) {
-            // Note: callbacks not triggered for inner-arc recipe instantiation or speculative arcs.
-            this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
-        }
-        this.debugHandler.recipeInstantiated({ particles });
-    }
-    _connectParticleToHandle(particle, name, targetHandle) {
-        assert$1(targetHandle, 'no target handle provided');
-        const handleMap = this.particleHandleMaps.get(particle.id);
-        assert$1(handleMap.spec.connectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
-        handleMap.handles.set(name, targetHandle);
-    }
-    async createStore(type, name, id, tags, storageKey = undefined) {
-        assert$1(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);
-        if (type instanceof RelationType) {
-            type = new CollectionType(type);
-        }
-        if (id == undefined) {
-            id = this.generateID();
-        }
-        if (storageKey == undefined && this.storageKey) {
-            storageKey =
-                this.storageProviderFactory.parseStringAsKey(this.storageKey)
-                    .childKeyForHandle(id)
-                    .toString();
-        }
-        // TODO(sjmiles): use `volatile` for nosync stores
-        const hasNosyncTag = tags => tags && ((Array.isArray(tags) && tags.includes('nosync')) || tags === 'nosync');
-        if (storageKey == undefined || hasNosyncTag(tags)) {
-            storageKey = 'volatile';
-        }
-        const store = await this.storageProviderFactory.construct(id, type, storageKey);
-        assert$1(store, `failed to create store with id [${id}]`);
-        store.name = name;
-        this._registerStore(store, tags);
-        return store;
-    }
-    _registerStore(store, tags) {
-        assert$1(!this.storesById.has(store.id), `Store already registered '${store.id}'`);
-        tags = tags || [];
-        tags = Array.isArray(tags) ? tags : [tags];
-        this.storesById.set(store.id, store);
-        this.storeTags.set(store, new Set(tags));
-        this.storageKeys[store.id] = store.storageKey;
-        store.on('change', () => this._onDataChange(), this);
-    }
-    _tagStore(store, tags) {
-        assert$1(this.storesById.has(store.id) && this.storeTags.has(store), `Store not registered '${store.id}'`);
-        const storeTags = this.storeTags.get(store);
-        (tags || []).forEach(tag => storeTags.add(tag));
-    }
-    _onDataChange() {
-        for (const callback of this.dataChangeCallbacks.values()) {
-            callback();
-        }
-    }
-    onDataChange(callback, registration) {
-        this.dataChangeCallbacks.set(registration, callback);
-    }
-    clearDataChange(registration) {
-        this.dataChangeCallbacks.delete(registration);
-    }
-    // Convert a type to a normalized key that we can use for
-    // equality testing.
-    //
-    // TODO: we should be testing the schemas for compatiblity instead of using just the name.
-    // TODO: now that this is only used to implement findStoresByType we can probably replace
-    // the check there with a type system equality check or similar.
-    static _typeToKey(type) {
-        const elementType = type.getContainedType();
-        if (elementType) {
-            const key = this._typeToKey(elementType);
-            if (key) {
-                return `list:${key}`;
-            }
-        }
-        else if (type instanceof EntityType) {
-            return type.entitySchema.name;
-        }
-        else if (type instanceof InterfaceType) {
-            // TODO we need to fix this too, otherwise all handles of interface type will
-            // be of the 'same type' when searching by type.
-            return type.interfaceInfo;
-        }
-        else if (type instanceof TypeVariable && type.isResolved()) {
-            return Arc._typeToKey(type.resolvedType());
-        }
-    }
-    findStoresByType(type, options) {
-        const typeKey = Arc._typeToKey(type);
-        let stores = [...this.storesById.values()].filter(handle => {
-            if (typeKey) {
-                const handleKey = Arc._typeToKey(handle.type);
-                if (typeKey === handleKey) {
-                    return true;
-                }
-            }
-            else {
-                if (type instanceof TypeVariable && !type.isResolved() && handle.type instanceof EntityType) {
-                    return true;
-                }
-                // elementType will only be non-null if type is either Collection or BigCollection; the tag
-                // comparison ensures that handle.type is the same sort of collection.
-                const elementType = type.getContainedType();
-                if (elementType && elementType instanceof TypeVariable && !elementType.isResolved() && type.tag === handle.type.tag) {
-                    return true;
-                }
-            }
-            return false;
-        });
-        if (options && options.tags && options.tags.length > 0) {
-            stores = stores.filter(store => options.tags.filter(tag => !this.storeTags.get(store).has(tag)).length === 0);
-        }
-        // Quick check that a new handle can fulfill the type contract.
-        // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
-        return stores.filter(s => !!Handle$1.effectiveType(type, [{ type: s.type, direction: (s.type instanceof InterfaceType) ? 'host' : 'inout' }]));
-    }
-    findStoreById(id) {
-        let store = this.storesById.get(id);
-        if (store == null) {
-            store = this._context.findStoreById(id);
-        }
-        return store;
-    }
-    findStoreTags(store) {
-        if (this.storeTags.has(store)) {
-            return this.storeTags.get(store);
-        }
-        return this._context.findStoreTags(store);
-    }
-    getStoreDescription(store) {
-        assert$1(store, 'Cannot fetch description for nonexistent store');
-        return this.storeDescriptions.get(store) || store.description;
-    }
-    getVersionByStore({ includeArc = true, includeContext = false }) {
-        const versionById = {};
-        if (includeArc) {
-            this.storesById.forEach((handle, id) => versionById[id] = handle.version);
-        }
-        if (includeContext) {
-            this._context.allStores.forEach(handle => versionById[handle.id] = handle.version);
-        }
-        return versionById;
-    }
-    keyForId(id) {
-        return this.storageKeys[id];
-    }
-    stop() {
-        this.pec.stop();
-    }
-    toContextString(options) {
-        const results = [];
-        const stores = [...this.storesById.values()].sort(compareComparables);
-        stores.forEach(store => {
-            results.push(store.toString([...this.storeTags.get(store)]));
-        });
-        // TODO: include stores entities
-        // TODO: include (remote) slots?
-        if (!this._activeRecipe.isEmpty()) {
-            results.push(this._activeRecipe.toString());
-        }
-        return results.join('\n');
     }
 }
 
@@ -26786,6 +25639,1139 @@ class Modality {
 Modality._modalities = {};
 Modality.init();
 
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Plan {
+    constructor(serialization, particles, handles, slots, modalities) {
+        this.particles = [];
+        this.handles = [];
+        this.slots = [];
+        this.modalities = [];
+        this.serialization = serialization;
+        this.particles = particles;
+        this.handles = handles;
+        this.slots = slots;
+        this.modalities = modalities;
+    }
+    static create(plan) {
+        return new Plan(plan.toString(), plan.particles.map(p => ({ name: p.name })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.getSupportedModalities());
+    }
+}
+class Suggestion {
+    constructor(plan, hash, rank, versionByStore) {
+        // TODO: update Description class to be serializable.
+        this.descriptionByModality = {};
+        this.versionByStore = {};
+        // List of search resolved token groups, this suggestion corresponds to.
+        this.searchGroups = [];
+        assert$1(plan, `plan cannot be null`);
+        assert$1(hash, `hash cannot be null`);
+        this.plan = plan;
+        this.hash = hash;
+        this.rank = rank;
+        this.versionByStore = versionByStore;
+    }
+    static create(plan, hash, relevance) {
+        assert$1(plan, `plan cannot be null`);
+        assert$1(hash, `hash cannot be null`);
+        assert$1(relevance, `relevance cannot be null`);
+        const suggestion = new Suggestion(Plan.create(plan), hash, relevance.calcRelevanceScore(), relevance.versionByStore);
+        suggestion.setSearch(plan.search);
+        return suggestion;
+    }
+    get descriptionText() {
+        return this.getDescription('text');
+    }
+    getDescription(modality) {
+        assert$1(this.descriptionByModality[modality], `No description for modality '${modality}'`);
+        return this.descriptionByModality[modality];
+    }
+    async setDescription(description) {
+        this.descriptionByModality['text'] = await description.getRecipeSuggestion();
+        for (const modality of this.plan.modalities) {
+            this.descriptionByModality[modality] =
+                await description.getRecipeSuggestion(Modality.forName(modality).descriptionFormatter);
+        }
+    }
+    isEquivalent(other) {
+        return (this.hash === other.hash) && (this.descriptionText === other.descriptionText);
+    }
+    static compare(s1, s2) {
+        return s2.rank - s1.rank;
+    }
+    hasSearch(search) {
+        const tokens = search.split(' ');
+        return this.searchGroups.some(group => tokens.every(token => group.includes(token)));
+    }
+    setSearch(search) {
+        this.searchGroups = [];
+        if (search) {
+            this._addSearch(search.resolvedTokens);
+        }
+    }
+    mergeSearch(suggestion) {
+        let updated = false;
+        for (const other of suggestion.searchGroups) {
+            if (this._addSearch(other)) {
+                if (this.searchGroups.length === 1) {
+                    this.searchGroups.push(['']);
+                }
+                updated = true;
+            }
+        }
+        this.searchGroups.sort();
+        return updated;
+    }
+    _addSearch(searchGroup) {
+        const equivalentGroup = (group, otherGroup) => {
+            return group.length === otherGroup.length &&
+                group.every(token => otherGroup.includes(token));
+        };
+        if (!this.searchGroups.find(group => equivalentGroup(group, searchGroup))) {
+            this.searchGroups.push(searchGroup);
+            return true;
+        }
+        return false;
+    }
+    toLiteral() {
+        return {
+            plan: this.plan,
+            hash: this.hash,
+            rank: this.rank,
+            // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
+            versionByStore: JSON.stringify(this.versionByStore),
+            searchGroups: this.searchGroups,
+            descriptionByModality: this.descriptionByModality
+        };
+    }
+    static fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }) {
+        const suggestion = new Suggestion(plan, hash, rank, JSON.parse(versionByStore || '{}'));
+        suggestion.searchGroups = searchGroups || [];
+        suggestion.descriptionByModality = descriptionByModality;
+        return suggestion;
+    }
+    async instantiate(arc) {
+        // For now shell is responsible for creating and setting the new arc.
+        assert$1(arc, `Cannot instantiate suggestion without and arc`);
+        const thePlan = await Suggestion.planFromString(this.plan.serialization, arc);
+        return arc.instantiate(thePlan);
+    }
+    // TODO(mmandlis): temporarily used in shell's plan instantiation hack. 
+    // Make private again, once fixed.
+    static async planFromString(planString, arc) {
+        try {
+            const manifest = await Manifest.parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
+            assert$1(manifest.recipes.length === 1);
+            let plan = manifest.recipes[0];
+            assert$1(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
+            if (!plan.isResolved()) {
+                const recipeResolver = new RecipeResolver(arc);
+                const resolvedPlan = await recipeResolver.resolve(plan);
+                assert$1(resolvedPlan, `can't resolve plan: ${plan.toString({ showUnresolved: true })}`);
+                if (resolvedPlan) {
+                    plan = resolvedPlan;
+                }
+            }
+            assert$1(manifest.stores.length === 0, `Unexpected stores in suggestion manifest.`);
+            return plan;
+        }
+        catch (e) {
+            console.error(`Failed to parse suggestion ${e}\n${planString}.`);
+        }
+        return null;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Speculator {
+    constructor(planningResult) {
+        this.suggestionByHash = {};
+        this.speculativeArcs = [];
+        if (planningResult) {
+            for (const suggestion of planningResult.suggestions) {
+                this.suggestionByHash[suggestion.hash] = suggestion;
+            }
+        }
+    }
+    async speculate(arc, plan, hash) {
+        assert$1(plan.isResolved(), `Cannot speculate on an unresolved plan: ${plan.toString({ showUnresolved: true })}`);
+        let suggestion = this.suggestionByHash[hash];
+        if (suggestion) {
+            const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
+            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === suggestion.versionByStore[handle.id])) {
+                return suggestion;
+            }
+        }
+        const speculativeArc = await arc.cloneForSpeculativeExecution();
+        this.speculativeArcs.push(speculativeArc);
+        const relevance = Relevance.create(arc, plan);
+        await speculativeArc.instantiate(plan);
+        await this.awaitCompletion(relevance, speculativeArc);
+        if (!relevance.isRelevant(plan)) {
+            return null;
+        }
+        speculativeArc.description.relevance = relevance;
+        suggestion = Suggestion.create(plan, hash, relevance);
+        await suggestion.setDescription(speculativeArc.description);
+        this.suggestionByHash[hash] = suggestion;
+        return suggestion;
+    }
+    async awaitCompletion(relevance, speculativeArc) {
+        const messageCount = speculativeArc.pec.messageCount;
+        relevance.apply(await speculativeArc.pec.idle);
+        // We expect two messages here, one requesting the idle status, and one answering it.
+        if (speculativeArc.pec.messageCount !== messageCount + 2) {
+            return this.awaitCompletion(relevance, speculativeArc);
+        }
+        else {
+            speculativeArc.stop();
+            this.speculativeArcs.splice(this.speculativeArcs.indexOf(speculativeArc, 1));
+            return relevance;
+        }
+    }
+    dispose() {
+        for (const arc of this.speculativeArcs) {
+            arc.dispose();
+        }
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class Planner {
+    // TODO: Use context.arc instead of arc
+    init(arc, { strategies = Planner.AllStrategies, ruleset = Empty, strategyArgs = {} } = {}) {
+        strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
+        this._arc = arc;
+        const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
+        this.strategizer = new Strategizer(strategyImpls, [], ruleset);
+    }
+    // Specify a timeout value less than zero to disable timeouts.
+    async plan(timeout, generations) {
+        const trace = Tracing.start({ cat: 'planning', name: 'Planner::plan', overview: true, args: { timeout } });
+        timeout = timeout || -1;
+        const allResolved = [];
+        const start = now$1();
+        do {
+            const record = await trace.wait(this.strategizer.generate());
+            const generated = this.strategizer.generated;
+            trace.addArgs({
+                generated: generated.length,
+                generation: this.strategizer.generation
+            });
+            if (generations) {
+                generations.push({ generated, record });
+            }
+            const resolved = this.strategizer.generated
+                .map(individual => individual.result)
+                .filter(recipe => recipe.isResolved());
+            allResolved.push(...resolved);
+            const elapsed = now$1() - start;
+            if (timeout >= 0 && elapsed > timeout) {
+                console.warn(`Planner.plan timed out [elapsed=${Math.floor(elapsed)}ms, timeout=${timeout}ms].`);
+                break;
+            }
+        } while (this.strategizer.generated.length + this.strategizer.terminal.length > 0);
+        trace.end();
+        return allResolved;
+    }
+    _speculativeThreadCount() {
+        // TODO(wkorman): We'll obviously have to rework the below when we do
+        // speculation in the cloud.
+        const cores = DeviceInfo.hardwareConcurrency();
+        const memory = DeviceInfo.deviceMemory();
+        // For now, allow occupying half of the available cores while constraining
+        // total memory used to at most a quarter of what's available. In the
+        // absence of resource information we just run two in parallel as a
+        // perhaps-low-end-device-oriented balancing act.
+        const minCores = 2;
+        if (!cores || !memory) {
+            return minCores;
+        }
+        // A rough estimate of memory used per thread in gigabytes.
+        const memoryPerThread = 0.125;
+        const quarterMemory = memory / 4;
+        const maxThreadsByMemory = quarterMemory / memoryPerThread;
+        const maxThreadsByCores = cores / 2;
+        return Math.max(minCores, Math.min(maxThreadsByMemory, maxThreadsByCores));
+    }
+    _splitToGroups(items, groupCount) {
+        const groups = [];
+        if (!items || items.length === 0)
+            return groups;
+        const groupItemSize = Math.max(1, Math.floor(items.length / groupCount));
+        let startIndex = 0;
+        for (let i = 0; i < groupCount && startIndex < items.length; i++) {
+            groups.push(items.slice(startIndex, startIndex + groupItemSize));
+            startIndex += groupItemSize;
+        }
+        // Add any remaining items to the end of the last group.
+        if (startIndex < items.length) {
+            groups[groups.length - 1].push(...items.slice(startIndex, items.length));
+        }
+        return groups;
+    }
+    async suggest(timeout, generations = [], speculator) {
+        const trace = Tracing.start({ cat: 'planning', name: 'Planner::suggest', overview: true, args: { timeout } });
+        if (!generations && DevtoolsConnection.isConnected)
+            generations = [];
+        const plans = await trace.wait(this.plan(timeout, generations));
+        speculator = speculator || new Speculator();
+        // We don't actually know how many threads the VM will decide to use to
+        // handle the parallel speculation, but at least we know we won't kick off
+        // more than this number and so can somewhat limit resource utilization.
+        // TODO(wkorman): Rework this to use a fixed size 'thread' pool for more
+        // efficient work distribution.
+        const threadCount = this._speculativeThreadCount();
+        const planGroups = this._splitToGroups(plans, threadCount);
+        let results = await trace.wait(Promise.all(planGroups.map(async (group, groupIndex) => {
+            const results = [];
+            for (const plan of group) {
+                const hash = ((hash) => hash.substring(hash.length - 4))(await plan.digest());
+                if (RecipeUtil.matchesRecipe(this._arc.activeRecipe, plan)) {
+                    this._updateGeneration(generations, hash, (g) => g.active = true);
+                    continue;
+                }
+                const planTrace = Tracing.start({
+                    cat: 'speculating',
+                    sequence: `speculator_${groupIndex}`,
+                    overview: true,
+                    args: { groupIndex }
+                });
+                const suggestion = await speculator.speculate(this._arc, plan, hash);
+                if (!suggestion) {
+                    this._updateGeneration(generations, hash, (g) => g.irrelevant = true);
+                    planTrace.end({ name: '[Irrelevant suggestion]', hash, groupIndex });
+                    continue;
+                }
+                this._updateGeneration(generations, hash, async (g) => g.description = suggestion.descriptionText);
+                suggestion.groupIndex = groupIndex;
+                results.push(suggestion);
+                planTrace.end({ name: suggestion.descriptionText, args: { rank: suggestion.rank, hash, groupIndex } });
+            }
+            return results;
+        })));
+        results = [].concat(...results);
+        return trace.endWith(results);
+    }
+    _updateGeneration(generations, hash, handler) {
+        if (generations) {
+            generations.forEach(g => {
+                g.generated.forEach(gg => {
+                    if (gg.hash.endsWith(hash)) {
+                        handler(gg);
+                    }
+                });
+            });
+        }
+    }
+}
+// tslint:disable-next-line: variable-name
+Planner.InitializationStrategies = [
+    InitPopulation,
+    InitSearch
+];
+// tslint:disable-next-line: variable-name
+Planner.ResolutionStrategies = [
+    SearchTokensToParticles,
+    SearchTokensToHandles,
+    GroupHandleConnections,
+    CreateHandleGroup,
+    ConvertConstraintsToConnections,
+    MapSlots,
+    AssignHandles,
+    MatchParticleByVerb,
+    MatchRecipeByVerb,
+    NameUnnamedConnections,
+    AddMissingHandles,
+    CreateDescriptionHandle,
+    MatchFreeHandlesToConnections,
+    ResolveRecipe,
+    FindHostedParticle,
+    CoalesceRecipes
+];
+// tslint:disable-next-line: variable-name
+Planner.AllStrategies = Planner.InitializationStrategies.concat(Planner.ResolutionStrategies);
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ArcPlannerInvoker {
+    constructor(arc, arcDevtoolsChannel) {
+        this.arc = arc;
+        this.planner = new Planner();
+        this.planner.init(arc);
+        arcDevtoolsChannel.listen('fetch-strategies', () => arcDevtoolsChannel.send({
+            messageType: 'fetch-strategies-result',
+            messageBody: this.planner.strategizer._strategies.map(a => a.constructor.name)
+        }));
+        arcDevtoolsChannel.listen('invoke-planner', async (msg) => arcDevtoolsChannel.send({
+            messageType: 'invoke-planner-result',
+            messageBody: await this.invokePlanner(msg.messageBody)
+        }));
+    }
+    async invokePlanner(msg) {
+        const strategy = this.planner.strategizer._strategies.find(s => s.constructor.name === msg.strategy);
+        if (!strategy)
+            return { error: 'could not find strategy' };
+        let manifest;
+        try {
+            manifest = await Manifest.parse(msg.recipe, { loader: this.arc._loader, fileName: 'manifest.manifest' });
+        }
+        catch (error) {
+            return { error: error.message };
+        }
+        const recipe = manifest.recipes[0];
+        recipe.normalize();
+        const results = await strategy.generate({
+            generation: 0,
+            generated: [{ result: recipe, score: 1 }],
+            population: [{ result: recipe, score: 1 }],
+            terminal: []
+        });
+        for (const result of results) {
+            result.hash = await result.hash;
+            result.derivation = undefined;
+            const recipe = result.result;
+            result.result = recipe.toString({ showUnresolved: true });
+            if (!Object.isFrozen(recipe)) {
+                const errors = new Map();
+                recipe.normalize({ errors });
+                result.errors = [...errors.keys()].map(thing => ({ id: thing.id, error: errors.get(thing) }));
+                result.normalized = recipe.toString();
+            }
+        }
+        return { results };
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ArcStoresFetcher {
+    constructor(arc, arcDevtoolsChannel) {
+        this.arc = arc;
+        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
+            messageType: 'fetch-stores-result',
+            messageBody: await this._listStores()
+        }));
+    }
+    async _listStores() {
+        const find = manifest => {
+            let tags = [...manifest.storeTags];
+            if (manifest.imports) {
+                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
+            }
+            return tags;
+        };
+        return {
+            arcStores: await this._digestStores(this.arc.storeTags),
+            contextStores: await this._digestStores(find(this.arc.context))
+        };
+    }
+    async _digestStores(stores) {
+        const result = [];
+        for (const [store, tags] of stores) {
+            let value = `(don't know how to dereference)`;
+            if (store.toList) {
+                value = await store.toList();
+            }
+            else if (store.get) {
+                value = await store.get();
+            }
+            result.push({
+                name: store.name,
+                tags: tags ? [...tags] : [],
+                id: store.id,
+                storage: store.storageKey,
+                type: store.type,
+                description: store.description,
+                value
+            });
+        }
+        return result;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// Arc-independent handlers for devtools logic.
+DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+    enableTracingAdapter(devtoolsChannel);
+});
+class ArcDebugHandler {
+    constructor(arc) {
+        this.arcDevtoolsChannel = null;
+        // Currently no support for speculative arcs.
+        if (arc.isSpeculative)
+            return;
+        DevtoolsConnection.onceConnected.then(devtoolsChannel => {
+            this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
+            // Message handles go here.
+            const arcPlannerInvoker = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
+            const arcStoresFetcher = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
+            this.arcDevtoolsChannel.send({ messageType: 'arc-available' });
+        });
+    }
+    recipeInstantiated({ particles }) {
+        if (!this.arcDevtoolsChannel)
+            return;
+        const truncate = ({ id, name }) => ({ id, name });
+        const slotConnections = [];
+        particles.forEach(p => Object.values(p.consumedSlotConnections).forEach(cs => {
+            slotConnections.push({
+                particleId: cs.particle.id,
+                consumed: truncate(cs.targetSlot),
+                provided: Object.values(cs.providedSlots).map(slot => truncate(slot)),
+            });
+        }));
+        this.arcDevtoolsChannel.send({
+            messageType: 'recipe-instantiated',
+            messageBody: { slotConnections }
+        });
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Arc {
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative }) {
+        this._activeRecipe = new Recipe();
+        // TODO: rename: these are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
+        this._recipes = [];
+        this.dataChangeCallbacks = new Map();
+        // All the stores, mapped by store ID
+        this.storesById = new Map();
+        // storage keys for referenced handles
+        this.storageKeys = {};
+        // Map from each store to a set of tags. public for debug access
+        this.storeTags = new Map();
+        // Map from each store to its description (originating in the manifest).
+        this.storeDescriptions = new Map();
+        this.instantiatePlanCallbacks = [];
+        this.particleHandleMaps = new Map();
+        // TODO: context should not be optional.
+        this._context = context || new Manifest({ id });
+        // TODO: pecFactory should not be optional. update all callers and fix here.
+        this.pecFactory = pecFactory || FakePecFactory(loader).bind(null);
+        // for now, every Arc gets its own session
+        this.id = Id.newSessionId().fromString(id);
+        this.speculative = !!speculative; // undefined => false
+        this._loader = loader;
+        this.storageKey = storageKey;
+        const pecId = this.generateID();
+        const innerPecPort = this.pecFactory(pecId);
+        this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
+        if (slotComposer) {
+            slotComposer.arc = this;
+        }
+        this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
+        this.arcId = this.storageKey ? this.storageProviderFactory.parseStringAsKey(this.storageKey).arcId : '';
+        this._description = new Description(this);
+        this.debugHandler = new ArcDebugHandler(this);
+    }
+    get loader() {
+        return this._loader;
+    }
+    get description() {
+        return this._description;
+    }
+    get modality() {
+        return this.pec.slotComposer && this.pec.slotComposer.modality;
+    }
+    registerInstantiatePlanCallback(callback) {
+        this.instantiatePlanCallbacks.push(callback);
+    }
+    unregisterInstantiatePlanCallback(callback) {
+        const index = this.instantiatePlanCallbacks.indexOf(callback);
+        if (index >= 0) {
+            this.instantiatePlanCallbacks.splice(index, 1);
+            return true;
+        }
+        return false;
+    }
+    dispose() {
+        this.instantiatePlanCallbacks = [];
+        // TODO: disconnect all assocated store event handlers
+        this.pec.close();
+        if (this.pec.slotComposer) {
+            this.pec.slotComposer.dispose();
+        }
+    }
+    // Returns a promise that spins sending a single `AwaitIdle` message until it
+    // sees no other messages were sent.
+    async _waitForIdle() {
+        let messageCount;
+        do {
+            messageCount = this.pec.messageCount;
+            await this.pec.idle;
+            // We expect two messages here, one requesting the idle status, and one answering it.
+        } while (this.pec.messageCount !== messageCount + 2);
+    }
+    get idle() {
+        if (!this.waitForIdlePromise) {
+            // Store one active completion promise for use by any subsequent callers.
+            // We explicitly want to avoid, for example, multiple simultaneous
+            // attempts to identify idle state each sending their own `AwaitIdle`
+            // message and expecting settlement that will never arrive.
+            this.waitForIdlePromise =
+                this._waitForIdle().then(() => this.waitForIdlePromise = null);
+        }
+        return this.waitForIdlePromise;
+    }
+    get isSpeculative() {
+        return this.speculative;
+    }
+    async _serializeHandle(handle, context, id) {
+        const type = handle.type.getContainedType() || handle.type;
+        if (type instanceof InterfaceType) {
+            context.interfaces += type.interfaceInfo.toString() + '\n';
+        }
+        const key = this.storageProviderFactory.parseStringAsKey(handle.storageKey);
+        const tags = this.storeTags.get(handle) || [];
+        const handleTags = [...tags].map(a => `#${a}`).join(' ');
+        const actualHandle = this.activeRecipe.findHandle(handle.id);
+        const originalId = actualHandle ? actualHandle.originalId : null;
+        let combinedId = `'${handle.id}'`;
+        if (originalId) {
+            combinedId += `!!'${originalId}'`;
+        }
+        switch (key.protocol) {
+            case 'firebase':
+            case 'pouchdb':
+                context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version === null ? 0 : handle.version} ${handleTags} at '${handle.storageKey}'\n`;
+                break;
+            case 'volatile': {
+                // TODO(sjmiles): emit empty data for stores marked `nosync`: shell will supply data
+                const nosync = handleTags.includes('nosync');
+                let serializedData = [];
+                if (!nosync) {
+                    // TODO: include keys in serialized [big]collections?
+                    serializedData = (await handle.toLiteral()).model.map(({ id, value, index }) => {
+                        if (value == null) {
+                            return null;
+                        }
+                        let result;
+                        if (value.rawData) {
+                            result = { $id: id };
+                            for (const field of Object.keys(value.rawData)) {
+                                result[field] = value.rawData[field];
+                            }
+                        }
+                        else {
+                            result = value;
+                        }
+                        if (index !== undefined) {
+                            result.$index = index;
+                        }
+                        return result;
+                    });
+                }
+                if (handle.referenceMode && serializedData.length > 0) {
+                    const storageKey = serializedData[0].storageKey;
+                    if (!context.dataResources.has(storageKey)) {
+                        const storeId = `${id}_Data`;
+                        context.dataResources.set(storageKey, storeId);
+                        // TODO: can't just reach into the store for the backing Store like this, should be an
+                        // accessor that loads-on-demand in the storage objects.
+                        await handle.ensureBackingStore();
+                        await this._serializeHandle(handle.backingStore, context, storeId);
+                    }
+                    const storeId = context.dataResources.get(storageKey);
+                    serializedData.forEach(a => { a.storageKey = storeId; });
+                }
+                context.resources += `resource ${id}Resource\n`;
+                const indent = '  ';
+                context.resources += indent + 'start\n';
+                const data = JSON.stringify(serializedData);
+                context.resources += data.split('\n').map(line => indent + line).join('\n');
+                context.resources += '\n';
+                context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version || 0} ${handleTags} in ${id}Resource\n`;
+                break;
+            }
+            default:
+                throw new Error(`unknown storageKey protocol ${key.protocol}`);
+        }
+    }
+    async _serializeHandles() {
+        const context = { handles: '', resources: '', interfaces: '', dataResources: new Map() };
+        let id = 0;
+        const importSet = new Set();
+        const handlesToSerialize = new Set();
+        const contextSet = new Set(this.context.stores.map(store => store.id));
+        for (const handle of this._activeRecipe.handles) {
+            if (handle.fate === 'map') {
+                importSet.add(this.context.findManifestUrlForHandleId(handle.id));
+            }
+            else {
+                // Immediate value handles have values inlined in the recipe and are not serialized.
+                if (handle.immediateValue)
+                    continue;
+                handlesToSerialize.add(handle.id);
+            }
+        }
+        for (const url of importSet.values()) {
+            context.resources += `import '${url}'\n`;
+        }
+        for (const handle of this._stores) {
+            if (!handlesToSerialize.has(handle.id) || contextSet.has(handle.id)) {
+                continue;
+            }
+            await this._serializeHandle(handle, context, `Store${id++}`);
+        }
+        return context.resources + context.interfaces + context.handles;
+    }
+    _serializeParticles() {
+        const particleSpecs = [];
+        // Particles used directly.
+        particleSpecs.push(...this._activeRecipe.particles.map(entry => entry.spec));
+        // Particles referenced in an immediate mode.
+        particleSpecs.push(...this._activeRecipe.handles
+            .filter(h => h.immediateValue)
+            .map(h => h.immediateValue));
+        const results = [];
+        particleSpecs.forEach(spec => {
+            for (const connection of spec.connections) {
+                if (connection.type instanceof InterfaceType) {
+                    results.push(connection.type.interfaceInfo.toString());
+                }
+            }
+            results.push(spec.toString());
+        });
+        return results.join('\n');
+    }
+    _serializeStorageKey() {
+        if (this.storageKey) {
+            return `storageKey: '${this.storageKey}'\n`;
+        }
+        return '';
+    }
+    async serialize() {
+        await this.idle;
+        return `
+meta
+  name: '${this.id}'
+  ${this._serializeStorageKey()}
+
+${await this._serializeHandles()}
+
+${this._serializeParticles()}
+
+@active
+${this.activeRecipe.toString()}`;
+    }
+    // Writes `serialization` to the ArcInfo child key under the Arc's storageKey.
+    // This does not directly use serialize() as callers may want to modify the
+    // contents of the serialized arc before persisting.
+    async persistSerialization(serialization) {
+        const storage = this.storageProviderFactory;
+        const key = storage.parseStringAsKey(this.storageKey).childKeyForArcInfo();
+        const arcInfoType = new ArcType();
+        const store = await storage.connectOrConstruct('store', arcInfoType, key.toString());
+        store.referenceMode = false;
+        // TODO: storage refactor: make sure set() is available here (or wrap store in a Handle-like adaptor).
+        await store['set'](arcInfoType.newInstance(this.id, serialization));
+    }
+    static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context }) {
+        const manifest = await Manifest.parse(serialization, { loader, fileName, context });
+        const arc = new Arc({
+            id: manifest.meta.name,
+            storageKey: manifest.meta.storageKey,
+            slotComposer,
+            pecFactory,
+            loader,
+            storageProviderFactory: manifest.storageProviderFactory,
+            context
+        });
+        await Promise.all(manifest.stores.map(async (store) => {
+            const tags = manifest.storeTags.get(store);
+            if (store instanceof StorageStub) {
+                store = await store.inflate();
+            }
+            arc._registerStore(store, tags);
+        }));
+        const recipe = manifest.activeRecipe.clone();
+        const options = { errors: new Map() };
+        assert$1(recipe.normalize(options), `Couldn't normalize recipe ${recipe.toString()}:\n${[...options.errors.values()].join('\n')}`);
+        await arc.instantiate(recipe);
+        return arc;
+    }
+    get context() {
+        return this._context;
+    }
+    get activeRecipe() { return this._activeRecipe; }
+    get recipes() { return this._recipes; }
+    loadedParticles() {
+        return [...this.particleHandleMaps.values()].map(({ spec }) => spec);
+    }
+    _instantiateParticle(recipeParticle) {
+        recipeParticle.id = this.generateID('particle');
+        const handleMap = { spec: recipeParticle.spec, handles: new Map() };
+        this.particleHandleMaps.set(recipeParticle.id, handleMap);
+        for (const [name, connection] of Object.entries(recipeParticle.connections)) {
+            if (!connection.handle) {
+                assert$1(connection.isOptional);
+                continue;
+            }
+            const handle = this.findStoreById(connection.handle.id);
+            assert$1(handle, `can't find handle of id ${connection.handle.id}`);
+            this._connectParticleToHandle(recipeParticle, name, handle);
+        }
+        // At least all non-optional connections must be resolved
+        assert$1(handleMap.handles.size >= handleMap.spec.connections.filter(c => !c.isOptional).length, `Not all mandatory connections are resolved for {$particle}`);
+        this.pec.instantiate(recipeParticle, handleMap.spec, handleMap.handles);
+    }
+    generateID(component = '') {
+        return this.id.createId(component).toString();
+    }
+    get _stores() {
+        return [...this.storesById.values()];
+    }
+    // Makes a copy of the arc used for speculative execution.
+    async cloneForSpeculativeExecution() {
+        const arc = new Arc({ id: this.generateID().toString(), pecFactory: this.pecFactory, context: this.context, loader: this._loader, speculative: true });
+        const storeMap = new Map();
+        for (const store of this._stores) {
+            const clone = await arc.storageProviderFactory.construct(store.id, store.type, 'volatile');
+            await clone.cloneFrom(store);
+            storeMap.set(store, clone);
+            if (this.storeDescriptions.has(store)) {
+                arc.storeDescriptions.set(clone, this.storeDescriptions.get(store));
+            }
+        }
+        this.particleHandleMaps.forEach((value, key) => {
+            arc.particleHandleMaps.set(key, {
+                spec: value.spec,
+                handles: new Map()
+            });
+            value.handles.forEach(handle => arc.particleHandleMaps.get(key).handles.set(handle.name, storeMap.get(handle)));
+        });
+        const { particles, handles, slots } = this._activeRecipe.mergeInto(arc._activeRecipe);
+        let particleIndex = 0;
+        let handleIndex = 0;
+        let slotIndex = 0;
+        this._recipes.forEach(recipe => {
+            const arcRecipe = { particles: [], handles: [], slots: [], innerArcs: new Map(), patterns: recipe.patterns };
+            recipe.particles.forEach(p => {
+                arcRecipe.particles.push(particles[particleIndex++]);
+                if (recipe.innerArcs.has(p)) {
+                    const thisInnerArc = recipe.innerArcs.get(p);
+                    const transformationParticle = arcRecipe.particles[arcRecipe.particles.length - 1];
+                    const innerArc = { activeRecipe: new Recipe(), recipes: [] };
+                    const innerTuples = thisInnerArc.activeRecipe.mergeInto(innerArc.activeRecipe);
+                    thisInnerArc.recipes.forEach(thisInnerArcRecipe => {
+                        const innerArcRecipe = { particles: [], handles: [], slots: [], innerArcs: new Map() };
+                        let innerIndex = 0;
+                        thisInnerArcRecipe.particles.forEach(thisInnerArcRecipeParticle => {
+                            innerArcRecipe.particles.push(innerTuples.particles[innerIndex++]);
+                        });
+                        innerIndex = 0;
+                        thisInnerArcRecipe.handles.forEach(thisInnerArcRecipeParticle => {
+                            innerArcRecipe.handles.push(innerTuples.handles[innerIndex++]);
+                        });
+                        innerIndex = 0;
+                        thisInnerArcRecipe.slots.forEach(thisInnerArcRecipeParticle => {
+                            innerArcRecipe.slots.push(innerTuples.slots[innerIndex++]);
+                        });
+                        innerArc.recipes.push(innerArcRecipe);
+                    });
+                    arcRecipe.innerArcs.set(transformationParticle, innerArc);
+                }
+            });
+            recipe.handles.forEach(p => {
+                arcRecipe.handles.push(handles[handleIndex++]);
+            });
+            recipe.slots.forEach(p => {
+                arcRecipe.slots.push(slots[slotIndex++]);
+            });
+            arc._recipes.push(arcRecipe);
+        });
+        for (const v of storeMap.values()) {
+            // FIXME: Tags
+            arc._registerStore(v, []);
+        }
+        return arc;
+    }
+    async instantiate(recipe, innerArc = undefined) {
+        assert$1(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({ showUnresolved: true })}`);
+        assert$1(recipe.isCompatibleWithModality(this.modality), `Cannot instantiate recipe ${recipe.toString()} with [${recipe.getSupportedModalities()}] modalities in '${this.modality}' arc`);
+        let currentArc = { activeRecipe: this._activeRecipe, recipes: this._recipes };
+        if (innerArc) {
+            const innerArcs = this._recipes.find(r => !!r.particles.find(p => p === innerArc.particle)).innerArcs;
+            if (!innerArcs.has(innerArc.particle)) {
+                innerArcs.set(innerArc.particle, { activeRecipe: new Recipe(), recipes: [] });
+            }
+            currentArc = innerArcs.get(innerArc.particle);
+        }
+        const { handles, particles, slots } = recipe.mergeInto(currentArc.activeRecipe);
+        currentArc.recipes.push({ particles, handles, slots, innerArcs: new Map(), patterns: recipe.patterns });
+        // TODO(mmandlis): Get rid of populating the missing local slot IDs here,
+        // it should be done at planning stage.
+        slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
+        for (const recipeHandle of handles) {
+            if (['copy', 'create'].includes(recipeHandle.fate)) {
+                let type = recipeHandle.type;
+                if (recipeHandle.fate === 'create') {
+                    assert$1(type.maybeEnsureResolved(), `Can't assign resolved type to ${type}`);
+                }
+                type = type.resolvedType();
+                assert$1(type.isResolved(), `Can't create handle for unresolved type ${type}`);
+                const newStore = await this.createStore(type, /* name= */ null, this.generateID(), recipeHandle.tags, recipeHandle.immediateValue ? 'volatile' : null);
+                if (recipeHandle.immediateValue) {
+                    const particleSpec = recipeHandle.immediateValue;
+                    const type = recipeHandle.type;
+                    assert$1(type instanceof InterfaceType && type.interfaceInfo.particleMatches(particleSpec));
+                    const particleClone = particleSpec.clone().toLiteral();
+                    particleClone.id = newStore.id;
+                    // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
+                    // tslint:disable-next-line: no-any
+                    await newStore.set(particleClone);
+                }
+                else if (recipeHandle.fate === 'copy') {
+                    const copiedStore = this.findStoreById(recipeHandle.id);
+                    assert$1(copiedStore, `Cannot find store ${recipeHandle.id}`);
+                    assert$1(copiedStore.version !== null, `Copied store ${recipeHandle.id} doesn't have version.`);
+                    await newStore.cloneFrom(copiedStore);
+                    this._tagStore(newStore, this.findStoreTags(copiedStore));
+                    const copiedStoreDesc = this.getStoreDescription(copiedStore);
+                    if (copiedStoreDesc) {
+                        this.storeDescriptions.set(newStore, copiedStoreDesc);
+                    }
+                }
+                recipeHandle.id = newStore.id;
+                recipeHandle.fate = 'use';
+                recipeHandle.storageKey = newStore.storageKey;
+                continue;
+                // TODO: move the call to ParticleExecutionHost's DefineHandle to here
+            }
+            // TODO(shans/sjmiles): This shouldn't be possible, but at the moment the
+            // shell pre-populates all arcs with a set of handles so if a recipe explicitly
+            // asks for one of these there's a conflict. Ideally these will end up as a
+            // part of the context and will be populated on-demand like everything else.
+            if (this.storesById.has(recipeHandle.id)) {
+                continue;
+            }
+            let storageKey = recipeHandle.storageKey;
+            if (!storageKey) {
+                storageKey = this.keyForId(recipeHandle.id);
+            }
+            assert$1(storageKey, `couldn't find storage key for handle '${recipeHandle}'`);
+            const type = recipeHandle.type.resolvedType();
+            assert$1(type.isResolved());
+            const store = await this.storageProviderFactory.connect(recipeHandle.id, type, storageKey);
+            assert$1(store, `store '${recipeHandle.id}' was not found`);
+            this._registerStore(store, recipeHandle.tags);
+        }
+        particles.forEach(recipeParticle => this._instantiateParticle(recipeParticle));
+        if (this.pec.slotComposer) {
+            // TODO: pass slot-connections instead
+            this.pec.slotComposer.initializeRecipe(particles);
+        }
+        if (!this.isSpeculative && !innerArc) {
+            // Note: callbacks not triggered for inner-arc recipe instantiation or speculative arcs.
+            this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
+        }
+        this.debugHandler.recipeInstantiated({ particles });
+    }
+    _connectParticleToHandle(particle, name, targetHandle) {
+        assert$1(targetHandle, 'no target handle provided');
+        const handleMap = this.particleHandleMaps.get(particle.id);
+        assert$1(handleMap.spec.connectionMap.get(name) !== undefined, 'can\'t connect handle to a connection that doesn\'t exist');
+        handleMap.handles.set(name, targetHandle);
+    }
+    async createStore(type, name, id, tags, storageKey = undefined) {
+        assert$1(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);
+        if (type instanceof RelationType) {
+            type = new CollectionType(type);
+        }
+        if (id == undefined) {
+            id = this.generateID();
+        }
+        if (storageKey == undefined && this.storageKey) {
+            storageKey =
+                this.storageProviderFactory.parseStringAsKey(this.storageKey)
+                    .childKeyForHandle(id)
+                    .toString();
+        }
+        // TODO(sjmiles): use `volatile` for nosync stores
+        const hasNosyncTag = tags => tags && ((Array.isArray(tags) && tags.includes('nosync')) || tags === 'nosync');
+        if (storageKey == undefined || hasNosyncTag(tags)) {
+            storageKey = 'volatile';
+        }
+        const store = await this.storageProviderFactory.construct(id, type, storageKey);
+        assert$1(store, `failed to create store with id [${id}]`);
+        store.name = name;
+        this._registerStore(store, tags);
+        return store;
+    }
+    _registerStore(store, tags) {
+        assert$1(!this.storesById.has(store.id), `Store already registered '${store.id}'`);
+        tags = tags || [];
+        tags = Array.isArray(tags) ? tags : [tags];
+        this.storesById.set(store.id, store);
+        this.storeTags.set(store, new Set(tags));
+        this.storageKeys[store.id] = store.storageKey;
+        store.on('change', () => this._onDataChange(), this);
+    }
+    _tagStore(store, tags) {
+        assert$1(this.storesById.has(store.id) && this.storeTags.has(store), `Store not registered '${store.id}'`);
+        const storeTags = this.storeTags.get(store);
+        (tags || []).forEach(tag => storeTags.add(tag));
+    }
+    _onDataChange() {
+        for (const callback of this.dataChangeCallbacks.values()) {
+            callback();
+        }
+    }
+    onDataChange(callback, registration) {
+        this.dataChangeCallbacks.set(registration, callback);
+    }
+    clearDataChange(registration) {
+        this.dataChangeCallbacks.delete(registration);
+    }
+    // Convert a type to a normalized key that we can use for
+    // equality testing.
+    //
+    // TODO: we should be testing the schemas for compatiblity instead of using just the name.
+    // TODO: now that this is only used to implement findStoresByType we can probably replace
+    // the check there with a type system equality check or similar.
+    static _typeToKey(type) {
+        const elementType = type.getContainedType();
+        if (elementType) {
+            const key = this._typeToKey(elementType);
+            if (key) {
+                return `list:${key}`;
+            }
+        }
+        else if (type instanceof EntityType) {
+            return type.entitySchema.name;
+        }
+        else if (type instanceof InterfaceType) {
+            // TODO we need to fix this too, otherwise all handles of interface type will
+            // be of the 'same type' when searching by type.
+            return type.interfaceInfo;
+        }
+        else if (type instanceof TypeVariable && type.isResolved()) {
+            return Arc._typeToKey(type.resolvedType());
+        }
+    }
+    findStoresByType(type, options) {
+        const typeKey = Arc._typeToKey(type);
+        let stores = [...this.storesById.values()].filter(handle => {
+            if (typeKey) {
+                const handleKey = Arc._typeToKey(handle.type);
+                if (typeKey === handleKey) {
+                    return true;
+                }
+            }
+            else {
+                if (type instanceof TypeVariable && !type.isResolved() && handle.type instanceof EntityType) {
+                    return true;
+                }
+                // elementType will only be non-null if type is either Collection or BigCollection; the tag
+                // comparison ensures that handle.type is the same sort of collection.
+                const elementType = type.getContainedType();
+                if (elementType && elementType instanceof TypeVariable && !elementType.isResolved() && type.tag === handle.type.tag) {
+                    return true;
+                }
+            }
+            return false;
+        });
+        if (options && options.tags && options.tags.length > 0) {
+            stores = stores.filter(store => options.tags.filter(tag => !this.storeTags.get(store).has(tag)).length === 0);
+        }
+        // Quick check that a new handle can fulfill the type contract.
+        // Rewrite of this method tracked by https://github.com/PolymerLabs/arcs/issues/1636.
+        return stores.filter(s => !!Handle$1.effectiveType(type, [{ type: s.type, direction: (s.type instanceof InterfaceType) ? 'host' : 'inout' }]));
+    }
+    findStoreById(id) {
+        let store = this.storesById.get(id);
+        if (store == null) {
+            store = this._context.findStoreById(id);
+        }
+        return store;
+    }
+    findStoreTags(store) {
+        if (this.storeTags.has(store)) {
+            return this.storeTags.get(store);
+        }
+        return this._context.findStoreTags(store);
+    }
+    getStoreDescription(store) {
+        assert$1(store, 'Cannot fetch description for nonexistent store');
+        return this.storeDescriptions.get(store) || store.description;
+    }
+    getVersionByStore({ includeArc = true, includeContext = false }) {
+        const versionById = {};
+        if (includeArc) {
+            this.storesById.forEach((handle, id) => versionById[id] = handle.version);
+        }
+        if (includeContext) {
+            this._context.allStores.forEach(handle => versionById[handle.id] = handle.version);
+        }
+        return versionById;
+    }
+    keyForId(id) {
+        return this.storageKeys[id];
+    }
+    stop() {
+        this.pec.stop();
+    }
+    toContextString(options) {
+        const results = [];
+        const stores = [...this.storesById.values()].sort(compareComparables);
+        stores.forEach(store => {
+            results.push(store.toString([...this.storeTags.get(store)]));
+        });
+        // TODO: include stores entities
+        // TODO: include (remote) slots?
+        if (!this._activeRecipe.isEmpty()) {
+            results.push(this._activeRecipe.toString());
+        }
+        return results.join('\n');
+    }
+}
+
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -26815,13 +26801,11 @@ const logFactory = (...args) => factory(...args);
  */
 const error = logFactory('PlanningResult', '#ff0090', 'error');
 class PlanningResult {
-    constructor(arc, store) {
+    constructor(store) {
         this.lastUpdated = new Date(null);
         this.generations = [];
         this.contextual = true;
         this.changeCallbacks = [];
-        assert$1(arc, 'Arc cannot be null');
-        this.arc = arc;
         this.store = store;
         if (this.store) {
             this.storeCallback = () => this.load();
@@ -26840,7 +26824,7 @@ class PlanningResult {
         assert$1(this.store['get'], 'Unsupported getter in suggestion storage');
         const value = await this.store['get']() || {};
         if (value.suggestions) {
-            if (await this.deserialize(value)) {
+            if (this.fromLiteral(value)) {
                 this.onChanged();
                 return true;
             }
@@ -26850,7 +26834,7 @@ class PlanningResult {
     async flush() {
         try {
             assert$1(this.store['set'], 'Unsupported setter in suggestion storage');
-            await this.store['set'](this.serialize());
+            await this.store['set'](this.toLiteral());
         }
         catch (e) {
             error('Failed storing suggestions: ', e);
@@ -26976,18 +26960,17 @@ class PlanningResult {
             oldSuggestions.length === newSuggestions.length &&
             oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
     }
-    async deserialize({ suggestions, generations, lastUpdated }) {
-        const recipeResolver = new RecipeResolver(this.arc);
+    fromLiteral({ suggestions, generations, lastUpdated }) {
         return this.set({
-            suggestions: (await Promise.all(suggestions.map(suggestion => Suggestion.deserialize(suggestion, this.arc, recipeResolver)))).filter(s => s),
+            suggestions: suggestions.map(suggestion => Suggestion.fromLiteral(suggestion)).filter(s => s),
             generations: JSON.parse(generations || '[]'),
             lastUpdated: new Date(lastUpdated),
             contextual: suggestions.contextual
         });
     }
-    serialize() {
+    toLiteral() {
         return {
-            suggestions: this.suggestions.map(suggestion => suggestion.serialize()),
+            suggestions: this.suggestions.map(suggestion => suggestion.toLiteral()),
             generations: JSON.stringify(this.generations),
             lastUpdated: this.lastUpdated.toString(),
             contextual: this.contextual
@@ -27061,7 +27044,7 @@ class SuggestionComposer {
                     throw new Error('cannot find suggest slot context');
                 }
                 this._suggestConsumers.splice(index, 1);
-                this._slotComposer.arc.instantiate(suggestion.plan);
+                suggestion.instantiate(this._slotComposer.arc);
             }
         });
         context.addSlotConsumer(suggestConsumer);
@@ -27097,16 +27080,16 @@ class StrategyExplorerAdapter {
  * http://polymer.github.io/PATENTS.txt
  */
 class PlanConsumer {
-    constructor(result) {
+    constructor(arc, result) {
         // Callback is triggered when planning results have changed.
         this.suggestionsChangeCallbacks = [];
         // Callback is triggered when suggestions visible to the user have changed.
         this.visibleSuggestionsChangeCallbacks = [];
         this.suggestionComposer = null;
         this.currentSuggestions = [];
+        assert$1(arc, 'arc cannot be null');
         assert$1(result, 'result cannot be null');
-        assert$1(result.arc, 'arc cannot be null');
-        this.arc = result.arc;
+        this.arc = arc;
         this.result = result;
         this.suggestFilter = { showAll: false };
         this.suggestionsChangeCallbacks = [];
@@ -27133,7 +27116,7 @@ class PlanConsumer {
     }
     getCurrentSuggestions() {
         const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0
-            && suggestion.plan.isCompatibleWithModality(this.arc.modality));
+            && suggestion.plan.modalities.includes(this.arc.modality.name));
         // `showAll`: returns all suggestions that render into slots.
         if (this.suggestFilter['showAll']) {
             // Should filter out suggestions produced by search phrases?
@@ -27714,13 +27697,13 @@ const defaultTimeoutMs = 5000;
 const log = logFactory('PlanProducer', '#ff0090', 'log');
 const error$1 = logFactory('PlanProducer', '#ff0090', 'error');
 class PlanProducer {
-    constructor(result, searchStore, { debug = false } = {}) {
+    constructor(arc, result, searchStore, { debug = false } = {}) {
         this.planner = null;
         this.stateChangedCallbacks = [];
         this.debug = false;
         assert$1(result, 'result cannot be null');
-        assert$1(result.arc, 'arc cannot be null');
-        this.arc = result.arc;
+        assert$1(arc, 'arc cannot be null');
+        this.arc = arc;
         this.result = result;
         this.recipeIndex = RecipeIndex.create(this.arc);
         this.speculator = new Speculator(this.result);
@@ -27954,14 +27937,14 @@ class Planificator {
         this.arc = arc;
         this.userid = userid;
         this.searchStore = searchStore;
-        this.result = new PlanningResult(arc, store);
+        this.result = new PlanningResult(store);
         if (!onlyConsumer) {
-            this.producer = new PlanProducer(this.result, searchStore, { debug });
+            this.producer = new PlanProducer(this.arc, this.result, searchStore, { debug });
             this.replanQueue = new ReplanQueue(this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
         }
-        this.consumer = new PlanConsumer(this.result);
+        this.consumer = new PlanConsumer(this.arc, this.result);
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
@@ -28261,6 +28244,7 @@ const Arcs = {
   Manifest,
   Modality,
   Planificator,
+  Suggestion,
   SlotComposer,
   SlotDomConsumer,
   Type,
@@ -28367,6 +28351,7 @@ const {
   Manifest: Manifest$1,
   Modality: Modality$1,
   Planificator: Planificator$1,
+  Suggestion: Suggestion$1,
   SlotComposer: SlotComposer$1,
   SlotDomConsumer: SlotDomConsumer$1,
   Type: Type$1,
@@ -28566,8 +28551,13 @@ class ArcHost {
       await this.instantiateDefaultRecipe(this.arc, config.manifest);
     }
     if (this.pendingPlan) {
-      const plan = this.pendingPlan;
+      let plan = this.pendingPlan;
       this.pendingPlan = null;
+      // TODO(sjmiles): pass suggestion all the way from web-shell
+      // and call suggestion.instantiate(arc).
+      if (plan.serialization) {
+        plan = await Suggestion$1.planFromString(plan.serialization, this.arc);
+      }
       await this.instantiatePlan(this.arc, plan);
     }
     return this.arc;

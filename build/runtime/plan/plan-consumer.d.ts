@@ -19,7 +19,7 @@ export declare class PlanConsumer {
     private visibleSuggestionsChangeCallbacks;
     suggestionComposer: SuggestionComposer | null;
     currentSuggestions: Suggestion[];
-    constructor(result: PlanningResult);
+    constructor(arc: Arc, result: PlanningResult);
     registerSuggestionsChangedCallback(callback: any): void;
     registerVisibleSuggestionsChangedCallback(callback: any): void;
     setSuggestFilter(showAll: any, search: any): void;

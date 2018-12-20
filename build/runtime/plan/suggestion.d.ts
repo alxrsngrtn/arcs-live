@@ -10,19 +10,45 @@
 import { Arc } from '../arc.js';
 import { Description } from '../description.js';
 import { Recipe } from '../recipe/recipe.js';
-import { RecipeResolver } from '../recipe/recipe-resolver.js';
 import { Relevance } from '../relevance.js';
 import { Search } from '../recipe/search.js';
+export declare class Plan {
+    serialization: string;
+    particles: {
+        name: string;
+    }[];
+    handles: {
+        id: string;
+        tags: string[];
+    }[];
+    slots: {
+        id: string;
+        name: string;
+        tags: string[];
+    }[];
+    modalities: string[];
+    constructor(serialization: string, particles: {
+        name: string;
+    }[], handles: {
+        id: string;
+        tags: string[];
+    }[], slots: {
+        id: string;
+        name: string;
+        tags: string[];
+    }[], modalities: string[]);
+    static create(plan: Recipe): Plan;
+}
 export declare class Suggestion {
-    arc: Arc;
-    plan: Recipe;
+    plan: Plan;
     descriptionByModality: {};
-    relevance: Relevance;
+    versionByStore: {};
     readonly hash: string;
     readonly rank: number;
     groupIndex: number;
     searchGroups: string[][];
-    constructor(plan: Recipe, hash: string, relevance: Relevance, arc: Arc);
+    static create(plan: Recipe, hash: string, relevance: Relevance): Suggestion;
+    constructor(plan: Plan, hash: string, rank: number, versionByStore: {});
     readonly descriptionText: string;
     getDescription(modality: string): string | {};
     setDescription(description: Description): Promise<void>;
@@ -32,21 +58,22 @@ export declare class Suggestion {
     setSearch(search: Search): void;
     mergeSearch(suggestion: Suggestion): boolean;
     _addSearch(searchGroup: string[]): boolean;
-    serialize(): {
-        plan: string;
+    toLiteral(): {
+        plan: Plan;
         hash: string;
         rank: number;
-        relevance: {};
+        versionByStore: string;
         searchGroups: string[][];
         descriptionByModality: {};
     };
-    static deserialize({ plan, hash, relevance, searchGroups, descriptionByModality }: {
+    static fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }: {
         plan: any;
         hash: any;
-        relevance: any;
+        rank: any;
+        versionByStore: any;
         searchGroups: any;
         descriptionByModality: any;
-    }, arc: Arc, recipeResolver: RecipeResolver): Promise<Suggestion>;
-    instantiate(): Promise<void>;
-    static _planFromString(planString: string, arc: Arc, recipeResolver: RecipeResolver): Promise<Recipe>;
+    }): Suggestion;
+    instantiate(arc: Arc): Promise<void>;
+    static planFromString(planString: string, arc: Arc): Promise<Recipe>;
 }

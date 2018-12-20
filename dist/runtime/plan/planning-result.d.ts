@@ -7,11 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Arc } from '../arc.js';
 import { StorageProviderBase } from '../storage/storage-provider-base.js';
 import { Suggestion } from './suggestion.js';
 export declare class PlanningResult {
-    arc: Arc;
     _suggestions: Suggestion[];
     lastUpdated: Date;
     generations: {}[];
@@ -19,7 +17,7 @@ export declare class PlanningResult {
     store: StorageProviderBase;
     private storeCallback;
     private changeCallbacks;
-    constructor(arc: any, store: any);
+    constructor(store: any);
     registerChangeCallback(callback: any): void;
     onChanged(): void;
     load(): Promise<boolean>;
@@ -42,10 +40,10 @@ export declare class PlanningResult {
     olderThan(other: any): boolean;
     isEquivalent(suggestions: any): any;
     static isEquivalent(oldSuggestions: any, newSuggestions: any): any;
-    deserialize({ suggestions, generations, lastUpdated }: {
+    fromLiteral({ suggestions, generations, lastUpdated }: {
         suggestions: any;
         generations: any;
         lastUpdated: any;
-    }): Promise<boolean>;
-    serialize(): {};
+    }): boolean;
+    toLiteral(): {};
 }

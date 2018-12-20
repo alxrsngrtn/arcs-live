@@ -91,22 +91,23 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_arc_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _build_runtime_modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(230);
+/* harmony import */ var _build_runtime_modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(229);
 /* harmony import */ var _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(240);
-/* harmony import */ var _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(249);
-/* harmony import */ var _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(231);
-/* harmony import */ var _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4);
-/* harmony import */ var _build_runtime_manifest_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(33);
-/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(188);
-/* harmony import */ var _build_runtime_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(46);
-/* harmony import */ var _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(253);
-/* harmony import */ var _build_runtime_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(180);
-/* harmony import */ var _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(259);
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(197);
-/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(234);
-/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(244);
-/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(260);
-/* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(243);
+/* harmony import */ var _build_runtime_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(228);
+/* harmony import */ var _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(249);
+/* harmony import */ var _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(230);
+/* harmony import */ var _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(4);
+/* harmony import */ var _build_runtime_manifest_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(33);
+/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(188);
+/* harmony import */ var _build_runtime_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(46);
+/* harmony import */ var _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(253);
+/* harmony import */ var _build_runtime_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(180);
+/* harmony import */ var _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(259);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(197);
+/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(233);
+/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(244);
+/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(260);
+/* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(243);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -135,28 +136,30 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 const Arcs = {
   version: '0.6',
   Arc: _build_runtime_arc_js__WEBPACK_IMPORTED_MODULE_0__["Arc"],
-  Manifest: _build_runtime_manifest_js__WEBPACK_IMPORTED_MODULE_6__["Manifest"],
+  Manifest: _build_runtime_manifest_js__WEBPACK_IMPORTED_MODULE_7__["Manifest"],
   Modality: _build_runtime_modality_js__WEBPACK_IMPORTED_MODULE_1__["Modality"],
   Planificator: _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_2__["Planificator"],
-  SlotComposer: _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_3__["SlotComposer"],
-  SlotDomConsumer: _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__["SlotDomConsumer"],
-  Type: _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_5__["Type"],
-  ArcType: _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_5__["ArcType"],
-  BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_15__["BrowserLoader"],
-  StorageProviderFactory: _build_runtime_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_8__["StorageProviderFactory"],
-  ParticleExecutionContext: _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_7__["ParticleExecutionContext"],
-  RecipeResolver: _build_runtime_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_10__["RecipeResolver"],
-  KeyManager: _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_9__["KeyManager"],
-  firebase: _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_11__["firebase"],
-  logFactory: _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_16__["logFactory"],
+  Suggestion: _build_runtime_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_3__["Suggestion"],
+  SlotComposer: _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_4__["SlotComposer"],
+  SlotDomConsumer: _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_5__["SlotDomConsumer"],
+  Type: _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_6__["Type"],
+  ArcType: _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_6__["ArcType"],
+  BrowserLoader: _browser_loader_js__WEBPACK_IMPORTED_MODULE_16__["BrowserLoader"],
+  StorageProviderFactory: _build_runtime_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_9__["StorageProviderFactory"],
+  ParticleExecutionContext: _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_8__["ParticleExecutionContext"],
+  RecipeResolver: _build_runtime_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_11__["RecipeResolver"],
+  KeyManager: _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_10__["KeyManager"],
+  firebase: _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_12__["firebase"],
+  logFactory: _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_17__["logFactory"],
   Xen: {
-    StateMixin: _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_12__["XenStateMixin"],
-    Template: _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_13__["Template"],
-    Debug: _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_14__["Debug"],
-    logFactory: _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_16__["logFactory"]
+    StateMixin: _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_13__["XenStateMixin"],
+    Template: _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_14__["Template"],
+    Debug: _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_15__["Debug"],
+    logFactory: _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_17__["logFactory"]
   }
 };
 
@@ -80518,7 +80521,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcDebugHandler", function() { return ArcDebugHandler; });
 /* harmony import */ var _tracing_adapter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(204);
 /* harmony import */ var _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(205);
-/* harmony import */ var _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(229);
+/* harmony import */ var _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(239);
 /* harmony import */ var _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(28);
 /**
  * @license
@@ -82623,8 +82626,7 @@ class Speculator {
         let suggestion = this.suggestionByHash[hash];
         if (suggestion) {
             const arcVersionByStoreId = arc.getVersionByStore({ includeArc: true, includeContext: true });
-            const relevanceVersionByStoreId = suggestion.relevance.versionByStore;
-            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === relevanceVersionByStoreId[handle.id])) {
+            if (plan.handles.every(handle => arcVersionByStoreId[handle.id] === suggestion.versionByStore[handle.id])) {
                 return suggestion;
             }
         }
@@ -82637,8 +82639,7 @@ class Speculator {
             return null;
         }
         speculativeArc.description.relevance = relevance;
-        suggestion = new _plan_suggestion_js__WEBPACK_IMPORTED_MODULE_2__["Suggestion"](plan, hash, relevance, arc);
-        suggestion.setSearch(plan.search);
+        suggestion = _plan_suggestion_js__WEBPACK_IMPORTED_MODULE_2__["Suggestion"].create(plan, hash, relevance);
         await suggestion.setDescription(speculativeArc.description);
         this.suggestionByHash[hash] = suggestion;
         return suggestion;
@@ -82671,17 +82672,6 @@ class Speculator {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Relevance", function() { return Relevance; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
 class Relevance {
     constructor() {
         // stores a copy of arc.getVersionByStore
@@ -82697,32 +82687,6 @@ class Relevance {
             }
         });
         return relevance;
-    }
-    static deserialize({ versionByStore = '{}', relevanceMap = {} }, recipe) {
-        const relevance = new Relevance();
-        Object.assign(relevance.versionByStore, JSON.parse(versionByStore));
-        Object.keys(relevanceMap).forEach(particleName => {
-            const particle = recipe.particles.find(particle => particle.name === particleName);
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(particle, `Cannot find particle ${particleName} in ${recipe.toString()}`);
-            if (relevance.relevanceMap.has(particle)) {
-                console.warn(`Multiple particles with name ${particleName}, relevance may be incorrect.`);
-            }
-            relevance.relevanceMap.set(particle, relevanceMap[particleName]);
-        });
-        return relevance;
-    }
-    serialize() {
-        const serializedRelevanceMap = {};
-        this.relevanceMap.forEach((relevances, particle) => {
-            // TODO(mmandlis): Should use particle ID or some other unique identifier instead,
-            // as recipe may contain multiple particles with the same name.
-            serializedRelevanceMap[particle.name] = relevances;
-        });
-        return {
-            // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
-            versionByStore: JSON.stringify(this.versionByStore),
-            relevanceMap: serializedRelevanceMap
-        };
     }
     apply(relevance) {
         for (const key of relevance.keys()) {
@@ -82797,10 +82761,12 @@ class Relevance {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Plan", function() { return Plan; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Suggestion", function() { return Suggestion; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(33);
-/* harmony import */ var _relevance_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(227);
+/* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(229);
+/* harmony import */ var _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(180);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -82813,19 +82779,44 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+class Plan {
+    constructor(serialization, particles, handles, slots, modalities) {
+        this.particles = [];
+        this.handles = [];
+        this.slots = [];
+        this.modalities = [];
+        this.serialization = serialization;
+        this.particles = particles;
+        this.handles = handles;
+        this.slots = slots;
+        this.modalities = modalities;
+    }
+    static create(plan) {
+        return new Plan(plan.toString(), plan.particles.map(p => ({ name: p.name })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.getSupportedModalities());
+    }
+}
 class Suggestion {
-    constructor(plan, hash, relevance, arc) {
+    constructor(plan, hash, rank, versionByStore) {
         // TODO: update Description class to be serializable.
         this.descriptionByModality = {};
+        this.versionByStore = {};
         // List of search resolved token groups, this suggestion corresponds to.
         this.searchGroups = [];
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan, `plan cannot be null`);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(hash, `hash cannot be null`);
         this.plan = plan;
         this.hash = hash;
-        this.rank = relevance.calcRelevanceScore();
-        this.relevance = relevance;
-        this.arc = arc;
+        this.rank = rank;
+        this.versionByStore = versionByStore;
+    }
+    static create(plan, hash, relevance) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan, `plan cannot be null`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(hash, `hash cannot be null`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(relevance, `relevance cannot be null`);
+        const suggestion = new Suggestion(Plan.create(plan), hash, relevance.calcRelevanceScore(), relevance.versionByStore);
+        suggestion.setSearch(plan.search);
+        return suggestion;
     }
     get descriptionText() {
         return this.getDescription('text');
@@ -82836,9 +82827,9 @@ class Suggestion {
     }
     async setDescription(description) {
         this.descriptionByModality['text'] = await description.getRecipeSuggestion();
-        if (this.arc.modality && this.arc.modality.name !== 'text') {
-            this.descriptionByModality[this.arc.modality.name] =
-                await description.getRecipeSuggestion(this.arc.modality.descriptionFormatter);
+        for (const modality of this.plan.modalities) {
+            this.descriptionByModality[modality] =
+                await description.getRecipeSuggestion(_modality_js__WEBPACK_IMPORTED_MODULE_2__["Modality"].forName(modality).descriptionFormatter);
         }
     }
     isEquivalent(other) {
@@ -82881,40 +82872,39 @@ class Suggestion {
         }
         return false;
     }
-    serialize() {
+    toLiteral() {
         return {
-            plan: this.plan.toString(),
+            plan: this.plan,
             hash: this.hash,
             rank: this.rank,
-            relevance: this.relevance.serialize(),
+            // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
+            versionByStore: JSON.stringify(this.versionByStore),
             searchGroups: this.searchGroups,
             descriptionByModality: this.descriptionByModality
         };
     }
-    static async deserialize({ plan, hash, relevance, searchGroups, descriptionByModality }, arc, recipeResolver) {
-        const deserializedPlan = await Suggestion._planFromString(plan, arc, recipeResolver);
-        if (deserializedPlan) {
-            const suggestion = new Suggestion(deserializedPlan, hash, _relevance_js__WEBPACK_IMPORTED_MODULE_2__["Relevance"].deserialize(relevance || {}, deserializedPlan), arc);
-            suggestion.searchGroups = searchGroups || [];
-            suggestion.descriptionByModality = descriptionByModality;
-            return suggestion;
-        }
-        return undefined;
+    static fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }) {
+        const suggestion = new Suggestion(plan, hash, rank, JSON.parse(versionByStore || '{}'));
+        suggestion.searchGroups = searchGroups || [];
+        suggestion.descriptionByModality = descriptionByModality;
+        return suggestion;
     }
-    async instantiate() {
+    async instantiate(arc) {
         // For now shell is responsible for creating and setting the new arc.
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.arc, `Cannot instantiate suggestion without and arc`);
-        if (this.arc) {
-            return this.arc.instantiate(this.plan);
-        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, `Cannot instantiate suggestion without and arc`);
+        const thePlan = await Suggestion.planFromString(this.plan.serialization, arc);
+        return arc.instantiate(thePlan);
     }
-    static async _planFromString(planString, arc, recipeResolver) {
+    // TODO(mmandlis): temporarily used in shell's plan instantiation hack. 
+    // Make private again, once fixed.
+    static async planFromString(planString, arc) {
         try {
             const manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest.recipes.length === 1);
             let plan = manifest.recipes[0];
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
             if (!plan.isResolved()) {
+                const recipeResolver = new _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_3__["RecipeResolver"](arc);
                 const resolvedPlan = await recipeResolver.resolve(plan);
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(resolvedPlan, `can't resolve plan: ${plan.toString({ showUnresolved: true })}`);
                 if (resolvedPlan) {
@@ -82938,75 +82928,13 @@ class Suggestion {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcStoresFetcher", function() { return ArcStoresFetcher; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class ArcStoresFetcher {
-    constructor(arc, arcDevtoolsChannel) {
-        this.arc = arc;
-        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
-            messageType: 'fetch-stores-result',
-            messageBody: await this._listStores()
-        }));
-    }
-    async _listStores() {
-        const find = manifest => {
-            let tags = [...manifest.storeTags];
-            if (manifest.imports) {
-                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
-            }
-            return tags;
-        };
-        return {
-            arcStores: await this._digestStores(this.arc.storeTags),
-            contextStores: await this._digestStores(find(this.arc.context))
-        };
-    }
-    async _digestStores(stores) {
-        const result = [];
-        for (const [store, tags] of stores) {
-            let value = `(don't know how to dereference)`;
-            if (store.toList) {
-                value = await store.toList();
-            }
-            else if (store.get) {
-                value = await store.get();
-            }
-            result.push({
-                name: store.name,
-                tags: tags ? [...tags] : [],
-                id: store.id,
-                storage: store.storageKey,
-                type: store.type,
-                description: store.description,
-                value
-            });
-        }
-        return result;
-    }
-}
-//# sourceMappingURL=arc-stores-fetcher.js.map
-
-/***/ }),
-/* 230 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Modality", function() { return Modality; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(231);
-/* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(236);
-/* harmony import */ var _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(237);
-/* harmony import */ var _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(238);
-/* harmony import */ var _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(239);
+/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(230);
+/* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(235);
+/* harmony import */ var _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(236);
+/* harmony import */ var _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(237);
+/* harmony import */ var _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(238);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -83051,16 +82979,16 @@ Modality.init();
 //# sourceMappingURL=modality.js.map
 
 /***/ }),
-/* 231 */
+/* 230 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotDomConsumer", function() { return SlotDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(232);
-/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(234);
-/* harmony import */ var _modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(235);
+/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(231);
+/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(233);
+/* harmony import */ var _modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(234);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -83366,14 +83294,14 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
 //# sourceMappingURL=slot-dom-consumer.js.map
 
 /***/ }),
-/* 232 */
+/* 231 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotConsumer", function() { return SlotConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(233);
+/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(232);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -83529,7 +83457,7 @@ class SlotConsumer {
 //# sourceMappingURL=slot-consumer.js.map
 
 /***/ }),
-/* 233 */
+/* 232 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -83618,7 +83546,7 @@ class SlotContext {
 //# sourceMappingURL=slot-context.js.map
 
 /***/ }),
-/* 234 */
+/* 233 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -84021,7 +83949,7 @@ const Template = {
 
 
 /***/ }),
-/* 235 */
+/* 234 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -84051,13 +83979,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /***/ }),
-/* 236 */
+/* 235 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestDomConsumer", function() { return SuggestDomConsumer; });
-/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(231);
+/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(230);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84109,14 +84037,14 @@ class SuggestDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_
 //# sourceMappingURL=suggest-dom-consumer.js.map
 
 /***/ }),
-/* 237 */
+/* 236 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MockSlotDomConsumer", function() { return MockSlotDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(231);
+/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(230);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84198,14 +84126,14 @@ class MockSlotDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE
 
 
 /***/ }),
-/* 238 */
+/* 237 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MockSuggestDomConsumer", function() { return MockSuggestDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(237);
+/* harmony import */ var _mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(236);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84246,7 +84174,7 @@ class MockSuggestDomConsumer extends _mock_slot_dom_consumer_js__WEBPACK_IMPORTE
 
 
 /***/ }),
-/* 239 */
+/* 238 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -84480,6 +84408,68 @@ class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1
 //# sourceMappingURL=description-dom-formatter.js.map
 
 /***/ }),
+/* 239 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcStoresFetcher", function() { return ArcStoresFetcher; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ArcStoresFetcher {
+    constructor(arc, arcDevtoolsChannel) {
+        this.arc = arc;
+        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
+            messageType: 'fetch-stores-result',
+            messageBody: await this._listStores()
+        }));
+    }
+    async _listStores() {
+        const find = manifest => {
+            let tags = [...manifest.storeTags];
+            if (manifest.imports) {
+                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
+            }
+            return tags;
+        };
+        return {
+            arcStores: await this._digestStores(this.arc.storeTags),
+            contextStores: await this._digestStores(find(this.arc.context))
+        };
+    }
+    async _digestStores(stores) {
+        const result = [];
+        for (const [store, tags] of stores) {
+            let value = `(don't know how to dereference)`;
+            if (store.toList) {
+                value = await store.toList();
+            }
+            else if (store.get) {
+                value = await store.get();
+            }
+            result.push({
+                name: store.name,
+                tags: tags ? [...tags] : [],
+                id: store.id,
+                storage: store.storageKey,
+                type: store.type,
+                description: store.description,
+                value
+            });
+        }
+        return result;
+    }
+}
+//# sourceMappingURL=arc-stores-fetcher.js.map
+
+/***/ }),
 /* 240 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -84518,14 +84508,14 @@ class Planificator {
         this.arc = arc;
         this.userid = userid;
         this.searchStore = searchStore;
-        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"](arc, store);
+        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"](store);
         if (!onlyConsumer) {
-            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](this.result, searchStore, { debug });
+            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](this.arc, this.result, searchStore, { debug });
             this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__["ReplanQueue"](this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
         }
-        this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](this.result);
+        this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](this.arc, this.result);
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
     }
@@ -84669,16 +84659,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class PlanConsumer {
-    constructor(result) {
+    constructor(arc, result) {
         // Callback is triggered when planning results have changed.
         this.suggestionsChangeCallbacks = [];
         // Callback is triggered when suggestions visible to the user have changed.
         this.visibleSuggestionsChangeCallbacks = [];
         this.suggestionComposer = null;
         this.currentSuggestions = [];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result, 'result cannot be null');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result.arc, 'arc cannot be null');
-        this.arc = result.arc;
+        this.arc = arc;
         this.result = result;
         this.suggestFilter = { showAll: false };
         this.suggestionsChangeCallbacks = [];
@@ -84705,7 +84695,7 @@ class PlanConsumer {
     }
     getCurrentSuggestions() {
         const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0
-            && suggestion.plan.isCompatibleWithModality(this.arc.modality));
+            && suggestion.plan.modalities.includes(this.arc.modality.name));
         // `showAll`: returns all suggestions that render into slots.
         if (this.suggestFilter['showAll']) {
             // Should filter out suggestions produced by search phrases?
@@ -84768,8 +84758,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanningResult", function() { return PlanningResult; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(243);
-/* harmony import */ var _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(180);
-/* harmony import */ var _suggestion_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(228);
+/* harmony import */ var _suggestion_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(228);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84782,16 +84771,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__["logFactory"])('PlanningResult', '#ff0090', 'error');
 class PlanningResult {
-    constructor(arc, store) {
+    constructor(store) {
         this.lastUpdated = new Date(null);
         this.generations = [];
         this.contextual = true;
         this.changeCallbacks = [];
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null');
-        this.arc = arc;
         this.store = store;
         if (this.store) {
             this.storeCallback = () => this.load();
@@ -84810,7 +84796,7 @@ class PlanningResult {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.store['get'], 'Unsupported getter in suggestion storage');
         const value = await this.store['get']() || {};
         if (value.suggestions) {
-            if (await this.deserialize(value)) {
+            if (this.fromLiteral(value)) {
                 this.onChanged();
                 return true;
             }
@@ -84820,7 +84806,7 @@ class PlanningResult {
     async flush() {
         try {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.store['set'], 'Unsupported setter in suggestion storage');
-            await this.store['set'](this.serialize());
+            await this.store['set'](this.toLiteral());
         }
         catch (e) {
             error('Failed storing suggestions: ', e);
@@ -84947,18 +84933,17 @@ class PlanningResult {
             oldSuggestions.length === newSuggestions.length &&
             oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
     }
-    async deserialize({ suggestions, generations, lastUpdated }) {
-        const recipeResolver = new _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_2__["RecipeResolver"](this.arc);
+    fromLiteral({ suggestions, generations, lastUpdated }) {
         return this.set({
-            suggestions: (await Promise.all(suggestions.map(suggestion => _suggestion_js__WEBPACK_IMPORTED_MODULE_3__["Suggestion"].deserialize(suggestion, this.arc, recipeResolver)))).filter(s => s),
+            suggestions: suggestions.map(suggestion => _suggestion_js__WEBPACK_IMPORTED_MODULE_2__["Suggestion"].fromLiteral(suggestion)).filter(s => s),
             generations: JSON.parse(generations || '[]'),
             lastUpdated: new Date(lastUpdated),
             contextual: suggestions.contextual
         });
     }
-    serialize() {
+    toLiteral() {
         return {
-            suggestions: this.suggestions.map(suggestion => suggestion.serialize()),
+            suggestions: this.suggestions.map(suggestion => suggestion.toLiteral()),
             generations: JSON.stringify(this.generations),
             lastUpdated: this.lastUpdated.toString(),
             contextual: this.contextual
@@ -85187,7 +85172,7 @@ class SuggestionComposer {
                     throw new Error('cannot find suggest slot context');
                 }
                 this._suggestConsumers.splice(index, 1);
-                this._slotComposer.arc.instantiate(suggestion.plan);
+                suggestion.instantiate(this._slotComposer.arc);
             }
         });
         context.addSlotConsumer(suggestConsumer);
@@ -85258,13 +85243,13 @@ const defaultTimeoutMs = 5000;
 const log = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'log');
 const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'error');
 class PlanProducer {
-    constructor(result, searchStore, { debug = false } = {}) {
+    constructor(arc, result, searchStore, { debug = false } = {}) {
         this.planner = null;
         this.stateChangedCallbacks = [];
         this.debug = false;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result, 'result cannot be null');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result.arc, 'arc cannot be null');
-        this.arc = result.arc;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
+        this.arc = arc;
         this.result = result;
         this.recipeIndex = _recipe_index_js__WEBPACK_IMPORTED_MODULE_6__["RecipeIndex"].create(this.arc);
         this.speculator = new _speculator_js__WEBPACK_IMPORTED_MODULE_7__["Speculator"](this.result);
@@ -85736,8 +85721,8 @@ class RecipeIndex {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotComposer", function() { return SlotComposer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(230);
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(233);
+/* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(229);
+/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(232);
 /* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(250);
 /**
  * @license
@@ -85907,7 +85892,7 @@ class SlotComposer {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotConsumer", function() { return HostedSlotConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(232);
+/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(231);
 /* harmony import */ var _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(251);
 /**
  * @license
@@ -85978,7 +85963,7 @@ class HostedSlotConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__[
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotContext", function() { return HostedSlotContext; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(233);
+/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(232);
 /* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(250);
 /**
  * @license

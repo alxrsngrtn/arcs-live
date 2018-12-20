@@ -19,13 +19,13 @@ const defaultTimeoutMs = 5000;
 const log = logFactory('PlanProducer', '#ff0090', 'log');
 const error = logFactory('PlanProducer', '#ff0090', 'error');
 export class PlanProducer {
-    constructor(result, searchStore, { debug = false } = {}) {
+    constructor(arc, result, searchStore, { debug = false } = {}) {
         this.planner = null;
         this.stateChangedCallbacks = [];
         this.debug = false;
         assert(result, 'result cannot be null');
-        assert(result.arc, 'arc cannot be null');
-        this.arc = result.arc;
+        assert(arc, 'arc cannot be null');
+        this.arc = arc;
         this.result = result;
         this.recipeIndex = RecipeIndex.create(this.arc);
         this.speculator = new Speculator(this.result);

@@ -13,16 +13,16 @@ import { SuggestionComposer } from '../suggestion-composer.js';
 import { DevtoolsConnection } from '../debug/devtools-connection.js';
 import { StrategyExplorerAdapter } from '../debug/strategy-explorer-adapter.js';
 export class PlanConsumer {
-    constructor(result) {
+    constructor(arc, result) {
         // Callback is triggered when planning results have changed.
         this.suggestionsChangeCallbacks = [];
         // Callback is triggered when suggestions visible to the user have changed.
         this.visibleSuggestionsChangeCallbacks = [];
         this.suggestionComposer = null;
         this.currentSuggestions = [];
+        assert(arc, 'arc cannot be null');
         assert(result, 'result cannot be null');
-        assert(result.arc, 'arc cannot be null');
-        this.arc = result.arc;
+        this.arc = arc;
         this.result = result;
         this.suggestFilter = { showAll: false };
         this.suggestionsChangeCallbacks = [];
@@ -49,7 +49,7 @@ export class PlanConsumer {
     }
     getCurrentSuggestions() {
         const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0
-            && suggestion.plan.isCompatibleWithModality(this.arc.modality));
+            && suggestion.plan.modalities.includes(this.arc.modality.name));
         // `showAll`: returns all suggestions that render into slots.
         if (this.suggestFilter['showAll']) {
             // Should filter out suggestions produced by search phrases?
