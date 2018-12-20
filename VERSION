@@ -1,5 +1,5 @@
-commit 150914f8649cc4755d71f28979dac2caad77c7d4
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Dec 20 14:11:39 2018 +1100
+commit 1fa977b4811f5f7701b11ac67e40933df2f25c82
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Dec 19 19:19:21 2018 -0800
 
-    Uncomments DevTools connection for Planner Shell (#2501)
+    update the global planificator (#2499)
