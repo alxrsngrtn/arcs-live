@@ -1,13 +1,9 @@
-commit 8d78d0a807376618657618c6616aff013661e48f
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Dec 19 21:11:03 2018 -0800
+commit 055a78c587a5ed91608f1ffdae90398751d8ed9a
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Dec 20 16:37:10 2018 +1100
 
-    Only deserialize suggestion's plan when instantiating. (#2494)
+    Remove particle interface (#2506)
     
-    * Only deserialize suggestion's plan when instantiating.
-    
-    * remove Arc from planning-result
-    
-    * rename de/serialize to from/toLiteral, remove async
-    
-    * post merge fixes
+    * Use ManifestParserError class to attach location information to parser errors
+    * Use a ManifestError class instead of a wrapper function
+    * Change error message expectation
