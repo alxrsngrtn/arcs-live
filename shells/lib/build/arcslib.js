@@ -16705,7 +16705,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
 /* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(40);
 /* harmony import */ var _search_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(43);
-/* harmony import */ var _slot_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(44);
+/* harmony import */ var _slot__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(44);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(45);
 /* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(39);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(4);
@@ -16804,7 +16804,7 @@ class Recipe {
         this._handles.splice(idx, 1);
     }
     newSlot(name) {
-        const slot = new _slot_js__WEBPACK_IMPORTED_MODULE_6__["Slot"](this, name);
+        const slot = new _slot__WEBPACK_IMPORTED_MODULE_6__["Slot"](this, name);
         this._slots.push(slot);
         return slot;
     }
@@ -18877,6 +18877,9 @@ class Handle {
         this._id = id;
     }
     mapToStorage(storage) {
+        if (!storage) {
+            throw new Error(`Cannot map to undefined storage`);
+        }
         this._id = storage.id;
         this._originalId = storage.originalId;
         this._type = undefined;

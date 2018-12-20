@@ -10,7 +10,7 @@ import { Strategizer } from '../../planning/strategizer.js';
 import { ConnectionConstraint } from './connection-constraint.js';
 import { Particle } from './particle.js';
 import { Search } from './search.js';
-import { Slot } from './slot.js';
+import { Slot } from './slot';
 import { Handle } from './handle.js';
 import { compareComparables } from './util.js';
 import { InterfaceType } from '../type.js';

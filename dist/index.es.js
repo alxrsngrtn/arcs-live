@@ -12973,6 +12973,9 @@ class Handle$1 {
         this._id = id;
     }
     mapToStorage(storage) {
+        if (!storage) {
+            throw new Error(`Cannot map to undefined storage`);
+        }
         this._id = storage.id;
         this._originalId = storage.originalId;
         this._type = undefined;

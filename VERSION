@@ -1,5 +1,5 @@
-commit 796660f3ef4ca5011192896ebf09417dd64eb7dd
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Dec 19 16:01:19 2018 -0800
+commit 3650b8d0c1f6c45f190b27e61645155956b843cc
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Dec 20 11:14:41 2018 +1100
 
-    Add PouchDB to remote planificator tests (#2497)
+    Tests for optional handles in an Arc (#2387)
