@@ -32,8 +32,7 @@ export class PlanningResult {
         }
     }
     async load() {
-        assert(this.store['get'], 'Unsupported getter in suggestion storage');
-        const value = await this.store['get']() || {};
+        const value = await this.store.get() || {};
         if (value.suggestions) {
             if (this.fromLiteral(value)) {
                 this.onChanged();
@@ -44,8 +43,7 @@ export class PlanningResult {
     }
     async flush() {
         try {
-            assert(this.store['set'], 'Unsupported setter in suggestion storage');
-            await this.store['set'](this.toLiteral());
+            await this.store.set(this.toLiteral());
         }
         catch (e) {
             error('Failed storing suggestions: ', e);
@@ -53,7 +51,7 @@ export class PlanningResult {
         }
     }
     async clear() {
-        return this.store['clear']();
+        return this.store.clear();
     }
     dispose() {
         this.changeCallbacks = [];

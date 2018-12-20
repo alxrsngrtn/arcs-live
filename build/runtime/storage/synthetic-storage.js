@@ -158,5 +158,21 @@ class SyntheticCollection extends StorageProviderBase {
     ensureBackingStore() {
         throw new Error('ensureBackingStore should never be called on SyntheticCollection!');
     }
+    // tslint:disable-next-line: no-any
+    async getMultiple(ids) {
+        throw new Error('unimplemented');
+    }
+    async storeMultiple(values, keys, originatorId) {
+        throw new Error('unimplemented');
+    }
+    removeMultiple(items, originatorId) {
+        throw new Error('unimplemented');
+    }
+    async get(id) {
+        throw new Error('unimplemented');
+    }
+    remove(id, keys, originatorId) {
+        throw new Error('unimplemented');
+    }
 }
 //# sourceMappingURL=synthetic-storage.js.map

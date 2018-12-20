@@ -2,6 +2,25 @@ import { Type } from '../type';
 import { Id } from '../id.js';
 import { KeyBase } from './key-base.js';
 declare type Callback = ({}: {}) => void;
+/**
+ * Methods that must be implemented by a Variable Storage Provider
+ */
+export interface VariableStorageProvider extends StorageProviderBase {
+    get(): Promise<any>;
+    set(value: {}, originatorId?: string, barrier?: string): Promise<void>;
+    clear(originatorId?: string, barrier?: string): Promise<void>;
+}
+/**
+ * Methods that must be implemented by a Collection Storage Provider
+ */
+export interface CollectionStorageProvider extends StorageProviderBase {
+    toList(): Promise<any[]>;
+    getMultiple(ids: string[]): Promise<any[]>;
+    storeMultiple(values: {}, keys: string[], originatorId: string): Promise<void>;
+    removeMultiple(items: any[], originatorId?: string): Promise<void>;
+    get(id: string): Promise<any>;
+    remove(id: string, keys: string[], originatorId?: string): any;
+}
 export declare abstract class StorageBase {
     protected readonly arcId: Id;
     protected _debug: boolean;

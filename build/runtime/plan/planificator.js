@@ -132,7 +132,7 @@ export class Planificator {
         return store;
     }
     async _storeSearch() {
-        const values = await this.searchStore['get']() || [];
+        const values = await this.searchStore.get() || [];
         const arcKey = this.arc.arcId;
         const newValues = [];
         for (const { arc, search } of values) {
@@ -143,7 +143,7 @@ export class Planificator {
         if (this.search) {
             newValues.push({ search: this.search, arc: arcKey });
         }
-        return this.searchStore['set'](newValues);
+        return this.searchStore.set(newValues);
     }
 }
 //# sourceMappingURL=planificator.js.map

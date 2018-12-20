@@ -1,4 +1,4 @@
-import { StorageBase, StorageProviderBase } from './storage-provider-base';
+import { StorageBase, StorageProviderBase, CollectionStorageProvider, VariableStorageProvider } from './storage-provider-base';
 import firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/storage';
@@ -79,7 +79,7 @@ declare abstract class FirebaseStorageProvider extends StorageProviderBase {
  * modifications), but the result will always be
  * monotonically increasing.
  */
-declare class FirebaseVariable extends FirebaseStorageProvider {
+declare class FirebaseVariable extends FirebaseStorageProvider implements VariableStorageProvider {
     private value;
     private localModified;
     private readonly initialized;
@@ -97,7 +97,7 @@ declare class FirebaseVariable extends FirebaseStorageProvider {
     readonly versionForTesting: number;
     get(): Promise<any>;
     set(value: any, originatorId?: any, barrier?: any): Promise<void>;
-    clear(originatorId?: any, barrier?: any): Promise<void>;
+    clear(originatorId?: string, barrier?: string): Promise<void>;
     cloneFrom(handle: any): Promise<void>;
     modelForSynchronization(): Promise<any>;
     toLiteral(): Promise<{}>;
@@ -139,7 +139,7 @@ declare class FirebaseVariable extends FirebaseStorageProvider {
  * When we persist our changes to firebase we align it with the remote
  * version.
  */
-declare class FirebaseCollection extends FirebaseStorageProvider {
+declare class FirebaseCollection extends FirebaseStorageProvider implements CollectionStorageProvider {
     private localChanges;
     private addSuppressions;
     private model;
@@ -154,9 +154,9 @@ declare class FirebaseCollection extends FirebaseStorageProvider {
     backingType(): any;
     remoteStateChanged(dataSnapshot: any): void;
     readonly versionForTesting: number;
-    get(id: any): any;
+    get(id: string): any;
     removeMultiple(items: any, originatorId?: any): Promise<void>;
-    remove(id: any, keys?: string[], originatorId?: any): Promise<void>;
+    remove(id: string, keys?: string[], originatorId?: any): Promise<void>;
     store(value: any, keys: any, originatorId?: any): Promise<void>;
     readonly _hasLocalChanges: boolean;
     _persistChangesImpl(): Promise<void>;
@@ -174,8 +174,8 @@ declare class FirebaseCollection extends FirebaseStorageProvider {
         }[];
     }>;
     toList(): Promise<any[]>;
-    getMultiple(ids: any): Promise<any>;
-    storeMultiple(values: any, keys: any, originatorId?: any): Promise<void>;
+    getMultiple(ids: string[]): Promise<import("./crdt-collection-model").ModelValue[]>;
+    storeMultiple(values: any, keys: string[], originatorId?: any): Promise<void>;
     cloneFrom(handle: any): Promise<void>;
     toLiteral(): Promise<{
         version: number;

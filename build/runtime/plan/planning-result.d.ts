@@ -7,22 +7,22 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { StorageProviderBase } from '../storage/storage-provider-base.js';
+import { VariableStorageProvider } from '../storage/storage-provider-base.js';
 import { Suggestion } from './suggestion.js';
 export declare class PlanningResult {
     _suggestions: Suggestion[];
     lastUpdated: Date;
     generations: {}[];
     contextual: boolean;
-    store: StorageProviderBase;
+    store: VariableStorageProvider;
     private storeCallback;
     private changeCallbacks;
-    constructor(store: any);
+    constructor(store: VariableStorageProvider);
     registerChangeCallback(callback: any): void;
     onChanged(): void;
     load(): Promise<boolean>;
     flush(): Promise<void>;
-    clear(): Promise<any>;
+    clear(): Promise<void>;
     dispose(): void;
     suggestions: Suggestion[];
     static formatSerializableGenerations(generations: any): any;

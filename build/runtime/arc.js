@@ -255,7 +255,7 @@ ${this.activeRecipe.toString()}`;
         const store = await storage.connectOrConstruct('store', arcInfoType, key.toString());
         store.referenceMode = false;
         // TODO: storage refactor: make sure set() is available here (or wrap store in a Handle-like adaptor).
-        await store['set'](arcInfoType.newInstance(this.id, serialization));
+        await store.set(arcInfoType.newInstance(this.id, serialization));
     }
     static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context }) {
         const manifest = await Manifest.parse(serialization, { loader, fileName, context });

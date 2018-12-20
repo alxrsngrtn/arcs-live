@@ -1,9 +1,9 @@
-commit 055a78c587a5ed91608f1ffdae90398751d8ed9a
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Dec 20 16:37:10 2018 +1100
+commit f79575bd5eedad7a650031e19b6e2f95514c60c6
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Dec 19 22:37:36 2018 -0800
 
-    Remove particle interface (#2506)
+    Introduce typing for Variables and Collections (#2500)
     
-    * Use ManifestParserError class to attach location information to parser errors
-    * Use a ManifestError class instead of a wrapper function
-    * Change error message expectation
+    - Allows for verifying Collections/Variables interface at compile time.
+    - Code can cast the result of construct/connect calls to either type.
+    - Cleans up existing usages/hacks.

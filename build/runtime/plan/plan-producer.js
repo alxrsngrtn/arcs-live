@@ -48,7 +48,7 @@ export class PlanProducer {
         this.stateChangedCallbacks.push(callback);
     }
     async onSearchChanged() {
-        const values = await this.searchStore['get']() || [];
+        const values = await this.searchStore.get() || [];
         const arcId = this.arc.arcId;
         const value = values.find(value => value.arc === arcId);
         if (!value) {

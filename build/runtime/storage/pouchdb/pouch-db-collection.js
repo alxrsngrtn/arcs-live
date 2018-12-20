@@ -135,7 +135,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
     async store(value, keys, originatorId = null) {
         assert(keys != null && keys.length > 0, 'keys required');
         const id = value.id;
-        const item = { value, keys, effective: undefined };
+        const item = { value, keys, effective: false };
         if (this.referenceMode) {
             const referredType = this.type.primitiveType();
             const storageKey = this.storageEngine.baseStorageKey(referredType, this.storageKey);
@@ -211,7 +211,7 @@ export class PouchDbCollection extends PouchDbStorageProvider {
             return;
         }
         // remote revision is different, update local copy.
-        const model = doc['model'];
+        const model = doc.model;
         this._model = new CrdtCollectionModel(model);
         this._rev = doc._rev;
         this.version++;
@@ -266,16 +266,14 @@ export class PouchDbCollection extends PouchDbStorageProvider {
         while (1) {
             // TODO(lindner): add backoff and error out if this goes on for too long
             let doc;
-            //: PouchDB.Core.IdMeta & PouchDB.Core.GetMeta & Model & {referenceMode: boolean, type: {}};
             let notFound = false;
             try {
                 doc = await this.db.get(this.pouchDbKey.location);
-                // as PouchDB.Core.IdMeta & PouchDB.Core.GetMeta & Model & {referenceMode: boolean, type: };
                 // Check remote doc.
                 // TODO(lindner): refactor with getModel above.
                 if (this._rev !== doc._rev) {
                     // remote revision is different, update local copy.
-                    this._model = new CrdtCollectionModel(doc['model']);
+                    this._model = new CrdtCollectionModel(doc.model);
                     this._rev = doc._rev;
                     this.version++;
                     // TODO(lindner): fire change events here?
@@ -303,8 +301,8 @@ export class PouchDbCollection extends PouchDbStorageProvider {
                 return this._model;
             }
             // Apply changes made by the mutator
-            doc['model'] = newModel.toLiteral();
-            doc['version'] = this.version;
+            doc.model = newModel.toLiteral();
+            doc.version = this.version;
             // Update on pouchdb
             try {
                 const putResult = await this.db.put(doc);

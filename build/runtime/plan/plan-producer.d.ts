@@ -12,7 +12,7 @@ import { Planner } from '../planner.js';
 import { PlanningResult } from './planning-result.js';
 import { RecipeIndex } from '../recipe-index.js';
 import { Speculator } from '../speculator.js';
-import { StorageProviderBase } from '../storage/storage-provider-base.js';
+import { VariableStorageProvider } from '../storage/storage-provider-base.js';
 export declare class PlanProducer {
     arc: Arc;
     result: PlanningResult;
@@ -24,10 +24,10 @@ export declare class PlanProducer {
     _isPlanning: boolean;
     stateChangedCallbacks: ((isPlanning: boolean) => void)[];
     search: string;
-    searchStore: StorageProviderBase;
+    searchStore: VariableStorageProvider;
     searchStoreCallback: ({}: {}) => void;
     debug: boolean;
-    constructor(arc: Arc, result: PlanningResult, searchStore: StorageProviderBase, { debug }?: {
+    constructor(arc: Arc, result: PlanningResult, searchStore: VariableStorageProvider, { debug }?: {
         debug?: boolean;
     });
     isPlanning: boolean;

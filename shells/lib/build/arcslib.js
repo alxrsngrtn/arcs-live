@@ -473,7 +473,7 @@ ${this.activeRecipe.toString()}`;
         const store = await storage.connectOrConstruct('store', arcInfoType, key.toString());
         store.referenceMode = false;
         // TODO: storage refactor: make sure set() is available here (or wrap store in a Handle-like adaptor).
-        await store['set'](arcInfoType.newInstance(this.id, serialization));
+        await store.set(arcInfoType.newInstance(this.id, serialization));
     }
     static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context }) {
         const manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"].parse(serialization, { loader, fileName, context });
@@ -46213,7 +46213,7 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
     async store(value, keys, originatorId = null) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(keys != null && keys.length > 0, 'keys required');
         const id = value.id;
-        const item = { value, keys, effective: undefined };
+        const item = { value, keys, effective: false };
         if (this.referenceMode) {
             const referredType = this.type.primitiveType();
             const storageKey = this.storageEngine.baseStorageKey(referredType, this.storageKey);
@@ -46289,7 +46289,7 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
             return;
         }
         // remote revision is different, update local copy.
-        const model = doc['model'];
+        const model = doc.model;
         this._model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_0__["CrdtCollectionModel"](model);
         this._rev = doc._rev;
         this.version++;
@@ -46344,16 +46344,14 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
         while (1) {
             // TODO(lindner): add backoff and error out if this goes on for too long
             let doc;
-            //: PouchDB.Core.IdMeta & PouchDB.Core.GetMeta & Model & {referenceMode: boolean, type: {}};
             let notFound = false;
             try {
                 doc = await this.db.get(this.pouchDbKey.location);
-                // as PouchDB.Core.IdMeta & PouchDB.Core.GetMeta & Model & {referenceMode: boolean, type: };
                 // Check remote doc.
                 // TODO(lindner): refactor with getModel above.
                 if (this._rev !== doc._rev) {
                     // remote revision is different, update local copy.
-                    this._model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_0__["CrdtCollectionModel"](doc['model']);
+                    this._model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_0__["CrdtCollectionModel"](doc.model);
                     this._rev = doc._rev;
                     this.version++;
                     // TODO(lindner): fire change events here?
@@ -46381,8 +46379,8 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
                 return this._model;
             }
             // Apply changes made by the mutator
-            doc['model'] = newModel.toLiteral();
-            doc['version'] = this.version;
+            doc.model = newModel.toLiteral();
+            doc.version = this.version;
             // Update on pouchdb
             try {
                 const putResult = await this.db.put(doc);
@@ -76158,6 +76156,22 @@ class SyntheticCollection extends _storage_provider_base_js__WEBPACK_IMPORTED_MO
     ensureBackingStore() {
         throw new Error('ensureBackingStore should never be called on SyntheticCollection!');
     }
+    // tslint:disable-next-line: no-any
+    async getMultiple(ids) {
+        throw new Error('unimplemented');
+    }
+    async storeMultiple(values, keys, originatorId) {
+        throw new Error('unimplemented');
+    }
+    removeMultiple(items, originatorId) {
+        throw new Error('unimplemented');
+    }
+    async get(id) {
+        throw new Error('unimplemented');
+    }
+    remove(id, keys, originatorId) {
+        throw new Error('unimplemented');
+    }
 }
 //# sourceMappingURL=synthetic-storage.js.map
 
@@ -84470,7 +84484,7 @@ class Planificator {
         return store;
     }
     async _storeSearch() {
-        const values = await this.searchStore['get']() || [];
+        const values = await this.searchStore.get() || [];
         const arcKey = this.arc.arcId;
         const newValues = [];
         for (const { arc, search } of values) {
@@ -84481,7 +84495,7 @@ class Planificator {
         if (this.search) {
             newValues.push({ search: this.search, arc: arcKey });
         }
-        return this.searchStore['set'](newValues);
+        return this.searchStore.set(newValues);
     }
 }
 //# sourceMappingURL=planificator.js.map
@@ -84647,8 +84661,7 @@ class PlanningResult {
         }
     }
     async load() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.store['get'], 'Unsupported getter in suggestion storage');
-        const value = await this.store['get']() || {};
+        const value = await this.store.get() || {};
         if (value.suggestions) {
             if (this.fromLiteral(value)) {
                 this.onChanged();
@@ -84659,8 +84672,7 @@ class PlanningResult {
     }
     async flush() {
         try {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.store['set'], 'Unsupported setter in suggestion storage');
-            await this.store['set'](this.toLiteral());
+            await this.store.set(this.toLiteral());
         }
         catch (e) {
             error('Failed storing suggestions: ', e);
@@ -84668,7 +84680,7 @@ class PlanningResult {
         }
     }
     async clear() {
-        return this.store['clear']();
+        return this.store.clear();
     }
     dispose() {
         this.changeCallbacks = [];
@@ -85126,7 +85138,7 @@ class PlanProducer {
         this.stateChangedCallbacks.push(callback);
     }
     async onSearchChanged() {
-        const values = await this.searchStore['get']() || [];
+        const values = await this.searchStore.get() || [];
         const arcId = this.arc.arcId;
         const value = values.find(value => value.arc === arcId);
         if (!value) {

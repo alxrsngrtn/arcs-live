@@ -13,7 +13,7 @@ import { PlanProducer } from './plan-producer.js';
 import { PlanningResult } from './planning-result.js';
 import { Recipe } from '../recipe/recipe.js';
 import { ReplanQueue } from './replan-queue.js';
-import { StorageProviderBase } from "../storage/storage-provider-base.js";
+import { VariableStorageProvider } from "../storage/storage-provider-base.js";
 export declare type PlanificatorOptions = {
     userid: string;
     storageKeyBase?: string;
@@ -30,10 +30,10 @@ export declare class Planificator {
     replanQueue?: ReplanQueue;
     dataChangeCallback: () => void;
     search: string | null;
-    searchStore: StorageProviderBase;
+    searchStore: VariableStorageProvider;
     arcCallback: ({}: {}) => void;
     lastActivatedPlan: Recipe | null;
-    constructor(arc: Arc, userid: string, store: StorageProviderBase, searchStore: StorageProviderBase, onlyConsumer: boolean, debug: boolean);
+    constructor(arc: Arc, userid: string, store: VariableStorageProvider, searchStore: VariableStorageProvider, onlyConsumer: boolean, debug: boolean);
     requestPlanning(options?: {}): Promise<void>;
     readonly consumerOnly: boolean;
     loadSuggestions(): Promise<boolean>;
