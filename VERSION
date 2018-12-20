@@ -1,5 +1,5 @@
-commit 3650b8d0c1f6c45f190b27e61645155956b843cc
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Dec 20 11:14:41 2018 +1100
+commit 150914f8649cc4755d71f28979dac2caad77c7d4
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Dec 20 14:11:39 2018 +1100
 
-    Tests for optional handles in an Arc (#2387)
+    Uncomments DevTools connection for Planner Shell (#2501)

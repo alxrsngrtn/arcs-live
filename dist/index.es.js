@@ -29380,7 +29380,8 @@ class PlannerShellInterface {
     if (!assetsPath || !userid || !storage) {
       throw new Error('assetsPath, userid, and storage required');
     }
-    //initDevTools();
+    // connect to DevTools if running with --explore
+    await maybeConnectToDevTools();
     // create an arcs environment
     const env = new Env$1(assetsPath);
     // observe user's arc list
@@ -29424,6 +29425,14 @@ const visualizeContext = context => {
   console.log('stores:');
   console.log(context.allStores.map(store => store.name));
   console.log('======================================');
+};
+
+const maybeConnectToDevTools = async () => {
+  if (process.argv.includes('--explore')) {
+    console.log('Waiting for Arcs Explorer');
+    DevtoolsConnection.ensure();
+    await DevtoolsConnection.onceConnected;
+  }
 };
 
 export { Runtime, KeyManager, PlannerShellInterface };
