@@ -1,9 +1,5 @@
-commit f79575bd5eedad7a650031e19b6e2f95514c60c6
+commit e39a0f819b6baaf5302447b0c4c08ede3e3f9af6
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Dec 19 22:37:36 2018 -0800
+Date:   Thu Dec 20 10:31:03 2018 -0800
 
-    Introduce typing for Variables and Collections (#2500)
-    
-    - Allows for verifying Collections/Variables interface at compile time.
-    - Code can cast the result of construct/connect calls to either type.
-    - Cleans up existing usages/hacks.
+    Remove unused imports (#2508)
