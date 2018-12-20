@@ -1,5 +1,5 @@
-commit f0f7ded3a3c2c1366d4febf66fc13a6d83707152
+commit decff633363034592c6e70881f38f9693ea25c04
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Dec 20 16:03:31 2018 +1100
+Date:   Thu Dec 20 16:03:18 2018 +1100
 
-    Serve standalone DevTools from devtools/ path (#2504)
+    Display full arc ID with DevTools arc selector (#2502)
