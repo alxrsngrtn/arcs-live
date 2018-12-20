@@ -20,6 +20,7 @@ import { ParticleSpec } from './particle-spec.js';
 import { PECInnerPort } from './api-channel.js';
 import { Particle } from './recipe/particle.js';
 import { SlotComposer } from './slot-composer.js';
+import { Modality } from './modality.js';
 declare type ArcOptions = {
     id: string;
     context: Manifest;
@@ -65,7 +66,7 @@ export declare class Arc {
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative }: ArcOptions);
     readonly loader: Loader;
     readonly description: Description;
-    readonly modality: string;
+    readonly modality: Modality;
     registerInstantiatePlanCallback(callback: PlanCallback): void;
     unregisterInstantiatePlanCallback(callback: PlanCallback): boolean;
     dispose(): void;

@@ -11,7 +11,6 @@
 import { assert } from './chai-web.js';
 import { TestHelper } from '../testing/test-helper.js';
 import { DescriptionDomFormatter } from '../description-dom-formatter.js';
-import { Modality } from '../modality.js';
 import { Recipe } from '../recipe/recipe.js';
 import { StubLoader } from '../testing/stub-loader.js';
 describe('recipe descriptions test', () => {
@@ -70,13 +69,14 @@ store BoxesStore of [Box] 'allboxes' in AllBoxes` : ''}
 `;
     }
     async function generateRecipeDescription(options) {
-        const originalFormatter = Modality.forName('dom').descriptionFormatter;
-        Modality.forName('dom').descriptionFormatter = options.formatter;
-        const helper = await TestHelper.createAndPlan({
+        const helper = await TestHelper.create({
             manifestString: options.manifestString || createManifestString(options), loader
         });
+        const originalFormatter = helper.arc.modality.descriptionFormatter;
+        helper.arc.modality.descriptionFormatter = options.formatter;
+        await helper.makePlans(options);
         assert.lengthOf(helper.suggestions, 1);
-        Modality.forName('dom').descriptionFormatter = originalFormatter;
+        helper.arc.modality.descriptionFormatter = originalFormatter;
         return helper.suggestions[0].getDescription('dom');
     }
     async function testRecipeDescription(options, expectedDescription) {

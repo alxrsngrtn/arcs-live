@@ -136,7 +136,7 @@ export class Recipe {
         if (this.uiParticles.length === 0) {
             return true;
         }
-        return this.getSupportedModalities().indexOf(modality) >= 0;
+        return this.getSupportedModalities().indexOf(modality.name) >= 0;
     }
     _findDuplicate(items, options) {
         const seenHandles = new Set();

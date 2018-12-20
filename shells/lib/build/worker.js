@@ -673,7 +673,7 @@ class ParticleSpec {
         return (this.verbs.length > 0) ? this.verbs[0] : undefined;
     }
     matchModality(modality) {
-        return this.slots.size <= 0 || this.modality.includes(modality);
+        return this.slots.size <= 0 || this.modality.includes(modality.name);
     }
     toLiteral() {
         const { args, name, verbs, description, implFile, modality, slots } = this.model;

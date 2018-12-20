@@ -1,5 +1,9 @@
-commit 1fa977b4811f5f7701b11ac67e40933df2f25c82
+commit b9586bb9f0d6e7c5b4d80c904fb14f27e71bd6d7
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Dec 19 19:19:21 2018 -0800
+Date:   Wed Dec 19 19:51:48 2018 -0800
 
-    update the global planificator (#2499)
+    use Modality as object everywhere (#2496)
+    
+    * use Modality as object everywhere
+    
+    * fix tests

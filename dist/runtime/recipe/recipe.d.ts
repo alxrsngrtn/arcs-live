@@ -6,6 +6,7 @@ import { Slot } from './slot';
 import { SlotConnection } from './slot-connection.js';
 import { Handle } from './handle.js';
 import { HandleConnection } from './handle-connection.js';
+import { Modality } from '../modality.js';
 export declare class Recipe {
     private _requires;
     private _particles;
@@ -37,7 +38,7 @@ export declare class Recipe {
     readonly uiParticles: Particle[];
     getSupportedModalities(): string[];
     isModalityResolved(): boolean;
-    isCompatibleWithModality(modality: any): boolean;
+    isCompatibleWithModality(modality: Modality): boolean;
     _findDuplicate(items: any, options: any): any;
     _isValid(options?: any): boolean;
     name: string | undefined;

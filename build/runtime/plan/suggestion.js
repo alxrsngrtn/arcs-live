@@ -9,7 +9,6 @@
  */
 import { assert } from '../../platform/assert-web.js';
 import { Manifest } from '../manifest.js';
-import { Modality } from '../modality.js';
 import { Relevance } from '../relevance.js';
 export class Suggestion {
     constructor(plan, hash, relevance, arc) {
@@ -34,10 +33,9 @@ export class Suggestion {
     }
     async setDescription(description) {
         this.descriptionByModality['text'] = await description.getRecipeSuggestion();
-        const modality = this.arc.modality;
-        if (modality && modality !== 'text') {
-            this.descriptionByModality[modality] =
-                await description.getRecipeSuggestion(Modality.forName(modality).descriptionFormatter);
+        if (this.arc.modality && this.arc.modality.name !== 'text') {
+            this.descriptionByModality[this.arc.modality.name] =
+                await description.getRecipeSuggestion(this.arc.modality.descriptionFormatter);
         }
     }
     isEquivalent(other) {
