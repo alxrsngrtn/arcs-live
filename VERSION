@@ -1,5 +1,13 @@
-commit b83aa7f22a3cc3551b83333eb11dc17ff3e9d02c
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Dec 20 18:30:24 2018 -0800
+commit c0447aa59e2ddcb467b787a01bbe77074d6b5373
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Dec 21 13:39:36 2018 +1100
 
-    add devtools command flag to planner readme (#2510)
+    Improved error messages on failed parse (#2507)
+    
+    * Use ManifestParserError class to attach location information to parser errors
+    
+    * Use a ManifestError class instead of a wrapper function
+    
+    * Change error message expectation
+    
+    * Improve error messages with named examples for parse failures
