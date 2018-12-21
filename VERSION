@@ -1,5 +1,5 @@
-commit e39a0f819b6baaf5302447b0c4c08ede3e3f9af6
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Dec 20 10:31:03 2018 -0800
+commit 12b428ac08548b21ed9e4fdabb5bc25b363aaf86
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Dec 20 16:09:02 2018 -0800
 
-    Remove unused imports (#2508)
+    serialize plan as json string (#2509)

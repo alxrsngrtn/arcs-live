@@ -25610,7 +25610,8 @@ class Suggestion {
     }
     toLiteral() {
         return {
-            plan: this.plan,
+            // Needs to JSON.strigify to avoid emitting empty strings and arrays.
+            plan: JSON.stringify(this.plan),
             hash: this.hash,
             rank: this.rank,
             // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
@@ -25620,7 +25621,7 @@ class Suggestion {
         };
     }
     static fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }) {
-        const suggestion = new Suggestion(plan, hash, rank, JSON.parse(versionByStore || '{}'));
+        const suggestion = new Suggestion(JSON.parse(plan), hash, rank, JSON.parse(versionByStore || '{}'));
         suggestion.searchGroups = searchGroups || [];
         suggestion.descriptionByModality = descriptionByModality;
         return suggestion;

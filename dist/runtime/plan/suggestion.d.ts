@@ -59,7 +59,7 @@ export declare class Suggestion {
     mergeSearch(suggestion: Suggestion): boolean;
     _addSearch(searchGroup: string[]): boolean;
     toLiteral(): {
-        plan: Plan;
+        plan: string;
         hash: string;
         rank: number;
         versionByStore: string;
