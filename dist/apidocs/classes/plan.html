@@ -87,6 +87,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="plan.html#handleconnections" class="tsd-kind-icon">handle<wbr>Connections</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="plan.html#handles" class="tsd-kind-icon">handles</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="plan.html#modalities" class="tsd-kind-icon">modalities</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="plan.html#particles" class="tsd-kind-icon">particles</a></li>
@@ -109,13 +110,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Plan<span class="tsd-signature-symbol">(</span>serialization<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, particles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span>, handles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span>, slots<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span>, modalities<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="plan.html" class="tsd-signature-type">Plan</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Plan<span class="tsd-signature-symbol">(</span>serialization<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, particles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span>, handles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span>, handleConnections<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span>, slots<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span>, modalities<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="plan.html" class="tsd-signature-type">Plan</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c0447aa/src/runtime/plan/suggestion.ts#L26">runtime/plan/suggestion.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8beabbb/src/runtime/plan/suggestion.ts#L27">runtime/plan/suggestion.ts:27</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -128,6 +129,9 @@
 								</li>
 								<li>
 									<h5>handles: <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>handleConnections: <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
 									<h5>slots: <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></h5>
@@ -144,12 +148,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="handleconnections" class="tsd-anchor"></a>
+					<h3>handle<wbr>Connections</h3>
+					<div class="tsd-signature tsd-kind-icon">handle<wbr>Connections<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8beabbb/src/runtime/plan/suggestion.ts#L25">runtime/plan/suggestion.ts:25</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="handles" class="tsd-anchor"></a>
 					<h3>handles</h3>
 					<div class="tsd-signature tsd-kind-icon">handles<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c0447aa/src/runtime/plan/suggestion.ts#L24">runtime/plan/suggestion.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8beabbb/src/runtime/plan/suggestion.ts#L24">runtime/plan/suggestion.ts:24</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -159,7 +173,7 @@
 					<div class="tsd-signature tsd-kind-icon">modalities<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c0447aa/src/runtime/plan/suggestion.ts#L26">runtime/plan/suggestion.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8beabbb/src/runtime/plan/suggestion.ts#L27">runtime/plan/suggestion.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -169,7 +183,7 @@
 					<div class="tsd-signature tsd-kind-icon">particles<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c0447aa/src/runtime/plan/suggestion.ts#L23">runtime/plan/suggestion.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8beabbb/src/runtime/plan/suggestion.ts#L23">runtime/plan/suggestion.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -179,7 +193,7 @@
 					<div class="tsd-signature tsd-kind-icon">serialization<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c0447aa/src/runtime/plan/suggestion.ts#L22">runtime/plan/suggestion.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8beabbb/src/runtime/plan/suggestion.ts#L22">runtime/plan/suggestion.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -189,7 +203,7 @@
 					<div class="tsd-signature tsd-kind-icon">slots<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c0447aa/src/runtime/plan/suggestion.ts#L25">runtime/plan/suggestion.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8beabbb/src/runtime/plan/suggestion.ts#L26">runtime/plan/suggestion.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -206,7 +220,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/c0447aa/src/runtime/plan/suggestion.ts#L40">runtime/plan/suggestion.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/8beabbb/src/runtime/plan/suggestion.ts#L43">runtime/plan/suggestion.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -238,6 +252,9 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="plan.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="plan.html#handleconnections" class="tsd-kind-icon">handle<wbr>Connections</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="plan.html#handles" class="tsd-kind-icon">handles</a>

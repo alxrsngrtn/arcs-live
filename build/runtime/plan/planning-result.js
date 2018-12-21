@@ -9,6 +9,7 @@
  */
 import { assert } from '../../platform/assert-web.js';
 import { logFactory } from '../../platform/log-web.js';
+import { RecipeUtil } from '../recipe/recipe-util.js';
 import { Suggestion } from './suggestion.js';
 const error = logFactory('PlanningResult', '#ff0090', 'error');
 export class PlanningResult {
@@ -131,6 +132,73 @@ export class PlanningResult {
         this.contextual = contextual;
         this.onChanged();
         return true;
+    }
+    merge({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }, arc) {
+        if (this.isEquivalent(suggestions)) {
+            return false;
+        }
+        const jointSuggestions = [];
+        const arcVersionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        // For all existing suggestions, keep the ones still up to date.
+        for (const currentSuggestion of this.suggestions) {
+            const newSuggestion = suggestions.find(suggestion => suggestion.hash === currentSuggestion.hash);
+            if (newSuggestion) {
+                // Suggestion with this hash exists in the new suggestions list.
+                const upToDateSuggestion = this._getUpToDate(currentSuggestion, newSuggestion, arcVersionByStore);
+                if (upToDateSuggestion) {
+                    jointSuggestions.push(upToDateSuggestion);
+                }
+            }
+            else {
+                // Suggestion with this hash does not exist in the new suggestions list.
+                // Add it to the joint suggestions list, iff it's up-to-date and not in the active recipe.
+                if (this._isUpToDate(currentSuggestion, arcVersionByStore) &&
+                    !RecipeUtil.matchesRecipe(arc.activeRecipe, currentSuggestion.plan)) {
+                    jointSuggestions.push(currentSuggestion);
+                }
+            }
+        }
+        for (const newSuggestion of suggestions) {
+            if (!this.suggestions.find(suggestion => suggestion.hash === newSuggestion.hash)) {
+                if (this._isUpToDate(newSuggestion, arcVersionByStore)) {
+                    jointSuggestions.push(newSuggestion);
+                }
+            }
+        }
+        return this.set({ suggestions: jointSuggestions, lastUpdated, generations, contextual });
+    }
+    _isUpToDate(suggestion, versionByStore) {
+        for (const handle of suggestion.plan.handles) {
+            const arcVersion = versionByStore[handle.id] || 0;
+            const relevanceVersion = suggestion.versionByStore[handle.id] || 0;
+            if (relevanceVersion < arcVersion) {
+                return false;
+            }
+        }
+        return true;
+    }
+    _getUpToDate(currentSuggestion, newSuggestion, versionByStore) {
+        const newUpToDate = this._isUpToDate(newSuggestion, versionByStore);
+        const currentUpToDate = this._isUpToDate(currentSuggestion, versionByStore);
+        if (newUpToDate && currentUpToDate) {
+            const newVersions = newSuggestion.versionByStore;
+            const currentVersions = currentSuggestion.versionByStore;
+            assert(Object.keys(newVersions).length === Object.keys(currentVersions).length);
+            if (Object.entries(newVersions).every(([id, version]) => currentVersions[id] !== undefined && version >= currentVersions[id])) {
+                return newSuggestion;
+            }
+            assert(Object.entries(currentVersions).every(([id, version]) => newVersions[id] !== undefined
+                && version <= newVersions[id]), `Inconsistent store versions for suggestions with hash: ${newSuggestion.hash}`);
+            return currentSuggestion;
+        }
+        if (newUpToDate) {
+            return newSuggestion;
+        }
+        if (currentUpToDate) {
+            return currentSuggestion;
+        }
+        console.warn(`None of the suggestions for hash ${newSuggestion.hash} is up to date.`);
+        return null;
     }
     append({ suggestions, lastUpdated = new Date(), generations = [] }) {
         const newSuggestions = [];

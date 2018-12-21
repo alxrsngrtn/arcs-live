@@ -25645,19 +25645,21 @@ Modality.init();
  * http://polymer.github.io/PATENTS.txt
  */
 class Plan {
-    constructor(serialization, particles, handles, slots, modalities) {
+    constructor(serialization, particles, handles, handleConnections, slots, modalities) {
         this.particles = [];
         this.handles = [];
+        this.handleConnections = [];
         this.slots = [];
         this.modalities = [];
         this.serialization = serialization;
         this.particles = particles;
         this.handles = handles;
+        this.handleConnections = handleConnections;
         this.slots = slots;
         this.modalities = modalities;
     }
     static create(plan) {
-        return new Plan(plan.toString(), plan.particles.map(p => ({ name: p.name })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.getSupportedModalities());
+        return new Plan(plan.toString(), plan.particles.map(p => ({ name: p.name, connections: Object.keys(p.connections).map(pcName => ({ name: pcName })) })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.handleConnections.map(hc => ({ name: hc.name, direction: hc.direction, particle: { name: hc.particle.name } })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.getSupportedModalities());
     }
 }
 class Suggestion {
@@ -26917,6 +26919,73 @@ class PlanningResult {
         this.onChanged();
         return true;
     }
+    merge({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }, arc) {
+        if (this.isEquivalent(suggestions)) {
+            return false;
+        }
+        const jointSuggestions = [];
+        const arcVersionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        // For all existing suggestions, keep the ones still up to date.
+        for (const currentSuggestion of this.suggestions) {
+            const newSuggestion = suggestions.find(suggestion => suggestion.hash === currentSuggestion.hash);
+            if (newSuggestion) {
+                // Suggestion with this hash exists in the new suggestions list.
+                const upToDateSuggestion = this._getUpToDate(currentSuggestion, newSuggestion, arcVersionByStore);
+                if (upToDateSuggestion) {
+                    jointSuggestions.push(upToDateSuggestion);
+                }
+            }
+            else {
+                // Suggestion with this hash does not exist in the new suggestions list.
+                // Add it to the joint suggestions list, iff it's up-to-date and not in the active recipe.
+                if (this._isUpToDate(currentSuggestion, arcVersionByStore) &&
+                    !RecipeUtil.matchesRecipe(arc.activeRecipe, currentSuggestion.plan)) {
+                    jointSuggestions.push(currentSuggestion);
+                }
+            }
+        }
+        for (const newSuggestion of suggestions) {
+            if (!this.suggestions.find(suggestion => suggestion.hash === newSuggestion.hash)) {
+                if (this._isUpToDate(newSuggestion, arcVersionByStore)) {
+                    jointSuggestions.push(newSuggestion);
+                }
+            }
+        }
+        return this.set({ suggestions: jointSuggestions, lastUpdated, generations, contextual });
+    }
+    _isUpToDate(suggestion, versionByStore) {
+        for (const handle of suggestion.plan.handles) {
+            const arcVersion = versionByStore[handle.id] || 0;
+            const relevanceVersion = suggestion.versionByStore[handle.id] || 0;
+            if (relevanceVersion < arcVersion) {
+                return false;
+            }
+        }
+        return true;
+    }
+    _getUpToDate(currentSuggestion, newSuggestion, versionByStore) {
+        const newUpToDate = this._isUpToDate(newSuggestion, versionByStore);
+        const currentUpToDate = this._isUpToDate(currentSuggestion, versionByStore);
+        if (newUpToDate && currentUpToDate) {
+            const newVersions = newSuggestion.versionByStore;
+            const currentVersions = currentSuggestion.versionByStore;
+            assert$1(Object.keys(newVersions).length === Object.keys(currentVersions).length);
+            if (Object.entries(newVersions).every(([id, version]) => currentVersions[id] !== undefined && version >= currentVersions[id])) {
+                return newSuggestion;
+            }
+            assert$1(Object.entries(currentVersions).every(([id, version]) => newVersions[id] !== undefined
+                && version <= newVersions[id]), `Inconsistent store versions for suggestions with hash: ${newSuggestion.hash}`);
+            return currentSuggestion;
+        }
+        if (newUpToDate) {
+            return newSuggestion;
+        }
+        if (currentUpToDate) {
+            return currentSuggestion;
+        }
+        console.warn(`None of the suggestions for hash ${newSuggestion.hash} is up to date.`);
+        return null;
+    }
     append({ suggestions, lastUpdated = new Date(), generations = [] }) {
         const newSuggestions = [];
         let searchUpdated = false;
@@ -27784,7 +27853,7 @@ class PlanProducer {
         time = ((now$1() - time) / 1000).toFixed(2);
         // Suggestions are null, if planning was cancelled.
         if (suggestions) {
-            log(`Produced ${suggestions.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
+            log(`[${this.arc.arcId}] Produced ${suggestions.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
             this.isPlanning = false;
             await this._updateResult({ suggestions, generations: this.debug ? generations : [] }, this.replanOptions);
         }
@@ -27827,7 +27896,7 @@ class PlanProducer {
             }
         }
         else {
-            if (!this.result.set({ suggestions, generations, contextual: options['contextual'] })) {
+            if (!this.result.merge({ suggestions, generations, contextual: options['contextual'] }, this.arc)) {
                 return;
             }
         }
@@ -27950,6 +28019,7 @@ class Planificator {
         const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
         const searchStore = await Planificator._initSearchStore(arc, userid);
         const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
+        await planificator.loadSuggestions();
         planificator.requestPlanning({ contextual: true });
         return planificator;
     }

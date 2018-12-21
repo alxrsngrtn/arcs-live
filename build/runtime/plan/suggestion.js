@@ -12,19 +12,21 @@ import { Manifest } from '../manifest.js';
 import { Modality } from '../modality.js';
 import { RecipeResolver } from '../recipe/recipe-resolver.js';
 export class Plan {
-    constructor(serialization, particles, handles, slots, modalities) {
+    constructor(serialization, particles, handles, handleConnections, slots, modalities) {
         this.particles = [];
         this.handles = [];
+        this.handleConnections = [];
         this.slots = [];
         this.modalities = [];
         this.serialization = serialization;
         this.particles = particles;
         this.handles = handles;
+        this.handleConnections = handleConnections;
         this.slots = slots;
         this.modalities = modalities;
     }
     static create(plan) {
-        return new Plan(plan.toString(), plan.particles.map(p => ({ name: p.name })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.getSupportedModalities());
+        return new Plan(plan.toString(), plan.particles.map(p => ({ name: p.name, connections: Object.keys(p.connections).map(pcName => ({ name: pcName })) })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.handleConnections.map(hc => ({ name: hc.name, direction: hc.direction, particle: { name: hc.particle.name } })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.getSupportedModalities());
     }
 }
 export class Suggestion {

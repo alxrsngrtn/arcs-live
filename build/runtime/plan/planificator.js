@@ -42,6 +42,7 @@ export class Planificator {
         const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
         const searchStore = await Planificator._initSearchStore(arc, userid);
         const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
+        await planificator.loadSuggestions();
         planificator.requestPlanning({ contextual: true });
         return planificator;
     }

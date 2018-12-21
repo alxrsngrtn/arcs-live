@@ -1,13 +1,9 @@
-commit c0447aa59e2ddcb467b787a01bbe77074d6b5373
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Dec 21 13:39:36 2018 +1100
+commit 8beabbb5c53d9e6a78c58d84a1dbb2cda1f628a2
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Fri Dec 21 12:04:52 2018 -0800
 
-    Improved error messages on failed parse (#2507)
+    merge planning results (#2512)
     
-    * Use ManifestParserError class to attach location information to parser errors
+    * merge planning results
     
-    * Use a ManifestError class instead of a wrapper function
-    
-    * Change error message expectation
-    
-    * Improve error messages with named examples for parse failures
+    * address comments

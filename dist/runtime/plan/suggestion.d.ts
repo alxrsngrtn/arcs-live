@@ -16,10 +16,16 @@ export declare class Plan {
     serialization: string;
     particles: {
         name: string;
+        connections: {}[];
     }[];
     handles: {
         id: string;
         tags: string[];
+    }[];
+    handleConnections: {
+        name: string;
+        direction: string;
+        particle: {};
     }[];
     slots: {
         id: string;
@@ -29,9 +35,14 @@ export declare class Plan {
     modalities: string[];
     constructor(serialization: string, particles: {
         name: string;
+        connections: {}[];
     }[], handles: {
         id: string;
         tags: string[];
+    }[], handleConnections: {
+        name: string;
+        direction: string;
+        particle: {};
     }[], slots: {
         id: string;
         name: string;
