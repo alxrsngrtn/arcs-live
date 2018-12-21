@@ -34,5 +34,12 @@ export class PouchDbStorageProvider extends StorageProviderBase {
     get db() {
         return this.storageEngine.dbForKey(this.pouchDbKey);
     }
+    /**
+     * Increments the local version to be one more than the maximum of
+     * the local and remove versions.
+     */
+    bumpVersion(otherVersion) {
+        this.version = Math.max(this.version, otherVersion) + 1;
+    }
 }
 //# sourceMappingURL=pouch-db-storage-provider.js.map

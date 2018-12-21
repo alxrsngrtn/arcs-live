@@ -1,9 +1,5 @@
-commit 8beabbb5c53d9e6a78c58d84a1dbb2cda1f628a2
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Dec 21 12:04:52 2018 -0800
+commit ab526372ef629260fda10c0423ae939bf6163c89
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Fri Dec 21 13:14:25 2018 -0800
 
-    merge planning results (#2512)
-    
-    * merge planning results
-    
-    * address comments
+    Fix PouchDb  event firing/referenceMode edge cases (#2513)

@@ -30,12 +30,12 @@ export class PouchDbVariable extends PouchDbStorageProvider {
             await this.backingStore.storeMultiple(underlying, [this.storageKey]);
         }
         await this.fromLiteral(literal);
-        // TODO(lindner): ask shane why this doesn't fire 'change' events like firebase does...
         if (literal && literal.model && literal.model.length === 1) {
             const newvalue = literal.model[0].value;
             if (newvalue) {
                 await this.getStoredAndUpdate(stored => newvalue);
             }
+            this._fire('change', new ChangeEvent({ data: newvalue, version: this.version }));
         }
     }
     /**
@@ -88,8 +88,6 @@ export class PouchDbVariable extends PouchDbStorageProvider {
             return value;
         });
         this.version = version;
-        // TODO(lindner): Mimic firebase?
-        // TODO(lindner): firebase fires 'change' events here...
     }
     /**
      * @return a promise containing the variable value or null if it does not exist.
@@ -163,7 +161,6 @@ export class PouchDbVariable extends PouchDbStorageProvider {
                 });
             }
         }
-        // Does anyone look at this?
         this.version++;
         const data = this.referenceMode ? value : this._stored;
         await this._fire('change', new ChangeEvent({ data, version: this.version, originatorId, barrier }));
@@ -191,7 +188,7 @@ export class PouchDbVariable extends PouchDbStorageProvider {
         this._stored = value;
         this._rev = doc._rev;
         this.referenceMode = doc.referenceMode;
-        this.version++;
+        this.bumpVersion(doc.version);
         // Skip if value == null, which is what happens when docs are deleted..
         if (this.referenceMode && value) {
             this.ensureBackingStore().then(async (store) => {
@@ -224,10 +221,10 @@ export class PouchDbVariable extends PouchDbStorageProvider {
             // compare revisions
             if (this._rev !== result._rev) {
                 // remote revision is different, update local copy.
-                this._stored = result['value'];
+                this._stored = result.value;
                 this._rev = result._rev;
                 this.referenceMode = result.referenceMode;
-                this.version++;
+                this.bumpVersion(result.version);
             }
         }
         catch (err) {
@@ -271,7 +268,7 @@ export class PouchDbVariable extends PouchDbStorageProvider {
                     // remote revision is different, update local copy.
                     this._stored = doc.value;
                     this._rev = doc._rev;
-                    this.version++;
+                    this.bumpVersion(doc.version);
                 }
             }
             catch (err) {

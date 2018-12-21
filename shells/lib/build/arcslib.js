@@ -46478,7 +46478,8 @@ class PouchDbCollection extends _pouch_db_storage_provider_js__WEBPACK_IMPORTED_
                     // remote revision is different, update local copy.
                     this._model = new _crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_0__["CrdtCollectionModel"](doc.model);
                     this._rev = doc._rev;
-                    this.version++;
+                    this.referenceMode = doc.referenceMode;
+                    this.bumpVersion(doc.version);
                     // TODO(lindner): fire change events here?
                 }
             }
@@ -46594,6 +46595,13 @@ class PouchDbStorageProvider extends _storage_provider_base_js__WEBPACK_IMPORTED
     get db() {
         return this.storageEngine.dbForKey(this.pouchDbKey);
     }
+    /**
+     * Increments the local version to be one more than the maximum of
+     * the local and remove versions.
+     */
+    bumpVersion(otherVersion) {
+        this.version = Math.max(this.version, otherVersion) + 1;
+    }
 }
 //# sourceMappingURL=pouch-db-storage-provider.js.map
 
@@ -46684,12 +46692,12 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
             await this.backingStore.storeMultiple(underlying, [this.storageKey]);
         }
         await this.fromLiteral(literal);
-        // TODO(lindner): ask shane why this doesn't fire 'change' events like firebase does...
         if (literal && literal.model && literal.model.length === 1) {
             const newvalue = literal.model[0].value;
             if (newvalue) {
                 await this.getStoredAndUpdate(stored => newvalue);
             }
+            this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["ChangeEvent"]({ data: newvalue, version: this.version }));
         }
     }
     /**
@@ -46742,8 +46750,6 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
             return value;
         });
         this.version = version;
-        // TODO(lindner): Mimic firebase?
-        // TODO(lindner): firebase fires 'change' events here...
     }
     /**
      * @return a promise containing the variable value or null if it does not exist.
@@ -46817,7 +46823,6 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
                 });
             }
         }
-        // Does anyone look at this?
         this.version++;
         const data = this.referenceMode ? value : this._stored;
         await this._fire('change', new _storage_provider_base_js__WEBPACK_IMPORTED_MODULE_2__["ChangeEvent"]({ data, version: this.version, originatorId, barrier }));
@@ -46845,7 +46850,7 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
         this._stored = value;
         this._rev = doc._rev;
         this.referenceMode = doc.referenceMode;
-        this.version++;
+        this.bumpVersion(doc.version);
         // Skip if value == null, which is what happens when docs are deleted..
         if (this.referenceMode && value) {
             this.ensureBackingStore().then(async (store) => {
@@ -46878,10 +46883,10 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
             // compare revisions
             if (this._rev !== result._rev) {
                 // remote revision is different, update local copy.
-                this._stored = result['value'];
+                this._stored = result.value;
                 this._rev = result._rev;
                 this.referenceMode = result.referenceMode;
-                this.version++;
+                this.bumpVersion(result.version);
             }
         }
         catch (err) {
@@ -46925,7 +46930,7 @@ class PouchDbVariable extends _pouch_db_storage_provider__WEBPACK_IMPORTED_MODUL
                     // remote revision is different, update local copy.
                     this._stored = doc.value;
                     this._rev = doc._rev;
-                    this.version++;
+                    this.bumpVersion(doc.version);
                 }
             }
             catch (err) {

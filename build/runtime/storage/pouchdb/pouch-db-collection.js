@@ -275,7 +275,8 @@ export class PouchDbCollection extends PouchDbStorageProvider {
                     // remote revision is different, update local copy.
                     this._model = new CrdtCollectionModel(doc.model);
                     this._rev = doc._rev;
-                    this.version++;
+                    this.referenceMode = doc.referenceMode;
+                    this.bumpVersion(doc.version);
                     // TODO(lindner): fire change events here?
                 }
             }
