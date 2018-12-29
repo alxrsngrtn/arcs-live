@@ -12,6 +12,17 @@ import { Description } from '../description.js';
 import { Recipe } from '../recipe/recipe.js';
 import { Relevance } from '../relevance.js';
 import { Search } from '../recipe/search.js';
+/**
+ * options for the fromLiteral() method.
+ */
+declare type FromLiteralOptions = {
+    plan: string;
+    hash: string;
+    rank: number;
+    versionByStore?: string;
+    searchGroups?: string[][];
+    descriptionByModality?: {};
+};
 export declare class Plan {
     serialization: string;
     particles: {
@@ -77,14 +88,8 @@ export declare class Suggestion {
         searchGroups: string[][];
         descriptionByModality: {};
     };
-    static fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }: {
-        plan: any;
-        hash: any;
-        rank: any;
-        versionByStore: any;
-        searchGroups: any;
-        descriptionByModality: any;
-    }): Suggestion;
+    static fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }: FromLiteralOptions): Suggestion;
     instantiate(arc: Arc): Promise<void>;
     static planFromString(planString: string, arc: Arc): Promise<Recipe>;
 }
+export {};

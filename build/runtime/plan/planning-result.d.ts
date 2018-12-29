@@ -13,7 +13,7 @@ import { VariableStorageProvider } from '../storage/storage-provider-base.js';
 export declare type PlanningResultOptions = {
     suggestions: Suggestion[];
     lastUpdated?: Date;
-    generations: {
+    generations?: {
         population: {}[];
         record: {};
     }[];
@@ -27,7 +27,7 @@ export declare class PlanningResult {
     store: VariableStorageProvider;
     private storeCallback;
     private changeCallbacks;
-    constructor(store: VariableStorageProvider);
+    constructor(store?: VariableStorageProvider);
     registerChangeCallback(callback: any): void;
     onChanged(): void;
     load(): Promise<boolean>;
@@ -46,8 +46,20 @@ export declare class PlanningResult {
     static isEquivalent(oldSuggestions: any, newSuggestions: any): any;
     fromLiteral({ suggestions, generations, lastUpdated }: {
         suggestions: any;
-        generations: any;
-        lastUpdated: any;
+        generations?: any;
+        lastUpdated?: Date;
     }): boolean;
-    toLiteral(): {};
+    toLiteral(): {
+        suggestions: {
+            plan: string;
+            hash: string;
+            rank: number;
+            versionByStore: string;
+            searchGroups: string[][];
+            descriptionByModality: {};
+        }[];
+        generations: string;
+        lastUpdated: string;
+        contextual: boolean;
+    };
 }

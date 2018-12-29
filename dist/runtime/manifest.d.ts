@@ -63,7 +63,7 @@ export declare class Manifest {
     readonly meta: ManifestMeta;
     readonly resources: {};
     applyMeta(section: any): void;
-    createStore(type: any, name: any, id: any, tags: any, storageKey: any): Promise<any>;
+    createStore(type: any, name: any, id: any, tags: any, storageKey?: any): Promise<any>;
     _addStore(store: any, tags: any): any;
     newStorageStub(type: any, name: any, id: any, storageKey: any, tags: any, originalId: any): any;
     _find<a>(manifestFinder: ManifestFinder<a>): a;

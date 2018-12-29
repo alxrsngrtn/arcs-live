@@ -22,7 +22,7 @@ export class ReplanQueue {
     }
     addChange() {
         this.changes.push(now());
-        if (this._isReplanningScheduled()) {
+        if (this.isReplanningScheduled()) {
             this._postponeReplan();
         }
         else if (!this.planProducer.isPlanning) {
@@ -42,15 +42,15 @@ export class ReplanQueue {
             this._scheduleReplan(this.options.defaultReplanDelayMs);
         }
     }
-    _isReplanningScheduled() {
-        return Boolean(this.replanTimer);
+    isReplanningScheduled() {
+        return this.replanTimer !== null;
     }
     _scheduleReplan(intervalMs) {
         this._cancelReplanIfScheduled();
         this.replanTimer = setTimeout(() => this.planProducer.produceSuggestions({ contextual: this.planProducer.result.contextual }), intervalMs);
     }
     _cancelReplanIfScheduled() {
-        if (this._isReplanningScheduled()) {
+        if (this.isReplanningScheduled()) {
             clearTimeout(this.replanTimer);
             this.replanTimer = null;
         }

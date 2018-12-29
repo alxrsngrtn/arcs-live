@@ -14,7 +14,10 @@ import { SuggestionComposer } from '../suggestion-composer.js';
 export declare class PlanConsumer {
     arc: Arc;
     result: PlanningResult;
-    suggestFilter: {};
+    suggestFilter: {
+        showAll: boolean;
+        search?: any;
+    };
     private suggestionsChangeCallbacks;
     private visibleSuggestionsChangeCallbacks;
     suggestionComposer: SuggestionComposer | null;
@@ -22,7 +25,7 @@ export declare class PlanConsumer {
     constructor(arc: Arc, result: PlanningResult);
     registerSuggestionsChangedCallback(callback: any): void;
     registerVisibleSuggestionsChangedCallback(callback: any): void;
-    setSuggestFilter(showAll: any, search: any): void;
+    setSuggestFilter(showAll: boolean, search?: string): void;
     onSuggestionsChanged(): void;
     getCurrentSuggestions(): Suggestion[];
     dispose(): void;

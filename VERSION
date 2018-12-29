@@ -1,5 +1,5 @@
-commit ab526372ef629260fda10c0423ae939bf6163c89
+commit 47bf8b0e85f4763e937dd7522224753134d0182b
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Fri Dec 21 13:14:25 2018 -0800
+Date:   Fri Dec 28 21:44:08 2018 -0800
 
-    Fix PouchDb  event firing/referenceMode edge cases (#2513)
+    Convert remaining planning tests to typescript (#2511)

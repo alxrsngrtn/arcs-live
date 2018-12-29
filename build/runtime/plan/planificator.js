@@ -14,7 +14,7 @@ import { PlanningResult } from './planning-result.js';
 import { ReplanQueue } from './replan-queue.js';
 import { EntityType } from '../type.js';
 export class Planificator {
-    constructor(arc, userid, store, searchStore, onlyConsumer, debug) {
+    constructor(arc, userid, store, searchStore, onlyConsumer = false, debug = false) {
         this.search = null;
         // In <0.6 shell, this is needed to backward compatibility, in order to (1)
         // (1) trigger replanning with a local producer and (2) notify shell of the
@@ -108,22 +108,22 @@ export class Planificator {
             }
         });
     }
-    static _constructSuggestionKey(arc, userid, storageKeyBase) {
+    static constructSuggestionKey(arc, userid, storageKeyBase) {
         const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
         const keybase = arc.storageProviderFactory.parseStringAsKey(storageKeyBase || arcStorageKey.base());
         return keybase.childKeyForSuggestions(userid, arcStorageKey.arcId);
     }
-    static _constructSearchKey(arc, userid) {
+    static constructSearchKey(arc, userid) {
         const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
         const keybase = arc.storageProviderFactory.parseStringAsKey(arcStorageKey.base());
         return keybase.childKeyForSearch(userid);
     }
     static async _initSuggestStore(arc, userid, storageKeyBase) {
-        const storageKey = Planificator._constructSuggestionKey(arc, userid, storageKeyBase);
+        const storageKey = Planificator.constructSuggestionKey(arc, userid, storageKeyBase);
         return Planificator._initStore(arc, 'suggestions-id', EntityType.make(['Suggestions'], { current: 'Object' }), storageKey);
     }
     static async _initSearchStore(arc, userid) {
-        const storageKey = Planificator._constructSearchKey(arc, userid);
+        const storageKey = Planificator.constructSearchKey(arc, userid);
         return Planificator._initStore(arc, 'search-id', EntityType.make(['Search'], { current: 'Object' }), storageKey);
     }
     static async _initStore(arc, id, type, storageKey) {

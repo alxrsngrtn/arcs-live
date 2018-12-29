@@ -10,7 +10,7 @@ export declare class Planner {
         ruleset?: import("../planning/strategizer.js").Ruleset;
         strategyArgs?: {};
     }): void;
-    plan(timeout: number, generations: any): Promise<any[]>;
+    plan(timeout: number, generations?: any): Promise<any[]>;
     _speculativeThreadCount(): number;
     _splitToGroups(items: any, groupCount: number): any[];
     suggest(timeout: number, generations?: {}[], speculator?: Speculator): Promise<Suggestion[]>;

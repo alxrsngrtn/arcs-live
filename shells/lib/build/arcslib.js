@@ -80473,42 +80473,41 @@ __webpack_require__.r(__webpack_exports__);
  * http://polymer.github.io/PATENTS.txt
  */
 
-
-/** @class StubLoader
+/**
  * A Loader initialized with a per-path canned responses.
  * Value for '*' key can be specified for a response if the path did not match.
  * If '*' is not specified and path is not matched, Loader logic is invoked.
  */
 class StubLoader extends _loader_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
-  constructor(fileMap) {
-    super();
-    this._fileMap = fileMap;
-    if (fileMap.hasOwnProperty('*')) {
-      this._cannedResponse = fileMap['*'];
+    constructor(fileMap) {
+        super();
+        this._fileMap = fileMap;
+        if (fileMap.hasOwnProperty('*')) {
+            this._cannedResponse = fileMap['*'];
+        }
     }
-  }
-  loadResource(path) {
-    return this._fileMap.hasOwnProperty(path)
-        ? this._fileMap[path]
-        : (this._cannedResponse || super.loadResource(path));
-  }
-  path(fileName) {
-    return (this._fileMap.hasOwnProperty(fileName) || this._cannedResponse)
-        ? fileName
-        : super.path(fileName);
-  }
-  join(prefix, path) {
-    // If referring from stubbed content, don't prepend stubbed filename.
-    return (this._fileMap.hasOwnProperty(prefix) || this._cannedResponse)
-        ? path
-        : super.join(prefix, path);
-  }
-  clone() {
-    // Each ParticleExecutionContext should get its own Loader, this facilitates that.
-    return new StubLoader(this._fileMap);
-  }
+    loadResource(path) {
+        return this._fileMap.hasOwnProperty(path)
+            ? this._fileMap[path]
+            : (this._cannedResponse || super.loadResource(path));
+    }
+    path(fileName) {
+        return (this._fileMap.hasOwnProperty(fileName) || this._cannedResponse)
+            ? fileName
+            : super.path(fileName);
+    }
+    join(prefix, path) {
+        // If referring from stubbed content, don't prepend stubbed filename.
+        return (this._fileMap.hasOwnProperty(prefix) || this._cannedResponse)
+            ? path
+            : super.join(prefix, path);
+    }
+    clone() {
+        // Each ParticleExecutionContext should get its own Loader, this facilitates that.
+        return new StubLoader(this._fileMap);
+    }
 }
-
+//# sourceMappingURL=stub-loader.js.map
 
 /***/ }),
 /* 203 */
@@ -84499,7 +84498,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Planificator {
-    constructor(arc, userid, store, searchStore, onlyConsumer, debug) {
+    constructor(arc, userid, store, searchStore, onlyConsumer = false, debug = false) {
         this.search = null;
         // In <0.6 shell, this is needed to backward compatibility, in order to (1)
         // (1) trigger replanning with a local producer and (2) notify shell of the
@@ -84593,22 +84592,22 @@ class Planificator {
             }
         });
     }
-    static _constructSuggestionKey(arc, userid, storageKeyBase) {
+    static constructSuggestionKey(arc, userid, storageKeyBase) {
         const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
         const keybase = arc.storageProviderFactory.parseStringAsKey(storageKeyBase || arcStorageKey.base());
         return keybase.childKeyForSuggestions(userid, arcStorageKey.arcId);
     }
-    static _constructSearchKey(arc, userid) {
+    static constructSearchKey(arc, userid) {
         const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
         const keybase = arc.storageProviderFactory.parseStringAsKey(arcStorageKey.base());
         return keybase.childKeyForSearch(userid);
     }
     static async _initSuggestStore(arc, userid, storageKeyBase) {
-        const storageKey = Planificator._constructSuggestionKey(arc, userid, storageKeyBase);
+        const storageKey = Planificator.constructSuggestionKey(arc, userid, storageKeyBase);
         return Planificator._initStore(arc, 'suggestions-id', _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"].make(['Suggestions'], { current: 'Object' }), storageKey);
     }
     static async _initSearchStore(arc, userid) {
-        const storageKey = Planificator._constructSearchKey(arc, userid);
+        const storageKey = Planificator.constructSearchKey(arc, userid);
         return Planificator._initStore(arc, 'search-id', _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"].make(['Search'], { current: 'Object' }), storageKey);
     }
     static async _initStore(arc, id, type, storageKey) {
@@ -86092,7 +86091,7 @@ class ReplanQueue {
     }
     addChange() {
         this.changes.push(Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__["now"])());
-        if (this._isReplanningScheduled()) {
+        if (this.isReplanningScheduled()) {
             this._postponeReplan();
         }
         else if (!this.planProducer.isPlanning) {
@@ -86112,15 +86111,15 @@ class ReplanQueue {
             this._scheduleReplan(this.options.defaultReplanDelayMs);
         }
     }
-    _isReplanningScheduled() {
-        return Boolean(this.replanTimer);
+    isReplanningScheduled() {
+        return this.replanTimer !== null;
     }
     _scheduleReplan(intervalMs) {
         this._cancelReplanIfScheduled();
         this.replanTimer = setTimeout(() => this.planProducer.produceSuggestions({ contextual: this.planProducer.result.contextual }), intervalMs);
     }
     _cancelReplanIfScheduled() {
-        if (this._isReplanningScheduled()) {
+        if (this.isReplanningScheduled()) {
             clearTimeout(this.replanTimer);
             this.replanTimer = null;
         }
