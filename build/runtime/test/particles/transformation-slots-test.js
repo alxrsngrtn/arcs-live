@@ -7,7 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-'use strict';
 import { TestHelper } from '../../testing/test-helper.js';
 describe('transformation slots', () => {
     it('combines hosted particles provided singleton slots into transformation provided set slot', async () => {

@@ -3663,7 +3663,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class ParticleExecutionHost {
     constructor(port, slotComposer, arc) {
         this.nextIdentifier = 0;
@@ -3913,7 +3912,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -4431,7 +4429,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 class OuterPortAttachment {
     constructor(arc, devtoolsChannel) {
@@ -77626,7 +77623,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class Description {
     constructor(arc) {
         this.relevance = null;
@@ -78175,7 +78171,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 // TODO: Make this generic so that it can also be used in-browser, or add a
 // separate in-process browser pec-factory.
 function FakePecFactory(loader) {
@@ -78474,7 +78469,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -79808,7 +79802,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -84191,7 +84184,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 class DescriptionDomFormatter extends _description_js__WEBPACK_IMPORTED_MODULE_1__["DescriptionFormatter"] {

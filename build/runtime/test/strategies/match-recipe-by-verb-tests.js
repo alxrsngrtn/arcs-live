@@ -7,7 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-'use strict';
 import { Manifest } from '../../manifest.js';
 import { StrategyTestHelper } from './strategy-test-helper.js';
 import { MatchRecipeByVerb } from '../../strategies/match-recipe-by-verb.js';

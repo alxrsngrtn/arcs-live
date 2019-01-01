@@ -1,5 +1,7 @@
-commit 47bf8b0e85f4763e937dd7522224753134d0182b
+commit 214d32bf56b88b9990b57c5dbab126e770773b0a
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Fri Dec 28 21:44:08 2018 -0800
+Date:   Tue Jan 1 14:27:01 2019 -0800
 
-    Convert remaining planning tests to typescript (#2511)
+    Remove extraneous use-strict statements (#2516)
+    
+    Our tsconfig.json uses --alwaysStrict so these are not needed

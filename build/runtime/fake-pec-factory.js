@@ -5,7 +5,6 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-'use strict';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 import { MessageChannel } from './message-channel.js';
 import { Loader } from './loader.js';
