@@ -1,7 +1,5 @@
-commit 214d32bf56b88b9990b57c5dbab126e770773b0a
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Jan 1 14:27:01 2019 -0800
+commit d62b9d38bebb5e2ee3d806f5ce7e5ad95560e6ec
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Jan 2 12:46:42 2019 +1100
 
-    Remove extraneous use-strict statements (#2516)
-    
-    Our tsconfig.json uses --alwaysStrict so these are not needed
+    Fixes type signatures on some api-channel calls (#2518)

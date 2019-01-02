@@ -51,13 +51,13 @@ export declare abstract class PECOuterPort extends APIPort {
     InstantiateParticle(particle: ParticleSpec, id: string, spec: ParticleSpec, handles: {
         [index: string]: Handle;
     }): void;
-    UIEvent(particle: ParticleSpec, slotName: string, event: {}): void;
+    UIEvent(particle: recipeParticle.Particle, slotName: string, event: {}): void;
     SimpleCallback(callback: number, data: {}): void;
     AwaitIdle(version: number): void;
-    StartRender(particle: ParticleSpec, slotName: string, providedSlots: {
+    StartRender(particle: recipeParticle.Particle, slotName: string, providedSlots: {
         [index: string]: string;
     }, contentTypes: string[]): void;
-    StopRender(particle: ParticleSpec, slotName: string): void;
+    StopRender(particle: recipeParticle.Particle, slotName: string): void;
     abstract onRender(particle: recipeParticle.Particle, slotName: string, content: string): any;
     abstract onInitializeProxy(handle: StorageProviderBase, callback: number): any;
     abstract onSynchronizeProxy(handle: StorageProviderBase, callback: number): any;
@@ -77,15 +77,15 @@ export declare abstract class PECOuterPort extends APIPort {
     abstract onIdle(version: number, relevance: Map<recipeParticle.Particle, number[]>): any;
     abstract onGetBackingStore(callback: number, storageKey: string, type: Type): any;
     GetBackingStoreCallback(store: StorageProviderBase, callback: number, type: Type, name: string, id: string, storageKey: string): void;
-    abstract onConstructInnerArc(callback: number, particle: ParticleSpec): any;
+    abstract onConstructInnerArc(callback: number, particle: recipeParticle.Particle): any;
     ConstructArcCallback(callback: number, arc: {}): void;
     abstract onArcCreateHandle(callback: number, arc: {}, type: Type, name: string): any;
     CreateHandleCallback(handle: StorageProviderBase, callback: number, type: Type, name: string, id: string): void;
     abstract onArcMapHandle(callback: number, arc: Arc, handle: recipeHandle.Handle): any;
     MapHandleCallback(newHandle: {}, callback: number, id: string): void;
-    abstract onArcCreateSlot(callback: number, arc: Arc, transformationParticle: ParticleSpec, transformationSlotName: string, hostedParticleName: string, hostedSlotName: string, handleId: string): any;
+    abstract onArcCreateSlot(callback: number, arc: Arc, transformationParticle: recipeParticle.Particle, transformationSlotName: string, hostedParticleName: string, hostedSlotName: string, handleId: string): any;
     CreateSlotCallback(slot: {}, callback: number, hostedSlotId: string): void;
-    InnerArcRender(transformationParticle: ParticleSpec, transformationSlotName: string, hostedSlotId: string, content: {}): void;
+    InnerArcRender(transformationParticle: recipeParticle.Particle, transformationSlotName: string, hostedSlotId: string, content: {}): void;
     abstract onArcLoadRecipe(arc: Arc, recipe: string, callback: number): any;
     abstract onRaiseSystemException(exception: {}, methodName: string, particleId: string): any;
     DevToolsConnected(): void;
