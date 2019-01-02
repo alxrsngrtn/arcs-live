@@ -16,12 +16,10 @@ export declare class HostedSlotConsumer extends SlotConsumer {
     readonly hostedSlotName: string;
     readonly hostedSlotId: string;
     readonly storeId: string;
-    readonly _arc: Arc;
     renderCallback: ({}: {}, {}: {}, {}: {}, {}: {}) => void;
-    constructor(transformationSlotConsumer: any, hostedParticleName: any, hostedSlotName: any, hostedSlotId: any, storeId: any, arc: any);
-    readonly arc: Arc;
+    constructor(arc: Arc, transformationSlotConsumer: any, hostedParticleName: any, hostedSlotName: any, hostedSlotId: any, storeId: any);
     consumeConn: import("./recipe/slot-connection.js").SlotConnection;
-    setContent(content: any, handler: any, arc: any): Promise<any>;
+    setContent(content: any, handler: any): Promise<any>;
     constructRenderRequest(): string[];
     getInnerContainer(name: any): any;
     createProvidedContexts(): HostedSlotContext[];

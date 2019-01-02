@@ -15,7 +15,6 @@ import { SlotConsumer } from './slot-consumer.js';
 import { HostedSlotConsumer } from './hosted-slot-consumer.js';
 import { Particle } from './recipe/particle.js';
 export declare class SlotComposer {
-    arc: Arc;
     private readonly _containerKind;
     readonly modality: Modality;
     readonly modalityHandler: ModalityHandler;
@@ -37,8 +36,8 @@ export declare class SlotComposer {
     findContextById(slotId: any): SlotContext;
     createHostedSlot(transformationParticle: any, transformationSlotName: any, hostedParticleName: any, hostedSlotName: any, storeId: any): string;
     _addSlotConsumer(slot: HostedSlotConsumer): void;
-    initializeRecipe(recipeParticles: Particle[]): void;
+    initializeRecipe(arc: Arc, recipeParticles: Particle[]): void;
     renderSlot(particle: Particle, slotName: string, content: any): Promise<void>;
     getAvailableContexts(): SlotContext[];
-    dispose(): void;
+    dispose(arc: Arc): void;
 }

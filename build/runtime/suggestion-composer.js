@@ -1,10 +1,11 @@
 import { Suggestion } from './plan/suggestion.js';
 export class SuggestionComposer {
-    constructor(slotComposer) {
+    constructor(arc, slotComposer) {
         this._suggestions = [];
         this._suggestConsumers = [];
         this._container = slotComposer.findContainerByName('suggestions');
         this._slotComposer = slotComposer;
+        this.arc = arc;
     }
     get modalityHandler() { return this._slotComposer.modalityHandler; }
     clear() {
@@ -24,7 +25,7 @@ export class SuggestionComposer {
                 throw new Error('No suggestion content available');
             }
             if (this._container) {
-                this.modalityHandler.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
+                this.modalityHandler.suggestionConsumerClass.render(this.arc, this._container, suggestion, suggestionContent);
             }
             this._addInlineSuggestion(suggestion, suggestionContent);
         }
@@ -56,7 +57,7 @@ export class SuggestionComposer {
             // the suggestion doesn't use any of the handles that the context is restricted to.
             return;
         }
-        const suggestConsumer = new this.modalityHandler.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
+        const suggestConsumer = new this.modalityHandler.suggestionConsumerClass(this.arc, this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
             const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
             suggestConsumer.dispose();
             if (suggestion) {
@@ -65,7 +66,7 @@ export class SuggestionComposer {
                     throw new Error('cannot find suggest slot context');
                 }
                 this._suggestConsumers.splice(index, 1);
-                suggestion.instantiate(this._slotComposer.arc);
+                suggestion.instantiate(this.arc);
             }
         });
         context.addSlotConsumer(suggestConsumer);

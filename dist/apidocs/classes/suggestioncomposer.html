@@ -91,6 +91,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="suggestioncomposer.html#_slotcomposer" class="tsd-kind-icon">_slot<wbr>Composer</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="suggestioncomposer.html#_suggestconsumers" class="tsd-kind-icon">_suggest<wbr>Consumers</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="suggestioncomposer.html#_suggestions" class="tsd-kind-icon">_suggestions</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="suggestioncomposer.html#arc" class="tsd-kind-icon">arc</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -116,17 +117,20 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Suggestion<wbr>Composer<span class="tsd-signature-symbol">(</span>slotComposer<span class="tsd-signature-symbol">: </span><a href="slotcomposer.html" class="tsd-signature-type">SlotComposer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="suggestioncomposer.html" class="tsd-signature-type">SuggestionComposer</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Suggestion<wbr>Composer<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a>, slotComposer<span class="tsd-signature-symbol">: </span><a href="slotcomposer.html" class="tsd-signature-type">SlotComposer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="suggestioncomposer.html" class="tsd-signature-type">SuggestionComposer</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0bfd7cf/src/runtime/suggestion-composer.ts#L20">runtime/suggestion-composer.ts:20</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10287a8/src/runtime/suggestion-composer.ts#L22">runtime/suggestion-composer.ts:22</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
+								<li>
+									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+								</li>
 								<li>
 									<h5>slotComposer: <a href="slotcomposer.html" class="tsd-signature-type">SlotComposer</a></h5>
 								</li>
@@ -144,7 +148,7 @@
 					<div class="tsd-signature tsd-kind-icon">_container<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0bfd7cf/src/runtime/suggestion-composer.ts#L16">runtime/suggestion-composer.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10287a8/src/runtime/suggestion-composer.ts#L17">runtime/suggestion-composer.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -154,7 +158,7 @@
 					<div class="tsd-signature tsd-kind-icon">_slot<wbr>Composer<span class="tsd-signature-symbol">:</span> <a href="slotcomposer.html" class="tsd-signature-type">SlotComposer</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0bfd7cf/src/runtime/suggestion-composer.ts#L18">runtime/suggestion-composer.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10287a8/src/runtime/suggestion-composer.ts#L19">runtime/suggestion-composer.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -164,7 +168,7 @@
 					<div class="tsd-signature tsd-kind-icon">_suggest<wbr>Consumers<span class="tsd-signature-symbol">:</span> <a href="suggestdomconsumer.html" class="tsd-signature-type">SuggestDomConsumer</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0bfd7cf/src/runtime/suggestion-composer.ts#L20">runtime/suggestion-composer.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10287a8/src/runtime/suggestion-composer.ts#L22">runtime/suggestion-composer.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -174,7 +178,17 @@
 					<div class="tsd-signature tsd-kind-icon">_suggestions<span class="tsd-signature-symbol">:</span> <a href="suggestion.html" class="tsd-signature-type">Suggestion</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0bfd7cf/src/runtime/suggestion-composer.ts#L19">runtime/suggestion-composer.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10287a8/src/runtime/suggestion-composer.ts#L21">runtime/suggestion-composer.ts:21</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="arc" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> arc</h3>
+					<div class="tsd-signature tsd-kind-icon">arc<span class="tsd-signature-symbol">:</span> <a href="arc.html" class="tsd-signature-type">Arc</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10287a8/src/runtime/suggestion-composer.ts#L20">runtime/suggestion-composer.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -191,7 +205,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0bfd7cf/src/runtime/suggestion-composer.ts#L27">runtime/suggestion-composer.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10287a8/src/runtime/suggestion-composer.ts#L30">runtime/suggestion-composer.ts:30</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="modalityhandler.html" class="tsd-signature-type">ModalityHandler</a></h4>
@@ -211,7 +225,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0bfd7cf/src/runtime/suggestion-composer.ts#L56">runtime/suggestion-composer.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10287a8/src/runtime/suggestion-composer.ts#L59">runtime/suggestion-composer.ts:59</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -237,7 +251,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0bfd7cf/src/runtime/suggestion-composer.ts#L29">runtime/suggestion-composer.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10287a8/src/runtime/suggestion-composer.ts#L32">runtime/suggestion-composer.ts:32</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -254,7 +268,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0bfd7cf/src/runtime/suggestion-composer.ts#L37">runtime/suggestion-composer.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10287a8/src/runtime/suggestion-composer.ts#L40">runtime/suggestion-composer.ts:40</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -298,6 +312,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="suggestioncomposer.html#_suggestions" class="tsd-kind-icon">_suggestions</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="suggestioncomposer.html#arc" class="tsd-kind-icon">arc</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="suggestioncomposer.html#modalityhandler" class="tsd-kind-icon">modality<wbr>Handler</a>

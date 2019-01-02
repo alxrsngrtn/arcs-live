@@ -21,7 +21,8 @@ export declare class SlotConsumer {
     readonly containerKind?: string;
     private _renderingBySubId;
     private innerContainerBySlotId;
-    constructor(consumeConn?: SlotConnection, containerKind?: string);
+    readonly arc: Arc;
+    constructor(arc: Arc, consumeConn?: SlotConnection, containerKind?: string);
     readonly consumeConn: SlotConnection;
     getRendering(subId: any): {
         container?: {};
@@ -35,8 +36,8 @@ export declare class SlotConsumer {
     updateProvidedContexts(): void;
     startRender(): void;
     stopRender(): void;
-    setContent(content: any, handler: any, arc?: Arc): Promise<void>;
-    populateHandleDescriptions(arc: any): Promise<{}>;
+    setContent(content: any, handler: any): Promise<void>;
+    populateHandleDescriptions(): Promise<{}>;
     getInnerContainer(slotId: any): any;
     _initInnerSlotContainer(slotId: any, subId: any, container: any): void;
     _clearInnerSlotContainers(subIds: any): void;

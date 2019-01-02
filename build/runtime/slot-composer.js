@@ -69,22 +69,23 @@ export class SlotComposer {
         return this._contexts.find(({ id }) => id === slotId);
     }
     createHostedSlot(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, storeId) {
-        const hostedSlotId = this.arc.generateID();
         const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
         assert(transformationSlotConsumer, `Unexpected transformation slot particle ${transformationParticle.name}:${transformationSlotName}, hosted particle ${hostedParticleName}, slot name ${hostedSlotName}`);
-        const hostedSlotConsumer = new HostedSlotConsumer(transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId, this.arc);
-        hostedSlotConsumer.renderCallback = this.arc.pec.innerArcRender.bind(this.arc.pec);
+        const arc = transformationSlotConsumer.arc;
+        const hostedSlotId = arc.generateID();
+        const hostedSlotConsumer = new HostedSlotConsumer(arc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId);
+        hostedSlotConsumer.renderCallback = arc.pec.innerArcRender.bind(arc.pec);
         this._addSlotConsumer(hostedSlotConsumer);
         const context = this.findContextById(transformationSlotConsumer.consumeConn.targetSlot.id);
         context.addSlotConsumer(hostedSlotConsumer);
         return hostedSlotId;
     }
     _addSlotConsumer(slot) {
-        slot.startRenderCallback = this.arc.pec.startRender.bind(this.arc.pec);
-        slot.stopRenderCallback = this.arc.pec.stopRender.bind(this.arc.pec);
+        slot.startRenderCallback = slot.arc.pec.startRender.bind(slot.arc.pec);
+        slot.stopRenderCallback = slot.arc.pec.stopRender.bind(slot.arc.pec);
         this._consumers.push(slot);
     }
-    initializeRecipe(recipeParticles) {
+    initializeRecipe(arc, recipeParticles) {
         const newConsumers = [];
         // Create slots for each of the recipe's particles slot connections.
         recipeParticles.forEach(p => {
@@ -100,7 +101,7 @@ export class SlotComposer {
                     transformationSlotConsumer = slotConsumer.transformationSlotConsumer;
                 }
                 else {
-                    slotConsumer = new this.modalityHandler.slotConsumerClass(cs, this._containerKind);
+                    slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
                     newConsumers.push(slotConsumer);
                 }
                 const providedContexts = slotConsumer.createProvidedContexts();
@@ -126,29 +127,34 @@ export class SlotComposer {
         const slotConsumer = this.getSlotConsumer(particle, slotName);
         assert(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
         await slotConsumer.setContent(content, async (eventlet) => {
-            this.arc.pec.sendEvent(particle, slotName, eventlet);
+            slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
             if (eventlet.data && eventlet.data.key) {
                 const hostedConsumers = this.consumers.filter(c => c instanceof HostedSlotConsumer && c.transformationSlotConsumer === slotConsumer);
                 for (const hostedConsumer of hostedConsumers) {
                     if (hostedConsumer instanceof HostedSlotConsumer && hostedConsumer.storeId) {
-                        const store = this.arc.findStoreById(hostedConsumer.storeId);
+                        const store = slotConsumer.arc.findStoreById(hostedConsumer.storeId);
                         assert(store);
                         // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc
                         // tslint:disable-next-line: no-any
                         const value = await store.get();
                         if (value && (value.id === eventlet.data.key)) {
-                            this.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
+                            slotConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
                         }
                     }
                 }
             }
-        }, this.arc);
+        });
     }
     getAvailableContexts() {
         return this._contexts;
     }
-    dispose() {
-        this.consumers.forEach(consumer => consumer.dispose());
+    dispose(arc) {
+        this.consumers.forEach(consumer => {
+            // At this point there should be a single Arc per SlotComposer.
+            // TODO: Fix disposal once multi-arc SlotComposer is possible.
+            assert(consumer.arc === arc);
+            consumer.dispose();
+        });
         this.modalityHandler.slotConsumerClass.dispose();
         this._contexts.forEach(context => {
             context.clearSlotConsumers();

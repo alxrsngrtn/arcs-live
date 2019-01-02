@@ -47,9 +47,6 @@ export class Arc {
         const pecId = this.generateID();
         const innerPecPort = this.pecFactory(pecId);
         this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
-        if (slotComposer) {
-            slotComposer.arc = this;
-        }
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
         this.arcId = this.storageKey ? this.storageProviderFactory.parseStringAsKey(this.storageKey).arcId : '';
         this._description = new Description(this);
@@ -83,7 +80,7 @@ export class Arc {
         // TODO: disconnect all assocated store event handlers
         this.pec.close();
         if (this.pec.slotComposer) {
-            this.pec.slotComposer.dispose();
+            this.pec.slotComposer.dispose(this);
         }
     }
     // Returns a promise that spins sending a single `AwaitIdle` message until it
@@ -453,7 +450,7 @@ ${this.activeRecipe.toString()}`;
         particles.forEach(recipeParticle => this._instantiateParticle(recipeParticle));
         if (this.pec.slotComposer) {
             // TODO: pass slot-connections instead
-            this.pec.slotComposer.initializeRecipe(particles);
+            this.pec.slotComposer.initializeRecipe(this, particles);
         }
         if (!this.isSpeculative && !innerArc) {
             // Note: callbacks not triggered for inner-arc recipe instantiation or speculative arcs.

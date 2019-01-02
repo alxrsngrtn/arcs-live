@@ -13,8 +13,8 @@ import { Template } from '../../modalities/dom/components/xen/xen-template.js';
 import IconStyles from '../../modalities/dom/components/icons.css.js';
 const templateByName = new Map();
 export class SlotDomConsumer extends SlotConsumer {
-    constructor(consumeConn, containerKind) {
-        super(consumeConn, containerKind);
+    constructor(arc, consumeConn, containerKind) {
+        super(arc, consumeConn, containerKind);
         this._observer = this._initMutationObserver();
     }
     constructRenderRequest(hostedSlotConsumer) {

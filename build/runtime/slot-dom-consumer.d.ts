@@ -8,10 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { SlotConsumer } from './slot-consumer.js';
+import { Arc } from './arc.js';
 import { SlotConnection } from './recipe/slot-connection.js';
 export declare class SlotDomConsumer extends SlotConsumer {
     private readonly _observer;
-    constructor(consumeConn?: SlotConnection, containerKind?: string);
+    constructor(arc: Arc, consumeConn?: SlotConnection, containerKind?: string);
     constructRenderRequest(hostedSlotConsumer: any): string[];
     static hasTemplate(templatePrefix: any): any;
     isSameContainer(container: any, contextContainer: any): boolean;

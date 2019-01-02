@@ -9,8 +9,8 @@
  */
 import { SlotDomConsumer } from './slot-dom-consumer.js';
 export class SuggestDomConsumer extends SlotDomConsumer {
-    constructor(containerKind, suggestion, suggestionContent, eventHandler) {
-        super(/* consumeConn= */ null, containerKind);
+    constructor(arc, containerKind, suggestion, suggestionContent, eventHandler) {
+        super(arc, /* consumeConn= */ null, containerKind);
         this._suggestion = suggestion;
         this._suggestionContent = suggestionContent;
         this._eventHandler = eventHandler;
@@ -34,11 +34,11 @@ export class SuggestDomConsumer extends SlotDomConsumer {
             this.setContent(this._suggestionContent, this._eventHandler);
         }
     }
-    static render(container, plan, content) {
+    static render(arc, container, plan, content) {
         const suggestionContainer = Object.assign(document.createElement('suggestion-element'), { plan });
         container.appendChild(suggestionContainer, container.firstElementChild);
         const rendering = { container: suggestionContainer, model: content.model };
-        const consumer = new SlotDomConsumer();
+        const consumer = new SlotDomConsumer(arc);
         consumer.addRenderingBySubId(undefined, rendering);
         consumer.eventHandler = (() => { });
         consumer._stampTemplate(rendering, consumer.createTemplateElement(content.template));

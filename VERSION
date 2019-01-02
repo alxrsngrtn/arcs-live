@@ -1,13 +1,5 @@
-commit 0bfd7cf542b475160b766d2b5b3abcedbd52105a
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jan 2 14:13:33 2019 -0800
+commit 10287a8204a32644b67c76feb119d6a12d488cc5
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Jan 3 10:32:44 2019 +1100
 
-    Refactor modalities - split names from rendering. (#2517)
-    
-    * Refactor modalities - split names from rendering.
-    
-    * move modality-handler to its own file
-    
-    * address comments
-    
-    * add context to test arc in ConvertConstraintsToConnections tests
+    Makes SlotComposer capable of multi-arc composition (#2520)

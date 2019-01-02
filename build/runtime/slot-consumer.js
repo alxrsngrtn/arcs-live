@@ -10,12 +10,13 @@
 import { assert } from '../platform/assert-web.js';
 import { SlotContext } from './slot-context.js';
 export class SlotConsumer {
-    constructor(consumeConn, containerKind) {
+    constructor(arc, consumeConn, containerKind) {
         this.providedSlotContexts = [];
         // Contains `container` and other modality specific rendering information
         // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
         this._renderingBySubId = new Map();
         this.innerContainerBySlotId = {};
+        this.arc = arc;
         this._consumeConn = consumeConn;
         this.containerKind = containerKind;
     }
@@ -86,23 +87,23 @@ export class SlotConsumer {
             this.stopRenderCallback({ particle: this.consumeConn.particle, slotName: this.consumeConn.name });
         }
     }
-    async setContent(content, handler, arc) {
+    async setContent(content, handler) {
         if (content && Object.keys(content).length > 0) {
-            if (arc) {
-                content.descriptions = await this.populateHandleDescriptions(arc);
-            }
+            content.descriptions = await this.populateHandleDescriptions();
         }
         this.eventHandler = handler;
         for (const [subId, rendering] of this.renderings) {
             this.setContainerContent(rendering, this.formatContent(content, subId), subId);
         }
     }
-    async populateHandleDescriptions(arc) {
+    async populateHandleDescriptions() {
+        if (!this.arc || !this.consumeConn)
+            return null;
         const descriptions = {};
         await Promise.all(Object.values(this.consumeConn.particle.connections).map(async (handleConn) => {
             // TODO(mmandlis): convert back to .handle and .name after all recipe files converted to typescript.
             if (handleConn['handle']) {
-                descriptions[`${handleConn['name']}.description`] = (await arc.description.getHandleDescription(handleConn['handle'])).toString();
+                descriptions[`${handleConn['name']}.description`] = (await this.arc.description.getHandleDescription(handleConn['handle'])).toString();
             }
         }));
         return descriptions;
