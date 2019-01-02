@@ -8,25 +8,21 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
+import { DescriptionFormatter } from '../description.js';
 import { Manifest } from '../manifest.js';
-import { Modality } from '../modality.js';
 import { RecipeResolver } from '../recipe/recipe-resolver.js';
 export class Plan {
-    constructor(serialization, particles, handles, handleConnections, slots, modalities) {
-        this.particles = [];
-        this.handles = [];
-        this.handleConnections = [];
-        this.slots = [];
-        this.modalities = [];
+    constructor(serialization, name, particles, handles, handleConnections, slots, modality) {
         this.serialization = serialization;
+        this.name = name;
         this.particles = particles;
         this.handles = handles;
         this.handleConnections = handleConnections;
         this.slots = slots;
-        this.modalities = modalities;
+        this.modality = modality;
     }
     static create(plan) {
-        return new Plan(plan.toString(), plan.particles.map(p => ({ name: p.name, connections: Object.keys(p.connections).map(pcName => ({ name: pcName })) })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.handleConnections.map(hc => ({ name: hc.name, direction: hc.direction, particle: { name: hc.particle.name } })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.getSupportedModalities());
+        return new Plan(plan.toString(), plan.name, plan.particles.map(p => ({ name: p.name, connections: Object.keys(p.connections).map(pcName => ({ name: pcName })) })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.handleConnections.map(hc => ({ name: hc.name, direction: hc.direction, particle: { name: hc.particle.name } })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.modality.names.map(n => ({ name: n })));
     }
 }
 export class Suggestion {
@@ -58,11 +54,13 @@ export class Suggestion {
         assert(this.descriptionByModality[modality], `No description for modality '${modality}'`);
         return this.descriptionByModality[modality];
     }
-    async setDescription(description) {
+    async setDescription(description, modality, descriptionFormatter = DescriptionFormatter) {
         this.descriptionByModality['text'] = await description.getRecipeSuggestion();
-        for (const modality of this.plan.modalities) {
-            this.descriptionByModality[modality] =
-                await description.getRecipeSuggestion(Modality.forName(modality).descriptionFormatter);
+        for (const planModality of this.plan.modality) {
+            if (modality.names.includes(planModality.name)) {
+                this.descriptionByModality[planModality.name] =
+                    await description.getRecipeSuggestion(descriptionFormatter);
+            }
         }
     }
     isEquivalent(other) {

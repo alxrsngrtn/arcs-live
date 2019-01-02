@@ -16,9 +16,9 @@ export class MatchParticleByVerb extends Strategy {
                     // Particle already has explicit name.
                     return undefined;
                 }
-                const modality = arc.modality;
+                const modality = arc.modality.intersection(recipe.modality);
                 const particleSpecs = arc.context.findParticlesByVerb(particle.primaryVerb)
-                    .filter(spec => !modality || spec.matchModality(modality));
+                    .filter(spec => spec.isCompatible(modality));
                 return particleSpecs.map(spec => {
                     return (recipe, particle) => {
                         const score = 1;

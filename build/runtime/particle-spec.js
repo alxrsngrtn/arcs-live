@@ -7,9 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { assert } from '../platform/assert-web.js';
+import { Modality } from './modality.js';
 import { Type, InterfaceType } from './type.js';
 import { TypeChecker } from './recipe/type-checker.js';
-import { assert } from '../platform/assert-web.js';
 function asType(t) {
     return (t instanceof Type) ? t : Type.fromLiteral(t);
 }
@@ -94,7 +95,7 @@ export class ParticleSpec {
             connectionSpec.pattern = model.description[connectionSpec.name];
         });
         this.implFile = model.implFile;
-        this.modality = model.modality || [];
+        this.modality = Modality.create(model.modality || []);
         this.slots = new Map();
         if (model.slots) {
             model.slots.forEach(s => this.slots.set(s.name, new SlotSpec(s)));
@@ -130,8 +131,8 @@ export class ParticleSpec {
     get primaryVerb() {
         return (this.verbs.length > 0) ? this.verbs[0] : undefined;
     }
-    matchModality(modality) {
-        return this.slots.size <= 0 || this.modality.includes(modality.name);
+    isCompatible(modality) {
+        return this.slots.size === 0 || this.modality.intersection(modality).isResolved();
     }
     toLiteral() {
         const { args, name, verbs, description, implFile, modality, slots } = this.model;
@@ -184,7 +185,7 @@ export class ParticleSpec {
             }
             writeConnection(connection, indent);
         }
-        this.modality.filter(a => a !== 'mock').forEach(a => results.push(`  modality ${a}`));
+        this.modality.names.forEach(a => results.push(`  modality ${a}`));
         this.slots.forEach(s => {
             // Consume slot.
             const consume = [];

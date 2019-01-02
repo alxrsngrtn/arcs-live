@@ -6,10 +6,10 @@ export class SuggestionComposer {
         this._container = slotComposer.findContainerByName('suggestions');
         this._slotComposer = slotComposer;
     }
-    get modality() { return this._slotComposer.modality; }
+    get modalityHandler() { return this._slotComposer.modalityHandler; }
     clear() {
         if (this._container) {
-            this.modality.slotConsumerClass.clear(this._container);
+            this.modalityHandler.slotConsumerClass.clear(this._container);
         }
         this._suggestConsumers.forEach(consumer => consumer.dispose());
         this._suggestConsumers = [];
@@ -24,7 +24,7 @@ export class SuggestionComposer {
                 throw new Error('No suggestion content available');
             }
             if (this._container) {
-                this.modality.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
+                this.modalityHandler.suggestionConsumerClass.render(this._container, suggestion, suggestionContent);
             }
             this._addInlineSuggestion(suggestion, suggestionContent);
         }
@@ -56,7 +56,7 @@ export class SuggestionComposer {
             // the suggestion doesn't use any of the handles that the context is restricted to.
             return;
         }
-        const suggestConsumer = new this.modality.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
+        const suggestConsumer = new this.modalityHandler.suggestionConsumerClass(this._slotComposer.containerKind, suggestion, suggestionContent, (eventlet) => {
             const suggestion = this._suggestions.find(s => s.hash === eventlet.data.key);
             suggestConsumer.dispose();
             if (suggestion) {

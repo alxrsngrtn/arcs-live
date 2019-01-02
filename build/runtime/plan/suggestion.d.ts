@@ -8,7 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../arc.js';
-import { Description } from '../description.js';
+import { Description, DescriptionFormatter } from '../description.js';
+import { Modality } from '../modality.js';
 import { Recipe } from '../recipe/recipe.js';
 import { Relevance } from '../relevance.js';
 import { Search } from '../recipe/search.js';
@@ -24,27 +25,30 @@ declare type FromLiteralOptions = {
     descriptionByModality?: {};
 };
 export declare class Plan {
-    serialization: string;
-    particles: {
+    readonly serialization: string;
+    readonly name: string;
+    readonly particles: {
         name: string;
         connections: {}[];
     }[];
-    handles: {
+    readonly handles: {
         id: string;
         tags: string[];
     }[];
-    handleConnections: {
+    readonly handleConnections: {
         name: string;
         direction: string;
         particle: {};
     }[];
-    slots: {
+    readonly slots: {
         id: string;
         name: string;
         tags: string[];
     }[];
-    modalities: string[];
-    constructor(serialization: string, particles: {
+    readonly modality: {
+        name: string;
+    }[];
+    constructor(serialization: string, name: string, particles: {
         name: string;
         connections: {}[];
     }[], handles: {
@@ -58,7 +62,9 @@ export declare class Plan {
         id: string;
         name: string;
         tags: string[];
-    }[], modalities: string[]);
+    }[], modality: {
+        name: string;
+    }[]);
     static create(plan: Recipe): Plan;
 }
 export declare class Suggestion {
@@ -73,7 +79,7 @@ export declare class Suggestion {
     constructor(plan: Plan, hash: string, rank: number, versionByStore: {});
     readonly descriptionText: string;
     getDescription(modality: string): string | {};
-    setDescription(description: Description): Promise<void>;
+    setDescription(description: Description, modality: Modality, descriptionFormatter?: typeof DescriptionFormatter): Promise<void>;
     isEquivalent(other: Suggestion): boolean;
     static compare(s1: Suggestion, s2: Suggestion): number;
     hasSearch(search: string): boolean;

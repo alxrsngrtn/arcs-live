@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Modality } from './modality.js';
+import { ModalityHandler } from './modality-handler.js';
 import { Arc } from './arc.js';
 import { SlotContext } from './slot-context.js';
 import { SlotConsumer } from './slot-consumer.js';
@@ -16,18 +17,19 @@ import { Particle } from './recipe/particle.js';
 export declare class SlotComposer {
     arc: Arc;
     private readonly _containerKind;
-    private _modality;
+    readonly modality: Modality;
+    readonly modalityHandler: ModalityHandler;
     private _consumers;
     private _contexts;
     /**
      * |options| must contain:
-     * - modality: the UI modality the slots composer render to (for example: dom).
+     * - modalityName: the UI modality the slot-composer renders to (for example: dom).
+     * - modalityHandler: the handler for UI modality the slot-composer renders to.
      * - rootContainer: the top level container to be used for slots.
      * and may contain:
      * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
      */
     constructor(options: any);
-    readonly modality: Modality;
     readonly consumers: SlotConsumer[];
     readonly containerKind: string;
     getSlotConsumer(particle: Particle, slotName: string): SlotConsumer;

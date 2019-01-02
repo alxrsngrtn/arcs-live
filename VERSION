@@ -1,5 +1,13 @@
-commit d62b9d38bebb5e2ee3d806f5ce7e5ad95560e6ec
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Jan 2 12:46:42 2019 +1100
+commit 0bfd7cf542b475160b766d2b5b3abcedbd52105a
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jan 2 14:13:33 2019 -0800
 
-    Fixes type signatures on some api-channel calls (#2518)
+    Refactor modalities - split names from rendering. (#2517)
+    
+    * Refactor modalities - split names from rendering.
+    
+    * move modality-handler to its own file
+    
+    * address comments
+    
+    * add context to test arc in ConvertConstraintsToConnections tests

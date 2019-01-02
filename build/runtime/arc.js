@@ -62,7 +62,10 @@ export class Arc {
         return this._description;
     }
     get modality() {
-        return this.pec.slotComposer && this.pec.slotComposer.modality;
+        if (this.pec.slotComposer && this.pec.slotComposer.modality) {
+            return this.pec.slotComposer.modality;
+        }
+        return this.activeRecipe.modality;
     }
     registerInstantiatePlanCallback(callback) {
         this.instantiatePlanCallbacks.push(callback);
@@ -379,7 +382,7 @@ ${this.activeRecipe.toString()}`;
     }
     async instantiate(recipe, innerArc = undefined) {
         assert(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({ showUnresolved: true })}`);
-        assert(recipe.isCompatibleWithModality(this.modality), `Cannot instantiate recipe ${recipe.toString()} with [${recipe.getSupportedModalities()}] modalities in '${this.modality}' arc`);
+        assert(recipe.isCompatible(this.modality), `Cannot instantiate recipe ${recipe.toString()} with [${recipe.modality.names}] modalities in '${this.modality.names}' arc`);
         let currentArc = { activeRecipe: this._activeRecipe, recipes: this._recipes };
         if (innerArc) {
             const innerArcs = this._recipes.find(r => !!r.particles.find(p => p === innerArc.particle)).innerArcs;

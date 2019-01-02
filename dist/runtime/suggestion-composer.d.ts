@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Modality } from './modality.js';
+import { ModalityHandler } from './modality-handler.js';
 import { SlotComposer } from './slot-composer.js';
 import { Suggestion } from './plan/suggestion.js';
 export declare class SuggestionComposer {
@@ -16,7 +16,7 @@ export declare class SuggestionComposer {
     private _suggestions;
     private _suggestConsumers;
     constructor(slotComposer: SlotComposer);
-    readonly modality: Modality;
+    readonly modalityHandler: ModalityHandler;
     clear(): void;
     setSuggestions(suggestions: Suggestion[]): void;
     private _addInlineSuggestion;

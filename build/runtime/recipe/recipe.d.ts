@@ -35,10 +35,8 @@ export declare class Recipe {
     newSlot(name: any): Slot;
     removeSlot(slot: any): void;
     isResolved(): boolean;
-    readonly uiParticles: Particle[];
-    getSupportedModalities(): string[];
-    isModalityResolved(): boolean;
-    isCompatibleWithModality(modality: Modality): boolean;
+    isCompatible(modality: Modality): boolean;
+    readonly modality: Modality;
     _findDuplicate(items: any, options: any): any;
     _isValid(options?: any): boolean;
     name: string | undefined;

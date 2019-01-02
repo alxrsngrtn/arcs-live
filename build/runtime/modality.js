@@ -8,35 +8,37 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { SlotDomConsumer } from './slot-dom-consumer.js';
-import { SuggestDomConsumer } from './suggest-dom-consumer.js';
-import { MockSlotDomConsumer } from './testing/mock-slot-dom-consumer.js';
-import { MockSuggestDomConsumer } from './testing/mock-suggest-dom-consumer.js';
-import { DescriptionDomFormatter } from './description-dom-formatter.js';
+var ModalityName;
+(function (ModalityName) {
+    ModalityName["Dom"] = "dom";
+    ModalityName["DomTouch"] = "dom-touch";
+    ModalityName["Vr"] = "vr";
+    ModalityName["Voice"] = "voice";
+})(ModalityName || (ModalityName = {}));
 export class Modality {
-    constructor(name, slotConsumerClass, suggestionConsumerClass, descriptionFormatter) {
-        this.name = name;
-        this.slotConsumerClass = slotConsumerClass;
-        this.suggestionConsumerClass = suggestionConsumerClass;
-        this.descriptionFormatter = descriptionFormatter;
+    constructor(names) {
+        this.names = names;
     }
-    static addModality(name, slotConsumerClass, suggestionConsumerClass, descriptionFormatter) {
-        assert(!Modality._modalities[name], `Modality '${name}' already exists`);
-        Modality._modalities[name] = new Modality(name, slotConsumerClass, suggestionConsumerClass, descriptionFormatter);
-        Modality._modalities[`mock-${name}`] =
-            new Modality(name, MockSlotDomConsumer, MockSuggestDomConsumer);
+    static create(names) {
+        assert(names.every(name => Modality.all.names.includes(name)), `Unsupported modality in: ${names}`);
+        return new Modality(names);
     }
-    static init() {
-        Object.keys(Modality._modalities).forEach(key => delete Modality._modalities[key]);
-        Modality.addModality('dom', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter);
-        Modality.addModality('dom-touch', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter);
-        Modality.addModality('vr', SlotDomConsumer, SuggestDomConsumer, DescriptionDomFormatter);
+    intersection(other) {
+        return new Modality(this.names.filter(name => other.names.includes(name)));
     }
-    static forName(name) {
-        assert(Modality._modalities[name], `Unsupported modality ${name}`);
-        return Modality._modalities[name];
+    isResolved() {
+        return this.names.length > 0;
     }
+    isCompatible(names) {
+        return this.intersection(Modality.create(names)).isResolved();
+    }
+    static get Name() { return ModalityName; }
 }
-Modality._modalities = {};
-Modality.init();
+Modality.all = new Modality([
+    Modality.Name.Dom, Modality.Name.DomTouch, Modality.Name.Vr, Modality.Name.Voice
+]);
+Modality.dom = new Modality([Modality.Name.Dom]);
+Modality.domTouch = new Modality([Modality.Name.DomTouch]);
+Modality.voice = new Modality([Modality.Name.Voice]);
+Modality.vr = new Modality([Modality.Name.Vr]);
 //# sourceMappingURL=modality.js.map

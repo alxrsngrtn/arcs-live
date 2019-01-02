@@ -25,12 +25,13 @@ import { RecipeUtil } from './recipe/recipe-util.js';
 import { Handle } from './recipe/handle.js';
 import { assert } from '../platform/assert-web.js';
 import { PlanningResult } from './plan/planning-result.js';
+import { ModalityHandler } from './modality-handler.js';
 class RelevantContextRecipes extends Strategy {
     constructor(context, modality) {
         super();
         this._recipes = [];
         for (let recipe of context.allRecipes) {
-            if (modality && recipe.particles.find(p => p.spec && !p.spec.matchModality(modality)) !== undefined) {
+            if (!recipe.isCompatible(modality)) {
                 continue;
             }
             recipe = recipe.clone();
@@ -75,7 +76,10 @@ export class RecipeIndex {
             id: 'index-stub',
             context: new Manifest({ id: 'empty-context' }),
             loader: arc.loader,
-            slotComposer: arc.modality ? new SlotComposer({ modality: arc.modality, noRoot: true }) : null,
+            slotComposer: new SlotComposer({
+                modalityHandler: ModalityHandler.createHeadlessHandler(),
+                noRoot: true
+            }),
             // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
             speculative: true
         });
