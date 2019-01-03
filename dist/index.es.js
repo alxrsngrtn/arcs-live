@@ -26828,7 +26828,6 @@ class PlanningResult {
         const value = await this.store.get() || {};
         if (value.suggestions) {
             if (this.fromLiteral(value)) {
-                this.onChanged();
                 return true;
             }
         }

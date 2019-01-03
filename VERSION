@@ -1,5 +1,5 @@
-commit 173d61945061a94d94433cd3325c2c6d2eacb859
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Jan 2 18:01:30 2019 -0800
+commit 1abee39afc269e3414a7d430996620b66a01c290
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jan 2 18:21:05 2019 -0800
 
-    Convert recipe tests to typescript (#2525)
+    fix remote planificator flaky test and remove duplicate planning-result update callback (#2522)
