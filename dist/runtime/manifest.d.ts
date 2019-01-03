@@ -68,7 +68,7 @@ export declare class Manifest {
     newStorageStub(type: any, name: any, id: any, storageKey: any, tags: any, originalId: any): any;
     _find<a>(manifestFinder: ManifestFinder<a>): a;
     _findAll<a>(manifestFinder: ManifestFinderGenerator<a>): IterableIterator<a>;
-    findSchemaByName(name: any): Schema;
+    findSchemaByName(name: string): Schema;
     findTypeByName(name: any): EntityType | InterfaceType;
     findParticleByName(name: any): ParticleSpec;
     findParticlesByVerb(verb: any): ParticleSpec[];

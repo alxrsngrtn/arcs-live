@@ -7,16 +7,14 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import {assert} from '../chai-web.js';
-import {Manifest} from '../../manifest.js';
-import {ResolveRecipe} from '../../strategies/resolve-recipe.js';
-import {StrategyTestHelper} from './strategy-test-helper.js';
-
-const {createTestArc, onlyResult, theResults, noResult} = StrategyTestHelper;
-
-describe('resolve recipe', function() {
-  it('does not resolve a mapping of a handle with an invalid type', async () => {
-    const manifest = await Manifest.parse(`
+import { assert } from '../chai-web.js';
+import { Manifest } from '../../manifest.js';
+import { ResolveRecipe } from '../../strategies/resolve-recipe.js';
+import { StrategyTestHelper } from './strategy-test-helper.js';
+const { createTestArc, onlyResult, theResults, noResult } = StrategyTestHelper;
+describe('resolve recipe', () => {
+    it('does not resolve a mapping of a handle with an invalid type', async () => {
+        const manifest = await Manifest.parse(`
       schema Car
         Number doors
       schema Tesla extends Car
@@ -35,15 +33,12 @@ describe('resolve recipe', function() {
         start
         []
     `);
-
-    const [recipe] = manifest.recipes;
-    assert.isTrue(recipe.normalize());
-
-    await noResult(createTestArc(manifest), ResolveRecipe, recipe);
-  });
-
-  it('resolves a mapping of a handle with a less specific entity type', async () => {
-    const manifest = await Manifest.parse(`
+        const [recipe] = manifest.recipes;
+        assert.isTrue(recipe.normalize());
+        await noResult(createTestArc(manifest), ResolveRecipe, recipe);
+    });
+    it('resolves a mapping of a handle with a less specific entity type', async () => {
+        const manifest = await Manifest.parse(`
       schema Car
         Number doors
       schema Tesla extends Car
@@ -62,16 +57,13 @@ describe('resolve recipe', function() {
         start
         []
     `);
-
-    let [recipe] = manifest.recipes;
-    assert.isTrue(recipe.normalize());
-
-    recipe = await onlyResult(createTestArc(manifest), ResolveRecipe, recipe);
-    assert.isTrue(recipe.isResolved());
-  });
-
-  it('resolves a mapping of a handle with a more specific entity type', async () => {
-    const manifest = await Manifest.parse(`
+        let [recipe] = manifest.recipes;
+        assert.isTrue(recipe.normalize());
+        recipe = await onlyResult(createTestArc(manifest), ResolveRecipe, recipe);
+        assert.isTrue(recipe.isResolved());
+    });
+    it('resolves a mapping of a handle with a more specific entity type', async () => {
+        const manifest = await Manifest.parse(`
       schema Car
         Number doors
       schema Tesla extends Car
@@ -90,16 +82,13 @@ describe('resolve recipe', function() {
         start
         []
     `);
-
-    let [recipe] = manifest.recipes;
-    assert.isTrue(recipe.normalize());
-
-    recipe = await onlyResult(createTestArc(manifest), ResolveRecipe, recipe);
-    assert.isTrue(recipe.isResolved());
-  });
-
-  it('resolves a mapping of a handle with an equivalent entity type', async () => {
-    const manifest = await Manifest.parse(`
+        let [recipe] = manifest.recipes;
+        assert.isTrue(recipe.normalize());
+        recipe = await onlyResult(createTestArc(manifest), ResolveRecipe, recipe);
+        assert.isTrue(recipe.isResolved());
+    });
+    it('resolves a mapping of a handle with an equivalent entity type', async () => {
+        const manifest = await Manifest.parse(`
       schema Car
         Number doors
       schema Tesla extends Car
@@ -118,16 +107,13 @@ describe('resolve recipe', function() {
         start
         []
     `);
-
-    let [recipe] = manifest.recipes;
-    assert.isTrue(recipe.normalize());
-
-    recipe = await onlyResult(createTestArc(manifest), ResolveRecipe, recipe);
-    assert.isTrue(recipe.isResolved());
-  });
-
-  it('maps slots by tags', async () => {
-    const manifest = (await Manifest.parse(`
+        let [recipe] = manifest.recipes;
+        assert.isTrue(recipe.normalize());
+        recipe = await onlyResult(createTestArc(manifest), ResolveRecipe, recipe);
+        assert.isTrue(recipe.isResolved());
+    });
+    it('maps slots by tags', async () => {
+        const manifest = (await Manifest.parse(`
       particle A in 'A.js'
         consume master #parent
 
@@ -135,15 +121,13 @@ describe('resolve recipe', function() {
         slot 'id0' #parent as s0
         A
     `));
-    let [recipe] = manifest.recipes;
-    assert.isTrue(recipe.normalize());
-
-    recipe = await onlyResult(createTestArc(manifest), ResolveRecipe, recipe);
-    assert.isTrue(recipe.isResolved());
-  });
-
-  it('map slots by slot connection tags', async () => {
-    const manifest = (await Manifest.parse(`
+        let [recipe] = manifest.recipes;
+        assert.isTrue(recipe.normalize());
+        recipe = await onlyResult(createTestArc(manifest), ResolveRecipe, recipe);
+        assert.isTrue(recipe.isResolved());
+    });
+    it('map slots by slot connection tags', async () => {
+        const manifest = (await Manifest.parse(`
       particle A in 'A.js'
         consume master #root
           provide detail #info #detail
@@ -154,19 +138,16 @@ describe('resolve recipe', function() {
         B
           consume info #detail
     `));
-
-    const strategy = new ResolveRecipe(createTestArc(manifest));
-    const results = await strategy.generate({generated: [{result: manifest.recipes[0], score: 1}]});
-    assert.lengthOf(results, 1);
-
-    const plan = results[0].result;
-    assert.lengthOf(plan.slots, 2);
-    plan.normalize();
-    assert.isTrue(plan.isResolved());
-  });
-
-  it(`maps 'map' handles specified by id to storage`, async () => {
-    const context = await Manifest.parse(`
+        const strategy = new ResolveRecipe(createTestArc(manifest));
+        const results = await strategy.generate({ generated: [{ result: manifest.recipes[0], score: 1 }] });
+        assert.lengthOf(results, 1);
+        const plan = results[0].result;
+        assert.lengthOf(plan.slots, 2);
+        plan.normalize();
+        assert.isTrue(plan.isResolved());
+    });
+    it(`maps 'map' handles specified by id to storage`, async () => {
+        const context = await Manifest.parse(`
       schema Car
         Number doors
 
@@ -175,10 +156,9 @@ describe('resolve recipe', function() {
         start
         []
     `);
-
-    // Separating context from the recipe as otherwise
-    // manifest parser maps to storage all by itself itself.
-    const recipe = (await Manifest.parse(`
+        // Separating context from the recipe as otherwise
+        // manifest parser maps to storage all by itself itself.
+        const recipe = (await Manifest.parse(`
       schema Car
         Number doors
 
@@ -190,22 +170,18 @@ describe('resolve recipe', function() {
         P
           param <- h0
     `)).recipes[0];
-
-    recipe.normalize();
-    assert.isUndefined(recipe.handles[0].storageKey);
-
-    const strategy = new ResolveRecipe(createTestArc(context));
-    const results = await strategy.generate({generated: [{result: recipe, score: 1}]});
-    assert.lengthOf(results, 1);
-
-    const plan = results[0].result;
-    plan.normalize();
-    assert.isDefined(plan.handles[0].storageKey);
-    assert.isTrue(plan.isResolved());
-  });
-
-  it(`maps 'use' handles specified by id to storage`, async () => {
-    const manifest = await Manifest.parse(`
+        recipe.normalize();
+        assert.isUndefined(recipe.handles[0].storageKey);
+        const strategy = new ResolveRecipe(createTestArc(context));
+        const results = await strategy.generate({ generated: [{ result: recipe, score: 1 }] });
+        assert.lengthOf(results, 1);
+        const plan = results[0].result;
+        plan.normalize();
+        assert.isDefined(plan.handles[0].storageKey);
+        assert.isTrue(plan.isResolved());
+    });
+    it(`maps 'use' handles specified by id to storage`, async () => {
+        const manifest = await Manifest.parse(`
       schema Car
         Number doors
 
@@ -217,24 +193,20 @@ describe('resolve recipe', function() {
         P
           param <- h0
     `);
-
-    const arc = createTestArc(manifest);
-
-    const Car = manifest.findSchemaByName('Car').entityClass();
-    await arc.createStore(Car.type, /* name= */ null, 'batmobile');
-
-    const recipe = manifest.recipes[0];
-
-    recipe.normalize();
-    assert.isUndefined(recipe.handles[0].storageKey);
-
-    const strategy = new ResolveRecipe(arc);
-    const results = await strategy.generate({generated: [{result: recipe, score: 1}]});
-    assert.lengthOf(results, 1);
-
-    const plan = results[0].result;
-    plan.normalize();
-    assert.isDefined(plan.handles[0].storageKey);
-    assert.isTrue(plan.isResolved());
-  });
+        const arc = createTestArc(manifest);
+        const car = manifest.findSchemaByName('Car').entityClass();
+        // TODO(plindner) find a better way to find the type
+        await arc.createStore(car['type'], /* name= */ null, 'batmobile');
+        const recipe = manifest.recipes[0];
+        recipe.normalize();
+        assert.isUndefined(recipe.handles[0].storageKey);
+        const strategy = new ResolveRecipe(arc);
+        const results = await strategy.generate({ generated: [{ result: recipe, score: 1 }] });
+        assert.lengthOf(results, 1);
+        const plan = results[0].result;
+        plan.normalize();
+        assert.isDefined(plan.handles[0].storageKey);
+        assert.isTrue(plan.isResolved());
+    });
 });
+//# sourceMappingURL=resolve-recipe-test.js.map

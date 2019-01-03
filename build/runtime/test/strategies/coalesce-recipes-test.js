@@ -8,43 +8,40 @@
  * http://polymer.github.io/PATENTS.txt
  */
 'use strict';
-
-import {Manifest} from '../../manifest.js';
-import {StrategyTestHelper} from './strategy-test-helper.js';
-import {CoalesceRecipes} from '../../strategies/coalesce-recipes.js';
-import {assert} from '../chai-web.js';
-
+import { Manifest } from '../../manifest.js';
+import { StrategyTestHelper } from './strategy-test-helper.js';
+import { CoalesceRecipes } from '../../strategies/coalesce-recipes.js';
+import { assert } from '../chai-web.js';
 async function tryCoalesceRecipes(manifestStr) {
-  const manifest = await Manifest.parse(manifestStr);
-  const recipes = manifest.recipes;
-  assert.isTrue(recipes.every(recipe => recipe.normalize()));
-  assert.isFalse(recipes.every(recipe => recipe.isResolved()));
-  const arc = StrategyTestHelper.createTestArc(manifest);
-  const strategy = new CoalesceRecipes(arc, StrategyTestHelper.createTestStrategyArgs(arc));
-  const inputParams = {generated: [], terminal: recipes.map(recipe => ({result: recipe, score: 1}))};
-  return await strategy.generate(inputParams);
+    const manifest = await Manifest.parse(manifestStr);
+    const recipes = manifest.recipes;
+    assert.isTrue(recipes.every(recipe => recipe.normalize()));
+    assert.isFalse(recipes.every(recipe => recipe.isResolved()));
+    const arc = StrategyTestHelper.createTestArc(manifest);
+    const strategy = new CoalesceRecipes(arc, StrategyTestHelper.createTestStrategyArgs(arc));
+    const inputParams = { generated: [], terminal: recipes.map(recipe => ({ result: recipe, score: 1 })) };
+    return await strategy.generate(inputParams);
 }
 async function doNotCoalesceRecipes(manifestStr) {
-  const results = await tryCoalesceRecipes(manifestStr);
-  assert.isEmpty(results);
+    const results = await tryCoalesceRecipes(manifestStr);
+    assert.isEmpty(results);
 }
 async function doCoalesceRecipes(manifestStr, options) {
-  options = options || {};
-  const results = await tryCoalesceRecipes(manifestStr);
-  // dedup identical coalescing outputs
-  const resultsMap = new Map();
-  results.forEach(r => {
-    if (!options.skipUnresolved || r.result.isResolved()) {
-      resultsMap.set(r.result.toString(), r.result);
-    }
-  });
-  assert.equal(1, resultsMap.size);
-  return [...resultsMap.values()][0];
+    options = options || {};
+    const results = await tryCoalesceRecipes(manifestStr);
+    // dedup identical coalescing outputs
+    const resultsMap = new Map();
+    results.forEach(r => {
+        if (!options.skipUnresolved || r.result.isResolved()) {
+            resultsMap.set(r.result.toString(), r.result);
+        }
+    });
+    assert.equal(1, resultsMap.size);
+    return [...resultsMap.values()][0];
 }
-
-describe('CoalesceRecipes', function() {
-  it('coalesces required slots', async () => {
-    const recipe = await doCoalesceRecipes(`
+describe('CoalesceRecipes', () => {
+    it('coalesces required slots', async () => {
+        const recipe = await doCoalesceRecipes(`
       particle P1
         consume root
           must provide foo
@@ -59,14 +56,12 @@ describe('CoalesceRecipes', function() {
       recipe
         P2
     `);
-
-    assert.isTrue(recipe.isResolved());
-    assert.lengthOf(recipe.particles, 2);
-    assert.lengthOf(recipe.slots, 2);
-  });
-
-  it('coalesces required slots with handles', async () => {
-    const recipe = await doCoalesceRecipes(`
+        assert.isTrue(recipe.isResolved());
+        assert.lengthOf(recipe.particles, 2);
+        assert.lengthOf(recipe.slots, 2);
+    });
+    it('coalesces required slots with handles', async () => {
+        const recipe = await doCoalesceRecipes(`
       schema Thing
       schema OtherThing
       particle P1
@@ -104,14 +99,12 @@ describe('CoalesceRecipes', function() {
           []
       store Store0 of Thing 'mything' in MyThing
     `);
-
-    assert.isTrue(recipe.isResolved());
-    assert.lengthOf(recipe.particles, 3);
-    assert.lengthOf(recipe.slots, 2);
-  });
-
-  it('ignores host connections for handle requirements', async () => {
-    const recipe = await doCoalesceRecipes(`
+        assert.isTrue(recipe.isResolved());
+        assert.lengthOf(recipe.particles, 3);
+        assert.lengthOf(recipe.slots, 2);
+    });
+    it('ignores host connections for handle requirements', async () => {
+        const recipe = await doCoalesceRecipes(`
       schema Thing
       particle P1
         inout Thing thing
@@ -138,18 +131,15 @@ describe('CoalesceRecipes', function() {
         P2
           thing = thingHandle
     `);
-
-    assert.isTrue(Object.isFrozen(recipe), 'recipe should be valid');
-    assert.lengthOf(recipe.particles, 2);
-    assert.lengthOf(recipe.slots, 2);
-
-    // hostedParticle connection should not be affected.
-    const p2 = recipe.particles.find(p => p.name === 'P2');
-    assert.isUndefined(p2.connections['hostedParticle'].handle);
-  });
-
-  it('does not coalesce required slots if handle constraint is not met', async () => {
-    await doNotCoalesceRecipes(`
+        assert.isTrue(Object.isFrozen(recipe), 'recipe should be valid');
+        assert.lengthOf(recipe.particles, 2);
+        assert.lengthOf(recipe.slots, 2);
+        // hostedParticle connection should not be affected.
+        const p2 = recipe.particles.find(p => p.name === 'P2');
+        assert.isUndefined(p2.connections['hostedParticle'].handle);
+    });
+    it('does not coalesce required slots if handle constraint is not met', async () => {
+        await doNotCoalesceRecipes(`
       schema Thing
       particle P1
         inout Thing thing
@@ -167,11 +157,10 @@ describe('CoalesceRecipes', function() {
       recipe
         P2
     `);
-  });
-
-  it('evaluates fates of handles of required slot in coalesced recipes', async () => {
-    const parseManifest = async (options) => {
-      return `
+    });
+    it('evaluates fates of handles of required slot in coalesced recipes', async () => {
+        const parseManifest = async (options) => {
+            return `
         schema Thing
 
         particle P1
@@ -198,38 +187,34 @@ describe('CoalesceRecipes', function() {
             ${options.fateB ? 'thing = thingHandle' : ''}
             ${options.outThingB ? 'outThing = thingHandle' : ''}
       `;
-    };
-
-    await doCoalesceRecipes(await parseManifest({fateA: 'map'}));
-    await doCoalesceRecipes(await parseManifest({fateA: 'map', fateB: 'map'}));
-    await doCoalesceRecipes(await parseManifest({fateA: 'map', fateB: 'use'}));
-    await doCoalesceRecipes(await parseManifest({fateA: 'map', fateB: '?'}));
-    await doNotCoalesceRecipes(await parseManifest({fateA: 'map', fateB: 'use', outThingB: true}));
-    await doNotCoalesceRecipes(await parseManifest({fateA: 'map', fateB: 'copy'}));
-    await doCoalesceRecipes(await parseManifest({fateA: 'copy'}));
-    await doCoalesceRecipes(await parseManifest({fateA: 'copy', fateB: 'map'}));
-    await doCoalesceRecipes(await parseManifest({fateA: 'copy', fateB: 'copy'}));
-    await doNotCoalesceRecipes(await parseManifest({fateA: 'copy', fateB: 'create'}));
-
-    await doCoalesceRecipes(await parseManifest({fateA: 'use', fateB: 'use'}));
-    await doCoalesceRecipes(await parseManifest({fateA: 'use', fateB: 'use', outThingB: true}));
-    await doCoalesceRecipes(await parseManifest({fateA: 'use', fateB: '?'}));
-    await doCoalesceRecipes(await parseManifest({fateA: 'use', fateB: '?', outThingB: true}));
-    await doNotCoalesceRecipes(await parseManifest({fateA: 'use', fateB: 'create'}));
-    await doNotCoalesceRecipes(await parseManifest({fateA: 'use', fateB: 'map'}));
-    await doNotCoalesceRecipes(await parseManifest({fateA: 'use', fateB: 'copy'}));
-
-    await doCoalesceRecipes(await parseManifest({fateA: 'create'}));
-    await doCoalesceRecipes(await parseManifest({fateA: 'create', fateB: '?'}));
-    await doCoalesceRecipes(await parseManifest({fateA: 'create', fateB: 'use'}));
-    await doCoalesceRecipes(await parseManifest({fateA: 'create', fateB: 'use', outThingB: true}));
-    await doNotCoalesceRecipes(await parseManifest({fateA: 'create', fateB: 'create'}));
-    await doNotCoalesceRecipes(await parseManifest({fateA: 'create', fateB: 'map'}));
-    await doNotCoalesceRecipes(await parseManifest({fateA: 'create', fateB: 'copy'}));
-  });
-
-  it('coalesces multiple handles', async () => {
-    const recipe = await doCoalesceRecipes(`
+        };
+        await doCoalesceRecipes(await parseManifest({ fateA: 'map' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'map', fateB: 'map' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'map', fateB: 'use' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'map', fateB: '?' }));
+        await doNotCoalesceRecipes(await parseManifest({ fateA: 'map', fateB: 'use', outThingB: true }));
+        await doNotCoalesceRecipes(await parseManifest({ fateA: 'map', fateB: 'copy' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'copy' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'copy', fateB: 'map' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'copy', fateB: 'copy' }));
+        await doNotCoalesceRecipes(await parseManifest({ fateA: 'copy', fateB: 'create' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'use', fateB: 'use' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'use', fateB: 'use', outThingB: true }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'use', fateB: '?' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'use', fateB: '?', outThingB: true }));
+        await doNotCoalesceRecipes(await parseManifest({ fateA: 'use', fateB: 'create' }));
+        await doNotCoalesceRecipes(await parseManifest({ fateA: 'use', fateB: 'map' }));
+        await doNotCoalesceRecipes(await parseManifest({ fateA: 'use', fateB: 'copy' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'create' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'create', fateB: '?' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'create', fateB: 'use' }));
+        await doCoalesceRecipes(await parseManifest({ fateA: 'create', fateB: 'use', outThingB: true }));
+        await doNotCoalesceRecipes(await parseManifest({ fateA: 'create', fateB: 'create' }));
+        await doNotCoalesceRecipes(await parseManifest({ fateA: 'create', fateB: 'map' }));
+        await doNotCoalesceRecipes(await parseManifest({ fateA: 'create', fateB: 'copy' }));
+    });
+    it('coalesces multiple handles', async () => {
+        const recipe = await doCoalesceRecipes(`
       schema Thing1
       schema Thing2
       schema Thing3
@@ -258,12 +243,11 @@ describe('CoalesceRecipes', function() {
           thing2 -> handle2
           thing3 -> handle3
       `);
-    assert.lengthOf(recipe.handles, 3);
-    recipe.handles.forEach(handle => assert.lengthOf(handle.connections, 2));
-  });
-
-  it('coalesces multiple handles while coalescing slots', async () => {
-    const recipe = await doCoalesceRecipes(`
+        assert.lengthOf(recipe.handles, 3);
+        recipe.handles.forEach(handle => assert.lengthOf(handle.connections, 2));
+    });
+    it('coalesces multiple handles while coalescing slots', async () => {
+        const recipe = await doCoalesceRecipes(`
       schema Thing1
       schema Thing2
       particle P1
@@ -289,13 +273,12 @@ describe('CoalesceRecipes', function() {
           thing1 = handle1
           thing2 = handle2
           consume root as slot0
-      `, {skipUnresolved: true});
-    assert.lengthOf(recipe.handles, 2);
-    recipe.handles.forEach(handle => assert.lengthOf(handle.connections, 2));
-  });
-
-  it('coalesces recipe descriptions', async () => {
-    const recipe = await doCoalesceRecipes(`
+      `, { skipUnresolved: true });
+        assert.lengthOf(recipe.handles, 2);
+        recipe.handles.forEach(handle => assert.lengthOf(handle.connections, 2));
+    });
+    it('coalesces recipe descriptions', async () => {
+        const recipe = await doCoalesceRecipes(`
       schema Thing
       particle P1
         in Thing inThing
@@ -312,12 +295,11 @@ describe('CoalesceRecipes', function() {
           outThing -> outHandle
         description \`output thing\`
     `);
-    assert.isTrue(recipe.isResolved());
-    assert.deepEqual(['input thing', 'output thing'], recipe.patterns);
-  });
-
-  it('coalesces for unresolved consume slots', async () => {
-    await doCoalesceRecipes(`
+        assert.isTrue(recipe.isResolved());
+        assert.deepEqual(['input thing', 'output thing'], recipe.patterns);
+    });
+    it('coalesces for unresolved consume slots', async () => {
+        await doCoalesceRecipes(`
       schema Thing
       particle P1
         out Thing outThing
@@ -334,5 +316,6 @@ describe('CoalesceRecipes', function() {
         P2
           consume root as rootSlot
     `);
-  });
+    });
 });
+//# sourceMappingURL=coalesce-recipes-test.js.map

@@ -1,5 +1,5 @@
-commit 10287a8204a32644b67c76feb119d6a12d488cc5
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jan 3 10:32:44 2019 +1100
+commit f4c1e404b020bd9772589eb45248edbf407b341f
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Jan 2 16:00:07 2019 -0800
 
-    Makes SlotComposer capable of multi-arc composition (#2520)
+    Convert strategies tests to typescript (#2515)

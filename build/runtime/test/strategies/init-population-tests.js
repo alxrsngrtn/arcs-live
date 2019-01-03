@@ -8,17 +8,15 @@
  * http://polymer.github.io/PATENTS.txt
  */
 'use strict';
-
-import {Arc} from '../../arc.js';
-import {Manifest} from '../../manifest.js';
-import {InitPopulation} from '../../strategies/init-population.js';
-import {StrategyTestHelper} from './strategy-test-helper.js';
-import {StubLoader} from '../../testing/stub-loader.js';
-import {assert} from '../chai-web.js';
-
+import { Arc } from '../../arc.js';
+import { Manifest } from '../../manifest.js';
+import { InitPopulation } from '../../strategies/init-population.js';
+import { StrategyTestHelper } from './strategy-test-helper.js';
+import { StubLoader } from '../../testing/stub-loader.js';
+import { assert } from '../chai-web.js';
 describe('InitPopulation', async () => {
-  it('penalizes resolution of particles that already exist in the arc', async () => {
-    const manifest = await Manifest.parse(`
+    it('penalizes resolution of particles that already exist in the arc', async () => {
+        const manifest = await Manifest.parse(`
       schema Product
 
       particle A in 'A.js'
@@ -28,50 +26,43 @@ describe('InitPopulation', async () => {
         create as handle1
         A
           product <- handle1`);
-    const loader = new StubLoader({
-      'A.js': 'defineParticle(({Particle}) => class extends Particle {})'
+        const loader = new StubLoader({
+            'A.js': 'defineParticle(({Particle}) => class extends Particle {})'
+        });
+        const recipe = manifest.recipes[0];
+        assert(recipe.normalize());
+        const arc = new Arc({ id: 'test-plan-arc', context: manifest, loader });
+        async function scoreOfInitPopulationOutput() {
+            const results = await new InitPopulation(arc, StrategyTestHelper.createTestStrategyArgs(arc, { contextual: false })).generate({ generation: 0 });
+            assert.lengthOf(results, 1);
+            return results[0].score;
+        }
+        assert.equal(await scoreOfInitPopulationOutput(), 1);
+        await arc.instantiate(recipe);
+        assert.equal(await scoreOfInitPopulationOutput(), 0);
     });
-    const recipe = manifest.recipes[0];
-    assert(recipe.normalize());
-    const arc = new Arc({id: 'test-plan-arc', context: manifest, loader, fileName: ''});
-
-    async function scoreOfInitPopulationOutput() {
-      const results = await new InitPopulation(arc, StrategyTestHelper.createTestStrategyArgs(
-          arc, {contextual: false})).generate({generation: 0});
-      assert.lengthOf(results, 1);
-      return results[0].score;
-    }
-
-    assert.equal(await scoreOfInitPopulationOutput(), 1);
-    await arc.instantiate(recipe);
-    assert.equal(await scoreOfInitPopulationOutput(), 0);
-  });
-
-  it('reads from RecipeIndex', async () => {
-    const manifest = await Manifest.parse(`
+    it('reads from RecipeIndex', async () => {
+        const manifest = await Manifest.parse(`
       particle A
       recipe
         A`);
-
-    const [recipe] = manifest.recipes;
-    assert(recipe.normalize());
-
-    const arc = new Arc({
-      id: 'test-plan-arc',
-      context: new Manifest({id: 'test'}),
-      recipeIndex: {
-        recipes: manifest.recipes
-      }
+        const [recipe] = manifest.recipes;
+        assert(recipe.normalize());
+        const loader = new StubLoader({
+            'A.js': 'defineParticle(({Particle}) => class extends Particle {})'
+        });
+        const arc = new Arc({
+            id: 'test-plan-arc',
+            context: new Manifest({ id: 'test' }),
+            loader
+        });
+        const results = await new InitPopulation(arc, { contextual: false,
+            recipeIndex: { recipes: manifest.recipes } }).generate({ generation: 0 });
+        assert.lengthOf(results, 1);
+        assert.equal(results[0].result.toString(), recipe.toString());
     });
-
-    const results = await new InitPopulation(arc, {contextual: false,
-        recipeIndex: {recipes: manifest.recipes}}).generate({generation: 0});
-    assert.lengthOf(results, 1);
-    assert.equal(results[0].result.toString(), recipe.toString());
-  });
-
-  it('contextual population has recipes matching arc handles and slots', async () => {
-    const manifest = await Manifest.parse(`
+    it('contextual population has recipes matching arc handles and slots', async () => {
+        const manifest = await Manifest.parse(`
       schema Burrito
 
       // Binds to handle Burrito
@@ -120,43 +111,35 @@ describe('InitPopulation', async () => {
         BurgerRestaurant
           burger -> burger
     `);
-
-    const arc = StrategyTestHelper.createTestArc(manifest);
-
-    async function openRestaurantWith(foodType) {
-      const restaurant = manifest.recipes.find(recipe => recipe.name === `${foodType}Restaurant`);
-      const FoodEntity = manifest.findSchemaByName(foodType).entityClass();
-      const store = await arc.createStore(FoodEntity.type, undefined, `test:${foodType}`);
-      restaurant.handles[0].mapToStorage(store);
-      restaurant.normalize();
-      restaurant.mergeInto(arc.activeRecipe);
-    }
-
-    let results = await new InitPopulation(arc, StrategyTestHelper.createTestStrategyArgs(
-        arc, {contextual: true})).generate({generation: 0});
-    assert.lengthOf(results, 0, 'Initially nothing is available to eat');
-
-    await openRestaurantWith('Burrito');
-    results = await new InitPopulation(arc, StrategyTestHelper.createTestStrategyArgs(
-        arc, {contextual: true})).generate({generation: 0});
-    assert.deepEqual(results.map(r => r.result.name), [
-      'FillsTortilla',
-      'EatBurrito'
-    ], 'After a Burrito restaurant opened, tortilla wrapped goodness can be consumed');
-
-    await openRestaurantWith('Burger');
-    results = await new InitPopulation(arc, StrategyTestHelper.createTestStrategyArgs(
-        arc, {contextual: true})).generate({generation: 0});
-    assert.lengthOf(results, 4, );
-    assert.deepEqual(results.map(r => r.result.name), [
-      'FillsTortilla',
-      'FillsBun',
-      'EatBurrito',
-      'EatBurger'
-    ], 'Eventually both a burrito and a burger can be enjoyed');
-
-    results = await new InitPopulation(arc, StrategyTestHelper.createTestStrategyArgs(
-        arc, {contextual: true})).generate({generation: 1});
-    assert.lengthOf(results, 0, 'Food is only served once');
-  });
+        const arc = StrategyTestHelper.createTestArc(manifest);
+        async function openRestaurantWith(foodType) {
+            const restaurant = manifest.recipes.find(recipe => recipe.name === `${foodType}Restaurant`);
+            const foodEntity = manifest.findSchemaByName(foodType).entityClass();
+            // TODO(lindner): there has to be a better way...
+            const store = await arc.createStore(foodEntity['type'], undefined, `test:${foodType}`);
+            restaurant.handles[0].mapToStorage(store);
+            restaurant.normalize();
+            restaurant.mergeInto(arc.activeRecipe);
+        }
+        let results = await new InitPopulation(arc, StrategyTestHelper.createTestStrategyArgs(arc, { contextual: true })).generate({ generation: 0 });
+        assert.lengthOf(results, 0, 'Initially nothing is available to eat');
+        await openRestaurantWith('Burrito');
+        results = await new InitPopulation(arc, StrategyTestHelper.createTestStrategyArgs(arc, { contextual: true })).generate({ generation: 0 });
+        assert.deepEqual(results.map(r => r.result.name), [
+            'FillsTortilla',
+            'EatBurrito'
+        ], 'After a Burrito restaurant opened, tortilla wrapped goodness can be consumed');
+        await openRestaurantWith('Burger');
+        results = await new InitPopulation(arc, StrategyTestHelper.createTestStrategyArgs(arc, { contextual: true })).generate({ generation: 0 });
+        assert.lengthOf(results, 4);
+        assert.deepEqual(results.map(r => r.result.name), [
+            'FillsTortilla',
+            'FillsBun',
+            'EatBurrito',
+            'EatBurger'
+        ], 'Eventually both a burrito and a burger can be enjoyed');
+        results = await new InitPopulation(arc, StrategyTestHelper.createTestStrategyArgs(arc, { contextual: true })).generate({ generation: 1 });
+        assert.lengthOf(results, 0, 'Food is only served once');
+    });
 });
+//# sourceMappingURL=init-population-tests.js.map
