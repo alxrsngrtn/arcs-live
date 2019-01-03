@@ -1,5 +1,5 @@
-commit f4c1e404b020bd9772589eb45248edbf407b341f
+commit 173d61945061a94d94433cd3325c2c6d2eacb859
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Jan 2 16:00:07 2019 -0800
+Date:   Wed Jan 2 18:01:30 2019 -0800
 
-    Convert strategies tests to typescript (#2515)
+    Convert recipe tests to typescript (#2525)

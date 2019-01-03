@@ -7,36 +7,34 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-import {RecipeIndex} from '../recipe-index.js';
-import {Manifest} from '../manifest.js';
-import {Arc} from '../arc.js';
-import {assert} from './chai-web.js';
-import {MockSlotComposer} from '../testing/mock-slot-composer.js';
-import {TestHelper} from '../testing/test-helper.js';
-
-describe('RecipeIndex', function() {
-  async function createIndex(manifestContent) {
-    const manifest = (await TestHelper.parseManifest(manifestContent));
-    for (const recipe of manifest.recipes) {
-      assert(recipe.normalize());
+import { RecipeIndex } from '../recipe-index.js';
+import { Loader } from '../loader.js';
+import { Arc } from '../arc.js';
+import { assert } from './chai-web.js';
+import { MockSlotComposer } from '../testing/mock-slot-composer.js';
+import { TestHelper } from '../testing/test-helper.js';
+describe('RecipeIndex', () => {
+    async function createIndex(manifestContent) {
+        const manifest = (await TestHelper.parseManifest(manifestContent));
+        for (const recipe of manifest.recipes) {
+            assert(recipe.normalize());
+        }
+        const loader = new Loader();
+        const arc = new Arc({
+            id: 'test-plan-arc',
+            context: manifest,
+            loader,
+            slotComposer: new MockSlotComposer()
+        });
+        const recipeIndex = RecipeIndex.create(arc);
+        await recipeIndex.ready;
+        return recipeIndex;
     }
-    const arc = new Arc({
-      id: 'test-plan-arc',
-      context: manifest,
-      slotComposer: new MockSlotComposer()
-    });
-    const recipeIndex = RecipeIndex.create(arc);
-    await recipeIndex.ready;
-    return recipeIndex;
-  }
-
-  async function extractIndexRecipeStrings(manifestContent) {
-    return (await createIndex(manifestContent)).recipes.map(r => r.toString());
-  }
-
-  it('adds use handles', async () => {
-    assert.sameMembers(await extractIndexRecipeStrings(`
+    async function extractIndexRecipeStrings(manifestContent) {
+        return (await createIndex(manifestContent)).recipes.map(r => r.toString());
+    }
+    it('adds use handles', async () => {
+        assert.sameMembers(await extractIndexRecipeStrings(`
       schema Person
       schema Lumberjack
 
@@ -47,17 +45,16 @@ describe('RecipeIndex', function() {
       recipe
         Transform
     `), [
-`recipe
+            `recipe
   ? as handle0 // ~
   ? as handle1 // ~
   Transform as particle0
     lumberjack -> handle0
     person <- handle1`
-    ]);
-  });
-
-  it('matches free handles to connections', async () => {
-    assert.sameMembers(await extractIndexRecipeStrings(`
+        ]);
+    });
+    it('matches free handles to connections', async () => {
+        assert.sameMembers(await extractIndexRecipeStrings(`
       schema Person
 
       particle A
@@ -67,15 +64,14 @@ describe('RecipeIndex', function() {
         create as person
         A
     `), [
-`recipe
+            `recipe
   create as handle0 // Person {}
   A as particle0
     person = handle0`
-    ]);
-  });
-
-  it('resolves local slots, but not a root slot', async () => {
-    assert.sameMembers(await extractIndexRecipeStrings(`
+        ]);
+    });
+    it('resolves local slots, but not a root slot', async () => {
+        assert.sameMembers(await extractIndexRecipeStrings(`
       particle A
         consume root
           provide detail
@@ -86,17 +82,16 @@ describe('RecipeIndex', function() {
         A
         B
     `), [
-`recipe
+            `recipe
   A as particle0
     consume root
       provide detail as slot0
   B as particle1
     consume detail as slot0`
-    ]);
-  });
-
-  it('resolves constraints', async () => {
-    assert.sameMembers(await extractIndexRecipeStrings(`
+        ]);
+    });
+    it('resolves constraints', async () => {
+        assert.sameMembers(await extractIndexRecipeStrings(`
       schema A
       schema B
       schema C
@@ -111,7 +106,7 @@ describe('RecipeIndex', function() {
       recipe
         Transform.b -> TransformAgain.b
     `), [
-`recipe
+            `recipe
   ? as handle0 // ~
   create as handle1 // B {}
   ? as handle2 // ~
@@ -121,23 +116,21 @@ describe('RecipeIndex', function() {
   TransformAgain as particle1
     b <- handle1
     c -> handle2`
-    ]);
-  });
-
-  it('does not resolve verbs', async () => {
-    assert.sameMembers(await extractIndexRecipeStrings(`
+        ]);
+    });
+    it('does not resolve verbs', async () => {
+        assert.sameMembers(await extractIndexRecipeStrings(`
       particle A &verb
 
       recipe
         &verb
     `), [
-`recipe
+            `recipe
   &verb`
-    ]);
-  });
-
-  it('exposes multiple recipes', async () => {
-    assert.sameMembers(await extractIndexRecipeStrings(`
+        ]);
+    });
+    it('exposes multiple recipes', async () => {
+        assert.sameMembers(await extractIndexRecipeStrings(`
       particle A
       particle B
 
@@ -148,17 +141,16 @@ describe('RecipeIndex', function() {
       recipe
         &verb
     `), [
-`recipe
+            `recipe
   A as particle0`,
-`recipe
+            `recipe
   B as particle0`,
-`recipe
+            `recipe
   &verb`
-    ]);
-  });
-
-  it('finds matching handles by fate', async () => {
-    const index = await createIndex(`
+        ]);
+    });
+    it('finds matching handles by fate', async () => {
+        const index = await createIndex(`
       schema Thing
 
       particle A
@@ -182,16 +174,13 @@ describe('RecipeIndex', function() {
         C
           thing = thing
     `);
-
-    const recipe = index.recipes.find(r => r.name === 'C');
-    const handle = recipe.handles[0];
-
-    assert.deepEqual(['A'], index.findHandleMatch(handle, ['map']).map(h => h.recipe.name));
-    assert.deepEqual(['B'], index.findHandleMatch(handle, ['create']).map(h => h.recipe.name));
-  });
-
-  it('finds matching handle by type', async () => {
-    const index = await createIndex(`
+        const recipe = index.recipes.find(r => r.name === 'C');
+        const handle = recipe.handles[0];
+        assert.deepEqual(['A'], index.findHandleMatch(handle, ['map']).map(h => h.recipe.name));
+        assert.deepEqual(['B'], index.findHandleMatch(handle, ['create']).map(h => h.recipe.name));
+    });
+    it('finds matching handle by type', async () => {
+        const index = await createIndex(`
       schema Thing
       schema OtherThing
 
@@ -214,17 +203,12 @@ describe('RecipeIndex', function() {
         create as otherThing
         ProducerOtherThing
     `);
-
-    const recipe = index.recipes.find(r => r.name === 'Selector');
-    const handle = recipe.handles[0];
-
-    assert.deepEqual(
-        ['ProducerThing'],
-        index.findHandleMatch(handle).map(h => h.recipe.particles[0].name));
-  });
-
-  it('finds matching handles by tags', async () => {
-    const index = await createIndex(`
+        const recipe = index.recipes.find(r => r.name === 'Selector');
+        const handle = recipe.handles[0];
+        assert.deepEqual(['ProducerThing'], index.findHandleMatch(handle).map(h => h.recipe.particles[0].name));
+    });
+    it('finds matching handles by tags', async () => {
+        const index = await createIndex(`
       schema Thing
 
       particle Consumer
@@ -252,17 +236,12 @@ describe('RecipeIndex', function() {
         use #loved #appreciated as thing
         Consumer
     `);
-
-    const recipe = index.recipes.find(r => r.name === 'Selector');
-    const handle = recipe.handles[0];
-
-    assert.deepEqual(
-        ['TakeMe1', 'TakeMe2', 'TakeMe3'],
-        index.findHandleMatch(handle).map(h => h.recipe.name));
-  });
-
-  it('finds tagged handles if selecting handle is not tagged', async () => {
-    const index = await createIndex(`
+        const recipe = index.recipes.find(r => r.name === 'Selector');
+        const handle = recipe.handles[0];
+        assert.deepEqual(['TakeMe1', 'TakeMe2', 'TakeMe3'], index.findHandleMatch(handle).map(h => h.recipe.name));
+    });
+    it('finds tagged handles if selecting handle is not tagged', async () => {
+        const index = await createIndex(`
       schema Thing
 
       particle Consumer
@@ -282,17 +261,12 @@ describe('RecipeIndex', function() {
         use as thing
         Consumer
     `);
-
-    const recipe = index.recipes.find(r => r.name === 'Selector');
-    const handle = recipe.handles[0];
-
-    assert.deepEqual(
-        ['TakeMe1', 'TakeMe2'],
-        index.findHandleMatch(handle).map(h => h.recipe.name));
-  });
-
-  it('matching use/create handle pairs require communication', async () => {
-    const index = await createIndex(`
+        const recipe = index.recipes.find(r => r.name === 'Selector');
+        const handle = recipe.handles[0];
+        assert.deepEqual(['TakeMe1', 'TakeMe2'], index.findHandleMatch(handle).map(h => h.recipe.name));
+    });
+    it('matching use/create handle pairs require communication', async () => {
+        const index = await createIndex(`
       schema Thing
 
       particle Consumer1
@@ -320,17 +294,12 @@ describe('RecipeIndex', function() {
         create as thing
         ProducerConsumer
     `);
-
-    const recipe = index.recipes.find(r => r.name === 'Selector');
-    const handle = recipe.handles[0];
-
-    assert.deepEqual(
-        ['Producer', 'ProducerConsumer'],
-        index.findHandleMatch(handle).map(h => h.recipe.particles[0].name));
-  });
-
-  it('matching use/copy handle pairs do not require communication', async () => {
-    const index = await createIndex(`
+        const recipe = index.recipes.find(r => r.name === 'Selector');
+        const handle = recipe.handles[0];
+        assert.deepEqual(['Producer', 'ProducerConsumer'], index.findHandleMatch(handle).map(h => h.recipe.particles[0].name));
+    });
+    it('matching use/copy handle pairs do not require communication', async () => {
+        const index = await createIndex(`
       schema Thing
 
       particle Consumer1
@@ -358,12 +327,9 @@ describe('RecipeIndex', function() {
         copy as thing
         ProducerConsumer
     `);
-
-    const recipe = index.recipes.find(r => r.name === 'Selector');
-    const handle = recipe.handles[0];
-
-    assert.deepEqual(
-        ['Consumer2', 'Producer', 'ProducerConsumer'],
-        index.findHandleMatch(handle).map(h => h.recipe.particles[0].name));
-  });
+        const recipe = index.recipes.find(r => r.name === 'Selector');
+        const handle = recipe.handles[0];
+        assert.deepEqual(['Consumer2', 'Producer', 'ProducerConsumer'], index.findHandleMatch(handle).map(h => h.recipe.particles[0].name));
+    });
 });
+//# sourceMappingURL=recipe-index-test.js.map

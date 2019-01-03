@@ -7,14 +7,12 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-import {Manifest} from '../manifest.js';
-import {RecipeUtil} from '../recipe/recipe-util.js';
-import {assert} from './chai-web.js';
-
-describe('recipe-util', function() {
-  it('can produce a shape match to a simple recipe', async () => {
-    const manifest = await Manifest.parse(`
+import { Manifest } from '../manifest.js';
+import { RecipeUtil } from '../recipe/recipe-util.js';
+import { assert } from './chai-web.js';
+describe('recipe-util', () => {
+    it('can produce a shape match to a simple recipe', async () => {
+        const manifest = await Manifest.parse(`
       schema S
       particle A
         out S a
@@ -27,19 +25,17 @@ describe('recipe-util', function() {
           a -> handle1
         B
           b -> handle1`);
-    const recipe = manifest.recipes[0];
-    const shape = RecipeUtil.makeShape(['A', 'B'], ['v'],
-      {'A': {'a': 'v'}, 'B': {'b': 'v'}});
-    const results = RecipeUtil.find(recipe, shape);
-    assert.lengthOf(results, 1);
-    assert.equal(results[0].score, 0);
-    assert.equal(results[0].match.A.name, 'A');
-    assert.equal(results[0].match.B.name, 'B');
-    assert.equal(results[0].match.v.localName, 'handle1');
-  });
-
-  it('can produce multiple partial shape matches to a simple recipe', async () => {
-    const manifest = await Manifest.parse(`
+        const recipe = manifest.recipes[0];
+        const shape = RecipeUtil.makeShape(['A', 'B'], ['v'], { 'A': { 'a': 'v' }, 'B': { 'b': 'v' } });
+        const results = RecipeUtil.find(recipe, shape);
+        assert.lengthOf(results, 1);
+        assert.equal(results[0].score, 0);
+        assert.equal(results[0].match['A'].name, 'A');
+        assert.equal(results[0].match['B'].name, 'B');
+        assert.equal(results[0].match['v'].localName, 'handle1');
+    });
+    it('can produce multiple partial shape matches to a simple recipe', async () => {
+        const manifest = await Manifest.parse(`
       schema S
       particle A
         out S a
@@ -59,25 +55,23 @@ describe('recipe-util', function() {
           a -> handle2
         C
           c -> handle2`);
-    const recipe = manifest.recipes[0];
-    const shape = RecipeUtil.makeShape(['A', 'B', 'C'], ['v'],
-      {'A': {'a': 'v'}, 'B': {'b': 'v'}, 'C': {'c': 'v'}});
-    const results = RecipeUtil.find(recipe, shape);
-    assert.lengthOf(results, 2);
-    assert.equal(results[0].score, -1);
-    assert.equal(results[0].match.A.name, 'A');
-    assert.equal(results[0].match.B.name, 'B');
-    assert.equal(results[0].match.C.name, 'C');
-    assert.equal(results[0].match.v.localName, 'handle1');
-    assert.equal(results[1].score, -1);
-    assert.equal(results[1].match.A.name, 'A');
-    assert.equal(results[1].match.B.name, 'B');
-    assert.equal(results[1].match.C.name, 'C');
-    assert.equal(results[1].match.v.localName, 'handle2');
-  });
-
-  it('can match a free handle', async () => {
-    const manifest = await Manifest.parse(`
+        const recipe = manifest.recipes[0];
+        const shape = RecipeUtil.makeShape(['A', 'B', 'C'], ['v'], { 'A': { 'a': 'v' }, 'B': { 'b': 'v' }, 'C': { 'c': 'v' } });
+        const results = RecipeUtil.find(recipe, shape);
+        assert.lengthOf(results, 2);
+        assert.equal(results[0].score, -1);
+        assert.equal(results[0].match['A'].name, 'A');
+        assert.equal(results[0].match['B'].name, 'B');
+        assert.equal(results[0].match['C'].name, 'C');
+        assert.equal(results[0].match['v'].localName, 'handle1');
+        assert.equal(results[1].score, -1);
+        assert.equal(results[1].match['A'].name, 'A');
+        assert.equal(results[1].match['B'].name, 'B');
+        assert.equal(results[1].match['C'].name, 'C');
+        assert.equal(results[1].match['v'].localName, 'handle2');
+    });
+    it('can match a free handle', async () => {
+        const manifest = await Manifest.parse(`
       particle A
       particle B
 
@@ -85,17 +79,15 @@ describe('recipe-util', function() {
         map as h1
         A
         B`);
-    const recipe = manifest.recipes[0];
-    const shape = RecipeUtil.makeShape(['A', 'B'], ['v'],
-      {'A': {'a': 'v'}, 'B': {'b': 'v'}});
-    const results = RecipeUtil.find(recipe, shape);
-    assert.lengthOf(results, 1);
-    assert.equal(results[0].score, -3);
-    assert.equal(results[0].match.v.localName, 'h1');
-  });
-
-  it('can match dangling handle connections', async () => {
-    const manifest = await Manifest.parse(`
+        const recipe = manifest.recipes[0];
+        const shape = RecipeUtil.makeShape(['A', 'B'], ['v'], { 'A': { 'a': 'v' }, 'B': { 'b': 'v' } });
+        const results = RecipeUtil.find(recipe, shape);
+        assert.lengthOf(results, 1);
+        assert.equal(results[0].score, -3);
+        assert.equal(results[0].match['v'].localName, 'h1');
+    });
+    it('can match dangling handle connections', async () => {
+        const manifest = await Manifest.parse(`
       schema S
       particle A
         out S a
@@ -109,19 +101,17 @@ describe('recipe-util', function() {
         B
           b -> //
         `);
-    const recipe = manifest.recipes[0];
-    const shape = RecipeUtil.makeShape(['A', 'B'], ['h'],
-      {'A': {'a': 'h'}, 'B': {'b': 'h'}});
-    const results = RecipeUtil.find(recipe, shape);
-    assert.lengthOf(results, 1);
-    assert.equal(results[0].score, -1);
-    assert.equal(results[0].match.h.localName, 'h1');
-    assert.equal(results[0].match['A:a'].name, 'a');
-    assert.equal(results[0].match['B:b'].name, 'b');
-  });
-
-  it('matches duplicate particles', async () => {
-    const manifest = await Manifest.parse(`
+        const recipe = manifest.recipes[0];
+        const shape = RecipeUtil.makeShape(['A', 'B'], ['h'], { 'A': { 'a': 'h' }, 'B': { 'b': 'h' } });
+        const results = RecipeUtil.find(recipe, shape);
+        assert.lengthOf(results, 1);
+        assert.equal(results[0].score, -1);
+        assert.equal(results[0].match['h'].localName, 'h1');
+        assert.equal(results[0].match['A:a'].name, 'a');
+        assert.equal(results[0].match['B:b'].name, 'b');
+    });
+    it('matches duplicate particles', async () => {
+        const manifest = await Manifest.parse(`
       schema S
       schema T
       particle A
@@ -146,6 +136,7 @@ describe('recipe-util', function() {
           s = h0
           t = h1
     `);
-    assert.isFalse(RecipeUtil.matchesRecipe(manifest.recipes[0], manifest.recipes[1]));
-  });
+        assert.isFalse(RecipeUtil.matchesRecipe(manifest.recipes[0], manifest.recipes[1]));
+    });
 });
+//# sourceMappingURL=recipe-util-tests.js.map
