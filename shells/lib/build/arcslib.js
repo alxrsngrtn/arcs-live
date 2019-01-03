@@ -7364,6 +7364,9 @@ class Manifest {
         return this._recipes.find(recipe => recipe.annotation === 'active');
     }
     get particles() {
+        return Object.values(this._particles);
+    }
+    get allParticles() {
         return [...new Set(this._findAll(manifest => Object.values(manifest._particles)))];
     }
     get imports() {
@@ -81858,7 +81861,7 @@ class SearchTokensToParticles extends _planning_strategizer_js__WEBPACK_IMPORTED
         super(arc, options);
         const thingByToken = {};
         const thingByPhrase = {};
-        arc.context.particles.forEach(p => {
+        arc.context.allParticles.forEach(p => {
             this._addThing(p.name, { spec: p }, thingByToken, thingByPhrase);
             p.verbs.forEach(verb => this._addThing(verb, { spec: p }, thingByToken, thingByPhrase));
         });
@@ -82375,7 +82378,7 @@ class FindHostedParticle extends _planning_strategizer_js__WEBPACK_IMPORTED_MODU
                 Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(connection.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["InterfaceType"]);
                 const iface = connection.type;
                 const results = [];
-                for (const particle of arc.context.particles) {
+                for (const particle of arc.context.allParticles) {
                     // This is what interfaceInfo.particleMatches() does, but we also do
                     // canEnsureResolved at the end:
                     const ifaceClone = iface.interfaceInfo.cloneWithResolutions(new Map());

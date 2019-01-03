@@ -1,5 +1,5 @@
-commit 1abee39afc269e3414a7d430996620b66a01c290
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jan 2 18:21:05 2019 -0800
+commit db2f36fb803bfb089e7027f95eb4994064494979
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Jan 3 14:22:20 2019 +1100
 
-    fix remote planificator flaky test and remove duplicate planning-result update callback (#2522)
+    Separate particles and allParticles getters on Manifest (#2526)

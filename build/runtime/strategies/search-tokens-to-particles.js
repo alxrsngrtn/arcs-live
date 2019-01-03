@@ -13,7 +13,7 @@ export class SearchTokensToParticles extends Strategy {
         super(arc, options);
         const thingByToken = {};
         const thingByPhrase = {};
-        arc.context.particles.forEach(p => {
+        arc.context.allParticles.forEach(p => {
             this._addThing(p.name, { spec: p }, thingByToken, thingByPhrase);
             p.verbs.forEach(verb => this._addThing(verb, { spec: p }, thingByToken, thingByPhrase));
         });

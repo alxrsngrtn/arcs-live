@@ -17890,6 +17890,9 @@ class Manifest {
         return this._recipes.find(recipe => recipe.annotation === 'active');
     }
     get particles() {
+        return Object.values(this._particles);
+    }
+    get allParticles() {
         return [...new Set(this._findAll(manifest => Object.values(manifest._particles)))];
     }
     get imports() {
@@ -23607,7 +23610,7 @@ class SearchTokensToParticles extends Strategy {
         super(arc, options);
         const thingByToken = {};
         const thingByPhrase = {};
-        arc.context.particles.forEach(p => {
+        arc.context.allParticles.forEach(p => {
             this._addThing(p.name, { spec: p }, thingByToken, thingByPhrase);
             p.verbs.forEach(verb => this._addThing(verb, { spec: p }, thingByToken, thingByPhrase));
         });
@@ -24004,7 +24007,7 @@ class FindHostedParticle extends Strategy {
                 assert$1(connection.type instanceof InterfaceType);
                 const iface = connection.type;
                 const results = [];
-                for (const particle of arc.context.particles) {
+                for (const particle of arc.context.allParticles) {
                     // This is what interfaceInfo.particleMatches() does, but we also do
                     // canEnsureResolved at the end:
                     const ifaceClone = iface.interfaceInfo.cloneWithResolutions(new Map());

@@ -52,6 +52,7 @@ export declare class Manifest {
     readonly allRecipes: Recipe[];
     readonly activeRecipe: Recipe;
     readonly particles: ParticleSpec[];
+    readonly allParticles: ParticleSpec[];
     readonly imports: Manifest[];
     readonly schemas: {
         [index: string]: Schema;
