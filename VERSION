@@ -1,5 +1,5 @@
-commit db2f36fb803bfb089e7027f95eb4994064494979
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Jan 3 14:22:20 2019 +1100
+commit bdd45015704bfc4af1e0206f9fbb6c68455546b0
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Jan 3 12:01:09 2019 -0800
 
-    Separate particles and allParticles getters on Manifest (#2526)
+    convert test-helpers to typescript (#2527)

@@ -20,7 +20,7 @@ async function loadFilesIntoNewArc(fileMap) {
     });
     return {
         arc: testHelper.arc,
-        manifest: testHelper.arc._context
+        manifest: testHelper.arc.context
     };
 }
 describe('particle-api', () => {
