@@ -97,7 +97,7 @@ export declare class Arc {
     cloneForSpeculativeExecution(): Promise<Arc>;
     instantiate(recipe: Recipe, innerArc?: any): Promise<void>;
     _connectParticleToHandle(particle: any, name: any, targetHandle: any): void;
-    createStore(type: Type, name: any, id: any, tags?: any, storageKey?: any): Promise<StorageProviderBase>;
+    createStore(type: Type, name?: any, id?: string, tags?: any, storageKey?: string): Promise<StorageProviderBase>;
     _registerStore(store: StorageProviderBase, tags?: any): void;
     _tagStore(store: StorageProviderBase, tags: any): void;
     _onDataChange(): void;
