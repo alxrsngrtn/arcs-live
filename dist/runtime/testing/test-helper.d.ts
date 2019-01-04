@@ -25,6 +25,7 @@ declare type TestHelperOptions = {
 declare type TestHelperPlanOptions = TestHelperOptions & {
     expectedNumPlans?: number;
     expectedSuggestions?: any;
+    includeInnerArcs?: boolean;
     verify?: any;
 };
 /**
