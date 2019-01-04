@@ -2650,46 +2650,19 @@ class ParticleSpec {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class Description {
-    constructor(arc) {
-        this.relevance = null;
-        this._particle = undefined;
-        this.arc = arc;
-    }
-    async getArcDescription(formatterClass = DescriptionFormatter) {
-        const desc = await new (formatterClass)(this).getDescription(this.arc.activeRecipe);
-        if (desc) {
-            return desc;
-        }
-        return undefined;
-    }
-    async getRecipeSuggestion(formatterClass = DescriptionFormatter) {
-        const formatter = await new (formatterClass)(this);
-        const desc = await formatter.getDescription(this.arc.recipes[this.arc.recipes.length - 1]);
-        if (desc) {
-            return desc;
-        }
-        return formatter._capitalizeAndPunctuate(this.arc.activeRecipe.name || Description.defaultDescription);
-    }
-    async getHandleDescription(recipeHandle) {
-        assert$1(recipeHandle.connections.length > 0, 'handle has no connections?');
-        const formatter = new DescriptionFormatter(this);
-        formatter.excludeValues = true;
-        return await formatter.getHandleDescription(recipeHandle);
-    }
-}
-Description.defaultDescription = 'i\'m feeling lucky';
 class DescriptionFormatter {
-    constructor(description) {
+    constructor(arc, relevance) {
+        this.relevance = null;
         this.particleDescriptions = [];
         this.seenHandles = new Set();
         this.seenParticles = new Set();
         this.excludeValues = false;
-        this.description = description;
-        this.arc = description.arc;
+        assert$1(arc, `Arc is mandatory`);
+        this.arc = arc;
+        this.relevance = relevance;
     }
     async getDescription(recipe) {
-        await this._updateDescriptionHandles(this.description);
+        await this._updateDescriptionHandles();
         if (recipe.patterns.length > 0) {
             let recipePatterns = [];
             for (const pattern of recipe.patterns) {
@@ -2719,16 +2692,16 @@ class DescriptionFormatter {
         return !!desc.pattern;
     }
     async getHandleDescription(recipeHandle) {
-        await this._updateDescriptionHandles(this.description);
+        await this._updateDescriptionHandles();
         const handleConnection = this._selectHandleConnection(recipeHandle) || recipeHandle.connections[0];
         const store = this.arc.findStoreById(recipeHandle.id);
         return this._formatDescription(handleConnection, store);
     }
-    async _updateDescriptionHandles(description) {
+    async _updateDescriptionHandles() {
         this.particleDescriptions = [];
         // Combine all particles from direct and inner arcs.
         const innerParticlesByName = {};
-        description.arc.recipes.forEach(recipe => {
+        this.arc.recipes.forEach(recipe => {
             const innerArcs = [...recipe.innerArcs.values()];
             innerArcs.forEach(innerArc => {
                 innerArc.recipes.forEach(innerRecipe => {
@@ -2740,18 +2713,18 @@ class DescriptionFormatter {
                 });
             });
         });
-        const allParticles = description.arc.activeRecipe.particles.concat(Object.values(innerParticlesByName));
+        const allParticles = this.arc.activeRecipe.particles.concat(Object.values(innerParticlesByName));
         await Promise.all(allParticles.map(async (particle) => {
-            this.particleDescriptions.push(await this._createParticleDescription(particle, description.relevance));
+            this.particleDescriptions.push(await this._createParticleDescription(particle));
         }));
     }
-    async _createParticleDescription(particle, relevance) {
+    async _createParticleDescription(particle) {
         let pDesc = {
             _particle: particle,
             _connections: {}
         };
-        if (relevance) {
-            pDesc._rank = relevance.calcParticleRelevance(particle);
+        if (this.relevance) {
+            pDesc._rank = this.relevance.calcParticleRelevance(particle);
         }
         const descByName = await this._getPatternByNameFromDescriptionHandle(particle) || {};
         pDesc = Object.assign({}, pDesc, this._populateParticleDescription(particle, descByName));
@@ -2948,7 +2921,7 @@ class DescriptionFormatter {
         throw new Error('no handle or slot name');
     }
     async _particleTokenToString(token) {
-        return this._combineSelectedDescriptions([token.particleDescription], { skipFormatting: true }); //debug;
+        return this._combineSelectedDescriptions([token.particleDescription], { skipFormatting: true });
     }
     async _handleTokenToString(token) {
         switch (token.extra) {
@@ -3174,6 +3147,45 @@ class DescriptionFormatter {
         return p2Slots - p1Slots;
     }
 }
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Description {
+    constructor(arc) {
+        this.relevance = null;
+        this._particle = undefined;
+        this.arc = arc;
+    }
+    async getArcDescription(formatterClass = DescriptionFormatter) {
+        const desc = await new (formatterClass)(this.arc, this.relevance).getDescription(this.arc.activeRecipe);
+        if (desc) {
+            return desc;
+        }
+        return undefined;
+    }
+    async getRecipeSuggestion(formatterClass = DescriptionFormatter) {
+        const formatter = await new (formatterClass)(this.arc, this.relevance);
+        const desc = await formatter.getDescription(this.arc.recipes[this.arc.recipes.length - 1]);
+        if (desc) {
+            return desc;
+        }
+        return formatter._capitalizeAndPunctuate(this.arc.activeRecipe.name || Description.defaultDescription);
+    }
+    async getHandleDescription(recipeHandle) {
+        assert$1(recipeHandle.connections.length > 0, 'handle has no connections?');
+        const formatter = new DescriptionFormatter(this.arc, this.relevance);
+        formatter.excludeValues = true;
+        return await formatter.getHandleDescription(recipeHandle);
+    }
+}
+Description.defaultDescription = 'i\'m feeling lucky';
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
 

@@ -93,9 +93,9 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="descriptionformatter.html#arc" class="tsd-kind-icon">arc</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="descriptionformatter.html#description" class="tsd-kind-icon">description</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="descriptionformatter.html#excludevalues" class="tsd-kind-icon">exclude<wbr>Values</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="descriptionformatter.html#particledescriptions" class="tsd-kind-icon">particle<wbr>Descriptions</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="descriptionformatter.html#relevance" class="tsd-kind-icon">relevance</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="descriptionformatter.html#seenhandles" class="tsd-kind-icon">seen<wbr>Handles</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="descriptionformatter.html#seenparticles" class="tsd-kind-icon">seen<wbr>Particles</a></li>
 							</ul>
@@ -145,19 +145,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Description<wbr>Formatter<span class="tsd-signature-symbol">(</span>description<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="descriptionformatter.html" class="tsd-signature-type">DescriptionFormatter</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Description<wbr>Formatter<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a>, relevance<span class="tsd-signature-symbol">?: </span><a href="relevance.html" class="tsd-signature-type">Relevance</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="descriptionformatter.html" class="tsd-signature-type">DescriptionFormatter</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L72">runtime/description.ts:72</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L35">runtime/description-formatter.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>description: <span class="tsd-signature-type">any</span></h5>
+									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> relevance: <a href="relevance.html" class="tsd-signature-type">Relevance</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="descriptionformatter.html" class="tsd-signature-type">DescriptionFormatter</a></h4>
@@ -173,17 +176,7 @@
 					<div class="tsd-signature tsd-kind-icon">arc<span class="tsd-signature-symbol">:</span> <a href="arc.html" class="tsd-signature-type">Arc</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L66">runtime/description.ts:66</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="description" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> description</h3>
-					<div class="tsd-signature tsd-kind-icon">description<span class="tsd-signature-symbol">:</span> <a href="description.html" class="tsd-signature-type">Description</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L65">runtime/description.ts:65</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L28">runtime/description-formatter.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -193,7 +186,7 @@
 					<div class="tsd-signature tsd-kind-icon">exclude<wbr>Values<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L72">runtime/description.ts:72</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L35">runtime/description-formatter.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -203,7 +196,17 @@
 					<div class="tsd-signature tsd-kind-icon">particle<wbr>Descriptions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;&lt;ParticleDescription[]&gt;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L67">runtime/description.ts:67</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L30">runtime/description-formatter.ts:30</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="relevance" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> relevance</h3>
+					<div class="tsd-signature tsd-kind-icon">relevance<span class="tsd-signature-symbol">:</span> <a href="relevance.html" class="tsd-signature-type">Relevance</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L29">runtime/description-formatter.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -213,7 +216,7 @@
 					<div class="tsd-signature tsd-kind-icon">seen<wbr>Handles<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><a href="handle.html" class="tsd-signature-type">Handle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L68">runtime/description.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L31">runtime/description-formatter.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -223,7 +226,7 @@
 					<div class="tsd-signature tsd-kind-icon">seen<wbr>Particles<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><a href="particle.html" class="tsd-signature-type">Particle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L70">runtime/description.ts:70</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L33">runtime/description-formatter.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -240,7 +243,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L231">runtime/description.ts:231</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L195">runtime/description-formatter.ts:195</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -263,7 +266,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L412">runtime/description.ts:412</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L376">runtime/description-formatter.ts:376</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -292,7 +295,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L191">runtime/description.ts:191</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L155">runtime/description-formatter.ts:155</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -312,22 +315,19 @@
 					<a name="_createparticledescription" class="tsd-anchor"></a>
 					<h3>_create<wbr>Particle<wbr>Description</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_create<wbr>Particle<wbr>Description<span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><a href="particle.html" class="tsd-signature-type">Particle</a>, relevance<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">_create<wbr>Particle<wbr>Description<span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><a href="particle.html" class="tsd-signature-type">Particle</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L146">runtime/description.ts:146</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L110">runtime/description-formatter.ts:110</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>particle: <a href="particle.html" class="tsd-signature-type">Particle</a></h5>
-								</li>
-								<li>
-									<h5>relevance: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -344,7 +344,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L500">runtime/description.ts:500</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L464">runtime/description-formatter.ts:464</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -370,7 +370,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L486">runtime/description.ts:486</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L450">runtime/description-formatter.ts:450</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -396,7 +396,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L518">runtime/description.ts:518</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L482">runtime/description-formatter.ts:482</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -422,7 +422,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L524">runtime/description.ts:524</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L488">runtime/description-formatter.ts:488</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -445,7 +445,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L456">runtime/description.ts:456</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L420">runtime/description-formatter.ts:420</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -474,7 +474,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L555">runtime/description.ts:555</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L519">runtime/description-formatter.ts:519</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -497,7 +497,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L504">runtime/description.ts:504</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L468">runtime/description-formatter.ts:468</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -526,7 +526,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L545">runtime/description.ts:545</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L509">runtime/description-formatter.ts:509</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -552,7 +552,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L460">runtime/description.ts:460</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L424">runtime/description-formatter.ts:424</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -578,7 +578,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L168">runtime/description.ts:168</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L132">runtime/description-formatter.ts:132</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -601,7 +601,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L365">runtime/description.ts:365</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L329">runtime/description-formatter.ts:329</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -624,7 +624,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L275">runtime/description.ts:275</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L239">runtime/description-formatter.ts:239</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -650,7 +650,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L248">runtime/description.ts:248</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L212">runtime/description-formatter.ts:212</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -676,7 +676,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L110">runtime/description.ts:110</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L74">runtime/description-formatter.ts:74</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -699,7 +699,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L212">runtime/description.ts:212</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L176">runtime/description-formatter.ts:176</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -722,7 +722,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L227">runtime/description.ts:227</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L191">runtime/description-formatter.ts:191</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -745,7 +745,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L361">runtime/description.ts:361</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L325">runtime/description-formatter.ts:325</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -768,7 +768,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L183">runtime/description.ts:183</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L147">runtime/description-formatter.ts:147</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -797,7 +797,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L438">runtime/description.ts:438</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L402">runtime/description-formatter.ts:402</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -826,7 +826,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L560">runtime/description.ts:560</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L524">runtime/description-formatter.ts:524</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -849,7 +849,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L419">runtime/description.ts:419</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L383">runtime/description-formatter.ts:383</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -866,21 +866,15 @@
 					<a name="_updatedescriptionhandles" class="tsd-anchor"></a>
 					<h3>_update<wbr>Description<wbr>Handles</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_update<wbr>Description<wbr>Handles<span class="tsd-signature-symbol">(</span>description<span class="tsd-signature-symbol">: </span><a href="description.html" class="tsd-signature-type">Description</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">_update<wbr>Description<wbr>Handles<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L122">runtime/description.ts:122</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L86">runtime/description-formatter.ts:86</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>description: <a href="description.html" class="tsd-signature-type">Description</a></h5>
-								</li>
-							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -895,7 +889,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L79">runtime/description.ts:79</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L43">runtime/description-formatter.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -918,7 +912,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L114">runtime/description.ts:114</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L78">runtime/description-formatter.ts:78</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -941,7 +935,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L238">runtime/description.ts:238</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L202">runtime/description-formatter.ts:202</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -967,7 +961,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L346">runtime/description.ts:346</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L310">runtime/description-formatter.ts:310</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -990,7 +984,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327a370/src/runtime/description.ts#L587">runtime/description.ts:587</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/e531487/src/runtime/description-formatter.ts#L551">runtime/description-formatter.ts:551</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1029,14 +1023,14 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="descriptionformatter.html#arc" class="tsd-kind-icon">arc</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="descriptionformatter.html#description" class="tsd-kind-icon">description</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="descriptionformatter.html#excludevalues" class="tsd-kind-icon">exclude<wbr>Values</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="descriptionformatter.html#particledescriptions" class="tsd-kind-icon">particle<wbr>Descriptions</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="descriptionformatter.html#relevance" class="tsd-kind-icon">relevance</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="descriptionformatter.html#seenhandles" class="tsd-kind-icon">seen<wbr>Handles</a>

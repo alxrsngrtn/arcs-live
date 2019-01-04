@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
-import { DescriptionFormatter } from '../description.js';
+import { DescriptionFormatter } from '../description-formatter.js';
 import { Manifest } from '../manifest.js';
 import { RecipeResolver } from '../recipe/recipe-resolver.js';
 export class Plan {

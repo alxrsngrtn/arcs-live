@@ -8,7 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../arc.js';
-import { Description, DescriptionFormatter } from '../description.js';
+import { Description } from '../description.js';
+import { DescriptionFormatter } from '../description-formatter.js';
 import { Modality } from '../modality.js';
 import { Recipe } from '../recipe/recipe.js';
 import { Relevance } from '../relevance.js';
