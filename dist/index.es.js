@@ -2699,21 +2699,7 @@ class DescriptionFormatter {
     }
     async _updateDescriptionHandles() {
         this.particleDescriptions = [];
-        // Combine all particles from direct and inner arcs.
-        const innerParticlesByName = {};
-        this.arc.recipes.forEach(recipe => {
-            const innerArcs = [...recipe.innerArcs.values()];
-            innerArcs.forEach(innerArc => {
-                innerArc.recipes.forEach(innerRecipe => {
-                    innerRecipe.particles.forEach(innerParticle => {
-                        if (!innerParticlesByName[innerParticle.name]) {
-                            innerParticlesByName[innerParticle.name] = innerParticle;
-                        }
-                    });
-                });
-            });
-        });
-        const allParticles = this.arc.activeRecipe.particles.concat(Object.values(innerParticlesByName));
+        const allParticles = [].concat(...this.arc.allDescendingArcs.map(arc => arc.activeRecipe.particles));
         await Promise.all(allParticles.map(async (particle) => {
             this.particleDescriptions.push(await this._createParticleDescription(particle));
         }));
@@ -20698,7 +20684,7 @@ class ParticleExecutionHost {
                 this.GetBackingStoreCallback(store, callback, type.collectionOf(), type.toString(), store.id, storageKey);
             }
             onConstructInnerArc(callback, particle) {
-                const arc = { particle };
+                const arc = pec.arc.createInnerArc(particle);
                 this.ConstructArcCallback(callback, arc);
             }
             async onArcCreateHandle(callback, arc, type, name) {
@@ -20706,7 +20692,9 @@ class ParticleExecutionHost {
                 // recreated when an arc is deserialized. As a consequence of this, dynamically 
                 // created handles for inner arcs must always be volatile to prevent storage 
                 // in firebase.
-                const store = await pec.arc.createStore(type, name, null, [], 'volatile');
+                const store = await arc.createStore(type, name, null, [], 'volatile');
+                // Store belongs to the inner arc, but the transformation particle,
+                // which itself is in the outer arc gets access to it.
                 this.CreateHandleCallback(store, callback, type, name, store.id);
             }
             onArcMapHandle(callback, arc, handle) {
@@ -20717,12 +20705,12 @@ class ParticleExecutionHost {
             onArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) {
                 let hostedSlotId;
                 if (pec.slotComposer) {
-                    hostedSlotId = pec.slotComposer.createHostedSlot(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId);
+                    hostedSlotId = pec.slotComposer.createHostedSlot(arc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId);
                 }
                 this.CreateSlotCallback({}, callback, hostedSlotId);
             }
             async onArcLoadRecipe(arc, recipe, callback) {
-                const manifest = await Manifest.parse(recipe, { loader: pec.arc.loader, fileName: '' });
+                const manifest = await Manifest.parse(recipe, { loader: arc.loader, fileName: '' });
                 const successResponse = {
                     providedSlotIds: {}
                 };
@@ -20731,6 +20719,15 @@ class ParticleExecutionHost {
                 // there's more than one recipe since currently we silently ignore them.
                 let recipe0 = manifest.recipes[0];
                 if (recipe0) {
+                    for (const slot of recipe0.slots) {
+                        slot.id = slot.id || `slotid-${arc.generateID()}`;
+                        if (slot.sourceConnection) {
+                            const particlelocalName = slot.sourceConnection.particle.localName;
+                            if (particlelocalName) {
+                                successResponse.providedSlotIds[`${particlelocalName}.${slot.name}`] = slot.id;
+                            }
+                        }
+                    }
                     const missingHandles = [];
                     for (const handle of recipe0.handles) {
                         const fromHandle = pec.arc.findStoreById(handle.id) || manifest.findStoreById(handle.id);
@@ -20741,21 +20738,16 @@ class ParticleExecutionHost {
                         handle.mapToStorage(fromHandle);
                     }
                     if (missingHandles.length > 0) {
-                        const resolvedRecipe = await new RecipeResolver(pec.arc).resolve(recipe0);
-                        if (!resolvedRecipe) {
+                        let recipeToResolve = recipe0;
+                        // We're resolving both against the inner and the outer arc.
+                        for (const resolver of [new RecipeResolver(arc /* inner */), new RecipeResolver(pec.arc /* outer */)]) {
+                            recipeToResolve = await resolver.resolve(recipeToResolve) || recipeToResolve;
+                        }
+                        if (recipeToResolve === recipe0) {
                             error = `Recipe couldn't load due to missing handles [recipe=${recipe0}, missingHandles=${missingHandles.join('\n')}].`;
                         }
                         else {
-                            recipe0 = resolvedRecipe;
-                        }
-                    }
-                    for (const slot of recipe0.slots) {
-                        slot.id = slot.id || `slotid-${pec.arc.generateID()}`;
-                        if (slot.sourceConnection) {
-                            const particlelocalName = slot.sourceConnection.particle.localName;
-                            if (particlelocalName) {
-                                successResponse.providedSlotIds[`${particlelocalName}.${slot.name}`] = slot.id;
-                            }
+                            recipe0 = recipeToResolve;
                         }
                     }
                     if (!error) {
@@ -20767,7 +20759,7 @@ class ParticleExecutionHost {
                                 // TODO: pass tags through too, and reconcile with similar logic
                                 // in Arc.deserialize.
                                 manifest.stores.forEach(store => pec.arc._registerStore(store, []));
-                                pec.arc.instantiate(recipe0, arc);
+                                arc.instantiate(recipe0);
                             }
                             else {
                                 error = `Recipe is not resolvable ${recipe0.toString({ showUnresolved: true })}`;
@@ -23282,13 +23274,7 @@ class InitPopulation extends Strategy {
         for (const slot of this.arc.activeRecipe.slots.filter(s => s.sourceConnection)) {
             results.push(...this._recipeIndex.findConsumeSlotConnectionMatch(slot).map(({ slotConn }) => ({ recipe: slotConn.recipe })));
         }
-        let innerArcHandles = [];
-        for (const recipe of this.arc.recipes) {
-            for (const innerArc of [...recipe.innerArcs.values()]) {
-                innerArcHandles = innerArcHandles.concat(innerArc.activeRecipe.handles);
-            }
-        }
-        for (const handle of this.arc.activeRecipe.handles.concat(innerArcHandles)) {
+        for (const handle of [].concat(...this.arc.allDescendingArcs.map(arc => arc.activeRecipe.handles))) {
             results.push(...this._recipeIndex.findHandleMatch(handle, ['use', '?']).map(otherHandle => ({ recipe: otherHandle.recipe })));
         }
         return results;
@@ -24857,7 +24843,7 @@ class ArcDebugHandler {
  * http://polymer.github.io/PATENTS.txt
  */
 class Arc {
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative }) {
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc }) {
         this._activeRecipe = new Recipe();
         // TODO: rename: these are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
         this._recipes = [];
@@ -24871,6 +24857,7 @@ class Arc {
         // Map from each store to its description (originating in the manifest).
         this.storeDescriptions = new Map();
         this.instantiatePlanCallbacks = [];
+        this.innerArcsByParticle = new Map();
         this.particleHandleMaps = new Map();
         // TODO: context should not be optional.
         this._context = context || new Manifest({ id });
@@ -24878,7 +24865,8 @@ class Arc {
         this.pecFactory = pecFactory || FakePecFactory(loader).bind(null);
         // for now, every Arc gets its own session
         this.id = Id.newSessionId().fromString(id);
-        this.speculative = !!speculative; // undefined => false
+        this.isSpeculative = !!speculative; // undefined => false
+        this.isInnerArc = !!innerArc; // undefined => false
         this._loader = loader;
         this.storageKey = storageKey;
         const pecId = this.generateID();
@@ -24913,22 +24901,35 @@ class Arc {
         return false;
     }
     dispose() {
+        for (const innerArc of this.innerArcs) {
+            innerArc.dispose();
+        }
         this.instantiatePlanCallbacks = [];
         // TODO: disconnect all assocated store event handlers
         this.pec.close();
-        if (this.pec.slotComposer) {
-            this.pec.slotComposer.dispose(this);
+        // Slot contexts and consumers from inner and outer arcs can be interwoven. Slot composer
+        // is therefore disposed in its entirety with an outer Arc's disposal.
+        if (!this.isInnerArc && this.pec.slotComposer) {
+            // Just a sanity check that we're not disposing a SlotComposer used by some other arc.
+            const allArcs = this.allDescendingArcs;
+            this.pec.slotComposer.consumers.forEach(consumer => assert$1(allArcs.includes(consumer.arc)));
+            this.pec.slotComposer.dispose();
         }
     }
     // Returns a promise that spins sending a single `AwaitIdle` message until it
     // sees no other messages were sent.
     async _waitForIdle() {
-        let messageCount;
-        do {
-            messageCount = this.pec.messageCount;
-            await this.pec.idle;
-            // We expect two messages here, one requesting the idle status, and one answering it.
-        } while (this.pec.messageCount !== messageCount + 2);
+        while (true) {
+            const messageCount = this.pec.messageCount;
+            const innerArcs = this.innerArcs;
+            // tslint:disable-next-line: no-any
+            await Promise.all([this.pec.idle, ...innerArcs.map(arc => arc.idle)]);
+            // We're idle if no new inner arcs appeared and this.pec had exactly 2 messages,
+            // one requesting the idle status, and one answering it.
+            if (this.innerArcs.length === innerArcs.length
+                && this.pec.messageCount === messageCount + 2)
+                break;
+        }
     }
     get idle() {
         if (!this.waitForIdlePromise) {
@@ -24941,8 +24942,29 @@ class Arc {
         }
         return this.waitForIdlePromise;
     }
-    get isSpeculative() {
-        return this.speculative;
+    findInnerArcs(particle) {
+        return this.innerArcsByParticle.get(particle) || [];
+    }
+    // Inner arcs of this arc's transformation particles.
+    // Does *not* include inner arcs of this arc's inner arcs.
+    get innerArcs() {
+        return [].concat(...this.innerArcsByParticle.values());
+    }
+    // This arc and all its descendants.
+    // *Does* include inner arcs of this arc's inner arcs.
+    get allDescendingArcs() {
+        return [this].concat(...this.innerArcs.map(arc => arc.allDescendingArcs));
+    }
+    createInnerArc(transformationParticle) {
+        const id = this.generateID('inner').toString();
+        const innerArc = new Arc({ id, pecFactory: this.pecFactory, slotComposer: this.pec.slotComposer, loader: this._loader, context: new Manifest({ id }), innerArc: true, speculative: this.isSpeculative });
+        let particleInnerArcs = this.innerArcsByParticle.get(transformationParticle);
+        if (!particleInnerArcs) {
+            particleInnerArcs = [];
+            this.innerArcsByParticle.set(transformationParticle, particleInnerArcs);
+        }
+        particleInnerArcs.push(innerArc);
+        return innerArc;
     }
     async _serializeHandle(handle, context, id) {
         const type = handle.type.getContainedType() || handle.type;
@@ -25151,7 +25173,7 @@ ${this.activeRecipe.toString()}`;
     }
     // Makes a copy of the arc used for speculative execution.
     async cloneForSpeculativeExecution() {
-        const arc = new Arc({ id: this.generateID().toString(), pecFactory: this.pecFactory, context: this.context, loader: this._loader, speculative: true });
+        const arc = new Arc({ id: this.generateID().toString(), pecFactory: this.pecFactory, context: this.context, loader: this._loader, speculative: true, innerArc: this.isInnerArc });
         const storeMap = new Map();
         for (const store of this._stores) {
             const clone = await arc.storageProviderFactory.construct(store.id, store.type, 'volatile');
@@ -25168,65 +25190,27 @@ ${this.activeRecipe.toString()}`;
             });
             value.handles.forEach(handle => arc.particleHandleMaps.get(key).handles.set(handle.name, storeMap.get(handle)));
         });
-        const { particles, handles, slots } = this._activeRecipe.mergeInto(arc._activeRecipe);
-        let particleIndex = 0;
-        let handleIndex = 0;
-        let slotIndex = 0;
-        this._recipes.forEach(recipe => {
-            const arcRecipe = { particles: [], handles: [], slots: [], innerArcs: new Map(), patterns: recipe.patterns };
-            recipe.particles.forEach(p => {
-                arcRecipe.particles.push(particles[particleIndex++]);
-                if (recipe.innerArcs.has(p)) {
-                    const thisInnerArc = recipe.innerArcs.get(p);
-                    const transformationParticle = arcRecipe.particles[arcRecipe.particles.length - 1];
-                    const innerArc = { activeRecipe: new Recipe(), recipes: [] };
-                    const innerTuples = thisInnerArc.activeRecipe.mergeInto(innerArc.activeRecipe);
-                    thisInnerArc.recipes.forEach(thisInnerArcRecipe => {
-                        const innerArcRecipe = { particles: [], handles: [], slots: [], innerArcs: new Map() };
-                        let innerIndex = 0;
-                        thisInnerArcRecipe.particles.forEach(thisInnerArcRecipeParticle => {
-                            innerArcRecipe.particles.push(innerTuples.particles[innerIndex++]);
-                        });
-                        innerIndex = 0;
-                        thisInnerArcRecipe.handles.forEach(thisInnerArcRecipeParticle => {
-                            innerArcRecipe.handles.push(innerTuples.handles[innerIndex++]);
-                        });
-                        innerIndex = 0;
-                        thisInnerArcRecipe.slots.forEach(thisInnerArcRecipeParticle => {
-                            innerArcRecipe.slots.push(innerTuples.slots[innerIndex++]);
-                        });
-                        innerArc.recipes.push(innerArcRecipe);
-                    });
-                    arcRecipe.innerArcs.set(transformationParticle, innerArc);
-                }
-            });
-            recipe.handles.forEach(p => {
-                arcRecipe.handles.push(handles[handleIndex++]);
-            });
-            recipe.slots.forEach(p => {
-                arcRecipe.slots.push(slots[slotIndex++]);
-            });
-            arc._recipes.push(arcRecipe);
-        });
+        const { cloneMap } = this._activeRecipe.mergeInto(arc._activeRecipe);
+        this._recipes.forEach(recipe => arc._recipes.push({
+            particles: recipe.particles.map(p => cloneMap.get(p)),
+            handles: recipe.handles.map(h => cloneMap.get(h)),
+            slots: recipe.slots.map(s => cloneMap.get(s)),
+            patterns: recipe.patterns
+        }));
+        for (const [particle, innerArcs] of this.innerArcsByParticle.entries()) {
+            arc.innerArcsByParticle.set(cloneMap.get(particle), await Promise.all(innerArcs.map(async (arc) => arc.cloneForSpeculativeExecution())));
+        }
         for (const v of storeMap.values()) {
             // FIXME: Tags
             arc._registerStore(v, []);
         }
         return arc;
     }
-    async instantiate(recipe, innerArc = undefined) {
+    async instantiate(recipe) {
         assert$1(recipe.isResolved(), `Cannot instantiate an unresolved recipe: ${recipe.toString({ showUnresolved: true })}`);
         assert$1(recipe.isCompatible(this.modality), `Cannot instantiate recipe ${recipe.toString()} with [${recipe.modality.names}] modalities in '${this.modality.names}' arc`);
-        let currentArc = { activeRecipe: this._activeRecipe, recipes: this._recipes };
-        if (innerArc) {
-            const innerArcs = this._recipes.find(r => !!r.particles.find(p => p === innerArc.particle)).innerArcs;
-            if (!innerArcs.has(innerArc.particle)) {
-                innerArcs.set(innerArc.particle, { activeRecipe: new Recipe(), recipes: [] });
-            }
-            currentArc = innerArcs.get(innerArc.particle);
-        }
-        const { handles, particles, slots } = recipe.mergeInto(currentArc.activeRecipe);
-        currentArc.recipes.push({ particles, handles, slots, innerArcs: new Map(), patterns: recipe.patterns });
+        const { handles, particles, slots } = recipe.mergeInto(this._activeRecipe);
+        this._recipes.push({ particles, handles, slots, patterns: recipe.patterns });
         // TODO(mmandlis): Get rid of populating the missing local slot IDs here,
         // it should be done at planning stage.
         slots.forEach(slot => slot.id = slot.id || `slotid-${this.generateID()}`);
@@ -25289,8 +25273,7 @@ ${this.activeRecipe.toString()}`;
             // TODO: pass slot-connections instead
             this.pec.slotComposer.initializeRecipe(this, particles);
         }
-        if (!this.isSpeculative && !innerArc) {
-            // Note: callbacks not triggered for inner-arc recipe instantiation or speculative arcs.
+        if (!this.isSpeculative) { // Note: callbacks not triggered for speculative arcs.
             this.instantiatePlanCallbacks.forEach(callback => callback(recipe));
         }
         this.debugHandler.recipeInstantiated({ particles });
@@ -27395,13 +27378,13 @@ class SlotComposer {
     findContextById(slotId) {
         return this._contexts.find(({ id }) => id === slotId);
     }
-    createHostedSlot(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, storeId) {
+    createHostedSlot(innerArc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, storeId) {
         const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
         assert$1(transformationSlotConsumer, `Unexpected transformation slot particle ${transformationParticle.name}:${transformationSlotName}, hosted particle ${hostedParticleName}, slot name ${hostedSlotName}`);
-        const arc = transformationSlotConsumer.arc;
-        const hostedSlotId = arc.generateID();
-        const hostedSlotConsumer = new HostedSlotConsumer(arc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId);
-        hostedSlotConsumer.renderCallback = arc.pec.innerArcRender.bind(arc.pec);
+        const hostedSlotId = innerArc.generateID();
+        const hostedSlotConsumer = new HostedSlotConsumer(innerArc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId);
+        const outerArc = transformationSlotConsumer.arc;
+        hostedSlotConsumer.renderCallback = outerArc.pec.innerArcRender.bind(outerArc.pec);
         this._addSlotConsumer(hostedSlotConsumer);
         const context = this.findContextById(transformationSlotConsumer.consumeConn.targetSlot.id);
         context.addSlotConsumer(hostedSlotConsumer);
@@ -27475,13 +27458,8 @@ class SlotComposer {
     getAvailableContexts() {
         return this._contexts;
     }
-    dispose(arc) {
-        this.consumers.forEach(consumer => {
-            // At this point there should be a single Arc per SlotComposer.
-            // TODO: Fix disposal once multi-arc SlotComposer is possible.
-            assert$1(consumer.arc === arc);
-            consumer.dispose();
-        });
+    dispose() {
+        this.consumers.forEach(consumer => consumer.dispose());
         this.modalityHandler.slotConsumerClass.dispose();
         this._contexts.forEach(context => {
             context.clearSlotConsumers();

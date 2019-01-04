@@ -1,5 +1,5 @@
-commit e5314875a429b8a33b6bb5c84ae4014566706f66
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jan 3 17:00:32 2019 -0800
+commit be0c1b7bc28384fd40a74f72b86a5d4dd03b2192
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Jan 4 14:11:36 2019 +1100
 
-    move description-formatter to its own file and cleanup dependencies (#2530)
+    Inner arc as its own object (#2524)

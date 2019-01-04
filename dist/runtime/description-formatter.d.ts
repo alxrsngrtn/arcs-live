@@ -8,7 +8,6 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from './arc.js';
-import { Recipe } from './recipe/recipe.js';
 import { Handle } from './recipe/handle.js';
 import { Particle } from './recipe/particle.js';
 import { HandleConnection } from './recipe/handle-connection.js';
@@ -38,7 +37,10 @@ export declare class DescriptionFormatter {
     seenParticles: Set<Particle>;
     excludeValues: boolean;
     constructor(arc: Arc, relevance?: Relevance);
-    getDescription(recipe: Recipe): Promise<any>;
+    getDescription(recipe: {
+        patterns: string[];
+        particles: Particle[];
+    }): Promise<any>;
     _isSelectedDescription(desc: ParticleDescription): boolean;
     getHandleDescription(recipeHandle: Handle): Promise<any>;
     _updateDescriptionHandles(): Promise<void>;

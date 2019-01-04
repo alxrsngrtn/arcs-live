@@ -68,13 +68,13 @@ export class SlotComposer {
     findContextById(slotId) {
         return this._contexts.find(({ id }) => id === slotId);
     }
-    createHostedSlot(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, storeId) {
+    createHostedSlot(innerArc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, storeId) {
         const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
         assert(transformationSlotConsumer, `Unexpected transformation slot particle ${transformationParticle.name}:${transformationSlotName}, hosted particle ${hostedParticleName}, slot name ${hostedSlotName}`);
-        const arc = transformationSlotConsumer.arc;
-        const hostedSlotId = arc.generateID();
-        const hostedSlotConsumer = new HostedSlotConsumer(arc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId);
-        hostedSlotConsumer.renderCallback = arc.pec.innerArcRender.bind(arc.pec);
+        const hostedSlotId = innerArc.generateID();
+        const hostedSlotConsumer = new HostedSlotConsumer(innerArc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId);
+        const outerArc = transformationSlotConsumer.arc;
+        hostedSlotConsumer.renderCallback = outerArc.pec.innerArcRender.bind(outerArc.pec);
         this._addSlotConsumer(hostedSlotConsumer);
         const context = this.findContextById(transformationSlotConsumer.consumeConn.targetSlot.id);
         context.addSlotConsumer(hostedSlotConsumer);
@@ -148,13 +148,8 @@ export class SlotComposer {
     getAvailableContexts() {
         return this._contexts;
     }
-    dispose(arc) {
-        this.consumers.forEach(consumer => {
-            // At this point there should be a single Arc per SlotComposer.
-            // TODO: Fix disposal once multi-arc SlotComposer is possible.
-            assert(consumer.arc === arc);
-            consumer.dispose();
-        });
+    dispose() {
+        this.consumers.forEach(consumer => consumer.dispose());
         this.modalityHandler.slotConsumerClass.dispose();
         this._contexts.forEach(context => {
             context.clearSlotConsumers();
