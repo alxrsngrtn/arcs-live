@@ -355,7 +355,7 @@ class Arc {
     }
     createInnerArc(transformationParticle) {
         const id = this.generateID('inner').toString();
-        const innerArc = new Arc({ id, pecFactory: this.pecFactory, slotComposer: this.pec.slotComposer, loader: this._loader, context: new _manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"]({ id }), innerArc: true, speculative: this.isSpeculative });
+        const innerArc = new Arc({ id, pecFactory: this.pecFactory, slotComposer: this.pec.slotComposer, loader: this._loader, context: this.context, innerArc: true, speculative: this.isSpeculative });
         let particleInnerArcs = this.innerArcsByParticle.get(transformationParticle);
         if (!particleInnerArcs) {
             particleInnerArcs = [];

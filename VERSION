@@ -1,5 +1,5 @@
-commit be0c1b7bc28384fd40a74f72b86a5d4dd03b2192
+commit 75a4c02359954febbcf2f99904e2f166be4c0282
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Jan 4 14:11:36 2019 +1100
+Date:   Sat Jan 5 04:15:18 2019 +1100
 
-    Inner arc as its own object (#2524)
+    Pass the context of the outer arc to the inner arc (#2533)
