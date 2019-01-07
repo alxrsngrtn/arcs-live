@@ -92,11 +92,11 @@
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_arc_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _build_runtime_modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _build_runtime_modality_handler_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(232);
-/* harmony import */ var _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(242);
+/* harmony import */ var _build_runtime_modality_handler_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(233);
+/* harmony import */ var _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(250);
 /* harmony import */ var _build_runtime_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(230);
-/* harmony import */ var _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(251);
-/* harmony import */ var _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(233);
+/* harmony import */ var _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(232);
+/* harmony import */ var _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(234);
 /* harmony import */ var _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(4);
 /* harmony import */ var _build_runtime_manifest_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(34);
 /* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(190);
@@ -105,10 +105,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _build_runtime_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(181);
 /* harmony import */ var _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(261);
 /* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(199);
-/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(236);
-/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(246);
+/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(237);
+/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(248);
 /* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(262);
-/* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(245);
+/* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(247);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -80573,7 +80573,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcDebugHandler", function() { return ArcDebugHandler; });
 /* harmony import */ var _tracing_adapter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(206);
 /* harmony import */ var _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(207);
-/* harmony import */ var _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(231);
+/* harmony import */ var _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(249);
 /* harmony import */ var _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
 /**
  * @license
@@ -80674,7 +80674,11 @@ function enableTracingAdapter(devtoolsChannel) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcPlannerInvoker", function() { return ArcPlannerInvoker; });
 /* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(208);
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(34);
+/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(231);
+/* harmony import */ var _strategies_coalesce_recipes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(227);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
+/* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(210);
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(34);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -80686,52 +80690,171 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
+
+
+
+
+class InitialRecipe extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategy"] {
+    constructor(recipe) {
+        super();
+        this.recipe = recipe;
+    }
+    async generate({ generation }) {
+        if (generation !== 0) {
+            return [];
+        }
+        return [{
+                result: this.recipe,
+                score: 1,
+                derivation: [{ strategy: this, parent: undefined }],
+                hash: this.recipe.digest(),
+                valid: Object.isFrozen(this.recipe),
+            }];
+    }
+}
 class ArcPlannerInvoker {
     constructor(arc, arcDevtoolsChannel) {
         this.arc = arc;
-        this.planner = new _planner_js__WEBPACK_IMPORTED_MODULE_0__["Planner"]();
-        this.planner.init(arc);
         arcDevtoolsChannel.listen('fetch-strategies', () => arcDevtoolsChannel.send({
             messageType: 'fetch-strategies-result',
-            messageBody: this.planner.strategizer._strategies.map(a => a.constructor.name)
+            messageBody: _planner_js__WEBPACK_IMPORTED_MODULE_0__["Planner"].AllStrategies.map(s => s.name)
         }));
         arcDevtoolsChannel.listen('invoke-planner', async (msg) => arcDevtoolsChannel.send({
             messageType: 'invoke-planner-result',
-            messageBody: await this.invokePlanner(msg.messageBody)
+            messageBody: await this.invokePlanner(msg.messageBody.manifest, msg.messageBody.method),
+            requestId: msg.requestId
         }));
     }
-    async invokePlanner(msg) {
-        const strategy = this.planner.strategizer._strategies.find(s => s.constructor.name === msg.strategy);
-        if (!strategy)
-            return { error: 'could not find strategy' };
+    async invokePlanner(manifestString, method) {
+        if (!this.recipeIndex) {
+            this.recipeIndex = _recipe_index_js__WEBPACK_IMPORTED_MODULE_1__["RecipeIndex"].create(this.arc);
+            await this.recipeIndex.ready;
+        }
         let manifest;
         try {
-            manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_1__["Manifest"].parse(msg.recipe, { loader: this.arc._loader, fileName: 'manifest.manifest' });
+            manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_5__["Manifest"].parse(manifestString, { loader: this.arc._loader, fileName: 'manifest.manifest' });
         }
         catch (error) {
-            return { error: error.message };
+            return this.processManifestError(error);
         }
+        if (manifest.recipes.length === 0)
+            return { results: [] };
+        if (manifest.recipes.length > 1)
+            return { error: { message: `More than 1 recipe present, found ${manifest.recipes.length}.` } };
         const recipe = manifest.recipes[0];
         recipe.normalize();
-        const results = await strategy.generate({
+        if (method === 'arc' || method === 'arc_coalesce') {
+            return this.multiStrategyRun(recipe, method);
+        }
+        else {
+            return this.singleStrategyRun(recipe, method);
+        }
+    }
+    async multiStrategyRun(recipe, method) {
+        const strategies = method === 'arc_coalesce' ? _planner_js__WEBPACK_IMPORTED_MODULE_0__["Planner"].ResolutionStrategies
+            : _planner_js__WEBPACK_IMPORTED_MODULE_0__["Planner"].ResolutionStrategies.filter(s => s !== _strategies_coalesce_recipes_js__WEBPACK_IMPORTED_MODULE_2__["CoalesceRecipes"]);
+        const strategizer = new _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"]([new InitialRecipe(recipe), ...strategies.map(S => this.instantiate(S))], [], _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_4__["Empty"]);
+        const terminal = [];
+        do {
+            await strategizer.generate();
+            terminal.push(...strategizer.terminal);
+        } while (strategizer.generated.length + strategizer.terminal.length > 0);
+        return this.processStrategyOutput(terminal);
+    }
+    async singleStrategyRun(recipe, strategyName) {
+        const strategy = _planner_js__WEBPACK_IMPORTED_MODULE_0__["Planner"].AllStrategies.find(s => s.name === strategyName);
+        if (!strategy)
+            return { error: { message: `Strategy ${strategyName} not found` } };
+        return this.processStrategyOutput(await this.instantiate(strategy).generate({
             generation: 0,
             generated: [{ result: recipe, score: 1 }],
             population: [{ result: recipe, score: 1 }],
-            terminal: []
-        });
-        for (const result of results) {
-            result.hash = await result.hash;
-            result.derivation = undefined;
-            const recipe = result.result;
-            result.result = recipe.toString({ showUnresolved: true });
-            if (!Object.isFrozen(recipe)) {
+            terminal: [{ result: recipe, score: 1 }]
+        }));
+    }
+    instantiate(strategyClass) {
+        // TODO: Strategies should have access to the context that is a combination of arc context and
+        //       the entered manifest. Right now strategies only see arc context, which means that
+        //       various strategies will not see particles defined in the manifest entered in the
+        //       editor. This may bite us with verb substitution, hosted particle resolution etc.
+        return new strategyClass(this.arc, { recipeIndex: this.recipeIndex });
+    }
+    processStrategyOutput(inputs) {
+        return { results: inputs.map(result => {
+                const recipe = result.result;
                 const errors = new Map();
-                recipe.normalize({ errors });
-                result.errors = [...errors.keys()].map(thing => ({ id: thing.id, error: errors.get(thing) }));
-                result.normalized = recipe.toString();
+                if (!Object.isFrozen(recipe)) {
+                    recipe.normalize({ errors });
+                }
+                let recipeString = '';
+                try {
+                    recipeString = recipe.toString({ showUnresolved: true });
+                }
+                catch (e) {
+                    console.warn(e);
+                }
+                return {
+                    recipe: recipeString,
+                    derivation: this.extractDerivation(result),
+                    errors: [...errors.values()].map(error => ({ error })),
+                };
+            }) };
+    }
+    extractDerivation(result) {
+        const found = [];
+        for (const deriv of result.derivation) {
+            if (!deriv.parent && deriv.strategy.constructor !== InitialRecipe) {
+                found.push(deriv.strategy.constructor.name);
+            }
+            else if (deriv.parent) {
+                const childDerivs = this.extractDerivation(deriv.parent);
+                for (const childDeriv of childDerivs) {
+                    found.push(childDeriv
+                        ? `${childDeriv} -> ${deriv.strategy.constructor.name}`
+                        : deriv.strategy.constructor.name);
+                }
+                if (childDerivs.length === 0)
+                    found.push(deriv.strategy.constructor.name);
             }
         }
-        return { results };
+        return found;
+    }
+    processManifestError(error) {
+        let suggestion = null;
+        const errorTypes = [{
+                // TODO: Switch to declaring errors in a structured way in the error object, instead of message parsing.
+                pattern: /could not find particle ([A-Z][A-Za-z0-9_]*)\n/,
+                predicate: extracted => manifest => !!(manifest.particles.find(p => p.name === extracted))
+            }, {
+                pattern: /Could not resolve type reference to type name '([A-Z][A-Za-z0-9_]*)'\n/,
+                predicate: extracted => manifest => !!(manifest.schemas[extracted])
+            }];
+        for (const { pattern, predicate } of errorTypes) {
+            const match = pattern.exec(error.message);
+            if (match) {
+                const [_, extracted] = match;
+                const fileNames = this.findManifestNames(this.arc.context, predicate(extracted));
+                if (fileNames.length > 0)
+                    suggestion = { action: 'import', fileNames };
+            }
+        }
+        return { suggestion, error: ((({ location, message }) => ({ location, message }))(error)) };
+    }
+    findManifestNames(manifest, predicate) {
+        const map = new Map();
+        this.findManifestNamesRecursive(manifest, predicate, map);
+        return [...map.entries()].sort(([a, depthA], [b, depthB]) => (depthA - depthB)).map(v => v[0]);
+    }
+    findManifestNamesRecursive(manifest, predicate, fileNames) {
+        let depth = predicate(manifest) ? 0 : Number.MAX_SAFE_INTEGER;
+        for (const child of manifest.imports) {
+            depth = Math.min(depth, this.findManifestNamesRecursive(child, predicate, fileNames) + 1);
+        }
+        // http check to avoid listin shell created 'in-memory manifest'.
+        if (depth < Number.MAX_SAFE_INTEGER && manifest.fileName.startsWith('http')) {
+            fileNames.set(manifest.fileName, depth);
+        }
+        return depth;
     }
 }
 //# sourceMappingURL=arc-planner-invoker.js.map
@@ -82971,7 +83094,26 @@ class Suggestion {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcStoresFetcher", function() { return ArcStoresFetcher; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeIndex", function() { return RecipeIndex; });
+/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(34);
+/* harmony import */ var _arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
+/* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(232);
+/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
+/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(245);
+/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(49);
+/* harmony import */ var _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(211);
+/* harmony import */ var _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(221);
+/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(182);
+/* harmony import */ var _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(225);
+/* harmony import */ var _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(216);
+/* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(210);
+/* harmony import */ var _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(185);
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(29);
+/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(180);
+/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(46);
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(3);
+/* harmony import */ var _plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(246);
+/* harmony import */ var _modality_handler_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(233);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -82981,51 +83123,300 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class ArcStoresFetcher {
-    constructor(arc, arcDevtoolsChannel) {
-        this.arc = arc;
-        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
-            messageType: 'fetch-stores-result',
-            messageBody: await this._listStores()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class RelevantContextRecipes extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategy"] {
+    constructor(context, modality) {
+        super();
+        this._recipes = [];
+        for (let recipe of context.allRecipes) {
+            if (!recipe.isCompatible(modality)) {
+                continue;
+            }
+            recipe = recipe.clone();
+            const options = { errors: new Map() };
+            if (recipe.normalize(options)) {
+                this._recipes.push(recipe);
+            }
+            else {
+                console.warn(`could not normalize a context recipe: ${[...options.errors.values()].join('\n')}.\n${recipe.toString()}`);
+            }
+        }
+    }
+    async generate({ generation }) {
+        if (generation !== 0) {
+            return [];
+        }
+        return this._recipes.map(recipe => ({
+            result: recipe,
+            score: 1,
+            derivation: [{ strategy: this, parent: undefined }],
+            hash: recipe.digest(),
+            valid: Object.isFrozen(recipe),
         }));
     }
-    async _listStores() {
-        const find = manifest => {
-            let tags = [...manifest.storeTags];
-            if (manifest.imports) {
-                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
+}
+// tslint:disable-next-line: variable-name
+const IndexStrategies = [
+    _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__["ConvertConstraintsToConnections"],
+    _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__["AddMissingHandles"],
+    _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_8__["ResolveRecipe"],
+    _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__["MatchFreeHandlesToConnections"],
+    // This one is not in-line with 'transparent' interfaces, but it operates on
+    // recipes without looking at the context and cannot run after AddUseHandles.
+    // We will revisit this list when we take a stab at recipe interfaces.
+    _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__["CreateHandleGroup"]
+];
+class RecipeIndex {
+    constructor(arc) {
+        this._isReady = false;
+        const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__["Tracing"].start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
+        const arcStub = new _arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"]({
+            id: 'index-stub',
+            context: new _manifest_js__WEBPACK_IMPORTED_MODULE_0__["Manifest"]({ id: 'empty-context' }),
+            loader: arc.loader,
+            slotComposer: new _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"]({
+                modalityHandler: _modality_handler_js__WEBPACK_IMPORTED_MODULE_18__["ModalityHandler"].createHeadlessHandler(),
+                noRoot: true
+            }),
+            // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
+            speculative: true
+        });
+        const strategizer = new _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"]([
+            new RelevantContextRecipes(arc.context, arc.modality),
+            ...IndexStrategies.map(S => new S(arcStub, { recipeIndex: this }))
+        ], [], _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__["Empty"]);
+        this.ready = trace.endWith(new Promise(async (resolve) => {
+            const generations = [];
+            do {
+                const record = await strategizer.generate();
+                generations.push({ record, generated: strategizer.generated });
+            } while (strategizer.generated.length + strategizer.terminal.length > 0);
+            if (_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].isConnected) {
+                _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(_plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__["PlanningResult"].formatSerializableGenerations(generations), _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].get().forArc(arc), { label: 'Index', keep: true });
             }
-            return tags;
-        };
-        return {
-            arcStores: await this._digestStores(this.arc.storeTags),
-            contextStores: await this._digestStores(find(this.arc.context))
-        };
+            const population = strategizer.population;
+            const candidates = new Set(population);
+            for (const result of population) {
+                for (const deriv of result.derivation) {
+                    if (deriv.parent)
+                        candidates.delete(deriv.parent);
+                }
+            }
+            this._recipes = [...candidates].map(r => r.result);
+            this._isReady = true;
+            resolve(true);
+        }));
     }
-    async _digestStores(stores) {
-        const result = [];
-        for (const [store, tags] of stores) {
-            let value = `(don't know how to dereference)`;
-            if (store.toList) {
-                value = await store.toList();
+    static create(arc) {
+        return new RecipeIndex(arc);
+    }
+    get recipes() {
+        if (!this._isReady)
+            throw Error('await on recipeIndex.ready before accessing');
+        return this._recipes;
+    }
+    ensureReady() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(this._isReady, 'await on recipeIndex.ready before accessing');
+    }
+    /**
+     * Given provided handle and requested fates, finds handles with
+     * matching type and requested fate.
+     */
+    findHandleMatch(handle, requestedFates) {
+        this.ensureReady();
+        const particleNames = handle.connections.map(conn => conn.particle.name);
+        const results = [];
+        for (const recipe of this._recipes) {
+            if (recipe.particles.some(particle => !particle.name)) {
+                // Skip recipes where not all verbs are resolved to specific particles
+                // to avoid trying to coalesce a recipe with itself.
+                continue;
             }
-            else if (store.get) {
-                value = await store.get();
+            for (const otherHandle of recipe.handles) {
+                if (requestedFates && !(requestedFates.includes(otherHandle.fate))) {
+                    continue;
+                }
+                if (!this.doesHandleMatch(handle, otherHandle)) {
+                    continue;
+                }
+                // If we're connecting the same sets of particles, that's probably not OK.
+                // This is a poor workaround for connecting the exact same recipes together, to be improved.
+                const otherParticleNames = otherHandle.connections.map(conn => conn.particle.name);
+                const connectedParticles = new Set([...particleNames, ...otherParticleNames]);
+                if (connectedParticles.size === particleNames.length
+                    && particleNames.length === otherParticleNames.length)
+                    continue;
+                results.push(otherHandle);
             }
-            result.push({
-                name: store.name,
-                tags: tags ? [...tags] : [],
-                id: store.id,
-                storage: store.storageKey,
-                type: store.type,
-                description: store.description,
-                value
-            });
         }
-        return result;
+        return results;
+    }
+    doesHandleMatch(handle, otherHandle) {
+        if (Boolean(handle.id) && Boolean(otherHandle.id) && handle.id !== otherHandle.id) {
+            // Either at most one of the handles has an ID, or they are the same.
+            return false;
+        }
+        // TODO was otherHandle.name, is localName correct
+        if (otherHandle.connections.length === 0 || otherHandle.localName === 'descriptions') {
+            return false;
+        }
+        // If we're connecting only create/use/? handles, we require communication.
+        // We don't do that if at least one handle is map/copy, as in such case
+        // everyone can be a reader.
+        // We inspect both fate and originalFate as copy ends up as use in an
+        // active recipe, and ? could end up as anything.
+        const fates = [handle.originalFate, handle.fate, otherHandle.originalFate, otherHandle.fate];
+        if (!fates.includes('copy') && !fates.includes('map')) {
+            const counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(handle);
+            const otherCounts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(otherHandle);
+            // Someone has to read and someone has to write.
+            if (otherCounts.in + counts.in === 0 || otherCounts.out + counts.out === 0) {
+                return false;
+            }
+        }
+        // If requesting handle has tags, we should have overlap.
+        if (handle.tags.length > 0 && !handle.tags.some(t => otherHandle.tags.includes(t))) {
+            return false;
+        }
+        // If types don't match.
+        if (!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(handle.mappedType, [...handle.connections, ...otherHandle.connections])) {
+            return false;
+        }
+        return true;
+    }
+    /**
+     * Given a slot, find consume slot connections that could be connected to it.
+     */
+    findConsumeSlotConnectionMatch(slot) {
+        this.ensureReady();
+        const consumeConns = [];
+        for (const recipe of this._recipes) {
+            if (recipe.particles.some(particle => !particle.name)) {
+                // Skip recipes where not all verbs are resolved to specific particles
+                // to avoid trying to coalesce a recipe with itself.
+                continue;
+            }
+            for (const slotConn of recipe.slotConnections) {
+                if (!slotConn.targetSlot && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].specMatch(slotConn, slot) && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].tagsOrNameMatch(slotConn, slot)) {
+                    const matchingHandles = [];
+                    if (!_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].handlesMatch(slotConn, slot)) {
+                        // Find potential handle connections to coalesce
+                        slot.handleConnections.forEach(slotHandleConn => {
+                            const matchingConns = Object.values(slotConn.particle.connections).filter(particleConn => {
+                                return particleConn.direction !== 'host'
+                                    && (!particleConn.handle || !particleConn.handle.id || particleConn.handle.id === slotHandleConn.handle.id)
+                                    && _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(slotHandleConn.handle.mappedType, [particleConn]);
+                            });
+                            matchingConns.forEach(matchingConn => {
+                                if (this._fatesAndDirectionsMatch(slotHandleConn, matchingConn)) {
+                                    matchingHandles.push({ handle: slotHandleConn.handle, matchingConn });
+                                }
+                            });
+                        });
+                        if (matchingHandles.length === 0) {
+                            continue;
+                        }
+                    }
+                    consumeConns.push({ slotConn, matchingHandles });
+                }
+            }
+        }
+        return consumeConns;
+    }
+    findProvidedSlot(slotConn) {
+        this.ensureReady();
+        const providedSlots = [];
+        for (const recipe of this._recipes) {
+            if (recipe.particles.some(particle => !particle.name)) {
+                // Skip recipes where not all verbs are resolved to specific particles
+                // to avoid trying to coalesce a recipe with itself.
+                continue;
+            }
+            for (const consumeConn of recipe.slotConnections) {
+                for (const providedSlot of Object.values(consumeConn.providedSlots)) {
+                    if (_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].slotMatches(slotConn, providedSlot)) {
+                        providedSlots.push(providedSlot);
+                    }
+                }
+            }
+        }
+        return providedSlots;
+    }
+    /**
+     * Helper function that determines whether handle connections in a provided slot
+     * and a potential consuming slot connection could be match, considering their fates and directions.
+     *
+     * - `slotHandleConn` is a handle connection restricting the provided slot.
+     * - `matchingHandleConn` - a handle connection of a particle, whose slot connection is explored
+     *    as a potential match to a slot above.
+     */
+    _fatesAndDirectionsMatch(slotHandleConn, matchingHandleConn) {
+        const matchingHandle = matchingHandleConn.handle;
+        const allMatchingHandleConns = matchingHandle ? matchingHandle.connections : [matchingHandleConn];
+        const matchingHandleConnsHasOutput = allMatchingHandleConns.find(conn => ['out', 'inout'].includes(conn.direction));
+        switch (slotHandleConn.handle.fate) {
+            case 'create':
+                // matching handle not defined or its fate is 'create' or '?'.
+                return !matchingHandle || ['use', '?'].includes(matchingHandle.fate);
+            case 'use':
+                // matching handle is not defined or its fate is either 'use' or '?'.
+                return !matchingHandle || ['use', '?'].includes(matchingHandle.fate);
+            case 'copy':
+                // Any handle fate, except explicit 'create'.
+                return !matchingHandle || matchingHandle.fate !== 'create';
+            case 'map':
+                // matching connections don't have output direction and matching handle's fate isn't copy.
+                return !matchingHandleConnsHasOutput && (!matchingHandle || matchingHandle.fate !== 'copy');
+            case '?':
+                return false;
+            default:
+                throw new Error(`Unexpected fate ${slotHandleConn.handle.fate}`);
+        }
+    }
+    get coalescableFates() {
+        return ['create', 'use', '?'];
+    }
+    findCoalescableHandles(recipe, otherRecipe, usedHandles) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(recipe !== otherRecipe, 'Cannot coalesce handles in the same recipe');
+        const otherToHandle = new Map();
+        usedHandles = usedHandles || new Set();
+        for (const handle of recipe.handles) {
+            if (usedHandles.has(handle) || !this.coalescableFates.includes(handle.fate)) {
+                continue;
+            }
+            for (const otherHandle of otherRecipe.handles) {
+                if (usedHandles.has(otherHandle) || !this.coalescableFates.includes(otherHandle.fate)) {
+                    continue;
+                }
+                if (this.doesHandleMatch(handle, otherHandle)) {
+                    otherToHandle.set(handle, otherHandle);
+                    usedHandles.add(handle);
+                    usedHandles.add(otherHandle);
+                }
+            }
+        }
+        return otherToHandle;
     }
 }
-//# sourceMappingURL=arc-stores-fetcher.js.map
+//# sourceMappingURL=recipe-index.js.map
 
 /***/ }),
 /* 232 */
@@ -83033,12 +83424,189 @@ class ArcStoresFetcher {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotComposer", function() { return SlotComposer; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _modality_handler_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(233);
+/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(236);
+/* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(243);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+class SlotComposer {
+    /**
+     * |options| must contain:
+     * - modalityName: the UI modality the slot-composer renders to (for example: dom).
+     * - modalityHandler: the handler for UI modality the slot-composer renders to.
+     * - rootContainer: the top level container to be used for slots.
+     * and may contain:
+     * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
+     */
+    constructor(options) {
+        this._consumers = [];
+        this._contexts = [];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(options.modalityHandler && options.modalityHandler.constructor === _modality_handler_js__WEBPACK_IMPORTED_MODULE_2__["ModalityHandler"], `Missing or invalid modality handler: ${options.modalityHandler.name}`);
+        // TODO: Support rootContext for backward compatibility, remove when unused.
+        options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])((options.rootContainer !== undefined)
+            !==
+                (options.noRoot === true), 'Root container is mandatory unless it is explicitly skipped');
+        this._containerKind = options.containerKind;
+        if (options.modalityName) {
+            this.modality = _modality_js__WEBPACK_IMPORTED_MODULE_1__["Modality"].create([options.modalityName]);
+        }
+        this.modalityHandler = options.modalityHandler;
+        if (options.noRoot) {
+            return;
+        }
+        const containerByName = options.containers
+            || this.modalityHandler.slotConsumerClass.findRootContainers(options.rootContainer) || {};
+        if (Object.keys(containerByName).length === 0) {
+            // fallback to single 'root' slot using the rootContainer.
+            containerByName['root'] = options.rootContainer;
+        }
+        Object.keys(containerByName).forEach(slotName => {
+            this._contexts.push(_slot_context_js__WEBPACK_IMPORTED_MODULE_3__["SlotContext"].createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
+        });
+    }
+    get consumers() { return this._consumers; }
+    get containerKind() { return this._containerKind; }
+    getSlotConsumer(particle, slotName) {
+        return this.consumers.find(s => s.consumeConn.particle === particle && s.consumeConn.name === slotName);
+    }
+    findContainerByName(name) {
+        const contexts = this._contexts.filter(context => context.name === name);
+        if (contexts.length === 0) {
+            // TODO this is a no-op, but throwing here breaks tests
+            console.warn(`No containers for '${name}'`);
+        }
+        else if (contexts.length === 1) {
+            return contexts[0].container;
+        }
+        console.warn(`Ambiguous containers for '${name}'`);
+        return undefined;
+    }
+    findContextById(slotId) {
+        return this._contexts.find(({ id }) => id === slotId);
+    }
+    createHostedSlot(innerArc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, storeId) {
+        const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(transformationSlotConsumer, `Unexpected transformation slot particle ${transformationParticle.name}:${transformationSlotName}, hosted particle ${hostedParticleName}, slot name ${hostedSlotName}`);
+        const hostedSlotId = innerArc.generateID();
+        const hostedSlotConsumer = new _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"](innerArc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId);
+        const outerArc = transformationSlotConsumer.arc;
+        hostedSlotConsumer.renderCallback = outerArc.pec.innerArcRender.bind(outerArc.pec);
+        this._addSlotConsumer(hostedSlotConsumer);
+        const context = this.findContextById(transformationSlotConsumer.consumeConn.targetSlot.id);
+        context.addSlotConsumer(hostedSlotConsumer);
+        return hostedSlotId;
+    }
+    _addSlotConsumer(slot) {
+        slot.startRenderCallback = slot.arc.pec.startRender.bind(slot.arc.pec);
+        slot.stopRenderCallback = slot.arc.pec.stopRender.bind(slot.arc.pec);
+        this._consumers.push(slot);
+    }
+    initializeRecipe(arc, recipeParticles) {
+        const newConsumers = [];
+        // Create slots for each of the recipe's particles slot connections.
+        recipeParticles.forEach(p => {
+            Object.values(p.consumedSlotConnections).forEach(cs => {
+                if (!cs.targetSlot) {
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!cs.slotSpec.isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
+                    return;
+                }
+                let slotConsumer = this.consumers.find(slot => slot instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"] && slot.hostedSlotId === cs.targetSlot.id);
+                let transformationSlotConsumer = null;
+                if (slotConsumer && slotConsumer instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"]) {
+                    slotConsumer.consumeConn = cs;
+                    transformationSlotConsumer = slotConsumer.transformationSlotConsumer;
+                }
+                else {
+                    slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
+                    newConsumers.push(slotConsumer);
+                }
+                const providedContexts = slotConsumer.createProvidedContexts();
+                this._contexts = this._contexts.concat(providedContexts);
+                // Slot contexts provided by the HostedSlotConsumer are managed by the transformation.
+                if (transformationSlotConsumer) {
+                    transformationSlotConsumer.providedSlotContexts.push(...providedContexts);
+                    if (transformationSlotConsumer.slotContext.container) {
+                        slotConsumer.startRender();
+                    }
+                }
+            });
+        });
+        // Set context for each of the slots.
+        newConsumers.forEach(consumer => {
+            this._addSlotConsumer(consumer);
+            const context = this.findContextById(consumer.consumeConn.targetSlot.id);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
+            context.addSlotConsumer(consumer);
+        });
+    }
+    async renderSlot(particle, slotName, content) {
+        const slotConsumer = this.getSlotConsumer(particle, slotName);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
+        await slotConsumer.setContent(content, async (eventlet) => {
+            slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
+            if (eventlet.data && eventlet.data.key) {
+                const hostedConsumers = this.consumers.filter(c => c instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"] && c.transformationSlotConsumer === slotConsumer);
+                for (const hostedConsumer of hostedConsumers) {
+                    if (hostedConsumer instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"] && hostedConsumer.storeId) {
+                        const store = slotConsumer.arc.findStoreById(hostedConsumer.storeId);
+                        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store);
+                        // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc
+                        // tslint:disable-next-line: no-any
+                        const value = await store.get();
+                        if (value && (value.id === eventlet.data.key)) {
+                            slotConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
+                        }
+                    }
+                }
+            }
+        });
+    }
+    getAvailableContexts() {
+        return this._contexts;
+    }
+    dispose() {
+        this.consumers.forEach(consumer => consumer.dispose());
+        this.modalityHandler.slotConsumerClass.dispose();
+        this._contexts.forEach(context => {
+            context.clearSlotConsumers();
+            if (context.container) {
+                this.modalityHandler.slotConsumerClass.clear(context.container);
+            }
+        });
+        this._contexts = this._contexts.filter(c => !c.sourceSlotConsumer);
+        this._consumers = [];
+    }
+}
+//# sourceMappingURL=slot-composer.js.map
+
+/***/ }),
+/* 233 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ModalityHandler", function() { return ModalityHandler; });
-/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(233);
-/* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(238);
-/* harmony import */ var _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(239);
-/* harmony import */ var _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(240);
-/* harmony import */ var _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(241);
+/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(234);
+/* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(239);
+/* harmony import */ var _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(240);
+/* harmony import */ var _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(241);
+/* harmony import */ var _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(242);
 
 
 
@@ -83058,16 +83626,16 @@ ModalityHandler.domHandler = new ModalityHandler(_slot_dom_consumer_js__WEBPACK_
 //# sourceMappingURL=modality-handler.js.map
 
 /***/ }),
-/* 233 */
+/* 234 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotDomConsumer", function() { return SlotDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(234);
-/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(236);
-/* harmony import */ var _modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(237);
+/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(235);
+/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(237);
+/* harmony import */ var _modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(238);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -83373,14 +83941,14 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
 //# sourceMappingURL=slot-dom-consumer.js.map
 
 /***/ }),
-/* 234 */
+/* 235 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotConsumer", function() { return SlotConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(235);
+/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(236);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -83537,7 +84105,7 @@ class SlotConsumer {
 //# sourceMappingURL=slot-consumer.js.map
 
 /***/ }),
-/* 235 */
+/* 236 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -83626,7 +84194,7 @@ class SlotContext {
 //# sourceMappingURL=slot-context.js.map
 
 /***/ }),
-/* 236 */
+/* 237 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -84029,7 +84597,7 @@ const Template = {
 
 
 /***/ }),
-/* 237 */
+/* 238 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -84059,13 +84627,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /***/ }),
-/* 238 */
+/* 239 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestDomConsumer", function() { return SuggestDomConsumer; });
-/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(233);
+/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(234);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84117,14 +84685,14 @@ class SuggestDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_
 //# sourceMappingURL=suggest-dom-consumer.js.map
 
 /***/ }),
-/* 239 */
+/* 240 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MockSlotDomConsumer", function() { return MockSlotDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(233);
+/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(234);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84206,13 +84774,13 @@ class MockSlotDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE
 
 
 /***/ }),
-/* 240 */
+/* 241 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MockSuggestDomConsumer", function() { return MockSuggestDomConsumer; });
-/* harmony import */ var _mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(239);
+/* harmony import */ var _mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(240);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84252,7 +84820,7 @@ class MockSuggestDomConsumer extends _mock_slot_dom_consumer_js__WEBPACK_IMPORTE
 
 
 /***/ }),
-/* 241 */
+/* 242 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -84485,181 +85053,15 @@ class DescriptionDomFormatter extends _description_formatter_js__WEBPACK_IMPORTE
 //# sourceMappingURL=description-dom-formatter.js.map
 
 /***/ }),
-/* 242 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planificator", function() { return Planificator; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(243);
-/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(249);
-/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(244);
-/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(254);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-class Planificator {
-    constructor(arc, userid, store, searchStore, onlyConsumer = false, debug = false) {
-        this.search = null;
-        // In <0.6 shell, this is needed to backward compatibility, in order to (1)
-        // (1) trigger replanning with a local producer and (2) notify shell of the
-        // last activated plan, to allow serialization.
-        // TODO(mmandlis): Is this really needed in the >0.6 shell?
-        this.arcCallback = this._onPlanInstantiated.bind(this);
-        this.arc = arc;
-        this.userid = userid;
-        this.searchStore = searchStore;
-        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"](store);
-        if (!onlyConsumer) {
-            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](this.arc, this.result, searchStore, { debug });
-            this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__["ReplanQueue"](this.producer);
-            this.dataChangeCallback = () => this.replanQueue.addChange();
-            this._listenToArcStores();
-        }
-        this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](this.arc, this.result);
-        this.lastActivatedPlan = null;
-        this.arc.registerInstantiatePlanCallback(this.arcCallback);
-    }
-    static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null.');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'User id cannot be null.');
-        debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
-        const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
-        const searchStore = await Planificator._initSearchStore(arc, userid);
-        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
-        await planificator.loadSuggestions();
-        planificator.requestPlanning({ contextual: true });
-        return planificator;
-    }
-    async requestPlanning(options = {}) {
-        if (!this.consumerOnly) {
-            await this.producer.produceSuggestions(options);
-        }
-    }
-    get consumerOnly() { return !Boolean(this.producer); }
-    async loadSuggestions() {
-        return this.result.load();
-    }
-    async setSearch(search) {
-        search = search ? search.toLowerCase().trim() : null;
-        search = (search !== '') ? search : null;
-        if (this.search !== search) {
-            this.search = search;
-            await this._storeSearch();
-            const showAll = this.search === '*';
-            const filter = showAll ? null : this.search;
-            this.consumer.setSuggestFilter(showAll, filter);
-        }
-    }
-    registerSuggestionsChangedCallback(callback) {
-        this.consumer.registerSuggestionsChangedCallback(callback);
-    }
-    registerVisibleSuggestionsChangedCallback(callback) {
-        this.consumer.registerVisibleSuggestionsChangedCallback(callback);
-    }
-    dispose() {
-        this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
-        if (!this.consumerOnly) {
-            this._unlistenToArcStores();
-            this.producer.dispose();
-        }
-        this.consumer.dispose();
-        this.result.dispose();
-    }
-    async deleteAll() {
-        await this.producer.result.clear();
-        this.setSearch(null);
-    }
-    getLastActivatedPlan() {
-        return { plan: this.lastActivatedPlan };
-    }
-    _onPlanInstantiated(plan) {
-        this.lastActivatedPlan = plan;
-        this.requestPlanning();
-    }
-    _listenToArcStores() {
-        this.arc.onDataChange(this.dataChangeCallback, this);
-        this.arc.context.allStores.forEach(store => {
-            if (store.on) { // #2141: some are StorageStubs.
-                store.on('change', this.dataChangeCallback, this);
-            }
-        });
-    }
-    _unlistenToArcStores() {
-        this.arc.clearDataChange(this);
-        this.arc.context.allStores.forEach(store => {
-            if (store.off) { // #2141: some are StorageStubs.
-                store.off('change', this.dataChangeCallback);
-            }
-        });
-    }
-    static constructSuggestionKey(arc, userid, storageKeyBase) {
-        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
-        const keybase = arc.storageProviderFactory.parseStringAsKey(storageKeyBase || arcStorageKey.base());
-        return keybase.childKeyForSuggestions(userid, arcStorageKey.arcId);
-    }
-    static constructSearchKey(arc, userid) {
-        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
-        const keybase = arc.storageProviderFactory.parseStringAsKey(arcStorageKey.base());
-        return keybase.childKeyForSearch(userid);
-    }
-    static async _initSuggestStore(arc, userid, storageKeyBase) {
-        const storageKey = Planificator.constructSuggestionKey(arc, userid, storageKeyBase);
-        return Planificator._initStore(arc, 'suggestions-id', _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"].make(['Suggestions'], { current: 'Object' }), storageKey);
-    }
-    static async _initSearchStore(arc, userid) {
-        const storageKey = Planificator.constructSearchKey(arc, userid);
-        return Planificator._initStore(arc, 'search-id', _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"].make(['Search'], { current: 'Object' }), storageKey);
-    }
-    static async _initStore(arc, id, type, storageKey) {
-        const store = await arc.storageProviderFactory.connectOrConstruct(id, type, storageKey.toString());
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${storageKey.toString()}' store.`);
-        store.referenceMode = false;
-        return store;
-    }
-    async _storeSearch() {
-        const values = await this.searchStore.get() || [];
-        const arcKey = this.arc.arcId;
-        const newValues = [];
-        for (const { arc, search } of values) {
-            if (arc !== arcKey) {
-                newValues.push({ arc, search });
-            }
-        }
-        if (this.search) {
-            newValues.push({ search: this.search, arc: arcKey });
-        }
-        return this.searchStore.set(newValues);
-    }
-}
-//# sourceMappingURL=planificator.js.map
-
-/***/ }),
 /* 243 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanConsumer", function() { return PlanConsumer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotConsumer", function() { return HostedSlotConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(244);
-/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(247);
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
-/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(248);
+/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(235);
+/* harmony import */ var _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(244);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84672,98 +85074,52 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-class PlanConsumer {
-    constructor(arc, result) {
-        // Callback is triggered when planning results have changed.
-        this.suggestionsChangeCallbacks = [];
-        // Callback is triggered when suggestions visible to the user have changed.
-        this.visibleSuggestionsChangeCallbacks = [];
-        this.suggestionComposer = null;
-        this.currentSuggestions = [];
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result, 'result cannot be null');
-        this.arc = arc;
-        this.result = result;
-        this.suggestFilter = { showAll: false };
-        this.suggestionsChangeCallbacks = [];
-        this.visibleSuggestionsChangeCallbacks = [];
-        this._initSuggestionComposer();
-        this.result.registerChangeCallback(() => this.onSuggestionsChanged());
+class HostedSlotConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotConsumer"] {
+    constructor(arc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId) {
+        super(arc, null, null);
+        this.transformationSlotConsumer = transformationSlotConsumer;
+        this.hostedParticleName = hostedParticleName;
+        this.hostedSlotName = hostedSlotName,
+            this.hostedSlotId = hostedSlotId;
+        // TODO: should this be a list?
+        this.storeId = storeId;
     }
-    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
-    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
-    setSuggestFilter(showAll, search) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!showAll || !search);
-        if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
-            return;
-        }
-        this.suggestFilter = { showAll, search };
-        this._onMaybeSuggestionsChanged();
+    get consumeConn() { return this._consumeConn; }
+    set consumeConn(consumeConn) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._consumeConn, 'Consume connection can be set only once');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedSlotId === consumeConn.targetSlot.id, `Expected target slot ${this.hostedSlotId}, but got ${consumeConn.targetSlot.id}`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedParticleName === consumeConn.particle.name, `Expected particle ${this.hostedParticleName} for slot ${this.hostedSlotId}, but got ${consumeConn.particle.name}`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedSlotName === consumeConn.name, `Expected slot ${this.hostedSlotName} for slot ${this.hostedSlotId}, but got ${consumeConn.name}`);
+        this._consumeConn = consumeConn;
     }
-    onSuggestionsChanged() {
-        this._onSuggestionsChanged();
-        this._onMaybeSuggestionsChanged();
-        if (this.result.generations.length && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected) {
-            _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get().forArc(this.arc));
+    async setContent(content, handler) {
+        if (this.renderCallback) {
+            this.renderCallback(this.transformationSlotConsumer.consumeConn.particle, this.transformationSlotConsumer.consumeConn.name, this.hostedSlotId, this.transformationSlotConsumer.formatHostedContent(this, content));
         }
+        return null;
     }
-    getCurrentSuggestions() {
-        const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0
-            && this.arc.modality.isCompatible(suggestion.plan.modality.map(m => m.name)));
-        // `showAll`: returns all suggestions that render into slots.
-        if (this.suggestFilter['showAll']) {
-            // Should filter out suggestions produced by search phrases?
-            return suggestions;
-        }
-        // search filter non empty: match plan search phrase or description text.
-        if (this.suggestFilter['search']) {
-            return suggestions.filter(suggestion => suggestion.descriptionText.toLowerCase().includes(this.suggestFilter['search']) ||
-                suggestion.hasSearch(this.suggestFilter['search']));
-        }
-        return suggestions.filter(suggestion => {
-            const usesHandlesFromActiveRecipe = suggestion.plan.handles.find(handle => {
-                // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
-                // either by tagging or by exploring connection directions etc.
-                return !!handle.id &&
-                    !!this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
-            });
-            const usesRemoteNonRootSlots = suggestion.plan.slots.find(slot => {
-                return !slot.name.includes('root') && !slot.tags.includes('root') &&
-                    slot.id && !slot.id.includes('root') &&
-                    Boolean(this.arc.pec.slotComposer.findContextById(slot.id));
-            });
-            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
-            return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
-        });
+    constructRenderRequest() {
+        return this.transformationSlotConsumer.constructRenderRequest(this);
     }
-    dispose() {
-        this.suggestionsChangeCallbacks = [];
-        this.visibleSuggestionsChangeCallbacks = [];
-        if (this.suggestionComposer) {
-            this.suggestionComposer.clear();
+    getInnerContainer(name) {
+        const innerContainer = this.transformationSlotConsumer.getInnerContainer(name);
+        if (innerContainer && this.storeId) {
+            // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
+            // tslint:disable-next-line: no-any
+            const subId = this.arc.findStoreById(this.storeId)._stored.id;
+            return innerContainer[subId];
         }
+        return innerContainer;
     }
-    _onSuggestionsChanged() {
-        this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
+    createProvidedContexts() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.consumeConn, `Cannot create provided context without consume connection for hosted slot ${this.hostedSlotId}`);
+        return this.consumeConn.slotSpec.providedSlots.map(providedSpec => new _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_2__["HostedSlotContext"](this.consumeConn.providedSlots[providedSpec.name].id, providedSpec, this));
     }
-    _onMaybeSuggestionsChanged() {
-        const suggestions = this.getCurrentSuggestions();
-        if (!_planning_result_js__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"].isEquivalent(this.currentSuggestions, suggestions)) {
-            this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
-            this.currentSuggestions = suggestions;
-        }
-    }
-    _initSuggestionComposer() {
-        const composer = this.arc.pec.slotComposer;
-        if (composer && composer.findContextById('rootslotid-suggestions')) {
-            this.suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestionComposer"](this.arc, composer);
-            this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
-        }
+    updateProvidedContexts() {
+        // The hosted context provided by hosted slots is updated as part of the transformation.
     }
 }
-//# sourceMappingURL=plan-consumer.js.map
+//# sourceMappingURL=hosted-slot-consumer.js.map
 
 /***/ }),
 /* 244 */
@@ -84771,9 +85127,71 @@ class PlanConsumer {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotContext", function() { return HostedSlotContext; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(236);
+/* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(243);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class HostedSlotContext extends _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["SlotContext"] {
+    // This is a context of a hosted slot, can only contain a hosted slot.
+    constructor(id, providedSpec, hostedSlotConsumer) {
+        super(id, providedSpec.name, providedSpec.tags, /* container= */ null, providedSpec, hostedSlotConsumer);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.sourceSlotConsumer instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__["HostedSlotConsumer"]);
+        const hostedSourceSlotConsumer = this.sourceSlotConsumer;
+        if (hostedSourceSlotConsumer.storeId) {
+            // TODO(mmandlis): This up-cast is dangerous. Why do we need to fake a Handle here?
+            this.handles = [{ id: hostedSourceSlotConsumer.storeId }];
+        }
+    }
+}
+//# sourceMappingURL=hosted-slot-context.js.map
+
+/***/ }),
+/* 245 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StrategyExplorerAdapter", function() { return StrategyExplorerAdapter; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class StrategyExplorerAdapter {
+    static processGenerations(generations, devtoolsChannel, options = {}) {
+        devtoolsChannel.send({
+            messageType: 'generations',
+            messageBody: { results: generations, options },
+        });
+    }
+}
+//# sourceMappingURL=strategy-explorer-adapter.js.map
+
+/***/ }),
+/* 246 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanningResult", function() { return PlanningResult; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(245);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(247);
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(180);
 /* harmony import */ var _suggestion_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(230);
 /**
@@ -85035,13 +85453,13 @@ class PlanningResult {
 //# sourceMappingURL=planning-result.js.map
 
 /***/ }),
-/* 245 */
+/* 247 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
-/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(246);
+/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(248);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -85057,7 +85475,7 @@ const logFactory = (...args) => factory(...args);
 
 
 /***/ }),
-/* 246 */
+/* 248 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -85180,7 +85598,350 @@ const walker = (node, tree) => {
 
 
 /***/ }),
-/* 247 */
+/* 249 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcStoresFetcher", function() { return ArcStoresFetcher; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ArcStoresFetcher {
+    constructor(arc, arcDevtoolsChannel) {
+        this.arc = arc;
+        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
+            messageType: 'fetch-stores-result',
+            messageBody: await this._listStores()
+        }));
+    }
+    async _listStores() {
+        const find = manifest => {
+            let tags = [...manifest.storeTags];
+            if (manifest.imports) {
+                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
+            }
+            return tags;
+        };
+        return {
+            arcStores: await this._digestStores(this.arc.storeTags),
+            contextStores: await this._digestStores(find(this.arc.context))
+        };
+    }
+    async _digestStores(stores) {
+        const result = [];
+        for (const [store, tags] of stores) {
+            let value = `(don't know how to dereference)`;
+            if (store.toList) {
+                value = await store.toList();
+            }
+            else if (store.get) {
+                value = await store.get();
+            }
+            result.push({
+                name: store.name,
+                tags: tags ? [...tags] : [],
+                id: store.id,
+                storage: store.storageKey,
+                type: store.type,
+                description: store.description,
+                value
+            });
+        }
+        return result;
+    }
+}
+//# sourceMappingURL=arc-stores-fetcher.js.map
+
+/***/ }),
+/* 250 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planificator", function() { return Planificator; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(251);
+/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(253);
+/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(246);
+/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(254);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+class Planificator {
+    constructor(arc, userid, store, searchStore, onlyConsumer = false, debug = false) {
+        this.search = null;
+        // In <0.6 shell, this is needed to backward compatibility, in order to (1)
+        // (1) trigger replanning with a local producer and (2) notify shell of the
+        // last activated plan, to allow serialization.
+        // TODO(mmandlis): Is this really needed in the >0.6 shell?
+        this.arcCallback = this._onPlanInstantiated.bind(this);
+        this.arc = arc;
+        this.userid = userid;
+        this.searchStore = searchStore;
+        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"](store);
+        if (!onlyConsumer) {
+            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](this.arc, this.result, searchStore, { debug });
+            this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__["ReplanQueue"](this.producer);
+            this.dataChangeCallback = () => this.replanQueue.addChange();
+            this._listenToArcStores();
+        }
+        this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](this.arc, this.result);
+        this.lastActivatedPlan = null;
+        this.arc.registerInstantiatePlanCallback(this.arcCallback);
+    }
+    static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null.');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'User id cannot be null.');
+        debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
+        const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
+        const searchStore = await Planificator._initSearchStore(arc, userid);
+        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
+        await planificator.loadSuggestions();
+        planificator.requestPlanning({ contextual: true });
+        return planificator;
+    }
+    async requestPlanning(options = {}) {
+        if (!this.consumerOnly) {
+            await this.producer.produceSuggestions(options);
+        }
+    }
+    get consumerOnly() { return !Boolean(this.producer); }
+    async loadSuggestions() {
+        return this.result.load();
+    }
+    async setSearch(search) {
+        search = search ? search.toLowerCase().trim() : null;
+        search = (search !== '') ? search : null;
+        if (this.search !== search) {
+            this.search = search;
+            await this._storeSearch();
+            const showAll = this.search === '*';
+            const filter = showAll ? null : this.search;
+            this.consumer.setSuggestFilter(showAll, filter);
+        }
+    }
+    registerSuggestionsChangedCallback(callback) {
+        this.consumer.registerSuggestionsChangedCallback(callback);
+    }
+    registerVisibleSuggestionsChangedCallback(callback) {
+        this.consumer.registerVisibleSuggestionsChangedCallback(callback);
+    }
+    dispose() {
+        this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
+        if (!this.consumerOnly) {
+            this._unlistenToArcStores();
+            this.producer.dispose();
+        }
+        this.consumer.dispose();
+        this.result.dispose();
+    }
+    async deleteAll() {
+        await this.producer.result.clear();
+        this.setSearch(null);
+    }
+    getLastActivatedPlan() {
+        return { plan: this.lastActivatedPlan };
+    }
+    _onPlanInstantiated(plan) {
+        this.lastActivatedPlan = plan;
+        this.requestPlanning();
+    }
+    _listenToArcStores() {
+        this.arc.onDataChange(this.dataChangeCallback, this);
+        this.arc.context.allStores.forEach(store => {
+            if (store.on) { // #2141: some are StorageStubs.
+                store.on('change', this.dataChangeCallback, this);
+            }
+        });
+    }
+    _unlistenToArcStores() {
+        this.arc.clearDataChange(this);
+        this.arc.context.allStores.forEach(store => {
+            if (store.off) { // #2141: some are StorageStubs.
+                store.off('change', this.dataChangeCallback);
+            }
+        });
+    }
+    static constructSuggestionKey(arc, userid, storageKeyBase) {
+        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        const keybase = arc.storageProviderFactory.parseStringAsKey(storageKeyBase || arcStorageKey.base());
+        return keybase.childKeyForSuggestions(userid, arcStorageKey.arcId);
+    }
+    static constructSearchKey(arc, userid) {
+        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        const keybase = arc.storageProviderFactory.parseStringAsKey(arcStorageKey.base());
+        return keybase.childKeyForSearch(userid);
+    }
+    static async _initSuggestStore(arc, userid, storageKeyBase) {
+        const storageKey = Planificator.constructSuggestionKey(arc, userid, storageKeyBase);
+        return Planificator._initStore(arc, 'suggestions-id', _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"].make(['Suggestions'], { current: 'Object' }), storageKey);
+    }
+    static async _initSearchStore(arc, userid) {
+        const storageKey = Planificator.constructSearchKey(arc, userid);
+        return Planificator._initStore(arc, 'search-id', _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"].make(['Search'], { current: 'Object' }), storageKey);
+    }
+    static async _initStore(arc, id, type, storageKey) {
+        const store = await arc.storageProviderFactory.connectOrConstruct(id, type, storageKey.toString());
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${storageKey.toString()}' store.`);
+        store.referenceMode = false;
+        return store;
+    }
+    async _storeSearch() {
+        const values = await this.searchStore.get() || [];
+        const arcKey = this.arc.arcId;
+        const newValues = [];
+        for (const { arc, search } of values) {
+            if (arc !== arcKey) {
+                newValues.push({ arc, search });
+            }
+        }
+        if (this.search) {
+            newValues.push({ search: this.search, arc: arcKey });
+        }
+        return this.searchStore.set(newValues);
+    }
+}
+//# sourceMappingURL=planificator.js.map
+
+/***/ }),
+/* 251 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanConsumer", function() { return PlanConsumer; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(246);
+/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(252);
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
+/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(245);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+class PlanConsumer {
+    constructor(arc, result) {
+        // Callback is triggered when planning results have changed.
+        this.suggestionsChangeCallbacks = [];
+        // Callback is triggered when suggestions visible to the user have changed.
+        this.visibleSuggestionsChangeCallbacks = [];
+        this.suggestionComposer = null;
+        this.currentSuggestions = [];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result, 'result cannot be null');
+        this.arc = arc;
+        this.result = result;
+        this.suggestFilter = { showAll: false };
+        this.suggestionsChangeCallbacks = [];
+        this.visibleSuggestionsChangeCallbacks = [];
+        this._initSuggestionComposer();
+        this.result.registerChangeCallback(() => this.onSuggestionsChanged());
+    }
+    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
+    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
+    setSuggestFilter(showAll, search) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!showAll || !search);
+        if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
+            return;
+        }
+        this.suggestFilter = { showAll, search };
+        this._onMaybeSuggestionsChanged();
+    }
+    onSuggestionsChanged() {
+        this._onSuggestionsChanged();
+        this._onMaybeSuggestionsChanged();
+        if (this.result.generations.length && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected) {
+            _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get().forArc(this.arc));
+        }
+    }
+    getCurrentSuggestions() {
+        const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0
+            && this.arc.modality.isCompatible(suggestion.plan.modality.map(m => m.name)));
+        // `showAll`: returns all suggestions that render into slots.
+        if (this.suggestFilter['showAll']) {
+            // Should filter out suggestions produced by search phrases?
+            return suggestions;
+        }
+        // search filter non empty: match plan search phrase or description text.
+        if (this.suggestFilter['search']) {
+            return suggestions.filter(suggestion => suggestion.descriptionText.toLowerCase().includes(this.suggestFilter['search']) ||
+                suggestion.hasSearch(this.suggestFilter['search']));
+        }
+        return suggestions.filter(suggestion => {
+            const usesHandlesFromActiveRecipe = suggestion.plan.handles.find(handle => {
+                // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
+                // either by tagging or by exploring connection directions etc.
+                return !!handle.id &&
+                    !!this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
+            });
+            const usesRemoteNonRootSlots = suggestion.plan.slots.find(slot => {
+                return !slot.name.includes('root') && !slot.tags.includes('root') &&
+                    slot.id && !slot.id.includes('root') &&
+                    Boolean(this.arc.pec.slotComposer.findContextById(slot.id));
+            });
+            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
+            return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
+        });
+    }
+    dispose() {
+        this.suggestionsChangeCallbacks = [];
+        this.visibleSuggestionsChangeCallbacks = [];
+        if (this.suggestionComposer) {
+            this.suggestionComposer.clear();
+        }
+    }
+    _onSuggestionsChanged() {
+        this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
+    }
+    _onMaybeSuggestionsChanged() {
+        const suggestions = this.getCurrentSuggestions();
+        if (!_planning_result_js__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"].isEquivalent(this.currentSuggestions, suggestions)) {
+            this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
+            this.currentSuggestions = suggestions;
+        }
+    }
+    _initSuggestionComposer() {
+        const composer = this.arc.pec.slotComposer;
+        if (composer && composer.findContextById('rootslotid-suggestions')) {
+            this.suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestionComposer"](this.arc, composer);
+            this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
+        }
+    }
+}
+//# sourceMappingURL=plan-consumer.js.map
+
+/***/ }),
+/* 252 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -85265,33 +86026,7 @@ class SuggestionComposer {
 //# sourceMappingURL=suggestion-composer.js.map
 
 /***/ }),
-/* 248 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StrategyExplorerAdapter", function() { return StrategyExplorerAdapter; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class StrategyExplorerAdapter {
-    static processGenerations(generations, devtoolsChannel, options = {}) {
-        devtoolsChannel.send({
-            messageType: 'generations',
-            messageBody: { results: generations, options },
-        });
-    }
-}
-//# sourceMappingURL=strategy-explorer-adapter.js.map
-
-/***/ }),
-/* 249 */
+/* 253 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -85299,11 +86034,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanProducer", function() { return PlanProducer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _strategies_init_search_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(218);
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(245);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(247);
 /* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(209);
 /* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(208);
-/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(244);
-/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(250);
+/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(246);
+/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(231);
 /* harmony import */ var _speculator_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(228);
 /**
  * @license
@@ -85470,618 +86205,6 @@ class PlanProducer {
     }
 }
 //# sourceMappingURL=plan-producer.js.map
-
-/***/ }),
-/* 250 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeIndex", function() { return RecipeIndex; });
-/* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(34);
-/* harmony import */ var _arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-/* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(251);
-/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
-/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(248);
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(49);
-/* harmony import */ var _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(211);
-/* harmony import */ var _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(221);
-/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(182);
-/* harmony import */ var _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(225);
-/* harmony import */ var _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(216);
-/* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(210);
-/* harmony import */ var _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(185);
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(29);
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(180);
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(46);
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(3);
-/* harmony import */ var _plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(244);
-/* harmony import */ var _modality_handler_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(232);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class RelevantContextRecipes extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategy"] {
-    constructor(context, modality) {
-        super();
-        this._recipes = [];
-        for (let recipe of context.allRecipes) {
-            if (!recipe.isCompatible(modality)) {
-                continue;
-            }
-            recipe = recipe.clone();
-            const options = { errors: new Map() };
-            if (recipe.normalize(options)) {
-                this._recipes.push(recipe);
-            }
-            else {
-                console.warn(`could not normalize a context recipe: ${[...options.errors.values()].join('\n')}.\n${recipe.toString()}`);
-            }
-        }
-    }
-    async generate({ generation }) {
-        if (generation !== 0) {
-            return [];
-        }
-        return this._recipes.map(recipe => ({
-            result: recipe,
-            score: 1,
-            derivation: [{ strategy: this, parent: undefined }],
-            hash: recipe.digest(),
-            valid: Object.isFrozen(recipe),
-        }));
-    }
-}
-// tslint:disable-next-line: variable-name
-const IndexStrategies = [
-    _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__["ConvertConstraintsToConnections"],
-    _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__["AddMissingHandles"],
-    _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_8__["ResolveRecipe"],
-    _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__["MatchFreeHandlesToConnections"],
-    // This one is not in-line with 'transparent' interfaces, but it operates on
-    // recipes without looking at the context and cannot run after AddUseHandles.
-    // We will revisit this list when we take a stab at recipe interfaces.
-    _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__["CreateHandleGroup"]
-];
-class RecipeIndex {
-    constructor(arc) {
-        this._isReady = false;
-        const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__["Tracing"].start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
-        const arcStub = new _arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"]({
-            id: 'index-stub',
-            context: new _manifest_js__WEBPACK_IMPORTED_MODULE_0__["Manifest"]({ id: 'empty-context' }),
-            loader: arc.loader,
-            slotComposer: new _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"]({
-                modalityHandler: _modality_handler_js__WEBPACK_IMPORTED_MODULE_18__["ModalityHandler"].createHeadlessHandler(),
-                noRoot: true
-            }),
-            // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
-            speculative: true
-        });
-        const strategizer = new _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"]([
-            new RelevantContextRecipes(arc.context, arc.modality),
-            ...IndexStrategies.map(S => new S(arcStub, { recipeIndex: this }))
-        ], [], _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__["Empty"]);
-        this.ready = trace.endWith(new Promise(async (resolve) => {
-            const generations = [];
-            do {
-                const record = await strategizer.generate();
-                generations.push({ record, generated: strategizer.generated });
-            } while (strategizer.generated.length + strategizer.terminal.length > 0);
-            if (_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].isConnected) {
-                _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(_plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__["PlanningResult"].formatSerializableGenerations(generations), _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].get().forArc(arc), { label: 'Index', keep: true });
-            }
-            const population = strategizer.population;
-            const candidates = new Set(population);
-            for (const result of population) {
-                for (const deriv of result.derivation) {
-                    if (deriv.parent)
-                        candidates.delete(deriv.parent);
-                }
-            }
-            this._recipes = [...candidates].map(r => r.result);
-            this._isReady = true;
-            resolve(true);
-        }));
-    }
-    static create(arc) {
-        return new RecipeIndex(arc);
-    }
-    get recipes() {
-        if (!this._isReady)
-            throw Error('await on recipeIndex.ready before accessing');
-        return this._recipes;
-    }
-    ensureReady() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(this._isReady, 'await on recipeIndex.ready before accessing');
-    }
-    /**
-     * Given provided handle and requested fates, finds handles with
-     * matching type and requested fate.
-     */
-    findHandleMatch(handle, requestedFates) {
-        this.ensureReady();
-        const particleNames = handle.connections.map(conn => conn.particle.name);
-        const results = [];
-        for (const recipe of this._recipes) {
-            if (recipe.particles.some(particle => !particle.name)) {
-                // Skip recipes where not all verbs are resolved to specific particles
-                // to avoid trying to coalesce a recipe with itself.
-                continue;
-            }
-            for (const otherHandle of recipe.handles) {
-                if (requestedFates && !(requestedFates.includes(otherHandle.fate))) {
-                    continue;
-                }
-                if (!this.doesHandleMatch(handle, otherHandle)) {
-                    continue;
-                }
-                // If we're connecting the same sets of particles, that's probably not OK.
-                // This is a poor workaround for connecting the exact same recipes together, to be improved.
-                const otherParticleNames = otherHandle.connections.map(conn => conn.particle.name);
-                const connectedParticles = new Set([...particleNames, ...otherParticleNames]);
-                if (connectedParticles.size === particleNames.length
-                    && particleNames.length === otherParticleNames.length)
-                    continue;
-                results.push(otherHandle);
-            }
-        }
-        return results;
-    }
-    doesHandleMatch(handle, otherHandle) {
-        if (Boolean(handle.id) && Boolean(otherHandle.id) && handle.id !== otherHandle.id) {
-            // Either at most one of the handles has an ID, or they are the same.
-            return false;
-        }
-        // TODO was otherHandle.name, is localName correct
-        if (otherHandle.connections.length === 0 || otherHandle.localName === 'descriptions') {
-            return false;
-        }
-        // If we're connecting only create/use/? handles, we require communication.
-        // We don't do that if at least one handle is map/copy, as in such case
-        // everyone can be a reader.
-        // We inspect both fate and originalFate as copy ends up as use in an
-        // active recipe, and ? could end up as anything.
-        const fates = [handle.originalFate, handle.fate, otherHandle.originalFate, otherHandle.fate];
-        if (!fates.includes('copy') && !fates.includes('map')) {
-            const counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(handle);
-            const otherCounts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(otherHandle);
-            // Someone has to read and someone has to write.
-            if (otherCounts.in + counts.in === 0 || otherCounts.out + counts.out === 0) {
-                return false;
-            }
-        }
-        // If requesting handle has tags, we should have overlap.
-        if (handle.tags.length > 0 && !handle.tags.some(t => otherHandle.tags.includes(t))) {
-            return false;
-        }
-        // If types don't match.
-        if (!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(handle.mappedType, [...handle.connections, ...otherHandle.connections])) {
-            return false;
-        }
-        return true;
-    }
-    /**
-     * Given a slot, find consume slot connections that could be connected to it.
-     */
-    findConsumeSlotConnectionMatch(slot) {
-        this.ensureReady();
-        const consumeConns = [];
-        for (const recipe of this._recipes) {
-            if (recipe.particles.some(particle => !particle.name)) {
-                // Skip recipes where not all verbs are resolved to specific particles
-                // to avoid trying to coalesce a recipe with itself.
-                continue;
-            }
-            for (const slotConn of recipe.slotConnections) {
-                if (!slotConn.targetSlot && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].specMatch(slotConn, slot) && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].tagsOrNameMatch(slotConn, slot)) {
-                    const matchingHandles = [];
-                    if (!_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].handlesMatch(slotConn, slot)) {
-                        // Find potential handle connections to coalesce
-                        slot.handleConnections.forEach(slotHandleConn => {
-                            const matchingConns = Object.values(slotConn.particle.connections).filter(particleConn => {
-                                return particleConn.direction !== 'host'
-                                    && (!particleConn.handle || !particleConn.handle.id || particleConn.handle.id === slotHandleConn.handle.id)
-                                    && _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(slotHandleConn.handle.mappedType, [particleConn]);
-                            });
-                            matchingConns.forEach(matchingConn => {
-                                if (this._fatesAndDirectionsMatch(slotHandleConn, matchingConn)) {
-                                    matchingHandles.push({ handle: slotHandleConn.handle, matchingConn });
-                                }
-                            });
-                        });
-                        if (matchingHandles.length === 0) {
-                            continue;
-                        }
-                    }
-                    consumeConns.push({ slotConn, matchingHandles });
-                }
-            }
-        }
-        return consumeConns;
-    }
-    findProvidedSlot(slotConn) {
-        this.ensureReady();
-        const providedSlots = [];
-        for (const recipe of this._recipes) {
-            if (recipe.particles.some(particle => !particle.name)) {
-                // Skip recipes where not all verbs are resolved to specific particles
-                // to avoid trying to coalesce a recipe with itself.
-                continue;
-            }
-            for (const consumeConn of recipe.slotConnections) {
-                for (const providedSlot of Object.values(consumeConn.providedSlots)) {
-                    if (_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].slotMatches(slotConn, providedSlot)) {
-                        providedSlots.push(providedSlot);
-                    }
-                }
-            }
-        }
-        return providedSlots;
-    }
-    /**
-     * Helper function that determines whether handle connections in a provided slot
-     * and a potential consuming slot connection could be match, considering their fates and directions.
-     *
-     * - `slotHandleConn` is a handle connection restricting the provided slot.
-     * - `matchingHandleConn` - a handle connection of a particle, whose slot connection is explored
-     *    as a potential match to a slot above.
-     */
-    _fatesAndDirectionsMatch(slotHandleConn, matchingHandleConn) {
-        const matchingHandle = matchingHandleConn.handle;
-        const allMatchingHandleConns = matchingHandle ? matchingHandle.connections : [matchingHandleConn];
-        const matchingHandleConnsHasOutput = allMatchingHandleConns.find(conn => ['out', 'inout'].includes(conn.direction));
-        switch (slotHandleConn.handle.fate) {
-            case 'create':
-                // matching handle not defined or its fate is 'create' or '?'.
-                return !matchingHandle || ['use', '?'].includes(matchingHandle.fate);
-            case 'use':
-                // matching handle is not defined or its fate is either 'use' or '?'.
-                return !matchingHandle || ['use', '?'].includes(matchingHandle.fate);
-            case 'copy':
-                // Any handle fate, except explicit 'create'.
-                return !matchingHandle || matchingHandle.fate !== 'create';
-            case 'map':
-                // matching connections don't have output direction and matching handle's fate isn't copy.
-                return !matchingHandleConnsHasOutput && (!matchingHandle || matchingHandle.fate !== 'copy');
-            case '?':
-                return false;
-            default:
-                throw new Error(`Unexpected fate ${slotHandleConn.handle.fate}`);
-        }
-    }
-    get coalescableFates() {
-        return ['create', 'use', '?'];
-    }
-    findCoalescableHandles(recipe, otherRecipe, usedHandles) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(recipe !== otherRecipe, 'Cannot coalesce handles in the same recipe');
-        const otherToHandle = new Map();
-        usedHandles = usedHandles || new Set();
-        for (const handle of recipe.handles) {
-            if (usedHandles.has(handle) || !this.coalescableFates.includes(handle.fate)) {
-                continue;
-            }
-            for (const otherHandle of otherRecipe.handles) {
-                if (usedHandles.has(otherHandle) || !this.coalescableFates.includes(otherHandle.fate)) {
-                    continue;
-                }
-                if (this.doesHandleMatch(handle, otherHandle)) {
-                    otherToHandle.set(handle, otherHandle);
-                    usedHandles.add(handle);
-                    usedHandles.add(otherHandle);
-                }
-            }
-        }
-        return otherToHandle;
-    }
-}
-//# sourceMappingURL=recipe-index.js.map
-
-/***/ }),
-/* 251 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotComposer", function() { return SlotComposer; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _modality_handler_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(232);
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(235);
-/* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(252);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class SlotComposer {
-    /**
-     * |options| must contain:
-     * - modalityName: the UI modality the slot-composer renders to (for example: dom).
-     * - modalityHandler: the handler for UI modality the slot-composer renders to.
-     * - rootContainer: the top level container to be used for slots.
-     * and may contain:
-     * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
-     */
-    constructor(options) {
-        this._consumers = [];
-        this._contexts = [];
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(options.modalityHandler && options.modalityHandler.constructor === _modality_handler_js__WEBPACK_IMPORTED_MODULE_2__["ModalityHandler"], `Missing or invalid modality handler: ${options.modalityHandler.name}`);
-        // TODO: Support rootContext for backward compatibility, remove when unused.
-        options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])((options.rootContainer !== undefined)
-            !==
-                (options.noRoot === true), 'Root container is mandatory unless it is explicitly skipped');
-        this._containerKind = options.containerKind;
-        if (options.modalityName) {
-            this.modality = _modality_js__WEBPACK_IMPORTED_MODULE_1__["Modality"].create([options.modalityName]);
-        }
-        this.modalityHandler = options.modalityHandler;
-        if (options.noRoot) {
-            return;
-        }
-        const containerByName = options.containers
-            || this.modalityHandler.slotConsumerClass.findRootContainers(options.rootContainer) || {};
-        if (Object.keys(containerByName).length === 0) {
-            // fallback to single 'root' slot using the rootContainer.
-            containerByName['root'] = options.rootContainer;
-        }
-        Object.keys(containerByName).forEach(slotName => {
-            this._contexts.push(_slot_context_js__WEBPACK_IMPORTED_MODULE_3__["SlotContext"].createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
-        });
-    }
-    get consumers() { return this._consumers; }
-    get containerKind() { return this._containerKind; }
-    getSlotConsumer(particle, slotName) {
-        return this.consumers.find(s => s.consumeConn.particle === particle && s.consumeConn.name === slotName);
-    }
-    findContainerByName(name) {
-        const contexts = this._contexts.filter(context => context.name === name);
-        if (contexts.length === 0) {
-            // TODO this is a no-op, but throwing here breaks tests
-            console.warn(`No containers for '${name}'`);
-        }
-        else if (contexts.length === 1) {
-            return contexts[0].container;
-        }
-        console.warn(`Ambiguous containers for '${name}'`);
-        return undefined;
-    }
-    findContextById(slotId) {
-        return this._contexts.find(({ id }) => id === slotId);
-    }
-    createHostedSlot(innerArc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, storeId) {
-        const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(transformationSlotConsumer, `Unexpected transformation slot particle ${transformationParticle.name}:${transformationSlotName}, hosted particle ${hostedParticleName}, slot name ${hostedSlotName}`);
-        const hostedSlotId = innerArc.generateID();
-        const hostedSlotConsumer = new _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"](innerArc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId);
-        const outerArc = transformationSlotConsumer.arc;
-        hostedSlotConsumer.renderCallback = outerArc.pec.innerArcRender.bind(outerArc.pec);
-        this._addSlotConsumer(hostedSlotConsumer);
-        const context = this.findContextById(transformationSlotConsumer.consumeConn.targetSlot.id);
-        context.addSlotConsumer(hostedSlotConsumer);
-        return hostedSlotId;
-    }
-    _addSlotConsumer(slot) {
-        slot.startRenderCallback = slot.arc.pec.startRender.bind(slot.arc.pec);
-        slot.stopRenderCallback = slot.arc.pec.stopRender.bind(slot.arc.pec);
-        this._consumers.push(slot);
-    }
-    initializeRecipe(arc, recipeParticles) {
-        const newConsumers = [];
-        // Create slots for each of the recipe's particles slot connections.
-        recipeParticles.forEach(p => {
-            Object.values(p.consumedSlotConnections).forEach(cs => {
-                if (!cs.targetSlot) {
-                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!cs.slotSpec.isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
-                    return;
-                }
-                let slotConsumer = this.consumers.find(slot => slot instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"] && slot.hostedSlotId === cs.targetSlot.id);
-                let transformationSlotConsumer = null;
-                if (slotConsumer && slotConsumer instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"]) {
-                    slotConsumer.consumeConn = cs;
-                    transformationSlotConsumer = slotConsumer.transformationSlotConsumer;
-                }
-                else {
-                    slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
-                    newConsumers.push(slotConsumer);
-                }
-                const providedContexts = slotConsumer.createProvidedContexts();
-                this._contexts = this._contexts.concat(providedContexts);
-                // Slot contexts provided by the HostedSlotConsumer are managed by the transformation.
-                if (transformationSlotConsumer) {
-                    transformationSlotConsumer.providedSlotContexts.push(...providedContexts);
-                    if (transformationSlotConsumer.slotContext.container) {
-                        slotConsumer.startRender();
-                    }
-                }
-            });
-        });
-        // Set context for each of the slots.
-        newConsumers.forEach(consumer => {
-            this._addSlotConsumer(consumer);
-            const context = this.findContextById(consumer.consumeConn.targetSlot.id);
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
-            context.addSlotConsumer(consumer);
-        });
-    }
-    async renderSlot(particle, slotName, content) {
-        const slotConsumer = this.getSlotConsumer(particle, slotName);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
-        await slotConsumer.setContent(content, async (eventlet) => {
-            slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
-            if (eventlet.data && eventlet.data.key) {
-                const hostedConsumers = this.consumers.filter(c => c instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"] && c.transformationSlotConsumer === slotConsumer);
-                for (const hostedConsumer of hostedConsumers) {
-                    if (hostedConsumer instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"] && hostedConsumer.storeId) {
-                        const store = slotConsumer.arc.findStoreById(hostedConsumer.storeId);
-                        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store);
-                        // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc
-                        // tslint:disable-next-line: no-any
-                        const value = await store.get();
-                        if (value && (value.id === eventlet.data.key)) {
-                            slotConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
-                        }
-                    }
-                }
-            }
-        });
-    }
-    getAvailableContexts() {
-        return this._contexts;
-    }
-    dispose() {
-        this.consumers.forEach(consumer => consumer.dispose());
-        this.modalityHandler.slotConsumerClass.dispose();
-        this._contexts.forEach(context => {
-            context.clearSlotConsumers();
-            if (context.container) {
-                this.modalityHandler.slotConsumerClass.clear(context.container);
-            }
-        });
-        this._contexts = this._contexts.filter(c => !c.sourceSlotConsumer);
-        this._consumers = [];
-    }
-}
-//# sourceMappingURL=slot-composer.js.map
-
-/***/ }),
-/* 252 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotConsumer", function() { return HostedSlotConsumer; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(234);
-/* harmony import */ var _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(253);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-class HostedSlotConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotConsumer"] {
-    constructor(arc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId) {
-        super(arc, null, null);
-        this.transformationSlotConsumer = transformationSlotConsumer;
-        this.hostedParticleName = hostedParticleName;
-        this.hostedSlotName = hostedSlotName,
-            this.hostedSlotId = hostedSlotId;
-        // TODO: should this be a list?
-        this.storeId = storeId;
-    }
-    get consumeConn() { return this._consumeConn; }
-    set consumeConn(consumeConn) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._consumeConn, 'Consume connection can be set only once');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedSlotId === consumeConn.targetSlot.id, `Expected target slot ${this.hostedSlotId}, but got ${consumeConn.targetSlot.id}`);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedParticleName === consumeConn.particle.name, `Expected particle ${this.hostedParticleName} for slot ${this.hostedSlotId}, but got ${consumeConn.particle.name}`);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedSlotName === consumeConn.name, `Expected slot ${this.hostedSlotName} for slot ${this.hostedSlotId}, but got ${consumeConn.name}`);
-        this._consumeConn = consumeConn;
-    }
-    async setContent(content, handler) {
-        if (this.renderCallback) {
-            this.renderCallback(this.transformationSlotConsumer.consumeConn.particle, this.transformationSlotConsumer.consumeConn.name, this.hostedSlotId, this.transformationSlotConsumer.formatHostedContent(this, content));
-        }
-        return null;
-    }
-    constructRenderRequest() {
-        return this.transformationSlotConsumer.constructRenderRequest(this);
-    }
-    getInnerContainer(name) {
-        const innerContainer = this.transformationSlotConsumer.getInnerContainer(name);
-        if (innerContainer && this.storeId) {
-            // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
-            // tslint:disable-next-line: no-any
-            const subId = this.arc.findStoreById(this.storeId)._stored.id;
-            return innerContainer[subId];
-        }
-        return innerContainer;
-    }
-    createProvidedContexts() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.consumeConn, `Cannot create provided context without consume connection for hosted slot ${this.hostedSlotId}`);
-        return this.consumeConn.slotSpec.providedSlots.map(providedSpec => new _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_2__["HostedSlotContext"](this.consumeConn.providedSlots[providedSpec.name].id, providedSpec, this));
-    }
-    updateProvidedContexts() {
-        // The hosted context provided by hosted slots is updated as part of the transformation.
-    }
-}
-//# sourceMappingURL=hosted-slot-consumer.js.map
-
-/***/ }),
-/* 253 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotContext", function() { return HostedSlotContext; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(235);
-/* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(252);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-class HostedSlotContext extends _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["SlotContext"] {
-    // This is a context of a hosted slot, can only contain a hosted slot.
-    constructor(id, providedSpec, hostedSlotConsumer) {
-        super(id, providedSpec.name, providedSpec.tags, /* container= */ null, providedSpec, hostedSlotConsumer);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.sourceSlotConsumer instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__["HostedSlotConsumer"]);
-        const hostedSourceSlotConsumer = this.sourceSlotConsumer;
-        if (hostedSourceSlotConsumer.storeId) {
-            // TODO(mmandlis): This up-cast is dangerous. Why do we need to fake a Handle here?
-            this.handles = [{ id: hostedSourceSlotConsumer.storeId }];
-        }
-    }
-}
-//# sourceMappingURL=hosted-slot-context.js.map
 
 /***/ }),
 /* 254 */
@@ -87392,7 +87515,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _build_runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(198);
 /* harmony import */ var _build_runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(201);
 /* harmony import */ var _build_runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(202);
-/* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(245);
+/* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(247);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.

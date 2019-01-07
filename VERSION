@@ -1,9 +1,5 @@
-commit 8db056b02ad466f5d17003ce585717a20efb6204
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Jan 4 13:02:37 2019 -0800
+commit 4fa30ce0a18b0c667f46bd41cca7a8dd776f6f0f
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Jan 7 11:07:12 2019 +1100
 
-    suggestion-composer test workaround (#2532)
-    
-    * workaround in suggestion-composer test to bypass inner arc strategizing
-    
-    * address comment
+    Recipe editor in DevTools (#2531)
