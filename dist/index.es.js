@@ -26214,17 +26214,24 @@ class SlotComposer {
         assert$1(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
         await slotConsumer.setContent(content, async (eventlet) => {
             slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
+            // This code is a temporary hack implemented in #2011 which allows to route UI events from
+            // multiplexer to hosted particles. Multiplexer assembles UI from multiple pieces rendered
+            // by hosted particles. Hosted particles can render DOM elements with a key containing a
+            // handle ID of the store, which contains the entity they render. The code below attempts
+            // to find the hosted particle using the store matching the 'key' attribute on the event,
+            // which has been extracted from DOM.
+            // TODO: FIXIT!
             if (eventlet.data && eventlet.data.key) {
                 const hostedConsumers = this.consumers.filter(c => c instanceof HostedSlotConsumer && c.transformationSlotConsumer === slotConsumer);
                 for (const hostedConsumer of hostedConsumers) {
                     if (hostedConsumer instanceof HostedSlotConsumer && hostedConsumer.storeId) {
-                        const store = slotConsumer.arc.findStoreById(hostedConsumer.storeId);
+                        const store = hostedConsumer.arc.findStoreById(hostedConsumer.storeId);
                         assert$1(store);
                         // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc
                         // tslint:disable-next-line: no-any
                         const value = await store.get();
                         if (value && (value.id === eventlet.data.key)) {
-                            slotConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
+                            hostedConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
                         }
                     }
                 }

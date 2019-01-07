@@ -1,5 +1,5 @@
-commit 4fa30ce0a18b0c667f46bd41cca7a8dd776f6f0f
+commit b7cff64b4c98284ad2e1f5617208ea276a837da5
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Jan 7 11:07:12 2019 +1100
+Date:   Mon Jan 7 15:43:07 2019 +1100
 
-    Recipe editor in DevTools (#2531)
+    Fixes the hacky event passing and explains it (#2535)
