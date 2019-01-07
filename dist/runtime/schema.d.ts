@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Type } from './type.js';
-import { Entity } from './entity.js';
+import { EntityClass } from './entity.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 export declare class Schema {
     readonly names: string[];
@@ -38,7 +38,9 @@ export declare class Schema {
     equals(otherSchema: Schema): boolean;
     isMoreSpecificThan(otherSchema: Schema): boolean;
     readonly type: Type;
-    entityClass(context?: ParticleExecutionContext): typeof Entity;
-    toInlineSchemaString(options: any): string;
+    entityClass(context?: ParticleExecutionContext): EntityClass;
+    toInlineSchemaString(options?: {
+        hideFields?: boolean;
+    }): string;
     toManifestString(): string;
 }

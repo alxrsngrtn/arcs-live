@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ReferenceMode | arcs</title>
+	<title>EntityStaticInterface | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,49 +56,85 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="referencemode.html">ReferenceMode</a>
+					<a href="entitystaticinterface.html">EntityStaticInterface</a>
 				</li>
 			</ul>
-			<h1>Enumeration ReferenceMode</h1>
+			<h1>Interface EntityStaticInterface</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A set of static methods used by Entity implementations.  These are
+							defined dynamically in Schema.  Required because Typescript does
+						not support abstract statics.</p>
+					</div>
+					<dl class="tsd-comment-tags">
+						<dt>see</dt>
+						<dd><p><a href="https://github.com/Microsoft/TypeScript/issues/14600">https://github.com/Microsoft/TypeScript/issues/14600</a></p>
+						</dd>
+						<dt>see</dt>
+						<dd><p><a href="https://stackoverflow.com/a/13955591">https://stackoverflow.com/a/13955591</a></p>
+						</dd>
+					</dl>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">EntityStaticInterface</span>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Enumeration members</h3>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported"><a href="referencemode.html#stored" class="tsd-kind-icon">Stored</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported"><a href="referencemode.html#unstored" class="tsd-kind-icon">Unstored</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="entitystaticinterface.html#key" class="tsd-kind-icon">key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="entitystaticinterface.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-				<h2>Enumeration members</h2>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported">
-					<a name="stored" class="tsd-anchor"></a>
-					<h3>Stored</h3>
-					<div class="tsd-signature tsd-kind-icon">Stored<span class="tsd-signature-symbol">:</span> </div>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="key" class="tsd-anchor"></a>
+					<h3>key</h3>
+					<div class="tsd-signature tsd-kind-icon">key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f1aa62/src/runtime/reference.ts#L15">runtime/reference.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f1aa62/src/runtime/entity.ts#L36">runtime/entity.ts:36</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>schema<span class="tsd-signature-symbol">: </span><a href="../classes/schema.html" class="tsd-signature-type">Schema</a></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>tag<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported">
-					<a name="unstored" class="tsd-anchor"></a>
-					<h3>Unstored</h3>
-					<div class="tsd-signature tsd-kind-icon">Unstored<span class="tsd-signature-symbol">:</span> </div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="../classes/type.html" class="tsd-signature-type">Type</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f1aa62/src/runtime/reference.ts#L15">runtime/reference.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3f1aa62/src/runtime/entity.ts#L35">runtime/entity.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -116,14 +152,14 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-enum tsd-is-not-exported">
-						<a href="referencemode.html" class="tsd-kind-icon">Reference<wbr>Mode</a>
+					<li class="current tsd-kind-interface">
+						<a href="entitystaticinterface.html" class="tsd-kind-icon">Entity<wbr>Static<wbr>Interface</a>
 						<ul>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported">
-								<a href="referencemode.html#stored" class="tsd-kind-icon">Stored</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="entitystaticinterface.html#key" class="tsd-kind-icon">key</a>
 							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-not-exported">
-								<a href="referencemode.html#unstored" class="tsd-kind-icon">Unstored</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="entitystaticinterface.html#type" class="tsd-kind-icon">type</a>
 							</li>
 						</ul>
 					</li>

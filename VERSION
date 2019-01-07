@@ -1,5 +1,8 @@
-commit b7cff64b4c98284ad2e1f5617208ea276a837da5
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Jan 7 15:43:07 2019 +1100
+commit 3f1aa62ffba8fbde87ecf207deffab0802a84994
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Jan 7 02:33:09 2019 -0800
 
-    Fixes the hacky event passing and explains it (#2535)
+    Implement much better type handling for dynamic entities code (#2529)
+    
+    - The signature of entityClass includes the static get properties now
+    - Major blocker to converting a number of tests
