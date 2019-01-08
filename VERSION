@@ -1,5 +1,5 @@
-commit 394a0c7e80378157e6b0ebebf85061dfd4a11992
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jan 7 20:25:41 2019 -0800
+commit a2a64bcf825f91134819fc52613ea5dbec4b5db4
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Jan 8 09:48:43 2019 -0800
 
-    arc-host to deserialize plan before instantiating (#2539)
+    convert type-test to typescript (#2536)
