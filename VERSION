@@ -1,9 +1,9 @@
-commit 7b9dbb2c4320f1301762da1bcb3d569ff8ca67ee
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jan 7 17:59:07 2019 -0800
+commit 44cdfcceacb12577b94790022477b873d7a3af09
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Jan 8 15:02:54 2019 +1100
 
-    exclude undefined versions from suggestions (#2537)
+    Make tests more hermetic (#2540)
     
-    - skip when generating versionByStore map in Relevance
-    - for backward compatibility, omit in undefined version in Suggestion constructor
-    (for example, this happens for hosted particle stores)
+    * Make tests more hermetic: initialisers with potential side effects should only be invoked when the given tests are run.
+    
+    * Add comment with the rationale behind using 'before' for globals
