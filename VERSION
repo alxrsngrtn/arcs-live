@@ -1,8 +1,9 @@
-commit 3f1aa62ffba8fbde87ecf207deffab0802a84994
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Jan 7 02:33:09 2019 -0800
+commit 7b9dbb2c4320f1301762da1bcb3d569ff8ca67ee
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jan 7 17:59:07 2019 -0800
 
-    Implement much better type handling for dynamic entities code (#2529)
+    exclude undefined versions from suggestions (#2537)
     
-    - The signature of entityClass includes the static get properties now
-    - Major blocker to converting a number of tests
+    - skip when generating versionByStore map in Relevance
+    - for backward compatibility, omit in undefined version in Suggestion constructor
+    (for example, this happens for hosted particle stores)

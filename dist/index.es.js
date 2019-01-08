@@ -24234,7 +24234,7 @@ class Relevance {
         const relevance = new Relevance();
         const versionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
         recipe.handles.forEach(handle => {
-            if (handle.id) {
+            if (handle.id && versionByStore[handle.id] !== undefined) {
                 relevance.versionByStore[handle.id] = versionByStore[handle.id];
             }
         });
@@ -24342,6 +24342,13 @@ class Suggestion {
         this.hash = hash;
         this.rank = rank;
         this.versionByStore = versionByStore;
+        // TODO(mmandlis): backward compatility for existing suggestions that include undefined
+        // versions. Code can be deleted, after we upgrade above 0_6 or wipe out the storage.
+        for (const store in this.versionByStore) {
+            if (this.versionByStore[store] === undefined) {
+                delete this.versionByStore[store];
+            }
+        }
     }
     static create(plan, hash, relevance) {
         assert$1(plan, `plan cannot be null`);
