@@ -25722,70 +25722,62 @@ class SuggestDomConsumer extends SlotDomConsumer {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 class MockSlotDomConsumer extends SlotDomConsumer {
-  constructor(arc, consumeConn) {
-    super(arc, consumeConn);
-    this._content = {};
-    this.contentAvailable = new Promise(resolve => this._contentAvailableResolve = resolve);
-  }
-
-  setContent(content, handler, description) {
-    super.setContent(content, handler);
-
-    // Mimics the behaviour of DomSlotConsumer::setContent, where template is only set at first,
-    // and model is overriden every time.
-    if (content) {
-      this._content.templateName = content.templateName;
-      if (content.template) {
-        this._content.template = content.template;
-      }
-      this._content.model = content.model;
-      this._contentAvailableResolve();
-    } else {
-      this._content = {};
+    constructor(arc, consumeConn) {
+        super(arc, consumeConn);
+        this._content = {};
+        this.contentAvailable = new Promise(resolve => this._contentAvailableResolve = resolve);
     }
-  }
-
-  createNewContainer(container, subId) {
-    return container;
-  }
-
-  isSameContainer(container, contextContainer) {
-    return container == contextContainer;
-  }
-
-  getInnerContainer(slotId) {
-    const model = this.renderings.map(([subId, {model}]) => model)[0];
-    const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
-    if (!providedContext) {
-      console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);
-      return;
+    setContent(content, handler, description) {
+        super.setContent(content, handler);
+        // Mimics the behaviour of DomSlotConsumer::setContent, where template is only set at first,
+        // and model is overriden every time.
+        if (content) {
+            this._content.templateName = content.templateName;
+            if (content.template) {
+                this._content.template = content.template;
+            }
+            this._content.model = content.model;
+            this._contentAvailableResolve();
+        }
+        else {
+            this._content = {};
+        }
     }
-    if (providedContext.spec.isSet && model && model.items && model.items.models) {
-      const innerContainers = {};
-      for (const itemModel of model.items.models) {
-        assert$1(itemModel.id);
-        innerContainers[itemModel.id] = itemModel.id;
-      }
-      return innerContainers;
+    createNewContainer(container, subId) {
+        return container;
     }
-    return slotId;
-  }
-
-  createTemplateElement(template) {
-    return template;
-  }
-
-  static findRootContainers(container) {
-    return container;
-  }
-
-  static clear(container) {}
-  _onUpdate(rendering) {}
-  _stampTemplate(template) {}
-  _initMutationObserver() {}
-  _observe() {}
+    isSameContainer(container, contextContainer) {
+        return container === contextContainer;
+    }
+    getInnerContainer(slotId) {
+        const model = this.renderings.map(([subId, { model }]) => model)[0];
+        const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
+        if (!providedContext) {
+            console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);
+            return;
+        }
+        if (providedContext.spec.isSet && model && model.items && model.items.models) {
+            const innerContainers = {};
+            for (const itemModel of model.items.models) {
+                assert$1(itemModel.id);
+                innerContainers[itemModel.id] = itemModel.id;
+            }
+            return innerContainers;
+        }
+        return slotId;
+    }
+    createTemplateElement(template) {
+        return template;
+    }
+    static findRootContainers(container) {
+        return container;
+    }
+    static clear(container) { }
+    _onUpdate(rendering) { }
+    _stampTemplate(template) { }
+    _initMutationObserver() { return null; }
+    _observe() { }
 }
 
 /**
@@ -25797,29 +25789,80 @@ class MockSlotDomConsumer extends SlotDomConsumer {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-// Should this class instead extend SuggestDomConsumer?
-class MockSuggestDomConsumer extends MockSlotDomConsumer {
-  constructor(arc, containerKind, suggestion, suggestionContent, eventHandler) {
-    super(arc, /* consumeConn= */null, containerKind);
-    this._suggestion = suggestion;
-    this._suggestionContent = suggestionContent.template ? suggestionContent : {
-      template: `<dummy-suggestion>${suggestionContent}</dummy-element>`,
-      templateName: 'dummy-suggestion',
-      model: {}
-    };
-  }
-
-  get suggestion() { return this._suggestion; }
-  get templatePrefix() { return 'suggest'; }
-
-  onContainerUpdate(container, originalContainer) {
-    super.onContainerUpdate(container, originalContainer);
-
-    if (container) {
-      this.setContent(this._suggestionContent, this._eventHandler);
+class MockSuggestDomConsumer extends SuggestDomConsumer {
+    constructor(arc, containerKind, suggestion, suggestionContent, eventHandler) {
+        super(arc, containerKind, suggestion, suggestionContent, eventHandler);
+        this._suggestion = suggestion;
+        this._suggestionContent = suggestionContent.template ? suggestionContent : {
+            template: `<dummy-suggestion>${suggestionContent}</dummy-element>`,
+            templateName: 'dummy-suggestion',
+            model: {}
+        };
+        this._setContentPromise = null;
+        this._content = {};
+        this.contentAvailable = new Promise(resolve => this._contentAvailableResolve = resolve);
     }
-  }
+    get suggestion() { return this._suggestion; }
+    get templatePrefix() { return 'suggest'; }
+    onContainerUpdate(container, originalContainer) {
+        super.onContainerUpdate(container, originalContainer);
+        if (container) {
+            this.setContent(this._suggestionContent, this._eventHandler);
+        }
+    }
+    static render(arc, container, plan, content) {
+        return undefined;
+    }
+    async setContent(content, handler) {
+        await super.setContent(content, handler);
+        // Mimics the behaviour of DomSlotConsumer::setContent, where template is only set at first,
+        // and model is overriden every time.
+        if (content) {
+            this._content.templateName = content.templateName;
+            if (content.template) {
+                this._content.template = content.template;
+            }
+            this._content.model = content.model;
+            this._contentAvailableResolve();
+        }
+        else {
+            this._content = {};
+        }
+    }
+    createNewContainer(container, subId) {
+        return container;
+    }
+    isSameContainer(container, contextContainer) {
+        return container === contextContainer;
+    }
+    getInnerContainer(slotId) {
+        const model = this.renderings.map(([subId, { model }]) => model)[0];
+        const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
+        if (!providedContext) {
+            console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);
+            return;
+        }
+        if (providedContext.spec.isSet && model && model.items && model.items.models) {
+            const innerContainers = {};
+            for (const itemModel of model.items.models) {
+                assert$1(itemModel.id);
+                innerContainers[itemModel.id] = itemModel.id;
+            }
+            return innerContainers;
+        }
+        return slotId;
+    }
+    createTemplateElement(template) {
+        return template;
+    }
+    static findRootContainers(container) {
+        return container;
+    }
+    static clear(container) { }
+    _onUpdate(rendering) { }
+    _stampTemplate(template) { }
+    _initMutationObserver() { return null; }
+    _observe() { }
 }
 
 /**
@@ -26149,7 +26192,7 @@ class SlotComposer {
     constructor(options) {
         this._consumers = [];
         this._contexts = [];
-        assert$1(options.modalityHandler && options.modalityHandler.constructor === ModalityHandler, `Missing or invalid modality handler: ${options.modalityHandler.name}`);
+        assert$1(options.modalityHandler && options.modalityHandler.constructor === ModalityHandler, `Missing or invalid modality handler: ${options.modalityHandler}`);
         // TODO: Support rootContext for backward compatibility, remove when unused.
         options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
         assert$1((options.rootContainer !== undefined)

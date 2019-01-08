@@ -9,7 +9,7 @@
  */
 import { Arc } from '../arc.js';
 import { assert } from './chai-web.js';
-import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
+import { MockSlotComposer } from '../testing/mock-slot-composer.js';
 import { HostedSlotConsumer } from '../hosted-slot-consumer.js';
 import { Loader } from '../loader.js';
 import { MockSlotDomConsumer } from '../testing/mock-slot-dom-consumer.js';
@@ -19,7 +19,7 @@ import { StrategyTestHelper } from './strategies/strategy-test-helper.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { TestHelper } from '../testing/test-helper.js';
 async function initSlotComposer(recipeStr) {
-    const slotComposer = new FakeSlotComposer();
+    const slotComposer = new MockSlotComposer({ strict: false }).newExpectations('debug');
     const manifest = await TestHelper.parseManifest(recipeStr, new Loader());
     const loader = new StubLoader({
         '*': `defineParticle(({Particle}) => { return class P extends Particle {} });`
@@ -69,7 +69,7 @@ recipe
         let { arc, slotComposer, plan, startRenderParticles } = await initSlotComposer(manifestStr);
         assert.lengthOf(slotComposer.getAvailableContexts(), 1);
         const verifyContext = (name, expected) => {
-            const context = slotComposer._contexts.find(c => c.name === name);
+            const context = slotComposer.contexts.find(c => c.name === name);
             assert.isNotNull(context);
             assert.equal(expected.sourceSlotName, context.sourceSlotConsumer ? context.sourceSlotConsumer.consumeConn.name : undefined);
             assert.equal(expected.hasContainer, Boolean(context.container));
@@ -90,7 +90,7 @@ recipe
         // render root slot
         const particle = arc.activeRecipe.particles[0];
         const rootSlot = slotComposer.getSlotConsumer(particle, 'root');
-        const mySlotId = slotComposer._contexts.find(ctx => ctx.name === 'mySlot').id;
+        const mySlotId = slotComposer.contexts.find(ctx => ctx.name === 'mySlot').id;
         rootSlot.getInnerContainer = (slotId) => slotId === mySlotId ? 'dummy-inner-container' : null;
         startRenderParticles.length = 0;
         await slotComposer.renderSlot(particle, 'root', { model: { 'foo': 'bar' } });
@@ -102,7 +102,7 @@ recipe
         verifyContext('otherSlot', { hasContainer: false, sourceSlotName: 'root', consumeConnNames: ['C::otherSlot'] });
     });
     it('initialize recipe and render hosted slots', async () => {
-        const slotComposer = new FakeSlotComposer();
+        const slotComposer = new MockSlotComposer({ strict: false }).newExpectations('debug');
         const helper = await TestHelper.createAndPlan({
             manifestFilename: './src/runtime/test/particles/artifacts/products-test.recipes',
             slotComposer
@@ -110,7 +110,7 @@ recipe
         const verifySlot = (fullName) => {
             const slot = slotComposer.consumers.find(s => fullName === s.consumeConn.getQualifiedName());
             assert.equal(MockSlotDomConsumer, slot.constructor);
-            assert.isTrue(Boolean(slotComposer._contexts.find(context => context === slot.slotContext)));
+            assert.isTrue(Boolean(slotComposer.contexts.find(context => context === slot.slotContext)));
         };
         const verifyHostedSlot = (fullName) => {
             const slot = slotComposer.consumers.find(s => fullName === s.consumeConn.getQualifiedName());
@@ -151,7 +151,7 @@ recipe
         assert.deepEqual(['A'], startRenderParticles);
         const [particleA, particleB, particleC] = arc.activeRecipe.particles;
         const rootSlot = slotComposer.getSlotConsumer(particleA, 'root');
-        const itemSlotId = slotComposer._contexts.find(ctx => ctx.name === 'item').id;
+        const itemSlotId = slotComposer.contexts.find(ctx => ctx.name === 'item').id;
         rootSlot.getInnerContainer = (slotId) => slotId === itemSlotId
             ? { 'id1': 'dummy-inner-container-1', 'id2': 'dummy-inner-container-2' }
             : null;
@@ -259,14 +259,14 @@ recipe
           };
         });`
             }),
-            slotComposer: new FakeSlotComposer(),
+            slotComposer: new MockSlotComposer({ strict: false }).newExpectations('debug')
         });
         const [recipe] = arc.context.recipes;
         recipe.normalize();
         await arc.instantiate(recipe);
-        const rootSlotConsumer = slotComposer._contexts.find(c => c.name === 'root').slotConsumers.find(sc => sc.constructor === MockSlotDomConsumer);
+        const rootSlotConsumer = slotComposer.contexts.find(c => c.name === 'root').slotConsumers.find(sc => sc.constructor === MockSlotDomConsumer);
         await rootSlotConsumer.contentAvailable;
-        const detailSlotConsumer = slotComposer._contexts.find(c => c.name === 'detail').slotConsumers.find(sc => sc.constructor === MockSlotDomConsumer);
+        const detailSlotConsumer = slotComposer.contexts.find(c => c.name === 'detail').slotConsumers.find(sc => sc.constructor === MockSlotDomConsumer);
         await detailSlotConsumer.contentAvailable;
         assert.deepEqual(rootSlotConsumer._content, {
             model: {

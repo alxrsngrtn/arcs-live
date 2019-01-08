@@ -1,8 +1,5 @@
-commit 358c691f7419d915385bf2724c7040840abbfbe1
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jan 8 10:31:33 2019 -0800
+commit cbe1a2b200b8deeac402531f0e088f872cf924d5
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Jan 8 13:09:27 2019 -0800
 
-    Refactor description to not rely on Arc instance. (#2541)
-    
-    All relevant store values are fetch during Description initialization.
-    As a nice side effect, most description and description code becomes synchronous.
+     migrate slot/suggest mocks and fakes to typescript (#2542)

@@ -25,11 +25,13 @@ export declare class SlotConsumer {
     readonly arc: Arc;
     constructor(arc: Arc, consumeConn?: SlotConnection, containerKind?: string);
     readonly consumeConn: SlotConnection;
-    getRendering(subId: any): {
+    getRendering(subId?: any): {
         container?: {};
+        model?: any;
     };
     readonly renderings: [string, {
         container?: {};
+        model?: any;
     }][];
     addRenderingBySubId(subId: string | undefined, rendering: any): void;
     onContainerUpdate(newContainer: any, originalContainer: any): void;

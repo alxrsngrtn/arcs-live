@@ -7,29 +7,81 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-'use strict';
-import {MockSlotDomConsumer} from './mock-slot-dom-consumer.js';
-
-// Should this class instead extend SuggestDomConsumer?
-export class MockSuggestDomConsumer extends MockSlotDomConsumer {
-  constructor(arc, containerKind, suggestion, suggestionContent, eventHandler) {
-    super(arc, /* consumeConn= */null, containerKind);
-    this._suggestion = suggestion;
-    this._suggestionContent = suggestionContent.template ? suggestionContent : {
-      template: `<dummy-suggestion>${suggestionContent}</dummy-element>`,
-      templateName: 'dummy-suggestion',
-      model: {}
-    };
-  }
-
-  get suggestion() { return this._suggestion; }
-  get templatePrefix() { return 'suggest'; }
-
-  onContainerUpdate(container, originalContainer) {
-    super.onContainerUpdate(container, originalContainer);
-
-    if (container) {
-      this.setContent(this._suggestionContent, this._eventHandler);
+import { assert } from '../../platform/assert-web.js';
+import { SuggestDomConsumer } from '../suggest-dom-consumer.js';
+export class MockSuggestDomConsumer extends SuggestDomConsumer {
+    constructor(arc, containerKind, suggestion, suggestionContent, eventHandler) {
+        super(arc, containerKind, suggestion, suggestionContent, eventHandler);
+        this._suggestion = suggestion;
+        this._suggestionContent = suggestionContent.template ? suggestionContent : {
+            template: `<dummy-suggestion>${suggestionContent}</dummy-element>`,
+            templateName: 'dummy-suggestion',
+            model: {}
+        };
+        this._setContentPromise = null;
+        this._content = {};
+        this.contentAvailable = new Promise(resolve => this._contentAvailableResolve = resolve);
     }
-  }
+    get suggestion() { return this._suggestion; }
+    get templatePrefix() { return 'suggest'; }
+    onContainerUpdate(container, originalContainer) {
+        super.onContainerUpdate(container, originalContainer);
+        if (container) {
+            this.setContent(this._suggestionContent, this._eventHandler);
+        }
+    }
+    static render(arc, container, plan, content) {
+        return undefined;
+    }
+    async setContent(content, handler) {
+        await super.setContent(content, handler);
+        // Mimics the behaviour of DomSlotConsumer::setContent, where template is only set at first,
+        // and model is overriden every time.
+        if (content) {
+            this._content.templateName = content.templateName;
+            if (content.template) {
+                this._content.template = content.template;
+            }
+            this._content.model = content.model;
+            this._contentAvailableResolve();
+        }
+        else {
+            this._content = {};
+        }
+    }
+    createNewContainer(container, subId) {
+        return container;
+    }
+    isSameContainer(container, contextContainer) {
+        return container === contextContainer;
+    }
+    getInnerContainer(slotId) {
+        const model = this.renderings.map(([subId, { model }]) => model)[0];
+        const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
+        if (!providedContext) {
+            console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);
+            return;
+        }
+        if (providedContext.spec.isSet && model && model.items && model.items.models) {
+            const innerContainers = {};
+            for (const itemModel of model.items.models) {
+                assert(itemModel.id);
+                innerContainers[itemModel.id] = itemModel.id;
+            }
+            return innerContainers;
+        }
+        return slotId;
+    }
+    createTemplateElement(template) {
+        return template;
+    }
+    static findRootContainers(container) {
+        return container;
+    }
+    static clear(container) { }
+    _onUpdate(rendering) { }
+    _stampTemplate(template) { }
+    _initMutationObserver() { return null; }
+    _observe() { }
 }
+//# sourceMappingURL=mock-suggest-dom-consumer.js.map

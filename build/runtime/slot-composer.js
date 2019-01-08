@@ -25,7 +25,7 @@ export class SlotComposer {
     constructor(options) {
         this._consumers = [];
         this._contexts = [];
-        assert(options.modalityHandler && options.modalityHandler.constructor === ModalityHandler, `Missing or invalid modality handler: ${options.modalityHandler.name}`);
+        assert(options.modalityHandler && options.modalityHandler.constructor === ModalityHandler, `Missing or invalid modality handler: ${options.modalityHandler}`);
         // TODO: Support rootContext for backward compatibility, remove when unused.
         options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
         assert((options.rootContainer !== undefined)

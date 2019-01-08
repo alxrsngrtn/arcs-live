@@ -14,12 +14,21 @@ import { SlotContext } from './slot-context.js';
 import { SlotConsumer } from './slot-consumer.js';
 import { HostedSlotConsumer } from './hosted-slot-consumer.js';
 import { Particle } from './recipe/particle.js';
+export declare type SlotComposerOptions = {
+    modalityName?: string;
+    modalityHandler?: ModalityHandler;
+    noRoot?: boolean;
+    rootContainer?: any;
+    rootContext?: any;
+    containerKind?: string;
+    containers?: any;
+};
 export declare class SlotComposer {
     private readonly _containerKind;
     readonly modality: Modality;
     readonly modalityHandler: ModalityHandler;
     private _consumers;
-    private _contexts;
+    protected _contexts: SlotContext[];
     /**
      * |options| must contain:
      * - modalityName: the UI modality the slot-composer renders to (for example: dom).
@@ -28,7 +37,7 @@ export declare class SlotComposer {
      * and may contain:
      * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
      */
-    constructor(options: any);
+    constructor(options: SlotComposerOptions);
     readonly consumers: SlotConsumer[];
     readonly containerKind: string;
     getSlotConsumer(particle: Particle, slotName: string): SlotConsumer;

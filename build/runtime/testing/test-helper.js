@@ -214,7 +214,9 @@ export class TestHelper {
     }
     verifySlots(numConsumers, verifyHandler) {
         assert.lengthOf(this.slotComposer.consumers, numConsumers);
-        this.slotComposer.consumers.forEach(consumer => verifyHandler(consumer.consumeConn.particle.name, consumer.consumeConn.name, consumer._content));
+        for (const consumer of this.slotComposer.consumers) {
+            verifyHandler(consumer.consumeConn.particle.name, consumer.consumeConn.name, consumer._content);
+        }
     }
     // TODO: add more helper methods to verify data and slots.
     log(message) {

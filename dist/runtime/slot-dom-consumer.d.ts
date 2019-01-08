@@ -40,7 +40,7 @@ export declare class SlotDomConsumer extends SlotConsumer {
     initInnerContainers(container: any): void;
     getNodeValue(node: any, name: any): any;
     isDirectInnerSlot(container: any, innerContainer: any): boolean;
-    _initMutationObserver(): MutationObserver;
+    _initMutationObserver(): MutationObserver | null;
     _eventMapper(eventHandler: any, node: any, eventName: any, handlerName: any): void;
     formatHostedContent(hostedSlot: any, content: any): {};
 }

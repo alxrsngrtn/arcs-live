@@ -7,30 +7,26 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-'use strict';
-
-import {Modality} from '../modality.js';
-import {ModalityHandler} from '../modality-handler.js';
-import {SlotComposer} from '../slot-composer.js';
-
-/** @class FakeSlotComposer
+import { ModalityHandler } from '../modality-handler.js';
+import { SlotComposer } from '../slot-composer.js';
+/**
  * A helper class for NodeJS tests that mimics SlotComposer without relying on DOM APIs.
  */
 export class FakeSlotComposer extends SlotComposer {
-  constructor(options = {}) {
-    super(Object.assign({
-      rootContainer: {'root': 'root-context'},
-      modalityName: options.modalityName,
-      modalityHandler: ModalityHandler.createHeadlessHandler()
-    }, options));
-  }
-
-  async renderSlot(particle, slotName, content) {
-    await super.renderSlot(particle, slotName, content);
-
-    // In production updateProvidedContexts() is done in DOM Mutation Observer.
-    // We don't have it in tests, so we do it here.
-    const slotConsumer = this.getSlotConsumer(particle, slotName);
-    if (slotConsumer) slotConsumer.updateProvidedContexts();
-  }
+    constructor(options = {}) {
+        super(Object.assign({ rootContainer: { 'root': 'root-context' }, modalityName: options.modalityName, modalityHandler: ModalityHandler.createHeadlessHandler() }, options));
+    }
+    async renderSlot(particle, slotName, content) {
+        await super.renderSlot(particle, slotName, content);
+        // In production updateProvidedContexts() is done in DOM Mutation Observer.
+        // We don't have it in tests, so we do it here.
+        const slotConsumer = this.getSlotConsumer(particle, slotName);
+        if (slotConsumer)
+            slotConsumer.updateProvidedContexts();
+    }
+    // Accessors for testing.
+    get contexts() {
+        return this._contexts;
+    }
 }
+//# sourceMappingURL=fake-slot-composer.js.map
