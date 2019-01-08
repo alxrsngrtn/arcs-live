@@ -61,12 +61,12 @@ export class Suggestion {
         assert(this.descriptionByModality[modality], `No description for modality '${modality}'`);
         return this.descriptionByModality[modality];
     }
-    async setDescription(description, modality, descriptionFormatter = DescriptionFormatter) {
-        this.descriptionByModality['text'] = await description.getRecipeSuggestion();
+    setDescription(description, modality, descriptionFormatter = DescriptionFormatter) {
+        this.descriptionByModality['text'] = description.getRecipeSuggestion();
         for (const planModality of this.plan.modality) {
             if (modality.names.includes(planModality.name)) {
                 this.descriptionByModality[planModality.name] =
-                    await description.getRecipeSuggestion(descriptionFormatter);
+                    description.getRecipeSuggestion(descriptionFormatter);
             }
         }
     }

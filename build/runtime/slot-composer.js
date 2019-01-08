@@ -12,6 +12,7 @@ import { Modality } from './modality.js';
 import { ModalityHandler } from './modality-handler.js';
 import { SlotContext } from './slot-context.js';
 import { HostedSlotConsumer } from './hosted-slot-consumer.js';
+import { Description } from './description.js';
 export class SlotComposer {
     /**
      * |options| must contain:
@@ -126,7 +127,8 @@ export class SlotComposer {
     async renderSlot(particle, slotName, content) {
         const slotConsumer = this.getSlotConsumer(particle, slotName);
         assert(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
-        await slotConsumer.setContent(content, async (eventlet) => {
+        const description = await Description.create(slotConsumer.arc);
+        slotConsumer.setContent(content, async (eventlet) => {
             slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
             // This code is a temporary hack implemented in #2011 which allows to route UI events from
             // multiplexer to hosted particles. Multiplexer assembles UI from multiple pieces rendered
@@ -150,7 +152,7 @@ export class SlotComposer {
                     }
                 }
             }
-        });
+        }, description);
     }
     getAvailableContexts() {
         return this._contexts;

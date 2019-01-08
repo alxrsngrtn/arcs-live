@@ -12,7 +12,6 @@ import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
 import { Manifest } from './manifest.js';
-import { Description } from './description.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Id } from './id.js';
 import { Loader } from './loader.js';
@@ -57,7 +56,6 @@ export declare class Arc {
     storageProviderFactory: StorageProviderFactory;
     storeTags: Map<StorageProviderBase, Set<string>>;
     private storeDescriptions;
-    private readonly _description;
     private instantiatePlanCallbacks;
     private waitForIdlePromise;
     private debugHandler;
@@ -70,7 +68,6 @@ export declare class Arc {
     pec: ParticleExecutionHost;
     constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc }: ArcOptions);
     readonly loader: Loader;
-    readonly description: Description;
     readonly modality: Modality;
     registerInstantiatePlanCallback(callback: PlanCallback): void;
     unregisterInstantiatePlanCallback(callback: PlanCallback): boolean;
@@ -120,7 +117,7 @@ export declare class Arc {
     findStoresByType(type: Type, options?: any): StorageProviderBase[];
     findStoreById(id: any): StorageProviderBase;
     findStoreTags(store: StorageProviderBase): string[] | Set<string>;
-    getStoreDescription(store: any): any;
+    getStoreDescription(store: StorageProviderBase): string;
     getVersionByStore({ includeArc, includeContext }: {
         includeArc?: boolean;
         includeContext?: boolean;

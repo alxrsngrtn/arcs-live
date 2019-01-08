@@ -8,16 +8,23 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from './arc.js';
-import { DescriptionFormatter } from './description-formatter.js';
+import { DescriptionFormatter, DescriptionValue, ParticleDescription } from './description-formatter.js';
 import { Particle } from './recipe/particle.js';
 import { Relevance } from './relevance.js';
 export declare class Description {
-    relevance: Relevance | null;
-    readonly arc: Arc;
-    _particle: Particle | undefined;
-    constructor(arc: any);
+    private readonly particleDescriptions;
+    private readonly storeDescById;
+    private readonly arcRecipeName;
+    private readonly arcRecipes;
+    private constructor();
+    static create(arc: Arc, relevance?: Relevance): Promise<Description>;
     getArcDescription(formatterClass?: typeof DescriptionFormatter): Promise<string>;
-    getRecipeSuggestion(formatterClass?: typeof DescriptionFormatter): Promise<any>;
-    getHandleDescription(recipeHandle: any): Promise<any>;
+    getRecipeSuggestion(formatterClass?: typeof DescriptionFormatter): any;
+    getHandleDescription(recipeHandle: any): any;
+    static _getStoreDescById(arc: Arc): {};
+    static initDescriptionHandles(arc: Arc, relevance?: Relevance): Promise<any[]>;
+    static _createParticleDescription(particle: Particle, arc: Arc, relevance?: Relevance): Promise<ParticleDescription>;
+    static _getPatternByNameFromDescriptionHandle(particle: Particle, arc: Arc): Promise<{}>;
+    static _prepareStoreValue(store: any): Promise<DescriptionValue>;
     static defaultDescription: string;
 }

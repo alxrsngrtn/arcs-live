@@ -11,21 +11,8 @@ import { DescriptionFormatter, CombinedDescriptionsOptions, ParticleDescription 
 export declare class DescriptionDomFormatter extends DescriptionFormatter {
     private nextID;
     _isSelectedDescription(desc: any): boolean;
-    _populateParticleDescription(particle: any, descriptionByName: any): {
-        pattern: any;
-    } | {
-        pattern?: undefined;
-    } | {
-        template: any;
-        model: any;
-        pattern: any;
-    } | {
-        template: any;
-        model: any;
-        pattern?: undefined;
-    };
-    _combineSelectedDescriptions(selectedDescriptions: ParticleDescription[], options: CombinedDescriptionsOptions): Promise<any>;
-    _retrieveTemplateAndModel(particleDesc: any, index: any, options: any): {
+    _combineSelectedDescriptions(selectedDescriptions: ParticleDescription[], options: CombinedDescriptionsOptions): any;
+    _retrieveTemplateAndModel(particleDesc: ParticleDescription, index: any, options: any): {
         template: any;
         model: any;
     };
@@ -52,7 +39,7 @@ export declare class DescriptionDomFormatter extends DescriptionFormatter {
             [x: string]: any;
         };
     };
-    _formatSingleton(handleName: any, value: any, handleDescription: any): {
+    _formatSingleton(handleName: any, value: any): {
         template: string;
         model: {
             [x: string]: any;

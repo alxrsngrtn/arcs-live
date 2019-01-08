@@ -21,10 +21,10 @@ export class Runtime {
     /**
      * Given an arc, returns it's description as a string.
      */
-    static getArcDescription(arc) {
+    static async getArcDescription(arc) {
         // Verify that it's one of my arcs, and make this non-static, once I have
         // Runtime objects in the calling code.
-        return new Description(arc).getArcDescription();
+        return (await Description.create(arc)).getArcDescription();
     }
     /**
      * Parse a textual manifest and return a Manifest object. See the Manifest

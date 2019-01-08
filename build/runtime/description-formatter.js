@@ -9,24 +9,20 @@
  */
 import { assert } from '../platform/assert-web.js';
 import { ParticleSpec } from './particle-spec.js';
-import { EntityType, CollectionType, BigCollectionType, InterfaceType } from './type.js';
+import { CollectionType, BigCollectionType, InterfaceType } from './type.js';
 export class DescriptionFormatter {
-    constructor(arc, relevance) {
-        this.relevance = null;
-        this.particleDescriptions = [];
+    constructor(particleDescriptions = [], storeDescById = {}) {
+        this.particleDescriptions = particleDescriptions;
+        this.storeDescById = storeDescById;
         this.seenHandles = new Set();
         this.seenParticles = new Set();
         this.excludeValues = false;
-        assert(arc, `Arc is mandatory`);
-        this.arc = arc;
-        this.relevance = relevance;
     }
-    async getDescription(recipe) {
-        await this._updateDescriptionHandles();
+    getDescription(recipe) {
         if (recipe.patterns.length > 0) {
             let recipePatterns = [];
             for (const pattern of recipe.patterns) {
-                recipePatterns.push(await this.patternToSuggestion(pattern, { _recipe: recipe }));
+                recipePatterns.push(this.patternToSuggestion(pattern, { _recipe: recipe }));
             }
             recipePatterns = recipePatterns.filter(pattern => Boolean(pattern));
             if (recipePatterns.length > 0) {
@@ -51,67 +47,20 @@ export class DescriptionFormatter {
     _isSelectedDescription(desc) {
         return !!desc.pattern;
     }
-    async getHandleDescription(recipeHandle) {
-        await this._updateDescriptionHandles();
+    getHandleDescription(recipeHandle) {
         const handleConnection = this._selectHandleConnection(recipeHandle) || recipeHandle.connections[0];
-        const store = this.arc.findStoreById(recipeHandle.id);
-        return this._formatDescription(handleConnection, store);
-    }
-    async _updateDescriptionHandles() {
-        this.particleDescriptions = [];
-        const allParticles = [].concat(...this.arc.allDescendingArcs.map(arc => arc.activeRecipe.particles));
-        await Promise.all(allParticles.map(async (particle) => {
-            this.particleDescriptions.push(await this._createParticleDescription(particle));
-        }));
-    }
-    async _createParticleDescription(particle) {
-        let pDesc = {
-            _particle: particle,
-            _connections: {}
-        };
-        if (this.relevance) {
-            pDesc._rank = this.relevance.calcParticleRelevance(particle);
-        }
-        const descByName = await this._getPatternByNameFromDescriptionHandle(particle) || {};
-        pDesc = Object.assign({}, pDesc, this._populateParticleDescription(particle, descByName));
-        Object.values(particle.connections).forEach(handleConn => {
-            const specConn = particle.spec.connectionMap.get(handleConn.name);
-            const pattern = descByName[handleConn.name] || specConn.pattern;
-            if (pattern) {
-                const handleDescription = { pattern, _handleConn: handleConn, _store: this.arc.findStoreById(handleConn.handle.id) };
-                pDesc._connections[handleConn.name] = handleDescription;
-            }
-        });
-        return pDesc;
-    }
-    async _getPatternByNameFromDescriptionHandle(particle) {
-        const descriptionConn = particle.connections['descriptions'];
-        if (descriptionConn && descriptionConn.handle && descriptionConn.handle.id) {
-            const descHandle = this.arc.findStoreById(descriptionConn.handle.id);
-            if (descHandle) {
-                // TODO(shans): fix this mess when there's a unified Collection class or interface.
-                const descList = await descHandle.toList();
-                const descByName = {};
-                descList.forEach(d => descByName[d.rawData.key] = d.rawData.value);
-                return descByName;
-            }
-        }
-        return undefined;
-    }
-    _populateParticleDescription(particle, descriptionByName) {
-        const pattern = descriptionByName['pattern'] || particle.spec.pattern;
-        return pattern ? { pattern } : {};
+        return this._formatDescription(handleConnection);
     }
     // TODO(mmandlis): the override of this function in subclasses also overrides the output. We'll need to unify
     // this into an output type hierarchy before we can assign a useful type to the output of this function.
     // tslint:disable-next-line: no-any 
-    async _combineSelectedDescriptions(selectedDescriptions, options = {}) {
+    _combineSelectedDescriptions(selectedDescriptions, options = {}) {
         const suggestions = [];
-        await Promise.all(selectedDescriptions.map(async (particle) => {
+        selectedDescriptions.map(particle => {
             if (!this.seenParticles.has(particle._particle)) {
-                suggestions.push(await this.patternToSuggestion(particle.pattern, particle));
+                suggestions.push(this.patternToSuggestion(particle.pattern, particle));
             }
-        }));
+        });
         const jointDescription = this._joinDescriptions(suggestions);
         if (jointDescription) {
             if (options.skipFormatting) {
@@ -149,10 +98,9 @@ export class DescriptionFormatter {
         const last = sentence.length - 1;
         return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9()'>\]]/i) ? '.' : ''}`;
     }
-    async patternToSuggestion(pattern, particleDescription) {
+    patternToSuggestion(pattern, particleDescription) {
         const tokens = this._initTokens(pattern, particleDescription);
-        const tokenPromises = tokens.map(async (token) => await this.tokenToString(token));
-        const tokenResults = await Promise.all(tokenPromises);
+        const tokenResults = tokens.map(token => this.tokenToString(token));
         if (tokenResults.filter(res => res == undefined).length === 0) {
             return this._joinTokens(tokenResults);
         }
@@ -225,10 +173,11 @@ export class DescriptionFormatter {
             return [{
                     fullName: valueTokens[0],
                     handleName: handleConn.name,
+                    storeId: handleConn.handle.id,
                     properties: handleNames.splice(1),
                     extra,
                     _handleConn: handleConn,
-                    _store: this.arc.findStoreById(handleConn.handle.id)
+                    value: particleDescription._connections[handleConn.name].value
                 }];
         }
         // slot connection
@@ -251,7 +200,7 @@ export class DescriptionFormatter {
                 _providedSlotConn: providedSlotConn
             }];
     }
-    async tokenToString(token) {
+    tokenToString(token) {
         if (token.text) {
             return token.text;
         }
@@ -266,45 +215,46 @@ export class DescriptionFormatter {
         }
         throw new Error('no handle or slot name');
     }
-    async _particleTokenToString(token) {
+    _particleTokenToString(token) {
         return this._combineSelectedDescriptions([token.particleDescription], { skipFormatting: true });
     }
-    async _handleTokenToString(token) {
+    _handleTokenToString(token) {
         switch (token.extra) {
             case '_type_':
                 return token._handleConn.type.toPrettyString().toLowerCase();
             case '_values_':
-                return this._formatStoreValue(token.handleName, token._store);
+                return this._formatStoreValue(token.handleName, token.value);
             case '_name_':
-                return this._formatDescription(token._handleConn, token._store);
+                return this._formatDescription(token._handleConn);
             default: {
                 assert(!token.extra, `Unrecognized extra ${token.extra}`);
                 // Transformation's hosted particle.
                 if (token._handleConn.type instanceof InterfaceType) {
-                    const particleSpec = ParticleSpec.fromLiteral(await token._store.get());
+                    assert(token.value.interfaceValue, `Missing interface type value for '${token._handleConn.type}'.`);
+                    const particleSpec = ParticleSpec.fromLiteral(token.value.interfaceValue);
                     // TODO: call this.patternToSuggestion(...) to resolved expressions in the pattern template.
                     return particleSpec.pattern;
                 }
                 // singleton handle property.
                 if (token.properties && token.properties.length > 0) {
-                    return this._propertyTokenToString(token.handleName, token._store, token.properties);
+                    return this._propertyTokenToString(token.handleName, token.value, token.properties);
                 }
                 // full handle description
-                let description = (await this._formatDescriptionPattern(token._handleConn)) ||
-                    this._formatStoreDescription(token._handleConn, token._store);
-                const storeValue = await this._formatStoreValue(token.handleName, token._store);
+                let description = this._formatDescriptionPattern(token._handleConn) ||
+                    this._formatStoreDescription(token._handleConn);
+                const storeValue = this._formatStoreValue(token.handleName, token.value);
                 if (!description) {
                     // For singleton handle, if there is no real description (the type was used), use the plain value for description.
                     // TODO: should this look at type.getContainedType() (which includes references), or maybe just check for EntityType?
-                    const storeType = token._store.type;
+                    const storeType = token._handleConn.type;
                     if (storeValue && !this.excludeValues &&
                         !(storeType instanceof CollectionType) && !(storeType instanceof BigCollectionType)) {
                         return storeValue;
                     }
                 }
                 description = description || this._formatHandleType(token._handleConn);
-                if (storeValue && !this.excludeValues && !this.seenHandles.has(token._store.id)) {
-                    this.seenHandles.add(token._store.id);
+                if (storeValue && !this.excludeValues && !this.seenHandles.has(token.storeId)) {
+                    this.seenHandles.add(token.storeId);
                     return this._combineDescriptionAndValue(token, description, storeValue);
                 }
                 return description;
@@ -317,7 +267,7 @@ export class DescriptionFormatter {
         }
         return `${description} (${storeValue})`;
     }
-    async _slotTokenToString(token) {
+    _slotTokenToString(token) {
         switch (token.extra) {
             case '_empty_':
                 // TODO: also return false, if the consuming particles generate an empty description.
@@ -325,60 +275,47 @@ export class DescriptionFormatter {
             default:
                 assert(!token.extra, `Unrecognized slot extra ${token.extra}`);
         }
-        const results = (await Promise.all(token._providedSlotConn.consumeConnections.map(async (consumeConn) => {
+        const results = token._providedSlotConn.consumeConnections.map(consumeConn => {
             const particle = consumeConn.particle;
             const particleDescription = this.particleDescriptions.find(desc => desc._particle === particle);
             this.seenParticles.add(particle);
             return this.patternToSuggestion(particle.spec.pattern, particleDescription);
-        })));
+        });
         return this._joinDescriptions(results);
     }
-    async _propertyTokenToString(handleName, store, properties) {
-        assert(!(store.type instanceof CollectionType) && !(store.type instanceof BigCollectionType), `Cannot return property ${properties.join(',')} for Collection or BigCollection`);
+    _propertyTokenToString(handleName, value, properties) {
+        assert(value.entityValue, `Cannot return property ${properties.join(',')} for non EntityType.`);
         // Use singleton value's property (eg. "09/15" for person's birthday)
-        const valueVar = await store.get();
-        if (valueVar) {
-            let value = valueVar.rawData;
-            properties.forEach(p => {
-                if (value) {
-                    value = value[p];
+        const valueVar = value.entityValue;
+        if (value.entityValue) {
+            let propertyValue = value.entityValue;
+            for (const property of properties) {
+                if (propertyValue) {
+                    propertyValue = propertyValue[property];
                 }
-            });
-            if (value) {
-                return this._formatEntityProperty(handleName, properties, value);
+            }
+            if (propertyValue) {
+                return this._formatEntityProperty(handleName, properties, propertyValue);
             }
         }
     }
     _formatEntityProperty(handleName, properties, value) {
         return value;
     }
-    async _formatStoreValue(handleName, store) {
-        if (!store) {
-            return;
-        }
-        if (store.type instanceof CollectionType) {
-            const values = await store.toList();
-            if (values && values.length > 0) {
-                return this._formatCollection(handleName, values);
+    _formatStoreValue(handleName, value) {
+        if (value) {
+            if (value.collectionValues) {
+                return this._formatCollection(handleName, value.collectionValues);
             }
-        }
-        else if (store.type instanceof BigCollectionType) {
-            const cursorId = await store.stream(1);
-            const { value, done } = await store.cursorNext(cursorId);
-            store.cursorClose(cursorId);
-            if (!done && value[0].rawData.name) {
-                return await this._formatBigCollection(handleName, value[0]);
+            if (value.bigCollectionValues) {
+                return this._formatBigCollection(handleName, value.bigCollectionValues);
             }
-        }
-        else if (store.type instanceof EntityType) {
-            const value = await store.get();
-            if (value) {
-                return this._formatSingleton(handleName, value, store.type.entitySchema.description.value);
+            if (value.entityValue) {
+                return this._formatSingleton(handleName, value);
             }
+            throw new Error(`invalid store type for handle ${handleName}`);
         }
-        else {
-            throw new Error(`invalid store type ${store.type}`);
-        }
+        return undefined;
     }
     _formatCollection(handleName, values) {
         if (values[0].rawData.name) {
@@ -397,25 +334,26 @@ export class DescriptionFormatter {
     _formatBigCollection(handleName, firstValue) {
         return `collection of items like ${firstValue.rawData.name}`;
     }
-    _formatSingleton(handleName, value, handleDescription) {
-        if (handleDescription) {
-            let valueDescription = handleDescription;
+    _formatSingleton(handleName, value) {
+        const entityValue = value.entityValue;
+        if (value.valueDescription) {
+            let valueDescription = value.valueDescription;
             let matches;
             while (matches = valueDescription.match(/\${([a-zA-Z0-9.]+)}/)) {
-                valueDescription = valueDescription.replace(matches[0], value.rawData[matches[1]]);
+                valueDescription = valueDescription.replace(matches[0], entityValue[matches[1]]);
             }
             return valueDescription;
         }
-        if (value.rawData.name) {
-            return value.rawData.name;
+        if (entityValue['name']) {
+            return entityValue['name'];
         }
     }
-    async _formatDescription(handleConnection, store) {
-        return (await this._formatDescriptionPattern(handleConnection)) ||
-            this._formatStoreDescription(handleConnection, store) ||
+    _formatDescription(handleConnection) {
+        return this._formatDescriptionPattern(handleConnection) ||
+            this._formatStoreDescription(handleConnection) ||
             this._formatHandleType(handleConnection);
     }
-    async _formatDescriptionPattern(handleConnection) {
+    _formatDescriptionPattern(handleConnection) {
         let chosenConnection = handleConnection;
         // For "out" connection, use its own description
         // For "in" connection, use description of the highest ranked out connection with description.
@@ -428,21 +366,23 @@ export class DescriptionFormatter {
         const chosenParticleDescription = this.particleDescriptions.find(desc => desc._particle === chosenConnection.particle);
         const handleDescription = chosenParticleDescription ? chosenParticleDescription._connections[chosenConnection.name] : null;
         // Add description to result array.
-        if (handleDescription) {
+        if (handleDescription && handleDescription.pattern) {
             // Add the connection spec's description pattern.
-            return await this.patternToSuggestion(handleDescription.pattern, chosenParticleDescription);
+            return this.patternToSuggestion(handleDescription.pattern, chosenParticleDescription);
         }
         return undefined;
     }
-    _formatStoreDescription(handleConn, store) {
-        if (store) {
-            const storeDescription = this.arc.getStoreDescription(store);
+    _formatStoreDescription(handleConn) {
+        if (handleConn.handle) {
+            assert(handleConn.handle.id, `no id for ${handleConn.name}?`);
+            const storeDescription = this.storeDescById[handleConn.handle.id];
             const handleType = this._formatHandleType(handleConn);
             // Use the handle description available in the arc (if it is different than type name).
             if (!!storeDescription && storeDescription !== handleType) {
                 return storeDescription;
             }
         }
+        return undefined;
     }
     _formatHandleType(handleConnection) {
         const type = handleConnection.handle && handleConnection.handle.type.isResolved() ? handleConnection.handle.type : handleConnection.type;
@@ -453,7 +393,7 @@ export class DescriptionFormatter {
             // Choose connections with patterns (manifest-based or dynamic).
             const connectionSpec = connection.spec;
             const particleDescription = this.particleDescriptions.find(desc => desc._particle === connection.particle);
-            return !!connectionSpec.pattern || !!particleDescription._connections[connection.name];
+            return !!connectionSpec.pattern || !!particleDescription._connections[connection.name].pattern;
         });
         possibleConnections.sort((c1, c2) => {
             const isOutput1 = c1.spec.isOutput;

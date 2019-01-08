@@ -2651,22 +2651,18 @@ class ParticleSpec {
  * http://polymer.github.io/PATENTS.txt
  */
 class DescriptionFormatter {
-    constructor(arc, relevance) {
-        this.relevance = null;
-        this.particleDescriptions = [];
+    constructor(particleDescriptions = [], storeDescById = {}) {
+        this.particleDescriptions = particleDescriptions;
+        this.storeDescById = storeDescById;
         this.seenHandles = new Set();
         this.seenParticles = new Set();
         this.excludeValues = false;
-        assert$1(arc, `Arc is mandatory`);
-        this.arc = arc;
-        this.relevance = relevance;
     }
-    async getDescription(recipe) {
-        await this._updateDescriptionHandles();
+    getDescription(recipe) {
         if (recipe.patterns.length > 0) {
             let recipePatterns = [];
             for (const pattern of recipe.patterns) {
-                recipePatterns.push(await this.patternToSuggestion(pattern, { _recipe: recipe }));
+                recipePatterns.push(this.patternToSuggestion(pattern, { _recipe: recipe }));
             }
             recipePatterns = recipePatterns.filter(pattern => Boolean(pattern));
             if (recipePatterns.length > 0) {
@@ -2691,67 +2687,20 @@ class DescriptionFormatter {
     _isSelectedDescription(desc) {
         return !!desc.pattern;
     }
-    async getHandleDescription(recipeHandle) {
-        await this._updateDescriptionHandles();
+    getHandleDescription(recipeHandle) {
         const handleConnection = this._selectHandleConnection(recipeHandle) || recipeHandle.connections[0];
-        const store = this.arc.findStoreById(recipeHandle.id);
-        return this._formatDescription(handleConnection, store);
-    }
-    async _updateDescriptionHandles() {
-        this.particleDescriptions = [];
-        const allParticles = [].concat(...this.arc.allDescendingArcs.map(arc => arc.activeRecipe.particles));
-        await Promise.all(allParticles.map(async (particle) => {
-            this.particleDescriptions.push(await this._createParticleDescription(particle));
-        }));
-    }
-    async _createParticleDescription(particle) {
-        let pDesc = {
-            _particle: particle,
-            _connections: {}
-        };
-        if (this.relevance) {
-            pDesc._rank = this.relevance.calcParticleRelevance(particle);
-        }
-        const descByName = await this._getPatternByNameFromDescriptionHandle(particle) || {};
-        pDesc = Object.assign({}, pDesc, this._populateParticleDescription(particle, descByName));
-        Object.values(particle.connections).forEach(handleConn => {
-            const specConn = particle.spec.connectionMap.get(handleConn.name);
-            const pattern = descByName[handleConn.name] || specConn.pattern;
-            if (pattern) {
-                const handleDescription = { pattern, _handleConn: handleConn, _store: this.arc.findStoreById(handleConn.handle.id) };
-                pDesc._connections[handleConn.name] = handleDescription;
-            }
-        });
-        return pDesc;
-    }
-    async _getPatternByNameFromDescriptionHandle(particle) {
-        const descriptionConn = particle.connections['descriptions'];
-        if (descriptionConn && descriptionConn.handle && descriptionConn.handle.id) {
-            const descHandle = this.arc.findStoreById(descriptionConn.handle.id);
-            if (descHandle) {
-                // TODO(shans): fix this mess when there's a unified Collection class or interface.
-                const descList = await descHandle.toList();
-                const descByName = {};
-                descList.forEach(d => descByName[d.rawData.key] = d.rawData.value);
-                return descByName;
-            }
-        }
-        return undefined;
-    }
-    _populateParticleDescription(particle, descriptionByName) {
-        const pattern = descriptionByName['pattern'] || particle.spec.pattern;
-        return pattern ? { pattern } : {};
+        return this._formatDescription(handleConnection);
     }
     // TODO(mmandlis): the override of this function in subclasses also overrides the output. We'll need to unify
     // this into an output type hierarchy before we can assign a useful type to the output of this function.
     // tslint:disable-next-line: no-any 
-    async _combineSelectedDescriptions(selectedDescriptions, options = {}) {
+    _combineSelectedDescriptions(selectedDescriptions, options = {}) {
         const suggestions = [];
-        await Promise.all(selectedDescriptions.map(async (particle) => {
+        selectedDescriptions.map(particle => {
             if (!this.seenParticles.has(particle._particle)) {
-                suggestions.push(await this.patternToSuggestion(particle.pattern, particle));
+                suggestions.push(this.patternToSuggestion(particle.pattern, particle));
             }
-        }));
+        });
         const jointDescription = this._joinDescriptions(suggestions);
         if (jointDescription) {
             if (options.skipFormatting) {
@@ -2789,10 +2738,9 @@ class DescriptionFormatter {
         const last = sentence.length - 1;
         return `${sentence[0].toUpperCase()}${sentence.slice(1, last)}${sentence[last]}${sentence[last].match(/[a-z0-9()'>\]]/i) ? '.' : ''}`;
     }
-    async patternToSuggestion(pattern, particleDescription) {
+    patternToSuggestion(pattern, particleDescription) {
         const tokens = this._initTokens(pattern, particleDescription);
-        const tokenPromises = tokens.map(async (token) => await this.tokenToString(token));
-        const tokenResults = await Promise.all(tokenPromises);
+        const tokenResults = tokens.map(token => this.tokenToString(token));
         if (tokenResults.filter(res => res == undefined).length === 0) {
             return this._joinTokens(tokenResults);
         }
@@ -2865,10 +2813,11 @@ class DescriptionFormatter {
             return [{
                     fullName: valueTokens[0],
                     handleName: handleConn.name,
+                    storeId: handleConn.handle.id,
                     properties: handleNames.splice(1),
                     extra,
                     _handleConn: handleConn,
-                    _store: this.arc.findStoreById(handleConn.handle.id)
+                    value: particleDescription._connections[handleConn.name].value
                 }];
         }
         // slot connection
@@ -2891,7 +2840,7 @@ class DescriptionFormatter {
                 _providedSlotConn: providedSlotConn
             }];
     }
-    async tokenToString(token) {
+    tokenToString(token) {
         if (token.text) {
             return token.text;
         }
@@ -2906,45 +2855,46 @@ class DescriptionFormatter {
         }
         throw new Error('no handle or slot name');
     }
-    async _particleTokenToString(token) {
+    _particleTokenToString(token) {
         return this._combineSelectedDescriptions([token.particleDescription], { skipFormatting: true });
     }
-    async _handleTokenToString(token) {
+    _handleTokenToString(token) {
         switch (token.extra) {
             case '_type_':
                 return token._handleConn.type.toPrettyString().toLowerCase();
             case '_values_':
-                return this._formatStoreValue(token.handleName, token._store);
+                return this._formatStoreValue(token.handleName, token.value);
             case '_name_':
-                return this._formatDescription(token._handleConn, token._store);
+                return this._formatDescription(token._handleConn);
             default: {
                 assert$1(!token.extra, `Unrecognized extra ${token.extra}`);
                 // Transformation's hosted particle.
                 if (token._handleConn.type instanceof InterfaceType) {
-                    const particleSpec = ParticleSpec.fromLiteral(await token._store.get());
+                    assert$1(token.value.interfaceValue, `Missing interface type value for '${token._handleConn.type}'.`);
+                    const particleSpec = ParticleSpec.fromLiteral(token.value.interfaceValue);
                     // TODO: call this.patternToSuggestion(...) to resolved expressions in the pattern template.
                     return particleSpec.pattern;
                 }
                 // singleton handle property.
                 if (token.properties && token.properties.length > 0) {
-                    return this._propertyTokenToString(token.handleName, token._store, token.properties);
+                    return this._propertyTokenToString(token.handleName, token.value, token.properties);
                 }
                 // full handle description
-                let description = (await this._formatDescriptionPattern(token._handleConn)) ||
-                    this._formatStoreDescription(token._handleConn, token._store);
-                const storeValue = await this._formatStoreValue(token.handleName, token._store);
+                let description = this._formatDescriptionPattern(token._handleConn) ||
+                    this._formatStoreDescription(token._handleConn);
+                const storeValue = this._formatStoreValue(token.handleName, token.value);
                 if (!description) {
                     // For singleton handle, if there is no real description (the type was used), use the plain value for description.
                     // TODO: should this look at type.getContainedType() (which includes references), or maybe just check for EntityType?
-                    const storeType = token._store.type;
+                    const storeType = token._handleConn.type;
                     if (storeValue && !this.excludeValues &&
                         !(storeType instanceof CollectionType) && !(storeType instanceof BigCollectionType)) {
                         return storeValue;
                     }
                 }
                 description = description || this._formatHandleType(token._handleConn);
-                if (storeValue && !this.excludeValues && !this.seenHandles.has(token._store.id)) {
-                    this.seenHandles.add(token._store.id);
+                if (storeValue && !this.excludeValues && !this.seenHandles.has(token.storeId)) {
+                    this.seenHandles.add(token.storeId);
                     return this._combineDescriptionAndValue(token, description, storeValue);
                 }
                 return description;
@@ -2957,7 +2907,7 @@ class DescriptionFormatter {
         }
         return `${description} (${storeValue})`;
     }
-    async _slotTokenToString(token) {
+    _slotTokenToString(token) {
         switch (token.extra) {
             case '_empty_':
                 // TODO: also return false, if the consuming particles generate an empty description.
@@ -2965,60 +2915,47 @@ class DescriptionFormatter {
             default:
                 assert$1(!token.extra, `Unrecognized slot extra ${token.extra}`);
         }
-        const results = (await Promise.all(token._providedSlotConn.consumeConnections.map(async (consumeConn) => {
+        const results = token._providedSlotConn.consumeConnections.map(consumeConn => {
             const particle = consumeConn.particle;
             const particleDescription = this.particleDescriptions.find(desc => desc._particle === particle);
             this.seenParticles.add(particle);
             return this.patternToSuggestion(particle.spec.pattern, particleDescription);
-        })));
+        });
         return this._joinDescriptions(results);
     }
-    async _propertyTokenToString(handleName, store, properties) {
-        assert$1(!(store.type instanceof CollectionType) && !(store.type instanceof BigCollectionType), `Cannot return property ${properties.join(',')} for Collection or BigCollection`);
+    _propertyTokenToString(handleName, value, properties) {
+        assert$1(value.entityValue, `Cannot return property ${properties.join(',')} for non EntityType.`);
         // Use singleton value's property (eg. "09/15" for person's birthday)
-        const valueVar = await store.get();
-        if (valueVar) {
-            let value = valueVar.rawData;
-            properties.forEach(p => {
-                if (value) {
-                    value = value[p];
+        const valueVar = value.entityValue;
+        if (value.entityValue) {
+            let propertyValue = value.entityValue;
+            for (const property of properties) {
+                if (propertyValue) {
+                    propertyValue = propertyValue[property];
                 }
-            });
-            if (value) {
-                return this._formatEntityProperty(handleName, properties, value);
+            }
+            if (propertyValue) {
+                return this._formatEntityProperty(handleName, properties, propertyValue);
             }
         }
     }
     _formatEntityProperty(handleName, properties, value) {
         return value;
     }
-    async _formatStoreValue(handleName, store) {
-        if (!store) {
-            return;
-        }
-        if (store.type instanceof CollectionType) {
-            const values = await store.toList();
-            if (values && values.length > 0) {
-                return this._formatCollection(handleName, values);
+    _formatStoreValue(handleName, value) {
+        if (value) {
+            if (value.collectionValues) {
+                return this._formatCollection(handleName, value.collectionValues);
             }
-        }
-        else if (store.type instanceof BigCollectionType) {
-            const cursorId = await store.stream(1);
-            const { value, done } = await store.cursorNext(cursorId);
-            store.cursorClose(cursorId);
-            if (!done && value[0].rawData.name) {
-                return await this._formatBigCollection(handleName, value[0]);
+            if (value.bigCollectionValues) {
+                return this._formatBigCollection(handleName, value.bigCollectionValues);
             }
-        }
-        else if (store.type instanceof EntityType) {
-            const value = await store.get();
-            if (value) {
-                return this._formatSingleton(handleName, value, store.type.entitySchema.description.value);
+            if (value.entityValue) {
+                return this._formatSingleton(handleName, value);
             }
+            throw new Error(`invalid store type for handle ${handleName}`);
         }
-        else {
-            throw new Error(`invalid store type ${store.type}`);
-        }
+        return undefined;
     }
     _formatCollection(handleName, values) {
         if (values[0].rawData.name) {
@@ -3037,25 +2974,26 @@ class DescriptionFormatter {
     _formatBigCollection(handleName, firstValue) {
         return `collection of items like ${firstValue.rawData.name}`;
     }
-    _formatSingleton(handleName, value, handleDescription) {
-        if (handleDescription) {
-            let valueDescription = handleDescription;
+    _formatSingleton(handleName, value) {
+        const entityValue = value.entityValue;
+        if (value.valueDescription) {
+            let valueDescription = value.valueDescription;
             let matches;
             while (matches = valueDescription.match(/\${([a-zA-Z0-9.]+)}/)) {
-                valueDescription = valueDescription.replace(matches[0], value.rawData[matches[1]]);
+                valueDescription = valueDescription.replace(matches[0], entityValue[matches[1]]);
             }
             return valueDescription;
         }
-        if (value.rawData.name) {
-            return value.rawData.name;
+        if (entityValue['name']) {
+            return entityValue['name'];
         }
     }
-    async _formatDescription(handleConnection, store) {
-        return (await this._formatDescriptionPattern(handleConnection)) ||
-            this._formatStoreDescription(handleConnection, store) ||
+    _formatDescription(handleConnection) {
+        return this._formatDescriptionPattern(handleConnection) ||
+            this._formatStoreDescription(handleConnection) ||
             this._formatHandleType(handleConnection);
     }
-    async _formatDescriptionPattern(handleConnection) {
+    _formatDescriptionPattern(handleConnection) {
         let chosenConnection = handleConnection;
         // For "out" connection, use its own description
         // For "in" connection, use description of the highest ranked out connection with description.
@@ -3068,21 +3006,23 @@ class DescriptionFormatter {
         const chosenParticleDescription = this.particleDescriptions.find(desc => desc._particle === chosenConnection.particle);
         const handleDescription = chosenParticleDescription ? chosenParticleDescription._connections[chosenConnection.name] : null;
         // Add description to result array.
-        if (handleDescription) {
+        if (handleDescription && handleDescription.pattern) {
             // Add the connection spec's description pattern.
-            return await this.patternToSuggestion(handleDescription.pattern, chosenParticleDescription);
+            return this.patternToSuggestion(handleDescription.pattern, chosenParticleDescription);
         }
         return undefined;
     }
-    _formatStoreDescription(handleConn, store) {
-        if (store) {
-            const storeDescription = this.arc.getStoreDescription(store);
+    _formatStoreDescription(handleConn) {
+        if (handleConn.handle) {
+            assert$1(handleConn.handle.id, `no id for ${handleConn.name}?`);
+            const storeDescription = this.storeDescById[handleConn.handle.id];
             const handleType = this._formatHandleType(handleConn);
             // Use the handle description available in the arc (if it is different than type name).
             if (!!storeDescription && storeDescription !== handleType) {
                 return storeDescription;
             }
         }
+        return undefined;
     }
     _formatHandleType(handleConnection) {
         const type = handleConnection.handle && handleConnection.handle.type.isResolved() ? handleConnection.handle.type : handleConnection.type;
@@ -3093,7 +3033,7 @@ class DescriptionFormatter {
             // Choose connections with patterns (manifest-based or dynamic).
             const connectionSpec = connection.spec;
             const particleDescription = this.particleDescriptions.find(desc => desc._particle === connection.particle);
-            return !!connectionSpec.pattern || !!particleDescription._connections[connection.name];
+            return !!connectionSpec.pattern || !!particleDescription._connections[connection.name].pattern;
         });
         possibleConnections.sort((c1, c2) => {
             const isOutput1 = c1.spec.isOutput;
@@ -3144,31 +3084,128 @@ class DescriptionFormatter {
  * http://polymer.github.io/PATENTS.txt
  */
 class Description {
-    constructor(arc) {
-        this.relevance = null;
-        this._particle = undefined;
-        this.arc = arc;
+    constructor(particleDescriptions = [], storeDescById = {}, arcRecipeName, 
+    // TODO(mmandlis): replace Particle[] with serializable json objects.
+    arcRecipes) {
+        this.particleDescriptions = particleDescriptions;
+        this.storeDescById = storeDescById;
+        this.arcRecipeName = arcRecipeName;
+        this.arcRecipes = arcRecipes;
     }
-    async getArcDescription(formatterClass = DescriptionFormatter) {
-        const desc = await new (formatterClass)(this.arc, this.relevance).getDescription(this.arc.activeRecipe);
+    static async create(arc, relevance) {
+        const particleDescriptions = await Description.initDescriptionHandles(arc, relevance);
+        return new Description(particleDescriptions, Description._getStoreDescById(arc), arc.activeRecipe.name, arc.recipes);
+    }
+    getArcDescription(formatterClass = DescriptionFormatter) {
+        const desc = new (formatterClass)(this.particleDescriptions, this.storeDescById).getDescription({
+            patterns: [].concat.apply([], this.arcRecipes.map(recipe => recipe.patterns)),
+            particles: [].concat.apply([], this.arcRecipes.map(recipe => recipe.particles))
+        });
         if (desc) {
             return desc;
         }
         return undefined;
     }
-    async getRecipeSuggestion(formatterClass = DescriptionFormatter) {
-        const formatter = await new (formatterClass)(this.arc, this.relevance);
-        const desc = await formatter.getDescription(this.arc.recipes[this.arc.recipes.length - 1]);
+    getRecipeSuggestion(formatterClass = DescriptionFormatter) {
+        const formatter = new (formatterClass)(this.particleDescriptions, this.storeDescById);
+        const desc = formatter.getDescription(this.arcRecipes[this.arcRecipes.length - 1]);
         if (desc) {
             return desc;
         }
-        return formatter._capitalizeAndPunctuate(this.arc.activeRecipe.name || Description.defaultDescription);
+        return formatter._capitalizeAndPunctuate(this.arcRecipeName || Description.defaultDescription);
     }
-    async getHandleDescription(recipeHandle) {
+    getHandleDescription(recipeHandle) {
         assert$1(recipeHandle.connections.length > 0, 'handle has no connections?');
-        const formatter = new DescriptionFormatter(this.arc, this.relevance);
+        const formatter = new DescriptionFormatter(this.particleDescriptions, this.storeDescById);
         formatter.excludeValues = true;
-        return await formatter.getHandleDescription(recipeHandle);
+        return formatter.getHandleDescription(recipeHandle);
+    }
+    static _getStoreDescById(arc) {
+        const storeDescById = {};
+        for (const { id } of arc.activeRecipe.handles) {
+            const store = arc.findStoreById(id);
+            if (store) {
+                storeDescById[id] = arc.getStoreDescription(store);
+            }
+        }
+        return storeDescById;
+    }
+    static async initDescriptionHandles(arc, relevance) {
+        const particleDescriptions = [];
+        const allParticles = [].concat(...arc.allDescendingArcs.map(arc => arc.activeRecipe.particles));
+        await Promise.all(allParticles.map(async (particle) => {
+            particleDescriptions.push(await this._createParticleDescription(particle, arc, relevance));
+        }));
+        return particleDescriptions;
+    }
+    static async _createParticleDescription(particle, arc, relevance) {
+        let pDesc = {
+            _particle: particle,
+            _connections: {}
+        };
+        if (relevance) {
+            pDesc._rank = relevance.calcParticleRelevance(particle);
+        }
+        const descByName = await this._getPatternByNameFromDescriptionHandle(particle, arc) || {};
+        pDesc = Object.assign({}, pDesc, descByName);
+        pDesc.pattern = pDesc.pattern || particle.spec.pattern;
+        for (const handleConn of Object.values(particle.connections)) {
+            const specConn = particle.spec.connectionMap.get(handleConn.name);
+            const pattern = descByName[handleConn.name] || specConn.pattern;
+            const store = arc.findStoreById(handleConn.handle.id);
+            pDesc._connections[handleConn.name] = {
+                pattern,
+                _handleConn: handleConn,
+                value: await this._prepareStoreValue(store)
+            };
+        }
+        return pDesc;
+    }
+    static async _getPatternByNameFromDescriptionHandle(particle, arc) {
+        const descriptionConn = particle.connections['descriptions'];
+        if (descriptionConn && descriptionConn.handle && descriptionConn.handle.id) {
+            const descHandle = arc.findStoreById(descriptionConn.handle.id);
+            if (descHandle) {
+                // TODO(shans): fix this mess when there's a unified Collection class or interface.
+                const descList = await descHandle.toList();
+                const descByName = {};
+                descList.forEach(d => descByName[d.rawData.key] = d.rawData.value);
+                return descByName;
+            }
+        }
+        return undefined;
+    }
+    static async _prepareStoreValue(store) {
+        if (!store) {
+            return undefined;
+        }
+        if (store.type instanceof CollectionType) {
+            const values = await store.toList();
+            if (values && values.length > 0) {
+                return { collectionValues: values };
+            }
+        }
+        else if (store.type instanceof BigCollectionType) {
+            const cursorId = await store.stream(1);
+            const { value, done } = await store.cursorNext(cursorId);
+            store.cursorClose(cursorId);
+            if (!done && value[0].rawData.name) {
+                return { bigCollectionValues: value[0] };
+            }
+        }
+        else if (store.type instanceof EntityType) {
+            const value = await store.get();
+            if (value && value['rawData']) {
+                return { entityValue: value['rawData'], valueDescription: store.type.entitySchema.description.value };
+            }
+        }
+        else if (store.type instanceof InterfaceType) {
+            const interfaceValue = await store.get();
+            if (interfaceValue) {
+                return { interfaceValue };
+            }
+        }
+        return undefined;
     }
 }
 Description.defaultDescription = 'i\'m feeling lucky';
@@ -18871,10 +18908,10 @@ class Runtime {
     /**
      * Given an arc, returns it's description as a string.
      */
-    static getArcDescription(arc) {
+    static async getArcDescription(arc) {
         // Verify that it's one of my arcs, and make this non-static, once I have
         // Runtime objects in the calling code.
-        return new Description(arc).getArcDescription();
+        return (await Description.create(arc)).getArcDescription();
     }
     /**
      * Parse a textual manifest and return a Manifest object. See the Manifest
@@ -24365,12 +24402,12 @@ class Suggestion {
         assert$1(this.descriptionByModality[modality], `No description for modality '${modality}'`);
         return this.descriptionByModality[modality];
     }
-    async setDescription(description, modality, descriptionFormatter = DescriptionFormatter) {
-        this.descriptionByModality['text'] = await description.getRecipeSuggestion();
+    setDescription(description, modality, descriptionFormatter = DescriptionFormatter) {
+        this.descriptionByModality['text'] = description.getRecipeSuggestion();
         for (const planModality of this.plan.modality) {
             if (modality.names.includes(planModality.name)) {
                 this.descriptionByModality[planModality.name] =
-                    await description.getRecipeSuggestion(descriptionFormatter);
+                    description.getRecipeSuggestion(descriptionFormatter);
             }
         }
     }
@@ -24500,9 +24537,9 @@ class Speculator {
         if (!relevance.isRelevant(plan)) {
             return null;
         }
-        speculativeArc.description.relevance = relevance;
+        const description = await Description.create(speculativeArc, relevance);
         suggestion = Suggestion.create(plan, hash, relevance);
-        await suggestion.setDescription(speculativeArc.description, arc.modality, arc.pec.slotComposer ? arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
+        suggestion.setDescription(description, arc.modality, arc.pec.slotComposer ? arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
         this.suggestionByHash[hash] = suggestion;
         return suggestion;
     }
@@ -24846,25 +24883,25 @@ class SlotConsumer {
             this.stopRenderCallback({ particle: this.consumeConn.particle, slotName: this.consumeConn.name });
         }
     }
-    async setContent(content, handler) {
-        if (content && Object.keys(content).length > 0) {
-            content.descriptions = await this.populateHandleDescriptions();
+    setContent(content, handler, description) {
+        if (content && Object.keys(content).length > 0 && description) {
+            content.descriptions = this.populateHandleDescriptions(description);
         }
         this.eventHandler = handler;
         for (const [subId, rendering] of this.renderings) {
             this.setContainerContent(rendering, this.formatContent(content, subId), subId);
         }
     }
-    async populateHandleDescriptions() {
-        if (!this.arc || !this.consumeConn)
+    populateHandleDescriptions(description) {
+        if (!this.consumeConn)
             return null;
         const descriptions = {};
-        await Promise.all(Object.values(this.consumeConn.particle.connections).map(async (handleConn) => {
-            // TODO(mmandlis): convert back to .handle and .name after all recipe files converted to typescript.
-            if (handleConn['handle']) {
-                descriptions[`${handleConn['name']}.description`] = (await this.arc.description.getHandleDescription(handleConn['handle'])).toString();
+        Object.values(this.consumeConn.particle.connections).map(handleConn => {
+            if (handleConn.handle) {
+                descriptions[`${handleConn.name}.description`] =
+                    description.getHandleDescription(handleConn.handle).toString();
             }
-        }));
+        });
         return descriptions;
     }
     getInnerContainer(slotId) {
@@ -25693,8 +25730,8 @@ class MockSlotDomConsumer extends SlotDomConsumer {
     this.contentAvailable = new Promise(resolve => this._contentAvailableResolve = resolve);
   }
 
-  async setContent(content, handler) {
-    await super.setContent(content, handler);
+  setContent(content, handler, description) {
+    super.setContent(content, handler);
 
     // Mimics the behaviour of DomSlotConsumer::setContent, where template is only set at first,
     // and model is overriden every time.
@@ -25771,7 +25808,6 @@ class MockSuggestDomConsumer extends MockSlotDomConsumer {
       templateName: 'dummy-suggestion',
       model: {}
     };
-    this._setContentPromise = null;
   }
 
   get suggestion() { return this._suggestion; }
@@ -25781,7 +25817,7 @@ class MockSuggestDomConsumer extends MockSlotDomConsumer {
     super.onContainerUpdate(container, originalContainer);
 
     if (container) {
-      this._setContentPromise = this.setContent(this._suggestionContent, this._eventHandler);
+      this.setContent(this._suggestionContent, this._eventHandler);
     }
   }
 }
@@ -25803,24 +25839,17 @@ class DescriptionDomFormatter extends DescriptionFormatter {
     _isSelectedDescription(desc) {
         return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
     }
-    _populateParticleDescription(particle, descriptionByName) {
-        const result = super._populateParticleDescription(particle, descriptionByName);
-        if (descriptionByName['_template_']) {
-            return Object.assign({}, result, { template: descriptionByName['_template_'], model: JSON.parse(descriptionByName['_model_']) });
-        }
-        return result;
-    }
-    async _combineSelectedDescriptions(selectedDescriptions, options) {
+    _combineSelectedDescriptions(selectedDescriptions, options) {
         const suggestionByParticleDesc = new Map();
         for (const particleDesc of selectedDescriptions) {
             if (this.seenParticles.has(particleDesc._particle)) {
                 continue;
             }
             let { template, model } = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
-            const success = await Promise.all(Object.keys(model).map(async (tokenKey) => {
+            const success = Object.keys(model).map(tokenKey => {
                 const tokens = this._initSubTokens(model[tokenKey], particleDesc);
-                return (await Promise.all(tokens.map(async (token) => {
-                    const tokenValue = await this.tokenToString(token);
+                return tokens.map(token => {
+                    const tokenValue = this.tokenToString(token);
                     if (tokenValue == undefined) {
                         return false;
                     }
@@ -25838,8 +25867,8 @@ class DescriptionDomFormatter extends DescriptionFormatter {
                         model[newTokenKey] = tokenValue;
                     }
                     return true;
-                }))).every(t => !!t);
-            }));
+                }).every(t => !!t);
+            });
             if (success.every(s => !!s)) {
                 suggestionByParticleDesc.set(particleDesc, { template, model });
             }
@@ -25860,8 +25889,11 @@ class DescriptionDomFormatter extends DescriptionFormatter {
         }
     }
     _retrieveTemplateAndModel(particleDesc, index, options) {
-        if (particleDesc.template && particleDesc.model) {
-            return { template: particleDesc.template, model: particleDesc.model };
+        if (particleDesc['_template_'] && particleDesc['_model_']) {
+            return {
+                template: particleDesc['_template_'],
+                model: JSON.parse(particleDesc['_model_'])
+            };
         }
         assert$1(particleDesc.pattern, 'Description must contain template and model, or pattern');
         let template = '';
@@ -25905,7 +25937,7 @@ class DescriptionDomFormatter extends DescriptionFormatter {
         return sentence;
     }
     _joinDescriptions(descs) {
-        // // If all tokens are strings, just join them.
+        // If all tokens are strings, just join them.
         if (descs.every(desc => typeof desc === 'string')) {
             return super._joinDescriptions(descs);
         }
@@ -25995,8 +26027,8 @@ class DescriptionDomFormatter extends DescriptionFormatter {
             model: { [`${handleName}FirstName`]: firstValue.rawData.name }
         };
     }
-    _formatSingleton(handleName, value, handleDescription) {
-        const formattedValue = super._formatSingleton(handleName, value, handleDescription);
+    _formatSingleton(handleName, value) {
+        const formattedValue = super._formatSingleton(handleName, value);
         if (formattedValue) {
             return {
                 template: `<b>{{${handleName}Var}}</b>`,
@@ -26068,7 +26100,7 @@ class HostedSlotConsumer extends SlotConsumer {
         assert$1(this.hostedSlotName === consumeConn.name, `Expected slot ${this.hostedSlotName} for slot ${this.hostedSlotId}, but got ${consumeConn.name}`);
         this._consumeConn = consumeConn;
     }
-    async setContent(content, handler) {
+    setContent(content, handler, description) {
         if (this.renderCallback) {
             this.renderCallback(this.transformationSlotConsumer.consumeConn.particle, this.transformationSlotConsumer.consumeConn.name, this.hostedSlotId, this.transformationSlotConsumer.formatHostedContent(this, content));
         }
@@ -26219,7 +26251,8 @@ class SlotComposer {
     async renderSlot(particle, slotName, content) {
         const slotConsumer = this.getSlotConsumer(particle, slotName);
         assert$1(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
-        await slotConsumer.setContent(content, async (eventlet) => {
+        const description = await Description.create(slotConsumer.arc);
+        slotConsumer.setContent(content, async (eventlet) => {
             slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
             // This code is a temporary hack implemented in #2011 which allows to route UI events from
             // multiplexer to hosted particles. Multiplexer assembles UI from multiple pieces rendered
@@ -26243,7 +26276,7 @@ class SlotComposer {
                     }
                 }
             }
-        });
+        }, description);
     }
     getAvailableContexts() {
         return this._contexts;
@@ -27148,14 +27181,10 @@ class Arc {
         this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
         this.arcId = this.storageKey ? this.storageProviderFactory.parseStringAsKey(this.storageKey).arcId : '';
-        this._description = new Description(this);
         this.debugHandler = new ArcDebugHandler(this);
     }
     get loader() {
         return this._loader;
-    }
-    get description() {
-        return this._description;
     }
     get modality() {
         if (this.pec.slotComposer && this.pec.slotComposer.modality) {

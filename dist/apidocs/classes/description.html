@@ -78,18 +78,19 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="description.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-private"><a href="description.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="description.html#_particle" class="tsd-kind-icon">_particle</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="description.html#arc" class="tsd-kind-icon">arc</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="description.html#relevance" class="tsd-kind-icon">relevance</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="description.html#arcrecipename" class="tsd-kind-icon">arc<wbr>Recipe<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="description.html#arcrecipes" class="tsd-kind-icon">arc<wbr>Recipes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="description.html#particledescriptions" class="tsd-kind-icon">particle<wbr>Descriptions</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="description.html#storedescbyid" class="tsd-kind-icon">store<wbr>Desc<wbr>ById</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="description.html#defaultdescription" class="tsd-kind-icon">default<wbr>Description</a></li>
 							</ul>
 						</section>
@@ -99,30 +100,50 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="description.html#getarcdescription" class="tsd-kind-icon">get<wbr>Arc<wbr>Description</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="description.html#gethandledescription" class="tsd-kind-icon">get<wbr>Handle<wbr>Description</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="description.html#getrecipesuggestion" class="tsd-kind-icon">get<wbr>Recipe<wbr>Suggestion</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="description.html#_createparticledescription" class="tsd-kind-icon">_create<wbr>Particle<wbr>Description</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="description.html#_getpatternbynamefromdescriptionhandle" class="tsd-kind-icon">_get<wbr>Pattern<wbr>ByName<wbr>From<wbr>Description<wbr>Handle</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="description.html#_getstoredescbyid" class="tsd-kind-icon">_get<wbr>Store<wbr>Desc<wbr>ById</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="description.html#_preparestorevalue" class="tsd-kind-icon">_prepare<wbr>Store<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="description.html#create" class="tsd-kind-icon">create</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="description.html#initdescriptionhandles" class="tsd-kind-icon">init<wbr>Description<wbr>Handles</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-private">
 					<a name="constructor" class="tsd-anchor"></a>
-					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Description<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="description.html" class="tsd-signature-type">Description</a></li>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Description<span class="tsd-signature-symbol">(</span>particleDescriptions<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span>, storeDescById<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">object</span>, arcRecipeName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, arcRecipes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="description.html" class="tsd-signature-type">Description</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a2a64bc/src/runtime/description.ts#L20">runtime/description.ts:20</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L18">runtime/description.ts:18</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>arc: <span class="tsd-signature-type">any</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> particleDescriptions: <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;&lt;ParticleDescription[]&gt;[]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> storeDescById: <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-index-signature">
+											<h5><span class="tsd-signature-symbol">[</span>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span></h5>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>arcRecipeName: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>arcRecipes: <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="description.html" class="tsd-signature-type">Description</a></h4>
@@ -132,35 +153,53 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_particle" class="tsd-anchor"></a>
-					<h3>_particle</h3>
-					<div class="tsd-signature tsd-kind-icon">_particle<span class="tsd-signature-symbol">:</span> <a href="particle.html" class="tsd-signature-type">Particle</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> =&nbsp;undefined</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="arcrecipename" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> arc<wbr>Recipe<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">arc<wbr>Recipe<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a2a64bc/src/runtime/description.ts#L20">runtime/description.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L21">runtime/description.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="arc" class="tsd-anchor"></a>
-					<h3>arc</h3>
-					<div class="tsd-signature tsd-kind-icon">arc<span class="tsd-signature-symbol">:</span> <a href="arc.html" class="tsd-signature-type">Arc</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="arcrecipes" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> arc<wbr>Recipes</h3>
+					<div class="tsd-signature tsd-kind-icon">arc<wbr>Recipes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a2a64bc/src/runtime/description.ts#L19">runtime/description.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L23">runtime/description.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="relevance" class="tsd-anchor"></a>
-					<h3>relevance</h3>
-					<div class="tsd-signature tsd-kind-icon">relevance<span class="tsd-signature-symbol">:</span> <a href="relevance.html" class="tsd-signature-type">Relevance</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="particledescriptions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> particle<wbr>Descriptions</h3>
+					<div class="tsd-signature tsd-kind-icon">particle<wbr>Descriptions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a2a64bc/src/runtime/description.ts#L18">runtime/description.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L19">runtime/description.ts:19</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="storedescbyid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> store<wbr>Desc<wbr>ById</h3>
+					<div class="tsd-signature tsd-kind-icon">store<wbr>Desc<wbr>ById<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L20">runtime/description.ts:20</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
 					<a name="defaultdescription" class="tsd-anchor"></a>
@@ -168,7 +207,7 @@
 					<div class="tsd-signature tsd-kind-icon">default<wbr>Description<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;i&#x27;m feeling lucky&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a2a64bc/src/runtime/description.ts#L52">runtime/description.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L148">runtime/description.ts:148</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -185,7 +224,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a2a64bc/src/runtime/description.ts#L26">runtime/description.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L30">runtime/description.ts:30</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -202,13 +241,13 @@
 					<a name="gethandledescription" class="tsd-anchor"></a>
 					<h3>get<wbr>Handle<wbr>Description</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Handle<wbr>Description<span class="tsd-signature-symbol">(</span>recipeHandle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Handle<wbr>Description<span class="tsd-signature-symbol">(</span>recipeHandle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a2a64bc/src/runtime/description.ts#L44">runtime/description.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L51">runtime/description.ts:51</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -217,7 +256,7 @@
 									<h5>recipeHandle: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -225,13 +264,13 @@
 					<a name="getrecipesuggestion" class="tsd-anchor"></a>
 					<h3>get<wbr>Recipe<wbr>Suggestion</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Recipe<wbr>Suggestion<span class="tsd-signature-symbol">(</span>formatterClass<span class="tsd-signature-symbol">?: </span><a href="descriptionformatter.html" class="tsd-signature-type">DescriptionFormatter</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Recipe<wbr>Suggestion<span class="tsd-signature-symbol">(</span>formatterClass<span class="tsd-signature-symbol">?: </span><a href="descriptionformatter.html" class="tsd-signature-type">DescriptionFormatter</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a2a64bc/src/runtime/description.ts#L34">runtime/description.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L42">runtime/description.ts:42</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -240,7 +279,160 @@
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> formatterClass: <a href="descriptionformatter.html" class="tsd-signature-type">DescriptionFormatter</a><span class="tsd-signature-symbol"> =&nbsp;DescriptionFormatter</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="_createparticledescription" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> _create<wbr>Particle<wbr>Description</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">_create<wbr>Particle<wbr>Description<span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><a href="particle.html" class="tsd-signature-type">Particle</a>, arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a>, relevance<span class="tsd-signature-symbol">?: </span><a href="relevance.html" class="tsd-signature-type">Relevance</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L78">runtime/description.ts:78</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>particle: <a href="particle.html" class="tsd-signature-type">Particle</a></h5>
+								</li>
+								<li>
+									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> relevance: <a href="relevance.html" class="tsd-signature-type">Relevance</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="_getpatternbynamefromdescriptionhandle" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> _get<wbr>Pattern<wbr>ByName<wbr>From<wbr>Description<wbr>Handle</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">_get<wbr>Pattern<wbr>ByName<wbr>From<wbr>Description<wbr>Handle<span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><a href="particle.html" class="tsd-signature-type">Particle</a>, arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L103">runtime/description.ts:103</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>particle: <a href="particle.html" class="tsd-signature-type">Particle</a></h5>
+								</li>
+								<li>
+									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="_getstoredescbyid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> _get<wbr>Store<wbr>Desc<wbr>ById</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">_get<wbr>Store<wbr>Desc<wbr>ById<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L58">runtime/description.ts:58</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">__type</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="_preparestorevalue" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> _prepare<wbr>Store<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">_prepare<wbr>Store<wbr>Value<span class="tsd-signature-symbol">(</span>store<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#descriptionvalue" class="tsd-signature-type">DescriptionValue</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L118">runtime/description.ts:118</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>store: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#descriptionvalue" class="tsd-signature-type">DescriptionValue</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="create" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> create</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">create<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a>, relevance<span class="tsd-signature-symbol">?: </span><a href="relevance.html" class="tsd-signature-type">Relevance</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="description.html" class="tsd-signature-type">Description</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L25">runtime/description.ts:25</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> relevance: <a href="relevance.html" class="tsd-signature-type">Relevance</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="description.html" class="tsd-signature-type">Description</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="initdescriptionhandles" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> init<wbr>Description<wbr>Handles</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">init<wbr>Description<wbr>Handles<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a>, relevance<span class="tsd-signature-symbol">?: </span><a href="relevance.html" class="tsd-signature-type">Relevance</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/358c691/src/runtime/description.ts#L69">runtime/description.ts:69</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> relevance: <a href="relevance.html" class="tsd-signature-type">Relevance</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -261,17 +453,20 @@
 					<li class="current tsd-kind-class">
 						<a href="description.html" class="tsd-kind-icon">Description</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-private">
 								<a href="description.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="description.html#_particle" class="tsd-kind-icon">_particle</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="description.html#arcrecipename" class="tsd-kind-icon">arc<wbr>Recipe<wbr>Name</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="description.html#arc" class="tsd-kind-icon">arc</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="description.html#arcrecipes" class="tsd-kind-icon">arc<wbr>Recipes</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="description.html#relevance" class="tsd-kind-icon">relevance</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="description.html#particledescriptions" class="tsd-kind-icon">particle<wbr>Descriptions</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="description.html#storedescbyid" class="tsd-kind-icon">store<wbr>Desc<wbr>ById</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
 								<a href="description.html#defaultdescription" class="tsd-kind-icon">default<wbr>Description</a>
@@ -284,6 +479,24 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="description.html#getrecipesuggestion" class="tsd-kind-icon">get<wbr>Recipe<wbr>Suggestion</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="description.html#_createparticledescription" class="tsd-kind-icon">_create<wbr>Particle<wbr>Description</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="description.html#_getpatternbynamefromdescriptionhandle" class="tsd-kind-icon">_get<wbr>Pattern<wbr>ByName<wbr>From<wbr>Description<wbr>Handle</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="description.html#_getstoredescbyid" class="tsd-kind-icon">_get<wbr>Store<wbr>Desc<wbr>ById</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="description.html#_preparestorevalue" class="tsd-kind-icon">_prepare<wbr>Store<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="description.html#create" class="tsd-kind-icon">create</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="description.html#initdescriptionhandles" class="tsd-kind-icon">init<wbr>Description<wbr>Handles</a>
 							</li>
 						</ul>
 					</li>

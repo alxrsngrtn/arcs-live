@@ -8,8 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { SlotConsumer } from './slot-consumer.js';
 import { HostedSlotContext } from './hosted-slot-context.js';
+import { SlotConsumer } from './slot-consumer.js';
 export class HostedSlotConsumer extends SlotConsumer {
     constructor(arc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId) {
         super(arc, null, null);
@@ -28,7 +28,7 @@ export class HostedSlotConsumer extends SlotConsumer {
         assert(this.hostedSlotName === consumeConn.name, `Expected slot ${this.hostedSlotName} for slot ${this.hostedSlotId}, but got ${consumeConn.name}`);
         this._consumeConn = consumeConn;
     }
-    async setContent(content, handler) {
+    setContent(content, handler, description) {
         if (this.renderCallback) {
             this.renderCallback(this.transformationSlotConsumer.consumeConn.particle, this.transformationSlotConsumer.consumeConn.name, this.hostedSlotId, this.transformationSlotConsumer.formatHostedContent(this, content));
         }

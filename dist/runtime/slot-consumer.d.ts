@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from './arc.js';
+import { Description } from './description.js';
 import { SlotContext } from './slot-context.js';
 import { SlotConnection } from './recipe/slot-connection.js';
 import { HostedSlotConsumer } from './hosted-slot-consumer.js';
@@ -36,8 +37,8 @@ export declare class SlotConsumer {
     updateProvidedContexts(): void;
     startRender(): void;
     stopRender(): void;
-    setContent(content: any, handler: any): Promise<void>;
-    populateHandleDescriptions(): Promise<{}>;
+    setContent(content: any, handler: any, description?: Description): void;
+    populateHandleDescriptions(description: Description): {};
     getInnerContainer(slotId: any): any;
     _initInnerSlotContainer(slotId: any, subId: any, container: any): void;
     _clearInnerSlotContainers(subIds: any): void;

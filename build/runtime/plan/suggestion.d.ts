@@ -80,7 +80,7 @@ export declare class Suggestion {
     constructor(plan: Plan, hash: string, rank: number, versionByStore: {});
     readonly descriptionText: string;
     getDescription(modality: string): string | {};
-    setDescription(description: Description, modality: Modality, descriptionFormatter?: typeof DescriptionFormatter): Promise<void>;
+    setDescription(description: Description, modality: Modality, descriptionFormatter?: typeof DescriptionFormatter): void;
     isEquivalent(other: Suggestion): boolean;
     static compare(s1: Suggestion, s2: Suggestion): number;
     hasSearch(search: string): boolean;

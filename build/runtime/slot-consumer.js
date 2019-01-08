@@ -87,25 +87,25 @@ export class SlotConsumer {
             this.stopRenderCallback({ particle: this.consumeConn.particle, slotName: this.consumeConn.name });
         }
     }
-    async setContent(content, handler) {
-        if (content && Object.keys(content).length > 0) {
-            content.descriptions = await this.populateHandleDescriptions();
+    setContent(content, handler, description) {
+        if (content && Object.keys(content).length > 0 && description) {
+            content.descriptions = this.populateHandleDescriptions(description);
         }
         this.eventHandler = handler;
         for (const [subId, rendering] of this.renderings) {
             this.setContainerContent(rendering, this.formatContent(content, subId), subId);
         }
     }
-    async populateHandleDescriptions() {
-        if (!this.arc || !this.consumeConn)
+    populateHandleDescriptions(description) {
+        if (!this.consumeConn)
             return null;
         const descriptions = {};
-        await Promise.all(Object.values(this.consumeConn.particle.connections).map(async (handleConn) => {
-            // TODO(mmandlis): convert back to .handle and .name after all recipe files converted to typescript.
-            if (handleConn['handle']) {
-                descriptions[`${handleConn['name']}.description`] = (await this.arc.description.getHandleDescription(handleConn['handle'])).toString();
+        Object.values(this.consumeConn.particle.connections).map(handleConn => {
+            if (handleConn.handle) {
+                descriptions[`${handleConn.name}.description`] =
+                    description.getHandleDescription(handleConn.handle).toString();
             }
-        }));
+        });
         return descriptions;
     }
     getInnerContainer(slotId) {

@@ -7,9 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { SlotConsumer } from './slot-consumer.js';
-import { HostedSlotContext } from './hosted-slot-context.js';
 import { Arc } from './arc.js';
+import { HostedSlotContext } from './hosted-slot-context.js';
+import { SlotConnection } from './recipe/slot-connection.js';
+import { SlotConsumer } from './slot-consumer.js';
 export declare class HostedSlotConsumer extends SlotConsumer {
     readonly transformationSlotConsumer: SlotConsumer;
     readonly hostedParticleName: string;
@@ -18,8 +19,8 @@ export declare class HostedSlotConsumer extends SlotConsumer {
     readonly storeId: string;
     renderCallback: ({}: {}, {}: {}, {}: {}, {}: {}) => void;
     constructor(arc: Arc, transformationSlotConsumer: any, hostedParticleName: any, hostedSlotName: any, hostedSlotId: any, storeId: any);
-    consumeConn: import("./recipe/slot-connection.js").SlotConnection;
-    setContent(content: any, handler: any): Promise<any>;
+    consumeConn: SlotConnection;
+    setContent(content: any, handler: any, description: any): any;
     constructRenderRequest(): string[];
     getInnerContainer(name: any): any;
     createProvidedContexts(): HostedSlotContext[];

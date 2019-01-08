@@ -17,24 +17,17 @@ export class DescriptionDomFormatter extends DescriptionFormatter {
     _isSelectedDescription(desc) {
         return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
     }
-    _populateParticleDescription(particle, descriptionByName) {
-        const result = super._populateParticleDescription(particle, descriptionByName);
-        if (descriptionByName['_template_']) {
-            return Object.assign({}, result, { template: descriptionByName['_template_'], model: JSON.parse(descriptionByName['_model_']) });
-        }
-        return result;
-    }
-    async _combineSelectedDescriptions(selectedDescriptions, options) {
+    _combineSelectedDescriptions(selectedDescriptions, options) {
         const suggestionByParticleDesc = new Map();
         for (const particleDesc of selectedDescriptions) {
             if (this.seenParticles.has(particleDesc._particle)) {
                 continue;
             }
             let { template, model } = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
-            const success = await Promise.all(Object.keys(model).map(async (tokenKey) => {
+            const success = Object.keys(model).map(tokenKey => {
                 const tokens = this._initSubTokens(model[tokenKey], particleDesc);
-                return (await Promise.all(tokens.map(async (token) => {
-                    const tokenValue = await this.tokenToString(token);
+                return tokens.map(token => {
+                    const tokenValue = this.tokenToString(token);
                     if (tokenValue == undefined) {
                         return false;
                     }
@@ -52,8 +45,8 @@ export class DescriptionDomFormatter extends DescriptionFormatter {
                         model[newTokenKey] = tokenValue;
                     }
                     return true;
-                }))).every(t => !!t);
-            }));
+                }).every(t => !!t);
+            });
             if (success.every(s => !!s)) {
                 suggestionByParticleDesc.set(particleDesc, { template, model });
             }
@@ -74,8 +67,11 @@ export class DescriptionDomFormatter extends DescriptionFormatter {
         }
     }
     _retrieveTemplateAndModel(particleDesc, index, options) {
-        if (particleDesc.template && particleDesc.model) {
-            return { template: particleDesc.template, model: particleDesc.model };
+        if (particleDesc['_template_'] && particleDesc['_model_']) {
+            return {
+                template: particleDesc['_template_'],
+                model: JSON.parse(particleDesc['_model_'])
+            };
         }
         assert(particleDesc.pattern, 'Description must contain template and model, or pattern');
         let template = '';
@@ -119,7 +115,7 @@ export class DescriptionDomFormatter extends DescriptionFormatter {
         return sentence;
     }
     _joinDescriptions(descs) {
-        // // If all tokens are strings, just join them.
+        // If all tokens are strings, just join them.
         if (descs.every(desc => typeof desc === 'string')) {
             return super._joinDescriptions(descs);
         }
@@ -209,8 +205,8 @@ export class DescriptionDomFormatter extends DescriptionFormatter {
             model: { [`${handleName}FirstName`]: firstValue.rawData.name }
         };
     }
-    _formatSingleton(handleName, value, handleDescription) {
-        const formattedValue = super._formatSingleton(handleName, value, handleDescription);
+    _formatSingleton(handleName, value) {
+        const formattedValue = super._formatSingleton(handleName, value);
         if (formattedValue) {
             return {
                 template: `<b>{{${handleName}Var}}</b>`,

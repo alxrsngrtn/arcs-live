@@ -1,5 +1,8 @@
-commit a2a64bcf825f91134819fc52613ea5dbec4b5db4
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Jan 8 09:48:43 2019 -0800
+commit 358c691f7419d915385bf2724c7040840abbfbe1
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jan 8 10:31:33 2019 -0800
 
-    convert type-test to typescript (#2536)
+    Refactor description to not rely on Arc instance. (#2541)
+    
+    All relevant store values are fetch during Description initialization.
+    As a nice side effect, most description and description code becomes synchronous.

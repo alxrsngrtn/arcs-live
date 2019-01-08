@@ -13,7 +13,6 @@ import { ParticleExecutionHost } from './particle-execution-host.js';
 import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
 import { Manifest, StorageStub } from './manifest.js';
-import { Description } from './description.js';
 import { compareComparables } from './recipe/util.js';
 import { FakePecFactory } from './fake-pec-factory.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
@@ -51,14 +50,10 @@ export class Arc {
         this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
         this.arcId = this.storageKey ? this.storageProviderFactory.parseStringAsKey(this.storageKey).arcId : '';
-        this._description = new Description(this);
         this.debugHandler = new ArcDebugHandler(this);
     }
     get loader() {
         return this._loader;
-    }
-    get description() {
-        return this._description;
     }
     get modality() {
         if (this.pec.slotComposer && this.pec.slotComposer.modality) {

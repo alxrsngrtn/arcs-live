@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
+import { Description } from './description.js';
 import { Relevance } from './relevance.js';
 import { Suggestion } from './plan/suggestion.js';
 export class Speculator {
@@ -37,9 +38,9 @@ export class Speculator {
         if (!relevance.isRelevant(plan)) {
             return null;
         }
-        speculativeArc.description.relevance = relevance;
+        const description = await Description.create(speculativeArc, relevance);
         suggestion = Suggestion.create(plan, hash, relevance);
-        await suggestion.setDescription(speculativeArc.description, arc.modality, arc.pec.slotComposer ? arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
+        suggestion.setDescription(description, arc.modality, arc.pec.slotComposer ? arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
         this.suggestionByHash[hash] = suggestion;
         return suggestion;
     }
