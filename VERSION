@@ -1,9 +1,5 @@
-commit 44cdfcceacb12577b94790022477b873d7a3af09
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Jan 8 15:02:54 2019 +1100
+commit 394a0c7e80378157e6b0ebebf85061dfd4a11992
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jan 7 20:25:41 2019 -0800
 
-    Make tests more hermetic (#2540)
-    
-    * Make tests more hermetic: initialisers with potential side effects should only be invoked when the given tests are run.
-    
-    * Add comment with the rationale behind using 'before' for globals
+    arc-host to deserialize plan before instantiating (#2539)
