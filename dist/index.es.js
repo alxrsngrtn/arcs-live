@@ -26347,294 +26347,6 @@ class SlotComposer {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class StrategyExplorerAdapter {
-    static processGenerations(generations, devtoolsChannel, options = {}) {
-        devtoolsChannel.send({
-            messageType: 'generations',
-            messageBody: { results: generations, options },
-        });
-    }
-}
-
-// Copyright (c) 2018 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-// TODO(wkorman): Incorporate debug levels. Consider outputting
-// preamble in the specified color via ANSI escape codes. Consider
-// sharing with similar log factory logic in `xen.js`. See `log-web.js`.
-const _logFactory = (preamble, color, log='log') => {
-  return console[log].bind(console, `(${preamble})`);
-};
-
-const factory = global.debugLevel < 1 ? () => () => {} : _logFactory;
-
-const logFactory = (...args) => factory(...args);
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const error = logFactory('PlanningResult', '#ff0090', 'error');
-class PlanningResult {
-    constructor(store) {
-        this.lastUpdated = new Date(null);
-        this.generations = [];
-        this.contextual = true;
-        this.changeCallbacks = [];
-        this.store = store;
-        if (this.store) {
-            this.storeCallback = () => this.load();
-            this.store.on('change', this.storeCallback, this);
-        }
-    }
-    registerChangeCallback(callback) {
-        this.changeCallbacks.push(callback);
-    }
-    onChanged() {
-        for (const callback of this.changeCallbacks) {
-            callback();
-        }
-    }
-    async load() {
-        const value = await this.store.get() || {};
-        if (value.suggestions) {
-            if (this.fromLiteral(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    async flush() {
-        try {
-            await this.store.set(this.toLiteral());
-        }
-        catch (e) {
-            error('Failed storing suggestions: ', e);
-            throw e;
-        }
-    }
-    async clear() {
-        return this.store.clear();
-    }
-    dispose() {
-        this.changeCallbacks = [];
-        this.store.off('change', this.storeCallback);
-        this.store.dispose();
-    }
-    get suggestions() { return this._suggestions || []; }
-    set suggestions(suggestions) {
-        assert$1(Boolean(suggestions), `Cannot set uninitialized suggestions`);
-        this._suggestions = suggestions;
-    }
-    static formatSerializableGenerations(generations) {
-        // Make a copy of everything and assign IDs to recipes.
-        const idMap = new Map(); // Recipe -> ID
-        let lastID = 0;
-        const assignIdAndCopy = recipe => {
-            idMap.set(recipe, lastID);
-            const { result, score, derivation, description, hash, valid, active, irrelevant } = recipe;
-            const resultString = result.toString({ showUnresolved: true, showInvalid: false, details: '' });
-            const resolved = result.isResolved();
-            return { result: resultString, resolved, score, derivation, description, hash, valid, active, irrelevant, id: lastID++ };
-        };
-        generations = generations.map(pop => ({
-            record: pop.record,
-            generated: pop.generated.map(assignIdAndCopy)
-        }));
-        // Change recipes in derivation to IDs and compute resolved stats.
-        return generations.map(pop => {
-            const population = pop.generated;
-            const record = pop.record;
-            // Adding those here to reuse recipe resolution computation.
-            record.resolvedDerivations = 0;
-            record.resolvedDerivationsByStrategy = {};
-            population.forEach(item => {
-                item.derivation = item.derivation.map(derivItem => {
-                    let parent;
-                    let strategy;
-                    if (derivItem.parent) {
-                        parent = idMap.get(derivItem.parent);
-                    }
-                    if (derivItem.strategy) {
-                        strategy = derivItem.strategy.constructor.name;
-                    }
-                    return { parent, strategy };
-                });
-                if (item.resolved) {
-                    record.resolvedDerivations++;
-                    const strategy = item.derivation[0].strategy;
-                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
-                        record.resolvedDerivationsByStrategy[strategy] = 0;
-                    }
-                    record.resolvedDerivationsByStrategy[strategy]++;
-                }
-            });
-            const populationMap = {};
-            population.forEach(item => {
-                if (populationMap[item.derivation[0].strategy] == undefined) {
-                    populationMap[item.derivation[0].strategy] = [];
-                }
-                populationMap[item.derivation[0].strategy].push(item);
-            });
-            const result = { population: [], record };
-            Object.keys(populationMap).forEach(strategy => {
-                result.population.push({ strategy, recipes: populationMap[strategy] });
-            });
-            return result;
-        });
-    }
-    set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
-        if (this.isEquivalent(suggestions)) {
-            return false;
-        }
-        this.suggestions = suggestions;
-        this.generations = generations;
-        this.lastUpdated = lastUpdated;
-        this.contextual = contextual;
-        this.onChanged();
-        return true;
-    }
-    merge({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }, arc) {
-        if (this.isEquivalent(suggestions)) {
-            return false;
-        }
-        const jointSuggestions = [];
-        const arcVersionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
-        // For all existing suggestions, keep the ones still up to date.
-        for (const currentSuggestion of this.suggestions) {
-            const newSuggestion = suggestions.find(suggestion => suggestion.hash === currentSuggestion.hash);
-            if (newSuggestion) {
-                // Suggestion with this hash exists in the new suggestions list.
-                const upToDateSuggestion = this._getUpToDate(currentSuggestion, newSuggestion, arcVersionByStore);
-                if (upToDateSuggestion) {
-                    jointSuggestions.push(upToDateSuggestion);
-                }
-            }
-            else {
-                // Suggestion with this hash does not exist in the new suggestions list.
-                // Add it to the joint suggestions list, iff it's up-to-date and not in the active recipe.
-                if (this._isUpToDate(currentSuggestion, arcVersionByStore) &&
-                    !RecipeUtil.matchesRecipe(arc.activeRecipe, currentSuggestion.plan)) {
-                    jointSuggestions.push(currentSuggestion);
-                }
-            }
-        }
-        for (const newSuggestion of suggestions) {
-            if (!this.suggestions.find(suggestion => suggestion.hash === newSuggestion.hash)) {
-                if (this._isUpToDate(newSuggestion, arcVersionByStore)) {
-                    jointSuggestions.push(newSuggestion);
-                }
-            }
-        }
-        return this.set({ suggestions: jointSuggestions, lastUpdated, generations, contextual });
-    }
-    _isUpToDate(suggestion, versionByStore) {
-        for (const handle of suggestion.plan.handles) {
-            const arcVersion = versionByStore[handle.id] || 0;
-            const relevanceVersion = suggestion.versionByStore[handle.id] || 0;
-            if (relevanceVersion < arcVersion) {
-                return false;
-            }
-        }
-        return true;
-    }
-    _getUpToDate(currentSuggestion, newSuggestion, versionByStore) {
-        const newUpToDate = this._isUpToDate(newSuggestion, versionByStore);
-        const currentUpToDate = this._isUpToDate(currentSuggestion, versionByStore);
-        if (newUpToDate && currentUpToDate) {
-            const newVersions = newSuggestion.versionByStore;
-            const currentVersions = currentSuggestion.versionByStore;
-            assert$1(Object.keys(newVersions).length === Object.keys(currentVersions).length);
-            if (Object.entries(newVersions).every(([id, version]) => currentVersions[id] !== undefined && version >= currentVersions[id])) {
-                return newSuggestion;
-            }
-            assert$1(Object.entries(currentVersions).every(([id, version]) => newVersions[id] !== undefined
-                && version <= newVersions[id]), `Inconsistent store versions for suggestions with hash: ${newSuggestion.hash}`);
-            return currentSuggestion;
-        }
-        if (newUpToDate) {
-            return newSuggestion;
-        }
-        if (currentUpToDate) {
-            return currentSuggestion;
-        }
-        console.warn(`None of the suggestions for hash ${newSuggestion.hash} is up to date.`);
-        return null;
-    }
-    append({ suggestions, lastUpdated = new Date(), generations = [] }) {
-        const newSuggestions = [];
-        let searchUpdated = false;
-        for (const newSuggestion of suggestions) {
-            const existingSuggestion = this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion));
-            if (existingSuggestion) {
-                searchUpdated = existingSuggestion.mergeSearch(newSuggestion);
-            }
-            else {
-                newSuggestions.push(newSuggestion);
-            }
-        }
-        if (newSuggestions.length > 0) {
-            this.suggestions = this.suggestions.concat(newSuggestions);
-        }
-        else {
-            if (!searchUpdated) {
-                return false;
-            }
-        }
-        // TODO: filter out generations of other suggestions.
-        this.generations.push(...generations);
-        this.lastUpdated = lastUpdated;
-        this.onChanged();
-        return true;
-    }
-    olderThan(other) {
-        return this.lastUpdated < other.lastUpdated;
-    }
-    isEquivalent(suggestions) {
-        return PlanningResult.isEquivalent(this._suggestions, suggestions);
-    }
-    static isEquivalent(oldSuggestions, newSuggestions) {
-        assert$1(newSuggestions, `New suggestions cannot be null.`);
-        return oldSuggestions &&
-            oldSuggestions.length === newSuggestions.length &&
-            oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
-    }
-    fromLiteral({ suggestions, generations, lastUpdated }) {
-        return this.set({
-            suggestions: suggestions.map(suggestion => Suggestion.fromLiteral(suggestion)).filter(s => s),
-            generations: JSON.parse(generations || '[]'),
-            lastUpdated: new Date(lastUpdated),
-            contextual: suggestions.contextual
-        });
-    }
-    toLiteral() {
-        return {
-            suggestions: this.suggestions.map(suggestion => suggestion.toLiteral()),
-            generations: JSON.stringify(this.generations),
-            lastUpdated: this.lastUpdated.toString(),
-            contextual: this.contextual
-        };
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 class RelevantContextRecipes extends Strategy {
     constructor(context, modality) {
         super();
@@ -26697,14 +26409,15 @@ class RecipeIndex {
             ...IndexStrategies.map(S => new S(arcStub, { recipeIndex: this }))
         ], [], Empty);
         this.ready = trace.endWith(new Promise(async (resolve) => {
-            const generations = [];
             do {
                 const record = await strategizer.generate();
-                generations.push({ record, generated: strategizer.generated });
             } while (strategizer.generated.length + strategizer.terminal.length > 0);
-            if (DevtoolsConnection.isConnected) {
-                StrategyExplorerAdapter.processGenerations(PlanningResult.formatSerializableGenerations(generations), DevtoolsConnection.get().forArc(arc), { label: 'Index', keep: true });
-            }
+            // TODO: This is workaround for #2546. Uncomment, when properly fixed.
+            // if (DevtoolsConnection.isConnected) {
+            //   StrategyExplorerAdapter.processGenerations(
+            //       PlanningResult.formatSerializableGenerations(generations),
+            //       DevtoolsConnection.get().forArc(arc), {label: 'Index', keep: true});
+            // }
             const population = strategizer.population;
             const candidates = new Set(population);
             for (const result of population) {
@@ -27783,6 +27496,276 @@ ${this.activeRecipe.toString()}`;
     }
 }
 
+// Copyright (c) 2018 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+// TODO(wkorman): Incorporate debug levels. Consider outputting
+// preamble in the specified color via ANSI escape codes. Consider
+// sharing with similar log factory logic in `xen.js`. See `log-web.js`.
+const _logFactory = (preamble, color, log='log') => {
+  return console[log].bind(console, `(${preamble})`);
+};
+
+const factory = global.debugLevel < 1 ? () => () => {} : _logFactory;
+
+const logFactory = (...args) => factory(...args);
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const error = logFactory('PlanningResult', '#ff0090', 'error');
+class PlanningResult {
+    constructor(store) {
+        this.lastUpdated = new Date(null);
+        this.generations = [];
+        this.contextual = true;
+        this.changeCallbacks = [];
+        this.store = store;
+        if (this.store) {
+            this.storeCallback = () => this.load();
+            this.store.on('change', this.storeCallback, this);
+        }
+    }
+    registerChangeCallback(callback) {
+        this.changeCallbacks.push(callback);
+    }
+    onChanged() {
+        for (const callback of this.changeCallbacks) {
+            callback();
+        }
+    }
+    async load() {
+        const value = await this.store.get() || {};
+        if (value.suggestions) {
+            if (this.fromLiteral(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    async flush() {
+        try {
+            await this.store.set(this.toLiteral());
+        }
+        catch (e) {
+            error('Failed storing suggestions: ', e);
+            throw e;
+        }
+    }
+    async clear() {
+        return this.store.clear();
+    }
+    dispose() {
+        this.changeCallbacks = [];
+        this.store.off('change', this.storeCallback);
+        this.store.dispose();
+    }
+    get suggestions() { return this._suggestions || []; }
+    set suggestions(suggestions) {
+        assert$1(Boolean(suggestions), `Cannot set uninitialized suggestions`);
+        this._suggestions = suggestions;
+    }
+    static formatSerializableGenerations(generations) {
+        // Make a copy of everything and assign IDs to recipes.
+        const idMap = new Map(); // Recipe -> ID
+        let lastID = 0;
+        const assignIdAndCopy = recipe => {
+            idMap.set(recipe, lastID);
+            const { result, score, derivation, description, hash, valid, active, irrelevant } = recipe;
+            const resultString = result.toString({ showUnresolved: true, showInvalid: false, details: '' });
+            const resolved = result.isResolved();
+            return { result: resultString, resolved, score, derivation, description, hash, valid, active, irrelevant, id: lastID++ };
+        };
+        generations = generations.map(pop => ({
+            record: pop.record,
+            generated: pop.generated.map(assignIdAndCopy)
+        }));
+        // Change recipes in derivation to IDs and compute resolved stats.
+        return generations.map(pop => {
+            const population = pop.generated;
+            const record = pop.record;
+            // Adding those here to reuse recipe resolution computation.
+            record.resolvedDerivations = 0;
+            record.resolvedDerivationsByStrategy = {};
+            population.forEach(item => {
+                item.derivation = item.derivation.map(derivItem => {
+                    let parent;
+                    let strategy;
+                    if (derivItem.parent) {
+                        parent = idMap.get(derivItem.parent);
+                    }
+                    if (derivItem.strategy) {
+                        strategy = derivItem.strategy.constructor.name;
+                    }
+                    return { parent, strategy };
+                });
+                if (item.resolved) {
+                    record.resolvedDerivations++;
+                    const strategy = item.derivation[0].strategy;
+                    if (record.resolvedDerivationsByStrategy[strategy] === undefined) {
+                        record.resolvedDerivationsByStrategy[strategy] = 0;
+                    }
+                    record.resolvedDerivationsByStrategy[strategy]++;
+                }
+            });
+            const populationMap = {};
+            population.forEach(item => {
+                if (populationMap[item.derivation[0].strategy] == undefined) {
+                    populationMap[item.derivation[0].strategy] = [];
+                }
+                populationMap[item.derivation[0].strategy].push(item);
+            });
+            const result = { population: [], record };
+            Object.keys(populationMap).forEach(strategy => {
+                result.population.push({ strategy, recipes: populationMap[strategy] });
+            });
+            return result;
+        });
+    }
+    set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
+        if (this.isEquivalent(suggestions)) {
+            return false;
+        }
+        this.suggestions = suggestions;
+        this.generations = generations;
+        this.lastUpdated = lastUpdated;
+        this.contextual = contextual;
+        this.onChanged();
+        return true;
+    }
+    merge({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }, arc) {
+        if (this.isEquivalent(suggestions)) {
+            return false;
+        }
+        const jointSuggestions = [];
+        const arcVersionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        // For all existing suggestions, keep the ones still up to date.
+        for (const currentSuggestion of this.suggestions) {
+            const newSuggestion = suggestions.find(suggestion => suggestion.hash === currentSuggestion.hash);
+            if (newSuggestion) {
+                // Suggestion with this hash exists in the new suggestions list.
+                const upToDateSuggestion = this._getUpToDate(currentSuggestion, newSuggestion, arcVersionByStore);
+                if (upToDateSuggestion) {
+                    jointSuggestions.push(upToDateSuggestion);
+                }
+            }
+            else {
+                // Suggestion with this hash does not exist in the new suggestions list.
+                // Add it to the joint suggestions list, iff it's up-to-date and not in the active recipe.
+                if (this._isUpToDate(currentSuggestion, arcVersionByStore) &&
+                    !RecipeUtil.matchesRecipe(arc.activeRecipe, currentSuggestion.plan)) {
+                    jointSuggestions.push(currentSuggestion);
+                }
+            }
+        }
+        for (const newSuggestion of suggestions) {
+            if (!this.suggestions.find(suggestion => suggestion.hash === newSuggestion.hash)) {
+                if (this._isUpToDate(newSuggestion, arcVersionByStore)) {
+                    jointSuggestions.push(newSuggestion);
+                }
+            }
+        }
+        return this.set({ suggestions: jointSuggestions, lastUpdated, generations, contextual });
+    }
+    _isUpToDate(suggestion, versionByStore) {
+        for (const handle of suggestion.plan.handles) {
+            const arcVersion = versionByStore[handle.id] || 0;
+            const relevanceVersion = suggestion.versionByStore[handle.id] || 0;
+            if (relevanceVersion < arcVersion) {
+                return false;
+            }
+        }
+        return true;
+    }
+    _getUpToDate(currentSuggestion, newSuggestion, versionByStore) {
+        const newUpToDate = this._isUpToDate(newSuggestion, versionByStore);
+        const currentUpToDate = this._isUpToDate(currentSuggestion, versionByStore);
+        if (newUpToDate && currentUpToDate) {
+            const newVersions = newSuggestion.versionByStore;
+            const currentVersions = currentSuggestion.versionByStore;
+            assert$1(Object.keys(newVersions).length === Object.keys(currentVersions).length);
+            if (Object.entries(newVersions).every(([id, version]) => currentVersions[id] !== undefined && version >= currentVersions[id])) {
+                return newSuggestion;
+            }
+            assert$1(Object.entries(currentVersions).every(([id, version]) => newVersions[id] !== undefined
+                && version <= newVersions[id]), `Inconsistent store versions for suggestions with hash: ${newSuggestion.hash}`);
+            return currentSuggestion;
+        }
+        if (newUpToDate) {
+            return newSuggestion;
+        }
+        if (currentUpToDate) {
+            return currentSuggestion;
+        }
+        console.warn(`None of the suggestions for hash ${newSuggestion.hash} is up to date.`);
+        return null;
+    }
+    append({ suggestions, lastUpdated = new Date(), generations = [] }) {
+        const newSuggestions = [];
+        let searchUpdated = false;
+        for (const newSuggestion of suggestions) {
+            const existingSuggestion = this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion));
+            if (existingSuggestion) {
+                searchUpdated = existingSuggestion.mergeSearch(newSuggestion);
+            }
+            else {
+                newSuggestions.push(newSuggestion);
+            }
+        }
+        if (newSuggestions.length > 0) {
+            this.suggestions = this.suggestions.concat(newSuggestions);
+        }
+        else {
+            if (!searchUpdated) {
+                return false;
+            }
+        }
+        // TODO: filter out generations of other suggestions.
+        this.generations.push(...generations);
+        this.lastUpdated = lastUpdated;
+        this.onChanged();
+        return true;
+    }
+    olderThan(other) {
+        return this.lastUpdated < other.lastUpdated;
+    }
+    isEquivalent(suggestions) {
+        return PlanningResult.isEquivalent(this._suggestions, suggestions);
+    }
+    static isEquivalent(oldSuggestions, newSuggestions) {
+        assert$1(newSuggestions, `New suggestions cannot be null.`);
+        return oldSuggestions &&
+            oldSuggestions.length === newSuggestions.length &&
+            oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
+    }
+    fromLiteral({ suggestions, generations, lastUpdated }) {
+        return this.set({
+            suggestions: suggestions.map(suggestion => Suggestion.fromLiteral(suggestion)).filter(s => s),
+            generations: JSON.parse(generations || '[]'),
+            lastUpdated: new Date(lastUpdated),
+            contextual: suggestions.contextual
+        });
+    }
+    toLiteral() {
+        return {
+            suggestions: this.suggestions.map(suggestion => suggestion.toLiteral()),
+            generations: JSON.stringify(this.generations),
+            lastUpdated: this.lastUpdated.toString(),
+            contextual: this.contextual
+        };
+    }
+}
+
 class SuggestionComposer {
     constructor(arc, slotComposer) {
         this._suggestions = [];
@@ -27855,6 +27838,24 @@ class SuggestionComposer {
         });
         context.addSlotConsumer(suggestConsumer);
         this._suggestConsumers.push(suggestConsumer);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class StrategyExplorerAdapter {
+    static processGenerations(generations, devtoolsChannel, options = {}) {
+        devtoolsChannel.send({
+            messageType: 'generations',
+            messageBody: { results: generations, options },
+        });
     }
 }
 

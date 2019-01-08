@@ -1,5 +1,5 @@
-commit cbe1a2b200b8deeac402531f0e088f872cf924d5
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Jan 8 13:09:27 2019 -0800
+commit 998fdcf94525c5be2f76b06bd7fca5a8a8288ebc
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jan 8 14:18:55 2019 -0800
 
-     migrate slot/suggest mocks and fakes to typescript (#2542)
+    Comment out Recipe Index sending generations to strategy explorer (#2547)

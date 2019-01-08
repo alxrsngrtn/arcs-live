@@ -93,7 +93,7 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_arc_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _build_runtime_modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 /* harmony import */ var _build_runtime_modality_handler_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(233);
-/* harmony import */ var _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(250);
+/* harmony import */ var _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(246);
 /* harmony import */ var _build_runtime_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(230);
 /* harmony import */ var _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(232);
 /* harmony import */ var _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(234);
@@ -106,9 +106,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(261);
 /* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(197);
 /* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(237);
-/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(248);
+/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(250);
 /* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(262);
-/* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(247);
+/* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(249);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -80009,7 +80009,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcDebugHandler", function() { return ArcDebugHandler; });
 /* harmony import */ var _tracing_adapter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(204);
 /* harmony import */ var _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(205);
-/* harmony import */ var _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(249);
+/* harmony import */ var _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(245);
 /* harmony import */ var _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
 /**
  * @license
@@ -83141,21 +83141,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(232);
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
-/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(245);
-/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(49);
-/* harmony import */ var _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(209);
-/* harmony import */ var _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(219);
-/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(182);
-/* harmony import */ var _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(223);
-/* harmony import */ var _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(214);
-/* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(208);
-/* harmony import */ var _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(185);
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(29);
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(180);
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(46);
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(3);
-/* harmony import */ var _plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(246);
-/* harmony import */ var _modality_handler_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(233);
+/* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(49);
+/* harmony import */ var _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(209);
+/* harmony import */ var _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(219);
+/* harmony import */ var _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(182);
+/* harmony import */ var _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(223);
+/* harmony import */ var _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(214);
+/* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(208);
+/* harmony import */ var _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(185);
+/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(180);
+/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(46);
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(3);
+/* harmony import */ var _modality_handler_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(233);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -83165,9 +83162,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-
-
 
 
 
@@ -83217,25 +83211,25 @@ class RelevantContextRecipes extends _planning_strategizer_js__WEBPACK_IMPORTED_
 }
 // tslint:disable-next-line: variable-name
 const IndexStrategies = [
-    _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_6__["ConvertConstraintsToConnections"],
-    _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_10__["AddMissingHandles"],
-    _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_8__["ResolveRecipe"],
-    _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_7__["MatchFreeHandlesToConnections"],
+    _strategies_convert_constraints_to_connections_js__WEBPACK_IMPORTED_MODULE_5__["ConvertConstraintsToConnections"],
+    _strategies_add_missing_handles_js__WEBPACK_IMPORTED_MODULE_9__["AddMissingHandles"],
+    _strategies_resolve_recipe_js__WEBPACK_IMPORTED_MODULE_7__["ResolveRecipe"],
+    _strategies_match_free_handles_to_connections_js__WEBPACK_IMPORTED_MODULE_6__["MatchFreeHandlesToConnections"],
     // This one is not in-line with 'transparent' interfaces, but it operates on
     // recipes without looking at the context and cannot run after AddUseHandles.
     // We will revisit this list when we take a stab at recipe interfaces.
-    _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_9__["CreateHandleGroup"]
+    _strategies_create_handle_group_js__WEBPACK_IMPORTED_MODULE_8__["CreateHandleGroup"]
 ];
 class RecipeIndex {
     constructor(arc) {
         this._isReady = false;
-        const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__["Tracing"].start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
+        const trace = _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_4__["Tracing"].start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
         const arcStub = new _arc_js__WEBPACK_IMPORTED_MODULE_1__["Arc"]({
             id: 'index-stub',
             context: new _manifest_js__WEBPACK_IMPORTED_MODULE_0__["Manifest"]({ id: 'empty-context' }),
             loader: arc.loader,
             slotComposer: new _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__["SlotComposer"]({
-                modalityHandler: _modality_handler_js__WEBPACK_IMPORTED_MODULE_18__["ModalityHandler"].createHeadlessHandler(),
+                modalityHandler: _modality_handler_js__WEBPACK_IMPORTED_MODULE_15__["ModalityHandler"].createHeadlessHandler(),
                 noRoot: true
             }),
             // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
@@ -83244,16 +83238,19 @@ class RecipeIndex {
         const strategizer = new _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__["Strategizer"]([
             new RelevantContextRecipes(arc.context, arc.modality),
             ...IndexStrategies.map(S => new S(arcStub, { recipeIndex: this }))
-        ], [], _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_11__["Empty"]);
+        ], [], _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_10__["Empty"]);
         this.ready = trace.endWith(new Promise(async (resolve) => {
             const generations = [];
             do {
                 const record = await strategizer.generate();
                 generations.push({ record, generated: strategizer.generated });
             } while (strategizer.generated.length + strategizer.terminal.length > 0);
-            if (_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].isConnected) {
-                _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(_plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__["PlanningResult"].formatSerializableGenerations(generations), _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_13__["DevtoolsConnection"].get().forArc(arc), { label: 'Index', keep: true });
-            }
+            // TODO: This is workaround for #2546. Uncomment, when properly fixed.
+            // if (DevtoolsConnection.isConnected) {
+            //   StrategyExplorerAdapter.processGenerations(
+            //       PlanningResult.formatSerializableGenerations(generations),
+            //       DevtoolsConnection.get().forArc(arc), {label: 'Index', keep: true});
+            // }
             const population = strategizer.population;
             const candidates = new Set(population);
             for (const result of population) {
@@ -83276,7 +83273,7 @@ class RecipeIndex {
         return this._recipes;
     }
     ensureReady() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(this._isReady, 'await on recipeIndex.ready before accessing');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_14__["assert"])(this._isReady, 'await on recipeIndex.ready before accessing');
     }
     /**
      * Given provided handle and requested fates, finds handles with
@@ -83327,8 +83324,8 @@ class RecipeIndex {
         // active recipe, and ? could end up as anything.
         const fates = [handle.originalFate, handle.fate, otherHandle.originalFate, otherHandle.fate];
         if (!fates.includes('copy') && !fates.includes('map')) {
-            const counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(handle);
-            const otherCounts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_14__["RecipeUtil"].directionCounts(otherHandle);
+            const counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_12__["RecipeUtil"].directionCounts(handle);
+            const otherCounts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_12__["RecipeUtil"].directionCounts(otherHandle);
             // Someone has to read and someone has to write.
             if (otherCounts.in + counts.in === 0 || otherCounts.out + counts.out === 0) {
                 return false;
@@ -83339,7 +83336,7 @@ class RecipeIndex {
             return false;
         }
         // If types don't match.
-        if (!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(handle.mappedType, [...handle.connections, ...otherHandle.connections])) {
+        if (!_recipe_handle_js__WEBPACK_IMPORTED_MODULE_13__["Handle"].effectiveType(handle.mappedType, [...handle.connections, ...otherHandle.connections])) {
             return false;
         }
         return true;
@@ -83357,15 +83354,15 @@ class RecipeIndex {
                 continue;
             }
             for (const slotConn of recipe.slotConnections) {
-                if (!slotConn.targetSlot && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].specMatch(slotConn, slot) && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].tagsOrNameMatch(slotConn, slot)) {
+                if (!slotConn.targetSlot && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_11__["MapSlots"].specMatch(slotConn, slot) && _strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_11__["MapSlots"].tagsOrNameMatch(slotConn, slot)) {
                     const matchingHandles = [];
-                    if (!_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].handlesMatch(slotConn, slot)) {
+                    if (!_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_11__["MapSlots"].handlesMatch(slotConn, slot)) {
                         // Find potential handle connections to coalesce
                         slot.handleConnections.forEach(slotHandleConn => {
                             const matchingConns = Object.values(slotConn.particle.connections).filter(particleConn => {
                                 return particleConn.direction !== 'host'
                                     && (!particleConn.handle || !particleConn.handle.id || particleConn.handle.id === slotHandleConn.handle.id)
-                                    && _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__["Handle"].effectiveType(slotHandleConn.handle.mappedType, [particleConn]);
+                                    && _recipe_handle_js__WEBPACK_IMPORTED_MODULE_13__["Handle"].effectiveType(slotHandleConn.handle.mappedType, [particleConn]);
                             });
                             matchingConns.forEach(matchingConn => {
                                 if (this._fatesAndDirectionsMatch(slotHandleConn, matchingConn)) {
@@ -83394,7 +83391,7 @@ class RecipeIndex {
             }
             for (const consumeConn of recipe.slotConnections) {
                 for (const providedSlot of Object.values(consumeConn.providedSlots)) {
-                    if (_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_12__["MapSlots"].slotMatches(slotConn, providedSlot)) {
+                    if (_strategies_map_slots_js__WEBPACK_IMPORTED_MODULE_11__["MapSlots"].slotMatches(slotConn, providedSlot)) {
                         providedSlots.push(providedSlot);
                     }
                 }
@@ -83437,7 +83434,7 @@ class RecipeIndex {
         return ['create', 'use', '?'];
     }
     findCoalescableHandles(recipe, otherRecipe, usedHandles) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__["assert"])(recipe !== otherRecipe, 'Cannot coalesce handles in the same recipe');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_14__["assert"])(recipe !== otherRecipe, 'Cannot coalesce handles in the same recipe');
         const otherToHandle = new Map();
         usedHandles = usedHandles || new Set();
         for (const handle of recipe.handles) {
@@ -85252,7 +85249,7 @@ class HostedSlotContext extends _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["S
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StrategyExplorerAdapter", function() { return StrategyExplorerAdapter; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcStoresFetcher", function() { return ArcStoresFetcher; });
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -85262,15 +85259,51 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class StrategyExplorerAdapter {
-    static processGenerations(generations, devtoolsChannel, options = {}) {
-        devtoolsChannel.send({
-            messageType: 'generations',
-            messageBody: { results: generations, options },
-        });
+class ArcStoresFetcher {
+    constructor(arc, arcDevtoolsChannel) {
+        this.arc = arc;
+        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
+            messageType: 'fetch-stores-result',
+            messageBody: await this._listStores()
+        }));
+    }
+    async _listStores() {
+        const find = manifest => {
+            let tags = [...manifest.storeTags];
+            if (manifest.imports) {
+                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
+            }
+            return tags;
+        };
+        return {
+            arcStores: await this._digestStores(this.arc.storeTags),
+            contextStores: await this._digestStores(find(this.arc.context))
+        };
+    }
+    async _digestStores(stores) {
+        const result = [];
+        for (const [store, tags] of stores) {
+            let value = `(don't know how to dereference)`;
+            if (store.toList) {
+                value = await store.toList();
+            }
+            else if (store.get) {
+                value = await store.get();
+            }
+            result.push({
+                name: store.name,
+                tags: tags ? [...tags] : [],
+                id: store.id,
+                storage: store.storageKey,
+                type: store.type,
+                description: store.description,
+                value
+            });
+        }
+        return result;
     }
 }
-//# sourceMappingURL=strategy-explorer-adapter.js.map
+//# sourceMappingURL=arc-stores-fetcher.js.map
 
 /***/ }),
 /* 246 */
@@ -85278,9 +85311,290 @@ class StrategyExplorerAdapter {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planificator", function() { return Planificator; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(247);
+/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(253);
+/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(248);
+/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(254);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+
+class Planificator {
+    constructor(arc, userid, store, searchStore, onlyConsumer = false, debug = false) {
+        this.search = null;
+        // In <0.6 shell, this is needed to backward compatibility, in order to (1)
+        // (1) trigger replanning with a local producer and (2) notify shell of the
+        // last activated plan, to allow serialization.
+        // TODO(mmandlis): Is this really needed in the >0.6 shell?
+        this.arcCallback = this._onPlanInstantiated.bind(this);
+        this.arc = arc;
+        this.userid = userid;
+        this.searchStore = searchStore;
+        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"](store);
+        if (!onlyConsumer) {
+            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](this.arc, this.result, searchStore, { debug });
+            this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__["ReplanQueue"](this.producer);
+            this.dataChangeCallback = () => this.replanQueue.addChange();
+            this._listenToArcStores();
+        }
+        this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](this.arc, this.result);
+        this.lastActivatedPlan = null;
+        this.arc.registerInstantiatePlanCallback(this.arcCallback);
+    }
+    static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null.');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'User id cannot be null.');
+        debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
+        const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
+        const searchStore = await Planificator._initSearchStore(arc, userid);
+        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
+        await planificator.loadSuggestions();
+        planificator.requestPlanning({ contextual: true });
+        return planificator;
+    }
+    async requestPlanning(options = {}) {
+        if (!this.consumerOnly) {
+            await this.producer.produceSuggestions(options);
+        }
+    }
+    get consumerOnly() { return !Boolean(this.producer); }
+    async loadSuggestions() {
+        return this.result.load();
+    }
+    async setSearch(search) {
+        search = search ? search.toLowerCase().trim() : null;
+        search = (search !== '') ? search : null;
+        if (this.search !== search) {
+            this.search = search;
+            await this._storeSearch();
+            const showAll = this.search === '*';
+            const filter = showAll ? null : this.search;
+            this.consumer.setSuggestFilter(showAll, filter);
+        }
+    }
+    registerSuggestionsChangedCallback(callback) {
+        this.consumer.registerSuggestionsChangedCallback(callback);
+    }
+    registerVisibleSuggestionsChangedCallback(callback) {
+        this.consumer.registerVisibleSuggestionsChangedCallback(callback);
+    }
+    dispose() {
+        this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
+        if (!this.consumerOnly) {
+            this._unlistenToArcStores();
+            this.producer.dispose();
+        }
+        this.consumer.dispose();
+        this.result.dispose();
+    }
+    async deleteAll() {
+        await this.producer.result.clear();
+        this.setSearch(null);
+    }
+    getLastActivatedPlan() {
+        return { plan: this.lastActivatedPlan };
+    }
+    _onPlanInstantiated(plan) {
+        this.lastActivatedPlan = plan;
+        this.requestPlanning();
+    }
+    _listenToArcStores() {
+        this.arc.onDataChange(this.dataChangeCallback, this);
+        this.arc.context.allStores.forEach(store => {
+            if (store.on) { // #2141: some are StorageStubs.
+                store.on('change', this.dataChangeCallback, this);
+            }
+        });
+    }
+    _unlistenToArcStores() {
+        this.arc.clearDataChange(this);
+        this.arc.context.allStores.forEach(store => {
+            if (store.off) { // #2141: some are StorageStubs.
+                store.off('change', this.dataChangeCallback);
+            }
+        });
+    }
+    static constructSuggestionKey(arc, userid, storageKeyBase) {
+        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        const keybase = arc.storageProviderFactory.parseStringAsKey(storageKeyBase || arcStorageKey.base());
+        return keybase.childKeyForSuggestions(userid, arcStorageKey.arcId);
+    }
+    static constructSearchKey(arc, userid) {
+        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
+        const keybase = arc.storageProviderFactory.parseStringAsKey(arcStorageKey.base());
+        return keybase.childKeyForSearch(userid);
+    }
+    static async _initSuggestStore(arc, userid, storageKeyBase) {
+        const storageKey = Planificator.constructSuggestionKey(arc, userid, storageKeyBase);
+        return Planificator._initStore(arc, 'suggestions-id', _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"].make(['Suggestions'], { current: 'Object' }), storageKey);
+    }
+    static async _initSearchStore(arc, userid) {
+        const storageKey = Planificator.constructSearchKey(arc, userid);
+        return Planificator._initStore(arc, 'search-id', _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"].make(['Search'], { current: 'Object' }), storageKey);
+    }
+    static async _initStore(arc, id, type, storageKey) {
+        const store = await arc.storageProviderFactory.connectOrConstruct(id, type, storageKey.toString());
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${storageKey.toString()}' store.`);
+        store.referenceMode = false;
+        return store;
+    }
+    async _storeSearch() {
+        const values = await this.searchStore.get() || [];
+        const arcKey = this.arc.arcId;
+        const newValues = [];
+        for (const { arc, search } of values) {
+            if (arc !== arcKey) {
+                newValues.push({ arc, search });
+            }
+        }
+        if (this.search) {
+            newValues.push({ search: this.search, arc: arcKey });
+        }
+        return this.searchStore.set(newValues);
+    }
+}
+//# sourceMappingURL=planificator.js.map
+
+/***/ }),
+/* 247 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanConsumer", function() { return PlanConsumer; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(248);
+/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(251);
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
+/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(252);
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+class PlanConsumer {
+    constructor(arc, result) {
+        // Callback is triggered when planning results have changed.
+        this.suggestionsChangeCallbacks = [];
+        // Callback is triggered when suggestions visible to the user have changed.
+        this.visibleSuggestionsChangeCallbacks = [];
+        this.suggestionComposer = null;
+        this.currentSuggestions = [];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result, 'result cannot be null');
+        this.arc = arc;
+        this.result = result;
+        this.suggestFilter = { showAll: false };
+        this.suggestionsChangeCallbacks = [];
+        this.visibleSuggestionsChangeCallbacks = [];
+        this._initSuggestionComposer();
+        this.result.registerChangeCallback(() => this.onSuggestionsChanged());
+    }
+    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
+    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
+    setSuggestFilter(showAll, search) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!showAll || !search);
+        if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
+            return;
+        }
+        this.suggestFilter = { showAll, search };
+        this._onMaybeSuggestionsChanged();
+    }
+    onSuggestionsChanged() {
+        this._onSuggestionsChanged();
+        this._onMaybeSuggestionsChanged();
+        if (this.result.generations.length && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected) {
+            _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get().forArc(this.arc));
+        }
+    }
+    getCurrentSuggestions() {
+        const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0
+            && this.arc.modality.isCompatible(suggestion.plan.modality.map(m => m.name)));
+        // `showAll`: returns all suggestions that render into slots.
+        if (this.suggestFilter['showAll']) {
+            // Should filter out suggestions produced by search phrases?
+            return suggestions;
+        }
+        // search filter non empty: match plan search phrase or description text.
+        if (this.suggestFilter['search']) {
+            return suggestions.filter(suggestion => suggestion.descriptionText.toLowerCase().includes(this.suggestFilter['search']) ||
+                suggestion.hasSearch(this.suggestFilter['search']));
+        }
+        return suggestions.filter(suggestion => {
+            const usesHandlesFromActiveRecipe = suggestion.plan.handles.find(handle => {
+                // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
+                // either by tagging or by exploring connection directions etc.
+                return !!handle.id &&
+                    !!this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
+            });
+            const usesRemoteNonRootSlots = suggestion.plan.slots.find(slot => {
+                return !slot.name.includes('root') && !slot.tags.includes('root') &&
+                    slot.id && !slot.id.includes('root') &&
+                    Boolean(this.arc.pec.slotComposer.findContextById(slot.id));
+            });
+            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
+            return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
+        });
+    }
+    dispose() {
+        this.suggestionsChangeCallbacks = [];
+        this.visibleSuggestionsChangeCallbacks = [];
+        if (this.suggestionComposer) {
+            this.suggestionComposer.clear();
+        }
+    }
+    _onSuggestionsChanged() {
+        this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
+    }
+    _onMaybeSuggestionsChanged() {
+        const suggestions = this.getCurrentSuggestions();
+        if (!_planning_result_js__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"].isEquivalent(this.currentSuggestions, suggestions)) {
+            this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
+            this.currentSuggestions = suggestions;
+        }
+    }
+    _initSuggestionComposer() {
+        const composer = this.arc.pec.slotComposer;
+        if (composer && composer.findContextById('rootslotid-suggestions')) {
+            this.suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestionComposer"](this.arc, composer);
+            this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
+        }
+    }
+}
+//# sourceMappingURL=plan-consumer.js.map
+
+/***/ }),
+/* 248 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanningResult", function() { return PlanningResult; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(247);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(249);
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(180);
 /* harmony import */ var _suggestion_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(230);
 /**
@@ -85542,13 +85856,13 @@ class PlanningResult {
 //# sourceMappingURL=planning-result.js.map
 
 /***/ }),
-/* 247 */
+/* 249 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
-/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(248);
+/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(250);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -85564,7 +85878,7 @@ const logFactory = (...args) => factory(...args);
 
 
 /***/ }),
-/* 248 */
+/* 250 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -85687,350 +86001,7 @@ const walker = (node, tree) => {
 
 
 /***/ }),
-/* 249 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcStoresFetcher", function() { return ArcStoresFetcher; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class ArcStoresFetcher {
-    constructor(arc, arcDevtoolsChannel) {
-        this.arc = arc;
-        arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
-            messageType: 'fetch-stores-result',
-            messageBody: await this._listStores()
-        }));
-    }
-    async _listStores() {
-        const find = manifest => {
-            let tags = [...manifest.storeTags];
-            if (manifest.imports) {
-                manifest.imports.forEach(imp => tags = tags.concat(find(imp)));
-            }
-            return tags;
-        };
-        return {
-            arcStores: await this._digestStores(this.arc.storeTags),
-            contextStores: await this._digestStores(find(this.arc.context))
-        };
-    }
-    async _digestStores(stores) {
-        const result = [];
-        for (const [store, tags] of stores) {
-            let value = `(don't know how to dereference)`;
-            if (store.toList) {
-                value = await store.toList();
-            }
-            else if (store.get) {
-                value = await store.get();
-            }
-            result.push({
-                name: store.name,
-                tags: tags ? [...tags] : [],
-                id: store.id,
-                storage: store.storageKey,
-                type: store.type,
-                description: store.description,
-                value
-            });
-        }
-        return result;
-    }
-}
-//# sourceMappingURL=arc-stores-fetcher.js.map
-
-/***/ }),
-/* 250 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planificator", function() { return Planificator; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(251);
-/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(253);
-/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(246);
-/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(254);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-
-class Planificator {
-    constructor(arc, userid, store, searchStore, onlyConsumer = false, debug = false) {
-        this.search = null;
-        // In <0.6 shell, this is needed to backward compatibility, in order to (1)
-        // (1) trigger replanning with a local producer and (2) notify shell of the
-        // last activated plan, to allow serialization.
-        // TODO(mmandlis): Is this really needed in the >0.6 shell?
-        this.arcCallback = this._onPlanInstantiated.bind(this);
-        this.arc = arc;
-        this.userid = userid;
-        this.searchStore = searchStore;
-        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"](store);
-        if (!onlyConsumer) {
-            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](this.arc, this.result, searchStore, { debug });
-            this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__["ReplanQueue"](this.producer);
-            this.dataChangeCallback = () => this.replanQueue.addChange();
-            this._listenToArcStores();
-        }
-        this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](this.arc, this.result);
-        this.lastActivatedPlan = null;
-        this.arc.registerInstantiatePlanCallback(this.arcCallback);
-    }
-    static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null.');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(userid, 'User id cannot be null.');
-        debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
-        const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
-        const searchStore = await Planificator._initSearchStore(arc, userid);
-        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
-        await planificator.loadSuggestions();
-        planificator.requestPlanning({ contextual: true });
-        return planificator;
-    }
-    async requestPlanning(options = {}) {
-        if (!this.consumerOnly) {
-            await this.producer.produceSuggestions(options);
-        }
-    }
-    get consumerOnly() { return !Boolean(this.producer); }
-    async loadSuggestions() {
-        return this.result.load();
-    }
-    async setSearch(search) {
-        search = search ? search.toLowerCase().trim() : null;
-        search = (search !== '') ? search : null;
-        if (this.search !== search) {
-            this.search = search;
-            await this._storeSearch();
-            const showAll = this.search === '*';
-            const filter = showAll ? null : this.search;
-            this.consumer.setSuggestFilter(showAll, filter);
-        }
-    }
-    registerSuggestionsChangedCallback(callback) {
-        this.consumer.registerSuggestionsChangedCallback(callback);
-    }
-    registerVisibleSuggestionsChangedCallback(callback) {
-        this.consumer.registerVisibleSuggestionsChangedCallback(callback);
-    }
-    dispose() {
-        this.arc.unregisterInstantiatePlanCallback(this.arcCallback);
-        if (!this.consumerOnly) {
-            this._unlistenToArcStores();
-            this.producer.dispose();
-        }
-        this.consumer.dispose();
-        this.result.dispose();
-    }
-    async deleteAll() {
-        await this.producer.result.clear();
-        this.setSearch(null);
-    }
-    getLastActivatedPlan() {
-        return { plan: this.lastActivatedPlan };
-    }
-    _onPlanInstantiated(plan) {
-        this.lastActivatedPlan = plan;
-        this.requestPlanning();
-    }
-    _listenToArcStores() {
-        this.arc.onDataChange(this.dataChangeCallback, this);
-        this.arc.context.allStores.forEach(store => {
-            if (store.on) { // #2141: some are StorageStubs.
-                store.on('change', this.dataChangeCallback, this);
-            }
-        });
-    }
-    _unlistenToArcStores() {
-        this.arc.clearDataChange(this);
-        this.arc.context.allStores.forEach(store => {
-            if (store.off) { // #2141: some are StorageStubs.
-                store.off('change', this.dataChangeCallback);
-            }
-        });
-    }
-    static constructSuggestionKey(arc, userid, storageKeyBase) {
-        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
-        const keybase = arc.storageProviderFactory.parseStringAsKey(storageKeyBase || arcStorageKey.base());
-        return keybase.childKeyForSuggestions(userid, arcStorageKey.arcId);
-    }
-    static constructSearchKey(arc, userid) {
-        const arcStorageKey = arc.storageProviderFactory.parseStringAsKey(arc.storageKey);
-        const keybase = arc.storageProviderFactory.parseStringAsKey(arcStorageKey.base());
-        return keybase.childKeyForSearch(userid);
-    }
-    static async _initSuggestStore(arc, userid, storageKeyBase) {
-        const storageKey = Planificator.constructSuggestionKey(arc, userid, storageKeyBase);
-        return Planificator._initStore(arc, 'suggestions-id', _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"].make(['Suggestions'], { current: 'Object' }), storageKey);
-    }
-    static async _initSearchStore(arc, userid) {
-        const storageKey = Planificator.constructSearchKey(arc, userid);
-        return Planificator._initStore(arc, 'search-id', _type_js__WEBPACK_IMPORTED_MODULE_5__["EntityType"].make(['Search'], { current: 'Object' }), storageKey);
-    }
-    static async _initStore(arc, id, type, storageKey) {
-        const store = await arc.storageProviderFactory.connectOrConstruct(id, type, storageKey.toString());
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store, `Failed initializing '${storageKey.toString()}' store.`);
-        store.referenceMode = false;
-        return store;
-    }
-    async _storeSearch() {
-        const values = await this.searchStore.get() || [];
-        const arcKey = this.arc.arcId;
-        const newValues = [];
-        for (const { arc, search } of values) {
-            if (arc !== arcKey) {
-                newValues.push({ arc, search });
-            }
-        }
-        if (this.search) {
-            newValues.push({ search: this.search, arc: arcKey });
-        }
-        return this.searchStore.set(newValues);
-    }
-}
-//# sourceMappingURL=planificator.js.map
-
-/***/ }),
 /* 251 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanConsumer", function() { return PlanConsumer; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(246);
-/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(252);
-/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
-/* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(245);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-class PlanConsumer {
-    constructor(arc, result) {
-        // Callback is triggered when planning results have changed.
-        this.suggestionsChangeCallbacks = [];
-        // Callback is triggered when suggestions visible to the user have changed.
-        this.visibleSuggestionsChangeCallbacks = [];
-        this.suggestionComposer = null;
-        this.currentSuggestions = [];
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result, 'result cannot be null');
-        this.arc = arc;
-        this.result = result;
-        this.suggestFilter = { showAll: false };
-        this.suggestionsChangeCallbacks = [];
-        this.visibleSuggestionsChangeCallbacks = [];
-        this._initSuggestionComposer();
-        this.result.registerChangeCallback(() => this.onSuggestionsChanged());
-    }
-    registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
-    registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
-    setSuggestFilter(showAll, search) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!showAll || !search);
-        if (this.suggestFilter['showAll'] === showAll && this.suggestFilter['search'] === search) {
-            return;
-        }
-        this.suggestFilter = { showAll, search };
-        this._onMaybeSuggestionsChanged();
-    }
-    onSuggestionsChanged() {
-        this._onSuggestionsChanged();
-        this._onMaybeSuggestionsChanged();
-        if (this.result.generations.length && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected) {
-            _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get().forArc(this.arc));
-        }
-    }
-    getCurrentSuggestions() {
-        const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0
-            && this.arc.modality.isCompatible(suggestion.plan.modality.map(m => m.name)));
-        // `showAll`: returns all suggestions that render into slots.
-        if (this.suggestFilter['showAll']) {
-            // Should filter out suggestions produced by search phrases?
-            return suggestions;
-        }
-        // search filter non empty: match plan search phrase or description text.
-        if (this.suggestFilter['search']) {
-            return suggestions.filter(suggestion => suggestion.descriptionText.toLowerCase().includes(this.suggestFilter['search']) ||
-                suggestion.hasSearch(this.suggestFilter['search']));
-        }
-        return suggestions.filter(suggestion => {
-            const usesHandlesFromActiveRecipe = suggestion.plan.handles.find(handle => {
-                // TODO(mmandlis): find a generic way to exlude system handles (eg Theme),
-                // either by tagging or by exploring connection directions etc.
-                return !!handle.id &&
-                    !!this.arc.activeRecipe.handles.find(activeHandle => activeHandle.id === handle.id);
-            });
-            const usesRemoteNonRootSlots = suggestion.plan.slots.find(slot => {
-                return !slot.name.includes('root') && !slot.tags.includes('root') &&
-                    slot.id && !slot.id.includes('root') &&
-                    Boolean(this.arc.pec.slotComposer.findContextById(slot.id));
-            });
-            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
-            return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
-        });
-    }
-    dispose() {
-        this.suggestionsChangeCallbacks = [];
-        this.visibleSuggestionsChangeCallbacks = [];
-        if (this.suggestionComposer) {
-            this.suggestionComposer.clear();
-        }
-    }
-    _onSuggestionsChanged() {
-        this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
-    }
-    _onMaybeSuggestionsChanged() {
-        const suggestions = this.getCurrentSuggestions();
-        if (!_planning_result_js__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"].isEquivalent(this.currentSuggestions, suggestions)) {
-            this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
-            this.currentSuggestions = suggestions;
-        }
-    }
-    _initSuggestionComposer() {
-        const composer = this.arc.pec.slotComposer;
-        if (composer && composer.findContextById('rootslotid-suggestions')) {
-            this.suggestionComposer = new _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__["SuggestionComposer"](this.arc, composer);
-            this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
-        }
-    }
-}
-//# sourceMappingURL=plan-consumer.js.map
-
-/***/ }),
-/* 252 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86115,6 +86086,32 @@ class SuggestionComposer {
 //# sourceMappingURL=suggestion-composer.js.map
 
 /***/ }),
+/* 252 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StrategyExplorerAdapter", function() { return StrategyExplorerAdapter; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class StrategyExplorerAdapter {
+    static processGenerations(generations, devtoolsChannel, options = {}) {
+        devtoolsChannel.send({
+            messageType: 'generations',
+            messageBody: { results: generations, options },
+        });
+    }
+}
+//# sourceMappingURL=strategy-explorer-adapter.js.map
+
+/***/ }),
 /* 253 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -86123,10 +86120,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanProducer", function() { return PlanProducer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _strategies_init_search_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(216);
-/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(247);
+/* harmony import */ var _platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(249);
 /* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(207);
 /* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(206);
-/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(246);
+/* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(248);
 /* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(231);
 /* harmony import */ var _speculator_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(226);
 /**
@@ -87604,7 +87601,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _build_runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(196);
 /* harmony import */ var _build_runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(199);
 /* harmony import */ var _build_runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(200);
-/* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(247);
+/* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(249);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
