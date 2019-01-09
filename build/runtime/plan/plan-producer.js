@@ -19,10 +19,9 @@ const defaultTimeoutMs = 5000;
 const log = logFactory('PlanProducer', '#ff0090', 'log');
 const error = logFactory('PlanProducer', '#ff0090', 'error');
 export class PlanProducer {
-    constructor(arc, result, searchStore, { debug = false } = {}) {
+    constructor(arc, result, searchStore, { debug = false, blockDevtools = false } = {}) {
         this.planner = null;
         this.stateChangedCallbacks = [];
-        this.debug = false;
         assert(result, 'result cannot be null');
         assert(arc, 'arc cannot be null');
         this.arc = arc;
@@ -35,6 +34,7 @@ export class PlanProducer {
             this.searchStore.on('change', this.searchStoreCallback, this);
         }
         this.debug = debug;
+        this.blockDevtools = blockDevtools;
     }
     get isPlanning() { return this._isPlanning; }
     set isPlanning(isPlanning) {
@@ -126,7 +126,8 @@ export class PlanProducer {
                 contextual: options['contextual'],
                 search: options['search'],
                 recipeIndex: this.recipeIndex
-            }
+            },
+            blockDevtools: this.blockDevtools
         });
         suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations, this.speculator);
         if (this.planner) {

@@ -1,5 +1,11 @@
-commit b487589aff145da84c3f127a038ae70aed120148
+commit 6c6d76e03b69d343e7fe9267dbf5747732f98ac6
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jan 9 13:46:50 2019 -0800
+Date:   Wed Jan 9 15:01:28 2019 -0800
 
-    add "unnamedConnections" to particle json (#2553)
+    fix suggestion composer test (#2556)
+    
+    it fails locally with:
+     1) suggestion composer
+           suggestion set-slots:
+         Uncaught AssertionError: Unexpected render slot item for particle CakeMuxer (content types: template,model,templateName)
+          at MockSlotComposer.renderSlot (file:///Users/mmandlis/arcs/arcs-1/src/runtime/testing/mock-slot-composer.ts:254:7)

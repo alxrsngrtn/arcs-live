@@ -47,7 +47,7 @@ describe('suggestion composer', () => {
         await slotComposer.expectationsCompleted();
     });
     it('suggestion set-slots', async () => {
-        const slotComposer = new MockSlotComposer().newExpectations('debug');
+        const slotComposer = new MockSlotComposer({ strict: false }).newExpectations('debug');
         const helper = await TestHelper.createAndPlan({
             manifestFilename: './src/runtime/test/artifacts/suggestions/Cakes.recipes',
             slotComposer

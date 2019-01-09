@@ -30,16 +30,19 @@ import { ResolveRecipe } from './strategies/resolve-recipe.js';
 import { Speculator } from './speculator.js';
 import { Tracing } from '../tracelib/trace.js';
 import { DevtoolsConnection } from './debug/devtools-connection.js';
+import { StrategyExplorerAdapter } from './debug/strategy-explorer-adapter.js';
+import { PlanningResult } from './plan/planning-result.js';
 export class Planner {
     // TODO: Use context.arc instead of arc
-    init(arc, { strategies = Planner.AllStrategies, ruleset = Rulesets.Empty, strategyArgs = {} } = {}) {
+    init(arc, { strategies = Planner.AllStrategies, ruleset = Rulesets.Empty, strategyArgs = {}, blockDevtools = false } = {}) {
         strategyArgs = Object.freeze(Object.assign({}, strategyArgs));
         this._arc = arc;
         const strategyImpls = strategies.map(strategy => new strategy(arc, strategyArgs));
         this.strategizer = new Strategizer(strategyImpls, [], ruleset);
+        this.blockDevtools = blockDevtools;
     }
     // Specify a timeout value less than zero to disable timeouts.
-    async plan(timeout, generations) {
+    async plan(timeout, generations = []) {
         const trace = Tracing.start({ cat: 'planning', name: 'Planner::plan', overview: true, args: { timeout } });
         timeout = timeout || -1;
         const allResolved = [];
@@ -65,6 +68,9 @@ export class Planner {
             }
         } while (this.strategizer.generated.length + this.strategizer.terminal.length > 0);
         trace.end();
+        if (generations.length && !this.blockDevtools && DevtoolsConnection.isConnected) {
+            StrategyExplorerAdapter.processGenerations(PlanningResult.formatSerializableGenerations(generations), DevtoolsConnection.get().forArc(this._arc), { label: 'Planner', keep: true });
+        }
         return allResolved;
     }
     _speculativeThreadCount() {
@@ -105,8 +111,6 @@ export class Planner {
     }
     async suggest(timeout, generations = [], speculator) {
         const trace = Tracing.start({ cat: 'planning', name: 'Planner::suggest', overview: true, args: { timeout } });
-        if (!generations && DevtoolsConnection.isConnected)
-            generations = [];
         const plans = await trace.wait(this.plan(timeout, generations));
         const suggestions = [];
         speculator = speculator || new Speculator();
