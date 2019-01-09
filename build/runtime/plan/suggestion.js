@@ -12,17 +12,22 @@ import { DescriptionFormatter } from '../description-formatter.js';
 import { Manifest } from '../manifest.js';
 import { RecipeResolver } from '../recipe/recipe-resolver.js';
 export class Plan {
-    constructor(serialization, name, particles, handles, handleConnections, slots, modality) {
+    constructor(serialization, name, particles, handles, handleConnections, slotConnections, slots, modality) {
         this.serialization = serialization;
         this.name = name;
         this.particles = particles;
         this.handles = handles;
         this.handleConnections = handleConnections;
+        this.slotConnections = slotConnections;
         this.slots = slots;
         this.modality = modality;
     }
     static create(plan) {
-        return new Plan(plan.toString(), plan.name, plan.particles.map(p => ({ name: p.name, connections: Object.keys(p.connections).map(pcName => ({ name: pcName })) })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.handleConnections.map(hc => ({ name: hc.name, direction: hc.direction, particle: { name: hc.particle.name } })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.modality.names.map(n => ({ name: n })));
+        return new Plan(plan.toString(), plan.name, plan.particles.map(p => ({
+            name: p.name,
+            connections: Object.keys(p.connections).map(pcName => ({ name: pcName })),
+            slotConnections: Object.keys(p.consumedSlotConnections)
+        })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.handleConnections.map(hc => ({ name: hc.name, direction: hc.direction, particle: { name: hc.particle.name } })), plan.slotConnections.map(sc => ({ name: sc.name, particle: sc.particle.name })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.modality.names.map(n => ({ name: n })));
     }
 }
 export class Suggestion {

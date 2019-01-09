@@ -72,7 +72,8 @@ export class PlanConsumer {
                     slot.id && !slot.id.includes('root') &&
                     Boolean(this.arc.pec.slotComposer.findContextById(slot.id));
             });
-            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root'));
+            const onlyUsesNonRootSlots = !suggestion.plan.slots.find(s => s.name.includes('root') || s.tags.includes('root')) &&
+                !((suggestion.plan.slotConnections || []).find(sc => sc.name === 'root'));
             return (usesHandlesFromActiveRecipe && usesRemoteNonRootSlots) || onlyUsesNonRootSlots;
         });
     }

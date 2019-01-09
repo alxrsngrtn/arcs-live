@@ -31,6 +31,7 @@ export declare class Plan {
     readonly particles: {
         name: string;
         connections: {}[];
+        slotConnections: {}[];
     }[];
     readonly handles: {
         id: string;
@@ -39,6 +40,10 @@ export declare class Plan {
     readonly handleConnections: {
         name: string;
         direction: string;
+        particle: {};
+    }[];
+    readonly slotConnections: {
+        name: string;
         particle: {};
     }[];
     readonly slots: {
@@ -52,12 +57,16 @@ export declare class Plan {
     constructor(serialization: string, name: string, particles: {
         name: string;
         connections: {}[];
+        slotConnections: {}[];
     }[], handles: {
         id: string;
         tags: string[];
     }[], handleConnections: {
         name: string;
         direction: string;
+        particle: {};
+    }[], slotConnections: {
+        name: string;
         particle: {};
     }[], slots: {
         id: string;
