@@ -1,8 +1,5 @@
-commit bdf4a9dd4167754414d97c0efea837ce560dd1c9
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Jan 9 11:57:38 2019 -0800
+commit 659d56adbbec2cd47b1e40af1dae7df495506e85
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jan 9 12:17:24 2019 -0800
 
-    Migrate suggestion-composer-tests to typescript (#2554)
-    
-    - Also cleans up usage of MockSlotComposer
-    - Adds useful error messages to make it easier to migrate to MockSlotComposer
+    update server/README with new shell URL (#2555)
