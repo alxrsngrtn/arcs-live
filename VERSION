@@ -1,11 +1,5 @@
-commit 6c6d76e03b69d343e7fe9267dbf5747732f98ac6
+commit 5750f9715ec174cfe1c44e55af6d5beaf121ded2
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jan 9 15:01:28 2019 -0800
+Date:   Wed Jan 9 15:20:26 2019 -0800
 
-    fix suggestion composer test (#2556)
-    
-    it fails locally with:
-     1) suggestion composer
-           suggestion set-slots:
-         Uncaught AssertionError: Unexpected render slot item for particle CakeMuxer (content types: template,model,templateName)
-          at MockSlotComposer.renderSlot (file:///Users/mmandlis/arcs/arcs-1/src/runtime/testing/mock-slot-composer.ts:254:7)
+    Adding handle information to Plan json to avoid errors in shape matching. (#2559)

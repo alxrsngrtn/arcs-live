@@ -24352,6 +24352,9 @@ class Relevance {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+// TODO(#2557): This class is a temporary format for serializing suggestions.
+// Suggestion class should instead receive loader and context parameters in fromLiteral method
+// and deserialize the plan immediately. This class will be removed.
 class Plan {
     constructor(serialization, name, particles, handles, handleConnections, slotConnections, slots, modality) {
         this.serialization = serialization;
@@ -24369,7 +24372,19 @@ class Plan {
             connections: Object.keys(p.connections).map(pcName => ({ name: pcName })),
             slotConnections: Object.keys(p.consumedSlotConnections),
             unnamedConnections: []
-        })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.handleConnections.map(hc => ({ name: hc.name, direction: hc.direction, particle: { name: hc.particle.name } })), plan.slotConnections.map(sc => ({ name: sc.name, particle: sc.particle.name })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.modality.names.map(n => ({ name: n })));
+        })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.handleConnections.map(hc => ({
+            name: hc.name,
+            direction: hc.direction,
+            particle: { name: hc.particle.name },
+            handle: hc.handle ? {
+                localName: hc.handle.localName,
+                id: hc.handle.id,
+                originalId: hc.handle.originalId,
+                fate: hc.handle.fate,
+                originalFate: hc.handle.originalFate,
+                immediateValue: hc.handle.immediateValue
+            } : null
+        })), plan.slotConnections.map(sc => ({ name: sc.name, particle: sc.particle.name })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.modality.names.map(n => ({ name: n })));
     }
 }
 class Suggestion {

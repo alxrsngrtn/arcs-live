@@ -41,6 +41,7 @@ export declare class Plan {
         name: string;
         direction: string;
         particle: {};
+        handle?: {};
     }[];
     readonly slotConnections: {
         name: string;
@@ -65,6 +66,7 @@ export declare class Plan {
         name: string;
         direction: string;
         particle: {};
+        handle?: {};
     }[], slotConnections: {
         name: string;
         particle: {};
