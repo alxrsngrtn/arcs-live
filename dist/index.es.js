@@ -24367,7 +24367,8 @@ class Plan {
         return new Plan(plan.toString(), plan.name, plan.particles.map(p => ({
             name: p.name,
             connections: Object.keys(p.connections).map(pcName => ({ name: pcName })),
-            slotConnections: Object.keys(p.consumedSlotConnections)
+            slotConnections: Object.keys(p.consumedSlotConnections),
+            unnamedConnections: []
         })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.handleConnections.map(hc => ({ name: hc.name, direction: hc.direction, particle: { name: hc.particle.name } })), plan.slotConnections.map(sc => ({ name: sc.name, particle: sc.particle.name })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.modality.names.map(n => ({ name: n })));
     }
 }
