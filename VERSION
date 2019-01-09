@@ -1,5 +1,5 @@
-commit 1867086125bd130c908a40147aeadc62b0724860
+commit 480a8f659ec135d0043989c7de2d88272d99a436
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jan 9 11:31:07 2019 -0800
+Date:   Wed Jan 9 11:32:27 2019 -0800
 
-    default filter out non-root slots rely on slot connection name too (#2548)
+    fix "Inconsistent store versions" assert when merging suggestions (#2549)

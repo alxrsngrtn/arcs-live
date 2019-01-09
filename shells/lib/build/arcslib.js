@@ -85788,11 +85788,11 @@ class PlanningResult {
             const newVersions = newSuggestion.versionByStore;
             const currentVersions = currentSuggestion.versionByStore;
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.keys(newVersions).length === Object.keys(currentVersions).length);
-            if (Object.entries(newVersions).every(([id, version]) => currentVersions[id] !== undefined && version >= currentVersions[id])) {
+            if (Object.entries(newVersions).every(([id, newVersion]) => currentVersions[id] !== undefined && newVersion >= currentVersions[id])) {
                 return newSuggestion;
             }
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.entries(currentVersions).every(([id, version]) => newVersions[id] !== undefined
-                && version <= newVersions[id]), `Inconsistent store versions for suggestions with hash: ${newSuggestion.hash}`);
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Object.entries(currentVersions).every(([id, currentVersion]) => newVersions[id] !== undefined
+                && currentVersion >= newVersions[id]), `Inconsistent store versions for suggestions with hash: ${newSuggestion.hash}`);
             return currentSuggestion;
         }
         if (newUpToDate) {
