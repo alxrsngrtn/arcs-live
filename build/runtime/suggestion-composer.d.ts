@@ -11,12 +11,13 @@ import { ModalityHandler } from './modality-handler.js';
 import { SlotComposer } from './slot-composer.js';
 import { Arc } from './arc.js';
 import { Suggestion } from './plan/suggestion.js';
+import { SuggestDomConsumer } from './suggest-dom-consumer.js';
 export declare class SuggestionComposer {
     private _container;
     private readonly _slotComposer;
     private readonly arc;
     private _suggestions;
-    private _suggestConsumers;
+    protected readonly _suggestConsumers: SuggestDomConsumer[];
     constructor(arc: Arc, slotComposer: SlotComposer);
     readonly modalityHandler: ModalityHandler;
     clear(): void;

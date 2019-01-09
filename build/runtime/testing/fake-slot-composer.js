@@ -14,7 +14,7 @@ import { SlotComposer } from '../slot-composer.js';
  */
 export class FakeSlotComposer extends SlotComposer {
     constructor(options = {}) {
-        super(Object.assign({ rootContainer: { 'root': 'root-context' }, modalityName: options.modalityName, modalityHandler: ModalityHandler.createHeadlessHandler() }, options));
+        super(Object.assign({ rootContainer: { 'root': 'root-context' }, modalityHandler: ModalityHandler.createHeadlessHandler() }, options));
     }
     async renderSlot(particle, slotName, content) {
         await super.renderSlot(particle, slotName, content);

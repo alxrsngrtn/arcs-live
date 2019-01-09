@@ -27791,6 +27791,7 @@ ${this.activeRecipe.toString()}`;
 class SuggestionComposer {
     constructor(arc, slotComposer) {
         this._suggestions = [];
+        // used in tests
         this._suggestConsumers = [];
         this._container = slotComposer.findContainerByName('suggestions');
         this._slotComposer = slotComposer;
@@ -27802,7 +27803,7 @@ class SuggestionComposer {
             this.modalityHandler.slotConsumerClass.clear(this._container);
         }
         this._suggestConsumers.forEach(consumer => consumer.dispose());
-        this._suggestConsumers = [];
+        this._suggestConsumers.length = 0;
     }
     setSuggestions(suggestions) {
         this.clear();
