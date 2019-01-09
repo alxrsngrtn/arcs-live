@@ -1,5 +1,5 @@
-commit 480a8f659ec135d0043989c7de2d88272d99a436
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jan 9 11:32:27 2019 -0800
+commit 4526308bab95b1dc87b5292010292e0534639675
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Jan 10 06:33:26 2019 +1100
 
-    fix "Inconsistent store versions" assert when merging suggestions (#2549)
+    Fixes issues with StrategyExplorer results disappearing (#2551)

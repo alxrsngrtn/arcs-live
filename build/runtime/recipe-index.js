@@ -11,6 +11,7 @@ import { Manifest } from './manifest.js';
 import { Arc } from './arc.js';
 import { SlotComposer } from './slot-composer.js';
 import { Strategizer, Strategy } from '../planning/strategizer.js';
+import { StrategyExplorerAdapter } from './debug/strategy-explorer-adapter.js';
 import { Tracing } from '../tracelib/trace.js';
 import { ConvertConstraintsToConnections } from './strategies/convert-constraints-to-connections.js';
 import { MatchFreeHandlesToConnections } from './strategies/match-free-handles-to-connections.js';
@@ -19,9 +20,11 @@ import { CreateHandleGroup } from './strategies/create-handle-group.js';
 import { AddMissingHandles } from './strategies/add-missing-handles.js';
 import * as Rulesets from './strategies/rulesets.js';
 import { MapSlots } from './strategies/map-slots.js';
+import { DevtoolsConnection } from './debug/devtools-connection.js';
 import { RecipeUtil } from './recipe/recipe-util.js';
 import { Handle } from './recipe/handle.js';
 import { assert } from '../platform/assert-web.js';
+import { PlanningResult } from './plan/planning-result.js';
 import { ModalityHandler } from './modality-handler.js';
 class RelevantContextRecipes extends Strategy {
     constructor(context, modality) {
@@ -66,7 +69,7 @@ const IndexStrategies = [
     CreateHandleGroup
 ];
 export class RecipeIndex {
-    constructor(arc) {
+    constructor(arc, { reportGenerations = true } = {}) {
         this._isReady = false;
         const trace = Tracing.start({ cat: 'indexing', name: 'RecipeIndex::constructor', overview: true });
         const arcStub = new Arc({
@@ -90,12 +93,9 @@ export class RecipeIndex {
                 const record = await strategizer.generate();
                 generations.push({ record, generated: strategizer.generated });
             } while (strategizer.generated.length + strategizer.terminal.length > 0);
-            // TODO: This is workaround for #2546. Uncomment, when properly fixed.
-            // if (DevtoolsConnection.isConnected) {
-            //   StrategyExplorerAdapter.processGenerations(
-            //       PlanningResult.formatSerializableGenerations(generations),
-            //       DevtoolsConnection.get().forArc(arc), {label: 'Index', keep: true});
-            // }
+            if (reportGenerations && DevtoolsConnection.isConnected) {
+                StrategyExplorerAdapter.processGenerations(PlanningResult.formatSerializableGenerations(generations), DevtoolsConnection.get().forArc(arc), { label: 'Index', keep: true });
+            }
             const population = strategizer.population;
             const candidates = new Set(population);
             for (const result of population) {
@@ -109,8 +109,8 @@ export class RecipeIndex {
             resolve(true);
         }));
     }
-    static create(arc) {
-        return new RecipeIndex(arc);
+    static create(arc, options = {}) {
+        return new RecipeIndex(arc, options);
     }
     get recipes() {
         if (!this._isReady)

@@ -44,7 +44,7 @@ export class PlanConsumer {
         this._onSuggestionsChanged();
         this._onMaybeSuggestionsChanged();
         if (this.result.generations.length && DevtoolsConnection.isConnected) {
-            StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get().forArc(this.arc));
+            StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get().forArc(this.arc), { label: 'Planning' });
         }
     }
     getCurrentSuggestions() {
