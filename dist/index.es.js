@@ -25805,13 +25805,8 @@ class SlotDomConsumer extends SlotConsumer {
     static clear(container) {
         container.textContent = '';
     }
-    static dispose() {
-        // TODO(sjmiles): dumping the template cache causes errors when running parallel arcs
-        // in shell. Disable for now, the corpus of templates is static at this time.
-        // empty template cache
-        if (!SlotDomConsumer['multitenant']) {
-            templateByName.clear();
-        }
+    static clearCache() {
+        templateByName.clear();
     }
     static findRootContainers(topContainer) {
         const containerBySlotId = {};
@@ -26637,7 +26632,6 @@ class SlotComposer {
     }
     dispose() {
         this.consumers.forEach(consumer => consumer.dispose());
-        this.modalityHandler.slotConsumerClass.dispose();
         this._contexts.forEach(context => {
             context.clearSlotConsumers();
             if (context.container) {

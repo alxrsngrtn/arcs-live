@@ -1,5 +1,7 @@
-commit 5750f9715ec174cfe1c44e55af6d5beaf121ded2
+commit 144a607a162e08fd5da8a6470c10ec95630e2b3d
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jan 9 15:20:26 2019 -0800
+Date:   Wed Jan 9 15:34:11 2019 -0800
 
-    Adding handle information to Plan json to avoid errors in shape matching. (#2559)
+    dont clear slot-dom-consumer cache to support multiple arcs (#2562)
+    
+    get rid of the multitenant workaround.

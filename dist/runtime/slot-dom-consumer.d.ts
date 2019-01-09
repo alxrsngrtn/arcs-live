@@ -26,7 +26,7 @@ export declare class SlotDomConsumer extends SlotConsumer {
     clearContainer(rendering: any): void;
     dispose(): void;
     static clear(container: any): void;
-    static dispose(): void;
+    static clearCache(): void;
     static findRootContainers(topContainer: any): {};
     createTemplateElement(template: any): HTMLTemplateElement & {
         innerHTML: any;
