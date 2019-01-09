@@ -6608,7 +6608,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const factory = _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["Debug"].Level < 1 ? () => () => {} : _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"];
+const factory = /*Debug.Level < 1 ? () => () => {} :*/ _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"];
 
 const logFactory = (...args) => factory(...args);
 
