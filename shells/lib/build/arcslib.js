@@ -85814,7 +85814,7 @@ class Planificator {
         this.searchStore = searchStore;
         this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"](store);
         if (!onlyConsumer) {
-            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](this.arc, this.result, searchStore, { debug, blockDevtools: true /* handled by consumer */ });
+            this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](this.arc, this.result, searchStore, { debug });
             this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__["ReplanQueue"](this.producer);
             this.dataChangeCallback = () => this.replanQueue.addChange();
             this._listenToArcStores();
@@ -86177,7 +86177,7 @@ const defaultTimeoutMs = 5000;
 const log = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'log');
 const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'error');
 class PlanProducer {
-    constructor(arc, result, searchStore, { debug = false, blockDevtools = false } = {}) {
+    constructor(arc, result, searchStore, { debug = false } = {}) {
         this.planner = null;
         this.stateChangedCallbacks = [];
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result, 'result cannot be null');
@@ -86192,7 +86192,6 @@ class PlanProducer {
             this.searchStore.on('change', this.searchStoreCallback, this);
         }
         this.debug = debug;
-        this.blockDevtools = blockDevtools;
     }
     get isPlanning() { return this._isPlanning; }
     set isPlanning(isPlanning) {
@@ -86285,7 +86284,7 @@ class PlanProducer {
                 search: options['search'],
                 recipeIndex: this.recipeIndex
             },
-            blockDevtools: this.blockDevtools
+            blockDevtools: true // Devtools communication is handled by PlanConsumer in Producer+Consumer setup.
         });
         suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations, this.speculator);
         if (this.planner) {

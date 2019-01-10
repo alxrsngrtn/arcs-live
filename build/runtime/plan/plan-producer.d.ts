@@ -28,10 +28,8 @@ export declare class PlanProducer {
     searchStore?: VariableStorageProvider;
     searchStoreCallback: ({}: {}) => void;
     debug: boolean;
-    blockDevtools: boolean;
-    constructor(arc: Arc, result: PlanningResult, searchStore?: VariableStorageProvider, { debug, blockDevtools }?: {
+    constructor(arc: Arc, result: PlanningResult, searchStore?: VariableStorageProvider, { debug }?: {
         debug?: boolean;
-        blockDevtools?: boolean;
     });
     isPlanning: boolean;
     registerStateChangedCallback(callback: any): void;

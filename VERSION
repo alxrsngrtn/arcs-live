@@ -1,5 +1,5 @@
-commit 6b6e6025dfa76a7d4d0e5d451687e47c85e1a02c
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Jan 10 13:43:12 2019 +1100
+commit cbc249470d366786cb4cb3fc652a57d8a9845491
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Jan 10 21:24:40 2019 +1100
 
-    Delete obsolete demo (#2565)
+    Clean up PlanProducer after PR 2560 (#2564)
