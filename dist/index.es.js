@@ -24716,7 +24716,7 @@ class PlanningResult {
             // Adding those here to reuse recipe resolution computation.
             record.resolvedDerivations = 0;
             record.resolvedDerivationsByStrategy = {};
-            population.forEach(item => {
+            for (const item of population) {
                 item.derivation = item.derivation.map(derivItem => {
                     let parent;
                     let strategy;
@@ -24736,18 +24736,18 @@ class PlanningResult {
                     }
                     record.resolvedDerivationsByStrategy[strategy]++;
                 }
-            });
+            }
             const populationMap = {};
-            population.forEach(item => {
+            for (const item of population) {
                 if (populationMap[item.derivation[0].strategy] == undefined) {
                     populationMap[item.derivation[0].strategy] = [];
                 }
                 populationMap[item.derivation[0].strategy].push(item);
-            });
+            }
             const result = { population: [], record };
-            Object.keys(populationMap).forEach(strategy => {
+            for (const strategy of Object.keys(populationMap)) {
                 result.population.push({ strategy, recipes: populationMap[strategy] });
-            });
+            }
             return result;
         });
     }
@@ -27931,6 +27931,13 @@ class PlanConsumer {
         this._onMaybeSuggestionsChanged();
         if (this.result.generations.length && DevtoolsConnection.isConnected) {
             StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get().forArc(this.arc), { label: 'Plan Consumer', keep: true });
+            DevtoolsConnection.get().forArc(this.arc).send({
+                messageType: 'suggestions-changed',
+                messageBody: {
+                    suggestions: this.result.suggestions,
+                    lastUpdated: this.result.lastUpdated.getTime()
+                },
+            });
         }
     }
     getCurrentSuggestions() {

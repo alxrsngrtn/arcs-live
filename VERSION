@@ -1,5 +1,5 @@
-commit 0076251db040e7d665401dbf1eee0e82965faa5a
+commit 51d0871eadc10243e79fec410bbba14e0197d0d8
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jan 10 12:55:28 2019 -0800
+Date:   Thu Jan 10 14:02:35 2019 -0800
 
-    add more fields to Plan json (#2563)
+    arcs devtools planning page (#2568)

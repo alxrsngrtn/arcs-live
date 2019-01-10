@@ -45,6 +45,13 @@ export class PlanConsumer {
         this._onMaybeSuggestionsChanged();
         if (this.result.generations.length && DevtoolsConnection.isConnected) {
             StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get().forArc(this.arc), { label: 'Plan Consumer', keep: true });
+            DevtoolsConnection.get().forArc(this.arc).send({
+                messageType: 'suggestions-changed',
+                messageBody: {
+                    suggestions: this.result.suggestions,
+                    lastUpdated: this.result.lastUpdated.getTime()
+                },
+            });
         }
     }
     getCurrentSuggestions() {
