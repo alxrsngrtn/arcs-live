@@ -2,6 +2,7 @@ export class Relevance {
     constructor() {
         // stores a copy of arc.getVersionByStore
         this.versionByStore = {};
+        // public for testing
         this.relevanceMap = new Map();
     }
     static create(arc, recipe) {

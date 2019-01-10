@@ -156,7 +156,7 @@ function restore(entry, entityClass) {
     // TODO some relation magic, somewhere, at some point.
     return entity;
 }
-/** @class Handle
+/**
  * Base class for Collections and Variables.
  */
 class Handle {

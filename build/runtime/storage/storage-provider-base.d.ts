@@ -20,6 +20,7 @@ export interface CollectionStorageProvider extends StorageProviderBase {
     removeMultiple(items: any[], originatorId?: string): Promise<void>;
     get(id: string): Promise<any>;
     remove(id: string, keys: string[], originatorId?: string): any;
+    store(value: any, keys: string[], originatorId?: string): any;
 }
 export declare abstract class StorageBase {
     protected readonly arcId: Id;

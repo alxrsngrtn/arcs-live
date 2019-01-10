@@ -174,5 +174,8 @@ class SyntheticCollection extends StorageProviderBase {
     remove(id, keys, originatorId) {
         throw new Error('unimplemented');
     }
+    store(value, keys, originatorId) {
+        throw new Error('unimplemented');
+    }
 }
 //# sourceMappingURL=synthetic-storage.js.map

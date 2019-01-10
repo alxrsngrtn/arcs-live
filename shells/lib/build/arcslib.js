@@ -2376,7 +2376,7 @@ function restore(entry, entityClass) {
     // TODO some relation magic, somewhere, at some point.
     return entity;
 }
-/** @class Handle
+/**
  * Base class for Collections and Variables.
  */
 class Handle {
@@ -76346,6 +76346,9 @@ class SyntheticCollection extends _storage_provider_base_js__WEBPACK_IMPORTED_MO
     remove(id, keys, originatorId) {
         throw new Error('unimplemented');
     }
+    store(value, keys, originatorId) {
+        throw new Error('unimplemented');
+    }
 }
 //# sourceMappingURL=synthetic-storage.js.map
 
@@ -82882,6 +82885,7 @@ class Relevance {
     constructor() {
         // stores a copy of arc.getVersionByStore
         this.versionByStore = {};
+        // public for testing
         this.relevanceMap = new Map();
     }
     static create(arc, recipe) {

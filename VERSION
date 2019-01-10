@@ -1,7 +1,7 @@
-commit 144a607a162e08fd5da8a6470c10ec95630e2b3d
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jan 9 15:34:11 2019 -0800
+commit 9af194c6f749902dacc4d40540a770468ef9669c
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Jan 9 16:04:37 2019 -0800
 
-    dont clear slot-dom-consumer cache to support multiple arcs (#2562)
+    Convert type-checker-tests and description-test to typescript (#2558)
     
-    get rid of the multitenant workaround.
+    - Also adds missing store method in storage-provider-base
