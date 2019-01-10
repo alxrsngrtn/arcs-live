@@ -83005,15 +83005,24 @@ class Plan {
         this.modality = modality;
     }
     static create(plan) {
-        return new Plan(plan.toString(), plan.name, plan.particles.map(p => ({
-            name: p.name,
-            connections: Object.keys(p.connections).map(pcName => ({ name: pcName })),
-            slotConnections: Object.keys(p.consumedSlotConnections),
-            unnamedConnections: []
-        })), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.handleConnections.map(hc => ({
+        const particleToJson = (p) => {
+            return {
+                name: p.name,
+                connections: Object.values(p.connections).reduce((conns, conn) => {
+                    conns[conn.name] = { name: conn.name };
+                    return conns;
+                }, {}),
+                consumedSlotConnections: Object.values(p.consumedSlotConnections).reduce((conns, conn) => {
+                    conns[conn.name] = { name: conn.name };
+                    return conns;
+                }, {}),
+                unnamedConnections: []
+            };
+        };
+        return new Plan(plan.toString(), plan.name, plan.particles.map(p => particleToJson(p)), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.handleConnections.map(hc => ({
             name: hc.name,
             direction: hc.direction,
-            particle: { name: hc.particle.name },
+            particle: particleToJson(hc.particle),
             handle: hc.handle ? {
                 localName: hc.handle.localName,
                 id: hc.handle.id,

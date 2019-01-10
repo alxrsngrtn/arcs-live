@@ -30,8 +30,8 @@ export declare class Plan {
     readonly name: string;
     readonly particles: {
         name: string;
-        connections: {}[];
-        slotConnections: {}[];
+        connections: {};
+        consumedSlotConnections: {};
     }[];
     readonly handles: {
         id: string;
@@ -57,8 +57,8 @@ export declare class Plan {
     }[];
     constructor(serialization: string, name: string, particles: {
         name: string;
-        connections: {}[];
-        slotConnections: {}[];
+        connections: {};
+        consumedSlotConnections: {};
     }[], handles: {
         id: string;
         tags: string[];
