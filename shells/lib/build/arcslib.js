@@ -827,6 +827,9 @@ ${this.activeRecipe.toString()}`;
         }
         return results.join('\n');
     }
+    get apiChannelMappingId() {
+        return this.id.toString();
+    }
 }
 //# sourceMappingURL=arc.js.map
 

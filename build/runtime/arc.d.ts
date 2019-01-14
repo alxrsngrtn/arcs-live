@@ -125,5 +125,6 @@ export declare class Arc {
     keyForId(id: string): string;
     stop(): void;
     toContextString(options: any): string;
+    readonly apiChannelMappingId: string;
 }
 export {};

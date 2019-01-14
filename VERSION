@@ -1,5 +1,5 @@
-commit a05b45408cac33e95ffd4f3defa79358559ac8a1
+commit 8574e87af0346d3d7caeb59162a8dc5f4b669932
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Jan 14 14:14:22 2019 +1100
+Date:   Mon Jan 14 15:51:06 2019 +1100
 
-    Streamling hosted slots, allow recursive inner arcs (#2573)
+    DevTools cleanup for proper inner arcs (#2586)
