@@ -12,16 +12,13 @@ import { Arc } from '../../arc.js';
 import { FakeSlotComposer } from '../../testing/fake-slot-composer.js';
 import { Loader } from '../../loader.js';
 import { Manifest } from '../../manifest.js';
-import { Recipe } from '../../recipe/recipe.js';
 import { TestHelper } from '../../testing/test-helper.js';
 import { PlanProducer } from '../../plan/plan-producer.js';
 import { Planificator } from '../../plan/planificator.js';
 import { PlanningResult } from '../../plan/planning-result.js';
-import { Relevance } from '../../relevance.js';
-import { Suggestion } from '../../plan/suggestion.js';
 class TestPlanProducer extends PlanProducer {
     constructor(arc, store) {
-        super(arc, new PlanningResult(store));
+        super(arc, new PlanningResult({ context: arc.context, loader: arc.loader }, store));
         this.produceCalledCount = 0;
         this.plannerRunOptions = [];
         this.cancelCount = 0;
@@ -56,27 +53,6 @@ class TestPlanProducer extends PlanProducer {
         }).then(suggestions => suggestions);
     }
     get plannerRunCount() { return this.plannerRunOptions.length; }
-    plannerReturnFakeResults(planInfos) {
-        const suggestions = [];
-        planInfos.forEach(info => {
-            if (!info.hash) {
-                info = { hash: info };
-            }
-            const plan = new Recipe(`Recipe${info.hash}`);
-            plan.newParticle('TestParticle');
-            if (!info.options || !info.options.invisible) {
-                plan.newSlot('slot0').id = 'id0';
-            }
-            plan.normalize();
-            const relevance = Relevance.create(this.arc, plan);
-            relevance.apply(new Map([[plan.particles[0], [info.rank || 0]]]));
-            const suggestion = Suggestion.create(plan, info.hash, relevance);
-            suggestion.descriptionByModality['text'] = `This is ${plan.name}`;
-            suggestions.push(suggestion);
-        });
-        this.plannerReturnResults(suggestions);
-        return suggestions;
-    }
     plannerReturnResults(suggestions) {
         if (this.plannerPromise) {
             this.plannerPromise(suggestions);
@@ -105,7 +81,7 @@ class TestPlanProducer extends PlanProducer {
             assert.lengthOf(producer.result.suggestions, 0);
             await producer.produceSuggestions();
             assert.lengthOf(producer.result.suggestions, 0);
-            producer.plannerReturnFakeResults(helper.suggestions);
+            producer.plannerReturnResults(helper.suggestions);
             await producer.allPlanningDone();
             assert.lengthOf(producer.result.suggestions, 1);
             assert.equal(producer.produceCalledCount, 1);
@@ -118,8 +94,8 @@ class TestPlanProducer extends PlanProducer {
             for (let i = 0; i < 10; ++i) {
                 producer.produceSuggestions({ test: i });
             }
-            producer.plannerReturnFakeResults(helper.suggestions);
-            producer.plannerReturnFakeResults(helper.suggestions);
+            producer.plannerReturnResults(helper.suggestions);
+            producer.plannerReturnResults(helper.suggestions);
             await producer.allPlanningDone();
             assert.equal(producer.produceCalledCount, 10);
             assert.equal(producer.plannerRunCount, 2);
@@ -132,7 +108,7 @@ class TestPlanProducer extends PlanProducer {
             assert.lengthOf(producer.result.suggestions, 0);
             producer.produceSuggestions();
             producer.produceSuggestions({ cancelOngoingPlanning: true });
-            producer.plannerReturnFakeResults(helper.suggestions);
+            producer.plannerReturnResults(helper.suggestions);
             await producer.allPlanningDone();
             assert.equal(producer.produceCalledCount, 2);
             assert.equal(producer.plannerRunCount, 2);
@@ -142,7 +118,7 @@ class TestPlanProducer extends PlanProducer {
     describe('plan producer - search', () => {
         class TestSearchPlanProducer extends PlanProducer {
             constructor(arc, searchStore) {
-                super(arc, new PlanningResult(searchStore), searchStore);
+                super(arc, new PlanningResult({ context: arc.context, loader: arc.loader }, searchStore), searchStore);
                 this.produceSuggestionsCalled = 0;
             }
             async produceSuggestions(options = {}) {

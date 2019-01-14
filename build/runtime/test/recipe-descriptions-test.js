@@ -12,7 +12,6 @@ import { TestHelper } from '../testing/test-helper.js';
 import { DescriptionDomFormatter } from '../description-dom-formatter.js';
 import { Recipe } from '../recipe/recipe.js';
 import { StubLoader } from '../testing/stub-loader.js';
-import { Suggestion } from '../plan/suggestion';
 describe('recipe descriptions test', () => {
     // Avoid initialising non-POD variables globally, since they would be constructed even when
     // these tests are not going to be executed (i.e. another test file uses 'only').
@@ -270,23 +269,19 @@ store BoxesStore of [Box] 'allboxes' in AllBoxes` : ''}
     `, loader });
         assert.lengthOf(helper.suggestions, 3);
         const recipe1 = new Recipe();
-        const plans = [];
-        for (const suggestion of helper.suggestions) {
-            plans.push(await Suggestion.planFromString(suggestion.plan.serialization, helper.arc));
-        }
-        plans[0].mergeInto(recipe1);
+        helper.suggestions[0].plan.mergeInto(recipe1);
         assert.lengthOf(recipe1.particles, 1);
         assert.lengthOf(recipe1.patterns, 1);
-        plans[1].mergeInto(recipe1);
+        helper.suggestions[1].plan.mergeInto(recipe1);
         assert.lengthOf(recipe1.particles, 2);
         assert.lengthOf(recipe1.patterns, 2);
-        plans[2].mergeInto(recipe1);
+        helper.suggestions[2].plan.mergeInto(recipe1);
         assert.lengthOf(recipe1.particles, 3);
         assert.deepEqual(['do A', 'do B', 'do C'], recipe1.patterns);
         const recipe2 = new Recipe();
-        plans[2].mergeInto(recipe2);
-        plans[0].mergeInto(recipe2);
-        plans[1].mergeInto(recipe2);
+        helper.suggestions[2].plan.mergeInto(recipe2);
+        helper.suggestions[0].plan.mergeInto(recipe2);
+        helper.suggestions[1].plan.mergeInto(recipe2);
         assert.deepEqual(['do C', 'do A', 'do B'], recipe2.patterns);
         assert.notDeepEqual(recipe1.patterns, recipe2.patterns);
         recipe1.normalize();

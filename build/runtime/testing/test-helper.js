@@ -76,6 +76,9 @@ export class TestHelper {
     clearTimeout() {
         clearTimeout(this.timeout);
     }
+    get envOptions() {
+        return { context: this.arc.context, loader: this.arc.loader };
+    }
     /**
      * Generates suggestions for the arc.
      * |options| contains possible verifications to be performed on the generated plans:

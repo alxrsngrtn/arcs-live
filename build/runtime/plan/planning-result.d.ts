@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../arc.js';
-import { Suggestion } from './suggestion.js';
+import { Suggestion, EnvOptions } from './suggestion.js';
 import { VariableStorageProvider } from '../storage/storage-provider-base.js';
 export declare type PlanningResultOptions = {
     suggestions: Suggestion[];
@@ -27,7 +27,8 @@ export declare class PlanningResult {
     store: VariableStorageProvider;
     private storeCallback;
     private changeCallbacks;
-    constructor(store?: VariableStorageProvider);
+    private envOptions;
+    constructor(envOptions: EnvOptions, store?: VariableStorageProvider);
     registerChangeCallback(callback: any): void;
     onChanged(): void;
     load(): Promise<boolean>;
@@ -48,7 +49,7 @@ export declare class PlanningResult {
         suggestions: any;
         generations?: any;
         lastUpdated?: Date;
-    }): boolean;
+    }): Promise<boolean>;
     toLiteral(): {
         suggestions: {
             plan: string;

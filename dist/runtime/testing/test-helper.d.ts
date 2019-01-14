@@ -61,6 +61,10 @@ export declare class TestHelper {
     static createAndPlan(options: TestHelperPlanOptions): Promise<TestHelper>;
     setTimeout(timeout: number): void;
     clearTimeout(): void;
+    readonly envOptions: {
+        context: any;
+        loader: any;
+    };
     /**
      * Generates suggestions for the arc.
      * |options| contains possible verifications to be performed on the generated plans:

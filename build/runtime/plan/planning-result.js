@@ -13,11 +13,14 @@ import { RecipeUtil } from '../recipe/recipe-util.js';
 import { Suggestion } from './suggestion.js';
 const error = logFactory('PlanningResult', '#ff0090', 'error');
 export class PlanningResult {
-    constructor(store) {
+    constructor(envOptions, store) {
         this.lastUpdated = new Date(null);
         this.generations = [];
         this.contextual = true;
         this.changeCallbacks = [];
+        this.envOptions = envOptions;
+        assert(envOptions.context, `context cannot be null`);
+        assert(envOptions.loader, `loader cannot be null`);
         this.store = store;
         if (this.store) {
             this.storeCallback = () => this.load();
@@ -35,7 +38,7 @@ export class PlanningResult {
     async load() {
         const value = await this.store.get() || {};
         if (value.suggestions) {
-            if (this.fromLiteral(value)) {
+            if (await this.fromLiteral(value)) {
                 return true;
             }
         }
@@ -237,9 +240,13 @@ export class PlanningResult {
             oldSuggestions.length === newSuggestions.length &&
             oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
     }
-    fromLiteral({ suggestions, generations, lastUpdated }) {
+    async fromLiteral({ suggestions, generations, lastUpdated }) {
+        const deserializedSuggestions = [];
+        for (const suggestion of suggestions) {
+            deserializedSuggestions.push(await Suggestion.fromLiteral(suggestion, this.envOptions));
+        }
         return this.set({
-            suggestions: suggestions.map(suggestion => Suggestion.fromLiteral(suggestion)).filter(s => s),
+            suggestions: deserializedSuggestions,
             generations: JSON.parse(generations || '[]'),
             lastUpdated: new Date(lastUpdated),
             contextual: suggestions.contextual

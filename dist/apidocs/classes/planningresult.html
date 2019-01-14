@@ -90,6 +90,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planningresult.html#_suggestions" class="tsd-kind-icon">_suggestions</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="planningresult.html#changecallbacks" class="tsd-kind-icon">change<wbr>Callbacks</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planningresult.html#contextual" class="tsd-kind-icon">contextual</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="planningresult.html#envoptions" class="tsd-kind-icon">env<wbr>Options</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planningresult.html#generations" class="tsd-kind-icon">generations</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planningresult.html#lastupdated" class="tsd-kind-icon">last<wbr>Updated</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="planningresult.html#store" class="tsd-kind-icon">store</a></li>
@@ -133,17 +134,20 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Planning<wbr>Result<span class="tsd-signature-symbol">(</span>store<span class="tsd-signature-symbol">?: </span><a href="../interfaces/variablestorageprovider.html" class="tsd-signature-type">VariableStorageProvider</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="planningresult.html" class="tsd-signature-type">PlanningResult</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Planning<wbr>Result<span class="tsd-signature-symbol">(</span>envOptions<span class="tsd-signature-symbol">: </span><a href="../globals.html#envoptions" class="tsd-signature-type">EnvOptions</a>, store<span class="tsd-signature-symbol">?: </span><a href="../interfaces/variablestorageprovider.html" class="tsd-signature-type">VariableStorageProvider</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="planningresult.html" class="tsd-signature-type">PlanningResult</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L34">runtime/plan/planning-result.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L35">runtime/plan/planning-result.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
+								<li>
+									<h5>envOptions: <a href="../globals.html#envoptions" class="tsd-signature-type">EnvOptions</a></h5>
+								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> store: <a href="../interfaces/variablestorageprovider.html" class="tsd-signature-type">VariableStorageProvider</a></h5>
 								</li>
@@ -161,7 +165,7 @@
 					<div class="tsd-signature tsd-kind-icon">_suggestions<span class="tsd-signature-symbol">:</span> <a href="suggestion.html" class="tsd-signature-type">Suggestion</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L28">runtime/plan/planning-result.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L28">runtime/plan/planning-result.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -171,7 +175,7 @@
 					<div class="tsd-signature tsd-kind-icon">change<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L34">runtime/plan/planning-result.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L34">runtime/plan/planning-result.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -181,7 +185,17 @@
 					<div class="tsd-signature tsd-kind-icon">contextual<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L31">runtime/plan/planning-result.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L31">runtime/plan/planning-result.ts:31</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="envoptions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> env<wbr>Options</h3>
+					<div class="tsd-signature tsd-kind-icon">env<wbr>Options<span class="tsd-signature-symbol">:</span> <a href="../globals.html#envoptions" class="tsd-signature-type">EnvOptions</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L35">runtime/plan/planning-result.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -191,7 +205,7 @@
 					<div class="tsd-signature tsd-kind-icon">generations<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L30">runtime/plan/planning-result.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L30">runtime/plan/planning-result.ts:30</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -201,7 +215,7 @@
 					<div class="tsd-signature tsd-kind-icon">last<wbr>Updated<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span><span class="tsd-signature-symbol"> =&nbsp;new Date(null)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L29">runtime/plan/planning-result.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L29">runtime/plan/planning-result.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -211,7 +225,7 @@
 					<div class="tsd-signature tsd-kind-icon">store<span class="tsd-signature-symbol">:</span> <a href="../interfaces/variablestorageprovider.html" class="tsd-signature-type">VariableStorageProvider</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L32">runtime/plan/planning-result.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L32">runtime/plan/planning-result.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -221,7 +235,7 @@
 					<div class="tsd-signature tsd-kind-icon">store<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L33">runtime/plan/planning-result.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L33">runtime/plan/planning-result.ts:33</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -262,7 +276,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L83">runtime/plan/planning-result.ts:83</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L87">runtime/plan/planning-result.ts:87</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="suggestion.html" class="tsd-signature-type">Suggestion</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -270,7 +284,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L84">runtime/plan/planning-result.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L88">runtime/plan/planning-result.ts:88</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -296,7 +310,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L210">runtime/plan/planning-result.ts:210</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L214">runtime/plan/planning-result.ts:214</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -328,7 +342,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L199">runtime/plan/planning-result.ts:199</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L203">runtime/plan/planning-result.ts:203</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -354,7 +368,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L236">runtime/plan/planning-result.ts:236</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L240">runtime/plan/planning-result.ts:240</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -388,7 +402,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L73">runtime/plan/planning-result.ts:73</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L77">runtime/plan/planning-result.ts:77</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -405,7 +419,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L77">runtime/plan/planning-result.ts:77</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L81">runtime/plan/planning-result.ts:81</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -422,7 +436,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L64">runtime/plan/planning-result.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L68">runtime/plan/planning-result.ts:68</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -433,13 +447,13 @@
 					<a name="fromliteral" class="tsd-anchor"></a>
 					<h3>from<wbr>Literal</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">from<wbr>Literal<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">from<wbr>Literal<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L280">runtime/plan/planning-result.ts:280</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L284">runtime/plan/planning-result.ts:284</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -459,7 +473,7 @@
 									</ul>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -473,7 +487,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L269">runtime/plan/planning-result.ts:269</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L273">runtime/plan/planning-result.ts:273</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -496,7 +510,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L54">runtime/plan/planning-result.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L58">runtime/plan/planning-result.ts:58</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -513,7 +527,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L163">runtime/plan/planning-result.ts:163</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L167">runtime/plan/planning-result.ts:167</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -553,7 +567,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L265">runtime/plan/planning-result.ts:265</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L269">runtime/plan/planning-result.ts:269</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -576,7 +590,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L48">runtime/plan/planning-result.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L52">runtime/plan/planning-result.ts:52</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -593,7 +607,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L44">runtime/plan/planning-result.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L48">runtime/plan/planning-result.ts:48</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -616,7 +630,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L150">runtime/plan/planning-result.ts:150</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L154">runtime/plan/planning-result.ts:154</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -653,7 +667,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L289">runtime/plan/planning-result.ts:289</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L297">runtime/plan/planning-result.ts:297</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
@@ -684,7 +698,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L89">runtime/plan/planning-result.ts:89</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L93">runtime/plan/planning-result.ts:93</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -707,7 +721,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/3d98aee/src/runtime/plan/planning-result.ts#L273">runtime/plan/planning-result.ts:273</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/327f454/src/runtime/plan/planning-result.ts#L277">runtime/plan/planning-result.ts:277</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -751,6 +765,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="planningresult.html#contextual" class="tsd-kind-icon">contextual</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="planningresult.html#envoptions" class="tsd-kind-icon">env<wbr>Options</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="planningresult.html#generations" class="tsd-kind-icon">generations</a>

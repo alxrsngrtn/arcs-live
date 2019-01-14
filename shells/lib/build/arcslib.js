@@ -82995,7 +82995,6 @@ class Relevance {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Plan", function() { return Plan; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Suggestion", function() { return Suggestion; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _description_formatter_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(228);
@@ -83014,50 +83013,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// TODO(#2557): This class is a temporary format for serializing suggestions.
-// Suggestion class should instead receive loader and context parameters in fromLiteral method
-// and deserialize the plan immediately. This class will be removed.
-class Plan {
-    constructor(serialization, name, particles, handles, handleConnections, slotConnections, slots, modality) {
-        this.serialization = serialization;
-        this.name = name;
-        this.particles = particles;
-        this.handles = handles;
-        this.handleConnections = handleConnections;
-        this.slotConnections = slotConnections;
-        this.slots = slots;
-        this.modality = modality;
-    }
-    static create(plan) {
-        const particleToJson = (p) => {
-            return {
-                name: p.name,
-                connections: Object.values(p.connections).reduce((conns, conn) => {
-                    conns[conn.name] = { name: conn.name };
-                    return conns;
-                }, {}),
-                consumedSlotConnections: Object.values(p.consumedSlotConnections).reduce((conns, conn) => {
-                    conns[conn.name] = { name: conn.name };
-                    return conns;
-                }, {}),
-                unnamedConnections: []
-            };
-        };
-        return new Plan(plan.toString(), plan.name, plan.particles.map(p => particleToJson(p)), plan.handles.map(h => ({ id: h.id, tags: h.tags })), plan.handleConnections.map(hc => ({
-            name: hc.name,
-            direction: hc.direction,
-            particle: particleToJson(hc.particle),
-            handle: hc.handle ? {
-                localName: hc.handle.localName,
-                id: hc.handle.id,
-                originalId: hc.handle.originalId,
-                fate: hc.handle.fate,
-                originalFate: hc.handle.originalFate,
-                immediateValue: hc.handle.immediateValue
-            } : null
-        })), plan.slotConnections.map(sc => ({ name: sc.name, particle: sc.particle.name })), plan.slots.map(s => ({ id: s.id, name: s.name, tags: s.tags })), plan.modality.names.map(n => ({ name: n })));
-    }
-}
 class Suggestion {
     constructor(plan, hash, rank, versionByStore) {
         // TODO: update Description class to be serializable.
@@ -83083,7 +83038,7 @@ class Suggestion {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan, `plan cannot be null`);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(hash, `hash cannot be null`);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(relevance, `relevance cannot be null`);
-        const suggestion = new Suggestion(Plan.create(plan), hash, relevance.calcRelevanceScore(), relevance.versionByStore);
+        const suggestion = new Suggestion(plan, hash, relevance.calcRelevanceScore(), relevance.versionByStore);
         suggestion.setSearch(plan.search);
         return suggestion;
     }
@@ -83096,9 +83051,9 @@ class Suggestion {
     }
     setDescription(description, modality, descriptionFormatter = _description_formatter_js__WEBPACK_IMPORTED_MODULE_1__["DescriptionFormatter"]) {
         this.descriptionByModality['text'] = description.getRecipeSuggestion();
-        for (const planModality of this.plan.modality) {
-            if (modality.names.includes(planModality.name)) {
-                this.descriptionByModality[planModality.name] =
+        for (const planModality of this.plan.modality.names) {
+            if (modality.names.includes(planModality)) {
+                this.descriptionByModality[planModality] =
                     description.getRecipeSuggestion(descriptionFormatter);
             }
         }
@@ -83145,8 +83100,7 @@ class Suggestion {
     }
     toLiteral() {
         return {
-            // Needs to JSON.strigify to avoid emitting empty strings and arrays.
-            plan: JSON.stringify(this.plan),
+            plan: this.plan.toString(),
             hash: this.hash,
             rank: this.rank,
             // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
@@ -83155,8 +83109,12 @@ class Suggestion {
             descriptionByModality: this.descriptionByModality
         };
     }
-    static fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }) {
-        const suggestion = new Suggestion(JSON.parse(plan), hash, rank, JSON.parse(versionByStore || '{}'));
+    static async fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }, { context, loader }) {
+        const manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_2__["Manifest"].parse(plan, { loader, context, fileName: '' });
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest.recipes.length === 1);
+        const recipe = manifest.recipes[0];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(recipe.normalize({}), `can't normalize deserialized suggestion: ${plan}`);
+        const suggestion = new Suggestion(recipe, hash, rank, JSON.parse(versionByStore || '{}'));
         suggestion.searchGroups = searchGroups || [];
         suggestion.descriptionByModality = descriptionByModality;
         return suggestion;
@@ -83164,32 +83122,17 @@ class Suggestion {
     async instantiate(arc) {
         // For now shell is responsible for creating and setting the new arc.
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, `Cannot instantiate suggestion without and arc`);
-        const thePlan = await Suggestion.planFromString(this.plan.serialization, arc);
-        return arc.instantiate(thePlan);
+        const plan = await this.getResolvedPlan(arc);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan && plan.isResolved(), `can't resolve plan: ${this.plan.toString({ showUnresolved: true })}`);
+        return arc.instantiate(plan);
     }
-    // TODO(mmandlis): temporarily used in shell's plan instantiation hack. 
-    // Make private again, once fixed.
-    static async planFromString(planString, arc) {
-        try {
-            const manifest = await _manifest_js__WEBPACK_IMPORTED_MODULE_2__["Manifest"].parse(planString, { loader: arc.loader, context: arc.context, fileName: '' });
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest.recipes.length === 1);
-            let plan = manifest.recipes[0];
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan.normalize({}), `can't normalize deserialized suggestion: ${plan.toString()}`);
-            if (!plan.isResolved()) {
-                const recipeResolver = new _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_3__["RecipeResolver"](arc);
-                const resolvedPlan = await recipeResolver.resolve(plan);
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(resolvedPlan, `can't resolve plan: ${plan.toString({ showUnresolved: true })}`);
-                if (resolvedPlan) {
-                    plan = resolvedPlan;
-                }
-            }
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(manifest.stores.length === 0, `Unexpected stores in suggestion manifest.`);
-            return plan;
+    async getResolvedPlan(arc) {
+        if (this.plan.isResolved()) {
+            return this.plan;
         }
-        catch (e) {
-            console.error(`Failed to parse suggestion ${e}\n${planString}.`);
-        }
-        return null;
+        // TODO(mmandlis): Is this still needed? Find out why and fix.
+        const recipeResolver = new _recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_3__["RecipeResolver"](arc);
+        return recipeResolver.resolve(this.plan);
     }
 }
 //# sourceMappingURL=suggestion.js.map
@@ -83246,11 +83189,14 @@ __webpack_require__.r(__webpack_exports__);
 
 const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_1__["logFactory"])('PlanningResult', '#ff0090', 'error');
 class PlanningResult {
-    constructor(store) {
+    constructor(envOptions, store) {
         this.lastUpdated = new Date(null);
         this.generations = [];
         this.contextual = true;
         this.changeCallbacks = [];
+        this.envOptions = envOptions;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(envOptions.context, `context cannot be null`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(envOptions.loader, `loader cannot be null`);
         this.store = store;
         if (this.store) {
             this.storeCallback = () => this.load();
@@ -83268,7 +83214,7 @@ class PlanningResult {
     async load() {
         const value = await this.store.get() || {};
         if (value.suggestions) {
-            if (this.fromLiteral(value)) {
+            if (await this.fromLiteral(value)) {
                 return true;
             }
         }
@@ -83470,9 +83416,13 @@ class PlanningResult {
             oldSuggestions.length === newSuggestions.length &&
             oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
     }
-    fromLiteral({ suggestions, generations, lastUpdated }) {
+    async fromLiteral({ suggestions, generations, lastUpdated }) {
+        const deserializedSuggestions = [];
+        for (const suggestion of suggestions) {
+            deserializedSuggestions.push(await _suggestion_js__WEBPACK_IMPORTED_MODULE_3__["Suggestion"].fromLiteral(suggestion, this.envOptions));
+        }
         return this.set({
-            suggestions: suggestions.map(suggestion => _suggestion_js__WEBPACK_IMPORTED_MODULE_3__["Suggestion"].fromLiteral(suggestion)).filter(s => s),
+            suggestions: deserializedSuggestions,
             generations: JSON.parse(generations || '[]'),
             lastUpdated: new Date(lastUpdated),
             contextual: suggestions.contextual
@@ -85804,7 +85754,7 @@ class Planificator {
         this.arc = arc;
         this.userid = userid;
         this.searchStore = searchStore;
-        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"](store);
+        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"]({ context: arc.context, loader: arc.loader }, store);
         if (!onlyConsumer) {
             this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](this.arc, this.result, searchStore, { debug });
             this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__["ReplanQueue"](this.producer);
@@ -85999,7 +85949,7 @@ class PlanConsumer {
     }
     getCurrentSuggestions() {
         const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0
-            && this.arc.modality.isCompatible(suggestion.plan.modality.map(m => m.name)));
+            && this.arc.modality.isCompatible(suggestion.plan.modality.names));
         // `showAll`: returns all suggestions that render into slots.
         if (this.suggestFilter['showAll']) {
             // Should filter out suggestions produced by search phrases?

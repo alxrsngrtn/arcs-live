@@ -17,7 +17,7 @@ import { ReplanQueue } from '../../plan/replan-queue.js';
 import { FakeSlotComposer } from '../../testing/fake-slot-composer.js';
 class TestPlanProducer extends PlanProducer {
     constructor(arc) {
-        super(arc, new PlanningResult());
+        super(arc, new PlanningResult({ context: arc.context, loader: arc.loader }));
         this.produceSuggestionsCalled = 0;
     }
     async produceSuggestions(options = {}) {

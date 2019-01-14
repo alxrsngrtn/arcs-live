@@ -10,14 +10,16 @@
 import { Arc } from '../arc.js';
 import { Description } from '../description.js';
 import { DescriptionFormatter } from '../description-formatter.js';
+import { Manifest } from '../manifest.js';
 import { Modality } from '../modality.js';
 import { Recipe } from '../recipe/recipe.js';
 import { Relevance } from '../relevance.js';
 import { Search } from '../recipe/search.js';
+import { Loader } from '../loader.js';
 /**
  * options for the fromLiteral() method.
  */
-declare type FromLiteralOptions = {
+export declare type FromLiteralOptions = {
     plan: string;
     hash: string;
     rank: number;
@@ -25,62 +27,12 @@ declare type FromLiteralOptions = {
     searchGroups?: string[][];
     descriptionByModality?: {};
 };
-export declare class Plan {
-    readonly serialization: string;
-    readonly name: string;
-    readonly particles: {
-        name: string;
-        connections: {};
-        consumedSlotConnections: {};
-    }[];
-    readonly handles: {
-        id: string;
-        tags: string[];
-    }[];
-    readonly handleConnections: {
-        name: string;
-        direction: string;
-        particle: {};
-        handle?: {};
-    }[];
-    readonly slotConnections: {
-        name: string;
-        particle: {};
-    }[];
-    readonly slots: {
-        id: string;
-        name: string;
-        tags: string[];
-    }[];
-    readonly modality: {
-        name: string;
-    }[];
-    constructor(serialization: string, name: string, particles: {
-        name: string;
-        connections: {};
-        consumedSlotConnections: {};
-    }[], handles: {
-        id: string;
-        tags: string[];
-    }[], handleConnections: {
-        name: string;
-        direction: string;
-        particle: {};
-        handle?: {};
-    }[], slotConnections: {
-        name: string;
-        particle: {};
-    }[], slots: {
-        id: string;
-        name: string;
-        tags: string[];
-    }[], modality: {
-        name: string;
-    }[]);
-    static create(plan: Recipe): Plan;
-}
+export declare type EnvOptions = {
+    context: Manifest;
+    loader: Loader;
+};
 export declare class Suggestion {
-    plan: Plan;
+    plan: Recipe;
     descriptionByModality: {};
     versionByStore: {};
     readonly hash: string;
@@ -88,7 +40,7 @@ export declare class Suggestion {
     groupIndex: number;
     searchGroups: string[][];
     static create(plan: Recipe, hash: string, relevance: Relevance): Suggestion;
-    constructor(plan: Plan, hash: string, rank: number, versionByStore: {});
+    constructor(plan: Recipe, hash: string, rank: number, versionByStore: {});
     readonly descriptionText: string;
     getDescription(modality: string): string | {};
     setDescription(description: Description, modality: Modality, descriptionFormatter?: typeof DescriptionFormatter): void;
@@ -106,8 +58,7 @@ export declare class Suggestion {
         searchGroups: string[][];
         descriptionByModality: {};
     };
-    static fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }: FromLiteralOptions): Suggestion;
+    static fromLiteral({ plan, hash, rank, versionByStore, searchGroups, descriptionByModality }: FromLiteralOptions, { context, loader }: EnvOptions): Promise<Suggestion>;
     instantiate(arc: Arc): Promise<void>;
-    static planFromString(planString: string, arc: Arc): Promise<Recipe>;
+    getResolvedPlan(arc: Arc): Promise<Recipe>;
 }
-export {};
