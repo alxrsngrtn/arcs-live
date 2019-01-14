@@ -1267,5 +1267,8 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     fromLiteral({ version, model }) {
         throw new Error('FirebaseBigCollection does not yet implement fromLiteral');
     }
+    clearItemsForTesting() {
+        throw new Error('unimplemented');
+    }
 }
 //# sourceMappingURL=firebase-storage.js.map

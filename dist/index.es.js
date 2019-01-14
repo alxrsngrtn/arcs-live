@@ -16054,6 +16054,9 @@ class FirebaseBigCollection extends FirebaseStorageProvider {
     fromLiteral({ version, model }) {
         throw new Error('FirebaseBigCollection does not yet implement fromLiteral');
     }
+    clearItemsForTesting() {
+        throw new Error('unimplemented');
+    }
 }
 
 // @license
@@ -16536,10 +16539,25 @@ class PouchDbBigCollection extends PouchDbStorageProvider {
     async remove(id, keys, originatorId) {
         throw new Error('NotImplemented');
     }
+    async stream(pageSize, forward = true) {
+        throw new Error('NotImplemented');
+    }
+    async cursorNext(cursorId) {
+        throw new Error('NotImplemented');
+    }
+    cursorClose(cursorId) {
+        throw new Error('NotImplemented');
+    }
+    cursorVersion(cursorId) {
+        throw new Error('NotImplemented');
+    }
     toLiteral() {
         throw new Error('NotImplemented');
     }
     cloneFrom() {
+        throw new Error('NotImplemented');
+    }
+    clearItemsForTesting() {
         throw new Error('NotImplemented');
     }
     /**

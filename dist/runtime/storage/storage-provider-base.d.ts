@@ -22,6 +22,17 @@ export interface CollectionStorageProvider extends StorageProviderBase {
     remove(id: string, keys: string[], originatorId?: string): any;
     store(value: any, keys: string[], originatorId?: string): any;
 }
+export interface BigCollectionStorageProvider extends StorageProviderBase {
+    get(id: string): any;
+    store(value: any, keys: string[], originatorId?: string): any;
+    remove(id: string, keys?: string[], originatorId?: string): any;
+    stream(pageSize: number, forward?: boolean): any;
+    cursorNext(cursorId: number): any;
+    cursorClose(cursorId: number): any;
+    cursorVersion(cursorId: number): any;
+    cloneFrom(handle: any): any;
+    clearItemsForTesting(): void;
+}
 export declare abstract class StorageBase {
     protected readonly arcId: Id;
     protected _debug: boolean;

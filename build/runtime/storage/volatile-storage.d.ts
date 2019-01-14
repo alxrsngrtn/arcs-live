@@ -1,4 +1,4 @@
-import { CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
+import { BigCollectionStorageProvider, CollectionStorageProvider, StorageBase, StorageProviderBase, VariableStorageProvider } from './storage-provider-base.js';
 import { KeyBase } from './key-base.js';
 import { CrdtCollectionModel } from './crdt-collection-model.js';
 import { Id } from '../id.js';
@@ -103,25 +103,25 @@ declare class VolatileVariable extends VolatileStorageProvider implements Variab
     }, originatorId?: string, barrier?: string): Promise<void>;
     clear(originatorId?: string, barrier?: string): Promise<void>;
 }
-declare class VolatileBigCollection extends VolatileStorageProvider {
+declare class VolatileBigCollection extends VolatileStorageProvider implements BigCollectionStorageProvider {
     private items;
     private cursors;
     private cursorIndex;
     constructor(type: any, storageEngine: any, name: any, id: any, key: any);
     enableReferenceMode(): void;
     backingType(): any;
-    get(id: any): Promise<{}>;
-    store(value: any, keys: any, originatorId: string): Promise<void>;
-    remove(id: string, keys: string[], originatorId: string): Promise<void>;
-    stream(pageSize: any, forward?: boolean): Promise<number>;
-    cursorNext(cursorId: any): Promise<{
+    get(id: string): Promise<{}>;
+    store(value: any, keys: string[], originatorId?: string): Promise<void>;
+    remove(id: string, keys?: string[], originatorId?: string): Promise<void>;
+    stream(pageSize: number, forward?: boolean): Promise<number>;
+    cursorNext(cursorId: number): Promise<{
         value: any;
         done: boolean;
     } | {
         done: boolean;
     }>;
-    cursorClose(cursorId: any): void;
-    cursorVersion(cursorId: any): number;
+    cursorClose(cursorId: number): void;
+    cursorVersion(cursorId: number): number;
     cloneFrom(handle: any): Promise<void>;
     toLiteral(): {
         version: number;

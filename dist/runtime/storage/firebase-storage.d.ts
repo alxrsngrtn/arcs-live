@@ -1,4 +1,4 @@
-import { StorageBase, StorageProviderBase, CollectionStorageProvider, VariableStorageProvider } from './storage-provider-base';
+import { StorageBase, StorageProviderBase, BigCollectionStorageProvider, CollectionStorageProvider, VariableStorageProvider } from './storage-provider-base';
 import firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/storage';
@@ -210,15 +210,15 @@ declare class FirebaseCollection extends FirebaseStorageProvider implements Coll
  *    }
  * ```
  */
-declare class FirebaseBigCollection extends FirebaseStorageProvider {
+declare class FirebaseBigCollection extends FirebaseStorageProvider implements BigCollectionStorageProvider {
     private cursors;
     private cursorIndex;
     constructor(type: any, storageEngine: any, id: any, reference: any, firebaseKey: any);
     backingType(): any;
     enableReferenceMode(): void;
-    get(id: any): Promise<any>;
-    store(value: any, keys: any, originatorId: any): Promise<void>;
-    remove(id: any, keys: any, originatorId: any): Promise<void>;
+    get(id: string): Promise<any>;
+    store(value: any, keys: string[], originatorId?: string): Promise<void>;
+    remove(id: string, keys: string[], originatorId?: string): Promise<void>;
     /**
      * Returns a FirebaseCursor id for paginated reads of the current version of this BigCollection.
      * The id should be passed to cursorNext() to retrive the contained entities. The cursor itself
@@ -228,23 +228,23 @@ declare class FirebaseBigCollection extends FirebaseStorageProvider {
      * caveat that items removed during a streamed read may be returned at the end). Set forward to
      * false to return items in reverse insertion order.
      */
-    stream(pageSize: any, forward?: boolean): Promise<number>;
+    stream(pageSize: number, forward?: boolean): Promise<number>;
     /**
      * Calls next() on the cursor identified by cursorId. The cursor will be discarded once the end
      * of the stream has been reached.
      */
-    cursorNext(cursorId: any): Promise<{
+    cursorNext(cursorId: number): Promise<{
         value: any[];
         done: boolean;
     } | {
         done: boolean;
     }>;
     /** Calls close() on and discards the cursor identified by cursorId. */
-    cursorClose(cursorId: any): void;
+    cursorClose(cursorId: number): void;
     /**
      * Returns the version at which the cursor identified by cursorId is reading.
      */
-    cursorVersion(cursorId: any): number;
+    cursorVersion(cursorId: number): number;
     _persistChangesImpl(): Promise<void>;
     readonly _hasLocalChanges: boolean;
     cloneFrom(handle: any): Promise<void>;
@@ -253,5 +253,6 @@ declare class FirebaseBigCollection extends FirebaseStorageProvider {
         version: any;
         model: any;
     }): void;
+    clearItemsForTesting(): void;
 }
 export {};
