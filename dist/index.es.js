@@ -860,6 +860,7 @@ class Reference {
  * http://polymer.github.io/PATENTS.txt
  */
 class Schema {
+    // tslint:disable-next-line: no-any
     constructor(names, fields, description) {
         this.names = names;
         this.fields = fields;

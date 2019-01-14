@@ -13,6 +13,7 @@ import { TypeChecker } from './recipe/type-checker.js';
 import { Entity } from './entity.js';
 import { Reference } from './reference.js';
 export class Schema {
+    // tslint:disable-next-line: no-any
     constructor(names, fields, description) {
         this.names = names;
         this.fields = fields;

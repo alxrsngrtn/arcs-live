@@ -12,12 +12,16 @@ import { EntityClass } from './entity.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 export declare class Schema {
     readonly names: string[];
-    readonly fields: {};
+    readonly fields: {
+        [index: string]: any;
+    };
     description: {
         [index: string]: string;
     };
     isAlias: boolean;
-    constructor(names: string[], fields: {}, description?: any);
+    constructor(names: string[], fields: {
+        [index: string]: any;
+    }, description?: any);
     toLiteral(): {
         names: string[];
         fields: {};

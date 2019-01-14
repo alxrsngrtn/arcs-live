@@ -1,5 +1,9 @@
-commit 8574e87af0346d3d7caeb59162a8dc5f4b669932
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Jan 14 15:51:06 2019 +1100
+commit d07ac59b8b6eaa94a97ed7c62fbc0b365051b26c
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Mon Jan 14 12:13:54 2019 -0800
 
-    DevTools cleanup for proper inner arcs (#2586)
+    convert multiplexer-test and schema-tests to typescript (#2587)
+    
+    * convert multiplexer-test to typescript
+    
+    * convert schema-tests to typescript

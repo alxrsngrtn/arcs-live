@@ -8292,6 +8292,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Schema {
+    // tslint:disable-next-line: no-any
     constructor(names, fields, description) {
         this.names = names;
         this.fields = fields;

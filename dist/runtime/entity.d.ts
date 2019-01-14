@@ -10,6 +10,7 @@ export interface EntityInterface {
     identify(identifier: any): any;
     createIdentity(components: any): any;
     toLiteral(): any;
+    [index: string]: any;
 }
 /**
  * A set of static methods used by Entity implementations.  These are

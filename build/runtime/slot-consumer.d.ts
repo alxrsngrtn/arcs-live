@@ -28,10 +28,12 @@ export declare class SlotConsumer {
     getRendering(subId?: any): {
         container?: {};
         model?: any;
+        templateName?: string;
     };
     readonly renderings: [string, {
         container?: {};
         model?: any;
+        templateName?: string;
     }][];
     addRenderingBySubId(subId: string | undefined, rendering: any): void;
     addHostedSlotContexts(context: HostedSlotContext): void;
