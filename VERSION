@@ -1,9 +1,5 @@
-commit d07ac59b8b6eaa94a97ed7c62fbc0b365051b26c
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Jan 14 12:13:54 2019 -0800
+commit 3d98aeef04f364ed6538b9e5ef722f75b4cf403b
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Mon Jan 14 12:37:49 2019 -0800
 
-    convert multiplexer-test and schema-tests to typescript (#2587)
-    
-    * convert multiplexer-test to typescript
-    
-    * convert schema-tests to typescript
+    gracefully handle undefined optional target-slot (#2588)
