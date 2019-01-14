@@ -7,17 +7,15 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-import {assert} from './chai-web.js';
-import {Manifest} from '../manifest.js';
-import {StubLoader} from '../testing/stub-loader.js';
-import {EntityType, ReferenceType} from '../type.js';
-import {Arc} from '../arc.js';
-import {assertSingletonWillChangeTo} from '../testing/test-util.js';
-
-describe('references', function() {
-  it('can parse & validate a recipe containing references', async () => {
-    const manifest = await Manifest.parse(`
+import { assert } from './chai-web.js';
+import { Manifest } from '../manifest.js';
+import { StubLoader } from '../testing/stub-loader.js';
+import { EntityType, ReferenceType } from '../type.js';
+import { Arc } from '../arc.js';
+import { assertSingletonWillChangeTo } from '../testing/test-util.js';
+describe('references', () => {
+    it('can parse & validate a recipe containing references', async () => {
+        const manifest = await Manifest.parse(`
         schema Result
           Text value  
 
@@ -40,18 +38,17 @@ describe('references', function() {
             inResult <- handle1
             outResult -> handle2
     `);
-    const recipe = manifest.recipes[0];
-    assert.isTrue(recipe.normalize());
-    assert.isTrue(recipe.isResolved());
-    assert.equal(recipe.handles[0].id, 'reference:1');
-    recipe.handles[0].type.maybeEnsureResolved();
-    assert.isTrue(recipe.handles[0].type instanceof ReferenceType);
-    assert.equal(recipe.handles[0].type.resolvedType().referredType.entitySchema.name, 'Result');
-  });
-
-  it('exposes a dereference API to particles', async () => {
-    const loader = new StubLoader({
-      manifest: `
+        const recipe = manifest.recipes[0];
+        assert.isTrue(recipe.normalize());
+        assert.isTrue(recipe.isResolved());
+        assert.equal(recipe.handles[0].id, 'reference:1');
+        recipe.handles[0].type.maybeEnsureResolved();
+        assert.isTrue(recipe.handles[0].type instanceof ReferenceType);
+        assert.equal(recipe.handles[0].type.resolvedType().referredType.entitySchema.name, 'Result');
+    });
+    it('exposes a dereference API to particles', async () => {
+        const loader = new StubLoader({
+            manifest: `
         schema Result
           Text value
         
@@ -66,7 +63,7 @@ describe('references', function() {
             inResult <- handle0
             outResult -> handle1
       `,
-      'dereferencer.js': `
+            'dereferencer.js': `
         defineParticle(({Particle}) => {
           return class Dereferencer extends Particle {
             setHandles(handles) {
@@ -85,30 +82,24 @@ describe('references', function() {
           }
         });
       `
+        });
+        const manifest = await Manifest.load('manifest', loader);
+        const arc = new Arc({ id: 'test:0', loader, context: manifest });
+        const recipe = manifest.recipes[0];
+        assert.isTrue(recipe.normalize());
+        assert.isTrue(recipe.isResolved());
+        await arc.instantiate(recipe);
+        assert.isTrue(arc._stores[0].type instanceof ReferenceType);
+        const volatileEngine = arc.storageProviderFactory._storageForKey('volatile');
+        const backingStore = await volatileEngine.baseStorageFor(arc._stores[1].type, volatileEngine.baseStorageKey(arc._stores[1].type));
+        await backingStore.store({ id: 'id:1', rawData: { value: 'what a result!' } }, ['totes a key']);
+        const refStore = arc._stores[0];
+        await refStore.set({ id: 'id:1', storageKey: backingStore.storageKey });
+        await assertSingletonWillChangeTo(arc, arc._stores[1], 'value', 'what a result!');
     });
-
-    const arc = new Arc({id: 'test:0', loader});
-    const manifest = await Manifest.load('manifest', loader);
-    const recipe = manifest.recipes[0];    
-    assert.isTrue(recipe.normalize());
-    assert.isTrue(recipe.isResolved());
-    await arc.instantiate(recipe);
-
-    assert.isTrue(arc._stores[0]._type instanceof ReferenceType);
-
-    const volatileEngine = arc.storageProviderFactory._storageInstances['volatile'].storage;
-    const backingStore = await volatileEngine.baseStorageFor(arc._stores[1]._type, volatileEngine.baseStorageKey(arc._stores[1]._type));
-    await backingStore.store({id: 'id:1', rawData: {value: 'what a result!'}}, ['totes a key']);
-
-    const refStore = arc._stores[0];
-    await refStore.set({id: 'id:1', storageKey: backingStore.storageKey});
-
-    await assertSingletonWillChangeTo(arc, arc._stores[1], 'value', 'what a result!');
-  });
-
-  it('exposes a reference API to particles', async () => {
-    const loader = new StubLoader({
-      manifest: `
+    it('exposes a reference API to particles', async () => {
+        const loader = new StubLoader({
+            manifest: `
         schema Result
           Text value
         
@@ -123,7 +114,7 @@ describe('references', function() {
             inResult <- handle0
             outResult -> handle1
       `,
-      'referencer.js': `
+            'referencer.js': `
         defineParticle(({Particle, Reference}) => {
           return class Referencer extends Particle {
             setHandles(handles) {
@@ -144,28 +135,22 @@ describe('references', function() {
           }
         });
       `
+        });
+        const manifest = await Manifest.load('manifest', loader);
+        const arc = new Arc({ id: 'test:0', loader, context: manifest });
+        const recipe = manifest.recipes[0];
+        assert.isTrue(recipe.normalize());
+        assert.isTrue(recipe.isResolved());
+        await arc.instantiate(recipe);
+        const inputStore = arc._stores[0];
+        await inputStore.set({ id: 'id:1', rawData: { value: 'what a result!' } });
+        const refStore = arc._stores[1];
+        const baseStoreType = new EntityType(manifest.schemas.Result);
+        await assertSingletonWillChangeTo(arc, refStore, 'storageKey', arc.storageProviderFactory.baseStorageKey(baseStoreType, 'volatile'));
     });
-
-    const arc = new Arc({id: 'test:0', loader});
-
-    const manifest = await Manifest.load('manifest', loader);
-    const recipe = manifest.recipes[0];    
-    assert.isTrue(recipe.normalize());
-    assert.isTrue(recipe.isResolved());
-    await arc.instantiate(recipe);
-
-    const inputStore = arc._stores[0];
-    await inputStore.set({id: 'id:1', rawData: {value: 'what a result!'}});
-
-    const refStore = arc._stores[1];
-    const baseStoreType = new EntityType(manifest.schemas.Result);
-    await assertSingletonWillChangeTo(arc, refStore, 'storageKey', 
-                                      arc.storageProviderFactory.baseStorageKey(baseStoreType, 'volatile'));
-  });
-
-  it('can deal with references in schemas', async () => {
-    const loader = new StubLoader({
-      manifest: `
+    it('can deal with references in schemas', async () => {
+        const loader = new StubLoader({
+            manifest: `
         schema Result
           Text value
         
@@ -180,7 +165,7 @@ describe('references', function() {
             referenceIn <- handle0
             rawOut -> handle1
         `,
-      'extractReference.js': `
+            'extractReference.js': `
         defineParticle(({Particle}) => {
           return class Dereferencer extends Particle {
             setHandles(handles) {
@@ -203,37 +188,32 @@ describe('references', function() {
           }
         });
       `
+        });
+        const manifest = await Manifest.load('manifest', loader);
+        const arc = new Arc({ id: 'test:0', loader, context: manifest });
+        const recipe = manifest.recipes[0];
+        assert.isTrue(recipe.normalize());
+        assert.isTrue(recipe.isResolved());
+        await arc.instantiate(recipe);
+        const volatileEngine = arc.storageProviderFactory._storageForKey('volatile');
+        const baseStoreType = new EntityType(manifest.schemas.Result);
+        const backingStore = await volatileEngine.baseStorageFor(baseStoreType, volatileEngine.baseStorageKey(baseStoreType));
+        await backingStore.store({ id: 'id:1', rawData: { value: 'what a result!' } }, ['totes a key']);
+        const refStore = arc._stores[1];
+        assert.equal(refStore.type.entitySchema.name, 'Foo');
+        await refStore.set({ id: 'id:2', rawData: { result: { id: 'id:1', storageKey: backingStore.storageKey } } });
+        await assertSingletonWillChangeTo(arc, arc._stores[0], 'value', 'what a result!');
     });
-
-    const arc = new Arc({id: 'test:0', loader});
-    const manifest = await Manifest.load('manifest', loader);
-    const recipe = manifest.recipes[0];    
-    assert.isTrue(recipe.normalize());
-    assert.isTrue(recipe.isResolved());
-    await arc.instantiate(recipe);
-
-    const volatileEngine = arc.storageProviderFactory._storageInstances['volatile'].storage;
-    const baseStoreType = new EntityType(manifest.schemas.Result);
-    const backingStore = await volatileEngine.baseStorageFor(baseStoreType, volatileEngine.baseStorageKey(baseStoreType));
-    await backingStore.store({id: 'id:1', rawData: {value: 'what a result!'}}, ['totes a key']);
-    
-    const refStore = arc._stores[1];
-    assert.equal(refStore._type.entitySchema.name, 'Foo');
-    await refStore.set({id: 'id:2', rawData: {result: {id: 'id:1', storageKey: backingStore.storageKey}}});
-
-    await assertSingletonWillChangeTo(arc, arc._stores[0], 'value', 'what a result!');
-  });
-
-  it('can construct references in schemas', async () => {
-    // This test looks at different scenarios for creating references
-    // inside schemas. It:
-    // * reads a single value from the inout connection 'out'
-    // * reads the single 'inFoo'
-    // * reads a collction of Results from 'inResult'.
-    // * puts a Result into each of the Foos retrieved from 'out' and 'inFoo'
-    // * writes the Foos back to 'out'.
-    const loader = new StubLoader({
-      manifest: `
+    it('can construct references in schemas', async () => {
+        // This test looks at different scenarios for creating references
+        // inside schemas. It:
+        // * reads a single value from the inout connection 'out'
+        // * reads the single 'inFoo'
+        // * reads a collction of Results from 'inResult'.
+        // * puts a Result into each of the Foos retrieved from 'out' and 'inFoo'
+        // * writes the Foos back to 'out'.
+        const loader = new StubLoader({
+            manifest: `
         schema Result
           Text value
         
@@ -251,7 +231,7 @@ describe('references', function() {
             inFoo <- handle1
             outResult = handle2
       `,
-      'referencer.js': `
+            'referencer.js': `
         defineParticle(({Particle, Reference}) => {
           return class Referencer extends Particle {
             setHandles(handles) {
@@ -299,45 +279,41 @@ describe('references', function() {
           }
         });
       `
+        });
+        const manifest = await Manifest.load('manifest', loader);
+        const arc = new Arc({ id: 'test:0', loader, context: manifest });
+        const recipe = manifest.recipes[0];
+        assert.isTrue(recipe.normalize());
+        assert.isTrue(recipe.isResolved());
+        await arc.instantiate(recipe);
+        const fooStore = arc._stores[0];
+        assert.equal(fooStore.type.entitySchema.name, 'Foo');
+        await fooStore.set({ id: 'id:1', rawData: { result: null, shortForm: 'a' } });
+        const inputStore = arc._stores[1];
+        assert.equal(inputStore.type.getContainedType().entitySchema.name, 'Result');
+        await inputStore.store({ id: 'id:a', rawData: { value: 'this is an a' } }, ['a']);
+        await inputStore.store({ id: 'id:b', rawData: { value: 'this is a b' } }, ['a']);
+        const outputStore = arc._stores[2];
+        assert.equal(outputStore.type.getContainedType().entitySchema.name, 'Foo');
+        await outputStore.store({ id: 'id:2', rawData: { result: null, shortForm: 'b' } }, ['a']);
+        await arc.idle;
+        const values = await outputStore.toList();
+        assert.equal(values.length, 2);
+        for (const value of values) {
+            if (value.rawData.shortForm === 'a') {
+                assert.equal(value.rawData.result.id, 'id:a');
+            }
+            else if (value.rawData.shortForm === 'b') {
+                assert.equal(value.rawData.result.id, 'id:b');
+            }
+            else {
+                assert.isTrue(false);
+            }
+        }
     });
-
-    const arc = new Arc({id: 'test:0', loader});
-    const manifest = await Manifest.load('manifest', loader);
-    const recipe = manifest.recipes[0];    
-    assert.isTrue(recipe.normalize());
-    assert.isTrue(recipe.isResolved());
-    await arc.instantiate(recipe);
-
-    const fooStore = arc._stores[0];
-    assert.equal(fooStore._type.entitySchema.name, 'Foo');
-    await fooStore.set({id: 'id:1', rawData: {result: null, shortForm: 'a'}});
-
-    const inputStore = arc._stores[1];
-    assert.equal(inputStore._type.getContainedType().entitySchema.name, 'Result');
-    await inputStore.store({id: 'id:a', rawData: {value: 'this is an a'}}, ['a']);
-    await inputStore.store({id: 'id:b', rawData: {value: 'this is a b'}}, ['a']);
-
-    const outputStore = arc._stores[2];
-    assert.equal(outputStore._type.getContainedType().entitySchema.name, 'Foo');
-    await outputStore.store({id: 'id:2', rawData: {result: null, shortForm: 'b'}}, ['a']);
-
-    await arc.idle;
-    const values = await outputStore.toList();
-    assert.equal(values.length, 2);
-    for (const value of values) {
-      if (value.rawData.shortForm == 'a') {
-        assert.equal(value.rawData.result.id, 'id:a');
-      } else if (value.rawData.shortForm == 'b') {
-        assert.equal(value.rawData.result.id, 'id:b');
-      } else {
-        assert.isTrue(false);
-      }
-    }
-  });
-
-  it('can deal with collections of references in schemas', async () => {
-    const loader = new StubLoader({
-      manifest: `
+    it('can deal with collections of references in schemas', async () => {
+        const loader = new StubLoader({
+            manifest: `
         schema Result
           Text value
         
@@ -352,7 +328,7 @@ describe('references', function() {
             referenceIn <- handle0
             rawOut -> handle1
         `,
-      'extractReferences.js': `
+            'extractReferences.js': `
         defineParticle(({Particle}) => {
           return class Dereferencer extends Particle {
             setHandles(handles) {
@@ -376,37 +352,32 @@ describe('references', function() {
           }
         });
       `
+        });
+        const manifest = await Manifest.load('manifest', loader);
+        const arc = new Arc({ id: 'test:0', loader, context: manifest });
+        const recipe = manifest.recipes[0];
+        assert.isTrue(recipe.normalize());
+        assert.isTrue(recipe.isResolved());
+        await arc.instantiate(recipe);
+        const volatileEngine = arc.storageProviderFactory._storageForKey('volatile');
+        const baseStoreType = new EntityType(manifest.schemas.Result);
+        const backingStore = await volatileEngine.baseStorageFor(baseStoreType, volatileEngine.baseStorageKey(baseStoreType));
+        await backingStore.store({ id: 'id:1', rawData: { value: 'what a result!' } }, ['totes a key']);
+        await backingStore.store({ id: 'id:2', rawData: { value: 'what another result!' } }, ['totes a key']);
+        const refStore = arc._stores[1];
+        assert.equal(refStore.type.entitySchema.name, 'Foo');
+        await refStore.set({ id: 'id:a', rawData: { result: [{ id: 'id:1', storageKey: backingStore.storageKey }, { id: 'id:2', storageKey: backingStore.storageKey }] } });
+        await arc.idle;
+        const outputStore = arc._stores[0];
+        assert.equal(outputStore.type.getContainedType().entitySchema.name, 'Result');
+        const values = await outputStore.toList();
+        assert.equal(values.length, 2);
+        assert.equal(values[0].rawData.value, 'what a result!');
+        assert.equal(values[1].rawData.value, 'what another result!');
     });
-
-    const arc = new Arc({id: 'test:0', loader});
-    const manifest = await Manifest.load('manifest', loader);
-    const recipe = manifest.recipes[0];    
-    assert.isTrue(recipe.normalize());
-    assert.isTrue(recipe.isResolved());
-    await arc.instantiate(recipe);
-
-    const volatileEngine = arc.storageProviderFactory._storageInstances['volatile'].storage;
-    const baseStoreType = new EntityType(manifest.schemas.Result);
-    const backingStore = await volatileEngine.baseStorageFor(baseStoreType, volatileEngine.baseStorageKey(baseStoreType));
-    await backingStore.store({id: 'id:1', rawData: {value: 'what a result!'}}, ['totes a key']);
-    await backingStore.store({id: 'id:2', rawData: {value: 'what another result!'}}, ['totes a key']);
-
-    const refStore = arc._stores[1];
-    assert.equal(refStore._type.entitySchema.name, 'Foo');
-    await refStore.set({id: 'id:a', rawData: {result: [{id: 'id:1', storageKey: backingStore.storageKey}, {id: 'id:2', storageKey: backingStore.storageKey}]}});
-
-    await arc.idle;
-    const outputStore = arc._stores[0];
-    assert.equal(outputStore._type.getContainedType().entitySchema.name, 'Result');
-    const values = await outputStore.toList();
-    assert.equal(values.length, 2);
-    assert.equal(values[0].rawData.value, 'what a result!');
-    assert.equal(values[1].rawData.value, 'what another result!');
-  });
-
-  it('can construct collections of references in schemas', async () => {
-    const loader = new StubLoader({
-      manifest: `
+    it('can construct collections of references in schemas', async () => {
+        const loader = new StubLoader({
+            manifest: `
         schema Result
           Text value
         
@@ -421,7 +392,7 @@ describe('references', function() {
             referenceOut -> handle0
             rawIn <- handle1
         `,
-      'constructReferenceCollection.js': `
+            'constructReferenceCollection.js': `
         defineParticle(({Particle, Reference}) => {
           return class Dereferencer extends Particle {
             setHandles(handles) {
@@ -459,26 +430,24 @@ describe('references', function() {
           }
         });
       `
+        });
+        const manifest = await Manifest.load('manifest', loader);
+        const arc = new Arc({ id: 'test:0', loader, context: manifest });
+        const recipe = manifest.recipes[0];
+        assert.isTrue(recipe.normalize());
+        assert.isTrue(recipe.isResolved());
+        await arc.instantiate(recipe);
+        const inputStore = arc._stores[0];
+        assert.equal(inputStore.type.getContainedType().entitySchema.name, 'Result');
+        await inputStore.store({ id: 'id:1', rawData: { value: 'what a result!' } }, ['totes a key']);
+        await inputStore.store({ id: 'id:2', rawData: { value: 'what another result!' } }, ['totes a key']);
+        await arc.idle;
+        const outputStore = arc._stores[1];
+        assert.equal(outputStore.type.entitySchema.name, 'Foo');
+        const values = await outputStore.get();
+        assert(values.rawData.result.length === 2);
+        assert.equal(values.rawData.result[0].id, 'id:1');
+        assert.equal(values.rawData.result[1].id, 'id:2');
     });
-
-    const arc = new Arc({id: 'test:0', loader});
-    const manifest = await Manifest.load('manifest', loader);
-    const recipe = manifest.recipes[0];    
-    assert.isTrue(recipe.normalize());
-    assert.isTrue(recipe.isResolved());
-    await arc.instantiate(recipe);
-
-    const inputStore = arc._stores[0];
-    assert.equal(inputStore._type.getContainedType().entitySchema.name, 'Result');
-    await inputStore.store({id: 'id:1', rawData: {value: 'what a result!'}}, ['totes a key']);
-    await inputStore.store({id: 'id:2', rawData: {value: 'what another result!'}}, ['totes a key']);
-
-    await arc.idle;
-    const outputStore = arc._stores[1];
-    assert.equal(outputStore._type.entitySchema.name, 'Foo');
-    const values = await outputStore.get();
-    assert(values.rawData.result.length == 2);
-    assert.equal(values.rawData.result[0].id, 'id:1');
-    assert.equal(values.rawData.result[1].id, 'id:2');
-  });
 });
+//# sourceMappingURL=reference-test.js.map

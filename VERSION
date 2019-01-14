@@ -1,10 +1,5 @@
-commit afe485c7b64f00ae4a9ad838ca4e9ae636d24516
+commit 92ed93020cc77f33e94bbf63871b692edd531627
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Sun Jan 13 17:26:40 2019 -0800
+Date:   Sun Jan 13 17:45:59 2019 -0800
 
-    Introduce BigCollectionStorageProvider (#2579)
-    
-    - Also convert volatile/firebase tests to typescript
-    - Tighten up types
-    
-    Addresses #2326
+    Convert interface-info-test, reference-test to typescript (#2577)

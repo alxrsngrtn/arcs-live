@@ -3616,7 +3616,7 @@ ${this._slotsToManifestString()}
                     return false;
             }
         }
-        return this;
+        return true;
     }
 }
 //# sourceMappingURL=interface-info.js.map

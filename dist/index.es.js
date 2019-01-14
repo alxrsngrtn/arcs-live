@@ -1739,7 +1739,7 @@ ${this._slotsToManifestString()}
                     return false;
             }
         }
-        return this;
+        return true;
     }
 }
 
