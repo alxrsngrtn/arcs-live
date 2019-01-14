@@ -8,10 +8,11 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { SlotContext } from './slot-context.js';
+import { ProvidedSlotContext } from './slot-context.js';
 export class SlotConsumer {
     constructor(arc, consumeConn, containerKind) {
-        this.providedSlotContexts = [];
+        this.directlyProvidedSlotContexts = [];
+        this.hostedSlotContexts = [];
         // Contains `container` and other modality specific rendering information
         // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
         this._renderingBySubId = new Map();
@@ -26,7 +27,30 @@ export class SlotConsumer {
     addRenderingBySubId(subId, rendering) {
         this._renderingBySubId.set(subId, rendering);
     }
+    addHostedSlotContexts(context) {
+        context.containerAvailable = Boolean(this.slotContext.containerAvailable);
+        this.hostedSlotContexts.push(context);
+    }
+    get allProvidedSlotContexts() {
+        return [...this.generateProvidedContexts()];
+    }
+    findProvidedContext(predicate) {
+        return this.generateProvidedContexts(predicate).next().value;
+    }
+    *generateProvidedContexts(predicate = (_) => true) {
+        for (const context of this.directlyProvidedSlotContexts) {
+            if (predicate(context))
+                yield context;
+        }
+        for (const hostedContext of this.hostedSlotContexts) {
+            for (const hostedConsumer of hostedContext.slotConsumers) {
+                yield* hostedConsumer.generateProvidedContexts(predicate);
+            }
+        }
+    }
     onContainerUpdate(newContainer, originalContainer) {
+        assert(this.slotContext instanceof ProvidedSlotContext, 'Container can only be updated in non-hosted context');
+        const context = this.slotContext;
         if (Boolean(newContainer) !== Boolean(originalContainer)) {
             if (newContainer) {
                 this.startRender();
@@ -35,13 +59,14 @@ export class SlotConsumer {
                 this.stopRender();
             }
         }
+        this.hostedSlotContexts.forEach(ctx => ctx.containerAvailable = Boolean(newContainer));
         if (newContainer !== originalContainer) {
             const contextContainerBySubId = new Map();
-            if (this.slotContext && this.slotContext.spec.isSet) {
-                Object.keys(this.slotContext.container || {}).forEach(subId => contextContainerBySubId.set(subId, this.slotContext.container[subId]));
+            if (context && context.spec.isSet) {
+                Object.keys(context.container || {}).forEach(subId => contextContainerBySubId.set(subId, context.container[subId]));
             }
             else {
-                contextContainerBySubId.set(undefined, this.slotContext.container);
+                contextContainerBySubId.set(undefined, context.container);
             }
             for (const [subId, container] of contextContainerBySubId) {
                 if (!this._renderingBySubId.has(subId)) {
@@ -65,11 +90,11 @@ export class SlotConsumer {
         }
     }
     createProvidedContexts() {
-        return this.consumeConn.slotSpec.providedSlots.map(spec => new SlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
+        return this.consumeConn.slotSpec.providedSlots.map(spec => new ProvidedSlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
     }
     updateProvidedContexts() {
-        this.providedSlotContexts.forEach(providedContext => {
-            providedContext.container = this.getInnerContainer(providedContext.id);
+        this.allProvidedSlotContexts.forEach(providedContext => {
+            providedContext.container = providedContext.sourceSlotConsumer.getInnerContainer(providedContext.id);
         });
     }
     startRender() {
@@ -77,7 +102,7 @@ export class SlotConsumer {
             this.startRenderCallback({
                 particle: this.consumeConn.particle,
                 slotName: this.consumeConn.name,
-                providedSlots: new Map(this.providedSlotContexts.map(context => [context.name, context.id])),
+                providedSlots: new Map(this.allProvidedSlotContexts.map(context => [context.name, context.id])),
                 contentTypes: this.constructRenderRequest()
             });
         }
@@ -134,21 +159,15 @@ export class SlotConsumer {
         });
     }
     isSameContainer(container, contextContainer) { return container === contextContainer; }
-    get hostedConsumers() {
-        return this.providedSlotContexts
-            .filter(context => context.constructor.name === 'HostedSlotContext')
-            .map(context => context.sourceSlotConsumer)
-            .filter(consumer => consumer !== this);
-    }
     // abstract
-    constructRenderRequest(hostedSlotConsumer = null) { return []; }
+    constructRenderRequest() { return []; }
     dispose() { }
     createNewContainer(contextContainer, subId) { return null; }
     deleteContainer(container) { }
     clearContainer(rendering) { }
     setContainerContent(rendering, content, subId) { }
     formatContent(content, subId) { return null; }
-    formatHostedContent(hostedSlot, content) { return null; }
+    formatHostedContent(content) { return null; }
     static clear(container) { }
 }
 //# sourceMappingURL=slot-consumer.js.map

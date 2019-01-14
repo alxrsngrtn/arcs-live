@@ -83,7 +83,7 @@ export declare abstract class PECOuterPort extends APIPort {
     CreateHandleCallback(handle: StorageProviderBase, callback: number, type: Type, name: string, id: string): void;
     abstract onArcMapHandle(callback: number, arc: Arc, handle: recipeHandle.Handle): any;
     MapHandleCallback(newHandle: {}, callback: number, id: string): void;
-    abstract onArcCreateSlot(callback: number, arc: Arc, transformationParticle: recipeParticle.Particle, transformationSlotName: string, hostedParticleName: string, hostedSlotName: string, handleId: string): any;
+    abstract onArcCreateSlot(callback: number, arc: Arc, transformationParticle: recipeParticle.Particle, transformationSlotName: string, handleId: string): any;
     CreateSlotCallback(slot: {}, callback: number, hostedSlotId: string): void;
     InnerArcRender(transformationParticle: recipeParticle.Particle, transformationSlotName: string, hostedSlotId: string, content: {}): void;
     abstract onArcLoadRecipe(arc: Arc, recipe: string, callback: number): any;
@@ -137,7 +137,7 @@ export declare abstract class PECInnerPort extends APIPort {
     abstract onCreateHandleCallback(callback: (proxy: StorageProxy) => void, type: Type, name: string, id: string): any;
     ArcMapHandle(callback: (value: string) => void, arc: {}, handle: Handle): void;
     abstract onMapHandleCallback(callback: (value: string) => void, id: string): any;
-    ArcCreateSlot(callback: (value: string) => void, arc: {}, transformationParticle: Particle, transformationSlotName: string, hostedParticleName: string, hostedSlotName: string, handleId: string): void;
+    ArcCreateSlot(callback: (value: string) => void, arc: {}, transformationParticle: Particle, transformationSlotName: string, handleId: string): void;
     abstract onCreateSlotCallback(callback: (value: string) => void, hostedSlotId: string): any;
     abstract onInnerArcRender(transformationParticle: Particle, transformationSlotName: string, hostedSlotID: string, content: string): any;
     ArcLoadRecipe(arc: {}, recipe: string, callback: (data: {

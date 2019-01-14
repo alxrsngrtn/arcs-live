@@ -93,6 +93,7 @@ export class MapSlots extends Strategy {
     }
     static specMatch(slotConnection, slot) {
         return slotConnection.slotSpec && // if there's no slotSpec, this is just a slot constraint on a verb
+            slot.spec && // if there is no spec on the slot, it is a hosted slot in the inner arc
             slotConnection.slotSpec.isSet === slot.spec.isSet;
     }
     // Returns true, if the slot connection's tags intersection with slot's tags is nonempty.

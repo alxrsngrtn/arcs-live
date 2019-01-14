@@ -10,8 +10,7 @@
 import { assert } from '../platform/assert-web.js';
 import { Modality } from './modality.js';
 import { ModalityHandler } from './modality-handler.js';
-import { SlotContext } from './slot-context.js';
-import { HostedSlotConsumer } from './hosted-slot-consumer.js';
+import { ProvidedSlotContext, HostedSlotContext } from './slot-context.js';
 import { Description } from './description.js';
 export class SlotComposer {
     /**
@@ -46,7 +45,7 @@ export class SlotComposer {
             containerByName['root'] = options.rootContainer;
         }
         Object.keys(containerByName).forEach(slotName => {
-            this._contexts.push(SlotContext.createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
+            this._contexts.push(ProvidedSlotContext.createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
         });
     }
     get consumers() { return this._consumers; }
@@ -55,7 +54,7 @@ export class SlotComposer {
         return this.consumers.find(s => s.consumeConn.particle === particle && s.consumeConn.name === slotName);
     }
     findContainerByName(name) {
-        const contexts = this._contexts.filter(context => context.name === name);
+        const contexts = this.findContextsByName(name);
         if (contexts.length === 0) {
             // TODO this is a no-op, but throwing here breaks tests
             console.warn(`No containers for '${name}'`);
@@ -66,19 +65,18 @@ export class SlotComposer {
         console.warn(`Ambiguous containers for '${name}'`);
         return undefined;
     }
+    findContextsByName(name) {
+        const providedSlotContexts = this._contexts.filter(ctx => ctx instanceof ProvidedSlotContext);
+        return providedSlotContexts.filter(ctx => ctx.name === name);
+    }
     findContextById(slotId) {
         return this._contexts.find(({ id }) => id === slotId);
     }
-    createHostedSlot(innerArc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, storeId) {
+    createHostedSlot(innerArc, transformationParticle, transformationSlotName, storeId) {
         const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
-        assert(transformationSlotConsumer, `Unexpected transformation slot particle ${transformationParticle.name}:${transformationSlotName}, hosted particle ${hostedParticleName}, slot name ${hostedSlotName}`);
+        assert(transformationSlotConsumer, `Transformation particle ${transformationParticle.name} with consumed ${transformationSlotName} not found`);
         const hostedSlotId = innerArc.generateID();
-        const hostedSlotConsumer = new HostedSlotConsumer(innerArc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId);
-        const outerArc = transformationSlotConsumer.arc;
-        hostedSlotConsumer.renderCallback = outerArc.pec.innerArcRender.bind(outerArc.pec);
-        this._addSlotConsumer(hostedSlotConsumer);
-        const context = this.findContextById(transformationSlotConsumer.consumeConn.targetSlot.id);
-        context.addSlotConsumer(hostedSlotConsumer);
+        this._contexts.push(new HostedSlotContext(hostedSlotId, transformationSlotConsumer, storeId));
         return hostedSlotId;
     }
     _addSlotConsumer(slot) {
@@ -95,25 +93,10 @@ export class SlotComposer {
                     assert(!cs.slotSpec.isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
                     return;
                 }
-                let slotConsumer = this.consumers.find(slot => slot instanceof HostedSlotConsumer && slot.hostedSlotId === cs.targetSlot.id);
-                let transformationSlotConsumer = null;
-                if (slotConsumer && slotConsumer instanceof HostedSlotConsumer) {
-                    slotConsumer.consumeConn = cs;
-                    transformationSlotConsumer = slotConsumer.transformationSlotConsumer;
-                }
-                else {
-                    slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
-                    newConsumers.push(slotConsumer);
-                }
+                const slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
                 const providedContexts = slotConsumer.createProvidedContexts();
                 this._contexts = this._contexts.concat(providedContexts);
-                // Slot contexts provided by the HostedSlotConsumer are managed by the transformation.
-                if (transformationSlotConsumer) {
-                    transformationSlotConsumer.providedSlotContexts.push(...providedContexts);
-                    if (transformationSlotConsumer.slotContext.container) {
-                        slotConsumer.startRender();
-                    }
-                }
+                newConsumers.push(slotConsumer);
             });
         });
         // Set context for each of the slots.
@@ -128,7 +111,7 @@ export class SlotComposer {
         const slotConsumer = this.getSlotConsumer(particle, slotName);
         assert(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
         const description = await Description.create(slotConsumer.arc);
-        slotConsumer.setContent(content, async (eventlet) => {
+        slotConsumer.slotContext.onRenderSlot(slotConsumer, content, async (eventlet) => {
             slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
             // This code is a temporary hack implemented in #2011 which allows to route UI events from
             // multiplexer to hosted particles. Multiplexer assembles UI from multiple pieces rendered
@@ -138,17 +121,20 @@ export class SlotComposer {
             // which has been extracted from DOM.
             // TODO: FIXIT!
             if (eventlet.data && eventlet.data.key) {
-                const hostedConsumers = this.consumers.filter(c => c instanceof HostedSlotConsumer && c.transformationSlotConsumer === slotConsumer);
-                for (const hostedConsumer of hostedConsumers) {
-                    if (hostedConsumer instanceof HostedSlotConsumer && hostedConsumer.storeId) {
-                        const store = hostedConsumer.arc.findStoreById(hostedConsumer.storeId);
+                // We fire off multiple async operations and don't wait.
+                for (const ctx of slotConsumer.hostedSlotContexts) {
+                    if (!ctx.storeId)
+                        continue;
+                    for (const hostedConsumer of ctx.slotConsumers) {
+                        const store = hostedConsumer.arc.findStoreById(ctx.storeId);
                         assert(store);
                         // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc
                         // tslint:disable-next-line: no-any
-                        const value = await store.get();
-                        if (value && (value.id === eventlet.data.key)) {
-                            hostedConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
-                        }
+                        store.get().then(value => {
+                            if (value && (value.id === eventlet.data.key)) {
+                                hostedConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
+                            }
+                        });
                     }
                 }
             }
@@ -161,7 +147,7 @@ export class SlotComposer {
         this.consumers.forEach(consumer => consumer.dispose());
         this._contexts.forEach(context => {
             context.clearSlotConsumers();
-            if (context.container) {
+            if (context instanceof ProvidedSlotContext && context.container) {
                 this.modalityHandler.slotConsumerClass.clear(context.container);
             }
         });

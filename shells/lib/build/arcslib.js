@@ -93,7 +93,7 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_arc_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _build_runtime_modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 /* harmony import */ var _build_runtime_modality_handler_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(237);
-/* harmony import */ var _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(250);
+/* harmony import */ var _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(248);
 /* harmony import */ var _build_runtime_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(230);
 /* harmony import */ var _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(236);
 /* harmony import */ var _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(238);
@@ -101,13 +101,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _build_runtime_manifest_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(34);
 /* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(188);
 /* harmony import */ var _build_runtime_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(47);
-/* harmony import */ var _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(255);
+/* harmony import */ var _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(253);
 /* harmony import */ var _build_runtime_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(181);
-/* harmony import */ var _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(261);
+/* harmony import */ var _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(259);
 /* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(197);
 /* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(241);
 /* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(234);
-/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(262);
+/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(260);
 /* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(233);
 /**
  * @license
@@ -3827,10 +3827,10 @@ class ParticleExecutionHost {
                 // TODO: create hosted handles map with specially generated ids instead of returning the real ones?
                 this.MapHandleCallback({}, callback, handle.id);
             }
-            onArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) {
+            onArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, handleId) {
                 let hostedSlotId;
                 if (pec.slotComposer) {
-                    hostedSlotId = pec.slotComposer.createHostedSlot(arc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId);
+                    hostedSlotId = pec.slotComposer.createHostedSlot(arc, transformationParticle, transformationSlotName, handleId);
                 }
                 this.CreateSlotCallback({}, callback, hostedSlotId);
             }
@@ -4388,7 +4388,7 @@ let PECInnerPort = class PECInnerPort extends APIPort {
     ConstructInnerArc(callback, particle) { }
     ArcCreateHandle(callback, arc, type, name) { }
     ArcMapHandle(callback, arc, handle) { }
-    ArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) { }
+    ArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, handleId) { }
     ArcLoadRecipe(arc, recipe, callback) { }
     RaiseSystemException(exception, methodName, particleId) { }
     // To show stack traces for calls made inside the context, we need to capture the trace at the call point and
@@ -4453,7 +4453,7 @@ __decorate([
     __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped)
 ], PECInnerPort.prototype, "ArcMapHandle", null);
 __decorate([
-    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped), __param(3, Direct), __param(4, Direct), __param(5, Direct), __param(6, Direct)
+    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped), __param(3, Direct), __param(4, Direct)
 ], PECInnerPort.prototype, "ArcCreateSlot", null);
 __decorate([
     __param(0, RemoteMapped), __param(1, Direct), __param(2, LocalMapped)
@@ -77599,6 +77599,7 @@ class MapSlots extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["St
     }
     static specMatch(slotConnection, slot) {
         return slotConnection.slotSpec && // if there's no slotSpec, this is just a slot constraint on a verb
+            slot.spec && // if there is no spec on the slot, it is a hosted slot in the inner arc
             slotConnection.slotSpec.isSet === slot.spec.isSet;
     }
     // Returns true, if the slot connection's tags intersection with slot's tags is nonempty.
@@ -77868,10 +77869,10 @@ class ParticleExecutionContext {
                     resolve(id);
                 }, arcId, handle));
             },
-            createSlot(transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) {
+            createSlot(transformationParticle, transformationSlotName, handleId) {
                 // handleId: the ID of a handle (returned by `createHandle` above) this slot is rendering; null - if not applicable.
                 // TODO: support multiple handle IDs.
-                return new Promise((resolve, reject) => pec.apiPort.ArcCreateSlot(hostedSlotId => resolve(hostedSlotId), arcId, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId));
+                return new Promise((resolve, reject) => pec.apiPort.ArcCreateSlot(hostedSlotId => resolve(hostedSlotId), arcId, transformationParticle, transformationSlotName, handleId));
             },
             loadRecipe(recipe) {
                 // TODO: do we want to return a promise on completion?
@@ -79709,8 +79710,7 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
       }
       const hostedSlotName = [...resolvedHostedParticle.slots.keys()][0];
       const slotName = [...this.spec.slots.values()][0].name;
-      const slotId = await arc.createSlot(
-          this, slotName, resolvedHostedParticle.name, hostedSlotName, itemHandle._id);
+      const slotId = await arc.createSlot(this, slotName, itemHandle._id);
 
       if (!slotId) {
         continue;
@@ -80030,7 +80030,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcDebugHandler", function() { return ArcDebugHandler; });
 /* harmony import */ var _tracing_adapter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(204);
 /* harmony import */ var _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(205);
-/* harmony import */ var _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(249);
+/* harmony import */ var _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(247);
 /* harmony import */ var _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
 /**
  * @license
@@ -83969,8 +83969,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 /* harmony import */ var _modality_handler_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(237);
 /* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(240);
-/* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(247);
-/* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(227);
+/* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(227);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -83980,7 +83979,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -84019,7 +84017,7 @@ class SlotComposer {
             containerByName['root'] = options.rootContainer;
         }
         Object.keys(containerByName).forEach(slotName => {
-            this._contexts.push(_slot_context_js__WEBPACK_IMPORTED_MODULE_3__["SlotContext"].createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
+            this._contexts.push(_slot_context_js__WEBPACK_IMPORTED_MODULE_3__["ProvidedSlotContext"].createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
         });
     }
     get consumers() { return this._consumers; }
@@ -84028,7 +84026,7 @@ class SlotComposer {
         return this.consumers.find(s => s.consumeConn.particle === particle && s.consumeConn.name === slotName);
     }
     findContainerByName(name) {
-        const contexts = this._contexts.filter(context => context.name === name);
+        const contexts = this.findContextsByName(name);
         if (contexts.length === 0) {
             // TODO this is a no-op, but throwing here breaks tests
             console.warn(`No containers for '${name}'`);
@@ -84039,19 +84037,18 @@ class SlotComposer {
         console.warn(`Ambiguous containers for '${name}'`);
         return undefined;
     }
+    findContextsByName(name) {
+        const providedSlotContexts = this._contexts.filter(ctx => ctx instanceof _slot_context_js__WEBPACK_IMPORTED_MODULE_3__["ProvidedSlotContext"]);
+        return providedSlotContexts.filter(ctx => ctx.name === name);
+    }
     findContextById(slotId) {
         return this._contexts.find(({ id }) => id === slotId);
     }
-    createHostedSlot(innerArc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, storeId) {
+    createHostedSlot(innerArc, transformationParticle, transformationSlotName, storeId) {
         const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(transformationSlotConsumer, `Unexpected transformation slot particle ${transformationParticle.name}:${transformationSlotName}, hosted particle ${hostedParticleName}, slot name ${hostedSlotName}`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(transformationSlotConsumer, `Transformation particle ${transformationParticle.name} with consumed ${transformationSlotName} not found`);
         const hostedSlotId = innerArc.generateID();
-        const hostedSlotConsumer = new _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"](innerArc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId);
-        const outerArc = transformationSlotConsumer.arc;
-        hostedSlotConsumer.renderCallback = outerArc.pec.innerArcRender.bind(outerArc.pec);
-        this._addSlotConsumer(hostedSlotConsumer);
-        const context = this.findContextById(transformationSlotConsumer.consumeConn.targetSlot.id);
-        context.addSlotConsumer(hostedSlotConsumer);
+        this._contexts.push(new _slot_context_js__WEBPACK_IMPORTED_MODULE_3__["HostedSlotContext"](hostedSlotId, transformationSlotConsumer, storeId));
         return hostedSlotId;
     }
     _addSlotConsumer(slot) {
@@ -84068,25 +84065,10 @@ class SlotComposer {
                     Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!cs.slotSpec.isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
                     return;
                 }
-                let slotConsumer = this.consumers.find(slot => slot instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"] && slot.hostedSlotId === cs.targetSlot.id);
-                let transformationSlotConsumer = null;
-                if (slotConsumer && slotConsumer instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"]) {
-                    slotConsumer.consumeConn = cs;
-                    transformationSlotConsumer = slotConsumer.transformationSlotConsumer;
-                }
-                else {
-                    slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
-                    newConsumers.push(slotConsumer);
-                }
+                const slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
                 const providedContexts = slotConsumer.createProvidedContexts();
                 this._contexts = this._contexts.concat(providedContexts);
-                // Slot contexts provided by the HostedSlotConsumer are managed by the transformation.
-                if (transformationSlotConsumer) {
-                    transformationSlotConsumer.providedSlotContexts.push(...providedContexts);
-                    if (transformationSlotConsumer.slotContext.container) {
-                        slotConsumer.startRender();
-                    }
-                }
+                newConsumers.push(slotConsumer);
             });
         });
         // Set context for each of the slots.
@@ -84100,8 +84082,8 @@ class SlotComposer {
     async renderSlot(particle, slotName, content) {
         const slotConsumer = this.getSlotConsumer(particle, slotName);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
-        const description = await _description_js__WEBPACK_IMPORTED_MODULE_5__["Description"].create(slotConsumer.arc);
-        slotConsumer.setContent(content, async (eventlet) => {
+        const description = await _description_js__WEBPACK_IMPORTED_MODULE_4__["Description"].create(slotConsumer.arc);
+        slotConsumer.slotContext.onRenderSlot(slotConsumer, content, async (eventlet) => {
             slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
             // This code is a temporary hack implemented in #2011 which allows to route UI events from
             // multiplexer to hosted particles. Multiplexer assembles UI from multiple pieces rendered
@@ -84111,17 +84093,20 @@ class SlotComposer {
             // which has been extracted from DOM.
             // TODO: FIXIT!
             if (eventlet.data && eventlet.data.key) {
-                const hostedConsumers = this.consumers.filter(c => c instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"] && c.transformationSlotConsumer === slotConsumer);
-                for (const hostedConsumer of hostedConsumers) {
-                    if (hostedConsumer instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_4__["HostedSlotConsumer"] && hostedConsumer.storeId) {
-                        const store = hostedConsumer.arc.findStoreById(hostedConsumer.storeId);
+                // We fire off multiple async operations and don't wait.
+                for (const ctx of slotConsumer.hostedSlotContexts) {
+                    if (!ctx.storeId)
+                        continue;
+                    for (const hostedConsumer of ctx.slotConsumers) {
+                        const store = hostedConsumer.arc.findStoreById(ctx.storeId);
                         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(store);
                         // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc
                         // tslint:disable-next-line: no-any
-                        const value = await store.get();
-                        if (value && (value.id === eventlet.data.key)) {
-                            hostedConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
-                        }
+                        store.get().then(value => {
+                            if (value && (value.id === eventlet.data.key)) {
+                                hostedConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
+                            }
+                        });
                     }
                 }
             }
@@ -84134,7 +84119,7 @@ class SlotComposer {
         this.consumers.forEach(consumer => consumer.dispose());
         this._contexts.forEach(context => {
             context.clearSlotConsumers();
-            if (context.container) {
+            if (context instanceof _slot_context_js__WEBPACK_IMPORTED_MODULE_3__["ProvidedSlotContext"] && context.container) {
                 this.modalityHandler.slotConsumerClass.clear(context.container);
             }
         });
@@ -84183,8 +84168,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotDomConsumer", function() { return SlotDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(239);
-/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(241);
-/* harmony import */ var _modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(242);
+/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(240);
+/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(241);
+/* harmony import */ var _modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(242);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84198,19 +84184,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 const templateByName = new Map();
 class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["SlotConsumer"] {
     constructor(arc, consumeConn, containerKind) {
         super(arc, consumeConn, containerKind);
         this._observer = this._initMutationObserver();
     }
-    constructRenderRequest(hostedSlotConsumer) {
+    constructRenderRequest() {
         const request = ['model'];
         const prefixes = [this.templatePrefix];
-        if (hostedSlotConsumer) {
-            prefixes.push(hostedSlotConsumer.consumeConn.particle.name);
-            prefixes.push(hostedSlotConsumer.consumeConn.name);
-        }
         if (!SlotDomConsumer.hasTemplate(prefixes.join('::'))) {
             request.push('template');
         }
@@ -84233,7 +84216,7 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         // TODO(sjmiles): introduce tree scope
         newContainer.attachShadow({ mode: `open` });
         // provision basic stylesheet
-        _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["Template"].stamp(`<style>${_modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_3__["default"]}</style>`).appendTo(newContainer.shadowRoot);
+        _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_3__["Template"].stamp(`<style>${_modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_4__["default"]}</style>`).appendTo(newContainer.shadowRoot);
         // TODO(sjmiles): maybe inject boilerplate styles
         return newContainer.shadowRoot;
     }
@@ -84245,15 +84228,17 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         }
     }
     formatContent(content, subId) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.slotContext instanceof _slot_context_js__WEBPACK_IMPORTED_MODULE_2__["ProvidedSlotContext"], 'Content formatting can only be done for provided SlotContext');
+        const contextSpec = this.slotContext.spec;
         const newContent = {};
         // Format model.
         if (Object.keys(content).indexOf('model') >= 0) {
             if (content.model) {
                 let formattedModel;
-                if (this.slotContext.spec.isSet && this.consumeConn.slotSpec.isSet) {
+                if (contextSpec.isSet && this.consumeConn.slotSpec.isSet) {
                     formattedModel = this._modelForSetSlotConsumedAsSetSlot(content.model, subId);
                 }
-                else if (this.slotContext.spec.isSet && !this.consumeConn.slotSpec.isSet) {
+                else if (contextSpec.isSet && !this.consumeConn.slotSpec.isSet) {
                     formattedModel = this._modelForSetSlotConsumedAsSingletonSlot(content.model, subId);
                 }
                 else {
@@ -84373,7 +84358,7 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
         if (!rendering.liveDom) {
             // TODO(sjmiles): hack to allow subtree elements (e.g. x-list) to marshal events
             rendering.container._eventMapper = this._eventMapper.bind(this, this.eventHandler);
-            rendering.liveDom = _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_2__["Template"]
+            rendering.liveDom = _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_3__["Template"]
                 .stamp(template)
                 .events(rendering.container._eventMapper)
                 .appendTo(rendering.container);
@@ -84391,14 +84376,14 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
                 return;
             }
             const slotId = this.getNodeValue(innerContainer, 'slotid');
-            const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
+            const providedContext = this.findProvidedContext(ctx => ctx.id === slotId);
             if (!providedContext) {
                 console.warn(`Slot ${this.consumeConn.slotSpec.name} has unexpected inner slot ${slotId}`);
                 return;
             }
             const subId = this.getNodeValue(innerContainer, 'subid');
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(subId) === providedContext.spec.isSet, `Sub-id ${subId} for slot ${providedContext.name} doesn't match set spec: ${providedContext.spec.isSet}`);
-            this._initInnerSlotContainer(slotId, subId, innerContainer);
+            providedContext.sourceSlotConsumer._initInnerSlotContainer(slotId, subId, innerContainer);
         });
     }
     // get a value from node that could be an attribute, if not a property
@@ -84469,10 +84454,10 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
             });
         });
     }
-    formatHostedContent(hostedSlot, content) {
+    formatHostedContent(content) {
         if (content.templateName) {
             if (typeof content.templateName === 'string') {
-                content.templateName = `${hostedSlot.consumeConn.particle.name}::${hostedSlot.consumeConn.name}::${content.templateName}`;
+                content.templateName = `${this.consumeConn.getQualifiedName()}::${content.templateName}`;
             }
             else {
                 // TODO(mmandlis): add support for hosted particle rendering set slot.
@@ -84506,7 +84491,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class SlotConsumer {
     constructor(arc, consumeConn, containerKind) {
-        this.providedSlotContexts = [];
+        this.directlyProvidedSlotContexts = [];
+        this.hostedSlotContexts = [];
         // Contains `container` and other modality specific rendering information
         // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
         this._renderingBySubId = new Map();
@@ -84521,7 +84507,30 @@ class SlotConsumer {
     addRenderingBySubId(subId, rendering) {
         this._renderingBySubId.set(subId, rendering);
     }
+    addHostedSlotContexts(context) {
+        context.containerAvailable = Boolean(this.slotContext.containerAvailable);
+        this.hostedSlotContexts.push(context);
+    }
+    get allProvidedSlotContexts() {
+        return [...this.generateProvidedContexts()];
+    }
+    findProvidedContext(predicate) {
+        return this.generateProvidedContexts(predicate).next().value;
+    }
+    *generateProvidedContexts(predicate = (_) => true) {
+        for (const context of this.directlyProvidedSlotContexts) {
+            if (predicate(context))
+                yield context;
+        }
+        for (const hostedContext of this.hostedSlotContexts) {
+            for (const hostedConsumer of hostedContext.slotConsumers) {
+                yield* hostedConsumer.generateProvidedContexts(predicate);
+            }
+        }
+    }
     onContainerUpdate(newContainer, originalContainer) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.slotContext instanceof _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["ProvidedSlotContext"], 'Container can only be updated in non-hosted context');
+        const context = this.slotContext;
         if (Boolean(newContainer) !== Boolean(originalContainer)) {
             if (newContainer) {
                 this.startRender();
@@ -84530,13 +84539,14 @@ class SlotConsumer {
                 this.stopRender();
             }
         }
+        this.hostedSlotContexts.forEach(ctx => ctx.containerAvailable = Boolean(newContainer));
         if (newContainer !== originalContainer) {
             const contextContainerBySubId = new Map();
-            if (this.slotContext && this.slotContext.spec.isSet) {
-                Object.keys(this.slotContext.container || {}).forEach(subId => contextContainerBySubId.set(subId, this.slotContext.container[subId]));
+            if (context && context.spec.isSet) {
+                Object.keys(context.container || {}).forEach(subId => contextContainerBySubId.set(subId, context.container[subId]));
             }
             else {
-                contextContainerBySubId.set(undefined, this.slotContext.container);
+                contextContainerBySubId.set(undefined, context.container);
             }
             for (const [subId, container] of contextContainerBySubId) {
                 if (!this._renderingBySubId.has(subId)) {
@@ -84560,11 +84570,11 @@ class SlotConsumer {
         }
     }
     createProvidedContexts() {
-        return this.consumeConn.slotSpec.providedSlots.map(spec => new _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["SlotContext"](this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
+        return this.consumeConn.slotSpec.providedSlots.map(spec => new _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["ProvidedSlotContext"](this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
     }
     updateProvidedContexts() {
-        this.providedSlotContexts.forEach(providedContext => {
-            providedContext.container = this.getInnerContainer(providedContext.id);
+        this.allProvidedSlotContexts.forEach(providedContext => {
+            providedContext.container = providedContext.sourceSlotConsumer.getInnerContainer(providedContext.id);
         });
     }
     startRender() {
@@ -84572,7 +84582,7 @@ class SlotConsumer {
             this.startRenderCallback({
                 particle: this.consumeConn.particle,
                 slotName: this.consumeConn.name,
-                providedSlots: new Map(this.providedSlotContexts.map(context => [context.name, context.id])),
+                providedSlots: new Map(this.allProvidedSlotContexts.map(context => [context.name, context.id])),
                 contentTypes: this.constructRenderRequest()
             });
         }
@@ -84629,21 +84639,15 @@ class SlotConsumer {
         });
     }
     isSameContainer(container, contextContainer) { return container === contextContainer; }
-    get hostedConsumers() {
-        return this.providedSlotContexts
-            .filter(context => context.constructor.name === 'HostedSlotContext')
-            .map(context => context.sourceSlotConsumer)
-            .filter(consumer => consumer !== this);
-    }
     // abstract
-    constructRenderRequest(hostedSlotConsumer = null) { return []; }
+    constructRenderRequest() { return []; }
     dispose() { }
     createNewContainer(contextContainer, subId) { return null; }
     deleteContainer(container) { }
     clearContainer(rendering) { }
     setContainerContent(rendering, content, subId) { }
     formatContent(content, subId) { return null; }
-    formatHostedContent(hostedSlot, content) { return null; }
+    formatHostedContent(content) { return null; }
     static clear(container) { }
 }
 //# sourceMappingURL=slot-consumer.js.map
@@ -84655,6 +84659,8 @@ class SlotConsumer {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotContext", function() { return SlotContext; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotContext", function() { return HostedSlotContext; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProvidedSlotContext", function() { return ProvidedSlotContext; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
 /**
@@ -84669,37 +84675,100 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * Holds container (eg div element) and its additional info.
+ * Represents a single slot in the rendering system.
+ */
+class SlotContext {
+    constructor(id, sourceSlotConsumer = null) {
+        this.slotConsumers = [];
+        this.id = id;
+        this.sourceSlotConsumer = sourceSlotConsumer;
+    }
+    addSlotConsumer(slotConsumer) {
+        this.slotConsumers.push(slotConsumer);
+        slotConsumer.slotContext = this;
+    }
+    clearSlotConsumers() {
+        this.slotConsumers.forEach(slotConsumer => slotConsumer.slotContext = null);
+        this.slotConsumers.length = 0;
+    }
+}
+/**
+ * Represents a slot created by a transformation particle in the inner arc.
+ *
+ * Render calls for that slot are routed to the transformation particle,
+ * which receives them as innerArcRender calls.
+ *
+ * TODO:
+ * Today startRender/stopRender calls for particles rendering into this slot are governed by the
+ * availability of the container on the transformation particle. This should be optional and only
+ * used if the purpose of the innerArc is rendering to the outer arc. It should be possible for
+ * the particle which doesn't consume a slot to create an inner arc with hosted slots, which
+ * today is not feasible.
+ */
+class HostedSlotContext extends SlotContext {
+    constructor(id, transformationSlotConsumer, storeId) {
+        super(id, transformationSlotConsumer);
+        this._containerAvailable = false;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(transformationSlotConsumer);
+        this.storeId = storeId;
+        transformationSlotConsumer.addHostedSlotContexts(this);
+    }
+    onRenderSlot(consumer, content, handler) {
+        this.sourceSlotConsumer.arc.pec.innerArcRender(this.sourceSlotConsumer.consumeConn.particle, this.sourceSlotConsumer.consumeConn.name, this.id, consumer.formatHostedContent(content));
+    }
+    addSlotConsumer(consumer) {
+        super.addSlotConsumer(consumer);
+        if (this.containerAvailable)
+            consumer.startRender();
+    }
+    get containerAvailable() { return this._containerAvailable; }
+    set containerAvailable(containerAvailable) {
+        if (this._containerAvailable === containerAvailable)
+            return;
+        this._containerAvailable = containerAvailable;
+        for (const consumer of this.slotConsumers) {
+            if (containerAvailable) {
+                consumer.startRender();
+            }
+            else {
+                consumer.stopRender();
+            }
+        }
+    }
+}
+/**
+ * Represents a slot provided by a particle through a provide connection or one of the root slots
+ * provided by the shell. Holds container (eg div element) and its additional info.
  * Must be initialized either with a container (for root slots provided by the shell) or
  * tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
  */
-class SlotContext {
+class ProvidedSlotContext extends SlotContext {
     constructor(id, name, tags, container, spec, sourceSlotConsumer = null) {
+        super(id, sourceSlotConsumer);
         this.tags = [];
-        // The slots consumers rendered into this context.
-        this.slotConsumers = [];
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(container) !== Boolean(spec), `Exactly one of either container or slotSpec may be set`);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(Boolean(spec) === Boolean(spec), `Spec and source slot can only be set together`);
-        this.id = id;
         this.name = name;
         this.tags = tags || [];
         this._container = container;
         // The context's accompanying ProvidedSlotSpec (see particle-spec.js).
         // Initialized to a default spec, if the container is one of the shell provided top root-contexts.
         this.spec = spec || new _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__["ProvidedSlotSpec"]({ name });
-        // The slot consumer providing this container (eg div)
-        this.sourceSlotConsumer = sourceSlotConsumer;
         if (this.sourceSlotConsumer) {
-            this.sourceSlotConsumer.providedSlotContexts.push(this);
+            this.sourceSlotConsumer.directlyProvidedSlotContexts.push(this);
         }
         // The list of handles this context is restricted to.
         this.handles = this.spec && this.sourceSlotConsumer
             ? this.spec.handles.map(handle => this.sourceSlotConsumer.consumeConn.particle.connections[handle].handle).filter(a => a !== undefined)
             : [];
     }
+    onRenderSlot(consumer, content, handler, description) {
+        consumer.setContent(content, handler, description);
+    }
     get container() { return this._container; }
+    get containerAvailable() { return !!this._container; }
     static createContextForContainer(id, name, container, tags) {
-        return new SlotContext(id, name, tags, container, null);
+        return new ProvidedSlotContext(id, name, tags, container, null);
     }
     isSameContainer(container) {
         if (this.spec.isSet) {
@@ -84724,15 +84793,10 @@ class SlotContext {
         this.slotConsumers.forEach(slotConsumer => slotConsumer.onContainerUpdate(this.container, originalContainer));
     }
     addSlotConsumer(slotConsumer) {
-        this.slotConsumers.push(slotConsumer);
-        slotConsumer.slotContext = this;
+        super.addSlotConsumer(slotConsumer);
         if (this.container) {
             slotConsumer.onContainerUpdate(this.container, null);
         }
-    }
-    clearSlotConsumers() {
-        this.slotConsumers.forEach(slotConsumer => slotConsumer.slotContext = null);
-        this.slotConsumers = [];
     }
 }
 //# sourceMappingURL=slot-context.js.map
@@ -85278,7 +85342,7 @@ class MockSlotDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE
     }
     getInnerContainer(slotId) {
         const model = this.renderings.map(([subId, { model }]) => model)[0];
-        const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
+        const providedContext = this.findProvidedContext(ctx => ctx.id === slotId);
         if (!providedContext) {
             console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);
             return;
@@ -85375,7 +85439,7 @@ class MockSuggestDomConsumer extends _suggest_dom_consumer_js__WEBPACK_IMPORTED_
     }
     getInnerContainer(slotId) {
         const model = this.renderings.map(([subId, { model }]) => model)[0];
-        const providedContext = this.providedSlotContexts.find(ctx => ctx.id === slotId);
+        const providedContext = this.findProvidedContext(ctx => ctx.id === slotId);
         if (!providedContext) {
             console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);
             return;
@@ -85639,111 +85703,6 @@ class DescriptionDomFormatter extends _description_formatter_js__WEBPACK_IMPORTE
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotConsumer", function() { return HostedSlotConsumer; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(248);
-/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(239);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-class HostedSlotConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__["SlotConsumer"] {
-    constructor(arc, transformationSlotConsumer, hostedParticleName, hostedSlotName, hostedSlotId, storeId) {
-        super(arc, null, null);
-        this.transformationSlotConsumer = transformationSlotConsumer;
-        this.hostedParticleName = hostedParticleName;
-        this.hostedSlotName = hostedSlotName,
-            this.hostedSlotId = hostedSlotId;
-        // TODO: should this be a list?
-        this.storeId = storeId;
-    }
-    get consumeConn() { return this._consumeConn; }
-    set consumeConn(consumeConn) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._consumeConn, 'Consume connection can be set only once');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedSlotId === consumeConn.targetSlot.id, `Expected target slot ${this.hostedSlotId}, but got ${consumeConn.targetSlot.id}`);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedParticleName === consumeConn.particle.name, `Expected particle ${this.hostedParticleName} for slot ${this.hostedSlotId}, but got ${consumeConn.particle.name}`);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.hostedSlotName === consumeConn.name, `Expected slot ${this.hostedSlotName} for slot ${this.hostedSlotId}, but got ${consumeConn.name}`);
-        this._consumeConn = consumeConn;
-    }
-    setContent(content, handler, description) {
-        if (this.renderCallback) {
-            this.renderCallback(this.transformationSlotConsumer.consumeConn.particle, this.transformationSlotConsumer.consumeConn.name, this.hostedSlotId, this.transformationSlotConsumer.formatHostedContent(this, content));
-        }
-        return null;
-    }
-    constructRenderRequest() {
-        return this.transformationSlotConsumer.constructRenderRequest(this);
-    }
-    getInnerContainer(name) {
-        const innerContainer = this.transformationSlotConsumer.getInnerContainer(name);
-        if (innerContainer && this.storeId) {
-            // TODO(shans): clean this up when we have interfaces for Variable, Collection, etc.
-            // tslint:disable-next-line: no-any
-            const subId = this.arc.findStoreById(this.storeId)._stored.id;
-            return innerContainer[subId];
-        }
-        return innerContainer;
-    }
-    createProvidedContexts() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.consumeConn, `Cannot create provided context without consume connection for hosted slot ${this.hostedSlotId}`);
-        return this.consumeConn.slotSpec.providedSlots.map(providedSpec => new _hosted_slot_context_js__WEBPACK_IMPORTED_MODULE_1__["HostedSlotContext"](this.consumeConn.providedSlots[providedSpec.name].id, providedSpec, this));
-    }
-    updateProvidedContexts() {
-        // The hosted context provided by hosted slots is updated as part of the transformation.
-    }
-}
-//# sourceMappingURL=hosted-slot-consumer.js.map
-
-/***/ }),
-/* 248 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HostedSlotContext", function() { return HostedSlotContext; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(240);
-/* harmony import */ var _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(247);
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-class HostedSlotContext extends _slot_context_js__WEBPACK_IMPORTED_MODULE_1__["SlotContext"] {
-    // This is a context of a hosted slot, can only contain a hosted slot.
-    constructor(id, providedSpec, hostedSlotConsumer) {
-        super(id, providedSpec.name, providedSpec.tags, /* container= */ null, providedSpec, hostedSlotConsumer);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.sourceSlotConsumer instanceof _hosted_slot_consumer_js__WEBPACK_IMPORTED_MODULE_2__["HostedSlotConsumer"]);
-        const hostedSourceSlotConsumer = this.sourceSlotConsumer;
-        if (hostedSourceSlotConsumer.storeId) {
-            // TODO(mmandlis): This up-cast is dangerous. Why do we need to fake a Handle here?
-            this.handles = [{ id: hostedSourceSlotConsumer.storeId }];
-        }
-    }
-}
-//# sourceMappingURL=hosted-slot-context.js.map
-
-/***/ }),
-/* 249 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcStoresFetcher", function() { return ArcStoresFetcher; });
 /**
  * @license
@@ -85801,17 +85760,17 @@ class ArcStoresFetcher {
 //# sourceMappingURL=arc-stores-fetcher.js.map
 
 /***/ }),
-/* 250 */
+/* 248 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planificator", function() { return Planificator; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(251);
-/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(253);
+/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(249);
+/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(251);
 /* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(232);
-/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(254);
+/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(252);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4);
 /**
  * @license
@@ -85965,7 +85924,7 @@ class Planificator {
 //# sourceMappingURL=planificator.js.map
 
 /***/ }),
-/* 251 */
+/* 249 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -85973,7 +85932,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanConsumer", function() { return PlanConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(232);
-/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(252);
+/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(250);
 /* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
 /* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(231);
 /**
@@ -86090,7 +86049,7 @@ class PlanConsumer {
 //# sourceMappingURL=plan-consumer.js.map
 
 /***/ }),
-/* 252 */
+/* 250 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86176,7 +86135,7 @@ class SuggestionComposer {
 //# sourceMappingURL=suggestion-composer.js.map
 
 /***/ }),
-/* 253 */
+/* 251 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86357,7 +86316,7 @@ class PlanProducer {
 //# sourceMappingURL=plan-producer.js.map
 
 /***/ }),
-/* 254 */
+/* 252 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86443,14 +86402,14 @@ class ReplanQueue {
 //# sourceMappingURL=replan-queue.js.map
 
 /***/ }),
-/* 255 */
+/* 253 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "KeyManager", function() { return KeyManager; });
-/* harmony import */ var _webcrypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(256);
-/* harmony import */ var _testing_cryptotestutils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(260);
+/* harmony import */ var _webcrypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(254);
+/* harmony import */ var _testing_cryptotestutils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(258);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -86478,17 +86437,17 @@ class KeyManager {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
-/* 256 */
+/* 254 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WebCryptoKeyGenerator", function() { return WebCryptoKeyGenerator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WebCryptoKeyIndexedDBStorage", function() { return WebCryptoKeyIndexedDBStorage; });
-/* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(257);
+/* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(255);
 /* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(idb__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _base64__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(258);
-/* harmony import */ var jsrsasign__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(259);
+/* harmony import */ var _base64__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(256);
+/* harmony import */ var jsrsasign__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(257);
 /* harmony import */ var jsrsasign__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jsrsasign__WEBPACK_IMPORTED_MODULE_2__);
 /**
  * @license
@@ -86802,7 +86761,7 @@ class WebCryptoKeyIndexedDBStorage {
 //# sourceMappingURL=webcrypto.js.map
 
 /***/ }),
-/* 257 */
+/* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -87123,7 +87082,7 @@ class WebCryptoKeyIndexedDBStorage {
 
 
 /***/ }),
-/* 258 */
+/* 256 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -87278,7 +87237,7 @@ function decode(str) {
 //# sourceMappingURL=base64.js.map
 
 /***/ }),
-/* 259 */
+/* 257 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {
@@ -87609,7 +87568,7 @@ exports.lang = KJUR.lang;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(104).Buffer))
 
 /***/ }),
-/* 260 */
+/* 258 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -87636,7 +87595,7 @@ class WebCryptoMemoryKeyStorage {
 //# sourceMappingURL=cryptotestutils.js.map
 
 /***/ }),
-/* 261 */
+/* 259 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -87654,7 +87613,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /***/ }),
-/* 262 */
+/* 260 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

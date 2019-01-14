@@ -13,7 +13,7 @@ import { SlotConnection } from './recipe/slot-connection.js';
 export declare class SlotDomConsumer extends SlotConsumer {
     private readonly _observer;
     constructor(arc: Arc, consumeConn?: SlotConnection, containerKind?: string);
-    constructRenderRequest(hostedSlotConsumer: any): string[];
+    constructRenderRequest(): string[];
     static hasTemplate(templatePrefix: any): any;
     isSameContainer(container: any, contextContainer: any): boolean;
     createNewContainer(contextContainer: any, subId: any): ShadowRoot;
@@ -42,5 +42,5 @@ export declare class SlotDomConsumer extends SlotConsumer {
     isDirectInnerSlot(container: any, innerContainer: any): boolean;
     _initMutationObserver(): MutationObserver | null;
     _eventMapper(eventHandler: any, node: any, eventName: any, handlerName: any): void;
-    formatHostedContent(hostedSlot: any, content: any): {};
+    formatHostedContent(content: any): {};
 }

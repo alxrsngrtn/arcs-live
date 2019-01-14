@@ -127,10 +127,10 @@ export class ParticleExecutionHost {
                 // TODO: create hosted handles map with specially generated ids instead of returning the real ones?
                 this.MapHandleCallback({}, callback, handle.id);
             }
-            onArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) {
+            onArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, handleId) {
                 let hostedSlotId;
                 if (pec.slotComposer) {
-                    hostedSlotId = pec.slotComposer.createHostedSlot(arc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId);
+                    hostedSlotId = pec.slotComposer.createHostedSlot(arc, transformationParticle, transformationSlotName, handleId);
                 }
                 this.CreateSlotCallback({}, callback, hostedSlotId);
             }

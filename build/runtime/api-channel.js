@@ -428,7 +428,7 @@ let PECInnerPort = class PECInnerPort extends APIPort {
     ConstructInnerArc(callback, particle) { }
     ArcCreateHandle(callback, arc, type, name) { }
     ArcMapHandle(callback, arc, handle) { }
-    ArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, hostedParticleName, hostedSlotName, handleId) { }
+    ArcCreateSlot(callback, arc, transformationParticle, transformationSlotName, handleId) { }
     ArcLoadRecipe(arc, recipe, callback) { }
     RaiseSystemException(exception, methodName, particleId) { }
     // To show stack traces for calls made inside the context, we need to capture the trace at the call point and
@@ -493,7 +493,7 @@ __decorate([
     __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped)
 ], PECInnerPort.prototype, "ArcMapHandle", null);
 __decorate([
-    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped), __param(3, Direct), __param(4, Direct), __param(5, Direct), __param(6, Direct)
+    __param(0, LocalMapped), __param(1, RemoteMapped), __param(2, Mapped), __param(3, Direct), __param(4, Direct)
 ], PECInnerPort.prototype, "ArcCreateSlot", null);
 __decorate([
     __param(0, RemoteMapped), __param(1, Direct), __param(2, LocalMapped)

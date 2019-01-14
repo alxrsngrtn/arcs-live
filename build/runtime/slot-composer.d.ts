@@ -10,9 +10,8 @@
 import { Modality } from './modality.js';
 import { ModalityHandler } from './modality-handler.js';
 import { Arc } from './arc.js';
-import { SlotContext } from './slot-context.js';
+import { SlotContext, ProvidedSlotContext } from './slot-context.js';
 import { SlotConsumer } from './slot-consumer.js';
-import { HostedSlotConsumer } from './hosted-slot-consumer.js';
 import { Particle } from './recipe/particle.js';
 export declare type SlotComposerOptions = {
     modalityName?: string;
@@ -42,9 +41,10 @@ export declare class SlotComposer {
     readonly containerKind: string;
     getSlotConsumer(particle: Particle, slotName: string): SlotConsumer;
     findContainerByName(name: string): HTMLElement | undefined;
+    findContextsByName(name: string): ProvidedSlotContext[];
     findContextById(slotId: any): SlotContext;
-    createHostedSlot(innerArc: Arc, transformationParticle: any, transformationSlotName: any, hostedParticleName: any, hostedSlotName: any, storeId: any): string;
-    _addSlotConsumer(slot: HostedSlotConsumer): void;
+    createHostedSlot(innerArc: Arc, transformationParticle: Particle, transformationSlotName: string, storeId: string): string;
+    _addSlotConsumer(slot: SlotConsumer): void;
     initializeRecipe(arc: Arc, recipeParticles: Particle[]): void;
     renderSlot(particle: Particle, slotName: string, content: any): Promise<void>;
     getAvailableContexts(): SlotContext[];

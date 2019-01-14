@@ -10,37 +10,100 @@
 import { assert } from '../platform/assert-web.js';
 import { ProvidedSlotSpec } from './particle-spec.js';
 /**
- * Holds container (eg div element) and its additional info.
+ * Represents a single slot in the rendering system.
+ */
+export class SlotContext {
+    constructor(id, sourceSlotConsumer = null) {
+        this.slotConsumers = [];
+        this.id = id;
+        this.sourceSlotConsumer = sourceSlotConsumer;
+    }
+    addSlotConsumer(slotConsumer) {
+        this.slotConsumers.push(slotConsumer);
+        slotConsumer.slotContext = this;
+    }
+    clearSlotConsumers() {
+        this.slotConsumers.forEach(slotConsumer => slotConsumer.slotContext = null);
+        this.slotConsumers.length = 0;
+    }
+}
+/**
+ * Represents a slot created by a transformation particle in the inner arc.
+ *
+ * Render calls for that slot are routed to the transformation particle,
+ * which receives them as innerArcRender calls.
+ *
+ * TODO:
+ * Today startRender/stopRender calls for particles rendering into this slot are governed by the
+ * availability of the container on the transformation particle. This should be optional and only
+ * used if the purpose of the innerArc is rendering to the outer arc. It should be possible for
+ * the particle which doesn't consume a slot to create an inner arc with hosted slots, which
+ * today is not feasible.
+ */
+export class HostedSlotContext extends SlotContext {
+    constructor(id, transformationSlotConsumer, storeId) {
+        super(id, transformationSlotConsumer);
+        this._containerAvailable = false;
+        assert(transformationSlotConsumer);
+        this.storeId = storeId;
+        transformationSlotConsumer.addHostedSlotContexts(this);
+    }
+    onRenderSlot(consumer, content, handler) {
+        this.sourceSlotConsumer.arc.pec.innerArcRender(this.sourceSlotConsumer.consumeConn.particle, this.sourceSlotConsumer.consumeConn.name, this.id, consumer.formatHostedContent(content));
+    }
+    addSlotConsumer(consumer) {
+        super.addSlotConsumer(consumer);
+        if (this.containerAvailable)
+            consumer.startRender();
+    }
+    get containerAvailable() { return this._containerAvailable; }
+    set containerAvailable(containerAvailable) {
+        if (this._containerAvailable === containerAvailable)
+            return;
+        this._containerAvailable = containerAvailable;
+        for (const consumer of this.slotConsumers) {
+            if (containerAvailable) {
+                consumer.startRender();
+            }
+            else {
+                consumer.stopRender();
+            }
+        }
+    }
+}
+/**
+ * Represents a slot provided by a particle through a provide connection or one of the root slots
+ * provided by the shell. Holds container (eg div element) and its additional info.
  * Must be initialized either with a container (for root slots provided by the shell) or
  * tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
  */
-export class SlotContext {
+export class ProvidedSlotContext extends SlotContext {
     constructor(id, name, tags, container, spec, sourceSlotConsumer = null) {
+        super(id, sourceSlotConsumer);
         this.tags = [];
-        // The slots consumers rendered into this context.
-        this.slotConsumers = [];
         assert(Boolean(container) !== Boolean(spec), `Exactly one of either container or slotSpec may be set`);
         assert(Boolean(spec) === Boolean(spec), `Spec and source slot can only be set together`);
-        this.id = id;
         this.name = name;
         this.tags = tags || [];
         this._container = container;
         // The context's accompanying ProvidedSlotSpec (see particle-spec.js).
         // Initialized to a default spec, if the container is one of the shell provided top root-contexts.
         this.spec = spec || new ProvidedSlotSpec({ name });
-        // The slot consumer providing this container (eg div)
-        this.sourceSlotConsumer = sourceSlotConsumer;
         if (this.sourceSlotConsumer) {
-            this.sourceSlotConsumer.providedSlotContexts.push(this);
+            this.sourceSlotConsumer.directlyProvidedSlotContexts.push(this);
         }
         // The list of handles this context is restricted to.
         this.handles = this.spec && this.sourceSlotConsumer
             ? this.spec.handles.map(handle => this.sourceSlotConsumer.consumeConn.particle.connections[handle].handle).filter(a => a !== undefined)
             : [];
     }
+    onRenderSlot(consumer, content, handler, description) {
+        consumer.setContent(content, handler, description);
+    }
     get container() { return this._container; }
+    get containerAvailable() { return !!this._container; }
     static createContextForContainer(id, name, container, tags) {
-        return new SlotContext(id, name, tags, container, null);
+        return new ProvidedSlotContext(id, name, tags, container, null);
     }
     isSameContainer(container) {
         if (this.spec.isSet) {
@@ -65,15 +128,10 @@ export class SlotContext {
         this.slotConsumers.forEach(slotConsumer => slotConsumer.onContainerUpdate(this.container, originalContainer));
     }
     addSlotConsumer(slotConsumer) {
-        this.slotConsumers.push(slotConsumer);
-        slotConsumer.slotContext = this;
+        super.addSlotConsumer(slotConsumer);
         if (this.container) {
             slotConsumer.onContainerUpdate(this.container, null);
         }
-    }
-    clearSlotConsumers() {
-        this.slotConsumers.forEach(slotConsumer => slotConsumer.slotContext = null);
-        this.slotConsumers = [];
     }
 }
 //# sourceMappingURL=slot-context.js.map

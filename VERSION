@@ -1,5 +1,5 @@
-commit 92ed93020cc77f33e94bbf63871b692edd531627
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Sun Jan 13 17:45:59 2019 -0800
+commit a05b45408cac33e95ffd4f3defa79358559ac8a1
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Jan 14 14:14:22 2019 +1100
 
-    Convert interface-info-test, reference-test to typescript (#2577)
+    Streamling hosted slots, allow recursive inner arcs (#2573)

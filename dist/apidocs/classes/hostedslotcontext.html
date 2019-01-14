@@ -66,6 +66,21 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Represents a slot created by a transformation particle in the inner arc.</p>
+					</div>
+					<p>Render calls for that slot are routed to the transformation particle,
+					which receives them as innerArcRender calls.</p>
+					<p>TODO:
+						Today startRender/stopRender calls for particles rendering into this slot are governed by the
+						availability of the container on the transformation particle. This should be optional and only
+						used if the purpose of the innerArc is rendering to the outer arc. It should be possible for
+						the particle which doesn&#39;t consume a slot to create an inner arc with hosted slots, which
+					today is not feasible.</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -89,31 +104,28 @@
 								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="hostedslotcontext.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-inherited">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="hostedslotcontext.html#handles" class="tsd-kind-icon">handles</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="hostedslotcontext.html#_containeravailable" class="tsd-kind-icon">_container<wbr>Available</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="hostedslotcontext.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="hostedslotcontext.html#name" class="tsd-kind-icon">name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="hostedslotcontext.html#slotconsumers" class="tsd-kind-icon">slot<wbr>Consumers</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="hostedslotcontext.html#sourceslotconsumer" class="tsd-kind-icon">source<wbr>Slot<wbr>Consumer</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="hostedslotcontext.html#spec" class="tsd-kind-icon">spec</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="hostedslotcontext.html#tags" class="tsd-kind-icon">tags</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="hostedslotcontext.html#storeid" class="tsd-kind-icon">store<wbr>Id</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-inherited">
+						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="hostedslotcontext.html#container" class="tsd-kind-icon">container</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite"><a href="hostedslotcontext.html#containeravailable" class="tsd-kind-icon">container<wbr>Available</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-inherited">
+						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="hostedslotcontext.html#addslotconsumer" class="tsd-kind-icon">add<wbr>Slot<wbr>Consumer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="hostedslotcontext.html#addslotconsumer" class="tsd-kind-icon">add<wbr>Slot<wbr>Consumer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="hostedslotcontext.html#clearslotconsumers" class="tsd-kind-icon">clear<wbr>Slot<wbr>Consumers</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="hostedslotcontext.html#issamecontainer" class="tsd-kind-icon">is<wbr>Same<wbr>Container</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="hostedslotcontext.html#createcontextforcontainer" class="tsd-kind-icon">create<wbr>Context<wbr>For<wbr>Container</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="hostedslotcontext.html#onrenderslot" class="tsd-kind-icon">on<wbr>Render<wbr>Slot</a></li>
 							</ul>
 						</section>
 					</div>
@@ -125,26 +137,26 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Hosted<wbr>Slot<wbr>Context<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, providedSpec<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, hostedSlotConsumer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="hostedslotcontext.html" class="tsd-signature-type">HostedSlotContext</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Hosted<wbr>Slot<wbr>Context<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, transformationSlotConsumer<span class="tsd-signature-symbol">: </span><a href="slotconsumer.html" class="tsd-signature-type">SlotConsumer</a>, storeId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="hostedslotcontext.html" class="tsd-signature-type">HostedSlotContext</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/hosted-slot-context.ts#L16">runtime/hosted-slot-context.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a05b454/src/runtime/slot-context.ts#L61">runtime/slot-context.ts:61</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>id: <span class="tsd-signature-type">any</span></h5>
+									<h5>id: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>providedSpec: <span class="tsd-signature-type">any</span></h5>
+									<h5>transformationSlotConsumer: <a href="slotconsumer.html" class="tsd-signature-type">SlotConsumer</a></h5>
 								</li>
 								<li>
-									<h5>hostedSlotConsumer: <span class="tsd-signature-type">any</span></h5>
+									<h5>storeId: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="hostedslotcontext.html" class="tsd-signature-type">HostedSlotContext</a></h4>
@@ -152,16 +164,15 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="handles" class="tsd-anchor"></a>
-					<h3>handles</h3>
-					<div class="tsd-signature tsd-kind-icon">handles<span class="tsd-signature-symbol">:</span> <a href="handle.html" class="tsd-signature-type">Handle</a><span class="tsd-signature-symbol">[]</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_containeravailable" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _container<wbr>Available</h3>
+					<div class="tsd-signature tsd-kind-icon">_container<wbr>Available<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#handles">handles</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L30">runtime/slot-context.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a05b454/src/runtime/slot-context.ts#L61">runtime/slot-context.ts:61</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -172,18 +183,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L22">runtime/slot-context.ts:22</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#name">name</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L23">runtime/slot-context.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a05b454/src/runtime/slot-context.ts#L21">runtime/slot-context.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -194,7 +194,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#slotconsumers">slotConsumers</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L29">runtime/slot-context.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a05b454/src/runtime/slot-context.ts#L23">runtime/slot-context.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -205,63 +205,51 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#sourceslotconsumer">sourceSlotConsumer</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L27">runtime/slot-context.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a05b454/src/runtime/slot-context.ts#L22">runtime/slot-context.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="spec" class="tsd-anchor"></a>
-					<h3>spec</h3>
-					<div class="tsd-signature tsd-kind-icon">spec<span class="tsd-signature-symbol">:</span> <a href="providedslotspec.html" class="tsd-signature-type">ProvidedSlotSpec</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="storeid" class="tsd-anchor"></a>
+					<h3>store<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">store<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#spec">spec</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L26">runtime/slot-context.ts:26</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="tags" class="tsd-anchor"></a>
-					<h3>tags</h3>
-					<div class="tsd-signature tsd-kind-icon">tags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#tags">tags</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L24">runtime/slot-context.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a05b454/src/runtime/slot-context.ts#L60">runtime/slot-context.ts:60</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
-					<a name="container" class="tsd-anchor"></a>
-					<h3>container</h3>
-					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> container<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span></li>
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> container<span class="tsd-signature-symbol">(</span>container<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
+					<a name="containeravailable" class="tsd-anchor"></a>
+					<h3>container<wbr>Available</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> containerAvailable<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> containerAvailable<span class="tsd-signature-symbol">(</span>containerAvailable<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#container">container</a></p>
+								<p>Overrides <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#containeravailable">containerAvailable</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L58">runtime/slot-context.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a05b454/src/runtime/slot-context.ts#L84">runtime/slot-context.ts:84</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLElement</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#container">container</a></p>
+								<p>Overrides <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#containeravailable">containerAvailable</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L80">runtime/slot-context.ts:80</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a05b454/src/runtime/slot-context.ts#L85">runtime/slot-context.ts:85</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>container: <span class="tsd-signature-type">HTMLElement</span></h5>
+									<h5>containerAvailable: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -269,26 +257,26 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="addslotconsumer" class="tsd-anchor"></a>
 					<h3>add<wbr>Slot<wbr>Consumer</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Slot<wbr>Consumer<span class="tsd-signature-symbol">(</span>slotConsumer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Slot<wbr>Consumer<span class="tsd-signature-symbol">(</span>consumer<span class="tsd-signature-symbol">: </span><a href="slotconsumer.html" class="tsd-signature-type">SlotConsumer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#addslotconsumer">addSlotConsumer</a></p>
+								<p>Overrides <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#addslotconsumer">addSlotConsumer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L90">runtime/slot-context.ts:90</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a05b454/src/runtime/slot-context.ts#L79">runtime/slot-context.ts:79</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>slotConsumer: <span class="tsd-signature-type">any</span></h5>
+									<h5>consumer: <a href="slotconsumer.html" class="tsd-signature-type">SlotConsumer</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -306,67 +294,40 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#clearslotconsumers">clearSlotConsumers</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L99">runtime/slot-context.ts:99</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a05b454/src/runtime/slot-context.ts#L35">runtime/slot-context.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a name="issamecontainer" class="tsd-anchor"></a>
-					<h3>is<wbr>Same<wbr>Container</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Same<wbr>Container<span class="tsd-signature-symbol">(</span>container<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="onrenderslot" class="tsd-anchor"></a>
+					<h3>on<wbr>Render<wbr>Slot</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Render<wbr>Slot<span class="tsd-signature-symbol">(</span>consumer<span class="tsd-signature-symbol">: </span><a href="slotconsumer.html" class="tsd-signature-type">SlotConsumer</a>, content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#issamecontainer">isSameContainer</a></p>
+								<p>Overrides <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#onrenderslot">onRenderSlot</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L64">runtime/slot-context.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/a05b454/src/runtime/slot-context.ts#L71">runtime/slot-context.ts:71</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>container: <span class="tsd-signature-type">any</span></h5>
+									<h5>consumer: <a href="slotconsumer.html" class="tsd-signature-type">SlotConsumer</a></h5>
+								</li>
+								<li>
+									<h5>content: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>handler: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-					<a name="createcontextforcontainer" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> create<wbr>Context<wbr>For<wbr>Container</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Context<wbr>For<wbr>Container<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, container<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, tags<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="slotcontext.html" class="tsd-signature-type">SlotContext</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Inherited from <a href="slotcontext.html">SlotContext</a>.<a href="slotcontext.html#createcontextforcontainer">createContextForContainer</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/92ed930/src/runtime/slot-context.ts#L60">runtime/slot-context.ts:60</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>id: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>name: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>container: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>tags: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="slotcontext.html" class="tsd-signature-type">SlotContext</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -390,14 +351,11 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="hostedslotcontext.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="hostedslotcontext.html#handles" class="tsd-kind-icon">handles</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="hostedslotcontext.html#_containeravailable" class="tsd-kind-icon">_container<wbr>Available</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="hostedslotcontext.html#id" class="tsd-kind-icon">id</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="hostedslotcontext.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="hostedslotcontext.html#slotconsumers" class="tsd-kind-icon">slot<wbr>Consumers</a>
@@ -405,26 +363,20 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="hostedslotcontext.html#sourceslotconsumer" class="tsd-kind-icon">source<wbr>Slot<wbr>Consumer</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="hostedslotcontext.html#spec" class="tsd-kind-icon">spec</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="hostedslotcontext.html#storeid" class="tsd-kind-icon">store<wbr>Id</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="hostedslotcontext.html#tags" class="tsd-kind-icon">tags</a>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
+								<a href="hostedslotcontext.html#containeravailable" class="tsd-kind-icon">container<wbr>Available</a>
 							</li>
-							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
-								<a href="hostedslotcontext.html#container" class="tsd-kind-icon">container</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="hostedslotcontext.html#addslotconsumer" class="tsd-kind-icon">add<wbr>Slot<wbr>Consumer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="hostedslotcontext.html#clearslotconsumers" class="tsd-kind-icon">clear<wbr>Slot<wbr>Consumers</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="hostedslotcontext.html#issamecontainer" class="tsd-kind-icon">is<wbr>Same<wbr>Container</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-								<a href="hostedslotcontext.html#createcontextforcontainer" class="tsd-kind-icon">create<wbr>Context<wbr>For<wbr>Container</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="hostedslotcontext.html#onrenderslot" class="tsd-kind-icon">on<wbr>Render<wbr>Slot</a>
 							</li>
 						</ul>
 					</li>
