@@ -19529,6 +19529,7 @@ class AbstractDevtoolsChannel {
         this.messageListeners = new Map();
     }
     send(message) {
+        this.ensureNoCycle(message);
         this.debouncedMessages.push(message);
         if (!this.debouncing) {
             this.debouncing = true;
@@ -19564,6 +19565,14 @@ class AbstractDevtoolsChannel {
     }
     _flush(messages) {
         throw new Error('Not implemented in an abstract class');
+    }
+    ensureNoCycle(object, objectPath = []) {
+        if (!object || typeof object !== 'object')
+            return;
+        assert$1(objectPath.indexOf(object) === -1, 'Message cannot contain a cycle');
+        objectPath.push(object);
+        (Array.isArray(object) ? object : Object.values(object)).forEach(element => this.ensureNoCycle(element, objectPath));
+        objectPath.pop();
     }
 }
 class ArcDevtoolsChannel {

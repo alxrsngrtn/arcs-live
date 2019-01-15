@@ -1,5 +1,5 @@
-commit 327f4548259f1febf046aed0fb2d47ced3dea286
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Mon Jan 14 13:36:46 2019 -0800
+commit 720e98039b6d9d3d12eaa7a67f815aafad348eeb
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Jan 15 17:06:51 2019 +1100
 
-    Get rid of the Plan JSON format (#2569)
+    Check for cyclic messages sent to DevTools (#2593)
