@@ -1,5 +1,9 @@
-commit 720e98039b6d9d3d12eaa7a67f815aafad348eeb
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Jan 15 17:06:51 2019 +1100
+commit bbeae6450062cf487af7c4c5c0c9c3a454f47d44
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jan 15 15:14:02 2019 -0800
 
-    Check for cyclic messages sent to DevTools (#2593)
+    remove circular structure from suggestion devtools message (#2595)
+    
+    * remove circular structure from suggestion devtools message
+    
+    * fix lint

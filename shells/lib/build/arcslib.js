@@ -101,13 +101,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _build_runtime_manifest_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(34);
 /* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(188);
 /* harmony import */ var _build_runtime_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(47);
-/* harmony import */ var _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(253);
+/* harmony import */ var _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(254);
 /* harmony import */ var _build_runtime_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(181);
-/* harmony import */ var _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(259);
+/* harmony import */ var _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(260);
 /* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(197);
 /* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(241);
 /* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(234);
-/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(260);
+/* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(261);
 /* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(233);
 /**
  * @license
@@ -83032,6 +83032,7 @@ class Suggestion {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(plan, `plan cannot be null`);
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(hash, `hash cannot be null`);
         this.plan = plan;
+        this.planString = this.plan.toString();
         this.hash = hash;
         this.rank = rank;
         this.versionByStore = versionByStore;
@@ -83109,7 +83110,7 @@ class Suggestion {
     }
     toLiteral() {
         return {
-            plan: this.plan.toString(),
+            plan: this.planString,
             hash: this.hash,
             rank: this.rank,
             // Needs to JSON.strigify because store IDs may contain invalid FB key symbols.
@@ -83164,10 +83165,12 @@ __webpack_require__.r(__webpack_exports__);
  */
 class StrategyExplorerAdapter {
     static processGenerations(generations, devtoolsChannel, options = {}) {
-        devtoolsChannel.send({
-            messageType: 'generations',
-            messageBody: { results: generations, options },
-        });
+        if (devtoolsChannel) {
+            devtoolsChannel.send({
+                messageType: 'generations',
+                messageBody: { results: generations, options },
+            });
+        }
     }
 }
 //# sourceMappingURL=strategy-explorer-adapter.js.map
@@ -85733,9 +85736,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planificator", function() { return Planificator; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(249);
-/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(251);
+/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(252);
 /* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(232);
-/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(252);
+/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(253);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4);
 /**
  * @license
@@ -85900,6 +85903,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(250);
 /* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
 /* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(231);
+/* harmony import */ var _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(251);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -85914,6 +85918,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 class PlanConsumer {
     constructor(arc, result) {
         // Callback is triggered when planning results have changed.
@@ -85922,6 +85927,7 @@ class PlanConsumer {
         this.visibleSuggestionsChangeCallbacks = [];
         this.suggestionComposer = null;
         this.currentSuggestions = [];
+        this.devtoolsChannel = null;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result, 'result cannot be null');
         this.arc = arc;
@@ -85931,6 +85937,9 @@ class PlanConsumer {
         this.visibleSuggestionsChangeCallbacks = [];
         this._initSuggestionComposer();
         this.result.registerChangeCallback(() => this.onSuggestionsChanged());
+        if (_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected) {
+            this.devtoolsChannel = _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get().forArc(this.arc);
+        }
     }
     registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
     registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
@@ -85945,15 +85954,9 @@ class PlanConsumer {
     onSuggestionsChanged() {
         this._onSuggestionsChanged();
         this._onMaybeSuggestionsChanged();
-        if (this.result.generations.length && _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected) {
-            _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get().forArc(this.arc), { label: 'Plan Consumer', keep: true });
-            _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].get().forArc(this.arc).send({
-                messageType: 'suggestions-changed',
-                messageBody: {
-                    suggestions: this.result.suggestions,
-                    lastUpdated: this.result.lastUpdated.getTime()
-                },
-            });
+        _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_5__["PlanningExplorerAdapter"].updatePlanningResults(this.result, this.devtoolsChannel);
+        if (this.result.generations.length) {
+            _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, this.devtoolsChannel, { label: 'Plan Consumer', keep: true });
         }
     }
     getCurrentSuggestions() {
@@ -86101,6 +86104,43 @@ class SuggestionComposer {
 
 /***/ }),
 /* 251 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanningExplorerAdapter", function() { return PlanningExplorerAdapter; });
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class PlanningExplorerAdapter {
+    static updatePlanningResults(result, devtoolsChannel) {
+        if (devtoolsChannel) {
+            const suggestions = result.suggestions.map(s => {
+                const suggestionCopy = Object.assign({}, s);
+                suggestionCopy.particles = s.plan.particles.map(p => ({ name: p.name }));
+                delete suggestionCopy.plan;
+                return suggestionCopy;
+            });
+            devtoolsChannel.send({
+                messageType: 'suggestions-changed',
+                messageBody: {
+                    suggestions,
+                    lastUpdated: result.lastUpdated.getTime()
+                }
+            });
+        }
+    }
+}
+//# sourceMappingURL=planning-explorer-adapter.js.map
+
+/***/ }),
+/* 252 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86281,7 +86321,7 @@ class PlanProducer {
 //# sourceMappingURL=plan-producer.js.map
 
 /***/ }),
-/* 252 */
+/* 253 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86367,14 +86407,14 @@ class ReplanQueue {
 //# sourceMappingURL=replan-queue.js.map
 
 /***/ }),
-/* 253 */
+/* 254 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "KeyManager", function() { return KeyManager; });
-/* harmony import */ var _webcrypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(254);
-/* harmony import */ var _testing_cryptotestutils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(258);
+/* harmony import */ var _webcrypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(255);
+/* harmony import */ var _testing_cryptotestutils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(259);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -86402,17 +86442,17 @@ class KeyManager {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
-/* 254 */
+/* 255 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WebCryptoKeyGenerator", function() { return WebCryptoKeyGenerator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WebCryptoKeyIndexedDBStorage", function() { return WebCryptoKeyIndexedDBStorage; });
-/* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(255);
+/* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(256);
 /* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(idb__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _base64__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(256);
-/* harmony import */ var jsrsasign__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(257);
+/* harmony import */ var _base64__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(257);
+/* harmony import */ var jsrsasign__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(258);
 /* harmony import */ var jsrsasign__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jsrsasign__WEBPACK_IMPORTED_MODULE_2__);
 /**
  * @license
@@ -86726,7 +86766,7 @@ class WebCryptoKeyIndexedDBStorage {
 //# sourceMappingURL=webcrypto.js.map
 
 /***/ }),
-/* 255 */
+/* 256 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -87047,7 +87087,7 @@ class WebCryptoKeyIndexedDBStorage {
 
 
 /***/ }),
-/* 256 */
+/* 257 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -87202,7 +87242,7 @@ function decode(str) {
 //# sourceMappingURL=base64.js.map
 
 /***/ }),
-/* 257 */
+/* 258 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {
@@ -87533,7 +87573,7 @@ exports.lang = KJUR.lang;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(104).Buffer))
 
 /***/ }),
-/* 258 */
+/* 259 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -87560,7 +87600,7 @@ class WebCryptoMemoryKeyStorage {
 //# sourceMappingURL=cryptotestutils.js.map
 
 /***/ }),
-/* 259 */
+/* 260 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -87578,7 +87618,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /***/ }),
-/* 260 */
+/* 261 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

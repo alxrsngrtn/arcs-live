@@ -9,10 +9,12 @@
  */
 export class StrategyExplorerAdapter {
     static processGenerations(generations, devtoolsChannel, options = {}) {
-        devtoolsChannel.send({
-            messageType: 'generations',
-            messageBody: { results: generations, options },
-        });
+        if (devtoolsChannel) {
+            devtoolsChannel.send({
+                messageType: 'generations',
+                messageBody: { results: generations, options },
+            });
+        }
     }
 }
 //# sourceMappingURL=strategy-explorer-adapter.js.map

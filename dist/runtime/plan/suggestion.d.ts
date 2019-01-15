@@ -33,6 +33,7 @@ export declare type EnvOptions = {
 };
 export declare class Suggestion {
     plan: Recipe;
+    planString: string;
     descriptionByModality: {};
     versionByStore: {};
     readonly hash: string;

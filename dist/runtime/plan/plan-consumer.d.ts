@@ -11,6 +11,7 @@ import { Arc } from '../arc.js';
 import { PlanningResult } from './planning-result.js';
 import { Suggestion } from './suggestion.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
+import { ArcDevtoolsChannel } from '../debug/abstract-devtools-channel.js';
 export declare class PlanConsumer {
     arc: Arc;
     result: PlanningResult;
@@ -22,6 +23,7 @@ export declare class PlanConsumer {
     private visibleSuggestionsChangeCallbacks;
     suggestionComposer: SuggestionComposer | null;
     currentSuggestions: Suggestion[];
+    devtoolsChannel: ArcDevtoolsChannel;
     constructor(arc: Arc, result: PlanningResult);
     registerSuggestionsChangedCallback(callback: any): void;
     registerVisibleSuggestionsChangedCallback(callback: any): void;

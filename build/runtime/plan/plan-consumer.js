@@ -12,6 +12,7 @@ import { PlanningResult } from './planning-result.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
 import { DevtoolsConnection } from '../debug/devtools-connection.js';
 import { StrategyExplorerAdapter } from '../debug/strategy-explorer-adapter.js';
+import { PlanningExplorerAdapter } from '../debug/planning-explorer-adapter.js';
 export class PlanConsumer {
     constructor(arc, result) {
         // Callback is triggered when planning results have changed.
@@ -20,6 +21,7 @@ export class PlanConsumer {
         this.visibleSuggestionsChangeCallbacks = [];
         this.suggestionComposer = null;
         this.currentSuggestions = [];
+        this.devtoolsChannel = null;
         assert(arc, 'arc cannot be null');
         assert(result, 'result cannot be null');
         this.arc = arc;
@@ -29,6 +31,9 @@ export class PlanConsumer {
         this.visibleSuggestionsChangeCallbacks = [];
         this._initSuggestionComposer();
         this.result.registerChangeCallback(() => this.onSuggestionsChanged());
+        if (DevtoolsConnection.isConnected) {
+            this.devtoolsChannel = DevtoolsConnection.get().forArc(this.arc);
+        }
     }
     registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
     registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
@@ -43,15 +48,9 @@ export class PlanConsumer {
     onSuggestionsChanged() {
         this._onSuggestionsChanged();
         this._onMaybeSuggestionsChanged();
-        if (this.result.generations.length && DevtoolsConnection.isConnected) {
-            StrategyExplorerAdapter.processGenerations(this.result.generations, DevtoolsConnection.get().forArc(this.arc), { label: 'Plan Consumer', keep: true });
-            DevtoolsConnection.get().forArc(this.arc).send({
-                messageType: 'suggestions-changed',
-                messageBody: {
-                    suggestions: this.result.suggestions,
-                    lastUpdated: this.result.lastUpdated.getTime()
-                },
-            });
+        PlanningExplorerAdapter.updatePlanningResults(this.result, this.devtoolsChannel);
+        if (this.result.generations.length) {
+            StrategyExplorerAdapter.processGenerations(this.result.generations, this.devtoolsChannel, { label: 'Plan Consumer', keep: true });
         }
     }
     getCurrentSuggestions() {
