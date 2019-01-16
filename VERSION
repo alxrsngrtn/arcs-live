@@ -1,9 +1,5 @@
-commit d2c15691da8e225250b67c8b54d02c6271496a57
+commit 797f4450fdae8d3f59da9531490297e549f3aca0
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jan 15 17:25:06 2019 -0800
+Date:   Tue Jan 15 17:45:38 2019 -0800
 
-    treat null and undefined as same container in slot-context and slot-consumer (#2600)
-    
-    * treat null and undefined as same container in slot-context and slot-consumer
-    
-    * address comment - rephrase expression
+    highlight visible suggestions in devtools planning (#2601)

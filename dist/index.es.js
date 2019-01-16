@@ -27890,6 +27890,16 @@ class PlanningExplorerAdapter {
             });
         }
     }
+    static updateVisibleSuggestions(visibleSuggestions, devtoolsChannel) {
+        if (devtoolsChannel) {
+            devtoolsChannel.send({
+                messageType: 'visible-suggestions-changed',
+                messageBody: {
+                    visibleSuggestionHashes: visibleSuggestions.map(s => s.hash)
+                }
+            });
+        }
+    }
 }
 
 /**
@@ -27936,7 +27946,6 @@ class PlanConsumer {
     onSuggestionsChanged() {
         this._onSuggestionsChanged();
         this._onMaybeSuggestionsChanged();
-        PlanningExplorerAdapter.updatePlanningResults(this.result, this.devtoolsChannel);
         if (this.result.generations.length) {
             StrategyExplorerAdapter.processGenerations(this.result.generations, this.devtoolsChannel, { label: 'Plan Consumer', keep: true });
         }
@@ -27980,12 +27989,14 @@ class PlanConsumer {
     }
     _onSuggestionsChanged() {
         this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
+        PlanningExplorerAdapter.updatePlanningResults(this.result, this.devtoolsChannel);
     }
     _onMaybeSuggestionsChanged() {
         const suggestions = this.getCurrentSuggestions();
         if (!PlanningResult.isEquivalent(this.currentSuggestions, suggestions)) {
             this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
             this.currentSuggestions = suggestions;
+            PlanningExplorerAdapter.updateVisibleSuggestions(this.currentSuggestions, this.devtoolsChannel);
         }
     }
     _initSuggestionComposer() {

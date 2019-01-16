@@ -25,5 +25,15 @@ export class PlanningExplorerAdapter {
             });
         }
     }
+    static updateVisibleSuggestions(visibleSuggestions, devtoolsChannel) {
+        if (devtoolsChannel) {
+            devtoolsChannel.send({
+                messageType: 'visible-suggestions-changed',
+                messageBody: {
+                    visibleSuggestionHashes: visibleSuggestions.map(s => s.hash)
+                }
+            });
+        }
+    }
 }
 //# sourceMappingURL=planning-explorer-adapter.js.map

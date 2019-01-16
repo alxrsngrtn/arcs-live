@@ -85956,7 +85956,6 @@ class PlanConsumer {
     onSuggestionsChanged() {
         this._onSuggestionsChanged();
         this._onMaybeSuggestionsChanged();
-        _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_5__["PlanningExplorerAdapter"].updatePlanningResults(this.result, this.devtoolsChannel);
         if (this.result.generations.length) {
             _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__["StrategyExplorerAdapter"].processGenerations(this.result.generations, this.devtoolsChannel, { label: 'Plan Consumer', keep: true });
         }
@@ -86000,12 +85999,14 @@ class PlanConsumer {
     }
     _onSuggestionsChanged() {
         this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
+        _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_5__["PlanningExplorerAdapter"].updatePlanningResults(this.result, this.devtoolsChannel);
     }
     _onMaybeSuggestionsChanged() {
         const suggestions = this.getCurrentSuggestions();
         if (!_planning_result_js__WEBPACK_IMPORTED_MODULE_1__["PlanningResult"].isEquivalent(this.currentSuggestions, suggestions)) {
             this.visibleSuggestionsChangeCallbacks.forEach(callback => callback(suggestions));
             this.currentSuggestions = suggestions;
+            _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_5__["PlanningExplorerAdapter"].updateVisibleSuggestions(this.currentSuggestions, this.devtoolsChannel);
         }
     }
     _initSuggestionComposer() {
@@ -86134,6 +86135,16 @@ class PlanningExplorerAdapter {
                 messageBody: {
                     suggestions,
                     lastUpdated: result.lastUpdated.getTime()
+                }
+            });
+        }
+    }
+    static updateVisibleSuggestions(visibleSuggestions, devtoolsChannel) {
+        if (devtoolsChannel) {
+            devtoolsChannel.send({
+                messageType: 'visible-suggestions-changed',
+                messageBody: {
+                    visibleSuggestionHashes: visibleSuggestions.map(s => s.hash)
                 }
             });
         }
