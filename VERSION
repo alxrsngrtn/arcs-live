@@ -1,5 +1,5 @@
-commit 797f4450fdae8d3f59da9531490297e549f3aca0
+commit 2fb0f0f766a2e76dd8f3222293389ae2795267ce
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jan 15 17:45:38 2019 -0800
+Date:   Wed Jan 16 09:27:55 2019 -0800
 
-    highlight visible suggestions in devtools planning (#2601)
+    update assert to help debug flaky planificator-test (#2604)
