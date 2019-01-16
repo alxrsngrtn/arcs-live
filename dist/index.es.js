@@ -25142,7 +25142,7 @@ class ProvidedSlotContext extends SlotContext {
                 Object.keys(this.container).every(key => Object.keys(container).some(newKey => newKey === key)) &&
                 Object.values(this.container).every(currentContainer => Object.values(container).some(newContainer => newContainer === currentContainer));
         }
-        return this.container === container;
+        return (!container && !this.container) || (this.container === container);
     }
     set container(container) {
         if (this.isSameContainer(container)) {
@@ -25318,7 +25318,9 @@ class SlotConsumer {
             }
         });
     }
-    isSameContainer(container, contextContainer) { return container === contextContainer; }
+    isSameContainer(container, contextContainer) {
+        return (!container && !contextContainer) || (container === contextContainer);
+    }
     // abstract
     constructRenderRequest() { return []; }
     dispose() { }

@@ -158,7 +158,9 @@ export class SlotConsumer {
             }
         });
     }
-    isSameContainer(container, contextContainer) { return container === contextContainer; }
+    isSameContainer(container, contextContainer) {
+        return (!container && !contextContainer) || (container === contextContainer);
+    }
     // abstract
     constructRenderRequest() { return []; }
     dispose() { }

@@ -1,9 +1,9 @@
-commit bbeae6450062cf487af7c4c5c0c9c3a454f47d44
+commit d2c15691da8e225250b67c8b54d02c6271496a57
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jan 15 15:14:02 2019 -0800
+Date:   Tue Jan 15 17:25:06 2019 -0800
 
-    remove circular structure from suggestion devtools message (#2595)
+    treat null and undefined as same container in slot-context and slot-consumer (#2600)
     
-    * remove circular structure from suggestion devtools message
+    * treat null and undefined as same container in slot-context and slot-consumer
     
-    * fix lint
+    * address comment - rephrase expression
