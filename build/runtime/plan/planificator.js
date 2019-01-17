@@ -13,6 +13,7 @@ import { PlanProducer } from './plan-producer.js';
 import { PlanningResult } from './planning-result.js';
 import { ReplanQueue } from './replan-queue.js';
 import { EntityType } from '../type.js';
+import { PlanningExplorerAdapter } from '../debug/planning-explorer-adapter.js';
 export class Planificator {
     constructor(arc, userid, store, searchStore, onlyConsumer = false, debug = false) {
         this.search = null;
@@ -34,6 +35,7 @@ export class Planificator {
         this.consumer = new PlanConsumer(this.arc, this.result);
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
+        PlanningExplorerAdapter.subscribeToForceReplan(this);
     }
     static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
         assert(arc, 'Arc cannot be null.');

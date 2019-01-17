@@ -1,7 +1,5 @@
-commit d9b4f7909135026eac21c75cfa0540f59b0423fd
+commit 984c86adc9d69b9d5054d0ad234007d8d6326267
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jan 17 14:09:29 2019 -0800
+Date:   Thu Jan 17 14:36:10 2019 -0800
 
-    add past replanning attempts to devtools (#2614)
-    
-    including cancelled attempts, and attempts that didn't change the actual results.
+    Add force-replan button to planning page in devtools (#2615)

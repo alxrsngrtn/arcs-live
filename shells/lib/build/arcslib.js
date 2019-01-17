@@ -85623,6 +85623,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(232);
 /* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(252);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4);
+/* harmony import */ var _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(250);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -85632,6 +85633,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -85659,6 +85661,7 @@ class Planificator {
         this.consumer = new _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__["PlanConsumer"](this.arc, this.result);
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
+        _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_6__["PlanningExplorerAdapter"].subscribeToForceReplan(this);
     }
     static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'Arc cannot be null.');
@@ -85993,6 +85996,8 @@ class SuggestionComposer {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanningExplorerAdapter", function() { return PlanningExplorerAdapter; });
+/* harmony import */ var _devtools_connection_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(29);
+
 class PlanningExplorerAdapter {
     static updatePlanningResults(result, devtoolsChannel) {
         if (devtoolsChannel) {
@@ -86032,6 +86037,17 @@ class PlanningExplorerAdapter {
             delete suggestionCopy.plan;
             return suggestionCopy;
         });
+    }
+    static subscribeToForceReplan(planificator) {
+        if (_devtools_connection_js__WEBPACK_IMPORTED_MODULE_0__["DevtoolsConnection"].isConnected) {
+            const devtoolsChannel = _devtools_connection_js__WEBPACK_IMPORTED_MODULE_0__["DevtoolsConnection"].get().forArc(planificator.arc);
+            devtoolsChannel.listen('force-replan', async () => {
+                planificator.consumer.result.suggestions = [];
+                await planificator.consumer.result.flush();
+                await planificator.requestPlanning();
+                await planificator.loadSuggestions();
+            });
+        }
     }
 }
 //# sourceMappingURL=planning-explorer-adapter.js.map

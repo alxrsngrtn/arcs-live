@@ -1,3 +1,4 @@
+import { DevtoolsConnection } from './devtools-connection.js';
 export class PlanningExplorerAdapter {
     static updatePlanningResults(result, devtoolsChannel) {
         if (devtoolsChannel) {
@@ -37,6 +38,17 @@ export class PlanningExplorerAdapter {
             delete suggestionCopy.plan;
             return suggestionCopy;
         });
+    }
+    static subscribeToForceReplan(planificator) {
+        if (DevtoolsConnection.isConnected) {
+            const devtoolsChannel = DevtoolsConnection.get().forArc(planificator.arc);
+            devtoolsChannel.listen('force-replan', async () => {
+                planificator.consumer.result.suggestions = [];
+                await planificator.consumer.result.flush();
+                await planificator.requestPlanning();
+                await planificator.loadSuggestions();
+            });
+        }
     }
 }
 //# sourceMappingURL=planning-explorer-adapter.js.map

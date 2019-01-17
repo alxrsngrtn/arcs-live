@@ -27907,6 +27907,17 @@ class PlanningExplorerAdapter {
             return suggestionCopy;
         });
     }
+    static subscribeToForceReplan(planificator) {
+        if (DevtoolsConnection.isConnected) {
+            const devtoolsChannel = DevtoolsConnection.get().forArc(planificator.arc);
+            devtoolsChannel.listen('force-replan', async () => {
+                planificator.consumer.result.suggestions = [];
+                await planificator.consumer.result.flush();
+                await planificator.requestPlanning();
+                await planificator.loadSuggestions();
+            });
+        }
+    }
 }
 
 /**
@@ -28288,6 +28299,7 @@ class Planificator {
         this.consumer = new PlanConsumer(this.arc, this.result);
         this.lastActivatedPlan = null;
         this.arc.registerInstantiatePlanCallback(this.arcCallback);
+        PlanningExplorerAdapter.subscribeToForceReplan(this);
     }
     static async create(arc, { userid, storageKeyBase, onlyConsumer, debug = false }) {
         assert$1(arc, 'Arc cannot be null.');

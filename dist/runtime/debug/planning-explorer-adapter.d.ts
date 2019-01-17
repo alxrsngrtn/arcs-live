@@ -1,3 +1,4 @@
+import { Planificator } from '../plan/planificator.js';
 import { Suggestion } from '../plan/suggestion';
 export declare class PlanningExplorerAdapter {
     static updatePlanningResults(result: any, devtoolsChannel: any): void;
@@ -6,4 +7,5 @@ export declare class PlanningExplorerAdapter {
         suggestions?: Suggestion[];
     }, devtoolsChannel: any): void;
     private static _formatSuggestions;
+    static subscribeToForceReplan(planificator: Planificator): void;
 }
