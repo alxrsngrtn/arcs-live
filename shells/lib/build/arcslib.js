@@ -83432,7 +83432,7 @@ class PlanningResult {
             oldSuggestions.length === newSuggestions.length &&
             oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
     }
-    async fromLiteral({ suggestions, generations, lastUpdated }) {
+    async fromLiteral({ suggestions, generations, lastUpdated, contextual }) {
         const deserializedSuggestions = [];
         for (const suggestion of suggestions) {
             deserializedSuggestions.push(await _suggestion_js__WEBPACK_IMPORTED_MODULE_3__["Suggestion"].fromLiteral(suggestion, this.envOptions));
@@ -83441,7 +83441,7 @@ class PlanningResult {
             suggestions: deserializedSuggestions,
             generations: JSON.parse(generations || '[]'),
             lastUpdated: new Date(lastUpdated),
-            contextual: suggestions.contextual
+            contextual
         });
     }
     toLiteral() {
@@ -86071,6 +86071,8 @@ const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFacto
 class PlanProducer {
     constructor(arc, result, searchStore, { debug = false } = {}) {
         this.planner = null;
+        this.needReplan = false;
+        this._isPlanning = false;
         this.stateChangedCallbacks = [];
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result, 'result cannot be null');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');

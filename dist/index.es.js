@@ -24849,7 +24849,7 @@ class PlanningResult {
             oldSuggestions.length === newSuggestions.length &&
             oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
     }
-    async fromLiteral({ suggestions, generations, lastUpdated }) {
+    async fromLiteral({ suggestions, generations, lastUpdated, contextual }) {
         const deserializedSuggestions = [];
         for (const suggestion of suggestions) {
             deserializedSuggestions.push(await Suggestion.fromLiteral(suggestion, this.envOptions));
@@ -24858,7 +24858,7 @@ class PlanningResult {
             suggestions: deserializedSuggestions,
             generations: JSON.parse(generations || '[]'),
             lastUpdated: new Date(lastUpdated),
-            contextual: suggestions.contextual
+            contextual
         });
     }
     toLiteral() {
@@ -28027,6 +28027,8 @@ const error$1 = logFactory('PlanProducer', '#ff0090', 'error');
 class PlanProducer {
     constructor(arc, result, searchStore, { debug = false } = {}) {
         this.planner = null;
+        this.needReplan = false;
+        this._isPlanning = false;
         this.stateChangedCallbacks = [];
         assert$1(result, 'result cannot be null');
         assert$1(arc, 'arc cannot be null');

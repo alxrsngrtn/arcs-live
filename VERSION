@@ -1,29 +1,11 @@
-commit 313830cbe6a69a58b7f6d8c95007b649b8ed78fc
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Jan 16 17:09:58 2019 -0800
+commit 4131f47abc341e6dde74fdd6490cde33c3d89947
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Jan 17 10:25:07 2019 -0800
 
-    Shell demo work (#2602)
+    fix contextual planning-result deserialization (#2608)
     
-    * minor cleanups
+    * fix contextual planning-result deserialization
     
-    * enable log-web logging in all cases (stopgap)
+    * address comment: replace assert
     
-    * recover lost commits
-    
-    * replace `nosync` with `volatile`
-    
-    * restrict body to 320px min-width
-    
-    * hopefully fix breakpoints for restaurant tiles
-    
-    * fix usage of descriptions in ReservationAnnotation
-    
-    * update text
-    
-    * fix indenting in template-string
-    
-    * modernize tests
-    
-    * skip choosing a restaurant for now, it takes too long
-    
-    * add comments, remove dead code
+    * add log to investigate flaky test

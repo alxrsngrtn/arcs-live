@@ -21,6 +21,8 @@ const error = logFactory('PlanProducer', '#ff0090', 'error');
 export class PlanProducer {
     constructor(arc, result, searchStore, { debug = false } = {}) {
         this.planner = null;
+        this.needReplan = false;
+        this._isPlanning = false;
         this.stateChangedCallbacks = [];
         assert(result, 'result cannot be null');
         assert(arc, 'arc cannot be null');

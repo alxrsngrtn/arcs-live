@@ -240,7 +240,7 @@ export class PlanningResult {
             oldSuggestions.length === newSuggestions.length &&
             oldSuggestions.every(suggestion => newSuggestions.find(newSuggestion => suggestion.isEquivalent(newSuggestion)));
     }
-    async fromLiteral({ suggestions, generations, lastUpdated }) {
+    async fromLiteral({ suggestions, generations, lastUpdated, contextual }) {
         const deserializedSuggestions = [];
         for (const suggestion of suggestions) {
             deserializedSuggestions.push(await Suggestion.fromLiteral(suggestion, this.envOptions));
@@ -249,7 +249,7 @@ export class PlanningResult {
             suggestions: deserializedSuggestions,
             generations: JSON.parse(generations || '[]'),
             lastUpdated: new Date(lastUpdated),
-            contextual: suggestions.contextual
+            contextual
         });
     }
     toLiteral() {

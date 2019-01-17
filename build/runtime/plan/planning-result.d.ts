@@ -45,10 +45,11 @@ export declare class PlanningResult {
     olderThan(other: any): boolean;
     isEquivalent(suggestions: any): any;
     static isEquivalent(oldSuggestions: any, newSuggestions: any): any;
-    fromLiteral({ suggestions, generations, lastUpdated }: {
+    fromLiteral({ suggestions, generations, lastUpdated, contextual }: {
         suggestions: any;
         generations?: any;
         lastUpdated?: Date;
+        contextual?: boolean;
     }): Promise<boolean>;
     toLiteral(): {
         suggestions: {
