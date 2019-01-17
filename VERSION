@@ -1,5 +1,5 @@
-commit 984c86adc9d69b9d5054d0ad234007d8d6326267
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jan 17 14:36:10 2019 -0800
+commit 64597123c2852b8b0c6aa6d237e6bba099425fcc
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Jan 18 09:58:37 2019 +1100
 
-    Add force-replan button to planning page in devtools (#2615)
+    Small fix to URL & Connections maintenance in devtools background page (#2618)
