@@ -1,25 +1,10 @@
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 export class PlanningExplorerAdapter {
     static updatePlanningResults(result, devtoolsChannel) {
         if (devtoolsChannel) {
-            const suggestions = result.suggestions.map(s => {
-                const suggestionCopy = Object.assign({}, s);
-                suggestionCopy.particles = s.plan.particles.map(p => ({ name: p.name }));
-                delete suggestionCopy.plan;
-                return suggestionCopy;
-            });
             devtoolsChannel.send({
                 messageType: 'suggestions-changed',
                 messageBody: {
-                    suggestions,
+                    suggestions: PlanningExplorerAdapter._formatSuggestions(result.suggestions),
                     lastUpdated: result.lastUpdated.getTime()
                 }
             });
@@ -34,6 +19,24 @@ export class PlanningExplorerAdapter {
                 }
             });
         }
+    }
+    static updatePlanningAttempt({ suggestions }, devtoolsChannel) {
+        if (devtoolsChannel) {
+            devtoolsChannel.send({
+                messageType: 'planning-attempt',
+                messageBody: {
+                    suggestions: suggestions ? PlanningExplorerAdapter._formatSuggestions(suggestions) : null,
+                }
+            });
+        }
+    }
+    static _formatSuggestions(suggestions) {
+        return suggestions.map(s => {
+            const suggestionCopy = Object.assign({}, s);
+            suggestionCopy['particles'] = s.plan.particles.map(p => ({ name: p.name }));
+            delete suggestionCopy.plan;
+            return suggestionCopy;
+        });
     }
 }
 //# sourceMappingURL=planning-explorer-adapter.js.map

@@ -85993,28 +85993,13 @@ class SuggestionComposer {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanningExplorerAdapter", function() { return PlanningExplorerAdapter; });
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
 class PlanningExplorerAdapter {
     static updatePlanningResults(result, devtoolsChannel) {
         if (devtoolsChannel) {
-            const suggestions = result.suggestions.map(s => {
-                const suggestionCopy = Object.assign({}, s);
-                suggestionCopy.particles = s.plan.particles.map(p => ({ name: p.name }));
-                delete suggestionCopy.plan;
-                return suggestionCopy;
-            });
             devtoolsChannel.send({
                 messageType: 'suggestions-changed',
                 messageBody: {
-                    suggestions,
+                    suggestions: PlanningExplorerAdapter._formatSuggestions(result.suggestions),
                     lastUpdated: result.lastUpdated.getTime()
                 }
             });
@@ -86029,6 +86014,24 @@ class PlanningExplorerAdapter {
                 }
             });
         }
+    }
+    static updatePlanningAttempt({ suggestions }, devtoolsChannel) {
+        if (devtoolsChannel) {
+            devtoolsChannel.send({
+                messageType: 'planning-attempt',
+                messageBody: {
+                    suggestions: suggestions ? PlanningExplorerAdapter._formatSuggestions(suggestions) : null,
+                }
+            });
+        }
+    }
+    static _formatSuggestions(suggestions) {
+        return suggestions.map(s => {
+            const suggestionCopy = Object.assign({}, s);
+            suggestionCopy['particles'] = s.plan.particles.map(p => ({ name: p.name }));
+            delete suggestionCopy.plan;
+            return suggestionCopy;
+        });
     }
 }
 //# sourceMappingURL=planning-explorer-adapter.js.map
@@ -86048,6 +86051,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(232);
 /* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(234);
 /* harmony import */ var _speculator_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(226);
+/* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(29);
+/* harmony import */ var _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(250);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -86065,6 +86070,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
 const defaultTimeoutMs = 5000;
 const log = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'log');
 const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'error');
@@ -86074,6 +86081,7 @@ class PlanProducer {
         this.needReplan = false;
         this._isPlanning = false;
         this.stateChangedCallbacks = [];
+        this.devtoolsChannel = null;
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result, 'result cannot be null');
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(arc, 'arc cannot be null');
         this.arc = arc;
@@ -86086,6 +86094,9 @@ class PlanProducer {
             this.searchStore.on('change', this.searchStoreCallback, this);
         }
         this.debug = debug;
+        if (_debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_8__["DevtoolsConnection"].isConnected) {
+            this.devtoolsChannel = _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_8__["DevtoolsConnection"].get().forArc(this.arc);
+        }
     }
     get isPlanning() { return this._isPlanning; }
     set isPlanning(isPlanning) {
@@ -86160,11 +86171,21 @@ class PlanProducer {
             suggestions = await this.runPlanner(this.replanOptions, generations);
         }
         time = ((Object(_platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__["now"])() - time) / 1000).toFixed(2);
-        // Suggestions are null, if planning was cancelled.
         if (suggestions) {
             log(`[${this.arc.arcId}] Produced ${suggestions.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
             this.isPlanning = false;
-            await this._updateResult({ suggestions, generations: this.debug ? generations : [] }, this.replanOptions);
+            if (this._updateResult({ suggestions, generations: this.debug ? generations : [] }, this.replanOptions)) {
+                // Store suggestions to store.
+                await this.result.flush();
+            }
+            else {
+                // Add skipped result to devtools.
+                _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_9__["PlanningExplorerAdapter"].updatePlanningAttempt({ suggestions }, this.devtoolsChannel);
+            }
+        }
+        else { // Suggestions are null, if planning was cancelled.
+            // Add cancelled attempt to devtools.
+            _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_9__["PlanningExplorerAdapter"].updatePlanningAttempt({}, this.devtoolsChannel);
         }
     }
     async runPlanner(options, generations) {
@@ -86197,21 +86218,15 @@ class PlanProducer {
         this.isPlanning = false; // using the setter method to trigger callbacks.
         log(`Cancel planning`);
     }
-    async _updateResult({ suggestions, generations }, options) {
+    _updateResult({ suggestions, generations }, options) {
         generations = _planning_result_js__WEBPACK_IMPORTED_MODULE_5__["PlanningResult"].formatSerializableGenerations(generations);
         if (options.append) {
             Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!options['contextual'], `Cannot append to contextual options`);
-            if (!this.result.append({ suggestions, generations })) {
-                return;
-            }
+            return this.result.append({ suggestions, generations });
         }
         else {
-            if (!this.result.merge({ suggestions, generations, contextual: options['contextual'] }, this.arc)) {
-                return;
-            }
+            return this.result.merge({ suggestions, generations, contextual: options['contextual'] }, this.arc);
         }
-        // Store suggestions to store.
-        await this.result.flush();
     }
 }
 //# sourceMappingURL=plan-producer.js.map

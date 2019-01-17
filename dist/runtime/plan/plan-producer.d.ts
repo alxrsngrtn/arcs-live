@@ -14,6 +14,7 @@ import { RecipeIndex } from '../recipe-index.js';
 import { Speculator } from '../speculator.js';
 import { Suggestion } from './suggestion.js';
 import { VariableStorageProvider } from '../storage/storage-provider-base.js';
+import { ArcDevtoolsChannel } from '../debug/abstract-devtools-channel.js';
 export declare class PlanProducer {
     arc: Arc;
     result: PlanningResult;
@@ -28,6 +29,7 @@ export declare class PlanProducer {
     searchStore?: VariableStorageProvider;
     searchStoreCallback: ({}: {}) => void;
     debug: boolean;
+    devtoolsChannel: ArcDevtoolsChannel;
     constructor(arc: Arc, result: PlanningResult, searchStore?: VariableStorageProvider, { debug }?: {
         debug?: boolean;
     });

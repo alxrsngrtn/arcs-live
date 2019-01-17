@@ -1,11 +1,7 @@
-commit 4131f47abc341e6dde74fdd6490cde33c3d89947
+commit d9b4f7909135026eac21c75cfa0540f59b0423fd
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jan 17 10:25:07 2019 -0800
+Date:   Thu Jan 17 14:09:29 2019 -0800
 
-    fix contextual planning-result deserialization (#2608)
+    add past replanning attempts to devtools (#2614)
     
-    * fix contextual planning-result deserialization
-    
-    * address comment: replace assert
-    
-    * add log to investigate flaky test
+    including cancelled attempts, and attempts that didn't change the actual results.
