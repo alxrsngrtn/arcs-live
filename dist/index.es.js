@@ -18133,32 +18133,36 @@ class Manifest {
             }
             const lines = content.split('\n');
             const line = lines[e.location.start.line - 1];
-            let span = 1;
-            if (e.location.end.line === e.location.start.line) {
-                span = e.location.end.column - e.location.start.column;
-            }
-            else {
-                span = line.length - e.location.start.column;
-            }
-            span = Math.max(1, span);
-            let highlight = '';
-            for (let i = 0; i < e.location.start.column - 1; i++) {
-                highlight += ' ';
-            }
-            for (let i = 0; i < span; i++) {
-                highlight += '^';
-            }
-            let preamble;
-            if (parseError) {
-                preamble = 'Parse error in';
-            }
-            else {
-                preamble = 'Post-parse processing error caused by';
-            }
-            const message = `${preamble} '${fileName}' line ${e.location.start.line}.
+            // TODO(sjmiles): see https://github.com/PolymerLabs/arcs/issues/2570
+            let message = e.message || '';
+            if (line) {
+                let span = 1;
+                if (e.location.end.line === e.location.start.line) {
+                    span = e.location.end.column - e.location.start.column;
+                }
+                else {
+                    span = line.length - e.location.start.column;
+                }
+                span = Math.max(1, span);
+                let highlight = '';
+                for (let i = 0; i < e.location.start.column - 1; i++) {
+                    highlight += ' ';
+                }
+                for (let i = 0; i < span; i++) {
+                    highlight += '^';
+                }
+                let preamble;
+                if (parseError) {
+                    preamble = 'Parse error in';
+                }
+                else {
+                    preamble = 'Post-parse processing error caused by';
+                }
+                message = `${preamble} '${fileName}' line ${e.location.start.line}.
 ${e.message}
   ${line}
   ${highlight}`;
+            }
             const err = new ManifestError(e.location, message);
             if (!parseError) {
                 err.stack = e.stack;
@@ -20758,8 +20762,8 @@ class ParticleExecutionHost {
             }
             async onArcCreateHandle(callback, arc, type, name) {
                 // At the moment, inner arcs are not persisted like their containers, but are instead
-                // recreated when an arc is deserialized. As a consequence of this, dynamically 
-                // created handles for inner arcs must always be volatile to prevent storage 
+                // recreated when an arc is deserialized. As a consequence of this, dynamically
+                // created handles for inner arcs must always be volatile to prevent storage
                 // in firebase.
                 const store = await arc.createStore(type, name, null, [], 'volatile');
                 // Store belongs to the inner arc, but the transformation particle,
@@ -20831,7 +20835,7 @@ class ParticleExecutionHost {
                                 arc.instantiate(recipe0);
                             }
                             else {
-                                error = `Recipe is not resolvable ${recipe0.toString({ showUnresolved: true })}`;
+                                error = `Recipe is not resolvable:\n${recipe0.toString({ showUnresolved: true })}`;
                             }
                         }
                         else {
@@ -27333,10 +27337,10 @@ class Arc {
                 context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version === null ? 0 : handle.version} ${handleTags} at '${handle.storageKey}'\n`;
                 break;
             case 'volatile': {
-                // TODO(sjmiles): emit empty data for stores marked `nosync`: shell will supply data
-                const nosync = handleTags.includes('nosync');
+                // TODO(sjmiles): emit empty data for stores marked `volatile`: shell will supply data
+                const volatile = handleTags.includes('volatile');
                 let serializedData = [];
-                if (!nosync) {
+                if (!volatile) {
                     // TODO: include keys in serialized [big]collections?
                     serializedData = (await handle.toLiteral()).model.map(({ id, value, index }) => {
                         if (value == null) {
@@ -27645,9 +27649,9 @@ ${this.activeRecipe.toString()}`;
                     .childKeyForHandle(id)
                     .toString();
         }
-        // TODO(sjmiles): use `volatile` for nosync stores
-        const hasNosyncTag = tags => tags && ((Array.isArray(tags) && tags.includes('nosync')) || tags === 'nosync');
-        if (storageKey == undefined || hasNosyncTag(tags)) {
+        // TODO(sjmiles): use `volatile` for volatile stores
+        const hasVolatileTag = tags => tags && ((Array.isArray(tags) && tags.includes('volatile')) || tags === 'volatile');
+        if (storageKey == undefined || hasVolatileTag(tags)) {
             storageKey = 'volatile';
         }
         const store = await this.storageProviderFactory.construct(id, type, storageKey);
@@ -29163,8 +29167,6 @@ const SingleUserContext = class {
       const store = await SyntheticStores.getStore(storage, key);
       if (store) {
         await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
-      } else {
-        warn$3(`failed to get SyntheticStore for arc at [${storage}, ${key}]\nhttps://github.com/PolymerLabs/arcs/issues/2304`);
       }
     }
   }
@@ -29264,9 +29266,9 @@ const SingleUserContext = class {
       // TODO(sjmiles): no mutation
       if (handle.type.isEntity) {
         if (info.data) {
-          // TODO(sjmiles): in the absence of data mutation, when entity changes
-          // it gets an entirely new id, so we cannot use entity id to track this
-          // entity in boxed stores. However as this entity is a Highlander for this
+          // TODO(sjmiles): in the absence of data mutation, when an entity changes
+          // it gets an entirely new id, so we cannot use ids to track entities
+          // in boxed stores. However as this entity is a Highlander for this
           // user and arc (by virtue of not being in a Collection) we can synthesize
           // a stable id.
           info.data.id = boxDataId;
@@ -29354,10 +29356,7 @@ const SingleUserContext = class {
     log$4(`removing entities for [${userid}]`);
     const jobs = [];
     for (let i=0, store; (store=context.stores[i]); i++) {
-      // SYSTEM_users persists across users
-      if (store.id !== 'SYSTEM_users') {
-        jobs.push(this.removeUserStoreEntities(userid, store, isProfile));
-      }
+      jobs.push(this.removeUserStoreEntities(userid, store, isProfile));
     }
     await Promise.all(jobs);
   }

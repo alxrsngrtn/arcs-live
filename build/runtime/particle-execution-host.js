@@ -114,8 +114,8 @@ export class ParticleExecutionHost {
             }
             async onArcCreateHandle(callback, arc, type, name) {
                 // At the moment, inner arcs are not persisted like their containers, but are instead
-                // recreated when an arc is deserialized. As a consequence of this, dynamically 
-                // created handles for inner arcs must always be volatile to prevent storage 
+                // recreated when an arc is deserialized. As a consequence of this, dynamically
+                // created handles for inner arcs must always be volatile to prevent storage
                 // in firebase.
                 const store = await arc.createStore(type, name, null, [], 'volatile');
                 // Store belongs to the inner arc, but the transformation particle,
@@ -187,7 +187,7 @@ export class ParticleExecutionHost {
                                 arc.instantiate(recipe0);
                             }
                             else {
-                                error = `Recipe is not resolvable ${recipe0.toString({ showUnresolved: true })}`;
+                                error = `Recipe is not resolvable:\n${recipe0.toString({ showUnresolved: true })}`;
                             }
                         }
                         else {

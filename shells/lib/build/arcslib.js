@@ -92,21 +92,21 @@
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_arc_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _build_runtime_modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _build_runtime_modality_handler_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(237);
-/* harmony import */ var _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(248);
+/* harmony import */ var _build_runtime_modality_handler_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(236);
+/* harmony import */ var _build_runtime_plan_planificator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(247);
 /* harmony import */ var _build_runtime_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(230);
-/* harmony import */ var _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(236);
-/* harmony import */ var _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(238);
+/* harmony import */ var _build_runtime_slot_composer_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(235);
+/* harmony import */ var _build_runtime_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(237);
 /* harmony import */ var _build_runtime_type_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(4);
 /* harmony import */ var _build_runtime_manifest_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(34);
 /* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(188);
 /* harmony import */ var _build_runtime_storage_storage_provider_factory_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(47);
-/* harmony import */ var _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(254);
+/* harmony import */ var _build_runtime_keymgmt_manager_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(253);
 /* harmony import */ var _build_runtime_recipe_recipe_resolver_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(181);
-/* harmony import */ var _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(260);
+/* harmony import */ var _build_runtime_firebase_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(259);
 /* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(197);
-/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(241);
-/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(234);
+/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(240);
+/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(260);
 /* harmony import */ var _browser_loader_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(261);
 /* harmony import */ var _build_platform_log_web_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(233);
 /**
@@ -378,10 +378,10 @@ class Arc {
                 context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version === null ? 0 : handle.version} ${handleTags} at '${handle.storageKey}'\n`;
                 break;
             case 'volatile': {
-                // TODO(sjmiles): emit empty data for stores marked `nosync`: shell will supply data
-                const nosync = handleTags.includes('nosync');
+                // TODO(sjmiles): emit empty data for stores marked `volatile`: shell will supply data
+                const volatile = handleTags.includes('volatile');
                 let serializedData = [];
-                if (!nosync) {
+                if (!volatile) {
                     // TODO: include keys in serialized [big]collections?
                     serializedData = (await handle.toLiteral()).model.map(({ id, value, index }) => {
                         if (value == null) {
@@ -690,9 +690,9 @@ ${this.activeRecipe.toString()}`;
                     .childKeyForHandle(id)
                     .toString();
         }
-        // TODO(sjmiles): use `volatile` for nosync stores
-        const hasNosyncTag = tags => tags && ((Array.isArray(tags) && tags.includes('nosync')) || tags === 'nosync');
-        if (storageKey == undefined || hasNosyncTag(tags)) {
+        // TODO(sjmiles): use `volatile` for volatile stores
+        const hasVolatileTag = tags => tags && ((Array.isArray(tags) && tags.includes('volatile')) || tags === 'volatile');
+        if (storageKey == undefined || hasVolatileTag(tags)) {
             storageKey = 'volatile';
         }
         const store = await this.storageProviderFactory.construct(id, type, storageKey);
@@ -3818,8 +3818,8 @@ class ParticleExecutionHost {
             }
             async onArcCreateHandle(callback, arc, type, name) {
                 // At the moment, inner arcs are not persisted like their containers, but are instead
-                // recreated when an arc is deserialized. As a consequence of this, dynamically 
-                // created handles for inner arcs must always be volatile to prevent storage 
+                // recreated when an arc is deserialized. As a consequence of this, dynamically
+                // created handles for inner arcs must always be volatile to prevent storage
                 // in firebase.
                 const store = await arc.createStore(type, name, null, [], 'volatile');
                 // Store belongs to the inner arc, but the transformation particle,
@@ -3891,7 +3891,7 @@ class ParticleExecutionHost {
                                 arc.instantiate(recipe0);
                             }
                             else {
-                                error = `Recipe is not resolvable ${recipe0.toString({ showUnresolved: true })}`;
+                                error = `Recipe is not resolvable:\n${recipe0.toString({ showUnresolved: true })}`;
                             }
                         }
                         else {
@@ -7560,32 +7560,36 @@ class Manifest {
             }
             const lines = content.split('\n');
             const line = lines[e.location.start.line - 1];
-            let span = 1;
-            if (e.location.end.line === e.location.start.line) {
-                span = e.location.end.column - e.location.start.column;
-            }
-            else {
-                span = line.length - e.location.start.column;
-            }
-            span = Math.max(1, span);
-            let highlight = '';
-            for (let i = 0; i < e.location.start.column - 1; i++) {
-                highlight += ' ';
-            }
-            for (let i = 0; i < span; i++) {
-                highlight += '^';
-            }
-            let preamble;
-            if (parseError) {
-                preamble = 'Parse error in';
-            }
-            else {
-                preamble = 'Post-parse processing error caused by';
-            }
-            const message = `${preamble} '${fileName}' line ${e.location.start.line}.
+            // TODO(sjmiles): see https://github.com/PolymerLabs/arcs/issues/2570
+            let message = e.message || '';
+            if (line) {
+                let span = 1;
+                if (e.location.end.line === e.location.start.line) {
+                    span = e.location.end.column - e.location.start.column;
+                }
+                else {
+                    span = line.length - e.location.start.column;
+                }
+                span = Math.max(1, span);
+                let highlight = '';
+                for (let i = 0; i < e.location.start.column - 1; i++) {
+                    highlight += ' ';
+                }
+                for (let i = 0; i < span; i++) {
+                    highlight += '^';
+                }
+                let preamble;
+                if (parseError) {
+                    preamble = 'Parse error in';
+                }
+                else {
+                    preamble = 'Post-parse processing error caused by';
+                }
+                message = `${preamble} '${fileName}' line ${e.location.start.line}.
 ${e.message}
   ${line}
   ${highlight}`;
+            }
             const err = new ManifestError(e.location, message);
             if (!parseError) {
                 err.stack = e.stack;
@@ -80043,7 +80047,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcDebugHandler", function() { return ArcDebugHandler; });
 /* harmony import */ var _tracing_adapter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(204);
 /* harmony import */ var _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(205);
-/* harmony import */ var _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(247);
+/* harmony import */ var _arc_stores_fetcher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(246);
 /* harmony import */ var _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
 /**
  * @license
@@ -80146,7 +80150,7 @@ function enableTracingAdapter(devtoolsChannel) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcPlannerInvoker", function() { return ArcPlannerInvoker; });
 /* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(206);
-/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(235);
+/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(234);
 /* harmony import */ var _strategies_coalesce_recipes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(225);
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
 /* harmony import */ var _strategies_rulesets_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(208);
@@ -83458,7 +83462,6 @@ class PlanningResult {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
-/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(234);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -83466,9 +83469,10 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
+//import {Debug, logFactory as _logFactory} from '../../modalities/dom/components/xen/xen-debug.js';
+//const factory = /*Debug.Level < 1 ? () => () => {} :*/ _logFactory;
 
-
-const factory = /*Debug.Level < 1 ? () => () => {} :*/ _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"];
+const factory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
 
 const logFactory = (...args) => factory(...args);
 
@@ -83479,133 +83483,10 @@ const logFactory = (...args) => factory(...args);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Debug", function() { return Debug; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "walker", function() { return walker; });
-const Debug = (Base, log) => class extends Base {
-  _setProperty(name, value) {
-    if (Debug.level > 1) {
-      if (((name in this._pendingProps) && (this._pendingProps[name] !== value)) || (this._props[name] !== value)) {
-        log('props', deepishClone({[name]: value}));
-      }
-    }
-    return super._setProperty(name, value);
-  }
-  _setState(state) {
-    if (typeof state !== 'object') {
-      console.warn(`Xen::_setState argument must be an object`);
-      return false;
-    }
-    if (super._setState(state)) {
-      if (Debug.level > 1) {
-        if (Debug.lastFire) {
-          //Debug.lastFire.log('[next state change from] fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
-          //Debug.lastFire.log('fire', Debug.lastFire.name, Debug.lastFire.detail);
-          log('(fired -->) state', deepishClone(state));
-        } else {
-          log('state', deepishClone(state));
-        }
-      }
-      return true;
-    }
-  }
-  _setImmutableState(name, value) {
-    log('state [immutable]', {[name]: value});
-    super._setImmutableState(name, value);
-  }
-  _fire(name, detail, node, init) {
-    Debug.lastFire = {name, detail: deepishClone(detail), log};
-    log('fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
-    super._fire(name, detail, node, init);
-    Debug.lastFire = null;
-  }
-  _doUpdate(...args) {
-    if (Debug.level > 2) {
-      log('updating...');
-    }
-    return super._doUpdate(...args);
-  }
-  _invalidate() {
-    if (Debug.level > 2) {
-      if (!this._validator) {
-        log('invalidating...');
-      }
-    }
-    super._invalidate();
-  }
-};
-
-// TODO(sjmiles): cloning prevents console log from showing values from the future,
-// but this must be a deep clone. Circular objects are not cloned.
-const deepishClone = (obj, depth) => {
-  if (!obj || typeof obj !== 'object') {
-    return obj;
-  }
-  const clone = Object.create(null);
-  for (const n in obj) {
-    let value = obj[n];
-    //try {
-    //  value = JSON.parse(JSON.stringify(value));
-    //} catch (x) {
-      if (depth < 1) {
-        value = deepishClone(obj, (depth || 0) + 1);
-      }
-    //}
-    clone[n] = value;
-  }
-  return clone;
-};
-
-Debug.level = 0;
-
-const _logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
-const logFactory = (preamble, color, log) => (Debug.level > 0) ? _logFactory(preamble, color, log) : () => {};
-
-const walker = (node, tree) => {
-  let subtree = tree;
-  if (!subtree) {
-    subtree = {};
-  }
-  const root = node || document.body;
-  let index = 1;
-  let child = root.firstElementChild;
-  while (child) {
-    const name = child.localName;
-    const clas = customElements.get(name);
-    if (clas) {
-      const shadow = child.shadowRoot;
-      const record = {
-        node: child,
-        props: child._props,
-        state: child._state
-      };
-      const children = shadow ? walker(shadow) : {};
-      if (children) {
-        record.children = children;
-      }
-      let moniker = `${name}${child.id ? `#${child.id}` : ``} (${index++})`;
-      while (subtree[moniker]) {
-        moniker += '_';
-      }
-      subtree[moniker] = record;
-    }
-    walker(child, subtree);
-    child = child.nextElementSibling;
-  }
-  return subtree;
-};
-
-
-/***/ }),
-/* 235 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeIndex", function() { return RecipeIndex; });
 /* harmony import */ var _manifest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(34);
 /* harmony import */ var _arc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-/* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(236);
+/* harmony import */ var _slot_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(235);
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
 /* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(231);
 /* harmony import */ var _tracelib_trace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(49);
@@ -83621,7 +83502,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(46);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(3);
 /* harmony import */ var _plan_planning_result_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(232);
-/* harmony import */ var _modality_handler_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(237);
+/* harmony import */ var _modality_handler_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(236);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -83927,7 +83808,7 @@ class RecipeIndex {
 //# sourceMappingURL=recipe-index.js.map
 
 /***/ }),
-/* 236 */
+/* 235 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -83935,8 +83816,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotComposer", function() { return SlotComposer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _modality_handler_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(237);
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(240);
+/* harmony import */ var _modality_handler_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(236);
+/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(239);
 /* harmony import */ var _description_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(227);
 /**
  * @license
@@ -84098,17 +83979,17 @@ class SlotComposer {
 //# sourceMappingURL=slot-composer.js.map
 
 /***/ }),
-/* 237 */
+/* 236 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ModalityHandler", function() { return ModalityHandler; });
-/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(238);
-/* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(243);
-/* harmony import */ var _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(244);
-/* harmony import */ var _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(245);
-/* harmony import */ var _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(246);
+/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(237);
+/* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(242);
+/* harmony import */ var _testing_mock_slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(243);
+/* harmony import */ var _testing_mock_suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(244);
+/* harmony import */ var _description_dom_formatter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(245);
 
 
 
@@ -84128,17 +84009,17 @@ ModalityHandler.domHandler = new ModalityHandler(_slot_dom_consumer_js__WEBPACK_
 //# sourceMappingURL=modality-handler.js.map
 
 /***/ }),
-/* 238 */
+/* 237 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotDomConsumer", function() { return SlotDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(239);
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(240);
-/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(241);
-/* harmony import */ var _modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(242);
+/* harmony import */ var _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(238);
+/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(239);
+/* harmony import */ var _modalities_dom_components_xen_xen_template_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(240);
+/* harmony import */ var _modalities_dom_components_icons_css_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(241);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -84438,14 +84319,14 @@ class SlotDomConsumer extends _slot_consumer_js__WEBPACK_IMPORTED_MODULE_1__["Sl
 //# sourceMappingURL=slot-dom-consumer.js.map
 
 /***/ }),
-/* 239 */
+/* 238 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotConsumer", function() { return SlotConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(240);
+/* harmony import */ var _slot_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(239);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -84623,7 +84504,7 @@ class SlotConsumer {
 //# sourceMappingURL=slot-consumer.js.map
 
 /***/ }),
-/* 240 */
+/* 239 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -84772,7 +84653,7 @@ class ProvidedSlotContext extends SlotContext {
 //# sourceMappingURL=slot-context.js.map
 
 /***/ }),
-/* 241 */
+/* 240 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -85175,7 +85056,7 @@ const Template = {
 
 
 /***/ }),
-/* 242 */
+/* 241 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -85205,13 +85086,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /***/ }),
-/* 243 */
+/* 242 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SuggestDomConsumer", function() { return SuggestDomConsumer; });
-/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(238);
+/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(237);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -85263,14 +85144,14 @@ class SuggestDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_
 //# sourceMappingURL=suggest-dom-consumer.js.map
 
 /***/ }),
-/* 244 */
+/* 243 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MockSlotDomConsumer", function() { return MockSlotDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(238);
+/* harmony import */ var _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(237);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -85342,14 +85223,14 @@ class MockSlotDomConsumer extends _slot_dom_consumer_js__WEBPACK_IMPORTED_MODULE
 //# sourceMappingURL=mock-slot-dom-consumer.js.map
 
 /***/ }),
-/* 245 */
+/* 244 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MockSuggestDomConsumer", function() { return MockSuggestDomConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(243);
+/* harmony import */ var _suggest_dom_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(242);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -85439,7 +85320,7 @@ class MockSuggestDomConsumer extends _suggest_dom_consumer_js__WEBPACK_IMPORTED_
 //# sourceMappingURL=mock-suggest-dom-consumer.js.map
 
 /***/ }),
-/* 246 */
+/* 245 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -85668,7 +85549,7 @@ class DescriptionDomFormatter extends _description_formatter_js__WEBPACK_IMPORTE
 //# sourceMappingURL=description-dom-formatter.js.map
 
 /***/ }),
-/* 247 */
+/* 246 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -85730,17 +85611,17 @@ class ArcStoresFetcher {
 //# sourceMappingURL=arc-stores-fetcher.js.map
 
 /***/ }),
-/* 248 */
+/* 247 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Planificator", function() { return Planificator; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(249);
-/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(252);
+/* harmony import */ var _plan_consumer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(248);
+/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(251);
 /* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(232);
-/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(253);
+/* harmony import */ var _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(252);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4);
 /**
  * @license
@@ -85894,7 +85775,7 @@ class Planificator {
 //# sourceMappingURL=planificator.js.map
 
 /***/ }),
-/* 249 */
+/* 248 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -85902,10 +85783,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanConsumer", function() { return PlanConsumer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(232);
-/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(250);
+/* harmony import */ var _suggestion_composer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(249);
 /* harmony import */ var _debug_devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
 /* harmony import */ var _debug_strategy_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(231);
-/* harmony import */ var _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(251);
+/* harmony import */ var _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(250);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -86020,7 +85901,7 @@ class PlanConsumer {
 //# sourceMappingURL=plan-consumer.js.map
 
 /***/ }),
-/* 250 */
+/* 249 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86106,7 +85987,7 @@ class SuggestionComposer {
 //# sourceMappingURL=suggestion-composer.js.map
 
 /***/ }),
-/* 251 */
+/* 250 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86153,7 +86034,7 @@ class PlanningExplorerAdapter {
 //# sourceMappingURL=planning-explorer-adapter.js.map
 
 /***/ }),
-/* 252 */
+/* 251 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86165,7 +86046,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(207);
 /* harmony import */ var _planner_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(206);
 /* harmony import */ var _planning_result_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(232);
-/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(235);
+/* harmony import */ var _recipe_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(234);
 /* harmony import */ var _speculator_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(226);
 /**
  * @license
@@ -86334,7 +86215,7 @@ class PlanProducer {
 //# sourceMappingURL=plan-producer.js.map
 
 /***/ }),
-/* 253 */
+/* 252 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86420,14 +86301,14 @@ class ReplanQueue {
 //# sourceMappingURL=replan-queue.js.map
 
 /***/ }),
-/* 254 */
+/* 253 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "KeyManager", function() { return KeyManager; });
-/* harmony import */ var _webcrypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(255);
-/* harmony import */ var _testing_cryptotestutils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(259);
+/* harmony import */ var _webcrypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(254);
+/* harmony import */ var _testing_cryptotestutils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(258);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -86455,17 +86336,17 @@ class KeyManager {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
-/* 255 */
+/* 254 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WebCryptoKeyGenerator", function() { return WebCryptoKeyGenerator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WebCryptoKeyIndexedDBStorage", function() { return WebCryptoKeyIndexedDBStorage; });
-/* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(256);
+/* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(255);
 /* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(idb__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _base64__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(257);
-/* harmony import */ var jsrsasign__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(258);
+/* harmony import */ var _base64__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(256);
+/* harmony import */ var jsrsasign__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(257);
 /* harmony import */ var jsrsasign__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jsrsasign__WEBPACK_IMPORTED_MODULE_2__);
 /**
  * @license
@@ -86779,7 +86660,7 @@ class WebCryptoKeyIndexedDBStorage {
 //# sourceMappingURL=webcrypto.js.map
 
 /***/ }),
-/* 256 */
+/* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -87100,7 +86981,7 @@ class WebCryptoKeyIndexedDBStorage {
 
 
 /***/ }),
-/* 257 */
+/* 256 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -87255,7 +87136,7 @@ function decode(str) {
 //# sourceMappingURL=base64.js.map
 
 /***/ }),
-/* 258 */
+/* 257 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {
@@ -87586,7 +87467,7 @@ exports.lang = KJUR.lang;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(104).Buffer))
 
 /***/ }),
-/* 259 */
+/* 258 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -87613,7 +87494,7 @@ class WebCryptoMemoryKeyStorage {
 //# sourceMappingURL=cryptotestutils.js.map
 
 /***/ }),
-/* 260 */
+/* 259 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -87628,6 +87509,129 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+/***/ }),
+/* 260 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Debug", function() { return Debug; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "walker", function() { return walker; });
+const Debug = (Base, log) => class extends Base {
+  _setProperty(name, value) {
+    if (Debug.level > 1) {
+      if (((name in this._pendingProps) && (this._pendingProps[name] !== value)) || (this._props[name] !== value)) {
+        log('props', deepishClone({[name]: value}));
+      }
+    }
+    return super._setProperty(name, value);
+  }
+  _setState(state) {
+    if (typeof state !== 'object') {
+      console.warn(`Xen::_setState argument must be an object`);
+      return false;
+    }
+    if (super._setState(state)) {
+      if (Debug.level > 1) {
+        if (Debug.lastFire) {
+          //Debug.lastFire.log('[next state change from] fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
+          //Debug.lastFire.log('fire', Debug.lastFire.name, Debug.lastFire.detail);
+          log('(fired -->) state', deepishClone(state));
+        } else {
+          log('state', deepishClone(state));
+        }
+      }
+      return true;
+    }
+  }
+  _setImmutableState(name, value) {
+    log('state [immutable]', {[name]: value});
+    super._setImmutableState(name, value);
+  }
+  _fire(name, detail, node, init) {
+    Debug.lastFire = {name, detail: deepishClone(detail), log};
+    log('fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
+    super._fire(name, detail, node, init);
+    Debug.lastFire = null;
+  }
+  _doUpdate(...args) {
+    if (Debug.level > 2) {
+      log('updating...');
+    }
+    return super._doUpdate(...args);
+  }
+  _invalidate() {
+    if (Debug.level > 2) {
+      if (!this._validator) {
+        log('invalidating...');
+      }
+    }
+    super._invalidate();
+  }
+};
+
+// TODO(sjmiles): cloning prevents console log from showing values from the future,
+// but this must be a deep clone. Circular objects are not cloned.
+const deepishClone = (obj, depth) => {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+  const clone = Object.create(null);
+  for (const n in obj) {
+    let value = obj[n];
+    //try {
+    //  value = JSON.parse(JSON.stringify(value));
+    //} catch (x) {
+      if (depth < 1) {
+        value = deepishClone(obj, (depth || 0) + 1);
+      }
+    //}
+    clone[n] = value;
+  }
+  return clone;
+};
+
+Debug.level = 0;
+
+const _logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
+const logFactory = (preamble, color, log) => (Debug.level > 0) ? _logFactory(preamble, color, log) : () => {};
+
+const walker = (node, tree) => {
+  let subtree = tree;
+  if (!subtree) {
+    subtree = {};
+  }
+  const root = node || document.body;
+  let index = 1;
+  let child = root.firstElementChild;
+  while (child) {
+    const name = child.localName;
+    const clas = customElements.get(name);
+    if (clas) {
+      const shadow = child.shadowRoot;
+      const record = {
+        node: child,
+        props: child._props,
+        state: child._state
+      };
+      const children = shadow ? walker(shadow) : {};
+      if (children) {
+        record.children = children;
+      }
+      let moniker = `${name}${child.id ? `#${child.id}` : ``} (${index++})`;
+      while (subtree[moniker]) {
+        moniker += '_';
+      }
+      subtree[moniker] = record;
+    }
+    walker(child, subtree);
+    child = child.nextElementSibling;
+  }
+  return subtree;
+};
 
 
 /***/ }),

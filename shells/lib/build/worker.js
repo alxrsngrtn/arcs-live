@@ -6479,7 +6479,6 @@ exports.compareByGeneratedPositionsInflated = compareByGeneratedPositionsInflate
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
-/* harmony import */ var _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(234);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -6487,135 +6486,12 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
+//import {Debug, logFactory as _logFactory} from '../../modalities/dom/components/xen/xen-debug.js';
+//const factory = /*Debug.Level < 1 ? () => () => {} :*/ _logFactory;
 
-
-const factory = /*Debug.Level < 1 ? () => () => {} :*/ _modalities_dom_components_xen_xen_debug_js__WEBPACK_IMPORTED_MODULE_0__["logFactory"];
+const factory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
 
 const logFactory = (...args) => factory(...args);
-
-
-/***/ }),
-
-/***/ 234:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Debug", function() { return Debug; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logFactory", function() { return logFactory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "walker", function() { return walker; });
-const Debug = (Base, log) => class extends Base {
-  _setProperty(name, value) {
-    if (Debug.level > 1) {
-      if (((name in this._pendingProps) && (this._pendingProps[name] !== value)) || (this._props[name] !== value)) {
-        log('props', deepishClone({[name]: value}));
-      }
-    }
-    return super._setProperty(name, value);
-  }
-  _setState(state) {
-    if (typeof state !== 'object') {
-      console.warn(`Xen::_setState argument must be an object`);
-      return false;
-    }
-    if (super._setState(state)) {
-      if (Debug.level > 1) {
-        if (Debug.lastFire) {
-          //Debug.lastFire.log('[next state change from] fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
-          //Debug.lastFire.log('fire', Debug.lastFire.name, Debug.lastFire.detail);
-          log('(fired -->) state', deepishClone(state));
-        } else {
-          log('state', deepishClone(state));
-        }
-      }
-      return true;
-    }
-  }
-  _setImmutableState(name, value) {
-    log('state [immutable]', {[name]: value});
-    super._setImmutableState(name, value);
-  }
-  _fire(name, detail, node, init) {
-    Debug.lastFire = {name, detail: deepishClone(detail), log};
-    log('fire', {[Debug.lastFire.name]: Debug.lastFire.detail});
-    super._fire(name, detail, node, init);
-    Debug.lastFire = null;
-  }
-  _doUpdate(...args) {
-    if (Debug.level > 2) {
-      log('updating...');
-    }
-    return super._doUpdate(...args);
-  }
-  _invalidate() {
-    if (Debug.level > 2) {
-      if (!this._validator) {
-        log('invalidating...');
-      }
-    }
-    super._invalidate();
-  }
-};
-
-// TODO(sjmiles): cloning prevents console log from showing values from the future,
-// but this must be a deep clone. Circular objects are not cloned.
-const deepishClone = (obj, depth) => {
-  if (!obj || typeof obj !== 'object') {
-    return obj;
-  }
-  const clone = Object.create(null);
-  for (const n in obj) {
-    let value = obj[n];
-    //try {
-    //  value = JSON.parse(JSON.stringify(value));
-    //} catch (x) {
-      if (depth < 1) {
-        value = deepishClone(obj, (depth || 0) + 1);
-      }
-    //}
-    clone[n] = value;
-  }
-  return clone;
-};
-
-Debug.level = 0;
-
-const _logFactory = (preamble, color, log='log') => console[log].bind(console, `%c${preamble}`, `background: ${color}; color: white; padding: 1px 6px 2px 7px; border-radius: 6px;`);
-const logFactory = (preamble, color, log) => (Debug.level > 0) ? _logFactory(preamble, color, log) : () => {};
-
-const walker = (node, tree) => {
-  let subtree = tree;
-  if (!subtree) {
-    subtree = {};
-  }
-  const root = node || document.body;
-  let index = 1;
-  let child = root.firstElementChild;
-  while (child) {
-    const name = child.localName;
-    const clas = customElements.get(name);
-    if (clas) {
-      const shadow = child.shadowRoot;
-      const record = {
-        node: child,
-        props: child._props,
-        state: child._state
-      };
-      const children = shadow ? walker(shadow) : {};
-      if (children) {
-        record.children = children;
-      }
-      let moniker = `${name}${child.id ? `#${child.id}` : ``} (${index++})`;
-      while (subtree[moniker]) {
-        moniker += '_';
-      }
-      subtree[moniker] = record;
-    }
-    walker(child, subtree);
-    child = child.nextElementSibling;
-  }
-  return subtree;
-};
 
 
 /***/ }),

@@ -158,10 +158,10 @@ export class Arc {
                 context.handles += `store ${id} of ${handle.type.toString()} ${combinedId} @${handle.version === null ? 0 : handle.version} ${handleTags} at '${handle.storageKey}'\n`;
                 break;
             case 'volatile': {
-                // TODO(sjmiles): emit empty data for stores marked `nosync`: shell will supply data
-                const nosync = handleTags.includes('nosync');
+                // TODO(sjmiles): emit empty data for stores marked `volatile`: shell will supply data
+                const volatile = handleTags.includes('volatile');
                 let serializedData = [];
-                if (!nosync) {
+                if (!volatile) {
                     // TODO: include keys in serialized [big]collections?
                     serializedData = (await handle.toLiteral()).model.map(({ id, value, index }) => {
                         if (value == null) {
@@ -470,9 +470,9 @@ ${this.activeRecipe.toString()}`;
                     .childKeyForHandle(id)
                     .toString();
         }
-        // TODO(sjmiles): use `volatile` for nosync stores
-        const hasNosyncTag = tags => tags && ((Array.isArray(tags) && tags.includes('nosync')) || tags === 'nosync');
-        if (storageKey == undefined || hasNosyncTag(tags)) {
+        // TODO(sjmiles): use `volatile` for volatile stores
+        const hasVolatileTag = tags => tags && ((Array.isArray(tags) && tags.includes('volatile')) || tags === 'volatile');
+        if (storageKey == undefined || hasVolatileTag(tags)) {
             storageKey = 'volatile';
         }
         const store = await this.storageProviderFactory.construct(id, type, storageKey);
