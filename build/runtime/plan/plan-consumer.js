@@ -91,7 +91,7 @@ export class PlanConsumer {
     }
     _onSuggestionsChanged() {
         this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
-        PlanningExplorerAdapter.updatePlanningResults(this.result, this.devtoolsChannel);
+        PlanningExplorerAdapter.updatePlanningResults(this.result, {}, this.devtoolsChannel);
     }
     _onMaybeSuggestionsChanged() {
         const suggestions = this.getCurrentSuggestions();

@@ -85640,7 +85640,7 @@ class Planificator {
         const searchStore = await Planificator._initSearchStore(arc, userid);
         const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
         await planificator.loadSuggestions();
-        planificator.requestPlanning({ contextual: true });
+        planificator.requestPlanning({ contextual: true, metadata: { trigger: _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["Trigger"].Init } });
         return planificator;
     }
     async requestPlanning(options = {}) {
@@ -85687,7 +85687,10 @@ class Planificator {
     }
     _onPlanInstantiated(plan) {
         this.lastActivatedPlan = plan;
-        this.requestPlanning();
+        this.requestPlanning({ metadata: {
+                trigger: _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["Trigger"].PlanInstantiated,
+                particleNames: plan.particles.map(p => p.name).join(',')
+            } });
     }
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);
@@ -85852,7 +85855,7 @@ class PlanConsumer {
     }
     _onSuggestionsChanged() {
         this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
-        _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_5__["PlanningExplorerAdapter"].updatePlanningResults(this.result, this.devtoolsChannel);
+        _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_5__["PlanningExplorerAdapter"].updatePlanningResults(this.result, {}, this.devtoolsChannel);
     }
     _onMaybeSuggestionsChanged() {
         const suggestions = this.getCurrentSuggestions();
@@ -85966,15 +85969,18 @@ class SuggestionComposer {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanningExplorerAdapter", function() { return PlanningExplorerAdapter; });
 /* harmony import */ var _devtools_connection_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(29);
+/* harmony import */ var _plan_plan_producer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(251);
+
 
 class PlanningExplorerAdapter {
-    static updatePlanningResults(result, devtoolsChannel) {
+    static updatePlanningResults(result, metadata, devtoolsChannel) {
         if (devtoolsChannel) {
             devtoolsChannel.send({
                 messageType: 'suggestions-changed',
                 messageBody: {
                     suggestions: PlanningExplorerAdapter._formatSuggestions(result.suggestions),
-                    lastUpdated: result.lastUpdated.getTime()
+                    lastUpdated: result.lastUpdated.getTime(),
+                    metadata
                 }
             });
         }
@@ -85989,12 +85995,13 @@ class PlanningExplorerAdapter {
             });
         }
     }
-    static updatePlanningAttempt({ suggestions }, devtoolsChannel) {
+    static updatePlanningAttempt(suggestions, metadata, devtoolsChannel) {
         if (devtoolsChannel) {
             devtoolsChannel.send({
                 messageType: 'planning-attempt',
                 messageBody: {
                     suggestions: suggestions ? PlanningExplorerAdapter._formatSuggestions(suggestions) : null,
+                    metadata
                 }
             });
         }
@@ -86013,7 +86020,7 @@ class PlanningExplorerAdapter {
             devtoolsChannel.listen('force-replan', async () => {
                 planificator.consumer.result.suggestions = [];
                 await planificator.consumer.result.flush();
-                await planificator.requestPlanning();
+                await planificator.requestPlanning({ metadata: { trigger: _plan_plan_producer_js__WEBPACK_IMPORTED_MODULE_1__["Trigger"].Forced } });
                 await planificator.loadSuggestions();
             });
         }
@@ -86027,6 +86034,7 @@ class PlanningExplorerAdapter {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Trigger", function() { return Trigger; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlanProducer", function() { return PlanProducer; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _strategies_init_search_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(216);
@@ -86060,6 +86068,14 @@ __webpack_require__.r(__webpack_exports__);
 const defaultTimeoutMs = 5000;
 const log = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'log');
 const error = Object(_platform_log_web_js__WEBPACK_IMPORTED_MODULE_2__["logFactory"])('PlanProducer', '#ff0090', 'error');
+var Trigger;
+(function (Trigger) {
+    Trigger["Init"] = "init";
+    Trigger["Search"] = "search";
+    Trigger["PlanInstantiated"] = "plan-instantiated";
+    Trigger["DataChanged"] = "data-changed";
+    Trigger["Forced"] = "forced";
+})(Trigger || (Trigger = {}));
 class PlanProducer {
     constructor(arc, result, searchStore, { debug = false } = {}) {
         this.planner = null;
@@ -86109,9 +86125,10 @@ class PlanProducer {
             // search string turned empty, no need to replan, going back to contextual suggestions.
             return;
         }
+        const metadata = { trigger: Trigger.Search, search: this.search };
         if (this.search === '*') { // Search for ALL (including non-contextual) suggestions.
             if (this.result.contextual) {
-                this.produceSuggestions({ contextual: false });
+                this.produceSuggestions({ contextual: false, metadata });
             }
         }
         else { // Search by search term.
@@ -86131,7 +86148,7 @@ class PlanProducer {
                 options.append = true;
                 options.strategies = [_strategies_init_search_js__WEBPACK_IMPORTED_MODULE_1__["InitSearch"], ..._planner_js__WEBPACK_IMPORTED_MODULE_4__["Planner"].ResolutionStrategies];
             }
-            this.produceSuggestions(options);
+            this.produceSuggestions(Object.assign({}, options, { metadata }));
         }
     }
     dispose() {
@@ -86162,15 +86179,16 @@ class PlanProducer {
             if (this._updateResult({ suggestions, generations: this.debug ? generations : [] }, this.replanOptions)) {
                 // Store suggestions to store.
                 await this.result.flush();
+                _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_9__["PlanningExplorerAdapter"].updatePlanningResults(this.result, options['metadata'], this.devtoolsChannel);
             }
             else {
                 // Add skipped result to devtools.
-                _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_9__["PlanningExplorerAdapter"].updatePlanningAttempt({ suggestions }, this.devtoolsChannel);
+                _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_9__["PlanningExplorerAdapter"].updatePlanningAttempt(suggestions, options['metadata'], this.devtoolsChannel);
             }
         }
         else { // Suggestions are null, if planning was cancelled.
             // Add cancelled attempt to devtools.
-            _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_9__["PlanningExplorerAdapter"].updatePlanningAttempt({}, this.devtoolsChannel);
+            _debug_planning_explorer_adapter_js__WEBPACK_IMPORTED_MODULE_9__["PlanningExplorerAdapter"].updatePlanningAttempt(null, options['metadata'], this.devtoolsChannel);
         }
     }
     async runPlanner(options, generations) {
@@ -86224,6 +86242,7 @@ class PlanProducer {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReplanQueue", function() { return ReplanQueue; });
 /* harmony import */ var _platform_date_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(207);
+/* harmony import */ var _plan_producer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(251);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -86233,6 +86252,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 const defaultDefaultReplanDelayMs = 3000;
 class ReplanQueue {
@@ -86273,7 +86293,10 @@ class ReplanQueue {
     }
     _scheduleReplan(intervalMs) {
         this._cancelReplanIfScheduled();
-        this.replanTimer = setTimeout(() => this.planProducer.produceSuggestions({ contextual: this.planProducer.result.contextual }), intervalMs);
+        this.replanTimer = setTimeout(() => this.planProducer.produceSuggestions({
+            contextual: this.planProducer.result.contextual,
+            metadata: { trigger: _plan_producer_js__WEBPACK_IMPORTED_MODULE_1__["Trigger"].DataChanged }
+        }), intervalMs);
     }
     _cancelReplanIfScheduled() {
         if (this.isReplanningScheduled()) {

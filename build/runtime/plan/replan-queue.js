@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { now } from '../../platform/date-web.js';
+import { Trigger } from './plan-producer.js';
 const defaultDefaultReplanDelayMs = 3000;
 export class ReplanQueue {
     constructor(planProducer, options = {}) {
@@ -47,7 +48,10 @@ export class ReplanQueue {
     }
     _scheduleReplan(intervalMs) {
         this._cancelReplanIfScheduled();
-        this.replanTimer = setTimeout(() => this.planProducer.produceSuggestions({ contextual: this.planProducer.result.contextual }), intervalMs);
+        this.replanTimer = setTimeout(() => this.planProducer.produceSuggestions({
+            contextual: this.planProducer.result.contextual,
+            metadata: { trigger: Trigger.DataChanged }
+        }), intervalMs);
     }
     _cancelReplanIfScheduled() {
         if (this.isReplanningScheduled()) {

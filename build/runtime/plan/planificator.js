@@ -9,7 +9,7 @@
  */
 import { assert } from '../../platform/assert-web.js';
 import { PlanConsumer } from './plan-consumer.js';
-import { PlanProducer } from './plan-producer.js';
+import { PlanProducer, Trigger } from './plan-producer.js';
 import { PlanningResult } from './planning-result.js';
 import { ReplanQueue } from './replan-queue.js';
 import { EntityType } from '../type.js';
@@ -45,7 +45,7 @@ export class Planificator {
         const searchStore = await Planificator._initSearchStore(arc, userid);
         const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
         await planificator.loadSuggestions();
-        planificator.requestPlanning({ contextual: true });
+        planificator.requestPlanning({ contextual: true, metadata: { trigger: Trigger.Init } });
         return planificator;
     }
     async requestPlanning(options = {}) {
@@ -92,7 +92,10 @@ export class Planificator {
     }
     _onPlanInstantiated(plan) {
         this.lastActivatedPlan = plan;
-        this.requestPlanning();
+        this.requestPlanning({ metadata: {
+                trigger: Trigger.PlanInstantiated,
+                particleNames: plan.particles.map(p => p.name).join(',')
+            } });
     }
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);

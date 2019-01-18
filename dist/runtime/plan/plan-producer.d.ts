@@ -15,6 +15,13 @@ import { Speculator } from '../speculator.js';
 import { Suggestion } from './suggestion.js';
 import { VariableStorageProvider } from '../storage/storage-provider-base.js';
 import { ArcDevtoolsChannel } from '../debug/abstract-devtools-channel.js';
+export declare enum Trigger {
+    Init = "init",
+    Search = "search",
+    PlanInstantiated = "plan-instantiated",
+    DataChanged = "data-changed",
+    Forced = "forced"
+}
 export declare class PlanProducer {
     arc: Arc;
     result: PlanningResult;

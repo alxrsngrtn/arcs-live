@@ -27870,14 +27870,192 @@ class SuggestionComposer {
     }
 }
 
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const defaultTimeoutMs = 5000;
+const log = logFactory('PlanProducer', '#ff0090', 'log');
+const error$1 = logFactory('PlanProducer', '#ff0090', 'error');
+var Trigger;
+(function (Trigger) {
+    Trigger["Init"] = "init";
+    Trigger["Search"] = "search";
+    Trigger["PlanInstantiated"] = "plan-instantiated";
+    Trigger["DataChanged"] = "data-changed";
+    Trigger["Forced"] = "forced";
+})(Trigger || (Trigger = {}));
+class PlanProducer {
+    constructor(arc, result, searchStore, { debug = false } = {}) {
+        this.planner = null;
+        this.needReplan = false;
+        this._isPlanning = false;
+        this.stateChangedCallbacks = [];
+        this.devtoolsChannel = null;
+        assert$1(result, 'result cannot be null');
+        assert$1(arc, 'arc cannot be null');
+        this.arc = arc;
+        this.result = result;
+        this.recipeIndex = RecipeIndex.create(this.arc);
+        this.speculator = new Speculator(this.result);
+        this.searchStore = searchStore;
+        if (this.searchStore) {
+            this.searchStoreCallback = () => this.onSearchChanged();
+            this.searchStore.on('change', this.searchStoreCallback, this);
+        }
+        this.debug = debug;
+        if (DevtoolsConnection.isConnected) {
+            this.devtoolsChannel = DevtoolsConnection.get().forArc(this.arc);
+        }
+    }
+    get isPlanning() { return this._isPlanning; }
+    set isPlanning(isPlanning) {
+        if (this.isPlanning === isPlanning) {
+            return;
+        }
+        this._isPlanning = isPlanning;
+        this.stateChangedCallbacks.forEach(callback => callback(this.isPlanning));
+    }
+    registerStateChangedCallback(callback) {
+        this.stateChangedCallbacks.push(callback);
+    }
+    async onSearchChanged() {
+        const values = await this.searchStore.get() || [];
+        const arcId = this.arc.arcId;
+        const value = values.find(value => value.arc === arcId);
+        if (!value) {
+            return;
+        }
+        if (value.search === this.search) {
+            return;
+        }
+        this.search = value.search;
+        if (!this.search) {
+            // search string turned empty, no need to replan, going back to contextual suggestions.
+            return;
+        }
+        const metadata = { trigger: Trigger.Search, search: this.search };
+        if (this.search === '*') { // Search for ALL (including non-contextual) suggestions.
+            if (this.result.contextual) {
+                this.produceSuggestions({ contextual: false, metadata });
+            }
+        }
+        else { // Search by search term.
+            const options = {
+                cancelOngoingPlanning: this.result.suggestions.length > 0,
+                search: this.search
+            };
+            if (this.result.contextual) {
+                // If we're searching but currently only have contextual suggestions,
+                // we need get non-contextual suggestions as well.
+                options.contextual = false;
+            }
+            else {
+                // If search changed and we already how all suggestions (i.e. including
+                // non-contextual ones) then it's enough to initialize with InitSearch
+                // with a new search phrase.
+                options.append = true;
+                options.strategies = [InitSearch, ...Planner.ResolutionStrategies];
+            }
+            this.produceSuggestions(Object.assign({}, options, { metadata }));
+        }
+    }
+    dispose() {
+        this.searchStore.off('change', this.searchStoreCallback);
+    }
+    async produceSuggestions(options = {}) {
+        if (options['cancelOngoingPlanning'] && this.isPlanning) {
+            this._cancelPlanning();
+        }
+        this.needReplan = true;
+        this.replanOptions = options;
+        if (this.isPlanning) {
+            return;
+        }
+        this.isPlanning = true;
+        let time = now$1();
+        let suggestions = [];
+        let generations = [];
+        while (this.needReplan) {
+            this.needReplan = false;
+            generations = [];
+            suggestions = await this.runPlanner(this.replanOptions, generations);
+        }
+        time = ((now$1() - time) / 1000).toFixed(2);
+        if (suggestions) {
+            log(`[${this.arc.arcId}] Produced ${suggestions.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
+            this.isPlanning = false;
+            if (this._updateResult({ suggestions, generations: this.debug ? generations : [] }, this.replanOptions)) {
+                // Store suggestions to store.
+                await this.result.flush();
+                PlanningExplorerAdapter.updatePlanningResults(this.result, options['metadata'], this.devtoolsChannel);
+            }
+            else {
+                // Add skipped result to devtools.
+                PlanningExplorerAdapter.updatePlanningAttempt(suggestions, options['metadata'], this.devtoolsChannel);
+            }
+        }
+        else { // Suggestions are null, if planning was cancelled.
+            // Add cancelled attempt to devtools.
+            PlanningExplorerAdapter.updatePlanningAttempt(null, options['metadata'], this.devtoolsChannel);
+        }
+    }
+    async runPlanner(options, generations) {
+        let suggestions = [];
+        assert$1(!this.planner, 'Planner must be null');
+        this.planner = new Planner();
+        this.planner.init(this.arc, {
+            strategies: options['strategies'],
+            strategyArgs: {
+                contextual: options['contextual'],
+                search: options['search'],
+                recipeIndex: this.recipeIndex
+            },
+            blockDevtools: true // Devtools communication is handled by PlanConsumer in Producer+Consumer setup.
+        });
+        suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations, this.speculator);
+        if (this.planner) {
+            this.planner = null;
+            return suggestions;
+        }
+        // Planning was cancelled.
+        return null;
+    }
+    _cancelPlanning() {
+        if (this.planner) {
+            this.planner = null;
+        }
+        this.speculator.dispose();
+        this.needReplan = false;
+        this.isPlanning = false; // using the setter method to trigger callbacks.
+        log(`Cancel planning`);
+    }
+    _updateResult({ suggestions, generations }, options) {
+        generations = PlanningResult.formatSerializableGenerations(generations);
+        if (options.append) {
+            assert$1(!options['contextual'], `Cannot append to contextual options`);
+            return this.result.append({ suggestions, generations });
+        }
+        else {
+            return this.result.merge({ suggestions, generations, contextual: options['contextual'] }, this.arc);
+        }
+    }
+}
+
 class PlanningExplorerAdapter {
-    static updatePlanningResults(result, devtoolsChannel) {
+    static updatePlanningResults(result, metadata, devtoolsChannel) {
         if (devtoolsChannel) {
             devtoolsChannel.send({
                 messageType: 'suggestions-changed',
                 messageBody: {
                     suggestions: PlanningExplorerAdapter._formatSuggestions(result.suggestions),
-                    lastUpdated: result.lastUpdated.getTime()
+                    lastUpdated: result.lastUpdated.getTime(),
+                    metadata
                 }
             });
         }
@@ -27892,12 +28070,13 @@ class PlanningExplorerAdapter {
             });
         }
     }
-    static updatePlanningAttempt({ suggestions }, devtoolsChannel) {
+    static updatePlanningAttempt(suggestions, metadata, devtoolsChannel) {
         if (devtoolsChannel) {
             devtoolsChannel.send({
                 messageType: 'planning-attempt',
                 messageBody: {
                     suggestions: suggestions ? PlanningExplorerAdapter._formatSuggestions(suggestions) : null,
+                    metadata
                 }
             });
         }
@@ -27916,7 +28095,7 @@ class PlanningExplorerAdapter {
             devtoolsChannel.listen('force-replan', async () => {
                 planificator.consumer.result.suggestions = [];
                 await planificator.consumer.result.flush();
-                await planificator.requestPlanning();
+                await planificator.requestPlanning({ metadata: { trigger: Trigger.Forced } });
                 await planificator.loadSuggestions();
             });
         }
@@ -28010,7 +28189,7 @@ class PlanConsumer {
     }
     _onSuggestionsChanged() {
         this.suggestionsChangeCallbacks.forEach(callback => callback({ suggestions: this.result.suggestions }));
-        PlanningExplorerAdapter.updatePlanningResults(this.result, this.devtoolsChannel);
+        PlanningExplorerAdapter.updatePlanningResults(this.result, {}, this.devtoolsChannel);
     }
     _onMaybeSuggestionsChanged() {
         const suggestions = this.getCurrentSuggestions();
@@ -28025,173 +28204,6 @@ class PlanConsumer {
         if (composer && composer.findContextById('rootslotid-suggestions')) {
             this.suggestionComposer = new SuggestionComposer(this.arc, composer);
             this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
-        }
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const defaultTimeoutMs = 5000;
-const log = logFactory('PlanProducer', '#ff0090', 'log');
-const error$1 = logFactory('PlanProducer', '#ff0090', 'error');
-class PlanProducer {
-    constructor(arc, result, searchStore, { debug = false } = {}) {
-        this.planner = null;
-        this.needReplan = false;
-        this._isPlanning = false;
-        this.stateChangedCallbacks = [];
-        this.devtoolsChannel = null;
-        assert$1(result, 'result cannot be null');
-        assert$1(arc, 'arc cannot be null');
-        this.arc = arc;
-        this.result = result;
-        this.recipeIndex = RecipeIndex.create(this.arc);
-        this.speculator = new Speculator(this.result);
-        this.searchStore = searchStore;
-        if (this.searchStore) {
-            this.searchStoreCallback = () => this.onSearchChanged();
-            this.searchStore.on('change', this.searchStoreCallback, this);
-        }
-        this.debug = debug;
-        if (DevtoolsConnection.isConnected) {
-            this.devtoolsChannel = DevtoolsConnection.get().forArc(this.arc);
-        }
-    }
-    get isPlanning() { return this._isPlanning; }
-    set isPlanning(isPlanning) {
-        if (this.isPlanning === isPlanning) {
-            return;
-        }
-        this._isPlanning = isPlanning;
-        this.stateChangedCallbacks.forEach(callback => callback(this.isPlanning));
-    }
-    registerStateChangedCallback(callback) {
-        this.stateChangedCallbacks.push(callback);
-    }
-    async onSearchChanged() {
-        const values = await this.searchStore.get() || [];
-        const arcId = this.arc.arcId;
-        const value = values.find(value => value.arc === arcId);
-        if (!value) {
-            return;
-        }
-        if (value.search === this.search) {
-            return;
-        }
-        this.search = value.search;
-        if (!this.search) {
-            // search string turned empty, no need to replan, going back to contextual suggestions.
-            return;
-        }
-        if (this.search === '*') { // Search for ALL (including non-contextual) suggestions.
-            if (this.result.contextual) {
-                this.produceSuggestions({ contextual: false });
-            }
-        }
-        else { // Search by search term.
-            const options = {
-                cancelOngoingPlanning: this.result.suggestions.length > 0,
-                search: this.search
-            };
-            if (this.result.contextual) {
-                // If we're searching but currently only have contextual suggestions,
-                // we need get non-contextual suggestions as well.
-                options.contextual = false;
-            }
-            else {
-                // If search changed and we already how all suggestions (i.e. including
-                // non-contextual ones) then it's enough to initialize with InitSearch
-                // with a new search phrase.
-                options.append = true;
-                options.strategies = [InitSearch, ...Planner.ResolutionStrategies];
-            }
-            this.produceSuggestions(options);
-        }
-    }
-    dispose() {
-        this.searchStore.off('change', this.searchStoreCallback);
-    }
-    async produceSuggestions(options = {}) {
-        if (options['cancelOngoingPlanning'] && this.isPlanning) {
-            this._cancelPlanning();
-        }
-        this.needReplan = true;
-        this.replanOptions = options;
-        if (this.isPlanning) {
-            return;
-        }
-        this.isPlanning = true;
-        let time = now$1();
-        let suggestions = [];
-        let generations = [];
-        while (this.needReplan) {
-            this.needReplan = false;
-            generations = [];
-            suggestions = await this.runPlanner(this.replanOptions, generations);
-        }
-        time = ((now$1() - time) / 1000).toFixed(2);
-        if (suggestions) {
-            log(`[${this.arc.arcId}] Produced ${suggestions.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
-            this.isPlanning = false;
-            if (this._updateResult({ suggestions, generations: this.debug ? generations : [] }, this.replanOptions)) {
-                // Store suggestions to store.
-                await this.result.flush();
-            }
-            else {
-                // Add skipped result to devtools.
-                PlanningExplorerAdapter.updatePlanningAttempt({ suggestions }, this.devtoolsChannel);
-            }
-        }
-        else { // Suggestions are null, if planning was cancelled.
-            // Add cancelled attempt to devtools.
-            PlanningExplorerAdapter.updatePlanningAttempt({}, this.devtoolsChannel);
-        }
-    }
-    async runPlanner(options, generations) {
-        let suggestions = [];
-        assert$1(!this.planner, 'Planner must be null');
-        this.planner = new Planner();
-        this.planner.init(this.arc, {
-            strategies: options['strategies'],
-            strategyArgs: {
-                contextual: options['contextual'],
-                search: options['search'],
-                recipeIndex: this.recipeIndex
-            },
-            blockDevtools: true // Devtools communication is handled by PlanConsumer in Producer+Consumer setup.
-        });
-        suggestions = await this.planner.suggest(options['timeout'] || defaultTimeoutMs, generations, this.speculator);
-        if (this.planner) {
-            this.planner = null;
-            return suggestions;
-        }
-        // Planning was cancelled.
-        return null;
-    }
-    _cancelPlanning() {
-        if (this.planner) {
-            this.planner = null;
-        }
-        this.speculator.dispose();
-        this.needReplan = false;
-        this.isPlanning = false; // using the setter method to trigger callbacks.
-        log(`Cancel planning`);
-    }
-    _updateResult({ suggestions, generations }, options) {
-        generations = PlanningResult.formatSerializableGenerations(generations);
-        if (options.append) {
-            assert$1(!options['contextual'], `Cannot append to contextual options`);
-            return this.result.append({ suggestions, generations });
-        }
-        else {
-            return this.result.merge({ suggestions, generations, contextual: options['contextual'] }, this.arc);
         }
     }
 }
@@ -28244,7 +28256,10 @@ class ReplanQueue {
     }
     _scheduleReplan(intervalMs) {
         this._cancelReplanIfScheduled();
-        this.replanTimer = setTimeout(() => this.planProducer.produceSuggestions({ contextual: this.planProducer.result.contextual }), intervalMs);
+        this.replanTimer = setTimeout(() => this.planProducer.produceSuggestions({
+            contextual: this.planProducer.result.contextual,
+            metadata: { trigger: Trigger.DataChanged }
+        }), intervalMs);
     }
     _cancelReplanIfScheduled() {
         if (this.isReplanningScheduled()) {
@@ -28312,7 +28327,7 @@ class Planificator {
         const searchStore = await Planificator._initSearchStore(arc, userid);
         const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
         await planificator.loadSuggestions();
-        planificator.requestPlanning({ contextual: true });
+        planificator.requestPlanning({ contextual: true, metadata: { trigger: Trigger.Init } });
         return planificator;
     }
     async requestPlanning(options = {}) {
@@ -28359,7 +28374,10 @@ class Planificator {
     }
     _onPlanInstantiated(plan) {
         this.lastActivatedPlan = plan;
-        this.requestPlanning();
+        this.requestPlanning({ metadata: {
+                trigger: Trigger.PlanInstantiated,
+                particleNames: plan.particles.map(p => p.name).join(',')
+            } });
     }
     _listenToArcStores() {
         this.arc.onDataChange(this.dataChangeCallback, this);
