@@ -1,5 +1,7 @@
-commit 64597123c2852b8b0c6aa6d237e6bba099425fcc
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Jan 18 09:58:37 2019 +1100
+commit dd2db18e57e7427f1b1d3446dea455163801ed82
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Jan 17 16:12:40 2019 -0800
 
-    Small fix to URL & Connections maintenance in devtools background page (#2618)
+    fix inline suggestion instantiation (#2617)
+    
+    (add missing line to suggestion-composer)

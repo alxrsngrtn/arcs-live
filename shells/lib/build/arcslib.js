@@ -85931,8 +85931,8 @@ class SuggestionComposer {
     }
     setSuggestions(suggestions) {
         this.clear();
-        const sortedSuggestions = suggestions.sort(_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_0__["Suggestion"].compare);
-        for (const suggestion of sortedSuggestions) {
+        this._suggestions = suggestions.sort(_plan_suggestion_js__WEBPACK_IMPORTED_MODULE_0__["Suggestion"].compare);
+        for (const suggestion of this._suggestions) {
             // TODO(mmandlis): use modality-appropriate description.
             const suggestionContent = { template: suggestion.descriptionText };
             if (!suggestionContent) {
