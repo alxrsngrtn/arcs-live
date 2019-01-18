@@ -1,5 +1,9 @@
-commit 1d1b0c5939367b4ba933d12dafa25f77d7cc7362
+commit d322882d1b1c62dda8b6111d57a1841845598495
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Jan 18 09:15:58 2019 -0800
+Date:   Fri Jan 18 15:30:00 2019 -0800
 
-    Add triggering reason to planning results in DevTools (#2621)
+    improve default arc selection in devtools (#2625)
+    
+    * improve default arc selection in devtools
+    
+    * update strategy-explorer page to also default to the "-null" arc
