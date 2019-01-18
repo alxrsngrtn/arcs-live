@@ -1,7 +1,5 @@
-commit dd2db18e57e7427f1b1d3446dea455163801ed82
+commit da1104c064baf70b54267892610f4752ef4c6b32
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jan 17 16:12:40 2019 -0800
+Date:   Thu Jan 17 16:22:11 2019 -0800
 
-    fix inline suggestion instantiation (#2617)
-    
-    (add missing line to suggestion-composer)
+    update `UseWishlist` recipe to resolve (#2619)
