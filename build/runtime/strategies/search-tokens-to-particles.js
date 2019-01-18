@@ -5,8 +5,7 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
-import { Strategy } from '../../planning/strategizer.js';
-import { Recipe } from '../recipe/recipe.js';
+import { Strategizer, Strategy } from '../../planning/strategizer.js';
 import { Walker } from '../recipe/walker.js';
 export class SearchTokensToParticles extends Strategy {
     constructor(arc, options) {
@@ -113,7 +112,7 @@ export class SearchTokensToParticles extends Strategy {
     }
     async generate(inputParams) {
         await this.walker.recipeIndex.ready;
-        return Recipe.over(this.getResults(inputParams), this.walker, this);
+        return Strategizer.over(this.getResults(inputParams), this.walker, this);
     }
 }
 //# sourceMappingURL=search-tokens-to-particles.js.map

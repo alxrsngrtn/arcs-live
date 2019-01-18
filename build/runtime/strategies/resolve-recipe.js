@@ -4,15 +4,14 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Strategy } from '../../planning/strategizer.js';
+import { Strategizer, Strategy } from '../../planning/strategizer.js';
 import { Walker } from '../recipe/walker.js';
-import { Recipe } from '../recipe/recipe.js';
 import { RecipeUtil } from '../recipe/recipe-util.js';
 import { MapSlots } from './map-slots.js';
 export class ResolveRecipe extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onHandle(recipe, handle) {
                 if (handle.connections.length === 0 ||
                     (handle.id && handle.storageKey) || (!handle.type) ||

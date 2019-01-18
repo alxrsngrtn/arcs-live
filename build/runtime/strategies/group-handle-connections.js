@@ -5,8 +5,7 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
-import { Strategy } from '../../planning/strategizer.js';
-import { Recipe } from '../recipe/recipe.js';
+import { Strategizer, Strategy } from '../../planning/strategizer.js';
 import { Walker } from '../recipe/walker.js';
 export class GroupHandleConnections extends Strategy {
     constructor(arc, args) {
@@ -102,7 +101,7 @@ export class GroupHandleConnections extends Strategy {
         return this._walker;
     }
     async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), this.walker, this);
+        return Strategizer.over(this.getResults(inputParams), this.walker, this);
     }
 }
 //# sourceMappingURL=group-handle-connections.js.map

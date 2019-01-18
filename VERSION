@@ -1,5 +1,5 @@
-commit 1087251b1dc727837393b61c95d5422daa15ff77
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Jan 18 13:09:50 2019 +1100
+commit 7dea948b05d43ad411abea28fade49719b1a9107
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Fri Jan 18 13:45:35 2019 +1100
 
-    Better warning when DevTools is incomplete (#2622)
+    Remove spurious dependency on Strategizer from Recipe (#2624)

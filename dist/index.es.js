@@ -11588,331 +11588,6 @@ const parser = /*
 })();
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-class Strategizer {
-    constructor(strategies, evaluators, ruleset) {
-        this._generation = 0;
-        this._internalPopulation = [];
-        this._population = [];
-        this._generated = [];
-        this._terminal = [];
-        this._strategies = strategies;
-        this._evaluators = evaluators;
-        this._ruleset = ruleset;
-        this.populationHash = new Map();
-    }
-    // Latest generation number.
-    get generation() {
-        return this._generation;
-    }
-    // All individuals in the current population.
-    get population() {
-        return this._population;
-    }
-    // Individuals of the latest generation.
-    get generated() {
-        return this._generated;
-    }
-    /**
-     * @return Individuals from the previous generation that were not descended from in the
-     * current generation.
-     */
-    get terminal() {
-        assert$1(this._terminal);
-        return this._terminal;
-    }
-    async generate() {
-        // Generate
-        const generation = this.generation + 1;
-        const generatedResults = await Promise.all(this._strategies.map(strategy => {
-            const recipeFilter = recipe => this._ruleset.isAllowed(strategy, recipe);
-            return strategy.generate({
-                generation: this.generation,
-                generated: this.generated.filter(recipeFilter),
-                terminal: this.terminal.filter(recipeFilter),
-                population: this.population.filter(recipeFilter)
-            });
-        }));
-        const record = {
-            generation,
-            sizeOfLastGeneration: this.generated.length,
-            generatedDerivationsByStrategy: {}
-        };
-        for (let i = 0; i < this._strategies.length; i++) {
-            record.generatedDerivationsByStrategy[this._strategies[i].constructor.name] = generatedResults[i].length;
-        }
-        let generated = [].concat(...generatedResults);
-        // TODO: get rid of this additional asynchrony
-        generated = await Promise.all(generated.map(async (result) => {
-            if (result.hash) {
-                result.hash = await result.hash;
-            }
-            return result;
-        }));
-        record.generatedDerivations = generated.length;
-        record.nullDerivations = 0;
-        record.invalidDerivations = 0;
-        record.duplicateDerivations = 0;
-        record.duplicateSameParentDerivations = 0;
-        record.nullDerivationsByStrategy = {};
-        record.invalidDerivationsByStrategy = {};
-        record.duplicateDerivationsByStrategy = {};
-        record.duplicateSameParentDerivationsByStrategy = {};
-        generated = generated.filter(result => {
-            const strategy = result.derivation[0].strategy.constructor.name;
-            if (result.hash) {
-                const existingResult = this.populationHash.get(result.hash);
-                if (existingResult) {
-                    if (result.derivation[0].parent === existingResult) {
-                        record.nullDerivations += 1;
-                        if (record.nullDerivationsByStrategy[strategy] == undefined) {
-                            record.nullDerivationsByStrategy[strategy] = 0;
-                        }
-                        record.nullDerivationsByStrategy[strategy]++;
-                    }
-                    else if (existingResult.derivation.map(a => a.parent).indexOf(result.derivation[0].parent) !== -1) {
-                        record.duplicateSameParentDerivations += 1;
-                        if (record.duplicateSameParentDerivationsByStrategy[strategy] ==
-                            undefined) {
-                            record.duplicateSameParentDerivationsByStrategy[strategy] = 0;
-                        }
-                        record.duplicateSameParentDerivationsByStrategy[strategy]++;
-                    }
-                    else {
-                        record.duplicateDerivations += 1;
-                        if (record.duplicateDerivationsByStrategy[strategy] == undefined) {
-                            record.duplicateDerivationsByStrategy[strategy] = 0;
-                        }
-                        record.duplicateDerivationsByStrategy[strategy]++;
-                        this.populationHash.get(result.hash).derivation.push(result.derivation[0]);
-                    }
-                    return false;
-                }
-                this.populationHash.set(result.hash, result);
-            }
-            if (result.valid === false) {
-                record.invalidDerivations++;
-                record.invalidDerivationsByStrategy[strategy] = (record.invalidDerivationsByStrategy[strategy] || 0) + 1;
-                return false;
-            }
-            return true;
-        });
-        const terminalMap = new Map();
-        for (const candidate of this.generated) {
-            terminalMap.set(candidate.result, candidate);
-        }
-        // TODO(piotrs): This is inefficient, improve at some point.
-        for (const result of this.populationHash.values()) {
-            for (const { parent } of result.derivation) {
-                if (parent && terminalMap.has(parent.result)) {
-                    terminalMap.delete(parent.result);
-                }
-            }
-        }
-        const terminal = [...terminalMap.values()];
-        record.survivingDerivations = generated.length;
-        generated.sort((a, b) => {
-            if (a.score > b.score) {
-                return -1;
-            }
-            if (a.score < b.score) {
-                return 1;
-            }
-            return 0;
-        });
-        const evaluations = await Promise.all(this._evaluators.map(strategy => {
-            return strategy.evaluate(this, generated);
-        }));
-        const fitness = Strategizer._mergeEvaluations(evaluations, generated);
-        assert$1(fitness.length === generated.length);
-        for (let i = 0; i < fitness.length; i++) {
-            this._internalPopulation.push({
-                fitness: fitness[i],
-                individual: generated[i],
-            });
-        }
-        // TODO: Instead of push+sort, merge `internalPopulation` with `generated`.
-        this._internalPopulation.sort((x, y) => y.fitness - x.fitness);
-        // Publish
-        this._terminal = terminal;
-        this._generation = generation;
-        this._generated = generated;
-        this._population = this._internalPopulation.map(x => x.individual);
-        return record;
-    }
-    static _mergeEvaluations(evaluations, generated) {
-        const n = generated.length;
-        const mergedEvaluations = [];
-        for (let i = 0; i < n; i++) {
-            let merged = NaN;
-            for (const evaluation of evaluations) {
-                const fitness = evaluation[i];
-                if (isNaN(fitness)) {
-                    continue;
-                }
-                if (isNaN(merged)) {
-                    merged = fitness;
-                }
-                else {
-                    // TODO: how should evaluations be combined?
-                    merged = (merged * i + fitness) / (i + 1);
-                }
-            }
-            if (isNaN(merged)) {
-                // TODO: What should happen when there was no evaluation?
-                merged = 0.5;
-            }
-            mergedEvaluations.push(merged);
-        }
-        return mergedEvaluations;
-    }
-    static over(results, walker, strategy) {
-        walker.onStrategy(strategy);
-        results.forEach(result => {
-            walker.onResult(result);
-            walker.onResultDone();
-        });
-        walker.onStrategyDone();
-        return walker.descendants;
-    }
-}
-class StrategizerWalker {
-    constructor() {
-        this.descendants = [];
-    }
-    onStrategy(strategy) {
-        this.currentStrategy = strategy;
-    }
-    onResult(result) {
-        this.currentResult = result;
-    }
-    createDescendant(result, score, hash, valid) {
-        assert$1(this.currentResult, 'no current result');
-        assert$1(this.currentStrategy, 'no current strategy');
-        if (this.currentResult.score) {
-            score += this.currentResult.score;
-        }
-        this.descendants.push({
-            result,
-            score,
-            derivation: [{ parent: this.currentResult, strategy: this.currentStrategy }],
-            hash,
-            valid,
-        });
-    }
-    onResultDone() {
-        this.currentResult = undefined;
-    }
-    onStrategyDone() {
-        this.currentStrategy = undefined;
-    }
-}
-// TODO: Doc call convention, incl strategies are stateful.
-class Strategy {
-    constructor(arc, args) {
-        this._arc = arc;
-        this._args = args;
-    }
-    get arc() {
-        return this._arc;
-    }
-    async activate(strategizer) {
-        // Returns estimated ability to generate/evaluate.
-        // TODO: What do these numbers mean? Some sort of indication of the accuracy of the
-        // generated individuals and evaluations.
-        return { generate: 0, evaluate: 0 };
-    }
-    getResults(inputParams) {
-        return inputParams.generated;
-    }
-    async generate(inputParams) {
-        return [];
-    }
-    async evaluate(strategizer, individuals) {
-        return individuals.map(() => NaN);
-    }
-}
-class RulesetBuilder {
-    constructor() {
-        // Strategy -> [Strategy*]
-        this._orderingRules = new Map();
-    }
-    /**
-     * When invoked for strategies (A, B), ensures that B will never follow A in
-     * the chain of derivations of all generated recipes.
-     *
-     * Following sequences are therefore valid: A, B, AB, AAABB, AC, DBC, CADCBCBD
-     * Following sequences are therefore invalid: BA, ABA, BCA, DBCA
-     *
-     * Transitive closure of the ordering is computed.
-     * I.e. For orderings (A, B) and (B, C), the ordering (A, C) is implied.
-     *
-     * Method can be called with multiple strategies at once.
-     * E.g. (A, B, C) implies (A, B), (B, C) and transitively (A, C).
-     *
-     * Method can be called with arrays of strategies, which represent groups.
-     * The ordering in the group is not enforced, but the ordering between them is.
-     * E.g. ([A, B], [C, D], E) is a shorthand for:
-     * (A, C), (A, D), (B, C), (B, D), (C, E), (D, E).
-     */
-    order(...strategiesOrGroups) {
-        for (let i = 0; i < strategiesOrGroups.length - 1; i++) {
-            const current = strategiesOrGroups[i];
-            const next = strategiesOrGroups[i + 1];
-            for (const strategy of Array.isArray(current) ? current : [current]) {
-                let set = this._orderingRules.get(strategy);
-                if (!set) {
-                    this._orderingRules.set(strategy, set = new Set());
-                }
-                for (const nextStrategy of Array.isArray(next) ? next : [next]) {
-                    set.add(nextStrategy);
-                }
-            }
-        }
-        return this;
-    }
-    build() {
-        // Making the ordering transitive.
-        const beingExpanded = new Set();
-        const alreadyExpanded = new Set();
-        for (const strategy of this._orderingRules.keys()) {
-            this._transitiveClosureFor(strategy, beingExpanded, alreadyExpanded);
-        }
-        return new Ruleset(this._orderingRules);
-    }
-    _transitiveClosureFor(strategy, beingExpanded, alreadyExpanded) {
-        assert$1(!beingExpanded.has(strategy), 'Detected a loop in the ordering rules');
-        const followingStrategies = this._orderingRules.get(strategy);
-        if (alreadyExpanded.has(strategy))
-            return followingStrategies || [];
-        if (followingStrategies) {
-            beingExpanded.add(strategy);
-            for (const following of followingStrategies) {
-                for (const expanded of this._transitiveClosureFor(following, beingExpanded, alreadyExpanded)) {
-                    followingStrategies.add(expanded);
-                }
-            }
-            beingExpanded.delete(strategy);
-        }
-        alreadyExpanded.add(strategy);
-        return followingStrategies || [];
-    }
-}
-class Ruleset {
-    constructor(orderingRules) {
-        this._orderingRules = orderingRules;
-    }
-    isAllowed(strategy, recipe) {
-        const forbiddenAncestors = this._orderingRules.get(strategy.constructor);
-        if (!forbiddenAncestors)
-            return true;
-        // TODO: This can be sped up with AND-ing bitsets of derivation strategies and forbiddenAncestors.
-        return !recipe.derivation.some(d => forbiddenAncestors.has(d.strategy.constructor));
-    }
-}
-// tslint:disable-next-line: variable-name
-Ruleset.Builder = RulesetBuilder;
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
 function compareNulls(o1, o2) {
     if (o1 === o2)
         return 0;
@@ -13560,9 +13235,6 @@ class Recipe {
         const result = {};
         Object.keys(dict).forEach(key => result[key] = this._cloneMap.get(dict[key]));
         return result;
-    }
-    static over(results, walker, strategy) {
-        return Strategizer.over(results, walker, strategy);
     }
     _makeLocalNameMap() {
         const names = new Set();
@@ -20205,6 +19877,331 @@ PECInnerPort = __decorate([
 ], PECInnerPort);
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
+class Strategizer {
+    constructor(strategies, evaluators, ruleset) {
+        this._generation = 0;
+        this._internalPopulation = [];
+        this._population = [];
+        this._generated = [];
+        this._terminal = [];
+        this._strategies = strategies;
+        this._evaluators = evaluators;
+        this._ruleset = ruleset;
+        this.populationHash = new Map();
+    }
+    // Latest generation number.
+    get generation() {
+        return this._generation;
+    }
+    // All individuals in the current population.
+    get population() {
+        return this._population;
+    }
+    // Individuals of the latest generation.
+    get generated() {
+        return this._generated;
+    }
+    /**
+     * @return Individuals from the previous generation that were not descended from in the
+     * current generation.
+     */
+    get terminal() {
+        assert$1(this._terminal);
+        return this._terminal;
+    }
+    async generate() {
+        // Generate
+        const generation = this.generation + 1;
+        const generatedResults = await Promise.all(this._strategies.map(strategy => {
+            const recipeFilter = recipe => this._ruleset.isAllowed(strategy, recipe);
+            return strategy.generate({
+                generation: this.generation,
+                generated: this.generated.filter(recipeFilter),
+                terminal: this.terminal.filter(recipeFilter),
+                population: this.population.filter(recipeFilter)
+            });
+        }));
+        const record = {
+            generation,
+            sizeOfLastGeneration: this.generated.length,
+            generatedDerivationsByStrategy: {}
+        };
+        for (let i = 0; i < this._strategies.length; i++) {
+            record.generatedDerivationsByStrategy[this._strategies[i].constructor.name] = generatedResults[i].length;
+        }
+        let generated = [].concat(...generatedResults);
+        // TODO: get rid of this additional asynchrony
+        generated = await Promise.all(generated.map(async (result) => {
+            if (result.hash) {
+                result.hash = await result.hash;
+            }
+            return result;
+        }));
+        record.generatedDerivations = generated.length;
+        record.nullDerivations = 0;
+        record.invalidDerivations = 0;
+        record.duplicateDerivations = 0;
+        record.duplicateSameParentDerivations = 0;
+        record.nullDerivationsByStrategy = {};
+        record.invalidDerivationsByStrategy = {};
+        record.duplicateDerivationsByStrategy = {};
+        record.duplicateSameParentDerivationsByStrategy = {};
+        generated = generated.filter(result => {
+            const strategy = result.derivation[0].strategy.constructor.name;
+            if (result.hash) {
+                const existingResult = this.populationHash.get(result.hash);
+                if (existingResult) {
+                    if (result.derivation[0].parent === existingResult) {
+                        record.nullDerivations += 1;
+                        if (record.nullDerivationsByStrategy[strategy] == undefined) {
+                            record.nullDerivationsByStrategy[strategy] = 0;
+                        }
+                        record.nullDerivationsByStrategy[strategy]++;
+                    }
+                    else if (existingResult.derivation.map(a => a.parent).indexOf(result.derivation[0].parent) !== -1) {
+                        record.duplicateSameParentDerivations += 1;
+                        if (record.duplicateSameParentDerivationsByStrategy[strategy] ==
+                            undefined) {
+                            record.duplicateSameParentDerivationsByStrategy[strategy] = 0;
+                        }
+                        record.duplicateSameParentDerivationsByStrategy[strategy]++;
+                    }
+                    else {
+                        record.duplicateDerivations += 1;
+                        if (record.duplicateDerivationsByStrategy[strategy] == undefined) {
+                            record.duplicateDerivationsByStrategy[strategy] = 0;
+                        }
+                        record.duplicateDerivationsByStrategy[strategy]++;
+                        this.populationHash.get(result.hash).derivation.push(result.derivation[0]);
+                    }
+                    return false;
+                }
+                this.populationHash.set(result.hash, result);
+            }
+            if (result.valid === false) {
+                record.invalidDerivations++;
+                record.invalidDerivationsByStrategy[strategy] = (record.invalidDerivationsByStrategy[strategy] || 0) + 1;
+                return false;
+            }
+            return true;
+        });
+        const terminalMap = new Map();
+        for (const candidate of this.generated) {
+            terminalMap.set(candidate.result, candidate);
+        }
+        // TODO(piotrs): This is inefficient, improve at some point.
+        for (const result of this.populationHash.values()) {
+            for (const { parent } of result.derivation) {
+                if (parent && terminalMap.has(parent.result)) {
+                    terminalMap.delete(parent.result);
+                }
+            }
+        }
+        const terminal = [...terminalMap.values()];
+        record.survivingDerivations = generated.length;
+        generated.sort((a, b) => {
+            if (a.score > b.score) {
+                return -1;
+            }
+            if (a.score < b.score) {
+                return 1;
+            }
+            return 0;
+        });
+        const evaluations = await Promise.all(this._evaluators.map(strategy => {
+            return strategy.evaluate(this, generated);
+        }));
+        const fitness = Strategizer._mergeEvaluations(evaluations, generated);
+        assert$1(fitness.length === generated.length);
+        for (let i = 0; i < fitness.length; i++) {
+            this._internalPopulation.push({
+                fitness: fitness[i],
+                individual: generated[i],
+            });
+        }
+        // TODO: Instead of push+sort, merge `internalPopulation` with `generated`.
+        this._internalPopulation.sort((x, y) => y.fitness - x.fitness);
+        // Publish
+        this._terminal = terminal;
+        this._generation = generation;
+        this._generated = generated;
+        this._population = this._internalPopulation.map(x => x.individual);
+        return record;
+    }
+    static _mergeEvaluations(evaluations, generated) {
+        const n = generated.length;
+        const mergedEvaluations = [];
+        for (let i = 0; i < n; i++) {
+            let merged = NaN;
+            for (const evaluation of evaluations) {
+                const fitness = evaluation[i];
+                if (isNaN(fitness)) {
+                    continue;
+                }
+                if (isNaN(merged)) {
+                    merged = fitness;
+                }
+                else {
+                    // TODO: how should evaluations be combined?
+                    merged = (merged * i + fitness) / (i + 1);
+                }
+            }
+            if (isNaN(merged)) {
+                // TODO: What should happen when there was no evaluation?
+                merged = 0.5;
+            }
+            mergedEvaluations.push(merged);
+        }
+        return mergedEvaluations;
+    }
+    static over(results, walker, strategy) {
+        walker.onStrategy(strategy);
+        results.forEach(result => {
+            walker.onResult(result);
+            walker.onResultDone();
+        });
+        walker.onStrategyDone();
+        return walker.descendants;
+    }
+}
+class StrategizerWalker {
+    constructor() {
+        this.descendants = [];
+    }
+    onStrategy(strategy) {
+        this.currentStrategy = strategy;
+    }
+    onResult(result) {
+        this.currentResult = result;
+    }
+    createDescendant(result, score, hash, valid) {
+        assert$1(this.currentResult, 'no current result');
+        assert$1(this.currentStrategy, 'no current strategy');
+        if (this.currentResult.score) {
+            score += this.currentResult.score;
+        }
+        this.descendants.push({
+            result,
+            score,
+            derivation: [{ parent: this.currentResult, strategy: this.currentStrategy }],
+            hash,
+            valid,
+        });
+    }
+    onResultDone() {
+        this.currentResult = undefined;
+    }
+    onStrategyDone() {
+        this.currentStrategy = undefined;
+    }
+}
+// TODO: Doc call convention, incl strategies are stateful.
+class Strategy {
+    constructor(arc, args) {
+        this._arc = arc;
+        this._args = args;
+    }
+    get arc() {
+        return this._arc;
+    }
+    async activate(strategizer) {
+        // Returns estimated ability to generate/evaluate.
+        // TODO: What do these numbers mean? Some sort of indication of the accuracy of the
+        // generated individuals and evaluations.
+        return { generate: 0, evaluate: 0 };
+    }
+    getResults(inputParams) {
+        return inputParams.generated;
+    }
+    async generate(inputParams) {
+        return [];
+    }
+    async evaluate(strategizer, individuals) {
+        return individuals.map(() => NaN);
+    }
+}
+class RulesetBuilder {
+    constructor() {
+        // Strategy -> [Strategy*]
+        this._orderingRules = new Map();
+    }
+    /**
+     * When invoked for strategies (A, B), ensures that B will never follow A in
+     * the chain of derivations of all generated recipes.
+     *
+     * Following sequences are therefore valid: A, B, AB, AAABB, AC, DBC, CADCBCBD
+     * Following sequences are therefore invalid: BA, ABA, BCA, DBCA
+     *
+     * Transitive closure of the ordering is computed.
+     * I.e. For orderings (A, B) and (B, C), the ordering (A, C) is implied.
+     *
+     * Method can be called with multiple strategies at once.
+     * E.g. (A, B, C) implies (A, B), (B, C) and transitively (A, C).
+     *
+     * Method can be called with arrays of strategies, which represent groups.
+     * The ordering in the group is not enforced, but the ordering between them is.
+     * E.g. ([A, B], [C, D], E) is a shorthand for:
+     * (A, C), (A, D), (B, C), (B, D), (C, E), (D, E).
+     */
+    order(...strategiesOrGroups) {
+        for (let i = 0; i < strategiesOrGroups.length - 1; i++) {
+            const current = strategiesOrGroups[i];
+            const next = strategiesOrGroups[i + 1];
+            for (const strategy of Array.isArray(current) ? current : [current]) {
+                let set = this._orderingRules.get(strategy);
+                if (!set) {
+                    this._orderingRules.set(strategy, set = new Set());
+                }
+                for (const nextStrategy of Array.isArray(next) ? next : [next]) {
+                    set.add(nextStrategy);
+                }
+            }
+        }
+        return this;
+    }
+    build() {
+        // Making the ordering transitive.
+        const beingExpanded = new Set();
+        const alreadyExpanded = new Set();
+        for (const strategy of this._orderingRules.keys()) {
+            this._transitiveClosureFor(strategy, beingExpanded, alreadyExpanded);
+        }
+        return new Ruleset(this._orderingRules);
+    }
+    _transitiveClosureFor(strategy, beingExpanded, alreadyExpanded) {
+        assert$1(!beingExpanded.has(strategy), 'Detected a loop in the ordering rules');
+        const followingStrategies = this._orderingRules.get(strategy);
+        if (alreadyExpanded.has(strategy))
+            return followingStrategies || [];
+        if (followingStrategies) {
+            beingExpanded.add(strategy);
+            for (const following of followingStrategies) {
+                for (const expanded of this._transitiveClosureFor(following, beingExpanded, alreadyExpanded)) {
+                    followingStrategies.add(expanded);
+                }
+            }
+            beingExpanded.delete(strategy);
+        }
+        alreadyExpanded.add(strategy);
+        return followingStrategies || [];
+    }
+}
+class Ruleset {
+    constructor(orderingRules) {
+        this._orderingRules = orderingRules;
+    }
+    isAllowed(strategy, recipe) {
+        const forbiddenAncestors = this._orderingRules.get(strategy.constructor);
+        if (!forbiddenAncestors)
+            return true;
+        // TODO: This can be sped up with AND-ing bitsets of derivation strategies and forbiddenAncestors.
+        return !recipe.derivation.some(d => forbiddenAncestors.has(d.strategy.constructor));
+    }
+}
+// tslint:disable-next-line: variable-name
+Ruleset.Builder = RulesetBuilder;
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
 /**
  * Walkers traverse an object, calling methods based on the
  * features encountered on that object. For example, a RecipeWalker
@@ -20391,7 +20388,7 @@ Walker.Independent = WalkerTactic.Independent;
 class MapSlots extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onSlotConnection(recipe, slotConnection) {
                 // don't try to connect verb constraints
                 // TODO: is this right? Should constraints be connectible, in order to precompute the
@@ -20505,7 +20502,7 @@ class MapSlots extends Strategy {
 class ResolveRecipe extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onHandle(recipe, handle) {
                 if (handle.connections.length === 0 ||
                     (handle.id && handle.storageKey) || (!handle.type) ||
@@ -23034,7 +23031,7 @@ function now$1() {
 class ConvertConstraintsToConnections extends Strategy {
     async generate(inputParams) {
         const arcModality = this.arc.modality;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onRecipe(recipe) {
                 const modality = arcModality.intersection(recipe.modality);
                 // The particles & handles Sets are used as input to RecipeUtil's shape functionality
@@ -23237,7 +23234,7 @@ class ConvertConstraintsToConnections extends Strategy {
 class AssignHandles extends Strategy {
     async generate(inputParams) {
         const self = this;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onHandle(recipe, handle) {
                 if (!['?', 'use', 'copy', 'map'].includes(handle.fate)) {
                     return undefined;
@@ -23362,7 +23359,7 @@ class InitPopulation extends Strategy {
 class MatchParticleByVerb extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onParticle(recipe, particle) {
                 if (particle.name) {
                     // Particle already has explicit name.
@@ -23399,7 +23396,7 @@ class MatchParticleByVerb extends Strategy {
 class MatchRecipeByVerb extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onParticle(recipe, particle) {
                 if (particle.name) {
                     // Particle already has explicit name.
@@ -23597,7 +23594,7 @@ class MatchRecipeByVerb extends Strategy {
 class AddMissingHandles extends Strategy {
     // TODO: move generation to use an async generator.
     async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onRecipe(recipe) {
                 // Don't add use handles while there are outstanding constraints
                 if (recipe.connectionConstraints.length > 0) {
@@ -23630,7 +23627,7 @@ class AddMissingHandles extends Strategy {
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class CreateDescriptionHandle extends Strategy {
     async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onHandleConnection(recipe, handleConnection) {
                 if (handleConnection.handle) {
                     return undefined;
@@ -23779,7 +23776,7 @@ class SearchTokensToParticles extends Strategy {
     }
     async generate(inputParams) {
         await this.walker.recipeIndex.ready;
-        return Recipe.over(this.getResults(inputParams), this.walker, this);
+        return Strategizer.over(this.getResults(inputParams), this.walker, this);
     }
 }
 
@@ -23878,7 +23875,7 @@ class GroupHandleConnections extends Strategy {
         return this._walker;
     }
     async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), this.walker, this);
+        return Strategizer.over(this.getResults(inputParams), this.walker, this);
     }
 }
 
@@ -23889,7 +23886,7 @@ class GroupHandleConnections extends Strategy {
  */
 class MatchFreeHandlesToConnections extends Strategy {
     async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onHandle(recipe, handle) {
                 if (handle.connections.length > 0) {
                     return;
@@ -23943,7 +23940,7 @@ class DeviceInfo {
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class NameUnnamedConnections extends Strategy {
     async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onHandleConnection(recipe, handleConnection) {
                 if (handleConnection.name) {
                     // it is already named.
@@ -23982,7 +23979,7 @@ class SearchTokensToHandles extends Strategy {
             stores = stores.filter(store => !handle.recipe.handles.find(handle => handle.id === store.id));
             return stores.map(store => ({ store, fate, token }));
         };
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onHandle(recipe, handle) {
                 if (!recipe.search || recipe.search.unresolvedTokens.length === 0) {
                     return undefined;
@@ -24012,7 +24009,7 @@ class SearchTokensToHandles extends Strategy {
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class CreateHandleGroup extends Strategy {
     async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onRecipe(recipe, result) {
                 // Resolve constraints before assuming connections are free.
                 if (recipe.connectionConstraints.length > 0)
@@ -24069,7 +24066,7 @@ class CreateHandleGroup extends Strategy {
 class FindHostedParticle extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onHandleConnection(recipe, connection) {
                 if (connection.direction !== 'host' || connection.handle)
                     return undefined;
@@ -24119,7 +24116,7 @@ class CoalesceRecipes extends Strategy {
         const arc = this.arc;
         const index = this.recipeIndex;
         await index.ready;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             // Find a provided slot for unfulfilled consume connection.
             onSlotConnection(recipe, slotConnection) {
                 if (slotConnection.isResolved()) {

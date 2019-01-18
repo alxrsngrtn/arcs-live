@@ -4,13 +4,12 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Strategy } from '../../planning/strategizer.js';
-import { Recipe } from '../recipe/recipe.js';
+import { Strategizer, Strategy } from '../../planning/strategizer.js';
 import { Walker } from '../recipe/walker.js';
 import { Handle } from '../recipe/handle.js';
 export class CreateHandleGroup extends Strategy {
     async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onRecipe(recipe, result) {
                 // Resolve constraints before assuming connections are free.
                 if (recipe.connectionConstraints.length > 0)

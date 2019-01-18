@@ -7,10 +7,9 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Strategy, Ruleset } from '../../../planning/strategizer.js';
+import { Strategizer, Strategy, Ruleset } from '../../../planning/strategizer.js';
 import { Manifest } from '../../manifest.js';
 import { Planner } from '../../planner.js';
-import { Recipe } from '../../recipe/recipe.js';
 import { StrategyTestHelper } from './strategy-test-helper.js';
 import { assert } from '../chai-web.js';
 import { Walker } from '../../recipe/walker.js';
@@ -40,7 +39,7 @@ class FateAssigner extends Strategy {
     }
     async generate(inputParams) {
         const self = this;
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onHandle(recipe, handle) {
                 if (handle.fate === '?') {
                     return [
@@ -64,7 +63,7 @@ class AssignFateC extends FateAssigner {
 }
 class Resolve extends Strategy {
     async generate(inputParams) {
-        return Recipe.over(this.getResults(inputParams), new class extends Walker {
+        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
             onHandle(recipe, handle) {
                 if (handle.fate !== '?' && !handle.id.endsWith('resolved')) {
                     return [
