@@ -1,5 +1,5 @@
-commit da1104c064baf70b54267892610f4752ef4c6b32
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Jan 17 16:22:11 2019 -0800
+commit 1087251b1dc727837393b61c95d5422daa15ff77
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Jan 18 13:09:50 2019 +1100
 
-    update `UseWishlist` recipe to resolve (#2619)
+    Better warning when DevTools is incomplete (#2622)

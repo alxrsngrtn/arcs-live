@@ -7495,7 +7495,6 @@ class DevtoolsBroker {
   }
   static markConnected() {
     root._arcDebugPromiseResolve();
-    return {preExistingArcs: !!root.arc};
   }
 }
 

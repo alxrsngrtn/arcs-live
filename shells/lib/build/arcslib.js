@@ -7209,7 +7209,6 @@ class DevtoolsBroker {
   }
   static markConnected() {
     root._arcDebugPromiseResolve();
-    return {preExistingArcs: !!root.arc};
   }
 }
 
@@ -80072,7 +80071,14 @@ class ArcDebugHandler {
         // Currently no support for speculative arcs.
         if (arc.isSpeculative)
             return;
+        const connectedOnInstantiate = _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].isConnected;
         _devtools_connection_js__WEBPACK_IMPORTED_MODULE_3__["DevtoolsConnection"].onceConnected.then(devtoolsChannel => {
+            if (!connectedOnInstantiate) {
+                devtoolsChannel.send({
+                    messageType: 'warning',
+                    messageBody: 'pre-existing-arc'
+                });
+            }
             this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
             // Message handles go here.
             const arcPlannerInvoker = new _arc_planner_invoker_js__WEBPACK_IMPORTED_MODULE_1__["ArcPlannerInvoker"](arc, this.arcDevtoolsChannel);
