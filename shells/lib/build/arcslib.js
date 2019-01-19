@@ -77627,7 +77627,7 @@ class MapSlots extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["St
         if (slot.handles.length === 0) {
             return true; // slot is not limited to specific handles
         }
-        return Object.values(slotConnection.particle.connections).find(handleConn => {
+        return !!Object.values(slotConnection.particle.connections).find(handleConn => {
             return slot.handles.includes(handleConn.handle) ||
                 (handleConn.handle && handleConn.handle.id && slot.handles.map(sh => sh.id).includes(handleConn.handle.id));
         });
@@ -82051,6 +82051,10 @@ class CoalesceRecipes extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_
                         continue;
                     if (_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__["RecipeUtil"].matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
                         // skip candidate recipe, if matches the shape of the arc's active recipe
+                        continue;
+                    }
+                    if (_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__["RecipeUtil"].matchesRecipe(recipe, providedSlot.recipe)) {
+                        // skip candidate recipe, if matches the shape of the currently explored recipe
                         continue;
                     }
                     results.push((recipe, slotConnection) => {

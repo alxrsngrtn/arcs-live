@@ -1,9 +1,9 @@
-commit d322882d1b1c62dda8b6111d57a1841845598495
+commit 871be6d06d63c073c1fe653f8e83c99b620472dc
 Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Jan 18 15:30:00 2019 -0800
+Date:   Fri Jan 18 18:43:58 2019 -0800
 
-    improve default arc selection in devtools (#2625)
+    detailed documentation of coalesce-recipes strategy (#2623)
     
-    * improve default arc selection in devtools
+    * detailed documentation of coalesce-recipes strategy
     
-    * update strategy-explorer page to also default to the "-null" arc
+    * link to coalescer.md from strategies.md and fix links
