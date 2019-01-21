@@ -1,9 +1,5 @@
-commit 871be6d06d63c073c1fe653f8e83c99b620472dc
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Jan 18 18:43:58 2019 -0800
+commit 5061efefbc3dff8aee0e749fef7ffc0b5b5a48db
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Jan 21 13:44:30 2019 +1100
 
-    detailed documentation of coalesce-recipes strategy (#2623)
-    
-    * detailed documentation of coalesce-recipes strategy
-    
-    * link to coalescer.md from strategies.md and fix links
+    Have Devtools built and ready to use on arcs-live (#2626)
