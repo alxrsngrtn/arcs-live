@@ -1,5 +1,5 @@
-commit 5061efefbc3dff8aee0e749fef7ffc0b5b5a48db
+commit 4b20e401ff3bf0b57ff8076c29ae136e502cbef8
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Jan 21 13:44:30 2019 +1100
+Date:   Mon Jan 21 15:40:19 2019 +1100
 
-    Have Devtools built and ready to use on arcs-live (#2626)
+    Fix '/' not escaped in sed command (#2628)

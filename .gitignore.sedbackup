@@ -16,7 +16,6 @@ manifest-railroad.html
 shell/build
 shell/test/errorShots
 shells/test/errorShots
-devtools/deps
 enclave/bazel-*
 enclave/sdk
 enclave/toolchains
