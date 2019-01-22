@@ -2,6 +2,7 @@
 import '../color.js';
 import '../font-icons.js';
 import '../sizing.js';
+import '../style.js';
 const $_documentContainer = document.createElement('template');
 
 $_documentContainer.innerHTML = `<dom-module id="lumo-field-button">
@@ -16,7 +17,7 @@ $_documentContainer.innerHTML = `<dom-module id="lumo-field-button">
         text-align: center;
         color: var(--lumo-contrast-60pct);
         transition: 0.2s color;
-        cursor: default;
+        cursor: var(--lumo-clickable-cursor);
       }
 
       :host(:not([readonly])) [part\$="button"]:hover {
@@ -30,6 +31,7 @@ $_documentContainer.innerHTML = `<dom-module id="lumo-field-button">
 
       [part\$="button"]::before {
         font-family: "lumo-icons";
+        display: block;
       }
     </style>
   </template>

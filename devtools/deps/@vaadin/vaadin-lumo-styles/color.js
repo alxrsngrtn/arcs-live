@@ -1,6 +1,7 @@
 /// BareSpecifier=@vaadin/vaadin-lumo-styles/color
 import './version.js';
 import '../../@polymer/polymer/lib/elements/custom-style.js';
+import '../../@polymer/polymer/lib/elements/dom-module.js';
 const $_documentContainer = document.createElement('template');
 
 $_documentContainer.innerHTML = `<custom-style>
@@ -180,7 +181,7 @@ $_documentContainer.innerHTML = `<custom-style>
       code,
       pre {
         background-color: var(--lumo-contrast-10pct);
-        border-radius: var(--lumo-border-radius);
+        border-radius: var(--lumo-border-radius-m);
       }
     </style>
   </template>

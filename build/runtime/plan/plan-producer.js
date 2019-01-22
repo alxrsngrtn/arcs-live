@@ -97,7 +97,6 @@ export class PlanProducer {
                 // If search changed and we already how all suggestions (i.e. including
                 // non-contextual ones) then it's enough to initialize with InitSearch
                 // with a new search phrase.
-                options.append = true;
                 options.strategies = [InitSearch, ...Planner.ResolutionStrategies];
             }
             this.produceSuggestions(Object.assign({}, options, { metadata }));
@@ -126,9 +125,13 @@ export class PlanProducer {
         }
         time = ((now() - time) / 1000).toFixed(2);
         if (suggestions) {
-            log(`[${this.arc.arcId}] Produced ${suggestions.length}${this.replanOptions['append'] ? ' additional' : ''} suggestions [elapsed=${time}s].`);
+            log(`[${this.arc.arcId}] Produced ${suggestions.length} suggestions [elapsed=${time}s].`);
             this.isPlanning = false;
-            if (this._updateResult({ suggestions, generations: this.debug ? generations : [] }, this.replanOptions)) {
+            if (this.result.merge({
+                suggestions,
+                generations: this.debug ? PlanningResult.formatSerializableGenerations(generations) : [],
+                contextual: this.replanOptions['contextual']
+            }, this.arc)) {
                 // Store suggestions to store.
                 await this.result.flush();
                 PlanningExplorerAdapter.updatePlanningResults(this.result, options['metadata'], this.devtoolsChannel);
@@ -172,16 +175,6 @@ export class PlanProducer {
         this.needReplan = false;
         this.isPlanning = false; // using the setter method to trigger callbacks.
         log(`Cancel planning`);
-    }
-    _updateResult({ suggestions, generations }, options) {
-        generations = PlanningResult.formatSerializableGenerations(generations);
-        if (options.append) {
-            assert(!options['contextual'], `Cannot append to contextual options`);
-            return this.result.append({ suggestions, generations });
-        }
-        else {
-            return this.result.merge({ suggestions, generations, contextual: options['contextual'] }, this.arc);
-        }
     }
 }
 //# sourceMappingURL=plan-producer.js.map

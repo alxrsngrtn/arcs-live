@@ -87,7 +87,7 @@ $_documentContainer.innerHTML = `<dom-module id="lumo-menu-overlay-core">
         }
 
         :host([closing]) [part="overlay"] {
-          animation: 0.14s 0.14s lumo-mobile-menu-overlay-exit cubic-bezier(.550, .055, .675, .19) both;
+          animation: 0.14s 0.14s lumo-mobile-menu-overlay-exit cubic-bezier(.55, .055, .675, .19) both;
         }
       }
 

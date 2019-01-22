@@ -1,6 +1,7 @@
 /// BareSpecifier=@vaadin/vaadin-lumo-styles/typography
 import './version.js';
 import '../../@polymer/polymer/lib/elements/custom-style.js';
+import '../../@polymer/polymer/lib/elements/dom-module.js';
 const $_documentContainer = document.createElement('template');
 
 $_documentContainer.innerHTML = `<custom-style>
@@ -122,7 +123,7 @@ $_documentContainer.innerHTML = `<custom-style>
         height: 1px;
         border: 0;
         padding: 0;
-        margin: var(--lumo-space-s) calc(var(--lumo-border-radius) / 2);
+        margin: var(--lumo-space-s) calc(var(--lumo-border-radius-m) / 2);
         background-color: var(--lumo-contrast-10pct);
       }
 

@@ -13,7 +13,7 @@ $_documentContainer.innerHTML = `<dom-module id="lumo-required-field">
         color: var(--lumo-secondary-text-color);
         font-weight: 500;
         font-size: var(--lumo-font-size-s);
-        margin-left: calc(var(--lumo-border-radius) / 4);
+        margin-left: calc(var(--lumo-border-radius-m) / 4);
         transition: color 0.2s;
         line-height: 1;
         padding-bottom: 0.5em;
@@ -57,7 +57,7 @@ $_documentContainer.innerHTML = `<dom-module id="lumo-required-field">
       }
 
       [part="error-message"] {
-        margin-left: calc(var(--lumo-border-radius) / 4);
+        margin-left: calc(var(--lumo-border-radius-m) / 4);
         font-size: var(--lumo-font-size-xs);
         line-height: var(--lumo-line-height-xs);
         color: var(--lumo-error-text-color);

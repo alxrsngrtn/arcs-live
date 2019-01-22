@@ -20,9 +20,12 @@ export declare type PlanningResultOptions = {
     contextual?: boolean;
 };
 export declare class PlanningResult {
-    _suggestions: Suggestion[];
+    suggestions: Suggestion[];
     lastUpdated: Date;
-    generations: {}[];
+    generations: {
+        population: {}[];
+        record: {};
+    }[];
     contextual: boolean;
     store: VariableStorageProvider;
     private storeCallback;
@@ -35,14 +38,10 @@ export declare class PlanningResult {
     flush(): Promise<void>;
     clear(): Promise<void>;
     dispose(): void;
-    suggestions: Suggestion[];
     static formatSerializableGenerations(generations: any): any;
-    set({ suggestions, lastUpdated, generations, contextual }: PlanningResultOptions): boolean;
+    private _set;
     merge({ suggestions, lastUpdated, generations, contextual }: PlanningResultOptions, arc: Arc): boolean;
     private _isUpToDate;
-    private _getUpToDate;
-    append({ suggestions, lastUpdated, generations }: PlanningResultOptions): boolean;
-    olderThan(other: any): boolean;
     isEquivalent(suggestions: any): any;
     static isEquivalent(oldSuggestions: any, newSuggestions: any): any;
     fromLiteral({ suggestions, generations, lastUpdated, contextual }: {

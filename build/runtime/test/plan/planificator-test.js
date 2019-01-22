@@ -108,7 +108,9 @@ describe('remote planificator', () => {
                 await verifyConsumerResults(expectedSuggestionsCount);
             };
             // No contextual suggestions for empty arc.
-            await verifyReplanningAndConsuming(0);
+            await verifyReplanning(producePlanificator, 0);
+            await delay(100);
+            assert.lengthOf(consumePlanificator.consumer.result.suggestions, 0);
             // Replan non-contextual.
             await consumePlanificator.setSearch('*');
             assert.isUndefined(consumePlanificator.producer);

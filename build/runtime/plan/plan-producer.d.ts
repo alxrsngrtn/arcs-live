@@ -47,5 +47,4 @@ export declare class PlanProducer {
     produceSuggestions(options?: {}): Promise<void>;
     runPlanner(options: any, generations: any): Promise<Suggestion[]>;
     protected _cancelPlanning(): void;
-    private _updateResult;
 }

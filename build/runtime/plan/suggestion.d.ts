@@ -46,8 +46,13 @@ export declare class Suggestion {
     getDescription(modality: string): string | {};
     setDescription(description: Description, modality: Modality, descriptionFormatter?: typeof DescriptionFormatter): void;
     isEquivalent(other: Suggestion): boolean;
+    isEqual(other: Suggestion): boolean;
+    _isSameSearch(other: Suggestion): boolean;
+    _isSameDescription(other: Suggestion): boolean;
+    _isSameVersions(other: Suggestion): boolean;
     static compare(s1: Suggestion, s2: Suggestion): number;
     hasSearch(search: string): boolean;
+    hasSearchGroup(tokens: string[]): boolean;
     setSearch(search: Search): void;
     mergeSearch(suggestion: Suggestion): boolean;
     _addSearch(searchGroup: string[]): boolean;

@@ -1,5 +1,13 @@
-commit 4b20e401ff3bf0b57ff8076c29ae136e502cbef8
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Jan 21 15:40:19 2019 +1100
+commit b860340209c1506a2015b7c5af343698a96d6ac6
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Jan 22 12:25:51 2019 -0800
 
-    Fix '/' not escaped in sed command (#2628)
+    Simplify planning results merge  (#2629)
+    
+    * simplify planning results merge
+    
+    * get rid of "append" replanning option
+    
+    * add hash to instantiated plan debug info and some cleanup
+    
+    * address comments

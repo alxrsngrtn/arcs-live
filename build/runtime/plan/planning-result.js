@@ -14,6 +14,7 @@ import { Suggestion } from './suggestion.js';
 const error = logFactory('PlanningResult', '#ff0090', 'error');
 export class PlanningResult {
     constructor(envOptions, store) {
+        this.suggestions = [];
         this.lastUpdated = new Date(null);
         this.generations = [];
         this.contextual = true;
@@ -60,11 +61,6 @@ export class PlanningResult {
         this.changeCallbacks = [];
         this.store.off('change', this.storeCallback);
         this.store.dispose();
-    }
-    get suggestions() { return this._suggestions || []; }
-    set suggestions(suggestions) {
-        assert(Boolean(suggestions), `Cannot set uninitialized suggestions`);
-        this._suggestions = suggestions;
     }
     static formatSerializableGenerations(generations) {
         // Make a copy of everything and assign IDs to recipes.
@@ -124,50 +120,51 @@ export class PlanningResult {
             return result;
         });
     }
-    set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
-        if (this.isEquivalent(suggestions)) {
-            return false;
-        }
+    _set({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }) {
         this.suggestions = suggestions;
         this.generations = generations;
         this.lastUpdated = lastUpdated;
         this.contextual = contextual;
         this.onChanged();
-        return true;
     }
     merge({ suggestions, lastUpdated = new Date(), generations = [], contextual = true }, arc) {
-        if (this.isEquivalent(suggestions)) {
+        const newSuggestions = [];
+        const removeIndexes = [];
+        const arcVersionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
+        for (const newSuggestion of suggestions) {
+            const index = this.suggestions.findIndex(suggestion => suggestion.isEquivalent(newSuggestion));
+            if (index >= 0) {
+                if (this.suggestions[index].isEqual(newSuggestion)) {
+                    continue; // skip suggestion, if identical to an existing one.
+                }
+                const outdatedStores = Object.keys(newSuggestion.versionByStore).filter(storeId => {
+                    const currentVersion = this.suggestions[index].versionByStore[storeId];
+                    return currentVersion === undefined || newSuggestion.versionByStore[storeId] < currentVersion;
+                });
+                if (outdatedStores.length > 0) {
+                    console.warn(`New suggestions has older store versions:\n ${outdatedStores.map(id => `${id}: ${this.suggestions[index].versionByStore[id]} -> ${newSuggestion.versionByStore[id]}`).join(';')}`);
+                    assert(false);
+                }
+                removeIndexes.push(index);
+                newSuggestion.mergeSearch(this.suggestions[index]);
+            }
+            if (this._isUpToDate(newSuggestion, arcVersionByStore)) {
+                newSuggestions.push(newSuggestion);
+            }
+        }
+        // Keep suggestions (1) not marked for remove (2) up-to-date with the arcs store versions and
+        // (3) not in active recipe.
+        const jointSuggestions = this.suggestions.filter((suggestion, index) => {
+            return !removeIndexes.some(removeIndex => removeIndex === index) &&
+                this._isUpToDate(suggestion, arcVersionByStore) &&
+                !RecipeUtil.matchesRecipe(arc.activeRecipe, suggestion.plan);
+        });
+        if (jointSuggestions.length === this.suggestions.length && newSuggestions.length === 0) {
             return false;
         }
-        const jointSuggestions = [];
-        const arcVersionByStore = arc.getVersionByStore({ includeArc: true, includeContext: true });
-        // For all existing suggestions, keep the ones still up to date.
-        for (const currentSuggestion of this.suggestions) {
-            const newSuggestion = suggestions.find(suggestion => suggestion.hash === currentSuggestion.hash);
-            if (newSuggestion) {
-                // Suggestion with this hash exists in the new suggestions list.
-                const upToDateSuggestion = this._getUpToDate(currentSuggestion, newSuggestion, arcVersionByStore);
-                if (upToDateSuggestion) {
-                    jointSuggestions.push(upToDateSuggestion);
-                }
-            }
-            else {
-                // Suggestion with this hash does not exist in the new suggestions list.
-                // Add it to the joint suggestions list, iff it's up-to-date and not in the active recipe.
-                if (this._isUpToDate(currentSuggestion, arcVersionByStore) &&
-                    !RecipeUtil.matchesRecipe(arc.activeRecipe, currentSuggestion.plan)) {
-                    jointSuggestions.push(currentSuggestion);
-                }
-            }
-        }
-        for (const newSuggestion of suggestions) {
-            if (!this.suggestions.find(suggestion => suggestion.hash === newSuggestion.hash)) {
-                if (this._isUpToDate(newSuggestion, arcVersionByStore)) {
-                    jointSuggestions.push(newSuggestion);
-                }
-            }
-        }
-        return this.set({ suggestions: jointSuggestions, lastUpdated, generations, contextual });
+        jointSuggestions.push(...newSuggestions);
+        this._set({ suggestions: jointSuggestions, generations: this.generations.concat(...generations), lastUpdated, contextual: contextual && this.contextual });
+        return true;
     }
     _isUpToDate(suggestion, versionByStore) {
         for (const handle of suggestion.plan.handles) {
@@ -179,60 +176,8 @@ export class PlanningResult {
         }
         return true;
     }
-    _getUpToDate(currentSuggestion, newSuggestion, versionByStore) {
-        const newUpToDate = this._isUpToDate(newSuggestion, versionByStore);
-        const currentUpToDate = this._isUpToDate(currentSuggestion, versionByStore);
-        if (newUpToDate && currentUpToDate) {
-            const newVersions = newSuggestion.versionByStore;
-            const currentVersions = currentSuggestion.versionByStore;
-            assert(Object.keys(newVersions).length === Object.keys(currentVersions).length);
-            if (Object.entries(newVersions).every(([id, newVersion]) => currentVersions[id] !== undefined && newVersion >= currentVersions[id])) {
-                return newSuggestion;
-            }
-            assert(Object.entries(currentVersions).every(([id, currentVersion]) => newVersions[id] !== undefined
-                && currentVersion >= newVersions[id]), `Inconsistent store versions for suggestions with hash: ${newSuggestion.hash}`);
-            return currentSuggestion;
-        }
-        if (newUpToDate) {
-            return newSuggestion;
-        }
-        if (currentUpToDate) {
-            return currentSuggestion;
-        }
-        console.warn(`None of the suggestions for hash ${newSuggestion.hash} is up to date.`);
-        return null;
-    }
-    append({ suggestions, lastUpdated = new Date(), generations = [] }) {
-        const newSuggestions = [];
-        let searchUpdated = false;
-        for (const newSuggestion of suggestions) {
-            const existingSuggestion = this.suggestions.find(suggestion => suggestion.isEquivalent(newSuggestion));
-            if (existingSuggestion) {
-                searchUpdated = existingSuggestion.mergeSearch(newSuggestion);
-            }
-            else {
-                newSuggestions.push(newSuggestion);
-            }
-        }
-        if (newSuggestions.length > 0) {
-            this.suggestions = this.suggestions.concat(newSuggestions);
-        }
-        else {
-            if (!searchUpdated) {
-                return false;
-            }
-        }
-        // TODO: filter out generations of other suggestions.
-        this.generations.push(...generations);
-        this.lastUpdated = lastUpdated;
-        this.onChanged();
-        return true;
-    }
-    olderThan(other) {
-        return this.lastUpdated < other.lastUpdated;
-    }
     isEquivalent(suggestions) {
-        return PlanningResult.isEquivalent(this._suggestions, suggestions);
+        return PlanningResult.isEquivalent(this.suggestions, suggestions);
     }
     static isEquivalent(oldSuggestions, newSuggestions) {
         assert(newSuggestions, `New suggestions cannot be null.`);
@@ -245,12 +190,16 @@ export class PlanningResult {
         for (const suggestion of suggestions) {
             deserializedSuggestions.push(await Suggestion.fromLiteral(suggestion, this.envOptions));
         }
-        return this.set({
+        if (this.isEquivalent(deserializedSuggestions)) {
+            return false;
+        }
+        this._set({
             suggestions: deserializedSuggestions,
             generations: JSON.parse(generations || '[]'),
             lastUpdated: new Date(lastUpdated),
             contextual
         });
+        return true;
     }
     toLiteral() {
         return {
