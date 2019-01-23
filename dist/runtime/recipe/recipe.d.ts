@@ -36,6 +36,7 @@ export declare class Recipe {
     isResolved(): boolean;
     isCompatible(modality: Modality): boolean;
     readonly modality: Modality;
+    allRequiredSlotsPresent(): boolean;
     _findDuplicate(items: any, options: any): any;
     _isValid(options?: any): boolean;
     name: string | undefined;

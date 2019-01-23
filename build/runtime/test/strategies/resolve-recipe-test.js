@@ -135,6 +135,7 @@ describe('resolve recipe', () => {
         consume info
       recipe
         A
+          consume master #root
         B
           consume info #detail
     `));

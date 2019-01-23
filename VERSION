@@ -1,13 +1,13 @@
-commit b860340209c1506a2015b7c5af343698a96d6ac6
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Tue Jan 22 12:25:51 2019 -0800
+commit 04896d60228bca5e95d70ec23e4271eb482856eb
+Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
+Date:   Wed Jan 23 14:56:23 2019 +1100
 
-    Simplify planning results merge  (#2629)
+    Slots and slot connections are no longer eagerly created (#2610)
     
-    * simplify planning results merge
+    * Slots and slot connections are no longer eagerly created
     
-    * get rid of "append" replanning option
+    * Update walker-base.ts
     
-    * add hash to instantiated plan debug info and some cleanup
+    * Update resolve-recipe.ts
     
-    * address comments
+    * created a new type for ConsumeSlotConnectionMatch

@@ -60,9 +60,13 @@ export class MatchRecipeByVerb extends Strategy {
                             if (slotConstraints[consumeSlot].targetSlot || Object.values(slotConstraints[consumeSlot].providedSlots).filter(a => a != null).length > 0) {
                                 let slotMapped = false;
                                 for (const particle of particles) {
-                                    if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, consumeSlot, slotConstraints[consumeSlot].providedSlots)) {
+                                    if (MatchRecipeByVerb.slotsMatchConstraint(particle, particle.getSlotSpecs(), consumeSlot, slotConstraints[consumeSlot].providedSlots)) {
                                         if (slotConstraints[consumeSlot].targetSlot) {
                                             const { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slotConstraints[consumeSlot].targetSlot });
+                                            // if slotConnection doesn't exist, then create it before connecting it to slot. 
+                                            if (particle.consumedSlotConnections[consumeSlot] == undefined) {
+                                                particle.addSlotConnection(consumeSlot);
+                                            }
                                             particle.consumedSlotConnections[consumeSlot].targetSlot = mappedSlot;
                                             mappedSlot.consumeConnections.push(particle.consumedSlotConnections[consumeSlot]);
                                         }
@@ -72,6 +76,9 @@ export class MatchRecipeByVerb extends Strategy {
                                                 continue;
                                             }
                                             const { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slot });
+                                            if (particle.consumedSlotConnections[consumeSlot] == undefined) {
+                                                particle.addSlotConnection(consumeSlot);
+                                            }
                                             const oldSlot = particle.consumedSlotConnections[consumeSlot].providedSlots[slotName];
                                             oldSlot.remove();
                                             particle.consumedSlotConnections[consumeSlot].providedSlots[slotName] = mappedSlot;
@@ -193,22 +200,25 @@ export class MatchRecipeByVerb extends Strategy {
     }
     static satisfiesSlotConnection(recipe, slotName, constraints) {
         for (const particle of recipe.particles) {
-            if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, slotName, constraints)) {
+            if (!particle.spec)
+                continue;
+            if (MatchRecipeByVerb.slotsMatchConstraint(particle, particle.getSlotSpecs(), slotName, constraints)) {
                 return true;
             }
         }
         return false;
     }
-    static slotsMatchConstraint(connections, name, constraints) {
-        if (connections[name] == null) {
+    static slotsMatchConstraint(particle, slotSpecs, name, constraints) {
+        if (slotSpecs.get(name) == null) {
             return false;
         }
-        if (connections[name]._targetSlot != null &&
+        const slotConn = particle.getSlotConnectionBySpec(slotSpecs.get(name));
+        if (slotConn && slotConn._targetSlot != null &&
             constraints.targetSlot != null) {
             return false;
         }
         for (const provideName in constraints.providedSlots) {
-            if (connections[name].providedSlots[provideName] == null) {
+            if (slotSpecs.get(name).providedSlots.find(spec => spec.name === provideName).length === 0) {
                 return false;
             }
         }

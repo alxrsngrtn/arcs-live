@@ -90,7 +90,7 @@ export class SlotComposer {
         recipeParticles.forEach(p => {
             Object.values(p.consumedSlotConnections).forEach(cs => {
                 if (!cs.targetSlot) {
-                    assert(!cs.slotSpec.isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
+                    assert(!cs.getSlotSpec().isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
                     return;
                 }
                 const slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);

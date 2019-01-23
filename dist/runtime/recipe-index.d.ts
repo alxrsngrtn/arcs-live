@@ -10,8 +10,18 @@
 import { Arc } from './arc.js';
 import { Recipe } from './recipe/recipe.js';
 import { Slot } from './recipe/slot.js';
-import { SlotConnection } from './recipe/slot-connection.js';
 import { Handle } from './recipe/handle.js';
+import { ProvidedSlotSpec, SlotSpec } from './particle-spec.js';
+import { Particle } from './recipe/particle.js';
+import { HandleConnection } from './recipe/handle-connection.js';
+declare type ConsumeSlotConnectionMatch = {
+    recipeParticle: Particle;
+    slotSpec: SlotSpec;
+    matchingHandles: {
+        handle: Handle;
+        matchingConn: HandleConnection;
+    }[];
+};
 export declare class RecipeIndex {
     ready: any;
     private _recipes;
@@ -29,10 +39,12 @@ export declare class RecipeIndex {
     findHandleMatch(handle: Handle, requestedFates?: string[]): Handle[];
     doesHandleMatch(handle: Handle, otherHandle: Handle): boolean;
     /**
-     * Given a slot, find consume slot connections that could be connected to it.
+     * Given a particle and a slot spec for a slot that particle could provide, find consume slot connections that
+     * could be connected to the potential slot.
      */
-    findConsumeSlotConnectionMatch(slot: Slot): any[];
-    findProvidedSlot(slotConn: SlotConnection): Slot[];
+    findConsumeSlotConnectionMatch(particle: Particle, providedSlotSpec: ProvidedSlotSpec): ConsumeSlotConnectionMatch[];
+    findProvidedSlot(particle: Particle, slotSpec: SlotSpec): Slot[];
+    private _getMatchingHandles;
     /**
      * Helper function that determines whether handle connections in a provided slot
      * and a potential consuming slot connection could be match, considering their fates and directions.
@@ -45,3 +57,4 @@ export declare class RecipeIndex {
     readonly coalescableFates: string[];
     findCoalescableHandles(recipe: Recipe, otherRecipe: Recipe, usedHandles?: Set<Handle>): Map<Handle, Handle>;
 }
+export {};

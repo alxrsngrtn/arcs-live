@@ -116,7 +116,9 @@ ${recipeManifest}
 
       recipe
         A
+          consume root 
         B
+          consume root
         C
     `));
         const inputParams = { generated: [{ result: manifest.recipes[0], score: 1 }] };
@@ -171,6 +173,7 @@ ${recipeManifest}
         await assertActionSlotTags(`
       recipe
         A
+          consume root
         B`, []);
     });
 });

@@ -62,10 +62,10 @@ export class SlotDomConsumer extends SlotConsumer {
         if (Object.keys(content).indexOf('model') >= 0) {
             if (content.model) {
                 let formattedModel;
-                if (contextSpec.isSet && this.consumeConn.slotSpec.isSet) {
+                if (contextSpec.isSet && this.consumeConn.getSlotSpec().isSet) {
                     formattedModel = this._modelForSetSlotConsumedAsSetSlot(content.model, subId);
                 }
-                else if (contextSpec.isSet && !this.consumeConn.slotSpec.isSet) {
+                else if (contextSpec.isSet && !this.consumeConn.getSlotSpec().isSet) {
                     formattedModel = this._modelForSetSlotConsumedAsSingletonSlot(content.model, subId);
                 }
                 else {
@@ -205,7 +205,7 @@ export class SlotDomConsumer extends SlotConsumer {
             const slotId = this.getNodeValue(innerContainer, 'slotid');
             const providedContext = this.findProvidedContext(ctx => ctx.id === slotId);
             if (!providedContext) {
-                console.warn(`Slot ${this.consumeConn.slotSpec.name} has unexpected inner slot ${slotId}`);
+                console.warn(`Slot ${this.consumeConn.getSlotSpec().name} has unexpected inner slot ${slotId}`);
                 return;
             }
             const subId = this.getNodeValue(innerContainer, 'subid');

@@ -5,6 +5,7 @@ import { Particle } from './particle.js';
 import { Recipe } from './recipe.js';
 import { Slot } from './slot.js';
 import { SlotConnection } from './slot-connection.js';
+import { SlotSpec } from '../particle-spec';
 import { WalkerBase, WalkerTactic } from './walker-base.js';
 export declare class Walker extends WalkerBase {
     static Permuted: WalkerTactic;
@@ -13,6 +14,7 @@ export declare class Walker extends WalkerBase {
     onHandleConnection?(recipe: Recipe, handleConnection: HandleConnection): any;
     onParticle?(recipe: Recipe, particle: Particle): any;
     onRecipe?(recipe: Recipe, result: any): any;
+    onPotentialSlotConnection?(recipe: Recipe, particle: Particle, slotSpec: SlotSpec): any;
     onSlotConnection?(recipe: Recipe, slotConnection: SlotConnection): any;
     onSlot?(recipe: Recipe, slot: Slot): any;
     onObligation?(recipe: Recipe, obligation: ConnectionConstraint): any;

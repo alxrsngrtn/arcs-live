@@ -77,7 +77,9 @@ export class ResolveRecipe extends Strategy {
                 if (slotConnection.isConnected()) {
                     return undefined;
                 }
-                const { local, remote } = MapSlots.findAllSlotCandidates(slotConnection, arc);
+                const slotSpec = slotConnection.getSlotSpec();
+                const particle = slotConnection.particle;
+                const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
                 const allSlots = [...local, ...remote];
                 // MapSlots handles a multi-slot case.
                 if (allSlots.length !== 1) {
@@ -86,6 +88,20 @@ export class ResolveRecipe extends Strategy {
                 const selectedSlot = allSlots[0];
                 return (recipe, slotConnection) => {
                     MapSlots.connectSlotConnection(slotConnection, selectedSlot);
+                    return 1;
+                };
+            }
+            onPotentialSlotConnection(recipe, particle, slotSpec) {
+                const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
+                const allSlots = [...local, ...remote];
+                // MapSlots handles a multi-slot case.
+                if (allSlots.length !== 1) {
+                    return undefined;
+                }
+                const selectedSlot = allSlots[0];
+                return (recipe, particle, slotSpec) => {
+                    const newSlotConnection = particle.addSlotConnection(slotSpec.name);
+                    MapSlots.connectSlotConnection(newSlotConnection, selectedSlot);
                     return 1;
                 };
             }

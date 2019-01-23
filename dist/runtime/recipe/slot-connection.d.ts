@@ -6,7 +6,6 @@ export declare class SlotConnection {
     private readonly _recipe;
     private readonly _particle;
     private readonly _name;
-    private _slotSpec;
     private _targetSlot;
     private _providedSlots;
     private _tags;
@@ -16,12 +15,12 @@ export declare class SlotConnection {
     readonly particle: Particle;
     readonly name: string;
     getQualifiedName(): string;
-    slotSpec: SlotSpec;
     targetSlot: Slot | undefined;
     readonly providedSlots: {
         [index: string]: Slot;
     };
     tags: string[];
+    getSlotSpec(): SlotSpec;
     connectToSlot(targetSlot: any): void;
     disconnectFromSlot(): void;
     _clone(particle: any, cloneMap: any): any;

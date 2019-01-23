@@ -11756,7 +11756,6 @@ class ConnectionConstraint {
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class SlotConnection {
     constructor(name, particle) {
-        this._slotSpec = undefined;
         this._targetSlot = undefined;
         this._providedSlots = {};
         this._tags = [];
@@ -11774,29 +11773,13 @@ class SlotConnection {
     get particle() { return this._particle; }
     get name() { return this._name; }
     getQualifiedName() { return `${this.particle.name}::${this.name}`; }
-    get slotSpec() { return this._slotSpec; }
     get targetSlot() { return this._targetSlot; }
     set targetSlot(targetSlot) { this._targetSlot = targetSlot; }
     get providedSlots() { return this._providedSlots; }
     get tags() { return this._tags; }
     set tags(tags) { this._tags = tags; }
-    set slotSpec(slotSpec) {
-        assert$1(this.name === slotSpec.name);
-        this._slotSpec = slotSpec;
-        slotSpec.providedSlots.forEach(providedSlot => {
-            let slot = this.providedSlots[providedSlot.name];
-            if (slot == undefined) {
-                slot = this.recipe.newSlot(providedSlot.name);
-                slot._sourceConnection = this;
-                slot._name = providedSlot.name;
-                this.providedSlots[providedSlot.name] = slot;
-            }
-            assert$1(slot.handleConnections.length === 0, 'Handle connections must be empty');
-            providedSlot.handles.forEach(handle => slot.handleConnections.push(this.particle.connections[handle]));
-            assert$1(slot._name === providedSlot.name);
-            assert$1(!slot.formFactor);
-            slot.formFactor = providedSlot.formFactor;
-        });
+    getSlotSpec() {
+        return this.particle.spec && this.particle.spec.getSlotSpec(this.name);
     }
     connectToSlot(targetSlot) {
         assert$1(targetSlot);
@@ -11815,11 +11798,8 @@ class SlotConnection {
         if (cloneMap.has(this)) {
             return cloneMap.get(this);
         }
-        const slotConnection = particle.addSlotConnection(this.name);
+        const slotConnection = particle.addSlotConnectionAsCopy(this.name);
         slotConnection.tags = this.tags;
-        if (this.slotSpec) {
-            slotConnection._slotSpec = particle.spec.getSlotSpec(this.name);
-        }
         cloneMap.set(this, slotConnection);
         return slotConnection;
     }
@@ -11866,7 +11846,7 @@ class SlotConnection {
             }
             return false;
         }
-        if (this.slotSpec.isRequired) {
+        if (this.getSlotSpec().isRequired) {
             if (!this.targetSlot || !(this.targetSlot.id || this.targetSlot.sourceConnection.isConnected())) {
                 // The required connection has no target slot
                 // or its target slot it not resolved (has no ID or source connection).
@@ -11879,7 +11859,7 @@ class SlotConnection {
         if (!this.targetSlot) {
             return true;
         }
-        return this.slotSpec.providedSlots.every(providedSlot => {
+        return this.getSlotSpec().providedSlots.every(providedSlot => {
             if (providedSlot.isRequired && this.providedSlots[providedSlot.name].consumeConnections.length === 0) {
                 if (options) {
                     options.details = 'missing consuming slot';
@@ -11919,8 +11899,8 @@ class SlotConnection {
             provideRes.push('  provide');
             // Only assert that there's a spec for this provided slot if there's a spec for
             // the consumed slot .. otherwise this is just a constraint.
-            if (this.slotSpec) {
-                const providedSlotSpec = this.slotSpec.getProvidedSlotSpec(psName);
+            if (this.getSlotSpec()) {
+                const providedSlotSpec = this.getSlotSpec().getProvidedSlotSpec(psName);
                 assert$1(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
             }
             provideRes.push(`${psName} as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);
@@ -12291,12 +12271,6 @@ class Particle {
             connection.type = speccedConnection.type;
             connection.direction = speccedConnection.direction;
         }
-        spec.slots.forEach(slotSpec => {
-            if (this._consumedSlotConnections[slotSpec.name] == undefined) {
-                this.addSlotConnection(slotSpec.name);
-            }
-            this._consumedSlotConnections[slotSpec.name].slotSpec = slotSpec;
-        });
     }
     addUnnamedConnection() {
         const connection = new HandleConnection(undefined, this);
@@ -12331,6 +12305,28 @@ class Particle {
         this._unnamedConnections.splice(idx, 1);
     }
     addSlotConnection(name) {
+        assert$1(!(name in this._consumedSlotConnections), "slot connection already exists");
+        assert$1(!this.spec || this.spec.slots.has(name), "slot connection not in particle spec");
+        const slotConn = new SlotConnection(name, this);
+        this._consumedSlotConnections[name] = slotConn;
+        const slotSpec = this.getSlotSpecByName(name);
+        if (slotSpec) {
+            slotSpec.providedSlots.forEach(providedSlot => {
+                const slot = this.recipe.newSlot(providedSlot.name);
+                slot.sourceConnection = slotConn;
+                slotConn.providedSlots[providedSlot.name] = slot;
+                // TODO: hook the handles up
+                assert$1(slot.handleConnections.length === 0, 'Handle connections must be empty');
+                providedSlot.handles.forEach(handle => slot.handleConnections.push(this.connections[handle]));
+            });
+        }
+        return slotConn;
+    }
+    addSlotConnectionAsCopy(name) {
+        // Called when a recipe and all of it's contents are being cloned. 
+        // Each slot connection in the existing recipe has to be created for the clone, 
+        // This method must not create slots for provided slot connections otherwise there 
+        // will be duplicate slots.
         const slotConn = new SlotConnection(name, this);
         this._consumedSlotConnections[name] = slotConn;
         return slotConn;
@@ -12341,6 +12337,23 @@ class Particle {
     }
     remove() {
         this.recipe.removeParticle(this);
+    }
+    getSlotConnectionBySpec(spec) {
+        return Object.values(this._consumedSlotConnections).find(slotConn => slotConn.getSlotSpec() === spec);
+    }
+    getSlotSpecByName(name) {
+        return this.spec && this.spec.slots.get(name);
+    }
+    getSlotConnectionByName(name) {
+        return this._consumedSlotConnections[name];
+    }
+    getProvidedSlotByName(consumeName, name) {
+        return this.consumedSlotConnections[consumeName] && this.consumedSlotConnections[consumeName].providedSlots[name];
+    }
+    getSlotSpecs() {
+        if (this.spec)
+            return this.spec.slots;
+        return new Map();
     }
     toString(nameMap, options) {
         let result = [];
@@ -12491,7 +12504,7 @@ class Slot {
     get spec() {
         // TODO: should this return something that indicates this isn't available yet instead of
         // the constructed {isSet: false, tags: []}?
-        return (this.sourceConnection && this.sourceConnection.slotSpec) ? this.sourceConnection.slotSpec.getProvidedSlotSpec(this.name) : { isSet: false, tags: [] };
+        return (this.sourceConnection && this.sourceConnection.getSlotSpec()) ? this.sourceConnection.getSlotSpec().getProvidedSlotSpec(this.name) : { isSet: false, tags: [] };
     }
     get handles() {
         return this.handleConnections.map(connection => connection.handle).filter(a => a !== undefined);
@@ -12959,6 +12972,7 @@ class Recipe {
             && this._handles.every(handle => handle.isResolved())
             && this._particles.every(particle => particle.isResolved())
             && this.modality.isResolved()
+            && this.allRequiredSlotsPresent()
             && this._slots.every(slot => slot.isResolved())
             && this.handleConnections.every(connection => connection.isResolved())
             && this.slotConnections.every(slotConnection => slotConnection.isResolved());
@@ -12970,6 +12984,36 @@ class Recipe {
     get modality() {
         return this.particles.filter(p => Boolean(p.spec && p.spec.slots.size > 0)).map(p => p.spec.modality)
             .reduce((modality, total) => modality.intersection(total), Modality.all);
+    }
+    allRequiredSlotsPresent() {
+        // All required slots and at least one consume slot for each particle must be present in order for the 
+        // recipe to be considered resolved. 
+        for (const particle of this.particles) {
+            if (particle.spec.slots.size === 0) {
+                continue;
+            }
+            let atLeastOneSlotConnection = false;
+            for (const [name, slotSpec] of particle.spec.slots) {
+                if (slotSpec.isRequired && !particle.consumedSlotConnections[name]) {
+                    return false;
+                }
+                // required provided slots are only required when the corresponding consume slot connection is present
+                if (particle.consumedSlotConnections[name]) {
+                    for (const providedSlotSpec of slotSpec.providedSlots) {
+                        if (providedSlotSpec.isRequired && !particle.getProvidedSlotByName(name, providedSlotSpec.name)) {
+                            return false;
+                        }
+                    }
+                }
+                if (particle.consumedSlotConnections[name]) {
+                    atLeastOneSlotConnection = true;
+                }
+            }
+            if (!atLeastOneSlotConnection) {
+                return false;
+            }
+        }
+        return true;
     }
     _findDuplicate(items, options) {
         const seenHandles = new Set();
@@ -18231,6 +18275,20 @@ ${e.message}
                 }
                 let slotConn = particle.consumedSlotConnections[slotConnectionItem.param];
                 if (!slotConn) {
+                    // particles that reference verbs should store slot connection information as constraints to be used
+                    // during verb matching. However, if there's a spec then the slots need to be validated against it
+                    // instead.
+                    if (particle.spec !== undefined) {
+                        // Validate consumed and provided slots names are according to spec.
+                        if (!particle.spec.slots.has(slotConnectionItem.param)) {
+                            throw new ManifestError(slotConnectionItem.location, `Consumed slot '${slotConnectionItem.param}' is not defined by '${particle.name}'`);
+                        }
+                        slotConnectionItem.dependentSlotConnections.forEach(ps => {
+                            if (!particle.spec.slots.get(slotConnectionItem.param).getProvidedSlotSpec(ps.param)) {
+                                throw new ManifestError(ps.location, `Provided slot '${ps.param}' is not defined by '${particle.name}'`);
+                            }
+                        });
+                    }
                     slotConn = particle.addSlotConnection(slotConnectionItem.param);
                 }
                 slotConn.tags = slotConnectionItem.tags || [];
@@ -18377,20 +18435,6 @@ ${e.message}
                 }
             }
             for (const slotConnectionItem of item.slotConnections) {
-                // particles that reference verbs should store slot connection information as constraints to be used
-                // during verb matching. However, if there's a spec then the slots need to be validated against it
-                // instead.
-                if (particle.spec !== undefined) {
-                    // Validate consumed and provided slots names are according to spec.
-                    if (!particle.spec.slots.has(slotConnectionItem.param)) {
-                        throw new ManifestError(slotConnectionItem.location, `Consumed slot '${slotConnectionItem.param}' is not defined by '${particle.name}'`);
-                    }
-                    slotConnectionItem.dependentSlotConnections.forEach(ps => {
-                        if (!particle.spec.slots.get(slotConnectionItem.param).getProvidedSlotSpec(ps.param)) {
-                            throw new ManifestError(ps.location, `Provided slot '${ps.param}' is not defined by '${particle.name}'`);
-                        }
-                    });
-                }
                 let targetSlot = items.byName.get(slotConnectionItem.name);
                 if (targetSlot) {
                     assert$1(items.bySlot.has(targetSlot));
@@ -20267,7 +20311,12 @@ class WalkerBase extends StrategizerWalker {
                             continue;
                         }
                         permutation.forEach(({ f, context }) => {
-                            score += f(newRecipe, cloneMap.get(context));
+                            if (context) {
+                                score = f(newRecipe, ...context.map(c => cloneMap.get(c) || c));
+                            }
+                            else {
+                                score = f(newRecipe);
+                            }
                         });
                         newRecipes.push({ recipe: newRecipe, score });
                     }
@@ -20278,13 +20327,19 @@ class WalkerBase extends StrategizerWalker {
                         if (typeof continuation === 'function') {
                             continuation = [continuation];
                         }
+                        let score = 0;
                         continuation.forEach(f => {
                             if (f == null) {
                                 f = () => 0;
                             }
                             const cloneMap = new Map();
                             const newRecipe = recipe.clone(cloneMap);
-                            const score = f(newRecipe, cloneMap.get(context));
+                            if (context) {
+                                score = f(newRecipe, ...context.map(c => cloneMap.get(c) || c));
+                            }
+                            else {
+                                score = f(newRecipe);
+                            }
                             newRecipes.push({ recipe: newRecipe, score });
                         });
                     });
@@ -20332,49 +20387,68 @@ class Walker extends WalkerBase {
         }
         for (const particle of recipe.particles) {
             if (this.onParticle) {
-                const result = this.onParticle(recipe, particle);
+                const context = [particle];
+                const result = this.onParticle(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context: particle });
+                    updateList.push({ continuation: result, context });
                 }
             }
         }
         for (const handleConnection of recipe.handleConnections) {
             if (this.onHandleConnection) {
-                const result = this.onHandleConnection(recipe, handleConnection);
+                const context = [handleConnection];
+                const result = this.onHandleConnection(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context: handleConnection });
+                    updateList.push({ continuation: result, context });
                 }
             }
         }
         for (const handle of recipe.handles) {
             if (this.onHandle) {
-                const result = this.onHandle(recipe, handle);
+                const context = [handle];
+                const result = this.onHandle(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context: handle });
+                    updateList.push({ continuation: result, context });
                 }
             }
         }
-        for (const slotConnection of recipe.slotConnections) {
-            if (this.onSlotConnection) {
-                const result = this.onSlotConnection(recipe, slotConnection);
+        if (this.onPotentialSlotConnection) {
+            for (const particle of recipe.particles) {
+                for (const [name, slotSpec] of particle.getSlotSpecs()) {
+                    if (particle.getSlotConnectionByName(name))
+                        continue;
+                    const context = [particle, slotSpec];
+                    const result = this.onPotentialSlotConnection(recipe, ...context);
+                    if (!this.isEmptyResult(result)) {
+                        updateList.push({ continuation: result, context });
+                    }
+                }
+            }
+        }
+        if (this.onSlotConnection) {
+            for (const slotConnection of recipe.slotConnections) {
+                const context = [slotConnection];
+                const result = this.onSlotConnection(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context: slotConnection });
+                    updateList.push({ continuation: result, context });
                 }
             }
         }
         for (const slot of recipe.slots) {
             if (this.onSlot) {
-                const result = this.onSlot(recipe, slot);
+                const context = [slot];
+                const result = this.onSlot(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context: slot });
+                    updateList.push({ continuation: result, context });
                 }
             }
         }
         for (const obligation of recipe.obligations) {
             if (this.onObligation) {
-                const result = this.onObligation(recipe, obligation);
+                const context = [obligation];
+                const result = this.onObligation(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context: obligation });
+                    updateList.push({ continuation: result, context });
                 }
             }
         }
@@ -20389,18 +20463,41 @@ class MapSlots extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
         return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+            onPotentialSlotConnection(recipe, particle, slotSpec) {
+                const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
+                // ResolveRecipe handles one-slot case.
+                if (local.length + remote.length < 2) {
+                    return undefined;
+                }
+                // If there are any local slots, prefer them over remote slots.
+                // TODO: There should not be any preference over local slots vs. remote slots.
+                // Strategies should be responsible for making all possible recipes. Ranking of 
+                // recipes is done later. 
+                const slotList = local.length > 0 ? local : remote;
+                return slotList.map(slot => ((recipe, particle, slotSpec) => {
+                    const newSlotConnection = particle.addSlotConnection(slotSpec.name);
+                    MapSlots.connectSlotConnection(newSlotConnection, slot);
+                    return 1;
+                }));
+            }
+            // TODO: this deals with cases where a SlotConnection has been
+            // created during parsing, so that provided slots inside the 
+            // connection can be connected to consume connections.
+            // Long term, we shouldn't have to do this, so we won't need
+            // to deal with the case of a disconnected SlotConnection.
             onSlotConnection(recipe, slotConnection) {
                 // don't try to connect verb constraints
                 // TODO: is this right? Should constraints be connectible, in order to precompute the
                 // recipe side once the verb is substituted?
-                if (slotConnection.slotSpec == undefined) {
+                if (slotConnection.getSlotSpec() == undefined) {
                     return undefined;
                 }
                 if (slotConnection.isConnected()) {
-                    return undefined;
+                    return;
                 }
-                const { local, remote } = MapSlots.findAllSlotCandidates(slotConnection, arc);
-                // ResolveRecipe handles one-slot case.
+                const slotSpec = slotConnection.getSlotSpec();
+                const particle = slotConnection.particle;
+                const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
                 if (local.length + remote.length < 2) {
                     return undefined;
                 }
@@ -20436,18 +20533,19 @@ class MapSlots extends Strategy {
         slotConnection.targetSlot.tags = [...selectedSlot.tags];
     }
     // Returns all possible slot candidates, sorted by "quality"
-    static findAllSlotCandidates(slotConnection, arc) {
+    static findAllSlotCandidates(particle, slotSpec, arc) {
+        const slotConn = particle.getSlotConnectionByName(slotSpec.name);
         return {
             // Note: during manfiest parsing, target slot is only set in slot connection, if the slot exists in the recipe.
             // If this slot is internal to the recipe, it has the sourceConnection set to the providing connection
             // (and hence the consuming connection is considered connected already). Otherwise, this may only be a remote slot.
-            local: !slotConnection.targetSlot ? MapSlots._findSlotCandidates(slotConnection, slotConnection.recipe.slots) : [],
-            remote: MapSlots._findSlotCandidates(slotConnection, arc.pec.slotComposer.getAvailableContexts())
+            local: !slotConn || !slotConn.targetSlot ? MapSlots._findSlotCandidates(particle, slotSpec, particle.recipe.slots) : [],
+            remote: MapSlots._findSlotCandidates(particle, slotSpec, arc.pec.slotComposer.getAvailableContexts())
         };
     }
     // Returns the given slot candidates, sorted by "quality".
-    static _findSlotCandidates(slotConnection, slots) {
-        const possibleSlots = slots.filter(s => this.slotMatches(slotConnection, s));
+    static _findSlotCandidates(particle, slotSpec, slots) {
+        const possibleSlots = slots.filter(s => this.slotMatches(particle, slotSpec, s));
         possibleSlots.sort((slot1, slot2) => {
             // TODO: implement.
             return slot1.name < slot2.name;
@@ -20455,46 +20553,43 @@ class MapSlots extends Strategy {
         return possibleSlots;
     }
     // Returns true, if the given slot is a viable candidate for the slotConnection.
-    static slotMatches(slotConnection, slot) {
-        if (!MapSlots.specMatch(slotConnection, slot)) {
+    static slotMatches(particle, slotSpec, slot) {
+        if (!MapSlots.specMatch(slotSpec, slot.spec)) {
             return false;
         }
-        if (!MapSlots.tagsOrNameMatch(slotConnection, slot)) {
+        const potentialSlotConn = particle.getSlotConnectionBySpec(slotSpec);
+        if (!MapSlots.tagsOrNameMatch(slotSpec, slot.spec, potentialSlotConn, slot)) {
             return false;
         }
         // Match handles of the provided slot with the slot-connection particle's handles.
-        if (!MapSlots.handlesMatch(slotConnection, slot)) {
+        if (!MapSlots.handlesMatch(particle, slot)) {
             return false;
         }
         return true;
     }
-    static specMatch(slotConnection, slot) {
-        return slotConnection.slotSpec && // if there's no slotSpec, this is just a slot constraint on a verb
-            slot.spec && // if there is no spec on the slot, it is a hosted slot in the inner arc
-            slotConnection.slotSpec.isSet === slot.spec.isSet;
-    }
-    // Returns true, if the slot connection's tags intersection with slot's tags is nonempty.
-    // TODO: replace with generic tag matcher
-    static tagsOrNameMatch(slotConnection, slot) {
-        const consumeConnTags = [].concat(slotConnection.slotSpec.tags || [], slotConnection.tags, slotConnection.targetSlot ? slotConnection.targetSlot.tags : []);
-        const slotTags = new Set([].concat(slot.tags, slot.spec.tags || [], [slot.name]));
-        // Consume connection tags aren't empty and intersection with the slot isn't empty.
-        if (consumeConnTags.length > 0 && consumeConnTags.some(t => slotTags.has(t))) {
-            return true;
-        }
-        // For backward compatibility support explicit slot names matching.
-        return (slotConnection.name === slot.name);
+    static specMatch(slotSpec, providedSlotSpec) {
+        return slotSpec && // if there's no slotSpec, this is just a slot constraint on a verb
+            providedSlotSpec &&
+            slotSpec.isSet === providedSlotSpec.isSet;
     }
     // Returns true, if the providing slot handle restrictions are satisfied by the consuming slot connection.
     // TODO: should we move some of this logic to the recipe? Or type matching?
-    static handlesMatch(slotConnection, slot) {
+    static handlesMatch(particle, slot) {
         if (slot.handles.length === 0) {
             return true; // slot is not limited to specific handles
         }
-        return !!Object.values(slotConnection.particle.connections).find(handleConn => {
+        return !!Object.values(particle.connections).find(handleConn => {
             return slot.handles.includes(handleConn.handle) ||
                 (handleConn.handle && handleConn.handle.id && slot.handles.map(sh => sh.id).includes(handleConn.handle.id));
         });
+    }
+    static tagsOrNameMatch(consumeSlotSpec, provideSlotSpec, consumeSlotConn = undefined, provideSlot = undefined) {
+        const consumeTags = [].concat(consumeSlotSpec.tags || [], consumeSlotConn ? consumeSlotConn.tags : [], consumeSlotConn && consumeSlotConn.targetSlot ? consumeSlotConn.targetSlot.tags : []);
+        const provideTags = [].concat(provideSlotSpec.tags || [], provideSlot ? provideSlot.tags : [], provideSlot ? provideSlot.name : (provideSlotSpec.name ? provideSlotSpec.name : []));
+        if (consumeTags.length > 0 && consumeTags.some(t => provideTags.includes(t))) {
+            return true;
+        }
+        return consumeSlotSpec.name === (provideSlot ? provideSlot.name : provideSlotSpec.name);
     }
 }
 
@@ -20568,7 +20663,9 @@ class ResolveRecipe extends Strategy {
                 if (slotConnection.isConnected()) {
                     return undefined;
                 }
-                const { local, remote } = MapSlots.findAllSlotCandidates(slotConnection, arc);
+                const slotSpec = slotConnection.getSlotSpec();
+                const particle = slotConnection.particle;
+                const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
                 const allSlots = [...local, ...remote];
                 // MapSlots handles a multi-slot case.
                 if (allSlots.length !== 1) {
@@ -20577,6 +20674,20 @@ class ResolveRecipe extends Strategy {
                 const selectedSlot = allSlots[0];
                 return (recipe, slotConnection) => {
                     MapSlots.connectSlotConnection(slotConnection, selectedSlot);
+                    return 1;
+                };
+            }
+            onPotentialSlotConnection(recipe, particle, slotSpec) {
+                const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
+                const allSlots = [...local, ...remote];
+                // MapSlots handles a multi-slot case.
+                if (allSlots.length !== 1) {
+                    return undefined;
+                }
+                const selectedSlot = allSlots[0];
+                return (recipe, particle, slotSpec) => {
+                    const newSlotConnection = particle.addSlotConnection(slotSpec.name);
+                    MapSlots.connectSlotConnection(newSlotConnection, selectedSlot);
                     return 1;
                 };
             }
@@ -23339,8 +23450,12 @@ class InitPopulation extends Strategy {
     }
     _contextualResults() {
         const results = [];
-        for (const slot of this.arc.activeRecipe.slots.filter(s => s.sourceConnection)) {
-            results.push(...this._recipeIndex.findConsumeSlotConnectionMatch(slot).map(({ slotConn }) => ({ recipe: slotConn.recipe })));
+        for (const particle of this.arc.activeRecipe.particles) {
+            for (const [name, slotSpec] of particle.spec.slots) {
+                for (const providedSlotSpec of slotSpec.providedSlots) {
+                    results.push(...this._recipeIndex.findConsumeSlotConnectionMatch(particle, providedSlotSpec).map(({ recipeParticle }) => ({ recipe: recipeParticle.recipe })));
+                }
+            }
         }
         for (const handle of [].concat(...this.arc.allDescendingArcs.map(arc => arc.activeRecipe.handles))) {
             results.push(...this._recipeIndex.findHandleMatch(handle, ['use', '?']).map(otherHandle => ({ recipe: otherHandle.recipe })));
@@ -23434,9 +23549,13 @@ class MatchRecipeByVerb extends Strategy {
                             if (slotConstraints[consumeSlot].targetSlot || Object.values(slotConstraints[consumeSlot].providedSlots).filter(a => a != null).length > 0) {
                                 let slotMapped = false;
                                 for (const particle of particles) {
-                                    if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, consumeSlot, slotConstraints[consumeSlot].providedSlots)) {
+                                    if (MatchRecipeByVerb.slotsMatchConstraint(particle, particle.getSlotSpecs(), consumeSlot, slotConstraints[consumeSlot].providedSlots)) {
                                         if (slotConstraints[consumeSlot].targetSlot) {
                                             const { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slotConstraints[consumeSlot].targetSlot });
+                                            // if slotConnection doesn't exist, then create it before connecting it to slot. 
+                                            if (particle.consumedSlotConnections[consumeSlot] == undefined) {
+                                                particle.addSlotConnection(consumeSlot);
+                                            }
                                             particle.consumedSlotConnections[consumeSlot].targetSlot = mappedSlot;
                                             mappedSlot.consumeConnections.push(particle.consumedSlotConnections[consumeSlot]);
                                         }
@@ -23446,6 +23565,9 @@ class MatchRecipeByVerb extends Strategy {
                                                 continue;
                                             }
                                             const { mappedSlot } = outputRecipe.updateToClone({ mappedSlot: slot });
+                                            if (particle.consumedSlotConnections[consumeSlot] == undefined) {
+                                                particle.addSlotConnection(consumeSlot);
+                                            }
                                             const oldSlot = particle.consumedSlotConnections[consumeSlot].providedSlots[slotName];
                                             oldSlot.remove();
                                             particle.consumedSlotConnections[consumeSlot].providedSlots[slotName] = mappedSlot;
@@ -23567,22 +23689,25 @@ class MatchRecipeByVerb extends Strategy {
     }
     static satisfiesSlotConnection(recipe, slotName, constraints) {
         for (const particle of recipe.particles) {
-            if (MatchRecipeByVerb.slotsMatchConstraint(particle.consumedSlotConnections, slotName, constraints)) {
+            if (!particle.spec)
+                continue;
+            if (MatchRecipeByVerb.slotsMatchConstraint(particle, particle.getSlotSpecs(), slotName, constraints)) {
                 return true;
             }
         }
         return false;
     }
-    static slotsMatchConstraint(connections, name, constraints) {
-        if (connections[name] == null) {
+    static slotsMatchConstraint(particle, slotSpecs, name, constraints) {
+        if (slotSpecs.get(name) == null) {
             return false;
         }
-        if (connections[name]._targetSlot != null &&
+        const slotConn = particle.getSlotConnectionBySpec(slotSpecs.get(name));
+        if (slotConn && slotConn._targetSlot != null &&
             constraints.targetSlot != null) {
             return false;
         }
         for (const provideName in constraints.providedSlots) {
-            if (connections[name].providedSlots[provideName] == null) {
+            if (slotSpecs.get(name).providedSlots.find(spec => spec.name === provideName).length === 0) {
                 return false;
             }
         }
@@ -24117,6 +24242,36 @@ class CoalesceRecipes extends Strategy {
         const index = this.recipeIndex;
         await index.ready;
         return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+            onPotentialSlotConnection(recipe, particle, slotSpec) {
+                const results = [];
+                // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
+                // these handles are coalescable? Add support for this.
+                for (const providedSlot of index.findProvidedSlot(particle, slotSpec)) {
+                    // Don't grow recipes above 10 particles, otherwise we might never stop.
+                    if (recipe.particles.length + providedSlot.recipe.particles.length > 10)
+                        continue;
+                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, providedSlot.recipe)) {
+                        // skip candidate recipe, if matches the shape of the arc's active recipe
+                        continue;
+                    }
+                    results.push((recipe, particle, slotSpec) => {
+                        const otherToHandle = index.findCoalescableHandles(recipe, providedSlot.recipe);
+                        const { cloneMap } = providedSlot.recipe.mergeInto(recipe);
+                        const mergedSlot = cloneMap.get(providedSlot);
+                        const newSlotConnection = particle.addSlotConnection(slotSpec.name);
+                        newSlotConnection.connectToSlot(mergedSlot);
+                        this._connectOtherHandles(otherToHandle, cloneMap, false);
+                        // Clear verbs and recipe name after coalescing two recipes.
+                        recipe.verbs.splice(0);
+                        recipe.name = null;
+                        return 1;
+                    });
+                }
+                if (results.length > 0) {
+                    return results;
+                }
+                return undefined;
+            }
             // Find a provided slot for unfulfilled consume connection.
             onSlotConnection(recipe, slotConnection) {
                 if (slotConnection.isResolved()) {
@@ -24133,7 +24288,7 @@ class CoalesceRecipes extends Strategy {
                 const results = [];
                 // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
                 // these handles are coalescable? Add support for this.
-                for (const providedSlot of index.findProvidedSlot(slotConnection)) {
+                for (const providedSlot of index.findProvidedSlot(slotConnection.particle, slotConnection.spec)) {
                     // Don't grow recipes above 10 particles, otherwise we might never stop.
                     if (recipe.particles.length + providedSlot.recipe.particles.length > 10)
                         continue;
@@ -24167,27 +24322,32 @@ class CoalesceRecipes extends Strategy {
                 if (slot.consumeConnections.length > 0) {
                     return undefined; // slot has consume connections.
                 }
-                if (!slot.sourceConnection || !slot.sourceConnection.slotSpec.getProvidedSlotSpec(slot.name).isRequired) {
+                if (!slot.sourceConnection || !slot.spec.isRequired) {
                     return undefined; // either a remote slot (no source connection), or a not required one.
                 }
                 const results = [];
-                for (const { slotConn, matchingHandles } of index.findConsumeSlotConnectionMatch(slot)) {
+                for (const { recipeParticle, slotSpec, matchingHandles } of index.findConsumeSlotConnectionMatch(slot.sourceConnection.particle, slot.spec)) {
                     // Don't grow recipes above 10 particles, otherwise we might never stop.
-                    if (recipe.particles.length + slotConn.recipe.particles.length > 10)
+                    if (recipe.particles.length + recipeParticle.recipe.particles.length > 10)
                         continue;
-                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, slotConn.recipe)) {
+                    if (RecipeUtil.matchesRecipe(arc.activeRecipe, recipeParticle.recipe)) {
                         // skip candidate recipe, if matches the shape of the arc's active recipe
                         continue;
                     }
-                    if (RecipeUtil.matchesRecipe(recipe, slotConn.recipe)) {
+                    if (RecipeUtil.matchesRecipe(recipe, recipeParticle.recipe)) {
                         // skip candidate recipe, if matches the shape of the currently explored recipe
                         continue;
                     }
                     results.push((recipe, slot) => {
                         // Find other handles that may be merged, as recipes are being coalesced.
-                        const otherToHandle = index.findCoalescableHandles(recipe, slotConn.recipe, new Set(slot.handleConnections.map(hc => hc.handle).concat(matchingHandles.map(({ handle, matchingConn }) => matchingConn.handle))));
-                        const { cloneMap } = slotConn.recipe.mergeInto(slot.recipe);
-                        const mergedSlotConn = cloneMap.get(slotConn);
+                        const otherToHandle = index.findCoalescableHandles(recipe, recipeParticle.recipe, new Set(slot.handleConnections.map(hc => hc.handle).concat(matchingHandles.map(({ handle, matchingConn }) => matchingConn.handle))));
+                        const { cloneMap } = recipeParticle.recipe.mergeInto(slot.recipe);
+                        const slotConn = recipeParticle.getSlotConnectionByName(slot.name);
+                        let mergedSlotConn = cloneMap.get(slotConn);
+                        if (!mergedSlotConn) {
+                            const clonedParticle = cloneMap.get(recipeParticle);
+                            mergedSlotConn = clonedParticle.addSlotConnection(slotSpec.name);
+                        }
                         mergedSlotConn.connectToSlot(slot);
                         for (const { handle, matchingConn } of matchingHandles) {
                             // matchingConn in the mergedSlotConnection's recipe should be connected to `handle` in the slot's recipe.
@@ -25228,7 +25388,7 @@ class SlotConsumer {
         }
     }
     createProvidedContexts() {
-        return this.consumeConn.slotSpec.providedSlots.map(spec => new ProvidedSlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
+        return this.consumeConn.getSlotSpec().providedSlots.map(spec => new ProvidedSlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
     }
     updateProvidedContexts() {
         this.allProvidedSlotContexts.forEach(providedContext => {
@@ -25788,10 +25948,10 @@ class SlotDomConsumer extends SlotConsumer {
         if (Object.keys(content).indexOf('model') >= 0) {
             if (content.model) {
                 let formattedModel;
-                if (contextSpec.isSet && this.consumeConn.slotSpec.isSet) {
+                if (contextSpec.isSet && this.consumeConn.getSlotSpec().isSet) {
                     formattedModel = this._modelForSetSlotConsumedAsSetSlot(content.model, subId);
                 }
-                else if (contextSpec.isSet && !this.consumeConn.slotSpec.isSet) {
+                else if (contextSpec.isSet && !this.consumeConn.getSlotSpec().isSet) {
                     formattedModel = this._modelForSetSlotConsumedAsSingletonSlot(content.model, subId);
                 }
                 else {
@@ -25931,7 +26091,7 @@ class SlotDomConsumer extends SlotConsumer {
             const slotId = this.getNodeValue(innerContainer, 'slotid');
             const providedContext = this.findProvidedContext(ctx => ctx.id === slotId);
             if (!providedContext) {
-                console.warn(`Slot ${this.consumeConn.slotSpec.name} has unexpected inner slot ${slotId}`);
+                console.warn(`Slot ${this.consumeConn.getSlotSpec().name} has unexpected inner slot ${slotId}`);
                 return;
             }
             const subId = this.getNodeValue(innerContainer, 'subid');
@@ -26537,7 +26697,7 @@ class SlotComposer {
         recipeParticles.forEach(p => {
             Object.values(p.consumedSlotConnections).forEach(cs => {
                 if (!cs.targetSlot) {
-                    assert$1(!cs.slotSpec.isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
+                    assert$1(!cs.getSlotSpec().isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
                     return;
                 }
                 const slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
@@ -26773,45 +26933,42 @@ class RecipeIndex {
         return true;
     }
     /**
-     * Given a slot, find consume slot connections that could be connected to it.
+     * Given a particle and a slot spec for a slot that particle could provide, find consume slot connections that
+     * could be connected to the potential slot.
      */
-    findConsumeSlotConnectionMatch(slot) {
+    findConsumeSlotConnectionMatch(particle, providedSlotSpec) {
         this.ensureReady();
         const consumeConns = [];
         for (const recipe of this._recipes) {
-            if (recipe.particles.some(particle => !particle.name)) {
+            if (recipe.particles.some(recipeParticle => !recipeParticle.name)) {
                 // Skip recipes where not all verbs are resolved to specific particles
                 // to avoid trying to coalesce a recipe with itself.
                 continue;
             }
-            for (const slotConn of recipe.slotConnections) {
-                if (!slotConn.targetSlot && MapSlots.specMatch(slotConn, slot) && MapSlots.tagsOrNameMatch(slotConn, slot)) {
-                    const matchingHandles = [];
-                    if (!MapSlots.handlesMatch(slotConn, slot)) {
-                        // Find potential handle connections to coalesce
-                        slot.handleConnections.forEach(slotHandleConn => {
-                            const matchingConns = Object.values(slotConn.particle.connections).filter(particleConn => {
-                                return particleConn.direction !== 'host'
-                                    && (!particleConn.handle || !particleConn.handle.id || particleConn.handle.id === slotHandleConn.handle.id)
-                                    && Handle$1.effectiveType(slotHandleConn.handle.mappedType, [particleConn]);
-                            });
-                            matchingConns.forEach(matchingConn => {
-                                if (this._fatesAndDirectionsMatch(slotHandleConn, matchingConn)) {
-                                    matchingHandles.push({ handle: slotHandleConn.handle, matchingConn });
-                                }
-                            });
-                        });
-                        if (matchingHandles.length === 0) {
-                            continue;
+            for (const recipeParticle of recipe.particles) {
+                if (!recipeParticle.spec)
+                    continue;
+                for (const [name, slotSpec] of recipeParticle.spec.slots) {
+                    const recipeSlotConn = recipeParticle.getSlotConnectionByName(name);
+                    if (recipeSlotConn && recipeSlotConn.targetSlot)
+                        continue;
+                    if (MapSlots.specMatch(slotSpec, providedSlotSpec) && MapSlots.tagsOrNameMatch(slotSpec, providedSlotSpec)) {
+                        const slotConn = particle.getSlotConnectionByName(providedSlotSpec.name);
+                        let matchingHandles = [];
+                        if (providedSlotSpec.handles.length !== 0 || (slotConn && !MapSlots.handlesMatch(recipeParticle, slotConn))) {
+                            matchingHandles = this._getMatchingHandles(recipeParticle, particle, providedSlotSpec);
+                            if (matchingHandles.length === 0) {
+                                continue;
+                            }
                         }
+                        consumeConns.push({ recipeParticle, slotSpec, matchingHandles });
                     }
-                    consumeConns.push({ slotConn, matchingHandles });
                 }
             }
         }
         return consumeConns;
     }
-    findProvidedSlot(slotConn) {
+    findProvidedSlot(particle, slotSpec) {
         this.ensureReady();
         const providedSlots = [];
         for (const recipe of this._recipes) {
@@ -26822,13 +26979,32 @@ class RecipeIndex {
             }
             for (const consumeConn of recipe.slotConnections) {
                 for (const providedSlot of Object.values(consumeConn.providedSlots)) {
-                    if (MapSlots.slotMatches(slotConn, providedSlot)) {
+                    if (MapSlots.slotMatches(particle, slotSpec, providedSlot)) {
                         providedSlots.push(providedSlot);
                     }
                 }
             }
         }
         return providedSlots;
+    }
+    _getMatchingHandles(particle, providingParticle, providedSlotSpec) {
+        const matchingHandles = [];
+        for (const slotHandleConnName of providedSlotSpec.handles) {
+            const providedHandleConn = providingParticle.getConnectionByName(slotHandleConnName);
+            if (!providedHandleConn)
+                continue;
+            const matchingConns = Object.values(particle.connections).filter(handleConn => {
+                return handleConn.direction !== 'host'
+                    && (!handleConn.handle || !handleConn.handle.id || handleConn.handle.id === providedHandleConn.handle.id)
+                    && Handle$1.effectiveType(providedHandleConn.handle.mappedType, [handleConn]);
+            });
+            matchingConns.forEach(matchingConn => {
+                if (this._fatesAndDirectionsMatch(providedHandleConn, matchingConn)) {
+                    matchingHandles.push({ handle: providedHandleConn.handle, matchingConn });
+                }
+            });
+        }
+        return matchingHandles;
     }
     /**
      * Helper function that determines whether handle connections in a provided slot

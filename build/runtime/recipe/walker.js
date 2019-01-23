@@ -20,49 +20,68 @@ export class Walker extends WalkerBase {
         }
         for (const particle of recipe.particles) {
             if (this.onParticle) {
-                const result = this.onParticle(recipe, particle);
+                const context = [particle];
+                const result = this.onParticle(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context: particle });
+                    updateList.push({ continuation: result, context });
                 }
             }
         }
         for (const handleConnection of recipe.handleConnections) {
             if (this.onHandleConnection) {
-                const result = this.onHandleConnection(recipe, handleConnection);
+                const context = [handleConnection];
+                const result = this.onHandleConnection(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context: handleConnection });
+                    updateList.push({ continuation: result, context });
                 }
             }
         }
         for (const handle of recipe.handles) {
             if (this.onHandle) {
-                const result = this.onHandle(recipe, handle);
+                const context = [handle];
+                const result = this.onHandle(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context: handle });
+                    updateList.push({ continuation: result, context });
                 }
             }
         }
-        for (const slotConnection of recipe.slotConnections) {
-            if (this.onSlotConnection) {
-                const result = this.onSlotConnection(recipe, slotConnection);
+        if (this.onPotentialSlotConnection) {
+            for (const particle of recipe.particles) {
+                for (const [name, slotSpec] of particle.getSlotSpecs()) {
+                    if (particle.getSlotConnectionByName(name))
+                        continue;
+                    const context = [particle, slotSpec];
+                    const result = this.onPotentialSlotConnection(recipe, ...context);
+                    if (!this.isEmptyResult(result)) {
+                        updateList.push({ continuation: result, context });
+                    }
+                }
+            }
+        }
+        if (this.onSlotConnection) {
+            for (const slotConnection of recipe.slotConnections) {
+                const context = [slotConnection];
+                const result = this.onSlotConnection(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context: slotConnection });
+                    updateList.push({ continuation: result, context });
                 }
             }
         }
         for (const slot of recipe.slots) {
             if (this.onSlot) {
-                const result = this.onSlot(recipe, slot);
+                const context = [slot];
+                const result = this.onSlot(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context: slot });
+                    updateList.push({ continuation: result, context });
                 }
             }
         }
         for (const obligation of recipe.obligations) {
             if (this.onObligation) {
-                const result = this.onObligation(recipe, obligation);
+                const context = [obligation];
+                const result = this.onObligation(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context: obligation });
+                    updateList.push({ continuation: result, context });
                 }
             }
         }

@@ -1,7 +1,8 @@
 import { SlotConnection } from './slot-connection.js';
 import { HandleConnection } from './handle-connection.js';
 import { Recipe } from './recipe.js';
-import { ParticleSpec } from '../particle-spec.js';
+import { ParticleSpec, SlotSpec } from '../particle-spec.js';
+import { Slot } from './slot.js';
 export declare class Particle {
     private readonly _recipe;
     private _id;
@@ -42,8 +43,14 @@ export declare class Particle {
     ensureConnectionName(name: any): HandleConnection;
     getConnectionByName(name: any): HandleConnection;
     nameConnection(connection: any, name: any): void;
-    addSlotConnection(name: any): SlotConnection;
+    addSlotConnection(name: string): SlotConnection;
+    addSlotConnectionAsCopy(name: string): SlotConnection;
     removeSlotConnection(slotConnection: any): void;
     remove(): void;
+    getSlotConnectionBySpec(spec: SlotSpec): SlotConnection;
+    getSlotSpecByName(name: string): SlotSpec;
+    getSlotConnectionByName(name: string): SlotConnection;
+    getProvidedSlotByName(consumeName: string, name: string): Slot;
+    getSlotSpecs(): Map<string, SlotSpec>;
     toString(nameMap: any, options: any): string;
 }
