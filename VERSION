@@ -1,5 +1,8 @@
-commit cf1493f1952a5a0c1b600abba48aa89efb7576ac
+commit 3d99bbc6c61b8d5a0cd16d4730af3573e381e31a
 Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Fri Jan 25 09:38:59 2019 +1100
+Date:   Fri Jan 25 10:29:19 2019 +1100
 
-    Move static helpers from MapSlots to SlotUtils (#2639)
+    Refactor recipe resolution to not just be a Strategy (#2641)
+    
+    This allows recipe loading and instantiating, which requires resolution, to not
+    require Strategies or the Strategizer.
