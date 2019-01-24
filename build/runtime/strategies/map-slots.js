@@ -4,13 +4,12 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Strategizer, Strategy } from '../../planning/strategizer.js';
-import { Walker } from '../recipe/walker.js';
+import { StrategizerWalker, Strategy } from '../../planning/strategizer.js';
 import { assert } from '../../platform/assert-web.js';
 export class MapSlots extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onPotentialSlotConnection(recipe, particle, slotSpec) {
                 const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
                 // ResolveRecipe handles one-slot case.
@@ -56,7 +55,7 @@ export class MapSlots extends Strategy {
                     return 1;
                 }));
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
     // Helper methods.
     // Connect the given slot connection to the selectedSlot, create the slot, if needed.

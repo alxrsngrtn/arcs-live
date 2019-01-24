@@ -1,4 +1,6 @@
 import { Arc } from '../runtime/arc.js';
+import { Action, Descendant } from '../runtime/recipe/walker.js';
+import { RecipeWalker } from '../runtime/recipe/recipe-walker.js';
 export declare class Strategizer {
     _strategies: Strategy[];
     _evaluators: Strategy[];
@@ -37,39 +39,18 @@ export declare class Strategizer {
         survivingDerivations?: any;
     }>;
     static _mergeEvaluations(evaluations: any, generated: any): any[];
+}
+export declare class StrategizerWalker extends RecipeWalker {
+    constructor(tactic: any);
+    createDescendant(recipe: any, score: any): void;
     static over(results: any, walker: StrategizerWalker, strategy: Strategy): Descendant[];
 }
-export interface Descendant {
-    result: any;
-    score: number;
-    derivation: any;
-    hash: any;
-    valid: boolean;
-    errors?: any;
-    normalized?: any;
-}
-export declare abstract class StrategizerWalker {
-    descendants: Descendant[];
-    currentStrategy: any;
-    currentResult: any;
-    protected constructor();
-    onStrategy(strategy: Strategy): void;
-    onResult(result: any): void;
-    createDescendant(result: any, score: any, hash: any, valid: any): void;
-    onResultDone(): void;
-    onStrategyDone(): void;
-}
-export declare abstract class Strategy {
-    private _arc?;
-    private _args?;
+export declare abstract class Strategy extends Action {
     constructor(arc?: Arc, args?: any);
-    readonly arc: Arc | undefined;
     activate(strategizer: any): Promise<{
         generate: number;
         evaluate: number;
     }>;
-    getResults(inputParams: any): any;
-    generate(inputParams: any): Promise<Descendant[]>;
     evaluate(strategizer: any, individuals: any): Promise<any>;
 }
 declare type StrategyClass = typeof Strategy;

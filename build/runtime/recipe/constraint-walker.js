@@ -4,8 +4,8 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { WalkerBase } from './walker-base.js';
-export class ConstraintWalker extends WalkerBase {
+import { RecipeWalker } from './recipe-walker.js';
+export class ConstraintWalker extends RecipeWalker {
     onResult(result) {
         super.onResult(result);
         const recipe = result.result;

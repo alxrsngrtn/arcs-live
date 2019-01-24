@@ -4,9 +4,8 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Strategizer, Strategy } from '../../planning/strategizer.js';
+import { StrategizerWalker, Strategy } from '../../planning/strategizer.js';
 import { RecipeUtil } from '../recipe/recipe-util.js';
-import { Walker } from '../recipe/walker.js';
 import { Handle } from '../recipe/handle.js';
 import { TypeVariable } from '../type.js';
 import { assert } from '../../platform/assert-web.js';
@@ -27,7 +26,7 @@ export class CoalesceRecipes extends Strategy {
         const arc = this.arc;
         const index = this.recipeIndex;
         await index.ready;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onPotentialSlotConnection(recipe, particle, slotSpec) {
                 const results = [];
                 // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
@@ -238,7 +237,7 @@ export class CoalesceRecipes extends Strategy {
                 recipeClone.normalize();
                 return Handle.effectiveType(cloneMap.get(handle).type, [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
             }
-        }(Walker.Independent), this);
+        }(StrategizerWalker.Independent), this);
     }
 }
 //# sourceMappingURL=coalesce-recipes.js.map

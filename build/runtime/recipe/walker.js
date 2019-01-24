@@ -4,90 +4,181 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { WalkerBase, WalkerTactic } from './walker-base.js';
-export class Walker extends WalkerBase {
-    onResult(result) {
-        super.onResult(result);
-        const recipe = result.result;
-        const updateList = [];
-        // update phase - walk through recipe and call onRecipe,
-        // onHandle, etc.
-        if (this.onRecipe) {
-            result = this.onRecipe(recipe, result);
-            if (!this.isEmptyResult(result)) {
-                updateList.push({ continuation: result });
-            }
-        }
-        for (const particle of recipe.particles) {
-            if (this.onParticle) {
-                const context = [particle];
-                const result = this.onParticle(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        for (const handleConnection of recipe.handleConnections) {
-            if (this.onHandleConnection) {
-                const context = [handleConnection];
-                const result = this.onHandleConnection(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        for (const handle of recipe.handles) {
-            if (this.onHandle) {
-                const context = [handle];
-                const result = this.onHandle(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        if (this.onPotentialSlotConnection) {
-            for (const particle of recipe.particles) {
-                for (const [name, slotSpec] of particle.getSlotSpecs()) {
-                    if (particle.getSlotConnectionByName(name))
-                        continue;
-                    const context = [particle, slotSpec];
-                    const result = this.onPotentialSlotConnection(recipe, ...context);
-                    if (!this.isEmptyResult(result)) {
-                        updateList.push({ continuation: result, context });
-                    }
-                }
-            }
-        }
-        if (this.onSlotConnection) {
-            for (const slotConnection of recipe.slotConnections) {
-                const context = [slotConnection];
-                const result = this.onSlotConnection(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        for (const slot of recipe.slots) {
-            if (this.onSlot) {
-                const context = [slot];
-                const result = this.onSlot(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        for (const obligation of recipe.obligations) {
-            if (this.onObligation) {
-                const context = [obligation];
-                const result = this.onObligation(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        this._runUpdateList(recipe, updateList);
+import { assert } from '../../platform/assert-web.js';
+/**
+ * Walkers traverse an object, calling methods based on the
+ * features encountered on that object. For example, a RecipeWalker
+ * takes a list of recipes and calls methods when:
+ *  - a new recipe is encountered
+ *  - a handle is found inside a recipe
+ *  - a particle is found inside a recipe
+ *  - etc..
+ *
+ * Each of these methods can return a list of updates:
+ *   [(recipe, encountered_thing) => new_recipe]
+ *
+ * The walker then does something with the updates depending on the
+ * tactic selected.
+ *
+ * If the tactic is "Permuted", then an output will be generated
+ * for every combination of 1 element drawn from each update list.
+ * For example, if 3 methods return [a,b], [c,d,e], and [f] respectively
+ * then "Permuted" will cause 6 outputs to be generated: [acf, adf, aef, bcf, bdf, bef]
+ *
+ * If the tactic is "Independent", an output will be generated for each
+ * update, regardless of the list the update is in. For example,
+ * if 3 methods return [a,b], [c,d,e], and [f] respectively,
+ * then "Independent" will cause 6 outputs to be generated: [a,b,c,d,e,f]
+ */
+export var WalkerTactic;
+(function (WalkerTactic) {
+    WalkerTactic["Permuted"] = "permuted";
+    WalkerTactic["Independent"] = "independent";
+})(WalkerTactic || (WalkerTactic = {}));
+/**
+ * An Action generates the list of Descendants by walking the object with a
+ * Walker.
+ */
+export class Action {
+    constructor(arc, args) {
+        this._arc = arc;
+        this._args = args;
+    }
+    get arc() {
+        return this._arc;
+    }
+    getResults(inputParams) {
+        return inputParams.generated;
+    }
+    async generate(inputParams) {
+        return [];
     }
 }
+export class Walker {
+    constructor(tactic) {
+        this.descendants = [];
+        assert(tactic);
+        this.tactic = tactic;
+    }
+    onAction(action) {
+        this.currentAction = action;
+    }
+    onResult(result) {
+        this.currentResult = result;
+    }
+    onResultDone() {
+        this.currentResult = undefined;
+    }
+    onActionDone() {
+        this.currentAction = undefined;
+    }
+    static walk(results, walker, action) {
+        walker.onAction(action);
+        results.forEach(result => {
+            walker.onResult(result);
+            walker.onResultDone();
+        });
+        walker.onActionDone();
+        return walker.descendants;
+    }
+    _runUpdateList(start, updateList) {
+        const updated = [];
+        if (updateList.length) {
+            switch (this.tactic) {
+                case WalkerTactic.Permuted: {
+                    let permutations = [[]];
+                    updateList.forEach(({ continuation, context }) => {
+                        const newResults = [];
+                        if (typeof continuation === 'function') {
+                            continuation = [continuation];
+                        }
+                        continuation.forEach(f => {
+                            permutations.forEach(p => {
+                                const newP = p.slice();
+                                newP.push({ f, context });
+                                newResults.push(newP);
+                            });
+                        });
+                        permutations = newResults;
+                    });
+                    for (let permutation of permutations) {
+                        const cloneMap = new Map();
+                        const newResult = start.clone(cloneMap);
+                        let score = 0;
+                        permutation = permutation.filter(p => p.f !== null);
+                        if (permutation.length === 0) {
+                            continue;
+                        }
+                        permutation.forEach(({ f, context }) => {
+                            if (context) {
+                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
+                            }
+                            else {
+                                score = f(newResult);
+                            }
+                        });
+                        updated.push({ result: newResult, score });
+                    }
+                    break;
+                }
+                case WalkerTactic.Independent:
+                    updateList.forEach(({ continuation, context }) => {
+                        if (typeof continuation === 'function') {
+                            continuation = [continuation];
+                        }
+                        let score = 0;
+                        continuation.forEach(f => {
+                            if (f == null) {
+                                f = () => 0;
+                            }
+                            const cloneMap = new Map();
+                            const newResult = start.clone(cloneMap);
+                            if (context) {
+                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
+                            }
+                            else {
+                                score = f(newResult);
+                            }
+                            updated.push({ result: newResult, score });
+                        });
+                    });
+                    break;
+                default:
+                    throw new Error(`${this.tactic} not supported`);
+            }
+        }
+        // commit phase - output results.
+        for (const newResult of updated) {
+            const result = this.createDescendant(newResult.result, newResult.score);
+        }
+    }
+    createWalkerDescendant(item, score, hash, valid) {
+        assert(this.currentResult, 'no current result');
+        assert(this.currentAction, 'no current action');
+        if (this.currentResult.score) {
+            score += this.currentResult.score;
+        }
+        this.descendants.push({
+            result: item,
+            score,
+            derivation: [{ parent: this.currentResult, strategy: this.currentAction }],
+            hash,
+            valid,
+        });
+    }
+    isEmptyResult(result) {
+        if (!result) {
+            return true;
+        }
+        if (result.constructor === Array && result.length <= 0) {
+            return true;
+        }
+        assert(typeof result === 'function' || result.length);
+        return false;
+    }
+}
+// tslint:disable-next-line: variable-name
 Walker.Permuted = WalkerTactic.Permuted;
+// tslint:disable-next-line: variable-name
 Walker.Independent = WalkerTactic.Independent;
 //# sourceMappingURL=walker.js.map

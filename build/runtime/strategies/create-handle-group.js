@@ -4,12 +4,11 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Strategizer, Strategy } from '../../planning/strategizer.js';
-import { Walker } from '../recipe/walker.js';
+import { StrategizerWalker, Strategy } from '../../planning/strategizer.js';
 import { Handle } from '../recipe/handle.js';
 export class CreateHandleGroup extends Strategy {
     async generate(inputParams) {
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onRecipe(recipe, result) {
                 // Resolve constraints before assuming connections are free.
                 if (recipe.connectionConstraints.length > 0)
@@ -58,7 +57,7 @@ export class CreateHandleGroup extends Strategy {
                 }
                 return undefined;
             }
-        }(Walker.Independent), this);
+        }(StrategizerWalker.Independent), this);
     }
 }
 //# sourceMappingURL=create-handle-group.js.map

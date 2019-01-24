@@ -4,14 +4,13 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Strategizer, Strategy } from '../../planning/strategizer.js';
-import { Walker } from '../recipe/walker.js';
+import { StrategizerWalker, Strategy } from '../../planning/strategizer.js';
 import { RecipeUtil } from '../recipe/recipe-util.js';
 import { ParticleEndPoint, HandleEndPoint, TagEndPoint, InstanceEndPoint } from '../recipe/connection-constraint.js';
 export class ConvertConstraintsToConnections extends Strategy {
     async generate(inputParams) {
         const arcModality = this.arc.modality;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onRecipe(recipe) {
                 const modality = arcModality.intersection(recipe.modality);
                 // The particles & handles Sets are used as input to RecipeUtil's shape functionality
@@ -206,7 +205,7 @@ export class ConvertConstraintsToConnections extends Strategy {
                 });
                 return processedResults;
             }
-        }(Walker.Independent), this);
+        }(StrategizerWalker.Independent), this);
     }
 }
 //# sourceMappingURL=convert-constraints-to-connections.js.map

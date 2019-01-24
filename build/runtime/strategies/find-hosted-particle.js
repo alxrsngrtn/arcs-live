@@ -4,15 +4,14 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Strategizer, Strategy } from '../../planning/strategizer.js';
-import { Walker } from '../recipe/walker.js';
+import { StrategizerWalker, Strategy } from '../../planning/strategizer.js';
 import { assert } from '../../platform/assert-web.js';
 import { InterfaceType } from '../type.js';
 import { RecipeUtil } from '../recipe/recipe-util.js';
 export class FindHostedParticle extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandleConnection(recipe, connection) {
                 if (connection.direction !== 'host' || connection.handle)
                     return undefined;
@@ -40,7 +39,7 @@ export class FindHostedParticle extends Strategy {
                 }
                 return results;
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 //# sourceMappingURL=find-hosted-particle.js.map

@@ -5,8 +5,7 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
-import { Strategizer, Strategy } from '../../planning/strategizer.js';
-import { Walker } from '../recipe/walker.js';
+import { StrategizerWalker, Strategy } from '../../planning/strategizer.js';
 export class SearchTokensToParticles extends Strategy {
     constructor(arc, options) {
         super(arc, options);
@@ -21,7 +20,7 @@ export class SearchTokensToParticles extends Strategy {
             this._addThing(r.name, packaged, thingByToken, thingByPhrase);
             r.verbs.forEach(verb => this._addThing(verb, packaged, thingByToken, thingByPhrase));
         });
-        class SearchWalker extends Walker {
+        class SearchWalker extends StrategizerWalker {
             constructor(tactic, arc, recipeIndex) {
                 super(tactic);
                 this.recipeIndex = recipeIndex;
@@ -81,7 +80,7 @@ export class SearchTokensToParticles extends Strategy {
                 });
             }
         }
-        this._walker = new SearchWalker(Walker.Permuted, arc, options['recipeIndex']);
+        this._walker = new SearchWalker(StrategizerWalker.Permuted, arc, options['recipeIndex']);
     }
     get walker() {
         return this._walker;
@@ -112,7 +111,7 @@ export class SearchTokensToParticles extends Strategy {
     }
     async generate(inputParams) {
         await this.walker.recipeIndex.ready;
-        return Strategizer.over(this.getResults(inputParams), this.walker, this);
+        return StrategizerWalker.over(this.getResults(inputParams), this.walker, this);
     }
 }
 //# sourceMappingURL=search-tokens-to-particles.js.map

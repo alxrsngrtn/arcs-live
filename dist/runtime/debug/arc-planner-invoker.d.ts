@@ -8,7 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../arc.js';
-import { Descendant, Strategy, StrategyDerived } from '../../planning/strategizer.js';
+import { Descendant } from '../recipe/walker.js';
+import { Strategy, StrategyDerived } from '../../planning/strategizer.js';
 import { Manifest } from '../manifest.js';
 import { Recipe } from '../recipe/recipe.js';
 import { ArcDevtoolsChannel } from './abstract-devtools-channel.js';

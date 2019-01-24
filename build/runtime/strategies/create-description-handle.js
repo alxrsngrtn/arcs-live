@@ -4,11 +4,10 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Strategizer, Strategy } from '../../planning/strategizer.js';
-import { Walker } from '../recipe/walker.js';
+import { StrategizerWalker, Strategy } from '../../planning/strategizer.js';
 export class CreateDescriptionHandle extends Strategy {
     async generate(inputParams) {
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandleConnection(recipe, handleConnection) {
                 if (handleConnection.handle) {
                     return undefined;
@@ -23,7 +22,7 @@ export class CreateDescriptionHandle extends Strategy {
                     return 1;
                 };
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 //# sourceMappingURL=create-description-handle.js.map

@@ -7,12 +7,11 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Strategizer, Strategy, Ruleset } from '../../../planning/strategizer.js';
+import { StrategizerWalker, Strategy, Ruleset } from '../../../planning/strategizer.js';
 import { Manifest } from '../../manifest.js';
 import { Planner } from '../../planner.js';
 import { StrategyTestHelper } from './strategy-test-helper.js';
 import { assert } from '../chai-web.js';
-import { Walker } from '../../recipe/walker.js';
 class InitPopulation extends Strategy {
     constructor(arc) {
         super();
@@ -39,7 +38,7 @@ class FateAssigner extends Strategy {
     }
     async generate(inputParams) {
         const self = this;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandle(recipe, handle) {
                 if (handle.fate === '?') {
                     return [
@@ -49,7 +48,7 @@ class FateAssigner extends Strategy {
                 }
                 return undefined;
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 class AssignFateA extends FateAssigner {
@@ -63,7 +62,7 @@ class AssignFateC extends FateAssigner {
 }
 class Resolve extends Strategy {
     async generate(inputParams) {
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandle(recipe, handle) {
                 if (handle.fate !== '?' && !handle.id.endsWith('resolved')) {
                     return [
@@ -75,7 +74,7 @@ class Resolve extends Strategy {
                 }
                 return undefined;
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 describe('Rulesets', () => {

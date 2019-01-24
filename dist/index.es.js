@@ -19921,6 +19921,275 @@ PECInnerPort = __decorate([
 ], PECInnerPort);
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
+/**
+ * Walkers traverse an object, calling methods based on the
+ * features encountered on that object. For example, a RecipeWalker
+ * takes a list of recipes and calls methods when:
+ *  - a new recipe is encountered
+ *  - a handle is found inside a recipe
+ *  - a particle is found inside a recipe
+ *  - etc..
+ *
+ * Each of these methods can return a list of updates:
+ *   [(recipe, encountered_thing) => new_recipe]
+ *
+ * The walker then does something with the updates depending on the
+ * tactic selected.
+ *
+ * If the tactic is "Permuted", then an output will be generated
+ * for every combination of 1 element drawn from each update list.
+ * For example, if 3 methods return [a,b], [c,d,e], and [f] respectively
+ * then "Permuted" will cause 6 outputs to be generated: [acf, adf, aef, bcf, bdf, bef]
+ *
+ * If the tactic is "Independent", an output will be generated for each
+ * update, regardless of the list the update is in. For example,
+ * if 3 methods return [a,b], [c,d,e], and [f] respectively,
+ * then "Independent" will cause 6 outputs to be generated: [a,b,c,d,e,f]
+ */
+var WalkerTactic;
+(function (WalkerTactic) {
+    WalkerTactic["Permuted"] = "permuted";
+    WalkerTactic["Independent"] = "independent";
+})(WalkerTactic || (WalkerTactic = {}));
+/**
+ * An Action generates the list of Descendants by walking the object with a
+ * Walker.
+ */
+class Action {
+    constructor(arc, args) {
+        this._arc = arc;
+        this._args = args;
+    }
+    get arc() {
+        return this._arc;
+    }
+    getResults(inputParams) {
+        return inputParams.generated;
+    }
+    async generate(inputParams) {
+        return [];
+    }
+}
+class Walker {
+    constructor(tactic) {
+        this.descendants = [];
+        assert$1(tactic);
+        this.tactic = tactic;
+    }
+    onAction(action) {
+        this.currentAction = action;
+    }
+    onResult(result) {
+        this.currentResult = result;
+    }
+    onResultDone() {
+        this.currentResult = undefined;
+    }
+    onActionDone() {
+        this.currentAction = undefined;
+    }
+    static walk(results, walker, action) {
+        walker.onAction(action);
+        results.forEach(result => {
+            walker.onResult(result);
+            walker.onResultDone();
+        });
+        walker.onActionDone();
+        return walker.descendants;
+    }
+    _runUpdateList(start, updateList) {
+        const updated = [];
+        if (updateList.length) {
+            switch (this.tactic) {
+                case WalkerTactic.Permuted: {
+                    let permutations = [[]];
+                    updateList.forEach(({ continuation, context }) => {
+                        const newResults = [];
+                        if (typeof continuation === 'function') {
+                            continuation = [continuation];
+                        }
+                        continuation.forEach(f => {
+                            permutations.forEach(p => {
+                                const newP = p.slice();
+                                newP.push({ f, context });
+                                newResults.push(newP);
+                            });
+                        });
+                        permutations = newResults;
+                    });
+                    for (let permutation of permutations) {
+                        const cloneMap = new Map();
+                        const newResult = start.clone(cloneMap);
+                        let score = 0;
+                        permutation = permutation.filter(p => p.f !== null);
+                        if (permutation.length === 0) {
+                            continue;
+                        }
+                        permutation.forEach(({ f, context }) => {
+                            if (context) {
+                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
+                            }
+                            else {
+                                score = f(newResult);
+                            }
+                        });
+                        updated.push({ result: newResult, score });
+                    }
+                    break;
+                }
+                case WalkerTactic.Independent:
+                    updateList.forEach(({ continuation, context }) => {
+                        if (typeof continuation === 'function') {
+                            continuation = [continuation];
+                        }
+                        let score = 0;
+                        continuation.forEach(f => {
+                            if (f == null) {
+                                f = () => 0;
+                            }
+                            const cloneMap = new Map();
+                            const newResult = start.clone(cloneMap);
+                            if (context) {
+                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
+                            }
+                            else {
+                                score = f(newResult);
+                            }
+                            updated.push({ result: newResult, score });
+                        });
+                    });
+                    break;
+                default:
+                    throw new Error(`${this.tactic} not supported`);
+            }
+        }
+        // commit phase - output results.
+        for (const newResult of updated) {
+            const result = this.createDescendant(newResult.result, newResult.score);
+        }
+    }
+    createWalkerDescendant(item, score, hash, valid) {
+        assert$1(this.currentResult, 'no current result');
+        assert$1(this.currentAction, 'no current action');
+        if (this.currentResult.score) {
+            score += this.currentResult.score;
+        }
+        this.descendants.push({
+            result: item,
+            score,
+            derivation: [{ parent: this.currentResult, strategy: this.currentAction }],
+            hash,
+            valid,
+        });
+    }
+    isEmptyResult(result) {
+        if (!result) {
+            return true;
+        }
+        if (result.constructor === Array && result.length <= 0) {
+            return true;
+        }
+        assert$1(typeof result === 'function' || result.length);
+        return false;
+    }
+}
+// tslint:disable-next-line: variable-name
+Walker.Permuted = WalkerTactic.Permuted;
+// tslint:disable-next-line: variable-name
+Walker.Independent = WalkerTactic.Independent;
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class RecipeWalker extends Walker {
+    onResult(result) {
+        super.onResult(result);
+        const recipe = result.result;
+        const updateList = [];
+        // update phase - walk through recipe and call onRecipe,
+        // onHandle, etc.
+        // TODO overriding the argument with a local variable is very confusing.
+        if (this.onRecipe) {
+            result = this.onRecipe(recipe, result);
+            if (!this.isEmptyResult(result)) {
+                updateList.push({ continuation: result });
+            }
+        }
+        for (const particle of recipe.particles) {
+            if (this.onParticle) {
+                const context = [particle];
+                const result = this.onParticle(recipe, ...context);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        for (const handleConnection of recipe.handleConnections) {
+            if (this.onHandleConnection) {
+                const context = [handleConnection];
+                const result = this.onHandleConnection(recipe, ...context);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        for (const handle of recipe.handles) {
+            if (this.onHandle) {
+                const context = [handle];
+                const result = this.onHandle(recipe, ...context);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        if (this.onPotentialSlotConnection) {
+            for (const particle of recipe.particles) {
+                for (const [name, slotSpec] of particle.getSlotSpecs()) {
+                    if (particle.getSlotConnectionByName(name))
+                        continue;
+                    const context = [particle, slotSpec];
+                    const result = this.onPotentialSlotConnection(recipe, ...context);
+                    if (!this.isEmptyResult(result)) {
+                        updateList.push({ continuation: result, context });
+                    }
+                }
+            }
+        }
+        if (this.onSlotConnection) {
+            for (const slotConnection of recipe.slotConnections) {
+                const context = [slotConnection];
+                const result = this.onSlotConnection(recipe, ...context);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        for (const slot of recipe.slots) {
+            if (this.onSlot) {
+                const context = [slot];
+                const result = this.onSlot(recipe, ...context);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        for (const obligation of recipe.obligations) {
+            if (this.onObligation) {
+                const context = [obligation];
+                const result = this.onObligation(recipe, ...context);
+                if (!this.isEmptyResult(result)) {
+                    updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        this._runUpdateList(recipe, updateList);
+    }
+    createDescendant(recipe, score) {
+        const valid = recipe.normalize();
+        const hash = valid ? recipe.digest() : null;
+        super.createWalkerDescendant(recipe, score, hash, valid);
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
 class Strategizer {
     constructor(strategies, evaluators, ruleset) {
         this._generation = 0;
@@ -20098,67 +20367,31 @@ class Strategizer {
         }
         return mergedEvaluations;
     }
-    static over(results, walker, strategy) {
-        walker.onStrategy(strategy);
-        results.forEach(result => {
-            walker.onResult(result);
-            walker.onResultDone();
-        });
-        walker.onStrategyDone();
-        return walker.descendants;
-    }
 }
-class StrategizerWalker {
-    constructor() {
-        this.descendants = [];
+class StrategizerWalker extends RecipeWalker {
+    constructor(tactic) {
+        super(tactic);
     }
-    onStrategy(strategy) {
-        this.currentStrategy = strategy;
+    createDescendant(recipe, score) {
+        assert$1(this.currentAction instanceof Strategy, 'no current strategy');
+        // Note that the currentAction assertion in the superclass method is now
+        // guaranteed to succeed.
+        super.createDescendant(recipe, score);
     }
-    onResult(result) {
-        this.currentResult = result;
-    }
-    createDescendant(result, score, hash, valid) {
-        assert$1(this.currentResult, 'no current result');
-        assert$1(this.currentStrategy, 'no current strategy');
-        if (this.currentResult.score) {
-            score += this.currentResult.score;
-        }
-        this.descendants.push({
-            result,
-            score,
-            derivation: [{ parent: this.currentResult, strategy: this.currentStrategy }],
-            hash,
-            valid,
-        });
-    }
-    onResultDone() {
-        this.currentResult = undefined;
-    }
-    onStrategyDone() {
-        this.currentStrategy = undefined;
+    static over(results, walker, strategy) {
+        return super.walk(results, walker, strategy);
     }
 }
 // TODO: Doc call convention, incl strategies are stateful.
-class Strategy {
+class Strategy extends Action {
     constructor(arc, args) {
-        this._arc = arc;
-        this._args = args;
-    }
-    get arc() {
-        return this._arc;
+        super(arc, args);
     }
     async activate(strategizer) {
         // Returns estimated ability to generate/evaluate.
         // TODO: What do these numbers mean? Some sort of indication of the accuracy of the
         // generated individuals and evaluations.
         return { generate: 0, evaluate: 0 };
-    }
-    getResults(inputParams) {
-        return inputParams.generated;
-    }
-    async generate(inputParams) {
-        return [];
     }
     async evaluate(strategizer, individuals) {
         return individuals.map(() => NaN);
@@ -20246,223 +20479,10 @@ class Ruleset {
 Ruleset.Builder = RulesetBuilder;
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
-/**
- * Walkers traverse an object, calling methods based on the
- * features encountered on that object. For example, a RecipeWalker
- * takes a list of recipes and calls methods when:
- *  - a new recipe is encountered
- *  - a handle is found inside a recipe
- *  - a particle is found inside a recipe
- *  - etc..
- *
- * Each of these methods can return a list of updates:
- *   [(recipe, encountered_thing) => new_recipe]
- *
- * The walker then does something with the updates depending on the
- * tactic selected.
- *
- * If the tactic is "Permuted", then an output will be generated
- * for every combination of 1 element drawn from each update list.
- * For example, if 3 methods return [a,b], [c,d,e], and [f] respectively
- * then "Permuted" will cause 6 outputs to be generated: [acf, adf, aef, bcf, bdf, bef]
- *
- * If the tactic is "Independent", an output will be generated for each
- * update, regardless of the list the update is in. For example,
- * if 3 methods return [a,b], [c,d,e], and [f] respectively,
- * then "Independent" will cause 6 outputs to be generated: [a,b,c,d,e,f]
- */
-var WalkerTactic;
-(function (WalkerTactic) {
-    WalkerTactic["Permuted"] = "permuted";
-    WalkerTactic["Independent"] = "independent";
-})(WalkerTactic || (WalkerTactic = {}));
-class WalkerBase extends StrategizerWalker {
-    constructor(tactic) {
-        super();
-        assert$1(tactic);
-        this.tactic = tactic;
-    }
-    _runUpdateList(recipe, updateList) {
-        const newRecipes = [];
-        if (updateList.length) {
-            switch (this.tactic) {
-                case WalkerTactic.Permuted: {
-                    let permutations = [[]];
-                    updateList.forEach(({ continuation, context }) => {
-                        const newResults = [];
-                        if (typeof continuation === 'function') {
-                            continuation = [continuation];
-                        }
-                        continuation.forEach(f => {
-                            permutations.forEach(p => {
-                                const newP = p.slice();
-                                newP.push({ f, context });
-                                newResults.push(newP);
-                            });
-                        });
-                        permutations = newResults;
-                    });
-                    for (let permutation of permutations) {
-                        const cloneMap = new Map();
-                        const newRecipe = recipe.clone(cloneMap);
-                        let score = 0;
-                        permutation = permutation.filter(p => p.f !== null);
-                        if (permutation.length === 0) {
-                            continue;
-                        }
-                        permutation.forEach(({ f, context }) => {
-                            if (context) {
-                                score = f(newRecipe, ...context.map(c => cloneMap.get(c) || c));
-                            }
-                            else {
-                                score = f(newRecipe);
-                            }
-                        });
-                        newRecipes.push({ recipe: newRecipe, score });
-                    }
-                    break;
-                }
-                case WalkerTactic.Independent:
-                    updateList.forEach(({ continuation, context }) => {
-                        if (typeof continuation === 'function') {
-                            continuation = [continuation];
-                        }
-                        let score = 0;
-                        continuation.forEach(f => {
-                            if (f == null) {
-                                f = () => 0;
-                            }
-                            const cloneMap = new Map();
-                            const newRecipe = recipe.clone(cloneMap);
-                            if (context) {
-                                score = f(newRecipe, ...context.map(c => cloneMap.get(c) || c));
-                            }
-                            else {
-                                score = f(newRecipe);
-                            }
-                            newRecipes.push({ recipe: newRecipe, score });
-                        });
-                    });
-                    break;
-                default:
-                    throw new Error(`${this.tactic} not supported`);
-            }
-        }
-        // commit phase - output results.
-        for (const newRecipe of newRecipes) {
-            const result = this.createDescendant(newRecipe.recipe, newRecipe.score);
-        }
-    }
-    createDescendant(recipe, score) {
-        const valid = recipe.normalize();
-        //if (!valid) debugger;
-        const hash = valid ? recipe.digest() : null;
-        super.createDescendant(recipe, score, hash, valid);
-    }
-    isEmptyResult(result) {
-        if (!result) {
-            return true;
-        }
-        if (result.constructor === Array && result.length <= 0) {
-            return true;
-        }
-        assert$1(typeof result === 'function' || result.length);
-        return false;
-    }
-}
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class Walker extends WalkerBase {
-    onResult(result) {
-        super.onResult(result);
-        const recipe = result.result;
-        const updateList = [];
-        // update phase - walk through recipe and call onRecipe,
-        // onHandle, etc.
-        if (this.onRecipe) {
-            result = this.onRecipe(recipe, result);
-            if (!this.isEmptyResult(result)) {
-                updateList.push({ continuation: result });
-            }
-        }
-        for (const particle of recipe.particles) {
-            if (this.onParticle) {
-                const context = [particle];
-                const result = this.onParticle(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        for (const handleConnection of recipe.handleConnections) {
-            if (this.onHandleConnection) {
-                const context = [handleConnection];
-                const result = this.onHandleConnection(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        for (const handle of recipe.handles) {
-            if (this.onHandle) {
-                const context = [handle];
-                const result = this.onHandle(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        if (this.onPotentialSlotConnection) {
-            for (const particle of recipe.particles) {
-                for (const [name, slotSpec] of particle.getSlotSpecs()) {
-                    if (particle.getSlotConnectionByName(name))
-                        continue;
-                    const context = [particle, slotSpec];
-                    const result = this.onPotentialSlotConnection(recipe, ...context);
-                    if (!this.isEmptyResult(result)) {
-                        updateList.push({ continuation: result, context });
-                    }
-                }
-            }
-        }
-        if (this.onSlotConnection) {
-            for (const slotConnection of recipe.slotConnections) {
-                const context = [slotConnection];
-                const result = this.onSlotConnection(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        for (const slot of recipe.slots) {
-            if (this.onSlot) {
-                const context = [slot];
-                const result = this.onSlot(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        for (const obligation of recipe.obligations) {
-            if (this.onObligation) {
-                const context = [obligation];
-                const result = this.onObligation(recipe, ...context);
-                if (!this.isEmptyResult(result)) {
-                    updateList.push({ continuation: result, context });
-                }
-            }
-        }
-        this._runUpdateList(recipe, updateList);
-    }
-}
-Walker.Permuted = WalkerTactic.Permuted;
-Walker.Independent = WalkerTactic.Independent;
-
-// Copyright (c) 2017 Google Inc. All rights reserved.
 class MapSlots extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onPotentialSlotConnection(recipe, particle, slotSpec) {
                 const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
                 // ResolveRecipe handles one-slot case.
@@ -20508,7 +20528,7 @@ class MapSlots extends Strategy {
                     return 1;
                 }));
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
     // Helper methods.
     // Connect the given slot connection to the selectedSlot, create the slot, if needed.
@@ -20597,7 +20617,7 @@ class MapSlots extends Strategy {
 class ResolveRecipe extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandle(recipe, handle) {
                 if (handle.connections.length === 0 ||
                     (handle.id && handle.storageKey) || (!handle.type) ||
@@ -20708,7 +20728,7 @@ class ResolveRecipe extends Strategy {
                 }
                 return undefined;
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 
@@ -23142,7 +23162,7 @@ function now$1() {
 class ConvertConstraintsToConnections extends Strategy {
     async generate(inputParams) {
         const arcModality = this.arc.modality;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onRecipe(recipe) {
                 const modality = arcModality.intersection(recipe.modality);
                 // The particles & handles Sets are used as input to RecipeUtil's shape functionality
@@ -23337,7 +23357,7 @@ class ConvertConstraintsToConnections extends Strategy {
                 });
                 return processedResults;
             }
-        }(Walker.Independent), this);
+        }(StrategizerWalker.Independent), this);
     }
 }
 
@@ -23345,7 +23365,7 @@ class ConvertConstraintsToConnections extends Strategy {
 class AssignHandles extends Strategy {
     async generate(inputParams) {
         const self = this;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandle(recipe, handle) {
                 if (!['?', 'use', 'copy', 'map'].includes(handle.fate)) {
                     return undefined;
@@ -23408,7 +23428,7 @@ class AssignHandles extends Strategy {
                 }
                 return score;
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
     getMappableStores(fate, type, tags, counts) {
         const stores = new Map();
@@ -23474,7 +23494,7 @@ class InitPopulation extends Strategy {
 class MatchParticleByVerb extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onParticle(recipe, particle) {
                 if (particle.name) {
                     // Particle already has explicit name.
@@ -23492,7 +23512,7 @@ class MatchParticleByVerb extends Strategy {
                     };
                 });
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 
@@ -23511,7 +23531,7 @@ class MatchParticleByVerb extends Strategy {
 class MatchRecipeByVerb extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onParticle(recipe, particle) {
                 if (particle.name) {
                     // Particle already has explicit name.
@@ -23631,7 +23651,7 @@ class MatchRecipeByVerb extends Strategy {
                     };
                 });
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
     static satisfiesHandleConstraints(recipe, handleConstraints) {
         for (const handleName in handleConstraints.named) {
@@ -23719,7 +23739,7 @@ class MatchRecipeByVerb extends Strategy {
 class AddMissingHandles extends Strategy {
     // TODO: move generation to use an async generator.
     async generate(inputParams) {
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onRecipe(recipe) {
                 // Don't add use handles while there are outstanding constraints
                 if (recipe.connectionConstraints.length > 0) {
@@ -23745,14 +23765,14 @@ class AddMissingHandles extends Strategy {
                     return 0;
                 };
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class CreateDescriptionHandle extends Strategy {
     async generate(inputParams) {
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandleConnection(recipe, handleConnection) {
                 if (handleConnection.handle) {
                     return undefined;
@@ -23767,7 +23787,7 @@ class CreateDescriptionHandle extends Strategy {
                     return 1;
                 };
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 
@@ -23810,7 +23830,7 @@ class SearchTokensToParticles extends Strategy {
             this._addThing(r.name, packaged, thingByToken, thingByPhrase);
             r.verbs.forEach(verb => this._addThing(verb, packaged, thingByToken, thingByPhrase));
         });
-        class SearchWalker extends Walker {
+        class SearchWalker extends StrategizerWalker {
             constructor(tactic, arc, recipeIndex) {
                 super(tactic);
                 this.recipeIndex = recipeIndex;
@@ -23870,7 +23890,7 @@ class SearchTokensToParticles extends Strategy {
                 });
             }
         }
-        this._walker = new SearchWalker(Walker.Permuted, arc, options['recipeIndex']);
+        this._walker = new SearchWalker(StrategizerWalker.Permuted, arc, options['recipeIndex']);
     }
     get walker() {
         return this._walker;
@@ -23901,7 +23921,7 @@ class SearchTokensToParticles extends Strategy {
     }
     async generate(inputParams) {
         await this.walker.recipeIndex.ready;
-        return Strategizer.over(this.getResults(inputParams), this.walker, this);
+        return StrategizerWalker.over(this.getResults(inputParams), this.walker, this);
     }
 }
 
@@ -23909,7 +23929,7 @@ class SearchTokensToParticles extends Strategy {
 class GroupHandleConnections extends Strategy {
     constructor(arc, args) {
         super(arc, args);
-        this._walker = new class extends Walker {
+        this._walker = new class extends StrategizerWalker {
             onRecipe(recipe, result) {
                 // Only apply this strategy if ALL handle connections are named and have types.
                 if (recipe.getUnnamedUntypedConnections()) {
@@ -23994,13 +24014,13 @@ class GroupHandleConnections extends Strategy {
                 }
                 return undefined;
             }
-        }(Walker.Permuted);
+        }(StrategizerWalker.Permuted);
     }
     get walker() {
         return this._walker;
     }
     async generate(inputParams) {
-        return Strategizer.over(this.getResults(inputParams), this.walker, this);
+        return StrategizerWalker.over(this.getResults(inputParams), this.walker, this);
     }
 }
 
@@ -24011,7 +24031,7 @@ class GroupHandleConnections extends Strategy {
  */
 class MatchFreeHandlesToConnections extends Strategy {
     async generate(inputParams) {
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandle(recipe, handle) {
                 if (handle.connections.length > 0) {
                     return;
@@ -24025,7 +24045,7 @@ class MatchFreeHandlesToConnections extends Strategy {
                     };
                 });
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 
@@ -24065,7 +24085,7 @@ class DeviceInfo {
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class NameUnnamedConnections extends Strategy {
     async generate(inputParams) {
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandleConnection(recipe, handleConnection) {
                 if (handleConnection.name) {
                     // it is already named.
@@ -24083,7 +24103,7 @@ class NameUnnamedConnections extends Strategy {
                     };
                 });
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 
@@ -24104,7 +24124,7 @@ class SearchTokensToHandles extends Strategy {
             stores = stores.filter(store => !handle.recipe.handles.find(handle => handle.id === store.id));
             return stores.map(store => ({ store, fate, token }));
         };
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandle(recipe, handle) {
                 if (!recipe.search || recipe.search.unresolvedTokens.length === 0) {
                     return undefined;
@@ -24127,14 +24147,14 @@ class SearchTokensToHandles extends Strategy {
                     };
                 });
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 
 // Copyright (c) 2017 Google Inc. All rights reserved.
 class CreateHandleGroup extends Strategy {
     async generate(inputParams) {
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onRecipe(recipe, result) {
                 // Resolve constraints before assuming connections are free.
                 if (recipe.connectionConstraints.length > 0)
@@ -24183,7 +24203,7 @@ class CreateHandleGroup extends Strategy {
                 }
                 return undefined;
             }
-        }(Walker.Independent), this);
+        }(StrategizerWalker.Independent), this);
     }
 }
 
@@ -24191,7 +24211,7 @@ class CreateHandleGroup extends Strategy {
 class FindHostedParticle extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandleConnection(recipe, connection) {
                 if (connection.direction !== 'host' || connection.handle)
                     return undefined;
@@ -24219,7 +24239,7 @@ class FindHostedParticle extends Strategy {
                 }
                 return results;
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 
@@ -24241,7 +24261,7 @@ class CoalesceRecipes extends Strategy {
         const arc = this.arc;
         const index = this.recipeIndex;
         await index.ready;
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onPotentialSlotConnection(recipe, particle, slotSpec) {
                 const results = [];
                 // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
@@ -24452,7 +24472,7 @@ class CoalesceRecipes extends Strategy {
                 recipeClone.normalize();
                 return Handle$1.effectiveType(cloneMap.get(handle).type, [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
             }
-        }(Walker.Independent), this);
+        }(StrategizerWalker.Independent), this);
     }
 }
 

@@ -4,9 +4,8 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { Strategizer, Strategy } from '../../planning/strategizer.js';
+import { StrategizerWalker, Strategy } from '../../planning/strategizer.js';
 import { RecipeUtil } from '../recipe/recipe-util.js';
-import { Walker } from '../recipe/walker.js';
 export class SearchTokensToHandles extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
@@ -23,7 +22,7 @@ export class SearchTokensToHandles extends Strategy {
             stores = stores.filter(store => !handle.recipe.handles.find(handle => handle.id === store.id));
             return stores.map(store => ({ store, fate, token }));
         };
-        return Strategizer.over(this.getResults(inputParams), new class extends Walker {
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
             onHandle(recipe, handle) {
                 if (!recipe.search || recipe.search.unresolvedTokens.length === 0) {
                     return undefined;
@@ -46,7 +45,7 @@ export class SearchTokensToHandles extends Strategy {
                     };
                 });
             }
-        }(Walker.Permuted), this);
+        }(StrategizerWalker.Permuted), this);
     }
 }
 //# sourceMappingURL=search-tokens-to-handles.js.map

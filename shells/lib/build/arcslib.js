@@ -76870,9 +76870,8 @@ class RecipeResolver {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ResolveRecipe", function() { return ResolveRecipe; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(179);
-/* harmony import */ var _map_slots_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(185);
+/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(179);
+/* harmony import */ var _map_slots_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(185);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -76882,11 +76881,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class ResolveRecipe extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const arc = this.arc;
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onHandle(recipe, handle) {
                 if (handle.connections.length === 0 ||
                     (handle.id && handle.storageKey) || (!handle.type) ||
@@ -76896,7 +76894,7 @@ class ResolveRecipe extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
                 let mappable;
                 if (!handle.id) {
                     // Handle doesn't have an ID, finding by type and tags.
-                    const counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].directionCounts(handle);
+                    const counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__["RecipeUtil"].directionCounts(handle);
                     switch (handle.fate) {
                         case 'use':
                             mappable = arc.findStoresByType(handle.type, { tags: handle.tags, subtype: counts.out === 0 });
@@ -76954,7 +76952,7 @@ class ResolveRecipe extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
                 }
                 const slotSpec = slotConnection.getSlotSpec();
                 const particle = slotConnection.particle;
-                const { local, remote } = _map_slots_js__WEBPACK_IMPORTED_MODULE_3__["MapSlots"].findAllSlotCandidates(particle, slotSpec, arc);
+                const { local, remote } = _map_slots_js__WEBPACK_IMPORTED_MODULE_2__["MapSlots"].findAllSlotCandidates(particle, slotSpec, arc);
                 const allSlots = [...local, ...remote];
                 // MapSlots handles a multi-slot case.
                 if (allSlots.length !== 1) {
@@ -76962,12 +76960,12 @@ class ResolveRecipe extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
                 }
                 const selectedSlot = allSlots[0];
                 return (recipe, slotConnection) => {
-                    _map_slots_js__WEBPACK_IMPORTED_MODULE_3__["MapSlots"].connectSlotConnection(slotConnection, selectedSlot);
+                    _map_slots_js__WEBPACK_IMPORTED_MODULE_2__["MapSlots"].connectSlotConnection(slotConnection, selectedSlot);
                     return 1;
                 };
             }
             onPotentialSlotConnection(recipe, particle, slotSpec) {
-                const { local, remote } = _map_slots_js__WEBPACK_IMPORTED_MODULE_3__["MapSlots"].findAllSlotCandidates(particle, slotSpec, arc);
+                const { local, remote } = _map_slots_js__WEBPACK_IMPORTED_MODULE_2__["MapSlots"].findAllSlotCandidates(particle, slotSpec, arc);
                 const allSlots = [...local, ...remote];
                 // MapSlots handles a multi-slot case.
                 if (allSlots.length !== 1) {
@@ -76976,7 +76974,7 @@ class ResolveRecipe extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
                 const selectedSlot = allSlots[0];
                 return (recipe, particle, slotSpec) => {
                     const newSlotConnection = particle.addSlotConnection(slotSpec.name);
-                    _map_slots_js__WEBPACK_IMPORTED_MODULE_3__["MapSlots"].connectSlotConnection(newSlotConnection, selectedSlot);
+                    _map_slots_js__WEBPACK_IMPORTED_MODULE_2__["MapSlots"].connectSlotConnection(newSlotConnection, selectedSlot);
                     return 1;
                 };
             }
@@ -76997,7 +76995,7 @@ class ResolveRecipe extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
                 }
                 return undefined;
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Permuted), this);
     }
 }
 //# sourceMappingURL=resolve-recipe.js.map
@@ -77014,12 +77012,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RulesetBuilder", function() { return RulesetBuilder; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Ruleset", function() { return Ruleset; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _runtime_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
+/* harmony import */ var _runtime_recipe_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(184);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+
+
 
 class Strategizer {
     constructor(strategies, evaluators, ruleset) {
@@ -77198,67 +77200,31 @@ class Strategizer {
         }
         return mergedEvaluations;
     }
-    static over(results, walker, strategy) {
-        walker.onStrategy(strategy);
-        results.forEach(result => {
-            walker.onResult(result);
-            walker.onResultDone();
-        });
-        walker.onStrategyDone();
-        return walker.descendants;
-    }
 }
-class StrategizerWalker {
-    constructor() {
-        this.descendants = [];
+class StrategizerWalker extends _runtime_recipe_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["RecipeWalker"] {
+    constructor(tactic) {
+        super(tactic);
     }
-    onStrategy(strategy) {
-        this.currentStrategy = strategy;
+    createDescendant(recipe, score) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.currentAction instanceof Strategy, 'no current strategy');
+        // Note that the currentAction assertion in the superclass method is now
+        // guaranteed to succeed.
+        super.createDescendant(recipe, score);
     }
-    onResult(result) {
-        this.currentResult = result;
-    }
-    createDescendant(result, score, hash, valid) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.currentResult, 'no current result');
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.currentStrategy, 'no current strategy');
-        if (this.currentResult.score) {
-            score += this.currentResult.score;
-        }
-        this.descendants.push({
-            result,
-            score,
-            derivation: [{ parent: this.currentResult, strategy: this.currentStrategy }],
-            hash,
-            valid,
-        });
-    }
-    onResultDone() {
-        this.currentResult = undefined;
-    }
-    onStrategyDone() {
-        this.currentStrategy = undefined;
+    static over(results, walker, strategy) {
+        return super.walk(results, walker, strategy);
     }
 }
 // TODO: Doc call convention, incl strategies are stateful.
-class Strategy {
+class Strategy extends _runtime_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Action"] {
     constructor(arc, args) {
-        this._arc = arc;
-        this._args = args;
-    }
-    get arc() {
-        return this._arc;
+        super(arc, args);
     }
     async activate(strategizer) {
         // Returns estimated ability to generate/evaluate.
         // TODO: What do these numbers mean? Some sort of indication of the accuracy of the
         // generated individuals and evaluations.
         return { generate: 0, evaluate: 0 };
-    }
-    getResults(inputParams) {
-        return inputParams.generated;
-    }
-    async generate(inputParams) {
-        return [];
     }
     async evaluate(strategizer, individuals) {
         return individuals.map(() => NaN);
@@ -77352,8 +77318,10 @@ Ruleset.Builder = RulesetBuilder;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WalkerTactic", function() { return WalkerTactic; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Action", function() { return Action; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Walker", function() { return Walker; });
-/* harmony import */ var _walker_base_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(184);
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -77361,13 +77329,207 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-class Walker extends _walker_base_js__WEBPACK_IMPORTED_MODULE_0__["WalkerBase"] {
+/**
+ * Walkers traverse an object, calling methods based on the
+ * features encountered on that object. For example, a RecipeWalker
+ * takes a list of recipes and calls methods when:
+ *  - a new recipe is encountered
+ *  - a handle is found inside a recipe
+ *  - a particle is found inside a recipe
+ *  - etc..
+ *
+ * Each of these methods can return a list of updates:
+ *   [(recipe, encountered_thing) => new_recipe]
+ *
+ * The walker then does something with the updates depending on the
+ * tactic selected.
+ *
+ * If the tactic is "Permuted", then an output will be generated
+ * for every combination of 1 element drawn from each update list.
+ * For example, if 3 methods return [a,b], [c,d,e], and [f] respectively
+ * then "Permuted" will cause 6 outputs to be generated: [acf, adf, aef, bcf, bdf, bef]
+ *
+ * If the tactic is "Independent", an output will be generated for each
+ * update, regardless of the list the update is in. For example,
+ * if 3 methods return [a,b], [c,d,e], and [f] respectively,
+ * then "Independent" will cause 6 outputs to be generated: [a,b,c,d,e,f]
+ */
+var WalkerTactic;
+(function (WalkerTactic) {
+    WalkerTactic["Permuted"] = "permuted";
+    WalkerTactic["Independent"] = "independent";
+})(WalkerTactic || (WalkerTactic = {}));
+/**
+ * An Action generates the list of Descendants by walking the object with a
+ * Walker.
+ */
+class Action {
+    constructor(arc, args) {
+        this._arc = arc;
+        this._args = args;
+    }
+    get arc() {
+        return this._arc;
+    }
+    getResults(inputParams) {
+        return inputParams.generated;
+    }
+    async generate(inputParams) {
+        return [];
+    }
+}
+class Walker {
+    constructor(tactic) {
+        this.descendants = [];
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(tactic);
+        this.tactic = tactic;
+    }
+    onAction(action) {
+        this.currentAction = action;
+    }
+    onResult(result) {
+        this.currentResult = result;
+    }
+    onResultDone() {
+        this.currentResult = undefined;
+    }
+    onActionDone() {
+        this.currentAction = undefined;
+    }
+    static walk(results, walker, action) {
+        walker.onAction(action);
+        results.forEach(result => {
+            walker.onResult(result);
+            walker.onResultDone();
+        });
+        walker.onActionDone();
+        return walker.descendants;
+    }
+    _runUpdateList(start, updateList) {
+        const updated = [];
+        if (updateList.length) {
+            switch (this.tactic) {
+                case WalkerTactic.Permuted: {
+                    let permutations = [[]];
+                    updateList.forEach(({ continuation, context }) => {
+                        const newResults = [];
+                        if (typeof continuation === 'function') {
+                            continuation = [continuation];
+                        }
+                        continuation.forEach(f => {
+                            permutations.forEach(p => {
+                                const newP = p.slice();
+                                newP.push({ f, context });
+                                newResults.push(newP);
+                            });
+                        });
+                        permutations = newResults;
+                    });
+                    for (let permutation of permutations) {
+                        const cloneMap = new Map();
+                        const newResult = start.clone(cloneMap);
+                        let score = 0;
+                        permutation = permutation.filter(p => p.f !== null);
+                        if (permutation.length === 0) {
+                            continue;
+                        }
+                        permutation.forEach(({ f, context }) => {
+                            if (context) {
+                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
+                            }
+                            else {
+                                score = f(newResult);
+                            }
+                        });
+                        updated.push({ result: newResult, score });
+                    }
+                    break;
+                }
+                case WalkerTactic.Independent:
+                    updateList.forEach(({ continuation, context }) => {
+                        if (typeof continuation === 'function') {
+                            continuation = [continuation];
+                        }
+                        let score = 0;
+                        continuation.forEach(f => {
+                            if (f == null) {
+                                f = () => 0;
+                            }
+                            const cloneMap = new Map();
+                            const newResult = start.clone(cloneMap);
+                            if (context) {
+                                score = f(newResult, ...context.map(c => cloneMap.get(c) || c));
+                            }
+                            else {
+                                score = f(newResult);
+                            }
+                            updated.push({ result: newResult, score });
+                        });
+                    });
+                    break;
+                default:
+                    throw new Error(`${this.tactic} not supported`);
+            }
+        }
+        // commit phase - output results.
+        for (const newResult of updated) {
+            const result = this.createDescendant(newResult.result, newResult.score);
+        }
+    }
+    createWalkerDescendant(item, score, hash, valid) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.currentResult, 'no current result');
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.currentAction, 'no current action');
+        if (this.currentResult.score) {
+            score += this.currentResult.score;
+        }
+        this.descendants.push({
+            result: item,
+            score,
+            derivation: [{ parent: this.currentResult, strategy: this.currentAction }],
+            hash,
+            valid,
+        });
+    }
+    isEmptyResult(result) {
+        if (!result) {
+            return true;
+        }
+        if (result.constructor === Array && result.length <= 0) {
+            return true;
+        }
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof result === 'function' || result.length);
+        return false;
+    }
+}
+// tslint:disable-next-line: variable-name
+Walker.Permuted = WalkerTactic.Permuted;
+// tslint:disable-next-line: variable-name
+Walker.Independent = WalkerTactic.Independent;
+//# sourceMappingURL=walker.js.map
+
+/***/ }),
+/* 184 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipeWalker", function() { return RecipeWalker; });
+/* harmony import */ var _walker_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(183);
+// Copyright (c) 2017 Google Inc. All rights reserved.
+// This code may only be used under the BSD style license found at
+// http://polymer.github.io/LICENSE.txt
+// Code distributed by Google as part of this project is also
+// subject to an additional IP rights grant found at
+// http://polymer.github.io/PATENTS.txt
+
+class RecipeWalker extends _walker_js__WEBPACK_IMPORTED_MODULE_0__["Walker"] {
     onResult(result) {
         super.onResult(result);
         const recipe = result.result;
         const updateList = [];
         // update phase - walk through recipe and call onRecipe,
         // onHandle, etc.
+        // TODO overriding the argument with a local variable is very confusing.
         if (this.onRecipe) {
             result = this.onRecipe(recipe, result);
             if (!this.isEmptyResult(result)) {
@@ -77443,154 +77605,13 @@ class Walker extends _walker_base_js__WEBPACK_IMPORTED_MODULE_0__["WalkerBase"] 
         }
         this._runUpdateList(recipe, updateList);
     }
-}
-Walker.Permuted = _walker_base_js__WEBPACK_IMPORTED_MODULE_0__["WalkerTactic"].Permuted;
-Walker.Independent = _walker_base_js__WEBPACK_IMPORTED_MODULE_0__["WalkerTactic"].Independent;
-//# sourceMappingURL=walker.js.map
-
-/***/ }),
-/* 184 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WalkerTactic", function() { return WalkerTactic; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WalkerBase", function() { return WalkerBase; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(182);
-// Copyright (c) 2017 Google Inc. All rights reserved.
-// This code may only be used under the BSD style license found at
-// http://polymer.github.io/LICENSE.txt
-// Code distributed by Google as part of this project is also
-// subject to an additional IP rights grant found at
-// http://polymer.github.io/PATENTS.txt
-
-
-/**
- * Walkers traverse an object, calling methods based on the
- * features encountered on that object. For example, a RecipeWalker
- * takes a list of recipes and calls methods when:
- *  - a new recipe is encountered
- *  - a handle is found inside a recipe
- *  - a particle is found inside a recipe
- *  - etc..
- *
- * Each of these methods can return a list of updates:
- *   [(recipe, encountered_thing) => new_recipe]
- *
- * The walker then does something with the updates depending on the
- * tactic selected.
- *
- * If the tactic is "Permuted", then an output will be generated
- * for every combination of 1 element drawn from each update list.
- * For example, if 3 methods return [a,b], [c,d,e], and [f] respectively
- * then "Permuted" will cause 6 outputs to be generated: [acf, adf, aef, bcf, bdf, bef]
- *
- * If the tactic is "Independent", an output will be generated for each
- * update, regardless of the list the update is in. For example,
- * if 3 methods return [a,b], [c,d,e], and [f] respectively,
- * then "Independent" will cause 6 outputs to be generated: [a,b,c,d,e,f]
- */
-var WalkerTactic;
-(function (WalkerTactic) {
-    WalkerTactic["Permuted"] = "permuted";
-    WalkerTactic["Independent"] = "independent";
-})(WalkerTactic || (WalkerTactic = {}));
-class WalkerBase extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["StrategizerWalker"] {
-    constructor(tactic) {
-        super();
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(tactic);
-        this.tactic = tactic;
-    }
-    _runUpdateList(recipe, updateList) {
-        const newRecipes = [];
-        if (updateList.length) {
-            switch (this.tactic) {
-                case WalkerTactic.Permuted: {
-                    let permutations = [[]];
-                    updateList.forEach(({ continuation, context }) => {
-                        const newResults = [];
-                        if (typeof continuation === 'function') {
-                            continuation = [continuation];
-                        }
-                        continuation.forEach(f => {
-                            permutations.forEach(p => {
-                                const newP = p.slice();
-                                newP.push({ f, context });
-                                newResults.push(newP);
-                            });
-                        });
-                        permutations = newResults;
-                    });
-                    for (let permutation of permutations) {
-                        const cloneMap = new Map();
-                        const newRecipe = recipe.clone(cloneMap);
-                        let score = 0;
-                        permutation = permutation.filter(p => p.f !== null);
-                        if (permutation.length === 0) {
-                            continue;
-                        }
-                        permutation.forEach(({ f, context }) => {
-                            if (context) {
-                                score = f(newRecipe, ...context.map(c => cloneMap.get(c) || c));
-                            }
-                            else {
-                                score = f(newRecipe);
-                            }
-                        });
-                        newRecipes.push({ recipe: newRecipe, score });
-                    }
-                    break;
-                }
-                case WalkerTactic.Independent:
-                    updateList.forEach(({ continuation, context }) => {
-                        if (typeof continuation === 'function') {
-                            continuation = [continuation];
-                        }
-                        let score = 0;
-                        continuation.forEach(f => {
-                            if (f == null) {
-                                f = () => 0;
-                            }
-                            const cloneMap = new Map();
-                            const newRecipe = recipe.clone(cloneMap);
-                            if (context) {
-                                score = f(newRecipe, ...context.map(c => cloneMap.get(c) || c));
-                            }
-                            else {
-                                score = f(newRecipe);
-                            }
-                            newRecipes.push({ recipe: newRecipe, score });
-                        });
-                    });
-                    break;
-                default:
-                    throw new Error(`${this.tactic} not supported`);
-            }
-        }
-        // commit phase - output results.
-        for (const newRecipe of newRecipes) {
-            const result = this.createDescendant(newRecipe.recipe, newRecipe.score);
-        }
-    }
     createDescendant(recipe, score) {
         const valid = recipe.normalize();
-        //if (!valid) debugger;
         const hash = valid ? recipe.digest() : null;
-        super.createDescendant(recipe, score, hash, valid);
-    }
-    isEmptyResult(result) {
-        if (!result) {
-            return true;
-        }
-        if (result.constructor === Array && result.length <= 0) {
-            return true;
-        }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(typeof result === 'function' || result.length);
-        return false;
+        super.createWalkerDescendant(recipe, score, hash, valid);
     }
 }
-//# sourceMappingURL=walker-base.js.map
+//# sourceMappingURL=recipe-walker.js.map
 
 /***/ }),
 /* 185 */
@@ -77600,8 +77621,7 @@ class WalkerBase extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MapSlots", function() { return MapSlots; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -77610,11 +77630,10 @@ __webpack_require__.r(__webpack_exports__);
 // http://polymer.github.io/PATENTS.txt
 
 
-
 class MapSlots extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const arc = this.arc;
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onPotentialSlotConnection(recipe, particle, slotSpec) {
                 const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
                 // ResolveRecipe handles one-slot case.
@@ -77660,7 +77679,7 @@ class MapSlots extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["St
                     return 1;
                 }));
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Permuted), this);
     }
     // Helper methods.
     // Connect the given slot connection to the selectedSlot, create the slot, if needed.
@@ -77679,7 +77698,7 @@ class MapSlots extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["St
             }
             slotConnection.connectToSlot(clonedSlot);
         }
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id === slotConnection.targetSlot.id), `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id === slotConnection.targetSlot.id), `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
         slotConnection.targetSlot.id = selectedSlot.id || slotConnection.targetSlot.id;
         // TODO: need to concat to existing tags and dedup?
         slotConnection.targetSlot.tags = [...selectedSlot.tags];
@@ -80759,9 +80778,8 @@ const ExperimentalLinear = new _planning_strategizer_js__WEBPACK_IMPORTED_MODULE
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConvertConstraintsToConnections", function() { return ConvertConstraintsToConnections; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(179);
-/* harmony import */ var _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
+/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(179);
+/* harmony import */ var _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(38);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -80771,11 +80789,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const arcModality = this.arc.modality;
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onRecipe(recipe) {
                 const modality = arcModality.intersection(recipe.modality);
                 // The particles & handles Sets are used as input to RecipeUtil's shape functionality
@@ -80797,8 +80814,8 @@ class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_
                     const from = constraint.from;
                     const to = constraint.to;
                     // Don't process constraints if their listed particles don't match the current modality.
-                    if (from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["ParticleEndPoint"]
-                        && to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["ParticleEndPoint"]
+                    if (from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__["ParticleEndPoint"]
+                        && to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__["ParticleEndPoint"]
                         && (!from.particle.isCompatible(modality) || !to.particle.isCompatible(modality))) {
                         return undefined;
                     }
@@ -80807,7 +80824,7 @@ class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_
                     let handle;
                     let handleIsConcrete = false;
                     let createObligation = false;
-                    if (from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["ParticleEndPoint"]) {
+                    if (from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__["ParticleEndPoint"]) {
                         particles.add(from.particle.name);
                         if (map[from.particle.name] == undefined) {
                             map[from.particle.name] = {};
@@ -80821,11 +80838,11 @@ class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_
                             createObligation = true;
                         }
                     }
-                    if (from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["HandleEndPoint"]) {
+                    if (from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__["HandleEndPoint"]) {
                         handle = { handle: from.handle, direction: reverse[constraint.direction] };
                         handles.add(handle.handle);
                     }
-                    if (to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["ParticleEndPoint"]) {
+                    if (to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__["ParticleEndPoint"]) {
                         particles.add(to.particle.name);
                         if (map[to.particle.name] == undefined) {
                             map[to.particle.name] = {};
@@ -80842,7 +80859,7 @@ class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_
                             createObligation = true;
                         }
                     }
-                    if (to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["HandleEndPoint"]) {
+                    if (to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__["HandleEndPoint"]) {
                         handle = { handle: to.handle, direction: constraint.direction };
                         handles.add(handle.handle);
                     }
@@ -80852,10 +80869,10 @@ class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_
                             handles.add(handle.handle);
                         }
                     }
-                    if (from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["TagEndPoint"]) {
+                    if (from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__["TagEndPoint"]) {
                         handle.tags = from.tags;
                     }
-                    else if (to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["TagEndPoint"]) {
+                    else if (to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__["TagEndPoint"]) {
                         handle.tags = to.tags;
                     }
                     if (createObligation) {
@@ -80878,7 +80895,7 @@ class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_
                         return a;
                     };
                     let direction = constraint.direction;
-                    if (from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["ParticleEndPoint"]) {
+                    if (from instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__["ParticleEndPoint"]) {
                         const connection = from.connection;
                         if (connection) {
                             const existingHandle = map[from.particle.name][connection];
@@ -80892,7 +80909,7 @@ class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_
                         }
                     }
                     direction = reverse[constraint.direction];
-                    if (to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["ParticleEndPoint"]) {
+                    if (to instanceof _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__["ParticleEndPoint"]) {
                         const connection = to.connection;
                         if (connection) {
                             const existingHandle = map[to.particle.name][connection];
@@ -80906,9 +80923,9 @@ class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_
                         }
                     }
                 }
-                const shape = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].makeShape([...particles.values()], [...handles.values()], map);
-                const matches = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].find(recipe, shape);
-                const results = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].find(recipe, shape);
+                const shape = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__["RecipeUtil"].makeShape([...particles.values()], [...handles.values()], map);
+                const matches = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__["RecipeUtil"].find(recipe, shape);
+                const results = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__["RecipeUtil"].find(recipe, shape);
                 const processedResults = results.filter(match => {
                     // Ensure that every handle is either matched, or an input of at least one
                     // connected particle in the constraints.
@@ -80961,8 +80978,8 @@ class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_
                         }
                         recipe.clearConnectionConstraints();
                         for (const obligation of obligations) {
-                            const from = new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["InstanceEndPoint"](recipeMap[obligation.from.particle.name], obligation.from.connection);
-                            const to = new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_3__["InstanceEndPoint"](recipeMap[obligation.to.particle.name], obligation.to.connection);
+                            const from = new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__["InstanceEndPoint"](recipeMap[obligation.from.particle.name], obligation.from.connection);
+                            const to = new _recipe_connection_constraint_js__WEBPACK_IMPORTED_MODULE_2__["InstanceEndPoint"](recipeMap[obligation.to.particle.name], obligation.to.connection);
                             recipe.newObligation(from, to, obligation.direction);
                         }
                         return score;
@@ -80970,7 +80987,7 @@ class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_
                 });
                 return processedResults;
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Independent), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Independent), this);
     }
 }
 //# sourceMappingURL=convert-constraints-to-connections.js.map
@@ -80983,9 +81000,8 @@ class ConvertConstraintsToConnections extends _planning_strategizer_js__WEBPACK_
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AssignHandles", function() { return AssignHandles; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(179);
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3);
+/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(179);
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -80995,11 +81011,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class AssignHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const self = this;
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onHandle(recipe, handle) {
                 if (!['?', 'use', 'copy', 'map'].includes(handle.fate)) {
                     return undefined;
@@ -81016,7 +81031,7 @@ class AssignHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
                 // TODO: using the connection to retrieve type information is wrong.
                 // Once validation of recipes generates type information on the handle
                 // we should switch to using that instead.
-                const counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_2__["RecipeUtil"].directionCounts(handle);
+                const counts = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__["RecipeUtil"].directionCounts(handle);
                 if (counts.unknown > 0) {
                     return undefined;
                 }
@@ -81030,7 +81045,7 @@ class AssignHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
                     return undefined;
                 }
                 const responses = [...stores.keys()].map(store => ((recipe, clonedHandle) => {
-                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(store.id);
+                    Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(store.id);
                     if (recipe.findHandleByID(store.id)) {
                         // TODO: Why don't we link the handle connections to the existingHandle?
                         return 0;
@@ -81040,7 +81055,7 @@ class AssignHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
                         clonedHandle.fate = stores.get(store);
                     }
                     else {
-                        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(clonedHandle.fate, stores.get(store));
+                        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(clonedHandle.fate, stores.get(store));
                     }
                     return score;
                 }));
@@ -81062,7 +81077,7 @@ class AssignHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0_
                 }
                 return score;
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Permuted), this);
     }
     getMappableStores(fate, type, tags, counts) {
         const stores = new Map();
@@ -81148,7 +81163,6 @@ class InitPopulation extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MatchParticleByVerb", function() { return MatchParticleByVerb; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -81156,11 +81170,10 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-
 class MatchParticleByVerb extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const arc = this.arc;
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onParticle(recipe, particle) {
                 if (particle.name) {
                     // Particle already has explicit name.
@@ -81178,7 +81191,7 @@ class MatchParticleByVerb extends _planning_strategizer_js__WEBPACK_IMPORTED_MOD
                     };
                 });
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Permuted), this);
     }
 }
 //# sourceMappingURL=match-particle-by-verb.js.map
@@ -81191,16 +81204,14 @@ class MatchParticleByVerb extends _planning_strategizer_js__WEBPACK_IMPORTED_MOD
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MatchRecipeByVerb", function() { return MatchRecipeByVerb; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(45);
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3);
+/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 
 
@@ -81218,7 +81229,7 @@ __webpack_require__.r(__webpack_exports__);
 class MatchRecipeByVerb extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const arc = this.arc;
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onParticle(recipe, particle) {
                 if (particle.name) {
                     // Particle already has explicit name.
@@ -81284,7 +81295,7 @@ class MatchRecipeByVerb extends _planning_strategizer_js__WEBPACK_IMPORTED_MODUL
                                         break;
                                     }
                                 }
-                                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(slotMapped);
+                                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(slotMapped);
                             }
                         }
                         function tryApplyHandleConstraint(name, connection, constraint, handle) {
@@ -81326,19 +81337,19 @@ class MatchRecipeByVerb extends _planning_strategizer_js__WEBPACK_IMPORTED_MODUL
                         }
                         for (const name in handleConstraints.named) {
                             if (handleConstraints.named[name].handle) {
-                                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(applyHandleConstraint(name, handleConstraints.named[name], handleConstraints.named[name].handle));
+                                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(applyHandleConstraint(name, handleConstraints.named[name], handleConstraints.named[name].handle));
                             }
                         }
                         for (const connection of handleConstraints.unnamed) {
                             if (connection.handle) {
-                                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_3__["assert"])(applyHandleConstraint(null, connection, connection.handle));
+                                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(applyHandleConstraint(null, connection, connection.handle));
                             }
                         }
                         return 1;
                     };
                 });
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Permuted), this);
     }
     static satisfiesHandleConstraints(recipe, handleConstraints) {
         for (const handleName in handleConstraints.named) {
@@ -81384,7 +81395,7 @@ class MatchRecipeByVerb extends _planning_strategizer_js__WEBPACK_IMPORTED_MODUL
         if (!handleData.handle) {
             return true;
         }
-        return _recipe_handle_js__WEBPACK_IMPORTED_MODULE_2__["Handle"].effectiveType(handleData.handle._mappedType, handleData.handle.connections.concat(connection)) != null;
+        return _recipe_handle_js__WEBPACK_IMPORTED_MODULE_1__["Handle"].effectiveType(handleData.handle._mappedType, handleData.handle.connections.concat(connection)) != null;
     }
     static satisfiesSlotConstraints(recipe, slotConstraints) {
         for (const slotName in slotConstraints) {
@@ -81431,7 +81442,6 @@ class MatchRecipeByVerb extends _planning_strategizer_js__WEBPACK_IMPORTED_MODUL
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddMissingHandles", function() { return AddMissingHandles; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -81439,11 +81449,10 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-
 class AddMissingHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     // TODO: move generation to use an async generator.
     async generate(inputParams) {
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onRecipe(recipe) {
                 // Don't add use handles while there are outstanding constraints
                 if (recipe.connectionConstraints.length > 0) {
@@ -81469,7 +81478,7 @@ class AddMissingHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODUL
                     return 0;
                 };
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Permuted), this);
     }
 }
 //# sourceMappingURL=add-missing-handles.js.map
@@ -81482,7 +81491,6 @@ class AddMissingHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODUL
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CreateDescriptionHandle", function() { return CreateDescriptionHandle; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -81490,10 +81498,9 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-
 class CreateDescriptionHandle extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onHandleConnection(recipe, handleConnection) {
                 if (handleConnection.handle) {
                     return undefined;
@@ -81508,7 +81515,7 @@ class CreateDescriptionHandle extends _planning_strategizer_js__WEBPACK_IMPORTED
                     return 1;
                 };
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Permuted), this);
     }
 }
 //# sourceMappingURL=create-description-handle.js.map
@@ -81565,14 +81572,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SearchTokensToParticles", function() { return SearchTokensToParticles; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(183);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 
 class SearchTokensToParticles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategy"] {
@@ -81589,7 +81594,7 @@ class SearchTokensToParticles extends _planning_strategizer_js__WEBPACK_IMPORTED
             this._addThing(r.name, packaged, thingByToken, thingByPhrase);
             r.verbs.forEach(verb => this._addThing(verb, packaged, thingByToken, thingByPhrase));
         });
-        class SearchWalker extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+        class SearchWalker extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["StrategizerWalker"] {
             constructor(tactic, arc, recipeIndex) {
                 super(tactic);
                 this.recipeIndex = recipeIndex;
@@ -81649,7 +81654,7 @@ class SearchTokensToParticles extends _planning_strategizer_js__WEBPACK_IMPORTED
                 });
             }
         }
-        this._walker = new SearchWalker(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted, arc, options['recipeIndex']);
+        this._walker = new SearchWalker(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["StrategizerWalker"].Permuted, arc, options['recipeIndex']);
     }
     get walker() {
         return this._walker;
@@ -81680,7 +81685,7 @@ class SearchTokensToParticles extends _planning_strategizer_js__WEBPACK_IMPORTED
     }
     async generate(inputParams) {
         await this.walker.recipeIndex.ready;
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategizer"].over(this.getResults(inputParams), this.walker, this);
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["StrategizerWalker"].over(this.getResults(inputParams), this.walker, this);
     }
 }
 //# sourceMappingURL=search-tokens-to-particles.js.map
@@ -81694,7 +81699,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GroupHandleConnections", function() { return GroupHandleConnections; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(183);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -81703,11 +81707,10 @@ __webpack_require__.r(__webpack_exports__);
 // http://polymer.github.io/PATENTS.txt
 
 
-
 class GroupHandleConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategy"] {
     constructor(arc, args) {
         super(arc, args);
-        this._walker = new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+        this._walker = new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["StrategizerWalker"] {
             onRecipe(recipe, result) {
                 // Only apply this strategy if ALL handle connections are named and have types.
                 if (recipe.getUnnamedUntypedConnections()) {
@@ -81792,13 +81795,13 @@ class GroupHandleConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_
                 }
                 return undefined;
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["StrategizerWalker"].Permuted);
     }
     get walker() {
         return this._walker;
     }
     async generate(inputParams) {
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["Strategizer"].over(this.getResults(inputParams), this.walker, this);
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_1__["StrategizerWalker"].over(this.getResults(inputParams), this.walker, this);
     }
 }
 //# sourceMappingURL=group-handle-connections.js.map
@@ -81811,7 +81814,6 @@ class GroupHandleConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MatchFreeHandlesToConnections", function() { return MatchFreeHandlesToConnections; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -81819,14 +81821,13 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-
 /*
  * Match free handles (i.e. handles that aren't connected to any connections)
  * to connections.
  */
 class MatchFreeHandlesToConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onHandle(recipe, handle) {
                 if (handle.connections.length > 0) {
                     return;
@@ -81840,7 +81841,7 @@ class MatchFreeHandlesToConnections extends _planning_strategizer_js__WEBPACK_IM
                     };
                 });
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Permuted), this);
     }
 }
 //# sourceMappingURL=match-free-handles-to-connections.js.map
@@ -81880,7 +81881,6 @@ class DeviceInfo {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NameUnnamedConnections", function() { return NameUnnamedConnections; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -81888,10 +81888,9 @@ __webpack_require__.r(__webpack_exports__);
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 
-
 class NameUnnamedConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onHandleConnection(recipe, handleConnection) {
                 if (handleConnection.name) {
                     // it is already named.
@@ -81909,7 +81908,7 @@ class NameUnnamedConnections extends _planning_strategizer_js__WEBPACK_IMPORTED_
                     };
                 });
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Permuted), this);
     }
 }
 //# sourceMappingURL=name-unnamed-connections.js.map
@@ -81923,14 +81922,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SearchTokensToHandles", function() { return SearchTokensToHandles; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(179);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(183);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 
 class SearchTokensToHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
@@ -81949,7 +81946,7 @@ class SearchTokensToHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_M
             stores = stores.filter(store => !handle.recipe.handles.find(handle => handle.id === store.id));
             return stores.map(store => ({ store, fate, token }));
         };
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onHandle(recipe, handle) {
                 if (!recipe.search || recipe.search.unresolvedTokens.length === 0) {
                     return undefined;
@@ -81972,7 +81969,7 @@ class SearchTokensToHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_M
                     };
                 });
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Permuted), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Permuted), this);
     }
 }
 //# sourceMappingURL=search-tokens-to-handles.js.map
@@ -81985,8 +81982,7 @@ class SearchTokensToHandles extends _planning_strategizer_js__WEBPACK_IMPORTED_M
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CreateHandleGroup", function() { return CreateHandleGroup; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(45);
+/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(45);
 // Copyright (c) 2017 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -81995,10 +81991,9 @@ __webpack_require__.r(__webpack_exports__);
 // http://polymer.github.io/PATENTS.txt
 
 
-
 class CreateHandleGroup extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onRecipe(recipe, result) {
                 // Resolve constraints before assuming connections are free.
                 if (recipe.connectionConstraints.length > 0)
@@ -82007,13 +82002,13 @@ class CreateHandleGroup extends _planning_strategizer_js__WEBPACK_IMPORTED_MODUL
                 let maximalGroup = null;
                 for (const writer of freeConnections.filter(hc => hc.isOutput)) {
                     const compatibleConnections = [writer];
-                    let effectiveType = _recipe_handle_js__WEBPACK_IMPORTED_MODULE_2__["Handle"].effectiveType(null, compatibleConnections);
+                    let effectiveType = _recipe_handle_js__WEBPACK_IMPORTED_MODULE_1__["Handle"].effectiveType(null, compatibleConnections);
                     let typeCandidate = null;
                     const involvedParticles = new Set([writer.particle]);
                     let foundSomeReader = false;
                     for (const reader of freeConnections.filter(hc => hc.isInput)) {
                         if (!involvedParticles.has(reader.particle) &&
-                            (typeCandidate = _recipe_handle_js__WEBPACK_IMPORTED_MODULE_2__["Handle"].effectiveType(effectiveType, [reader])) !== null) {
+                            (typeCandidate = _recipe_handle_js__WEBPACK_IMPORTED_MODULE_1__["Handle"].effectiveType(effectiveType, [reader])) !== null) {
                             compatibleConnections.push(reader);
                             involvedParticles.add(reader.particle);
                             effectiveType = typeCandidate;
@@ -82025,7 +82020,7 @@ class CreateHandleGroup extends _planning_strategizer_js__WEBPACK_IMPORTED_MODUL
                         continue;
                     for (const otherWriter of freeConnections.filter(hc => hc.isOutput)) {
                         if (!involvedParticles.has(otherWriter.particle) &&
-                            (typeCandidate = _recipe_handle_js__WEBPACK_IMPORTED_MODULE_2__["Handle"].effectiveType(effectiveType, [otherWriter])) !== null) {
+                            (typeCandidate = _recipe_handle_js__WEBPACK_IMPORTED_MODULE_1__["Handle"].effectiveType(effectiveType, [otherWriter])) !== null) {
                             compatibleConnections.push(otherWriter);
                             involvedParticles.add(otherWriter.particle);
                             effectiveType = typeCandidate;
@@ -82047,7 +82042,7 @@ class CreateHandleGroup extends _planning_strategizer_js__WEBPACK_IMPORTED_MODUL
                 }
                 return undefined;
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Independent), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Independent), this);
     }
 }
 //# sourceMappingURL=create-handle-group.js.map
@@ -82060,10 +82055,9 @@ class CreateHandleGroup extends _planning_strategizer_js__WEBPACK_IMPORTED_MODUL
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FindHostedParticle", function() { return FindHostedParticle; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(183);
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4);
-/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(179);
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
+/* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(179);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
@@ -82074,15 +82068,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 class FindHostedParticle extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategy"] {
     async generate(inputParams) {
         const arc = this.arc;
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onHandleConnection(recipe, connection) {
                 if (connection.direction !== 'host' || connection.handle)
                     return undefined;
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(connection.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["InterfaceType"]);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(connection.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["InterfaceType"]);
                 const iface = connection.type;
                 const results = [];
                 for (const particle of arc.context.allParticles) {
@@ -82099,14 +82092,14 @@ class FindHostedParticle extends _planning_strategizer_js__WEBPACK_IMPORTED_MODU
                     if (!ifaceClone.canEnsureResolved())
                         continue;
                     results.push((recipe, hc) => {
-                        const handle = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_4__["RecipeUtil"].constructImmediateValueHandle(hc, particle, arc.generateID());
-                        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_2__["assert"])(handle); // Type matching should have been ensure by the checks above;
+                        const handle = _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_3__["RecipeUtil"].constructImmediateValueHandle(hc, particle, arc.generateID());
+                        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__["assert"])(handle); // Type matching should have been ensure by the checks above;
                         hc.connectToHandle(handle);
                     });
                 }
                 return results;
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_1__["Walker"].Permuted), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Permuted), this);
     }
 }
 //# sourceMappingURL=find-hosted-particle.js.map
@@ -82120,17 +82113,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CoalesceRecipes", function() { return CoalesceRecipes; });
 /* harmony import */ var _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(182);
 /* harmony import */ var _recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(179);
-/* harmony import */ var _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(183);
-/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4);
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3);
+/* harmony import */ var _recipe_handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(45);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4);
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3);
 // Copyright (c) 2018 Google Inc. All rights reserved.
 // This code may only be used under the BSD style license found at
 // http://polymer.github.io/LICENSE.txt
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-
 
 
 
@@ -82153,7 +82144,7 @@ class CoalesceRecipes extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_
         const arc = this.arc;
         const index = this.recipeIndex;
         await index.ready;
-        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["Strategizer"].over(this.getResults(inputParams), new class extends _recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"] {
+        return _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].over(this.getResults(inputParams), new class extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"] {
             onPotentialSlotConnection(recipe, particle, slotSpec) {
                 const results = [];
                 // TODO: It is possible that provided-slot wasn't matched due to different handles, but actually
@@ -82310,7 +82301,7 @@ class CoalesceRecipes extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_
                         let resolved = otherHandle.type.resolvedType();
                         // TODO: getContainedType returns non-null for references ... is that correct here?
                         resolved = resolved.getContainedType() || resolved;
-                        if (resolved instanceof _type_js__WEBPACK_IMPORTED_MODULE_4__["TypeVariable"] && !resolved.canReadSubset)
+                        if (resolved instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariable"] && !resolved.canReadSubset)
                             continue;
                     }
                     if (_recipe_recipe_util_js__WEBPACK_IMPORTED_MODULE_1__["RecipeUtil"].matchesRecipe(arc.activeRecipe, otherHandle.recipe)) {
@@ -82358,13 +82349,13 @@ class CoalesceRecipes extends _planning_strategizer_js__WEBPACK_IMPORTED_MODULE_
             }
             // Returns true, if both handles have types that can be coalesced.
             _reverifyHandleTypes(handle, otherHandle) {
-                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_5__["assert"])(handle.recipe === otherHandle.recipe);
+                Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_4__["assert"])(handle.recipe === otherHandle.recipe);
                 const cloneMap = new Map();
                 const recipeClone = handle.recipe.clone(cloneMap);
                 recipeClone.normalize();
-                return _recipe_handle_js__WEBPACK_IMPORTED_MODULE_3__["Handle"].effectiveType(cloneMap.get(handle).type, [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
+                return _recipe_handle_js__WEBPACK_IMPORTED_MODULE_2__["Handle"].effectiveType(cloneMap.get(handle).type, [...cloneMap.get(handle).connections, ...cloneMap.get(otherHandle).connections]);
             }
-        }(_recipe_walker_js__WEBPACK_IMPORTED_MODULE_2__["Walker"].Independent), this);
+        }(_planning_strategizer_js__WEBPACK_IMPORTED_MODULE_0__["StrategizerWalker"].Independent), this);
     }
 }
 //# sourceMappingURL=coalesce-recipes.js.map

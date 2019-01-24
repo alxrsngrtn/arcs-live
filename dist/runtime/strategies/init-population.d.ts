@@ -1,4 +1,5 @@
-import { Strategy, Descendant } from '../../planning/strategizer.js';
+import { Descendant } from '../recipe/walker.js';
+import { Strategy } from '../../planning/strategizer.js';
 import { Arc } from '../arc.js';
 import { RecipeIndex } from '../recipe-index.js';
 export declare class InitPopulation extends Strategy {

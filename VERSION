@@ -1,5 +1,7 @@
-commit a4d89f3f7dad67035a3cfeb841373a7821e6b0c6
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Wed Jan 23 18:00:41 2019 -0800
+commit 8d1f6ba731ba1be34195da7512b98a1ff5817ff1
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Thu Jan 24 13:35:00 2019 +1100
 
-    fix "trigger" column value in Devtools Planning (#2635)
+    Refactor walking to make Strategizer walking use recipe walking (#2632)
+    
+    Refactor Walkers to make Strategizer walking a special case (subclass) of general walking.

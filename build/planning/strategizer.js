@@ -5,6 +5,8 @@
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../platform/assert-web.js';
+import { Action } from '../runtime/recipe/walker.js';
+import { RecipeWalker } from '../runtime/recipe/recipe-walker.js';
 export class Strategizer {
     constructor(strategies, evaluators, ruleset) {
         this._generation = 0;
@@ -182,67 +184,31 @@ export class Strategizer {
         }
         return mergedEvaluations;
     }
-    static over(results, walker, strategy) {
-        walker.onStrategy(strategy);
-        results.forEach(result => {
-            walker.onResult(result);
-            walker.onResultDone();
-        });
-        walker.onStrategyDone();
-        return walker.descendants;
-    }
 }
-export class StrategizerWalker {
-    constructor() {
-        this.descendants = [];
+export class StrategizerWalker extends RecipeWalker {
+    constructor(tactic) {
+        super(tactic);
     }
-    onStrategy(strategy) {
-        this.currentStrategy = strategy;
+    createDescendant(recipe, score) {
+        assert(this.currentAction instanceof Strategy, 'no current strategy');
+        // Note that the currentAction assertion in the superclass method is now
+        // guaranteed to succeed.
+        super.createDescendant(recipe, score);
     }
-    onResult(result) {
-        this.currentResult = result;
-    }
-    createDescendant(result, score, hash, valid) {
-        assert(this.currentResult, 'no current result');
-        assert(this.currentStrategy, 'no current strategy');
-        if (this.currentResult.score) {
-            score += this.currentResult.score;
-        }
-        this.descendants.push({
-            result,
-            score,
-            derivation: [{ parent: this.currentResult, strategy: this.currentStrategy }],
-            hash,
-            valid,
-        });
-    }
-    onResultDone() {
-        this.currentResult = undefined;
-    }
-    onStrategyDone() {
-        this.currentStrategy = undefined;
+    static over(results, walker, strategy) {
+        return super.walk(results, walker, strategy);
     }
 }
 // TODO: Doc call convention, incl strategies are stateful.
-export class Strategy {
+export class Strategy extends Action {
     constructor(arc, args) {
-        this._arc = arc;
-        this._args = args;
-    }
-    get arc() {
-        return this._arc;
+        super(arc, args);
     }
     async activate(strategizer) {
         // Returns estimated ability to generate/evaluate.
         // TODO: What do these numbers mean? Some sort of indication of the accuracy of the
         // generated individuals and evaluations.
         return { generate: 0, evaluate: 0 };
-    }
-    getResults(inputParams) {
-        return inputParams.generated;
-    }
-    async generate(inputParams) {
-        return [];
     }
     async evaluate(strategizer, individuals) {
         return individuals.map(() => NaN);
