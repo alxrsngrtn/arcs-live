@@ -10,7 +10,7 @@
 import { Manifest } from '../../manifest.js';
 import { StrategyTestHelper } from './strategy-test-helper.js';
 import { SearchTokensToHandles } from '../../strategies/search-tokens-to-handles.js';
-import { assert } from '../chai-web.js';
+import { assert } from '../../../platform/chai-web.js';
 import { Loader } from '../../loader.js';
 describe('SearchTokensToHandles', () => {
     it('finds local handle by tags', async () => {

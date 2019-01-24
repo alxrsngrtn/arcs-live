@@ -9,7 +9,7 @@
  */
 'use strict';
 import { Arc } from '../../arc.js';
-import { assert } from '../chai-web.js';
+import { assert } from '../../../platform/chai-web.js';
 import { Loader } from '../../loader.js';
 import { RecipeIndex } from '../../recipe-index.js';
 import { FakeSlotComposer } from '../../testing/fake-slot-composer.js';

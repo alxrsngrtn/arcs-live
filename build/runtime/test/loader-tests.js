@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Loader } from '../loader.js';
-import { assert } from './chai-web.js';
+import { assert } from '../../platform/chai-web.js';
 import { Manifest } from '../manifest.js';
 describe('loader', () => {
     it('can extract a path', () => {

@@ -4,7 +4,7 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { assert } from '../chai-web.js';
+import { assert } from '../../../platform/chai-web.js';
 import { CrdtCollectionModel } from '../../storage/crdt-collection-model.js';
 describe('crdt-collection-model', () => {
     it('can add values', async () => {

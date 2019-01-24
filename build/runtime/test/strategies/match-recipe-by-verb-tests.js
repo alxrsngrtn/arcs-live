@@ -11,7 +11,7 @@ import { Manifest } from '../../manifest.js';
 import { StrategyTestHelper } from './strategy-test-helper.js';
 import { MatchRecipeByVerb } from '../../strategies/match-recipe-by-verb.js';
 import { ConvertConstraintsToConnections } from '../../strategies/convert-constraints-to-connections.js';
-import { assert } from '../chai-web.js';
+import { assert } from '../../../platform/chai-web.js';
 describe('MatchRecipeByVerb', () => {
     it('removes a particle and adds a recipe', async () => {
         const manifest = await Manifest.parse(`

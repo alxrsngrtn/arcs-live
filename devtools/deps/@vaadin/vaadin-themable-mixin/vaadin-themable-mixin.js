@@ -55,7 +55,7 @@ export const ThemableMixin = superClass => class VaadinThemableMixin extends The
 
   /** @private */
   static _includeStyle(moduleName, template) {
-    if (template && !template.content.querySelector(`style[include=${moduleName}]`)) {
+    if (template && !template.content.querySelector(`style[include="${moduleName}"]`)) {
       const styleEl = document.createElement('style');
       styleEl.setAttribute('include', moduleName);
       template.content.appendChild(styleEl);

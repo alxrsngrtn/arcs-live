@@ -15,7 +15,7 @@ import { Manifest } from '../../manifest.js';
 import { StrategyTestHelper } from './strategy-test-helper.js';
 import { MapSlots } from '../../strategies/map-slots.js';
 import { ResolveRecipe } from '../../strategies/resolve-recipe.js';
-import { assert } from '../chai-web.js';
+import { assert } from '../../../platform/chai-web.js';
 describe('MapSlots', () => {
     const particlesSpec = `
       particle A in 'A.js'

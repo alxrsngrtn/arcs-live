@@ -9,7 +9,7 @@
  */
 import { Manifest } from '../manifest.js';
 import { parser } from '../../../build/runtime/manifest-parser.js';
-import { assert } from './chai-web.js';
+import { assert } from '../../platform/chai-web.js';
 import { fs } from '../../platform/fs-web.js';
 import { path } from '../../platform/path-web.js';
 async function assertRecipeParses(input, result) {

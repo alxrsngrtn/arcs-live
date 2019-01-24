@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Manifest } from '../../manifest.js';
-import { assert } from '../chai-web.js';
+import { assert } from '../../../platform/chai-web.js';
 describe('Recipe Particle', () => {
     it('cloning maints type variable mapping', async () => {
         const manifest = await Manifest.parse(`

@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { assert } from '../test/chai-web.js';
+import { assert } from '../../platform/chai-web.js';
 import { CollectionType } from '../type.js';
 /**
  * Helper class for testing a Collection-based store that collects messages from a particle.

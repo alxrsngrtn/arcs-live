@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { assert } from '../chai-web.js';
+import { assert } from '../../../platform/chai-web.js';
 import { TestHelper } from '../../testing/test-helper.js';
 describe('products test', () => {
     const manifestFilename = './src/runtime/test/particles/artifacts/products-test.recipes';

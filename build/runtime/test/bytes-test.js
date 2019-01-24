@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { assert } from './chai-web.js';
+import { assert } from '../../platform/chai-web.js';
 import { Bytes } from '../bytes.js';
 // Small Red Dot from https://en.wikipedia.org/wiki/Data_URI_scheme
 const RED_DOT_DATA_URI = 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';

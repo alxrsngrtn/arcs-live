@@ -1,9 +1,5 @@
-commit 6ffbcae7e9cb8a785032cde0744788529d4d07aa
-Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
-Date:   Thu Jan 24 13:38:38 2019 +1100
+commit 14958783c181f3ec6225562b061dfdbed08bf5ab
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Jan 24 06:24:40 2019 -0800
 
-    using the handle keyword to parse handles (as an alternative to fates) (#2633)
-    
-    * using the handle keyword to parse handles (as an alternative to using fates)
-    
-    * consistency
+    move chai to platform (#2637)

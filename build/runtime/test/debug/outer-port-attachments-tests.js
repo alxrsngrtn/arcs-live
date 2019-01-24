@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { assert } from '../chai-web.js';
+import { assert } from '../../../platform/chai-web.js';
 import { StubLoader } from '../../testing/stub-loader.js';
 import { DevtoolsForTests } from '../../debug/devtools-connection.js';
 import { Random } from '../../random.js';

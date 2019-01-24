@@ -11,7 +11,7 @@ import { StrategizerWalker, Strategy, Ruleset } from '../../../planning/strategi
 import { Manifest } from '../../manifest.js';
 import { Planner } from '../../planner.js';
 import { StrategyTestHelper } from './strategy-test-helper.js';
-import { assert } from '../chai-web.js';
+import { assert } from '../../../platform/chai-web.js';
 class InitPopulation extends Strategy {
     constructor(arc) {
         super();

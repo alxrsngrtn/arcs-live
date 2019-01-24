@@ -7,8 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-'use strict';
-import { assert } from './chai-web.js';
+import { assert } from '../../platform/chai-web.js';
 import { EntityType, TypeVariable, SlotType } from '../type.js';
 import { TypeChecker } from '../recipe/type-checker.js';
 import { Manifest } from '../manifest.js';

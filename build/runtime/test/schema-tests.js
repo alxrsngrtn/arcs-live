@@ -10,7 +10,7 @@
 // These tests use ClassName like variables and run many tests where return values are ignored.
 // tslint:disable: variable-name
 // tslint:disable: no-unused-expression
-import { assert } from './chai-web.js';
+import { assert } from '../../platform/chai-web.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { Manifest } from '../manifest.js';
 import { Reference } from '../reference.js';
