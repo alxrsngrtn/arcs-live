@@ -24937,7 +24937,8 @@ class PlanningResult {
                 });
                 if (outdatedStores.length > 0) {
                     console.warn(`New suggestions has older store versions:\n ${outdatedStores.map(id => `${id}: ${this.suggestions[index].versionByStore[id]} -> ${newSuggestion.versionByStore[id]}`).join(';')}`);
-                    assert$1(false);
+                    // TODO(mmandlis): investigate why this is happening.
+                    // assert(false);
                 }
                 removeIndexes.push(index);
                 newSuggestion.mergeSearch(this.suggestions[index]);
@@ -28523,7 +28524,6 @@ class Planificator {
         this.lastActivatedPlan = plan;
         this.requestPlanning({ metadata: {
                 trigger: Trigger.PlanInstantiated,
-                hash: plan.hash,
                 particleNames: plan.particles.map(p => p.name).join(',')
             } });
     }

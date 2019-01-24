@@ -1,13 +1,5 @@
-commit 04896d60228bca5e95d70ec23e4271eb482856eb
-Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
-Date:   Wed Jan 23 14:56:23 2019 +1100
+commit a4d89f3f7dad67035a3cfeb841373a7821e6b0c6
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Wed Jan 23 18:00:41 2019 -0800
 
-    Slots and slot connections are no longer eagerly created (#2610)
-    
-    * Slots and slot connections are no longer eagerly created
-    
-    * Update walker-base.ts
-    
-    * Update resolve-recipe.ts
-    
-    * created a new type for ConsumeSlotConnectionMatch
+    fix "trigger" column value in Devtools Planning (#2635)
