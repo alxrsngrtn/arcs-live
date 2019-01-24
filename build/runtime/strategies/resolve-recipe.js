@@ -6,7 +6,7 @@
 // http://polymer.github.io/PATENTS.txt
 import { StrategizerWalker, Strategy } from '../../planning/strategizer.js';
 import { RecipeUtil } from '../recipe/recipe-util.js';
-import { MapSlots } from './map-slots.js';
+import { SlotUtils } from '../recipe/slot-utils.js';
 export class ResolveRecipe extends Strategy {
     async generate(inputParams) {
         const arc = this.arc;
@@ -78,29 +78,29 @@ export class ResolveRecipe extends Strategy {
                 }
                 const slotSpec = slotConnection.getSlotSpec();
                 const particle = slotConnection.particle;
-                const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
+                const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
                 const allSlots = [...local, ...remote];
-                // MapSlots handles a multi-slot case.
+                // SlotUtils handles a multi-slot case.
                 if (allSlots.length !== 1) {
                     return undefined;
                 }
                 const selectedSlot = allSlots[0];
                 return (recipe, slotConnection) => {
-                    MapSlots.connectSlotConnection(slotConnection, selectedSlot);
+                    SlotUtils.connectSlotConnection(slotConnection, selectedSlot);
                     return 1;
                 };
             }
             onPotentialSlotConnection(recipe, particle, slotSpec) {
-                const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
+                const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
                 const allSlots = [...local, ...remote];
-                // MapSlots handles a multi-slot case.
+                // SlotUtils handles a multi-slot case.
                 if (allSlots.length !== 1) {
                     return undefined;
                 }
                 const selectedSlot = allSlots[0];
                 return (recipe, particle, slotSpec) => {
                     const newSlotConnection = particle.addSlotConnection(slotSpec.name);
-                    MapSlots.connectSlotConnection(newSlotConnection, selectedSlot);
+                    SlotUtils.connectSlotConnection(newSlotConnection, selectedSlot);
                     return 1;
                 };
             }

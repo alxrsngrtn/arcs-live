@@ -20482,58 +20482,8 @@ class Ruleset {
 // tslint:disable-next-line: variable-name
 Ruleset.Builder = RulesetBuilder;
 
-// Copyright (c) 2017 Google Inc. All rights reserved.
-class MapSlots extends Strategy {
-    async generate(inputParams) {
-        const arc = this.arc;
-        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
-            onPotentialSlotConnection(recipe, particle, slotSpec) {
-                const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
-                // ResolveRecipe handles one-slot case.
-                if (local.length + remote.length < 2) {
-                    return undefined;
-                }
-                // If there are any local slots, prefer them over remote slots.
-                // TODO: There should not be any preference over local slots vs. remote slots.
-                // Strategies should be responsible for making all possible recipes. Ranking of 
-                // recipes is done later. 
-                const slotList = local.length > 0 ? local : remote;
-                return slotList.map(slot => ((recipe, particle, slotSpec) => {
-                    const newSlotConnection = particle.addSlotConnection(slotSpec.name);
-                    MapSlots.connectSlotConnection(newSlotConnection, slot);
-                    return 1;
-                }));
-            }
-            // TODO: this deals with cases where a SlotConnection has been
-            // created during parsing, so that provided slots inside the 
-            // connection can be connected to consume connections.
-            // Long term, we shouldn't have to do this, so we won't need
-            // to deal with the case of a disconnected SlotConnection.
-            onSlotConnection(recipe, slotConnection) {
-                // don't try to connect verb constraints
-                // TODO: is this right? Should constraints be connectible, in order to precompute the
-                // recipe side once the verb is substituted?
-                if (slotConnection.getSlotSpec() == undefined) {
-                    return undefined;
-                }
-                if (slotConnection.isConnected()) {
-                    return;
-                }
-                const slotSpec = slotConnection.getSlotSpec();
-                const particle = slotConnection.particle;
-                const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
-                if (local.length + remote.length < 2) {
-                    return undefined;
-                }
-                // If there are any local slots, prefer them over remote slots.
-                const slotList = local.length > 0 ? local : remote;
-                return slotList.map(slot => ((recipe, slotConnection) => {
-                    MapSlots.connectSlotConnection(slotConnection, slot);
-                    return 1;
-                }));
-            }
-        }(StrategizerWalker.Permuted), this);
-    }
+// Copyright (c) 2019 Google Inc. All rights reserved.
+class SlotUtils {
     // Helper methods.
     // Connect the given slot connection to the selectedSlot, create the slot, if needed.
     static connectSlotConnection(slotConnection, selectedSlot) {
@@ -20563,8 +20513,8 @@ class MapSlots extends Strategy {
             // Note: during manfiest parsing, target slot is only set in slot connection, if the slot exists in the recipe.
             // If this slot is internal to the recipe, it has the sourceConnection set to the providing connection
             // (and hence the consuming connection is considered connected already). Otherwise, this may only be a remote slot.
-            local: !slotConn || !slotConn.targetSlot ? MapSlots._findSlotCandidates(particle, slotSpec, particle.recipe.slots) : [],
-            remote: MapSlots._findSlotCandidates(particle, slotSpec, arc.pec.slotComposer.getAvailableContexts())
+            local: !slotConn || !slotConn.targetSlot ? SlotUtils._findSlotCandidates(particle, slotSpec, particle.recipe.slots) : [],
+            remote: SlotUtils._findSlotCandidates(particle, slotSpec, arc.pec.slotComposer.getAvailableContexts())
         };
     }
     // Returns the given slot candidates, sorted by "quality".
@@ -20578,15 +20528,15 @@ class MapSlots extends Strategy {
     }
     // Returns true, if the given slot is a viable candidate for the slotConnection.
     static slotMatches(particle, slotSpec, slot) {
-        if (!MapSlots.specMatch(slotSpec, slot.spec)) {
+        if (!SlotUtils.specMatch(slotSpec, slot.spec)) {
             return false;
         }
         const potentialSlotConn = particle.getSlotConnectionBySpec(slotSpec);
-        if (!MapSlots.tagsOrNameMatch(slotSpec, slot.spec, potentialSlotConn, slot)) {
+        if (!SlotUtils.tagsOrNameMatch(slotSpec, slot.spec, potentialSlotConn, slot)) {
             return false;
         }
         // Match handles of the provided slot with the slot-connection particle's handles.
-        if (!MapSlots.handlesMatch(particle, slot)) {
+        if (!SlotUtils.handlesMatch(particle, slot)) {
             return false;
         }
         return true;
@@ -20689,29 +20639,29 @@ class ResolveRecipe extends Strategy {
                 }
                 const slotSpec = slotConnection.getSlotSpec();
                 const particle = slotConnection.particle;
-                const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
+                const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
                 const allSlots = [...local, ...remote];
-                // MapSlots handles a multi-slot case.
+                // SlotUtils handles a multi-slot case.
                 if (allSlots.length !== 1) {
                     return undefined;
                 }
                 const selectedSlot = allSlots[0];
                 return (recipe, slotConnection) => {
-                    MapSlots.connectSlotConnection(slotConnection, selectedSlot);
+                    SlotUtils.connectSlotConnection(slotConnection, selectedSlot);
                     return 1;
                 };
             }
             onPotentialSlotConnection(recipe, particle, slotSpec) {
-                const { local, remote } = MapSlots.findAllSlotCandidates(particle, slotSpec, arc);
+                const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
                 const allSlots = [...local, ...remote];
-                // MapSlots handles a multi-slot case.
+                // SlotUtils handles a multi-slot case.
                 if (allSlots.length !== 1) {
                     return undefined;
                 }
                 const selectedSlot = allSlots[0];
                 return (recipe, particle, slotSpec) => {
                     const newSlotConnection = particle.addSlotConnection(slotSpec.name);
-                    MapSlots.connectSlotConnection(newSlotConnection, selectedSlot);
+                    SlotUtils.connectSlotConnection(newSlotConnection, selectedSlot);
                     return 1;
                 };
             }
@@ -23491,6 +23441,60 @@ class InitPopulation extends Strategy {
             recipe,
             score: 1 - recipe.getParticlesByImplFile(this._loadedParticles).length
         }));
+    }
+}
+
+// Copyright (c) 2017 Google Inc. All rights reserved.
+class MapSlots extends Strategy {
+    async generate(inputParams) {
+        const arc = this.arc;
+        return StrategizerWalker.over(this.getResults(inputParams), new class extends StrategizerWalker {
+            onPotentialSlotConnection(recipe, particle, slotSpec) {
+                const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
+                // ResolveRecipe handles one-slot case.
+                if (local.length + remote.length < 2) {
+                    return undefined;
+                }
+                // If there are any local slots, prefer them over remote slots.
+                // TODO: There should not be any preference over local slots vs. remote slots.
+                // Strategies should be responsible for making all possible recipes. Ranking of 
+                // recipes is done later. 
+                const slotList = local.length > 0 ? local : remote;
+                return slotList.map(slot => ((recipe, particle, slotSpec) => {
+                    const newSlotConnection = particle.addSlotConnection(slotSpec.name);
+                    SlotUtils.connectSlotConnection(newSlotConnection, slot);
+                    return 1;
+                }));
+            }
+            // TODO: this deals with cases where a SlotConnection has been
+            // created during parsing, so that provided slots inside the 
+            // connection can be connected to consume connections.
+            // Long term, we shouldn't have to do this, so we won't need
+            // to deal with the case of a disconnected SlotConnection.
+            onSlotConnection(recipe, slotConnection) {
+                // don't try to connect verb constraints
+                // TODO: is this right? Should constraints be connectible, in order to precompute the
+                // recipe side once the verb is substituted?
+                if (slotConnection.getSlotSpec() == undefined) {
+                    return undefined;
+                }
+                if (slotConnection.isConnected()) {
+                    return;
+                }
+                const slotSpec = slotConnection.getSlotSpec();
+                const particle = slotConnection.particle;
+                const { local, remote } = SlotUtils.findAllSlotCandidates(particle, slotSpec, arc);
+                if (local.length + remote.length < 2) {
+                    return undefined;
+                }
+                // If there are any local slots, prefer them over remote slots.
+                const slotList = local.length > 0 ? local : remote;
+                return slotList.map(slot => ((recipe, slotConnection) => {
+                    SlotUtils.connectSlotConnection(slotConnection, slot);
+                    return 1;
+                }));
+            }
+        }(StrategizerWalker.Permuted), this);
     }
 }
 
@@ -26977,10 +26981,10 @@ class RecipeIndex {
                     const recipeSlotConn = recipeParticle.getSlotConnectionByName(name);
                     if (recipeSlotConn && recipeSlotConn.targetSlot)
                         continue;
-                    if (MapSlots.specMatch(slotSpec, providedSlotSpec) && MapSlots.tagsOrNameMatch(slotSpec, providedSlotSpec)) {
+                    if (SlotUtils.specMatch(slotSpec, providedSlotSpec) && SlotUtils.tagsOrNameMatch(slotSpec, providedSlotSpec)) {
                         const slotConn = particle.getSlotConnectionByName(providedSlotSpec.name);
                         let matchingHandles = [];
-                        if (providedSlotSpec.handles.length !== 0 || (slotConn && !MapSlots.handlesMatch(recipeParticle, slotConn))) {
+                        if (providedSlotSpec.handles.length !== 0 || (slotConn && !SlotUtils.handlesMatch(recipeParticle, slotConn))) {
                             matchingHandles = this._getMatchingHandles(recipeParticle, particle, providedSlotSpec);
                             if (matchingHandles.length === 0) {
                                 continue;
@@ -27004,7 +27008,7 @@ class RecipeIndex {
             }
             for (const consumeConn of recipe.slotConnections) {
                 for (const providedSlot of Object.values(consumeConn.providedSlots)) {
-                    if (MapSlots.slotMatches(particle, slotSpec, providedSlot)) {
+                    if (SlotUtils.slotMatches(particle, slotSpec, providedSlot)) {
                         providedSlots.push(providedSlot);
                     }
                 }

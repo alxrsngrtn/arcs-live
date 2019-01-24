@@ -1,5 +1,5 @@
-commit d61b7e19d161603842d9eb94ed23f719395c4170
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Jan 24 10:44:31 2019 -0800
+commit cf1493f1952a5a0c1b600abba48aa89efb7576ac
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Fri Jan 25 09:38:59 2019 +1100
 
-    Convert akms-test to typescript (#2634)
+    Move static helpers from MapSlots to SlotUtils (#2639)
