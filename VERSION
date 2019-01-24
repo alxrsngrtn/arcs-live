@@ -1,7 +1,9 @@
-commit 8d1f6ba731ba1be34195da7512b98a1ff5817ff1
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Jan 24 13:35:00 2019 +1100
+commit 6ffbcae7e9cb8a785032cde0744788529d4d07aa
+Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
+Date:   Thu Jan 24 13:38:38 2019 +1100
 
-    Refactor walking to make Strategizer walking use recipe walking (#2632)
+    using the handle keyword to parse handles (as an alternative to fates) (#2633)
     
-    Refactor Walkers to make Strategizer walking a special case (subclass) of general walking.
+    * using the handle keyword to parse handles (as an alternative to using fates)
+    
+    * consistency

@@ -39,6 +39,7 @@ export declare class Recipe {
     allRequiredSlotsPresent(): boolean;
     _findDuplicate(items: any, options: any): any;
     _isValid(options?: any): boolean;
+    readonly requires: Recipe[];
     name: string | undefined;
     localName: string;
     particles: Particle[];

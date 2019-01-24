@@ -633,6 +633,9 @@ ${e.message}
             require: recipeItem.items.filter(item => item.kind === 'require'),
             handles: recipeItem.items.filter(item => item.kind === 'handle'),
             byHandle: new Map(),
+            // requireHandles are handles constructed by the 'handle' keyword. This is intended to replace handles.
+            requireHandles: recipeItem.items.filter(item => item.kind === 'requireHandle'),
+            byRequireHandle: new Map(),
             particles: recipeItem.items.filter(item => item.kind === 'particle'),
             byParticle: new Map(),
             slots: recipeItem.items.filter(item => item.kind === 'slot'),
@@ -642,7 +645,11 @@ ${e.message}
             search: recipeItem.items.find(item => item.kind === 'search'),
             description: recipeItem.items.find(item => item.kind === 'description')
         };
-        for (const item of items.handles) {
+        // A recipe should either source handles by the 'handle' keyword (requireHandle item) or use fates (handle item). 
+        // A recipe should not use both methods. 
+        assert(!(items.handles.length > 0 && items.requireHandles.length > 0), `Inconsistent handle definitions`);
+        const itemHandles = items.handles.length > 0 ? items.handles : items.requireHandles;
+        for (const item of itemHandles) {
             const handle = recipe.newHandle();
             const ref = item.ref || { tags: [] };
             if (ref.id) {
@@ -664,7 +671,7 @@ ${e.message}
                 handle.localName = item.name;
                 items.byName.set(item.name, { item, handle });
             }
-            handle.fate = item.fate;
+            handle.fate = item.fate ? item.fate : null;
             items.byHandle.set(handle, item);
         }
         const prepareEndpoint = (connection, info) => {
@@ -859,7 +866,7 @@ ${e.message}
                     else if (!entry.item) {
                         throw new ManifestError(connectionItem.location, `did not expect ${entry} expected handle or particle`);
                     }
-                    if (entry.item.kind === 'handle') {
+                    if (entry.item.kind === 'handle' || entry.item.kind === 'requireHandle') {
                         targetHandle = entry.handle;
                     }
                     else if (entry.item.kind === 'particle') {

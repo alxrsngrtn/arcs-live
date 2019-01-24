@@ -776,13 +776,12 @@ export const parser = /*
               items: extractIndented(items),
             }
           },
-        peg$c197 = function(name, id, tags) {
+        peg$c197 = function(name, ref) {
             return {
               kind: 'requireHandle',
               location: location(),
               name: optional(name, name => name[1], null),
-              id,
-              tags: tags || []
+              ref: optional(ref, ref => ref[1], null)
             }
           },
         peg$c198 = "#",
@@ -4455,15 +4454,18 @@ export const parser = /*
       if (s0 === peg$FAILED) {
         s0 = peg$parseRecipeHandle();
         if (s0 === peg$FAILED) {
-          s0 = peg$parseRecipeRequire();
+          s0 = peg$parseRequireHandleSection();
           if (s0 === peg$FAILED) {
-            s0 = peg$parseRecipeSlot();
+            s0 = peg$parseRecipeRequire();
             if (s0 === peg$FAILED) {
-              s0 = peg$parseRecipeSearch();
+              s0 = peg$parseRecipeSlot();
               if (s0 === peg$FAILED) {
-                s0 = peg$parseRecipeConnection();
+                s0 = peg$parseRecipeSearch();
                 if (s0 === peg$FAILED) {
-                  s0 = peg$parseDescription();
+                  s0 = peg$parseRecipeConnection();
+                  if (s0 === peg$FAILED) {
+                    s0 = peg$parseDescription();
+                  }
                 }
               }
             }
@@ -5542,6 +5544,9 @@ export const parser = /*
               s8 = peg$parseRecipeParticle();
               if (s8 === peg$FAILED) {
                 s8 = peg$parseRequireHandleSection();
+                if (s8 === peg$FAILED) {
+                  s8 = peg$parseRecipeSlot();
+                }
               }
               if (s8 !== peg$FAILED) {
                 s7 = [s7, s8];
@@ -5562,6 +5567,9 @@ export const parser = /*
                 s8 = peg$parseRecipeParticle();
                 if (s8 === peg$FAILED) {
                   s8 = peg$parseRequireHandleSection();
+                  if (s8 === peg$FAILED) {
+                    s8 = peg$parseRecipeSlot();
+                  }
                 }
                 if (s8 !== peg$FAILED) {
                   s7 = [s7, s8];
@@ -5643,10 +5651,7 @@ export const parser = /*
           s3 = peg$currPos;
           s4 = peg$parsewhiteSpace();
           if (s4 !== peg$FAILED) {
-            s5 = peg$parseid();
-            if (s5 === peg$FAILED) {
-              s5 = peg$parseupperIdent();
-            }
+            s5 = peg$parseHandleOrSlotRef();
             if (s5 !== peg$FAILED) {
               s4 = [s4, s5];
               s3 = s4;
@@ -5662,20 +5667,11 @@ export const parser = /*
             s3 = null;
           }
           if (s3 !== peg$FAILED) {
-            s4 = peg$parseSpaceTagList();
-            if (s4 === peg$FAILED) {
-              s4 = null;
-            }
+            s4 = peg$parseeolWhiteSpace();
             if (s4 !== peg$FAILED) {
-              s5 = peg$parseeolWhiteSpace();
-              if (s5 !== peg$FAILED) {
-                peg$savedPos = s0;
-                s1 = peg$c197(s2, s3, s4);
-                s0 = s1;
-              } else {
-                peg$currPos = s0;
-                s0 = peg$FAILED;
-              }
+              peg$savedPos = s0;
+              s1 = peg$c197(s2, s3);
+              s0 = s1;
             } else {
               peg$currPos = s0;
               s0 = peg$FAILED;

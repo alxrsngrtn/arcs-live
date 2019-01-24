@@ -181,6 +181,7 @@ export class Recipe {
             && this.slotConnections.every(connection => connection._isValid(options))
             && (!this.search || this.search.isValid());
     }
+    get requires() { return this._requires; }
     get name() { return this._name; }
     set name(name) { this._name = name; }
     get localName() { return this._localName; }
