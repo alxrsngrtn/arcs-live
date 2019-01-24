@@ -1,5 +1,5 @@
-commit 14958783c181f3ec6225562b061dfdbed08bf5ab
+commit d61b7e19d161603842d9eb94ed23f719395c4170
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Jan 24 06:24:40 2019 -0800
+Date:   Thu Jan 24 10:44:31 2019 -0800
 
-    move chai to platform (#2637)
+    Convert akms-test to typescript (#2634)
