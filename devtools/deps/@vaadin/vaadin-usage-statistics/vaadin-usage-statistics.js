@@ -9,6 +9,11 @@ Statistics gathering is automatically disabled and excluded from production buil
 For details and to opt-out, see https://github.com/vaadin/vaadin-usage-statistics.
 
 */
+/*
+  FIXME(polymer-modulizer): the above comments were extracted
+  from HTML and may be out of place here. Review them and
+  then delete this comment!
+*/
 import { runIfDevelopmentMode } from '../vaadin-development-mode-detector/vaadin-development-mode-detector.js';
 
 function maybeGatherAndSendStats() {
@@ -429,8 +434,8 @@ function maybeGatherAndSendStats() {
   }();
   try {
   window.Vaadin = window.Vaadin || {};
-  window.Vaadin.usageStatistics = window.Vaadin.usageStatistics || new UsageStatistics();
-  window.Vaadin.usageStatistics.maybeGatherAndSend();
+  window.Vaadin.usageStatsChecker = window.Vaadin.usageStatsChecker || new UsageStatistics();
+  window.Vaadin.usageStatsChecker.maybeGatherAndSend();
   } catch (e) {
   // Intentionally ignored as this is not a problem in the app being developed
   }

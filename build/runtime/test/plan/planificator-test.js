@@ -12,6 +12,7 @@ import { Arc } from '../../arc.js';
 import { FakeSlotComposer } from '../../testing/fake-slot-composer.js';
 import { Loader } from '../../loader.js';
 import { Planificator } from '../../plan/planificator.js';
+import { PlanningResult } from '../../plan/planning-result.js';
 import { TestHelper } from '../../testing/test-helper.js';
 describe('planificator', () => {
     it('constructs suggestion and search storage keys for fb arc', async () => {
@@ -39,8 +40,12 @@ describe('remote planificator', () => {
     async function createConsumePlanificator(plannerStorageKeyBase, manifestFilename) {
         return Planificator.create(await createArc({ manifestFilename }, storageKey), { userid, storageKeyBase: plannerStorageKeyBase, onlyConsumer: true, debug: false });
     }
+    function createPlanningResult(arc, store) {
+        return new PlanningResult({ context: arc.context, loader: arc.loader }, store);
+    }
     async function createProducePlanificator(plannerStorageKeyBase, manifestFilename, store, searchStore) {
-        return new Planificator(await createArc({ manifestFilename }, storageKey), userid, store, searchStore);
+        const arc = await createArc({ manifestFilename }, storageKey);
+        return new Planificator(arc, userid, createPlanningResult(arc, store), searchStore);
     }
     async function instantiateAndReplan(consumePlanificator, producePlanificator, suggestionIndex) {
         await consumePlanificator.consumer.result.suggestions[suggestionIndex].instantiate(consumePlanificator.arc);
@@ -54,7 +59,7 @@ describe('remote planificator', () => {
             fileName: '',
             pecFactory: undefined,
             context: consumePlanificator.arc.context });
-        producePlanificator = new Planificator(deserializedArc, consumePlanificator.userid, consumePlanificator.consumer.result.store, consumePlanificator.searchStore, 
+        producePlanificator = new Planificator(deserializedArc, consumePlanificator.userid, createPlanningResult(consumePlanificator.arc, consumePlanificator.result.store), consumePlanificator.searchStore, 
         /* onlyConsumer= */ false, 
         /* debug= */ false);
         producePlanificator.requestPlanning({ contextual: true });
@@ -157,7 +162,7 @@ particle ShowProduct in 'show-product.js'
   in Product product
   consume item
   `;
-        const restaurantsPlanificator = new Planificator(await createArc({ manifestString: restaurantsManifestString }, storageKey), userid, productsPlanificator.result.store, productsPlanificator.searchStore);
+        const restaurantsPlanificator = new Planificator(await createArc({ manifestString: restaurantsManifestString }, storageKey), userid, createPlanningResult(productsPlanificator.arc, productsPlanificator.result.store), productsPlanificator.searchStore);
         assert.isTrue(restaurantsPlanificator.producer.result.contextual);
         await restaurantsPlanificator.loadSuggestions();
         assert.isFalse(restaurantsPlanificator.producer.result.contextual);

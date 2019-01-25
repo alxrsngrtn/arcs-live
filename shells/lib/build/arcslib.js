@@ -83526,7 +83526,7 @@ class PlanningResult {
                 });
                 if (outdatedStores.length > 0) {
                     console.warn(`New suggestions has older store versions:\n ${outdatedStores.map(id => `${id}: ${this.suggestions[index].versionByStore[id]} -> ${newSuggestion.versionByStore[id]}`).join(';')}`);
-                    // TODO(mmandlis): investigate why this is happening.
+                    // Note: This happens due to #2638. Revisit, when fixed.
                     // assert(false);
                 }
                 removeIndexes.push(index);
@@ -85798,7 +85798,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Planificator {
-    constructor(arc, userid, store, searchStore, onlyConsumer = false, debug = false) {
+    constructor(arc, userid, result, searchStore, onlyConsumer = false, debug = false) {
         this.search = null;
         // In <0.6 shell, this is needed to backward compatibility, in order to (1)
         // (1) trigger replanning with a local producer and (2) notify shell of the
@@ -85808,7 +85808,8 @@ class Planificator {
         this.arc = arc;
         this.userid = userid;
         this.searchStore = searchStore;
-        this.result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"]({ context: arc.context, loader: arc.loader }, store);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(result, 'Result cannot be null.');
+        this.result = result;
         if (!onlyConsumer) {
             this.producer = new _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["PlanProducer"](this.arc, this.result, searchStore, { debug });
             this.replanQueue = new _replan_queue_js__WEBPACK_IMPORTED_MODULE_4__["ReplanQueue"](this.producer);
@@ -85826,8 +85827,9 @@ class Planificator {
         debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
         const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
         const searchStore = await Planificator._initSearchStore(arc, userid);
-        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
-        await planificator.loadSuggestions();
+        const result = new _planning_result_js__WEBPACK_IMPORTED_MODULE_3__["PlanningResult"]({ context: arc.context, loader: arc.loader }, store);
+        await result.load();
+        const planificator = new Planificator(arc, userid, result, searchStore, onlyConsumer, debug);
         planificator.requestPlanning({ contextual: true, metadata: { trigger: _plan_producer_js__WEBPACK_IMPORTED_MODULE_2__["Trigger"].Init } });
         return planificator;
     }

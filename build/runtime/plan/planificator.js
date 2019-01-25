@@ -15,7 +15,7 @@ import { ReplanQueue } from './replan-queue.js';
 import { EntityType } from '../type.js';
 import { PlanningExplorerAdapter } from '../debug/planning-explorer-adapter.js';
 export class Planificator {
-    constructor(arc, userid, store, searchStore, onlyConsumer = false, debug = false) {
+    constructor(arc, userid, result, searchStore, onlyConsumer = false, debug = false) {
         this.search = null;
         // In <0.6 shell, this is needed to backward compatibility, in order to (1)
         // (1) trigger replanning with a local producer and (2) notify shell of the
@@ -25,7 +25,8 @@ export class Planificator {
         this.arc = arc;
         this.userid = userid;
         this.searchStore = searchStore;
-        this.result = new PlanningResult({ context: arc.context, loader: arc.loader }, store);
+        assert(result, 'Result cannot be null.');
+        this.result = result;
         if (!onlyConsumer) {
             this.producer = new PlanProducer(this.arc, this.result, searchStore, { debug });
             this.replanQueue = new ReplanQueue(this.producer);
@@ -43,8 +44,9 @@ export class Planificator {
         debug = debug || (storageKeyBase && storageKeyBase.startsWith('volatile'));
         const store = await Planificator._initSuggestStore(arc, userid, storageKeyBase);
         const searchStore = await Planificator._initSearchStore(arc, userid);
-        const planificator = new Planificator(arc, userid, store, searchStore, onlyConsumer, debug);
-        await planificator.loadSuggestions();
+        const result = new PlanningResult({ context: arc.context, loader: arc.loader }, store);
+        await result.load();
+        const planificator = new Planificator(arc, userid, result, searchStore, onlyConsumer, debug);
         planificator.requestPlanning({ contextual: true, metadata: { trigger: Trigger.Init } });
         return planificator;
     }

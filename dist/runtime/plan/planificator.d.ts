@@ -34,7 +34,7 @@ export declare class Planificator {
     searchStore: VariableStorageProvider;
     arcCallback: ({}: {}) => void;
     lastActivatedPlan: Recipe | null;
-    constructor(arc: Arc, userid: string, store: VariableStorageProvider, searchStore: VariableStorageProvider, onlyConsumer?: boolean, debug?: boolean);
+    constructor(arc: Arc, userid: string, result: PlanningResult, searchStore: VariableStorageProvider, onlyConsumer?: boolean, debug?: boolean);
     requestPlanning(options?: {}): Promise<void>;
     readonly consumerOnly: boolean;
     loadSuggestions(): Promise<boolean>;
