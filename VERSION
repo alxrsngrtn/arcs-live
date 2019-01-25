@@ -1,9 +1,5 @@
-commit af8e262fe8602a89bc7c91cbba7c0fcffa27f7a1
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Jan 25 10:28:17 2019 -0800
+commit 2dba3a4f691d335bfe9702363bca7aac15fd141e
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Fri Jan 25 10:37:28 2019 -0800
 
-    in planificator ctor: load planning result before triggering planning (#2636)
-    
-    * in planificator ctor: load planning result before triggering planning
-    
-    * update todo and fix tests
+    convert data-layer-test to typescript (#2640)
