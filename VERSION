@@ -1,8 +1,5 @@
-commit 3d99bbc6c61b8d5a0cd16d4730af3573e381e31a
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Fri Jan 25 10:29:19 2019 +1100
+commit 38c10551f2728cd6a980ff03378c85e95654baf2
+Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
+Date:   Fri Jan 25 16:21:24 2019 +1100
 
-    Refactor recipe resolution to not just be a Strategy (#2641)
-    
-    This allows recipe loading and instantiating, which requires resolution, to not
-    require Strategies or the Strategizer.
+    recipe.isResolved() checks that the require sections are empty (#2642)
