@@ -12,9 +12,7 @@ import { CollectionType, BigCollectionType, ReferenceType } from '../../type.js'
 import { PouchDbCollection } from './pouch-db-collection.js';
 import { PouchDbBigCollection } from './pouch-db-big-collection.js';
 import { PouchDbVariable } from './pouch-db-variable.js';
-import PouchDB from 'pouchdb';
-import PouchDbMemory from 'pouchdb-adapter-memory';
-import PouchDbDebug from 'pouchdb-debug';
+import { PouchDB, PouchDbMemory, PouchDbDebug } from '../../../platform/pouchdb-web.js';
 PouchDB.plugin(PouchDbDebug);
 PouchDB.debug.disable();
 export class PouchDbStorage extends StorageBase {

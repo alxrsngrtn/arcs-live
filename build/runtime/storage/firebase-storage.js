@@ -5,11 +5,8 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
-import { StorageBase, StorageProviderBase, ChangeEvent } from './storage-provider-base';
-// keep in sync with shell/source/ArcsLib.js
-import firebase from 'firebase/app';
-import 'firebase/database';
-import 'firebase/storage';
+import { StorageBase, StorageProviderBase, ChangeEvent } from './storage-provider-base.js';
+import { firebase } from '../../platform/firebase-web.js';
 import { assert } from '../../platform/assert-web.js';
 import { KeyBase } from './key-base.js';
 import { atob } from '../../platform/atob-web.js';

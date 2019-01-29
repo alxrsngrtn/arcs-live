@@ -8,20 +8,20 @@
  * http://polymer.github.io/PATENTS.txt
  */
 
-import {Loader} from '../../../build/runtime/loader.js';
-import {Particle} from '../../../build/runtime/particle.js';
-import {DomParticle} from '../../../build/runtime/dom-particle.js';
-import {MultiplexerDomParticle} from '../../../build/runtime/multiplexer-dom-particle.js';
-import {TransformationDomParticle} from '../../../build/runtime/transformation-dom-particle.js';
+import {Loader} from '../runtime/loader.js';
+import {Particle} from '../runtime/particle.js';
+import {DomParticle} from '../runtime/dom-particle.js';
+import {MultiplexerDomParticle} from '../runtime/multiplexer-dom-particle.js';
+import {TransformationDomParticle} from '../runtime/transformation-dom-particle.js';
 
 const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
 
 const dumbCache = {};
 
-export class NodeLoader extends Loader {
+export class PlatformLoader extends Loader {
   constructor(urlMap) {
     super();
-    this._urlMap = urlMap;
+    this._urlMap = urlMap || [];
   }
   loadResource(name) {
     const path = this._resolve(name);
@@ -40,10 +40,9 @@ export class NodeLoader extends Loader {
       }
     }
     url = url || path;
-    //console.log(`browser-loader: resolve(${path}) = ${url}`);
     return url;
   }
-  requireParticle(fileName) {
+  async requireParticle(fileName) {
     const path = this._resolve(fileName);
     // inject path to this particle into the UrlMap,
     // allows "foo.js" particle to invoke `importScripts(resolver('foo/othermodule.js'))`
@@ -62,8 +61,6 @@ export class NodeLoader extends Loader {
     //  _resolve method allows particles to request remapping of assets paths
     //  for use in DOM
     const resolver = this._resolve.bind(this);
-    // TODO(sjmiles): hack to plumb `fetch` into Particle space under node
-    //const _fetch = NodeLoader.fetch || fetch;
     return particleWrapper({
       Particle,
       DomParticle,
@@ -73,7 +70,6 @@ export class NodeLoader extends Loader {
       resolver,
       log: log || (() => {}),
       html,
-      //_fetch
     });
   }
 }

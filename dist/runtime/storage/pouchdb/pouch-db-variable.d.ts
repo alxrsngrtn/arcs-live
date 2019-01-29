@@ -1,5 +1,5 @@
 /// <reference types="pouchdb-core" />
-import { PouchDbStorageProvider } from './pouch-db-storage-provider';
+import { PouchDbStorageProvider } from './pouch-db-storage-provider.js';
 import { PouchDbStorage } from './pouch-db-storage.js';
 import { Type } from '../../type.js';
 import { VariableStorageProvider } from '../storage-provider-base.js';

@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import MersenneTwister from 'mersenne-twister';
+import { MersenneTwister } from '../platform/mersenne-twister-web.js';
 class RNG {
 }
 /**

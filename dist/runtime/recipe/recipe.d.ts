@@ -1,7 +1,7 @@
 import { ConnectionConstraint } from './connection-constraint.js';
 import { Particle } from './particle.js';
 import { Search } from './search.js';
-import { Slot } from './slot';
+import { Slot } from './slot.js';
 import { SlotConnection } from './slot-connection.js';
 import { Handle } from './handle.js';
 import { HandleConnection } from './handle-connection.js';
