@@ -1,5 +1,15 @@
-commit 165b1700a4c1a34626877680c39041e8adbdef69
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Mon Jan 28 16:06:27 2019 -0800
+commit 9295cb30cecf3efc64c7daf99b496671ce7f2700
+Author: Brian Chen <chenbrian@google.com>
+Date:   Mon Jan 28 16:40:23 2019 -0800
 
-    convert storage-proxy-test to typescript (#2643)
+    Add Repeat and Retry functionality to sigh test (#2590)
+    
+    * repeat and retry functionality added
+    
+    * added comments and returned output of test run in test()
+    
+    * Remove package-lock.json from pull request
+    
+    * added number validation
+    
+    * removing retries flag and adding run summary
