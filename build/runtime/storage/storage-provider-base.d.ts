@@ -1,7 +1,9 @@
 import { Type } from '../type.js';
 import { Id } from '../id.js';
 import { KeyBase } from './key-base.js';
-declare type Callback = ({}: {}) => void;
+declare type Callback = (v: {
+    [index: string]: any;
+}) => void;
 /**
  * Methods that must be implemented by a Variable Storage Provider
  */

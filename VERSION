@@ -1,13 +1,5 @@
-commit 33aaf41d094a00bff3a3323b0ff0362e765f340b
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Tue Jan 29 15:52:58 2019 +1100
+commit 45e2f41317cc7c38eef94eae345d865305f2aff6
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Tue Jan 29 05:30:52 2019 -0800
 
-    Remove all artifacts from reducethislist (#2646)
-    
-    These are all imported directly from the src directory anyway, so they never
-    needed to be linked in the first place.
-    
-    This is a significant reduction in the list.
-    
-    Note that the artifacts themselves should still be moved out of runtime, but
-    that is for another PR.
+    Convert handle-test to typescript (#2645)
