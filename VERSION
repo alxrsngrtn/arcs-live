@@ -1,5 +1,7 @@
-commit 570999535f43049ddd480ece01c5d30679835da4
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Jan 29 10:28:47 2019 -0800
+commit ade29f95495bd21dcfd698ada581daf31abc3773
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Wed Jan 30 09:59:03 2019 +1100
 
-    convert loader-tests to typescript (#2648)
+    Remove an .md file from reducethislist (#2647)
+    
+    It should never have been linked to begin with.
