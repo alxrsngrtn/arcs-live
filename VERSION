@@ -1,15 +1,13 @@
-commit 9295cb30cecf3efc64c7daf99b496671ce7f2700
-Author: Brian Chen <chenbrian@google.com>
-Date:   Mon Jan 28 16:40:23 2019 -0800
+commit 33aaf41d094a00bff3a3323b0ff0362e765f340b
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Tue Jan 29 15:52:58 2019 +1100
 
-    Add Repeat and Retry functionality to sigh test (#2590)
+    Remove all artifacts from reducethislist (#2646)
     
-    * repeat and retry functionality added
+    These are all imported directly from the src directory anyway, so they never
+    needed to be linked in the first place.
     
-    * added comments and returned output of test run in test()
+    This is a significant reduction in the list.
     
-    * Remove package-lock.json from pull request
-    
-    * added number validation
-    
-    * removing retries flag and adding run summary
+    Note that the artifacts themselves should still be moved out of runtime, but
+    that is for another PR.
