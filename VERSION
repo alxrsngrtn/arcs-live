@@ -1,5 +1,5 @@
-commit 45e2f41317cc7c38eef94eae345d865305f2aff6
+commit 570999535f43049ddd480ece01c5d30679835da4
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Jan 29 05:30:52 2019 -0800
+Date:   Tue Jan 29 10:28:47 2019 -0800
 
-    Convert handle-test to typescript (#2645)
+    convert loader-tests to typescript (#2648)
