@@ -25,7 +25,7 @@ import { RecipeUtil } from './recipe/recipe-util.js';
 import { Handle } from './recipe/handle.js';
 import { assert } from '../platform/assert-web.js';
 import { PlanningResult } from './plan/planning-result.js';
-import { ModalityHandler } from './modality-handler.js';
+import { PlanningModalityHandler } from './planning-modality-handler.js';
 class RelevantContextRecipes extends Strategy {
     constructor(context, modality) {
         super();
@@ -77,7 +77,7 @@ export class RecipeIndex {
             context: new Manifest({ id: 'empty-context' }),
             loader: arc.loader,
             slotComposer: new SlotComposer({
-                modalityHandler: ModalityHandler.createHeadlessHandler(),
+                modalityHandler: PlanningModalityHandler.createHeadlessHandler(),
                 noRoot: true
             }),
             // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.

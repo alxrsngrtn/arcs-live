@@ -9,7 +9,6 @@
  */
 import { assert } from '../platform/assert-web.js';
 import { Modality } from './modality.js';
-import { ModalityHandler } from './modality-handler.js';
 import { ProvidedSlotContext, HostedSlotContext } from './slot-context.js';
 import { Description } from './description.js';
 export class SlotComposer {
@@ -24,7 +23,9 @@ export class SlotComposer {
     constructor(options) {
         this._consumers = [];
         this._contexts = [];
-        assert(options.modalityHandler && options.modalityHandler.constructor === ModalityHandler, `Missing or invalid modality handler: ${options.modalityHandler}`);
+        //    assert(options.modalityHandler && options.modalityHandler.constructor === ModalityHandler,
+        //           `Missing or invalid modality handler: ${options.modalityHandler}`);
+        assert(options.modalityHandler, `Missing or invalid modality handler: ${options.modalityHandler}`);
         // TODO: Support rootContext for backward compatibility, remove when unused.
         options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
         assert((options.rootContainer !== undefined)
