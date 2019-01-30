@@ -1,53 +1,17 @@
-commit efc62f618342b206b1cf5e1a3e3ac2dbceee8939
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Jan 29 15:45:28 2019 -0800
+commit af8918687b3cd4dd7e6e71dd66da527316ec32ff
+Author: Brian Chen <chenbrian@google.com>
+Date:   Tue Jan 29 18:18:47 2019 -0800
 
-    [Shells] simplify env: affordances for importing modules directly (#2630)
+    First pass at generics refactoring (#2606)
     
-    * add missing platform-resolution for various modules
+    * repeat and retry functionality added
     
-    * support for building web-loadable firebase and pouch
+    * refactor CollectionType w/ generics + tests refactor
     
-    * we require path imports
+    * readded package-lock.json again
     
-    * A `shells` rebuild with superior cross-platform support
+    * adding tools/sigh back
     
-    * for worker.js build, make webpack use the node version of sourcemapped-stacktrace
+    * remove <Type> from collectionOf()
     
-    * encapsulate details of DOM modality SlotComposer
-    
-    * cleanup
-    
-    * port in material for web-shell
-    
-    * promote yms to shells
-    
-    * use ram-cache for particle code
-    
-    * update build scripts for shells/lib changes
-    
-    * clean up
-    
-    * remove vestiges
-    
-    * restore tests and some unported shells, remove some dead code
-    
-    * wip
-    
-    * standardize webpack.configs
-    
-    * disable but capture 'headless particle' experiment
-    
-    * disable problematic caching experiment
-    
-    * fix particle impl caching by plumbing a BLOB through the PEC
-    
-    * support caching `worker.js` via Blob URL
-    
-    * remove caching work for other PR
-    
-    * update planner-shell
-    
-    * remove dead code
-    
-    * fix paths
+    * resolving comments

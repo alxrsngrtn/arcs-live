@@ -27,7 +27,7 @@ export declare abstract class Type {
     primitiveType(): any;
     getContainedType(): any;
     isTypeContainer(): boolean;
-    collectionOf(): CollectionType;
+    collectionOf(): CollectionType<this>;
     bigCollectionOf(): BigCollectionType;
     resolvedType(): Type;
     canEnsureResolved(): boolean;
@@ -98,28 +98,28 @@ export declare class TypeVariable extends Type {
     getEntitySchema(): any;
     toPrettyString(): any;
 }
-export declare class CollectionType extends Type {
-    readonly collectionType: Type;
-    constructor(collectionType: Type);
+export declare class CollectionType<T extends Type> extends Type {
+    readonly collectionType: T;
+    constructor(collectionType: T);
     readonly isCollection: boolean;
-    mergeTypeVariablesByName(variableMap: Map<string, Type>): CollectionType;
-    _applyExistenceTypeTest(test: any): any;
-    primitiveType(): Type;
-    getContainedType(): Type;
+    mergeTypeVariablesByName(variableMap: Map<string, Type>): CollectionType<Type>;
+    _applyExistenceTypeTest(test: (type: Type) => boolean): boolean;
+    primitiveType(): T;
+    getContainedType(): T;
     isTypeContainer(): boolean;
-    resolvedType(): CollectionType;
+    resolvedType(): CollectionType<Type>;
     _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
     _clone(variableMap: any): Type;
-    _cloneWithResolutions(variableMap: any): CollectionType;
+    _cloneWithResolutions(variableMap: any): CollectionType<Type>;
     toLiteral(): {
         tag: "Entity" | "TypeVariable" | "Collection" | "BigCollection" | "Relation" | "Interface" | "Slot" | "Reference" | "Arc" | "Handle";
         data: TypeLiteral;
     };
-    _hasProperty(property: any): any;
+    _hasProperty(property: any): boolean;
     toString(options?: any): string;
-    getEntitySchema(): any;
-    toPrettyString(): any;
+    getEntitySchema(): Schema;
+    toPrettyString(): string;
 }
 export declare class BigCollectionType extends Type {
     readonly bigCollectionType: Type;
