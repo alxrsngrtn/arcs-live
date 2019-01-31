@@ -1,5 +1,5 @@
-commit 13448d4b71dda1588df719f55626776a2de8263e
-Author: Brian Chen <chenbrian@google.com>
-Date:   Thu Jan 31 11:05:47 2019 -0800
+commit d5b19a75fc423dbfa6012a4b639db80b0f91836f
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Thu Jan 31 15:11:16 2019 -0800
 
-    BigCollectionType generics (#2657)
+    convert arc-tests to typescript (#2653)

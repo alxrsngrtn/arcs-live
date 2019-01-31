@@ -12,7 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 'use strict';
 
 import { applyStylePlaceHolder } from './style-util.js';
-import { nativeShadow } from './style-settings.js';
+import { nativeShadow, disableRuntime } from './style-settings.js';
 
 /** @type {!Object<string, !Node>} */
 const placeholderMap = {};
@@ -38,7 +38,7 @@ export function ensureStylePlaceholder(elementName) {
  * @const {CustomElementRegistry}
  */
 const ce = window['customElements'];
-if (ce && !nativeShadow) {
+if (ce && !nativeShadow && !disableRuntime) {
   /**
    * @const {function(this:CustomElementRegistry, string,function(new:HTMLElement),{extends: string}=)}
    */

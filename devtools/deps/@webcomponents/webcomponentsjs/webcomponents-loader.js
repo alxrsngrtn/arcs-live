@@ -19,8 +19,7 @@
    *
    * - Synchronous script, no polyfills needed
    *   - wait for `DOMContentLoaded`
-   *   - run callbacks passed to `waitFor`
-   *   - fire WCR event
+   *   - fire WCR event, as there could not be any callbacks passed to `waitFor`
    *
    * - Synchronous script, polyfills needed
    *   - document.write the polyfill bundle
@@ -30,7 +29,9 @@
    *   - fire WCR event
    *
    * - Asynchronous script, no polyfills needed
-   *   - fire WCR event, as there could not be any callbacks passed to `waitFor`
+   *   - wait for `DOMContentLoaded`
+   *   - run callbacks passed to `waitFor`
+   *   - fire WCR event
    *
    * - Asynchronous script, polyfills needed
    *   - Append the polyfill bundle script
@@ -77,15 +78,13 @@
 
   function runWhenLoadedFns() {
     allowUpgrades = false;
-    var done = function () {
-      allowUpgrades = true;
-      whenLoadedFns.length = 0;
-      flushFn && flushFn();
-    };
-    return Promise.all(whenLoadedFns.map(function (fn) {
+    var fnsMap = whenLoadedFns.map(function (fn) {
       return fn instanceof Function ? fn() : fn;
-    })).then(function () {
-      done();
+    });
+    whenLoadedFns = [];
+    return Promise.all(fnsMap).then(function () {
+      allowUpgrades = true;
+      flushFn && flushFn();
     }).catch(function (err) {
       console.error(err);
     });
@@ -169,8 +168,9 @@
       document.head.appendChild(newScript);
     }
   } else {
-    polyfillsLoaded = true;
+    // if readyState is 'complete', script is loaded imperatively on a spec-compliant browser, so just fire WCR
     if (document.readyState === 'complete') {
+      polyfillsLoaded = true;
       fireEvent();
     } else {
       // this script may come between DCL and load, so listen for both, and cancel load listener if DCL fires

@@ -85,7 +85,7 @@ export declare class Manifest {
     findRecipesByVerb(verb: any): Recipe[];
     generateID(): string;
     static load(fileName: string, loader: any, options?: any): Promise<Manifest>;
-    static parse(content: any, options?: any): Promise<Manifest>;
+    static parse(content: string, options?: any): Promise<Manifest>;
     static _augmentAstWithTypes(manifest: any, items: any): void;
     static _processSchema(manifest: any, schemaItem: any): void;
     static _processResource(manifest: any, schemaItem: any): void;

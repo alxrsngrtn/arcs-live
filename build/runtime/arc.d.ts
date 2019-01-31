@@ -33,6 +33,14 @@ declare type ArcOptions = {
     speculative?: boolean;
     innerArc?: boolean;
 };
+declare type DeserializeArcOptions = {
+    serialization: string;
+    pecFactory?: (id: string) => PECInnerPort;
+    slotComposer?: SlotComposer;
+    loader: Loader;
+    fileName: string;
+    context: Manifest;
+};
 export declare type PlanCallback = (recipe: Recipe) => void;
 declare type SerializeContext = {
     handles: string;
@@ -84,14 +92,7 @@ export declare class Arc {
     _serializeStorageKey(): string;
     serialize(): Promise<string>;
     persistSerialization(serialization: string): Promise<void>;
-    static deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context }: {
-        serialization: any;
-        pecFactory: any;
-        slotComposer: any;
-        loader: any;
-        fileName: any;
-        context: any;
-    }): Promise<Arc>;
+    static deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context }: DeserializeArcOptions): Promise<Arc>;
     readonly context: Manifest;
     readonly activeRecipe: Recipe;
     readonly recipes: {
