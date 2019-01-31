@@ -1,10 +1,13 @@
-commit 877d112a283e450f85a0a12d16ae10be2585bfcf
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Jan 31 09:05:28 2019 +1100
+commit 2bf8af7a8f2d8e0c8671619f5741399f9eef085d
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Jan 30 16:34:06 2019 -0800
 
-    Refactor ModalityHandler to not depend on Suggestions. (#2651)
+    Improve restaurants suggestions (#2649)
     
-    Part of preparing to split off all Planning and Strategizing from the runtime code.
+    * better suggestions for Restaurant demo
     
-    ModalityHandler is now a base class and PlanningModalityHandler is a subclass
-    that does know about Suggestions.
+    * remove dead code
+    
+    * some model-img cleanup, increase render debounce
+    
+    * prefer camelCase
