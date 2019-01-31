@@ -1,5 +1,7 @@
-commit d5b19a75fc423dbfa6012a4b639db80b0f91836f
+commit 882045531d43f25d641858dcbbe5a384cf293bd5
 Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Jan 31 15:11:16 2019 -0800
+Date:   Thu Jan 31 15:51:24 2019 -0800
 
-    convert arc-tests to typescript (#2653)
+    Remove obsolete firebase import (#2659)
+    
+    Not needed after efc62f618342b206b1cf5e1a3e3ac2dbceee8939
