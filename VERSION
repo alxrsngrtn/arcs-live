@@ -1,15 +1,5 @@
-commit 1635be5fcfe60975591fc9e679a3df259773d719
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Jan 31 14:34:35 2019 +1100
+commit 13448d4b71dda1588df719f55626776a2de8263e
+Author: Brian Chen <chenbrian@google.com>
+Date:   Thu Jan 31 11:05:47 2019 -0800
 
-    Move all planning and strategizing files under src/planning (#2655)
-    
-    * Move all planning and strategizing files under src/planning
-    
-    Much cheese is once again in motion!
-    
-    All tests pass, though note that there are still dependencies on src/planning
-    in runtime/tests and runtime/testing. These will be refactored out in a
-    subsequent PR, corresponding to a subsequent step in the work plan.
-    
-    * Fixed missing file that needed changing
+    BigCollectionType generics (#2657)

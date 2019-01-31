@@ -28,7 +28,7 @@ export declare abstract class Type {
     getContainedType(): any;
     isTypeContainer(): boolean;
     collectionOf(): CollectionType<this>;
-    bigCollectionOf(): BigCollectionType;
+    bigCollectionOf(): BigCollectionType<this>;
     resolvedType(): Type;
     canEnsureResolved(): boolean;
     protected _canEnsureResolved(): boolean;
@@ -121,27 +121,27 @@ export declare class CollectionType<T extends Type> extends Type {
     getEntitySchema(): Schema;
     toPrettyString(): string;
 }
-export declare class BigCollectionType extends Type {
-    readonly bigCollectionType: Type;
-    constructor(bigCollectionType: Type);
+export declare class BigCollectionType<T extends Type> extends Type {
+    readonly bigCollectionType: T;
+    constructor(bigCollectionType: T);
     readonly isBigCollection: boolean;
-    mergeTypeVariablesByName(variableMap: Map<string, Type>): BigCollectionType;
-    _applyExistenceTypeTest(test: any): any;
-    getContainedType(): Type;
+    mergeTypeVariablesByName(variableMap: Map<string, Type>): BigCollectionType<Type>;
+    _applyExistenceTypeTest(test: any): boolean;
+    getContainedType(): T;
     isTypeContainer(): boolean;
-    resolvedType(): BigCollectionType;
+    resolvedType(): BigCollectionType<Type>;
     _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
     _clone(variableMap: any): Type;
-    _cloneWithResolutions(variableMap: any): BigCollectionType;
+    _cloneWithResolutions(variableMap: any): BigCollectionType<Type>;
     toLiteral(): {
         tag: "Entity" | "TypeVariable" | "Collection" | "BigCollection" | "Relation" | "Interface" | "Slot" | "Reference" | "Arc" | "Handle";
         data: TypeLiteral;
     };
-    _hasProperty(property: any): any;
+    _hasProperty(property: any): boolean;
     toString(options?: any): string;
-    getEntitySchema(): any;
-    toPrettyString(): any;
+    getEntitySchema(): Schema;
+    toPrettyString(): string;
 }
 export declare class RelationType extends Type {
     readonly relationEntities: Type[];
