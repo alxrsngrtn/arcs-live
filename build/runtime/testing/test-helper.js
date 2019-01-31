@@ -13,8 +13,8 @@ import { InterfaceType } from '../type.js';
 import { Loader } from '../loader.js';
 import { Manifest } from '../manifest.js';
 import { MockSlotComposer } from '../testing/mock-slot-composer.js';
-import { Planner } from '../planner.js';
-import { RecipeIndex } from '../recipe-index.js';
+import { Planner } from '../../planning/planner.js';
+import { RecipeIndex } from '../../planning/recipe-index.js';
 /**
  * Helper class to recipe instantiation and replanning.
  * Usage example:

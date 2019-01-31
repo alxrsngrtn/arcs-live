@@ -1,13 +1,15 @@
-commit 2bf8af7a8f2d8e0c8671619f5741399f9eef085d
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Jan 30 16:34:06 2019 -0800
+commit 1635be5fcfe60975591fc9e679a3df259773d719
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Thu Jan 31 14:34:35 2019 +1100
 
-    Improve restaurants suggestions (#2649)
+    Move all planning and strategizing files under src/planning (#2655)
     
-    * better suggestions for Restaurant demo
+    * Move all planning and strategizing files under src/planning
     
-    * remove dead code
+    Much cheese is once again in motion!
     
-    * some model-img cleanup, increase render debounce
+    All tests pass, though note that there are still dependencies on src/planning
+    in runtime/tests and runtime/testing. These will be refactored out in a
+    subsequent PR, corresponding to a subsequent step in the work plan.
     
-    * prefer camelCase
+    * Fixed missing file that needed changing

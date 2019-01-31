@@ -12,9 +12,9 @@ import { assert } from '../../platform/chai-web.js';
 import { MockSlotComposer } from '../testing/mock-slot-composer.js';
 import { ProvidedSlotContext, HostedSlotContext } from '../slot-context.js';
 import { Loader } from '../loader.js';
-import { Planner } from '../planner.js';
+import { Planner } from '../../planning/planner.js';
 import { Random } from '../random.js';
-import { StrategyTestHelper } from './strategies/strategy-test-helper.js';
+import { StrategyTestHelper } from '../../planning/test/strategies/strategy-test-helper.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { TestHelper } from '../testing/test-helper.js';
 async function initSlotComposer(recipeStr) {

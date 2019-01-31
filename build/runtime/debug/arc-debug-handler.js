@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { enableTracingAdapter } from './tracing-adapter.js';
-import { ArcPlannerInvoker } from './arc-planner-invoker.js';
+import { ArcPlannerInvoker } from '../../planning/debug/arc-planner-invoker.js';
 import { ArcStoresFetcher } from './arc-stores-fetcher.js';
 import { DevtoolsConnection } from './devtools-connection.js';
 // Arc-independent handlers for devtools logic.
