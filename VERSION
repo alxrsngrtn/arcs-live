@@ -1,7 +1,13 @@
-commit 882045531d43f25d641858dcbbe5a384cf293bd5
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Thu Jan 31 15:51:24 2019 -0800
+commit 0bb66854670d21addb4d7e0443df0025b5a9f341
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Feb 1 15:38:18 2019 +1100
 
-    Remove obsolete firebase import (#2659)
+    Add regex option for filtering in devtools (#2650)
     
-    Not needed after efc62f618342b206b1cf5e1a3e3ac2dbceee8939
+    * Add regex option for filtering in devtools
+    
+    * Found chrome bug for '?' being intercepted by the devtools UI
+    
+    * Update usage comments for ObjectExplorer
+    
+    * Tiny indent tweak
