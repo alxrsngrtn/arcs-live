@@ -1,5 +1,5 @@
-commit 2fddb9bb6c179392f2ce968b6bf0a35cc70c0103
+commit 2dbc958f1c749eff60d345f05442d2cd4e939715
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Fri Feb 1 16:08:46 2019 +1100
+Date:   Sat Feb 2 10:47:23 2019 +1100
 
-    Send planning generated in a previous session to StrategyExplorer (#2661)
+    Disable local DevTools if remote one is requested (#2664)

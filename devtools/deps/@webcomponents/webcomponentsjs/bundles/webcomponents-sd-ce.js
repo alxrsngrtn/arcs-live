@@ -44,7 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   }function ha(a) {
     da();ba();da();var b = a[Symbol.iterator];return b ? b.call(a) : ea(a);
   }
-  function ka(a) {
+  function ia(a) {
     for (var b, c = []; !(b = a.next()).done;) c.push(b.value);return c;
   }function la() {
     this.ca = this.root = null;this.N = !1;this.v = this.K = this.V = this.assignedSlot = this.assignedNodes = this.C = null;this.childNodes = this.nextSibling = this.previousSibling = this.lastChild = this.firstChild = this.parentNode = this.F = void 0;this.Z = this.$ = !1;this.I = {};
@@ -156,7 +156,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       a: {
         var h = g;var k = a,
             l = b;switch (h.nodeType) {case Node.ELEMENT_NODE:
-            k = h.localName;for (var m = "<" + k, v = h.attributes, ia = 0, ja; ja = v[ia]; ia++) m += " " + ja.name + '="' + ja.value.replace(Ga, Ia) + '"';m += ">";h = Ka[k] ? m : m + Ma(h, l) + "</" + k + ">";break a;case Node.TEXT_NODE:
+            k = h.localName;for (var m = "<" + k, v = h.attributes, ja = 0, ka; ka = v[ja]; ja++) m += " " + ka.name + '="' + ka.value.replace(Ga, Ia) + '"';m += ">";h = Ka[k] ? m : m + Ma(h, l) + "</" + k + ">";break a;case Node.TEXT_NODE:
             h = h.data;h = k && La[k.localName] ? h : h.replace(Ha, Ia);break a;case Node.COMMENT_NODE:
             h = "\x3c!--" + h.data + "--\x3e";break a;default:
             throw window.console.error(h), Error("not implemented");}
@@ -410,7 +410,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       for (b = Cb(e, 0); f < d;) b.G.push(c[f++]);return [b];
     }if (f == d) return [Cb(e, b - e)];k = e;g = f;d = d - g + 1;h = b - k + 1;b = Array(d);for (l = 0; l < d; l++) b[l] = Array(h), b[l][0] = l;for (l = 0; l < h; l++) b[0][l] = l;for (l = 1; l < d; l++) for (m = 1; m < h; m++) if (a[k + m - 1] === c[g + l - 1]) b[l][m] = b[l - 1][m - 1];else {
       var v = b[l - 1][m] + 1,
-          ia = b[l][m - 1] + 1;b[l][m] = v < ia ? v : ia;
+          ja = b[l][m - 1] + 1;b[l][m] = v < ja ? v : ja;
     }k = b.length - 1;g = b[0].length - 1;d = b[k][g];for (a = []; 0 < k || 0 < g;) 0 == k ? (a.push(2), g--) : 0 == g ? (a.push(3), k--) : (h = b[k - 1][g - 1], l = b[k - 1][g], m = b[k][g - 1], v = l < m ? l < h ? l : h : m < h ? m : h, v == h ? (h == d ? a.push(0) : (a.push(1), d = h), k--, g--) : v == l ? (a.push(3), k--, d = l) : (a.push(2), g--, d = m));a.reverse();b = void 0;k = [];for (g = 0; g < a.length; g++) switch (a[g]) {case 0:
         b && (k.push(b), b = void 0);e++;f++;break;case 1:
         b || (b = Cb(e, 0));b.L++;e++;b.G.push(c[f]);f++;break;case 2:
@@ -515,7 +515,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         k && "slot" === a.localName && d.push(a);if (h) {
           var b = g;D() && (b && Kb(a, b), (b = D()) && b.scopeNode(a, e));
         }
-      });if ("slot" === this.localName || d.length) d.length && (c.c = c.c || [], c.a = c.a || [], c.b = c.b || {}, c.c.push.apply(c.c, d instanceof Array ? d : ka(ha(d)))), c && F(c);u(this) && (Gb(a, this, b), c = r(this), na(this) ? (F(c.root), f = !1) : c.root && (f = !1));f ? (c = w(this) ? this.host : this, b ? (b = Ub(b), c.__shady_native_insertBefore(a, b)) : c.__shady_native_appendChild(a)) : a.ownerDocument !== this.ownerDocument && this.ownerDocument.adoptNode(a);Vb(this, a);return a;
+      });if ("slot" === this.localName || d.length) d.length && (c.c = c.c || [], c.a = c.a || [], c.b = c.b || {}, c.c.push.apply(c.c, d instanceof Array ? d : ia(ha(d)))), c && F(c);u(this) && (Gb(a, this, b), c = r(this), na(this) ? (F(c.root), f = !1) : c.root && (f = !1));f ? (c = w(this) ? this.host : this, b ? (b = Ub(b), c.__shady_native_insertBefore(a, b)) : c.__shady_native_appendChild(a)) : a.ownerDocument !== this.ownerDocument && this.ownerDocument.adoptNode(a);Vb(this, a);return a;
     }, appendChild: function (a) {
       return this.__shady_insertBefore(a);
     }, removeChild: function (a, b) {
@@ -897,12 +897,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       if (a.ownerDocument !== Dc || "template" === a.localName) return this.__shady_native_importNode(a, b);var c = this.__shady_native_importNode(a, !1);if (b) {
         a = a.__shady_childNodes;b = 0;for (var d; b < a.length; b++) d = this.__shady_importNode(a[b], !0), c.__shady_appendChild(d);
       }return c;
-    } });var Fc = z({ addEventListener: sb.bind(window), removeEventListener: ub.bind(window) });var Gc = {};Object.getOwnPropertyDescriptor(HTMLElement.prototype, "parentElement") && (Gc.parentElement = Xb.parentElement);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "contains") && (Gc.contains = Xb.contains);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "children") && (Gc.children = G.children);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "innerHTML") && (Gc.innerHTML = ec.innerHTML);
-  var Hc = { EventTarget: [wc], Node: [Xb, window.EventTarget ? null : wc], Text: [xc], Element: [Ac, G, xc, !t.j || "innerHTML" in Element.prototype ? ec : null, window.HTMLSlotElement ? null : Cc], HTMLElement: [Bc, Gc], HTMLSlotElement: [Cc], DocumentFragment: [ac, bc], Document: [Ec, ac, bc, cc], Window: [Fc] },
-      Ic = t.j ? null : ["innerHTML", "textContent"];function Jc(a) {
-    var b = a ? null : Ic,
+    } });var Fc = z({ addEventListener: sb.bind(window), removeEventListener: ub.bind(window) });var J = {};Object.getOwnPropertyDescriptor(HTMLElement.prototype, "parentElement") && (J.parentElement = Xb.parentElement);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "contains") && (J.contains = Xb.contains);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "children") && (J.children = G.children);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "innerHTML") && (J.innerHTML = ec.innerHTML);Object.getOwnPropertyDescriptor(HTMLElement.prototype, "className") && (J.className = Ac.className);
+  var Gc = { EventTarget: [wc], Node: [Xb, window.EventTarget ? null : wc], Text: [xc], Element: [Ac, G, xc, !t.j || "innerHTML" in Element.prototype ? ec : null, window.HTMLSlotElement ? null : Cc], HTMLElement: [Bc, J], HTMLSlotElement: [Cc], DocumentFragment: [ac, bc], Document: [Ec, ac, bc, cc], Window: [Fc] },
+      Hc = t.j ? null : ["innerHTML", "textContent"];function Ic(a) {
+    var b = a ? null : Hc,
         c = {},
-        d;for (d in Hc) c.R = window[d] && window[d].prototype, Hc[d].forEach(function (c) {
+        d;for (d in Gc) c.R = window[d] && window[d].prototype, Gc[d].forEach(function (c) {
       return function (d) {
         return c.R && d && y(c.R, d, a, b);
       };
@@ -912,72 +912,72 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         db(a);cb(a);return a;
       }, isShadyRoot: w, enqueue: za, flush: Aa, settings: t, filterMutations: Fa, observeChildren: Da, unobserveChildren: Ea, deferConnectionCallbacks: t.deferConnectionCallbacks, preferPerformance: t.preferPerformance, handlesDynamicScoping: !0, wrap: t.D ? vc : function (a) {
         return a;
-      }, Wrapper: I, composedPath: kb, noPatch: t.D, nativeMethods: Oa, nativeTree: Pa };window.ShadyDOM = ShadyDOM;Xa();Jc("__shady_");Object.defineProperty(document, "_activeElement", cc.activeElement);
-    y(Window.prototype, Fc, "__shady_");t.D || (Jc(), Ab());vb();window.Event = xb;window.CustomEvent = yb;window.MouseEvent = zb;window.ShadowRoot = kc;
-  };var Kc = new Set("annotation-xml color-profile font-face font-face-src font-face-uri font-face-format font-face-name missing-glyph".split(" "));function Lc(a) {
-    var b = Kc.has(a);a = /^[a-z][.0-9_a-z]*-[\-.0-9_a-z]*$/.test(a);return !b && a;
-  }function J(a) {
+      }, Wrapper: I, composedPath: kb, noPatch: t.D, nativeMethods: Oa, nativeTree: Pa };window.ShadyDOM = ShadyDOM;Xa();Ic("__shady_");Object.defineProperty(document, "_activeElement", cc.activeElement);
+    y(Window.prototype, Fc, "__shady_");t.D || (Ic(), Ab());vb();window.Event = xb;window.CustomEvent = yb;window.MouseEvent = zb;window.ShadowRoot = kc;
+  };var Jc = new Set("annotation-xml color-profile font-face font-face-src font-face-uri font-face-format font-face-name missing-glyph".split(" "));function Kc(a) {
+    var b = Jc.has(a);a = /^[a-z][.0-9_a-z]*-[\-.0-9_a-z]*$/.test(a);return !b && a;
+  }function K(a) {
     var b = a.isConnected;if (void 0 !== b) return b;for (; a && !(a.__CE_isImportDocument || a instanceof Document);) a = a.parentNode || (window.ShadowRoot && a instanceof ShadowRoot ? a.host : void 0);return !(!a || !(a.__CE_isImportDocument || a instanceof Document));
   }
-  function Mc(a, b) {
+  function Lc(a, b) {
     for (; b && b !== a && !b.nextSibling;) b = b.parentNode;return b && b !== a ? b.nextSibling : null;
   }
-  function K(a, b, c) {
+  function L(a, b, c) {
     c = void 0 === c ? new Set() : c;for (var d = a; d;) {
       if (d.nodeType === Node.ELEMENT_NODE) {
         var e = d;b(e);var f = e.localName;if ("link" === f && "import" === e.getAttribute("rel")) {
-          d = e.import;if (d instanceof Node && !c.has(d)) for (c.add(d), d = d.firstChild; d; d = d.nextSibling) K(d, b, c);d = Mc(a, e);continue;
+          d = e.import;if (d instanceof Node && !c.has(d)) for (c.add(d), d = d.firstChild; d; d = d.nextSibling) L(d, b, c);d = Lc(a, e);continue;
         } else if ("template" === f) {
-          d = Mc(a, e);continue;
-        }if (e = e.__CE_shadowRoot) for (e = e.firstChild; e; e = e.nextSibling) K(e, b, c);
-      }d = d.firstChild ? d.firstChild : Mc(a, d);
+          d = Lc(a, e);continue;
+        }if (e = e.__CE_shadowRoot) for (e = e.firstChild; e; e = e.nextSibling) L(e, b, c);
+      }d = d.firstChild ? d.firstChild : Lc(a, d);
     }
-  }function L(a, b, c) {
+  }function M(a, b, c) {
     a[b] = c;
-  };function Nc() {
+  };function Mc() {
     this.a = new Map();this.i = new Map();this.f = [];this.c = !1;
-  }function Oc(a, b, c) {
+  }function Nc(a, b, c) {
     a.a.set(b, c);a.i.set(c.constructorFunction, c);
-  }function Pc(a, b) {
+  }function Oc(a, b) {
     a.c = !0;a.f.push(b);
-  }function Qc(a, b) {
-    a.c && K(b, function (b) {
+  }function Pc(a, b) {
+    a.c && L(b, function (b) {
       return a.b(b);
     });
-  }Nc.prototype.b = function (a) {
+  }Mc.prototype.b = function (a) {
     if (this.c && !a.__CE_patched) {
       a.__CE_patched = !0;for (var b = 0; b < this.f.length; b++) this.f[b](a);
     }
-  };function M(a, b) {
-    var c = [];K(b, function (a) {
+  };function N(a, b) {
+    var c = [];L(b, function (a) {
       return c.push(a);
     });for (b = 0; b < c.length; b++) {
-      var d = c[b];1 === d.__CE_state ? a.connectedCallback(d) : Rc(a, d);
+      var d = c[b];1 === d.__CE_state ? a.connectedCallback(d) : Qc(a, d);
     }
   }
-  function N(a, b) {
-    var c = [];K(b, function (a) {
+  function O(a, b) {
+    var c = [];L(b, function (a) {
       return c.push(a);
     });for (b = 0; b < c.length; b++) {
       var d = c[b];1 === d.__CE_state && a.disconnectedCallback(d);
     }
   }
-  function O(a, b, c) {
+  function P(a, b, c) {
     c = void 0 === c ? {} : c;var d = c.Ca || new Set(),
         e = c.S || function (b) {
-      return Rc(a, b);
+      return Qc(a, b);
     },
-        f = [];K(b, function (b) {
+        f = [];L(b, function (b) {
       if ("link" === b.localName && "import" === b.getAttribute("rel")) {
         var c = b.import;c instanceof Node && (c.__CE_isImportDocument = !0, c.__CE_hasRegistry = !0);c && "complete" === c.readyState ? c.__CE_documentLoadHandled = !0 : b.addEventListener("load", function () {
           var c = b.import;if (!c.__CE_documentLoadHandled) {
-            c.__CE_documentLoadHandled = !0;var f = new Set(d);f.delete(c);O(a, c, { Ca: f, S: e });
+            c.__CE_documentLoadHandled = !0;var f = new Set(d);f.delete(c);P(a, c, { Ca: f, S: e });
           }
         });
       } else f.push(b);
     }, d);if (a.c) for (b = 0; b < f.length; b++) a.b(f[b]);for (b = 0; b < f.length; b++) e(f[b]);
   }
-  function Rc(a, b) {
+  function Qc(a, b) {
     if (void 0 === b.__CE_state) {
       var c = b.ownerDocument;if (c.defaultView || c.__CE_isImportDocument && c.__CE_hasRegistry) if (c = a.a.get(b.localName)) {
         c.constructionStack.push(b);var d = c.constructorFunction;try {
@@ -991,35 +991,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }b.__CE_state = 1;b.__CE_definition = c;if (c.attributeChangedCallback) for (c = c.observedAttributes, d = 0; d < c.length; d++) {
           var e = c[d],
               f = b.getAttribute(e);null !== f && a.attributeChangedCallback(b, e, null, f, null);
-        }J(b) && a.connectedCallback(b);
+        }K(b) && a.connectedCallback(b);
       }
     }
-  }Nc.prototype.connectedCallback = function (a) {
+  }Mc.prototype.connectedCallback = function (a) {
     var b = a.__CE_definition;b.connectedCallback && b.connectedCallback.call(a);
-  };Nc.prototype.disconnectedCallback = function (a) {
+  };Mc.prototype.disconnectedCallback = function (a) {
     var b = a.__CE_definition;b.disconnectedCallback && b.disconnectedCallback.call(a);
   };
-  Nc.prototype.attributeChangedCallback = function (a, b, c, d, e) {
+  Mc.prototype.attributeChangedCallback = function (a, b, c, d, e) {
     var f = a.__CE_definition;f.attributeChangedCallback && -1 < f.observedAttributes.indexOf(b) && f.attributeChangedCallback.call(a, b, c, d, e);
-  };function Sc(a) {
-    var b = document;this.b = a;this.a = b;this.w = void 0;O(this.b, this.a);"loading" === this.a.readyState && (this.w = new MutationObserver(this.c.bind(this)), this.w.observe(this.a, { childList: !0, subtree: !0 }));
-  }function Tc(a) {
+  };function Rc(a) {
+    var b = document;this.b = a;this.a = b;this.w = void 0;P(this.b, this.a);"loading" === this.a.readyState && (this.w = new MutationObserver(this.c.bind(this)), this.w.observe(this.a, { childList: !0, subtree: !0 }));
+  }function Sc(a) {
     a.w && a.w.disconnect();
-  }Sc.prototype.c = function (a) {
-    var b = this.a.readyState;"interactive" !== b && "complete" !== b || Tc(this);for (b = 0; b < a.length; b++) for (var c = a[b].addedNodes, d = 0; d < c.length; d++) O(this.b, c[d]);
-  };function Uc() {
+  }Rc.prototype.c = function (a) {
+    var b = this.a.readyState;"interactive" !== b && "complete" !== b || Sc(this);for (b = 0; b < a.length; b++) for (var c = a[b].addedNodes, d = 0; d < c.length; d++) P(this.b, c[d]);
+  };function Tc() {
     var a = this;this.b = this.a = void 0;this.c = new Promise(function (b) {
       a.b = b;a.a && b(a.a);
     });
-  }function Vc(a) {
+  }function Uc(a) {
     if (a.a) throw Error("Already resolved.");a.a = void 0;a.b && a.b(void 0);
-  };function P(a) {
+  };function Q(a) {
     this.c = !1;this.a = a;this.B = new Map();this.f = function (a) {
       return a();
-    };this.b = !1;this.i = [];this.sa = new Sc(a);
-  }n = P.prototype;
+    };this.b = !1;this.i = [];this.sa = new Rc(a);
+  }n = Q.prototype;
   n.ea = function (a, b) {
-    var c = this;if (!(b instanceof Function)) throw new TypeError("Custom element constructors must be functions.");if (!Lc(a)) throw new SyntaxError("The element name '" + a + "' is not valid.");if (this.a.a.get(a)) throw Error("A custom element with name '" + a + "' has already been defined.");if (this.c) throw Error("A custom element is already being defined.");this.c = !0;try {
+    var c = this;if (!(b instanceof Function)) throw new TypeError("Custom element constructors must be functions.");if (!Kc(a)) throw new SyntaxError("The element name '" + a + "' is not valid.");if (this.a.a.get(a)) throw Error("A custom element with name '" + a + "' has already been defined.");if (this.c) throw Error("A custom element is already being defined.");this.c = !0;try {
       var d = function (a) {
         var b = e[a];if (void 0 !== b && !(b instanceof Function)) throw Error("The '" + a + "' callback must be a function.");
         return b;
@@ -1029,191 +1029,191 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return;
     } finally {
       this.c = !1;
-    }b = { localName: a, constructorFunction: b, connectedCallback: f, disconnectedCallback: g, adoptedCallback: h, attributeChangedCallback: k, observedAttributes: l, constructionStack: [] };Oc(this.a, a, b);this.i.push(b);this.b || (this.b = !0, this.f(function () {
+    }b = { localName: a, constructorFunction: b, connectedCallback: f, disconnectedCallback: g, adoptedCallback: h, attributeChangedCallback: k, observedAttributes: l, constructionStack: [] };Nc(this.a, a, b);this.i.push(b);this.b || (this.b = !0, this.f(function () {
       return c.J();
     }));
   };n.S = function (a) {
-    O(this.a, a);
+    P(this.a, a);
   };
   n.J = function () {
     var a = this;if (!1 !== this.b) {
-      this.b = !1;for (var b = this.i, c = [], d = new Map(), e = 0; e < b.length; e++) d.set(b[e].localName, []);O(this.a, document, { S: function (b) {
+      this.b = !1;for (var b = this.i, c = [], d = new Map(), e = 0; e < b.length; e++) d.set(b[e].localName, []);P(this.a, document, { S: function (b) {
           if (void 0 === b.__CE_state) {
             var e = b.localName,
                 f = d.get(e);f ? f.push(b) : a.a.a.get(e) && c.push(b);
           }
-        } });for (e = 0; e < c.length; e++) Rc(this.a, c[e]);for (; 0 < b.length;) {
-        var f = b.shift();e = f.localName;f = d.get(f.localName);for (var g = 0; g < f.length; g++) Rc(this.a, f[g]);(e = this.B.get(e)) && Vc(e);
+        } });for (e = 0; e < c.length; e++) Qc(this.a, c[e]);for (; 0 < b.length;) {
+        var f = b.shift();e = f.localName;f = d.get(f.localName);for (var g = 0; g < f.length; g++) Qc(this.a, f[g]);(e = this.B.get(e)) && Uc(e);
       }
     }
   };n.get = function (a) {
     if (a = this.a.a.get(a)) return a.constructorFunction;
   };
   n.fa = function (a) {
-    if (!Lc(a)) return Promise.reject(new SyntaxError("'" + a + "' is not a valid custom element name."));var b = this.B.get(a);if (b) return b.c;b = new Uc();this.B.set(a, b);this.a.a.get(a) && !this.i.some(function (b) {
+    if (!Kc(a)) return Promise.reject(new SyntaxError("'" + a + "' is not a valid custom element name."));var b = this.B.get(a);if (b) return b.c;b = new Tc();this.B.set(a, b);this.a.a.get(a) && !this.i.some(function (b) {
       return b.localName === a;
-    }) && Vc(b);return b.c;
+    }) && Uc(b);return b.c;
   };n.ua = function (a) {
-    Tc(this.sa);var b = this.f;this.f = function (c) {
+    Sc(this.sa);var b = this.f;this.f = function (c) {
       return a(function () {
         return b(c);
       });
     };
-  };window.CustomElementRegistry = P;P.prototype.define = P.prototype.ea;P.prototype.upgrade = P.prototype.S;P.prototype.get = P.prototype.get;
-  P.prototype.whenDefined = P.prototype.fa;P.prototype.polyfillWrapFlushCallback = P.prototype.ua;var Wc = window.Document.prototype.createElement,
-      Xc = window.Document.prototype.createElementNS,
-      Yc = window.Document.prototype.importNode,
-      Zc = window.Document.prototype.prepend,
-      $c = window.Document.prototype.append,
-      ad = window.DocumentFragment.prototype.prepend,
-      bd = window.DocumentFragment.prototype.append,
-      cd = window.Node.prototype.cloneNode,
-      dd = window.Node.prototype.appendChild,
-      ed = window.Node.prototype.insertBefore,
-      fd = window.Node.prototype.removeChild,
-      gd = window.Node.prototype.replaceChild,
-      hd = Object.getOwnPropertyDescriptor(window.Node.prototype, "textContent"),
-      id = window.Element.prototype.attachShadow,
-      jd = Object.getOwnPropertyDescriptor(window.Element.prototype, "innerHTML"),
-      kd = window.Element.prototype.getAttribute,
-      ld = window.Element.prototype.setAttribute,
-      md = window.Element.prototype.removeAttribute,
-      nd = window.Element.prototype.getAttributeNS,
-      od = window.Element.prototype.setAttributeNS,
-      pd = window.Element.prototype.removeAttributeNS,
-      qd = window.Element.prototype.insertAdjacentElement,
-      rd = window.Element.prototype.insertAdjacentHTML,
-      sd = window.Element.prototype.prepend,
-      td = window.Element.prototype.append,
-      ud = window.Element.prototype.before,
-      vd = window.Element.prototype.after,
-      wd = window.Element.prototype.replaceWith,
-      xd = window.Element.prototype.remove,
-      yd = window.HTMLElement,
-      zd = Object.getOwnPropertyDescriptor(window.HTMLElement.prototype, "innerHTML"),
-      Ad = window.HTMLElement.prototype.insertAdjacentElement,
-      Bd = window.HTMLElement.prototype.insertAdjacentHTML;var Cd = new function () {}();function Dd() {
-    var a = Q;window.HTMLElement = function () {
+  };window.CustomElementRegistry = Q;Q.prototype.define = Q.prototype.ea;Q.prototype.upgrade = Q.prototype.S;Q.prototype.get = Q.prototype.get;
+  Q.prototype.whenDefined = Q.prototype.fa;Q.prototype.polyfillWrapFlushCallback = Q.prototype.ua;var Vc = window.Document.prototype.createElement,
+      Wc = window.Document.prototype.createElementNS,
+      Xc = window.Document.prototype.importNode,
+      Yc = window.Document.prototype.prepend,
+      Zc = window.Document.prototype.append,
+      $c = window.DocumentFragment.prototype.prepend,
+      ad = window.DocumentFragment.prototype.append,
+      bd = window.Node.prototype.cloneNode,
+      cd = window.Node.prototype.appendChild,
+      dd = window.Node.prototype.insertBefore,
+      ed = window.Node.prototype.removeChild,
+      fd = window.Node.prototype.replaceChild,
+      gd = Object.getOwnPropertyDescriptor(window.Node.prototype, "textContent"),
+      hd = window.Element.prototype.attachShadow,
+      id = Object.getOwnPropertyDescriptor(window.Element.prototype, "innerHTML"),
+      jd = window.Element.prototype.getAttribute,
+      kd = window.Element.prototype.setAttribute,
+      ld = window.Element.prototype.removeAttribute,
+      md = window.Element.prototype.getAttributeNS,
+      nd = window.Element.prototype.setAttributeNS,
+      od = window.Element.prototype.removeAttributeNS,
+      pd = window.Element.prototype.insertAdjacentElement,
+      qd = window.Element.prototype.insertAdjacentHTML,
+      rd = window.Element.prototype.prepend,
+      sd = window.Element.prototype.append,
+      td = window.Element.prototype.before,
+      ud = window.Element.prototype.after,
+      vd = window.Element.prototype.replaceWith,
+      wd = window.Element.prototype.remove,
+      xd = window.HTMLElement,
+      yd = Object.getOwnPropertyDescriptor(window.HTMLElement.prototype, "innerHTML"),
+      zd = window.HTMLElement.prototype.insertAdjacentElement,
+      Ad = window.HTMLElement.prototype.insertAdjacentHTML;var Bd = new function () {}();function Cd() {
+    var a = Dd;window.HTMLElement = function () {
       function b() {
         var b = this.constructor,
-            d = a.i.get(b);if (!d) throw Error("The custom element being constructed was not registered with `customElements`.");var e = d.constructionStack;if (0 === e.length) return e = Wc.call(document, d.localName), Object.setPrototypeOf(e, b.prototype), e.__CE_state = 1, e.__CE_definition = d, a.b(e), e;d = e.length - 1;var f = e[d];if (f === Cd) throw Error("The HTMLElement constructor was either called reentrantly for this constructor or called multiple times.");
-        e[d] = Cd;Object.setPrototypeOf(f, b.prototype);a.b(f);return f;
-      }b.prototype = yd.prototype;Object.defineProperty(b.prototype, "constructor", { writable: !0, configurable: !0, enumerable: !1, value: b });return b;
+            d = a.i.get(b);if (!d) throw Error("The custom element being constructed was not registered with `customElements`.");var e = d.constructionStack;if (0 === e.length) return e = Vc.call(document, d.localName), Object.setPrototypeOf(e, b.prototype), e.__CE_state = 1, e.__CE_definition = d, a.b(e), e;d = e.length - 1;var f = e[d];if (f === Bd) throw Error("The HTMLElement constructor was either called reentrantly for this constructor or called multiple times.");
+        e[d] = Bd;Object.setPrototypeOf(f, b.prototype);a.b(f);return f;
+      }b.prototype = xd.prototype;Object.defineProperty(b.prototype, "constructor", { writable: !0, configurable: !0, enumerable: !1, value: b });return b;
     }();
   };function Ed(a, b, c) {
     function d(b) {
       return function (c) {
         for (var d = [], e = 0; e < arguments.length; ++e) d[e] = arguments[e];e = [];for (var f = [], l = 0; l < d.length; l++) {
-          var m = d[l];m instanceof Element && J(m) && f.push(m);if (m instanceof DocumentFragment) for (m = m.firstChild; m; m = m.nextSibling) e.push(m);else e.push(m);
-        }b.apply(this, d);for (d = 0; d < f.length; d++) N(a, f[d]);if (J(this)) for (d = 0; d < e.length; d++) f = e[d], f instanceof Element && M(a, f);
+          var m = d[l];m instanceof Element && K(m) && f.push(m);if (m instanceof DocumentFragment) for (m = m.firstChild; m; m = m.nextSibling) e.push(m);else e.push(m);
+        }b.apply(this, d);for (d = 0; d < f.length; d++) O(a, f[d]);if (K(this)) for (d = 0; d < e.length; d++) f = e[d], f instanceof Element && N(a, f);
       };
     }void 0 !== c.P && (b.prepend = d(c.P));void 0 !== c.append && (b.append = d(c.append));
   };function Fd() {
-    var a = Q;L(Document.prototype, "createElement", function (b) {
+    var a = Dd;M(Document.prototype, "createElement", function (b) {
       if (this.__CE_hasRegistry) {
         var c = a.a.get(b);if (c) return new c.constructorFunction();
-      }b = Wc.call(this, b);a.b(b);return b;
-    });L(Document.prototype, "importNode", function (b, c) {
-      b = Yc.call(this, b, !!c);this.__CE_hasRegistry ? O(a, b) : Qc(a, b);return b;
-    });L(Document.prototype, "createElementNS", function (b, c) {
+      }b = Vc.call(this, b);a.b(b);return b;
+    });M(Document.prototype, "importNode", function (b, c) {
+      b = Xc.call(this, b, !!c);this.__CE_hasRegistry ? P(a, b) : Pc(a, b);return b;
+    });M(Document.prototype, "createElementNS", function (b, c) {
       if (this.__CE_hasRegistry && (null === b || "http://www.w3.org/1999/xhtml" === b)) {
         var d = a.a.get(c);if (d) return new d.constructorFunction();
-      }b = Xc.call(this, b, c);a.b(b);return b;
-    });Ed(a, Document.prototype, { P: Zc, append: $c });
+      }b = Wc.call(this, b, c);a.b(b);return b;
+    });Ed(a, Document.prototype, { P: Yc, append: Zc });
   };function Gd() {
     function a(a, d) {
       Object.defineProperty(a, "textContent", { enumerable: d.enumerable, configurable: !0, get: d.get, set: function (a) {
           if (this.nodeType === Node.TEXT_NODE) d.set.call(this, a);else {
             var c = void 0;if (this.firstChild) {
               var e = this.childNodes,
-                  h = e.length;if (0 < h && J(this)) {
+                  h = e.length;if (0 < h && K(this)) {
                 c = Array(h);for (var k = 0; k < h; k++) c[k] = e[k];
               }
-            }d.set.call(this, a);if (c) for (a = 0; a < c.length; a++) N(b, c[a]);
+            }d.set.call(this, a);if (c) for (a = 0; a < c.length; a++) O(b, c[a]);
           }
         } });
-    }var b = Q;L(Node.prototype, "insertBefore", function (a, d) {
+    }var b = Dd;M(Node.prototype, "insertBefore", function (a, d) {
       if (a instanceof DocumentFragment) {
         var c = Array.prototype.slice.apply(a.childNodes);
-        a = ed.call(this, a, d);if (J(this)) for (d = 0; d < c.length; d++) M(b, c[d]);return a;
-      }c = J(a);d = ed.call(this, a, d);c && N(b, a);J(this) && M(b, a);return d;
-    });L(Node.prototype, "appendChild", function (a) {
+        a = dd.call(this, a, d);if (K(this)) for (d = 0; d < c.length; d++) N(b, c[d]);return a;
+      }c = K(a);d = dd.call(this, a, d);c && O(b, a);K(this) && N(b, a);return d;
+    });M(Node.prototype, "appendChild", function (a) {
       if (a instanceof DocumentFragment) {
-        var c = Array.prototype.slice.apply(a.childNodes);a = dd.call(this, a);if (J(this)) for (var e = 0; e < c.length; e++) M(b, c[e]);return a;
-      }c = J(a);e = dd.call(this, a);c && N(b, a);J(this) && M(b, a);return e;
-    });L(Node.prototype, "cloneNode", function (a) {
-      a = cd.call(this, !!a);this.ownerDocument.__CE_hasRegistry ? O(b, a) : Qc(b, a);return a;
-    });L(Node.prototype, "removeChild", function (a) {
-      var c = J(a),
-          e = fd.call(this, a);c && N(b, a);return e;
-    });L(Node.prototype, "replaceChild", function (a, d) {
+        var c = Array.prototype.slice.apply(a.childNodes);a = cd.call(this, a);if (K(this)) for (var e = 0; e < c.length; e++) N(b, c[e]);return a;
+      }c = K(a);e = cd.call(this, a);c && O(b, a);K(this) && N(b, a);return e;
+    });M(Node.prototype, "cloneNode", function (a) {
+      a = bd.call(this, !!a);this.ownerDocument.__CE_hasRegistry ? P(b, a) : Pc(b, a);return a;
+    });M(Node.prototype, "removeChild", function (a) {
+      var c = K(a),
+          e = ed.call(this, a);c && O(b, a);return e;
+    });M(Node.prototype, "replaceChild", function (a, d) {
       if (a instanceof DocumentFragment) {
-        var c = Array.prototype.slice.apply(a.childNodes);a = gd.call(this, a, d);if (J(this)) for (N(b, d), d = 0; d < c.length; d++) M(b, c[d]);return a;
-      }c = J(a);var f = gd.call(this, a, d),
-          g = J(this);g && N(b, d);c && N(b, a);g && M(b, a);return f;
-    });hd && hd.get ? a(Node.prototype, hd) : Pc(b, function (b) {
+        var c = Array.prototype.slice.apply(a.childNodes);a = fd.call(this, a, d);if (K(this)) for (O(b, d), d = 0; d < c.length; d++) N(b, c[d]);return a;
+      }c = K(a);var f = fd.call(this, a, d),
+          g = K(this);g && O(b, d);c && O(b, a);g && N(b, a);return f;
+    });gd && gd.get ? a(Node.prototype, gd) : Oc(b, function (b) {
       a(b, { enumerable: !0, configurable: !0, get: function () {
           for (var a = [], b = 0; b < this.childNodes.length; b++) a.push(this.childNodes[b].textContent);return a.join("");
         }, set: function (a) {
-          for (; this.firstChild;) fd.call(this, this.firstChild);dd.call(this, document.createTextNode(a));
+          for (; this.firstChild;) ed.call(this, this.firstChild);cd.call(this, document.createTextNode(a));
         } });
     });
   };function Hd(a) {
     function b(b) {
       return function (c) {
         for (var d = [], e = 0; e < arguments.length; ++e) d[e] = arguments[e];e = [];for (var h = [], k = 0; k < d.length; k++) {
-          var l = d[k];l instanceof Element && J(l) && h.push(l);if (l instanceof DocumentFragment) for (l = l.firstChild; l; l = l.nextSibling) e.push(l);else e.push(l);
-        }b.apply(this, d);for (d = 0; d < h.length; d++) N(a, h[d]);if (J(this)) for (d = 0; d < e.length; d++) h = e[d], h instanceof Element && M(a, h);
+          var l = d[k];l instanceof Element && K(l) && h.push(l);if (l instanceof DocumentFragment) for (l = l.firstChild; l; l = l.nextSibling) e.push(l);else e.push(l);
+        }b.apply(this, d);for (d = 0; d < h.length; d++) O(a, h[d]);if (K(this)) for (d = 0; d < e.length; d++) h = e[d], h instanceof Element && N(a, h);
       };
-    }var c = Element.prototype;void 0 !== ud && (c.before = b(ud));void 0 !== ud && (c.after = b(vd));void 0 !== wd && L(c, "replaceWith", function (b) {
+    }var c = Element.prototype;void 0 !== td && (c.before = b(td));void 0 !== td && (c.after = b(ud));void 0 !== vd && M(c, "replaceWith", function (b) {
       for (var c = [], d = 0; d < arguments.length; ++d) c[d] = arguments[d];d = [];for (var g = [], h = 0; h < c.length; h++) {
-        var k = c[h];k instanceof Element && J(k) && g.push(k);if (k instanceof DocumentFragment) for (k = k.firstChild; k; k = k.nextSibling) d.push(k);else d.push(k);
-      }h = J(this);wd.apply(this, c);for (c = 0; c < g.length; c++) N(a, g[c]);if (h) for (N(a, this), c = 0; c < d.length; c++) g = d[c], g instanceof Element && M(a, g);
-    });void 0 !== xd && L(c, "remove", function () {
-      var b = J(this);xd.call(this);b && N(a, this);
+        var k = c[h];k instanceof Element && K(k) && g.push(k);if (k instanceof DocumentFragment) for (k = k.firstChild; k; k = k.nextSibling) d.push(k);else d.push(k);
+      }h = K(this);vd.apply(this, c);for (c = 0; c < g.length; c++) O(a, g[c]);if (h) for (O(a, this), c = 0; c < d.length; c++) g = d[c], g instanceof Element && N(a, g);
+    });void 0 !== wd && M(c, "remove", function () {
+      var b = K(this);wd.call(this);b && O(a, this);
     });
   };function Id() {
     function a(a, b) {
       Object.defineProperty(a, "innerHTML", { enumerable: b.enumerable, configurable: !0, get: b.get, set: function (a) {
           var c = this,
-              e = void 0;J(this) && (e = [], K(this, function (a) {
+              e = void 0;K(this) && (e = [], L(this, function (a) {
             a !== c && e.push(a);
           }));b.set.call(this, a);if (e) for (var f = 0; f < e.length; f++) {
             var g = e[f];1 === g.__CE_state && d.disconnectedCallback(g);
-          }this.ownerDocument.__CE_hasRegistry ? O(d, this) : Qc(d, this);return a;
+          }this.ownerDocument.__CE_hasRegistry ? P(d, this) : Pc(d, this);return a;
         } });
     }function b(a, b) {
-      L(a, "insertAdjacentElement", function (a, c) {
-        var e = J(c);a = b.call(this, a, c);e && N(d, c);J(a) && M(d, c);return a;
+      M(a, "insertAdjacentElement", function (a, c) {
+        var e = K(c);a = b.call(this, a, c);e && O(d, c);K(a) && N(d, c);return a;
       });
     }
     function c(a, b) {
       function c(a, b) {
-        for (var c = []; a !== b; a = a.nextSibling) c.push(a);for (b = 0; b < c.length; b++) O(d, c[b]);
-      }L(a, "insertAdjacentHTML", function (a, d) {
+        for (var c = []; a !== b; a = a.nextSibling) c.push(a);for (b = 0; b < c.length; b++) P(d, c[b]);
+      }M(a, "insertAdjacentHTML", function (a, d) {
         a = a.toLowerCase();if ("beforebegin" === a) {
           var e = this.previousSibling;b.call(this, a, d);c(e || this.parentNode.firstChild, this);
         } else if ("afterbegin" === a) e = this.firstChild, b.call(this, a, d), c(this.firstChild, e);else if ("beforeend" === a) e = this.lastChild, b.call(this, a, d), c(e || this.firstChild, null);else if ("afterend" === a) e = this.nextSibling, b.call(this, a, d), c(this.nextSibling, e);else throw new SyntaxError("The value provided (" + String(a) + ") is not one of 'beforebegin', 'afterbegin', 'beforeend', or 'afterend'.");
       });
-    }var d = Q;id && L(Element.prototype, "attachShadow", function (a) {
-      return this.__CE_shadowRoot = a = id.call(this, a);
-    });jd && jd.get ? a(Element.prototype, jd) : zd && zd.get ? a(HTMLElement.prototype, zd) : Pc(d, function (b) {
+    }var d = Dd;hd && M(Element.prototype, "attachShadow", function (a) {
+      return this.__CE_shadowRoot = a = hd.call(this, a);
+    });id && id.get ? a(Element.prototype, id) : yd && yd.get ? a(HTMLElement.prototype, yd) : Oc(d, function (b) {
       a(b, { enumerable: !0, configurable: !0, get: function () {
-          return cd.call(this, !0).innerHTML;
+          return bd.call(this, !0).innerHTML;
         }, set: function (a) {
           var b = "template" === this.localName,
               c = b ? this.content : this,
-              d = Xc.call(document, this.namespaceURI, this.localName);for (d.innerHTML = a; 0 < c.childNodes.length;) fd.call(c, c.childNodes[0]);for (a = b ? d.content : d; 0 < a.childNodes.length;) dd.call(c, a.childNodes[0]);
+              d = Wc.call(document, this.namespaceURI, this.localName);for (d.innerHTML = a; 0 < c.childNodes.length;) ed.call(c, c.childNodes[0]);for (a = b ? d.content : d; 0 < a.childNodes.length;) cd.call(c, a.childNodes[0]);
         } });
-    });L(Element.prototype, "setAttribute", function (a, b) {
-      if (1 !== this.__CE_state) return ld.call(this, a, b);var c = kd.call(this, a);ld.call(this, a, b);b = kd.call(this, a);d.attributeChangedCallback(this, a, c, b, null);
-    });L(Element.prototype, "setAttributeNS", function (a, b, c) {
-      if (1 !== this.__CE_state) return od.call(this, a, b, c);var e = nd.call(this, a, b);od.call(this, a, b, c);c = nd.call(this, a, b);d.attributeChangedCallback(this, b, e, c, a);
-    });L(Element.prototype, "removeAttribute", function (a) {
-      if (1 !== this.__CE_state) return md.call(this, a);var b = kd.call(this, a);md.call(this, a);null !== b && d.attributeChangedCallback(this, a, b, null, null);
-    });L(Element.prototype, "removeAttributeNS", function (a, b) {
-      if (1 !== this.__CE_state) return pd.call(this, a, b);var c = nd.call(this, a, b);pd.call(this, a, b);var e = nd.call(this, a, b);c !== e && d.attributeChangedCallback(this, b, c, e, a);
-    });Ad ? b(HTMLElement.prototype, Ad) : qd ? b(Element.prototype, qd) : console.warn("Custom Elements: `Element#insertAdjacentElement` was not patched.");Bd ? c(HTMLElement.prototype, Bd) : rd ? c(Element.prototype, rd) : console.warn("Custom Elements: `Element#insertAdjacentHTML` was not patched.");Ed(d, Element.prototype, { P: sd, append: td });Hd(d);
+    });M(Element.prototype, "setAttribute", function (a, b) {
+      if (1 !== this.__CE_state) return kd.call(this, a, b);var c = jd.call(this, a);kd.call(this, a, b);b = jd.call(this, a);d.attributeChangedCallback(this, a, c, b, null);
+    });M(Element.prototype, "setAttributeNS", function (a, b, c) {
+      if (1 !== this.__CE_state) return nd.call(this, a, b, c);var e = md.call(this, a, b);nd.call(this, a, b, c);c = md.call(this, a, b);d.attributeChangedCallback(this, b, e, c, a);
+    });M(Element.prototype, "removeAttribute", function (a) {
+      if (1 !== this.__CE_state) return ld.call(this, a);var b = jd.call(this, a);ld.call(this, a);null !== b && d.attributeChangedCallback(this, a, b, null, null);
+    });M(Element.prototype, "removeAttributeNS", function (a, b) {
+      if (1 !== this.__CE_state) return od.call(this, a, b);var c = md.call(this, a, b);od.call(this, a, b);var e = md.call(this, a, b);c !== e && d.attributeChangedCallback(this, b, c, e, a);
+    });zd ? b(HTMLElement.prototype, zd) : pd ? b(Element.prototype, pd) : console.warn("Custom Elements: `Element#insertAdjacentElement` was not patched.");Ad ? c(HTMLElement.prototype, Ad) : qd ? c(Element.prototype, qd) : console.warn("Custom Elements: `Element#insertAdjacentHTML` was not patched.");Ed(d, Element.prototype, { P: rd, append: sd });Hd(d);
   }; /*
      Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
      This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -1223,7 +1223,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
      */
   var Jd = window.customElements;if (!Jd || Jd.forcePolyfill || "function" != typeof Jd.define || "function" != typeof Jd.get) {
-    var Q = new Nc();Dd();Fd();Ed(Q, DocumentFragment.prototype, { P: ad, append: bd });Gd();Id();document.__CE_hasRegistry = !0;var customElements = new P(Q);Object.defineProperty(window, "customElements", { configurable: !0, enumerable: !0, value: customElements });
+    var Dd = new Mc();Cd();Fd();Ed(Dd, DocumentFragment.prototype, { P: $c, append: ad });Gd();Id();document.__CE_hasRegistry = !0;var customElements = new Q(Dd);Object.defineProperty(window, "customElements", { configurable: !0, enumerable: !0, value: customElements });
   }; /*
      Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
      This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -1503,7 +1503,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           for (l = 0; l < b.O.length; ++l) h = k[b.O[l]], e = h(e);h = e;
         }b.cssText = h;b.h = b.h || b.selector;
-        e = "." + d;l = xe(b.h);h = 0;for (var ja = l.length, Ra = void 0; h < ja && (Ra = l[h]); h++) l[h] = Ra.match(g) ? Ra.replace(f, e) : e + " " + Ra;b.selector = l.join(",");
+        e = "." + d;l = xe(b.h);h = 0;for (var ka = l.length, Ra = void 0; h < ka && (Ra = l[h]); h++) l[h] = Ra.match(g) ? Ra.replace(f, e) : e + " " + Ra;b.selector = l.join(",");
       }
     }, h);
   }function mf(a, b) {
