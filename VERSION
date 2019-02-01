@@ -1,13 +1,5 @@
-commit 0bb66854670d21addb4d7e0443df0025b5a9f341
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Feb 1 15:38:18 2019 +1100
+commit 2fddb9bb6c179392f2ce968b6bf0a35cc70c0103
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Feb 1 16:08:46 2019 +1100
 
-    Add regex option for filtering in devtools (#2650)
-    
-    * Add regex option for filtering in devtools
-    
-    * Found chrome bug for '?' being intercepted by the devtools UI
-    
-    * Update usage comments for ObjectExplorer
-    
-    * Tiny indent tweak
+    Send planning generated in a previous session to StrategyExplorer (#2661)

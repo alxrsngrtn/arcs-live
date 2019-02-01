@@ -34,4 +34,5 @@ export declare class PlanConsumer {
     _onSuggestionsChanged(): void;
     _onMaybeSuggestionsChanged(): void;
     _initSuggestionComposer(): void;
+    _maybeUpdateStrategyExplorer(): void;
 }

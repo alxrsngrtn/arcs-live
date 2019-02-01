@@ -29276,6 +29276,7 @@ class PlanConsumer {
         if (DevtoolsConnection.isConnected) {
             this.devtoolsChannel = DevtoolsConnection.get().forArc(this.arc);
         }
+        this._maybeUpdateStrategyExplorer();
     }
     registerSuggestionsChangedCallback(callback) { this.suggestionsChangeCallbacks.push(callback); }
     registerVisibleSuggestionsChangedCallback(callback) { this.visibleSuggestionsChangeCallbacks.push(callback); }
@@ -29290,9 +29291,7 @@ class PlanConsumer {
     onSuggestionsChanged() {
         this._onSuggestionsChanged();
         this._onMaybeSuggestionsChanged();
-        if (this.result.generations.length) {
-            StrategyExplorerAdapter.processGenerations(this.result.generations, this.devtoolsChannel, { label: 'Plan Consumer', keep: true });
-        }
+        this._maybeUpdateStrategyExplorer();
     }
     getCurrentSuggestions() {
         const suggestions = this.result.suggestions.filter(suggestion => suggestion.plan.slots.length > 0
@@ -29348,6 +29347,11 @@ class PlanConsumer {
         if (composer && composer.findContextById('rootslotid-suggestions')) {
             this.suggestionComposer = new SuggestionComposer(this.arc, composer);
             this.registerVisibleSuggestionsChangedCallback((suggestions) => this.suggestionComposer.setSuggestions(suggestions));
+        }
+    }
+    _maybeUpdateStrategyExplorer() {
+        if (this.result.generations.length) {
+            StrategyExplorerAdapter.processGenerations(this.result.generations, this.devtoolsChannel, { label: 'Plan Consumer', keep: true });
         }
     }
 }
