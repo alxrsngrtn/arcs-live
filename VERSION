@@ -1,5 +1,5 @@
-commit 2dbc958f1c749eff60d345f05442d2cd4e939715
+commit 72152f0e30889805058f8ad04367e14bc8770656
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Sat Feb 2 10:47:23 2019 +1100
+Date:   Tue Feb 5 05:05:25 2019 +1100
 
-    Disable local DevTools if remote one is requested (#2664)
+    Protect node_modules/sourcemapped-stacktrace/dist from being removed by travis (#2654)
