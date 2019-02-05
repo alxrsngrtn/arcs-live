@@ -11,12 +11,8 @@ import { mapStackTrace } from '../../platform/sourcemapped-stacktrace-web.js';
 export class OuterPortAttachment {
     constructor(arc, devtoolsChannel) {
         this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
-        this.speculative = arc.isSpeculative;
     }
     handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
-        // Skip speculative arcs for now.
-        if (this.speculative)
-            return;
         const stack = this._extractStackFrames(stackString);
         this.arcDevtoolsChannel.send({
             messageType: 'PecLog',

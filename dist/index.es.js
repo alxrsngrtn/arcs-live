@@ -19197,12 +19197,8 @@ const mapStackTrace = () => {};
 class OuterPortAttachment {
     constructor(arc, devtoolsChannel) {
         this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
-        this.speculative = arc.isSpeculative;
     }
     handlePecMessage(name, pecMsgBody, pecMsgCount, stackString) {
-        // Skip speculative arcs for now.
-        if (this.speculative)
-            return;
         const stack = this._extractStackFrames(stackString);
         this.arcDevtoolsChannel.send({
             messageType: 'PecLog',
@@ -24778,6 +24774,14 @@ class Speculator {
         suggestion = Suggestion.create(plan, hash, relevance);
         suggestion.setDescription(description, arc.modality, arc.pec.slotComposer ? arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
         this.suggestionByHash[hash] = suggestion;
+        // TODO: Find a better way to associate arcs with descriptions.
+        //       Ideally, a way that works also for non-speculative arcs.
+        if (DevtoolsConnection.isConnected) {
+            DevtoolsConnection.get().forArc(speculativeArc).send({
+                messageType: 'arc-description',
+                messageBody: suggestion.descriptionText
+            });
+        }
         return suggestion;
     }
     async awaitCompletion(relevance, speculativeArc) {
@@ -26889,8 +26893,7 @@ class RecipeIndex {
                 modalityHandler: PlanningModalityHandler.createHeadlessHandler(),
                 noRoot: true
             }),
-            // TODO: Not speculative really, figure out how to mark it so DevTools doesn't pick it up.
-            speculative: true
+            stub: true
         });
         const strategizer = new Strategizer([
             new RelevantContextRecipes(arc.context, arc.modality),
@@ -27369,8 +27372,7 @@ DevtoolsConnection.onceConnected.then(devtoolsChannel => {
 class ArcDebugHandler {
     constructor(arc) {
         this.arcDevtoolsChannel = null;
-        // Currently no support for speculative arcs.
-        if (arc.isSpeculative)
+        if (arc.isStub)
             return;
         const connectedOnInstantiate = DevtoolsConnection.isConnected;
         DevtoolsConnection.onceConnected.then(devtoolsChannel => {
@@ -27384,7 +27386,12 @@ class ArcDebugHandler {
             // Message handles go here.
             const arcPlannerInvoker = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
             const arcStoresFetcher = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
-            this.arcDevtoolsChannel.send({ messageType: 'arc-available' });
+            this.arcDevtoolsChannel.send({
+                messageType: 'arc-available',
+                messageBody: {
+                    speculative: arc.isSpeculative
+                }
+            });
         });
     }
     recipeInstantiated({ particles }) {
@@ -27418,7 +27425,7 @@ class ArcDebugHandler {
  * http://polymer.github.io/PATENTS.txt
  */
 class Arc {
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc }) {
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub }) {
         this._activeRecipe = new Recipe();
         // TODO: rename: these are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
         this._recipes = [];
@@ -27442,6 +27449,7 @@ class Arc {
         this.id = Id.newSessionId().fromString(id);
         this.isSpeculative = !!speculative; // undefined => false
         this.isInnerArc = !!innerArc; // undefined => false
+        this.isStub = !!stub;
         this._loader = loader;
         this.storageKey = storageKey;
         const pecId = this.generateID();

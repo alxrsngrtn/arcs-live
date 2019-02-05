@@ -1,5 +1,5 @@
-commit 72152f0e30889805058f8ad04367e14bc8770656
+commit 493579174b4421953cfd2e5a8bd0733f37d105ba
 Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Feb 5 05:05:25 2019 +1100
+Date:   Tue Feb 5 14:09:45 2019 +1100
 
-    Protect node_modules/sourcemapped-stacktrace/dist from being removed by travis (#2654)
+    Show Speculative Arcs with Suggestion text in Arcs Explorer (#2668)

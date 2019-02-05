@@ -32,6 +32,7 @@ declare type ArcOptions = {
     storageProviderFactory?: StorageProviderFactory;
     speculative?: boolean;
     innerArc?: boolean;
+    stub?: boolean;
 };
 declare type DeserializeArcOptions = {
     serialization: string;
@@ -53,6 +54,7 @@ export declare class Arc {
     private readonly pecFactory;
     readonly isSpeculative: boolean;
     readonly isInnerArc: boolean;
+    readonly isStub: boolean;
     private _activeRecipe;
     private _recipes;
     readonly _loader: Loader;
@@ -74,7 +76,7 @@ export declare class Arc {
         handles: Map<string, StorageProviderBase>;
     }>;
     pec: ParticleExecutionHost;
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc }: ArcOptions);
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub }: ArcOptions);
     readonly loader: Loader;
     readonly modality: Modality;
     registerInstantiatePlanCallback(callback: PlanCallback): void;

@@ -18,8 +18,7 @@ DevtoolsConnection.onceConnected.then(devtoolsChannel => {
 export class ArcDebugHandler {
     constructor(arc) {
         this.arcDevtoolsChannel = null;
-        // Currently no support for speculative arcs.
-        if (arc.isSpeculative)
+        if (arc.isStub)
             return;
         const connectedOnInstantiate = DevtoolsConnection.isConnected;
         DevtoolsConnection.onceConnected.then(devtoolsChannel => {
@@ -33,7 +32,12 @@ export class ArcDebugHandler {
             // Message handles go here.
             const arcPlannerInvoker = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
             const arcStoresFetcher = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
-            this.arcDevtoolsChannel.send({ messageType: 'arc-available' });
+            this.arcDevtoolsChannel.send({
+                messageType: 'arc-available',
+                messageBody: {
+                    speculative: arc.isSpeculative
+                }
+            });
         });
     }
     recipeInstantiated({ particles }) {

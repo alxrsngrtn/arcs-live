@@ -11,6 +11,7 @@ import { assert } from '../platform/assert-web.js';
 import { Description } from '../runtime/description.js';
 import { Relevance } from '../runtime/relevance.js';
 import { Suggestion } from './plan/suggestion.js';
+import { DevtoolsConnection } from '../runtime/debug/devtools-connection.js';
 export class Speculator {
     constructor(planningResult) {
         this.suggestionByHash = {};
@@ -42,6 +43,14 @@ export class Speculator {
         suggestion = Suggestion.create(plan, hash, relevance);
         suggestion.setDescription(description, arc.modality, arc.pec.slotComposer ? arc.pec.slotComposer.modalityHandler.descriptionFormatter : undefined);
         this.suggestionByHash[hash] = suggestion;
+        // TODO: Find a better way to associate arcs with descriptions.
+        //       Ideally, a way that works also for non-speculative arcs.
+        if (DevtoolsConnection.isConnected) {
+            DevtoolsConnection.get().forArc(speculativeArc).send({
+                messageType: 'arc-description',
+                messageBody: suggestion.descriptionText
+            });
+        }
         return suggestion;
     }
     async awaitCompletion(relevance, speculativeArc) {
