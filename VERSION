@@ -1,5 +1,5 @@
-commit 493579174b4421953cfd2e5a8bd0733f37d105ba
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Tue Feb 5 14:09:45 2019 +1100
+commit 49bd65bc869b17cebfaca698bf46aa9c174266a3
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Tue Feb 5 14:45:14 2019 +1100
 
-    Show Speculative Arcs with Suggestion text in Arcs Explorer (#2668)
+    Firebase Collection: don't bump the version when a remote update has no effect (#2666)
