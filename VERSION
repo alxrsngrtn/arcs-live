@@ -1,5 +1,9 @@
-commit 49bd65bc869b17cebfaca698bf46aa9c174266a3
+commit 633da96c5aef358db77aac7ff390ee4b88777b37
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Feb 5 14:45:14 2019 +1100
+Date:   Tue Feb 5 14:48:09 2019 +1100
 
-    Firebase Collection: don't bump the version when a remote update has no effect (#2666)
+    Dev tools: feature to download PEC log as text file. (#2667)
+    
+    * Dev tools: feature to download PEC log as text file.
+    
+    * Update arcs-pec-log.js (missing semi-colon)
