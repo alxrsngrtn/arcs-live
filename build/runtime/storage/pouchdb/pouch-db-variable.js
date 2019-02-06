@@ -10,6 +10,17 @@ export class PouchDbVariable extends PouchDbStorageProvider {
         this._stored = null;
         this.localKeyId = 0;
         this.backingStore = null;
+        // Insure that there's a value stored.
+        this.db.get(this.pouchDbKey.location).catch((err) => {
+            if (err.name === 'not_found') {
+                this.db.put({
+                    _id: this.pouchDbKey.location,
+                    value: null,
+                    version: 0,
+                    referenceMode: this.referenceMode
+                }).catch((e) => { console.log('error init', e); });
+            }
+        });
     }
     backingType() {
         return this.type;

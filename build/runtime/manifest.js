@@ -40,6 +40,7 @@ export class StorageStub {
     }
     async inflate() {
         const store = await this.storageProviderFactory.connect(this.id, this.type, this.storageKey);
+        assert(store != null, 'inflating missing storageKey ' + this.storageKey);
         store.originalId = this.originalId;
         return store;
     }

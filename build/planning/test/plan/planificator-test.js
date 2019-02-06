@@ -91,7 +91,7 @@ describe('remote planificator', () => {
         producePlanificator.requestPlanning({ contextual: true });
         return { consumePlanificator, producePlanificator };
     }
-    [null, 'pouchdb://memory/user/'].forEach(plannerStorageKeyBase => {
+    ['volatile', 'pouchdb://memory/user/'].forEach(plannerStorageKeyBase => {
         it(`consumes remotely produced gifts demo from ${plannerStorageKeyBase}`, async () => {
             let { consumePlanificator, producePlanificator } = await init(plannerStorageKeyBase, './src/runtime/test/artifacts/Products/Products.recipes');
             let consumerUpdateCount = 0;

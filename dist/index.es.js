@@ -15908,6 +15908,17 @@ class PouchDbCollection extends PouchDbStorageProvider {
     constructor(type, storageEngine, name, id, key) {
         super(type, storageEngine, name, id, key);
         this._model = new CrdtCollectionModel();
+        // Ensure that the underlying database item is created.
+        this.db.get(this.pouchDbKey.location).catch((err) => {
+            if (err.name === 'not_found') {
+                this.db.put({
+                    _id: this.pouchDbKey.location,
+                    model: this._model.toLiteral(),
+                    referenceMode: this.referenceMode,
+                    type: this.type.toLiteral()
+                }).catch((e) => { console.warn('error init', e); });
+            }
+        });
         assert$1(this.version !== null);
     }
     /** @inheritDoc */
@@ -16145,7 +16156,7 @@ class PouchDbCollection extends PouchDbStorageProvider {
      * Provides a way to apply changes to the model in a way that will result in the
      * crdt being written to the underlying PouchDB.
      *
-     * - A new entry is stored if it doesn't exists.
+     * - A new entry is stored if it doesn't exist.
      * - If the existing entry is available it is fetched and the
      *   internal state is updated.
      * - A copy of the CRDT model is passed to the modelMutator, which may change it.
@@ -16294,6 +16305,17 @@ class PouchDbVariable extends PouchDbStorageProvider {
         this._stored = null;
         this.localKeyId = 0;
         this.backingStore = null;
+        // Insure that there's a value stored.
+        this.db.get(this.pouchDbKey.location).catch((err) => {
+            if (err.name === 'not_found') {
+                this.db.put({
+                    _id: this.pouchDbKey.location,
+                    value: null,
+                    version: 0,
+                    referenceMode: this.referenceMode
+                }).catch((e) => { console.log('error init', e); });
+            }
+        });
     }
     backingType() {
         return this.type;
@@ -17569,6 +17591,7 @@ class StorageStub {
     }
     async inflate() {
         const store = await this.storageProviderFactory.connect(this.id, this.type, this.storageKey);
+        assert$1(store != null, 'inflating missing storageKey ' + this.storageKey);
         store.originalId = this.originalId;
         return store;
     }

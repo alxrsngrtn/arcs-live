@@ -107,7 +107,7 @@ export declare class PouchDbCollection extends PouchDbStorageProvider implements
      * Provides a way to apply changes to the model in a way that will result in the
      * crdt being written to the underlying PouchDB.
      *
-     * - A new entry is stored if it doesn't exists.
+     * - A new entry is stored if it doesn't exist.
      * - If the existing entry is available it is fetched and the
      *   internal state is updated.
      * - A copy of the CRDT model is passed to the modelMutator, which may change it.

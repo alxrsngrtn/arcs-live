@@ -1,9 +1,10 @@
-commit 633da96c5aef358db77aac7ff390ee4b88777b37
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Tue Feb 5 14:48:09 2019 +1100
+commit 9925fc3310a433ab887043b25f3bd840b45d19c8
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Wed Feb 6 01:56:58 2019 -0800
 
-    Dev tools: feature to download PEC log as text file. (#2667)
+    Write default data for pouch collection/variable storage keys (#2669)
     
-    * Dev tools: feature to download PEC log as text file.
+    Note: the pouch driver keeps a consistent view of the underlying data, so
+    starting an async write in the constructor is okay.
     
-    * Update arcs-pec-log.js (missing semi-colon)
+    Fixes #2605
