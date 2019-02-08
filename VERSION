@@ -1,5 +1,9 @@
-commit 6d826779d5a4137a13023f5073d6c9777c7a4eeb
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Fri Feb 8 11:25:40 2019 -0800
+commit 701df510fe6b7a40720301172af9d8da5f0bd2fd
+Author: Paul Lindner <lindner@inuus.com>
+Date:   Fri Feb 8 13:22:24 2019 -0800
 
-    Reset search value for the current arc when creating planificator (#2676)
+    Introduce a testing class to verify the number of StorageProvider callbacks (#2678)
+    
+    - Still needs to be used in more tests
+    - Can be extended to verify that specific callbacks were called
+    - Eventually convert to ts-mockito when it's compatible with our environment

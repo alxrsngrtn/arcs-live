@@ -16,6 +16,7 @@ import { assert } from '../../platform/chai-web.js';
 import { resetStorageForTesting } from '../storage/firebase-storage.js';
 import { StubLoader } from '../testing/stub-loader.js';
 import { TestHelper } from '../testing/test-helper.js';
+import { CallbackTracker } from '../testing/callback-tracker.js';
 // Console is https://firebase.corp.google.com/project/arcs-storage-test/database/arcs-storage-test/data/firebase-storage-test
 const testUrl = 'firebase://arcs-storage-test.firebaseio.com/AIzaSyBLqThan3QCOICj0JZ-nEwk27H4gmnADP8/firebase-storage-test';
 const backingStoreUrl = 'firebase://arcs-storage-test.firebaseio.com/AIzaSyBLqThan3QCOICj0JZ-nEwk27H4gmnADP8/backingStores';
@@ -61,9 +62,11 @@ describe('firebase', function () {
             const barType = new EntityType(manifest.schemas.Bar);
             const value = 'Hi there' + Math.random();
             const variable = await storage.construct('test0', barType, newStoreKey('variable'));
+            const callbackTracker = new CallbackTracker(variable, 1);
             await variable.set({ id: 'test0:test', value });
             const result = await variable.get();
             assert.equal(value, result.value);
+            callbackTracker.verify();
         });
         it('resolves concurrent set', async () => {
             const manifest = await Manifest.parse(`
@@ -75,11 +78,15 @@ describe('firebase', function () {
             const barType = new EntityType(manifest.schemas.Bar);
             const key = newStoreKey('variable');
             const var1 = await storage.construct('test0', barType, key);
+            const var1Callbacks = new CallbackTracker(var1, 2);
             const var2 = await storage.connect('test0', barType, key);
+            const var2Callbacks = new CallbackTracker(var2, 2);
             var1.set({ id: 'id1', value: 'value1' });
             var2.set({ id: 'id2', value: 'value2' });
             await synchronized(var1, var2);
             assert.deepEqual(await var1.get(), await var2.get());
+            var1Callbacks.verify();
+            var2Callbacks.verify();
         });
         it('enables referenceMode by default', async () => {
             const manifest = await Manifest.parse(`
@@ -217,6 +224,7 @@ describe('firebase', function () {
             const barType = new EntityType(manifest.schemas.Bar);
             const key1 = newStoreKey('colPtr');
             const collection1 = await storage.construct('test0', new ReferenceType(barType).collectionOf(), key1);
+            const callbackTracker = new CallbackTracker(collection1, 4);
             await collection1.store({ id: 'id1', storageKey: 'value1' }, ['key1']);
             await collection1.store({ id: 'id2', storageKey: 'value2' }, ['key2']);
             let result = await collection1.get('id1');
@@ -225,6 +233,7 @@ describe('firebase', function () {
             assert.equal('value2', result.storageKey);
             assert.isFalse(collection1.referenceMode);
             assert.isNull(collection1.backingStore);
+            callbackTracker.verify();
         });
         it('supports removeMultiple', async () => {
             const manifest = await Manifest.parse(`
@@ -236,12 +245,14 @@ describe('firebase', function () {
             const barType = new EntityType(manifest.schemas.Bar);
             const key = newStoreKey('collection');
             const collection = await storage.construct('test1', barType.collectionOf(), key);
+            const collectionCallbacks = new CallbackTracker(collection, 6);
             await collection.store({ id: 'id1', value: 'value' }, ['key1']);
             await collection.store({ id: 'id2', value: 'value' }, ['key2']);
             await collection.removeMultiple([
                 { id: 'id1', keys: ['key1'] }, { id: 'id2', keys: ['key2'] }
             ]);
             assert.isEmpty(await collection.toList());
+            collectionCallbacks.verify();
         });
     });
     // For these tests, the following index rule should be manually set up in the console at
