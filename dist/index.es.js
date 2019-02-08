@@ -12211,21 +12211,20 @@ class Particle {
     }
     isResolved(options = undefined) {
         assert$1(Object.isFrozen(this));
-        const consumedSlotConnections = Object.values(this.consumedSlotConnections);
-        if (consumedSlotConnections.length > 0) {
-            const fulfilledSlotConnections = consumedSlotConnections.filter(connection => connection.targetSlot !== undefined);
+        if (!this.spec) {
+            if (options && options.showUnresolved) {
+                options.details = 'missing spec';
+            }
+            return false;
+        }
+        if (this.spec.slots.size > 0) {
+            const fulfilledSlotConnections = Object.values(this.consumedSlotConnections).filter(connection => connection.targetSlot !== undefined);
             if (fulfilledSlotConnections.length === 0) {
                 if (options && options.showUnresolved) {
                     options.details = 'unfullfilled slot connections';
                 }
                 return false;
             }
-        }
-        if (!this.spec) {
-            if (options && options.showUnresolved) {
-                options.details = 'missing spec';
-            }
-            return false;
         }
         if (this.spec.connectionMap.size !== Object.keys(this._connections).length) {
             if (options && options.showUnresolved) {

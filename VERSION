@@ -1,13 +1,5 @@
-commit 10ed49e8eeeb5e16682c2497e7906e14da4dd3de
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Fri Feb 8 11:41:40 2019 +1100
+commit 42236f23bef97ccd624333fa71b30bf83620fb66
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Feb 7 17:15:22 2019 -0800
 
-    Inject devtools endpoints into Arc constructor and deserialize method (#2671)
-    
-    * Refactor how the runtime sets up devtools endpoints.
-    
-    This breaks the runtime debugging dependency on planning. (Tests still need to be done.)
-    
-    * Patched per review comments
-    
-    * Add a todo to replace map with foreach at some point.
+    comment for unresolved particle unfulfilled slot connection (#2675)
