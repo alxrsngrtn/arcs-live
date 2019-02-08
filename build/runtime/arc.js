@@ -19,7 +19,7 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { Id } from './id.js';
 import { ArcDebugHandler } from './debug/arc-debug-handler.js';
 export class Arc {
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub }) {
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, listenerClasses }) {
         this._activeRecipe = new Recipe();
         // TODO: rename: these are just tuples of {particles, handles, slots, pattern} of instantiated recipes merged into active recipe.
         this._recipes = [];
@@ -51,7 +51,8 @@ export class Arc {
         this.pec = new ParticleExecutionHost(innerPecPort, slotComposer, this);
         this.storageProviderFactory = storageProviderFactory || new StorageProviderFactory(this.id);
         this.arcId = this.storageKey ? this.storageProviderFactory.parseStringAsKey(this.storageKey).arcId : '';
-        this.debugHandler = new ArcDebugHandler(this);
+        this.listenerClasses = listenerClasses;
+        this.debugHandler = new ArcDebugHandler(this, listenerClasses);
     }
     get loader() {
         return this._loader;
@@ -289,7 +290,7 @@ ${this.activeRecipe.toString()}`;
         // TODO: storage refactor: make sure set() is available here (or wrap store in a Handle-like adaptor).
         await store.set(arcInfoType.newInstance(this.id, serialization));
     }
-    static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context }) {
+    static async deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, listenerClasses }) {
         const manifest = await Manifest.parse(serialization, { loader, fileName, context });
         const arc = new Arc({
             id: manifest.meta.name,
@@ -298,7 +299,8 @@ ${this.activeRecipe.toString()}`;
             pecFactory,
             loader,
             storageProviderFactory: manifest.storageProviderFactory,
-            context
+            context,
+            listenerClasses
         });
         await Promise.all(manifest.stores.map(async (store) => {
             const tags = manifest.storeTags.get(store);
@@ -346,7 +348,13 @@ ${this.activeRecipe.toString()}`;
     }
     // Makes a copy of the arc used for speculative execution.
     async cloneForSpeculativeExecution() {
-        const arc = new Arc({ id: this.generateID().toString(), pecFactory: this.pecFactory, context: this.context, loader: this._loader, speculative: true, innerArc: this.isInnerArc });
+        const arc = new Arc({ id: this.generateID().toString(),
+            pecFactory: this.pecFactory,
+            context: this.context,
+            loader: this._loader,
+            speculative: true,
+            innerArc: this.isInnerArc,
+            listenerClasses: this.listenerClasses });
         const storeMap = new Map();
         for (const store of this._stores) {
             const clone = await arc.storageProviderFactory.construct(store.id, store.type, 'volatile');

@@ -96,6 +96,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="arcdevtoolschannel.html#listen" class="tsd-kind-icon">listen</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="arcdevtoolschannel.html#send" class="tsd-kind-icon">send</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="arcdevtoolschannel.html#instantiatelistener" class="tsd-kind-icon">instantiate<wbr>Listener</a></li>
 							</ul>
 						</section>
 					</div>
@@ -113,7 +114,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/85570dd/src/runtime/debug/abstract-devtools-channel.ts#L75">runtime/debug/abstract-devtools-channel.ts:75</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10ed49e/src/runtime/debug/abstract-devtools-channel.ts#L75">runtime/debug/abstract-devtools-channel.ts:75</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -138,7 +139,7 @@
 					<div class="tsd-signature tsd-kind-icon">arc<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/85570dd/src/runtime/debug/abstract-devtools-channel.ts#L75">runtime/debug/abstract-devtools-channel.ts:75</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10ed49e/src/runtime/debug/abstract-devtools-channel.ts#L75">runtime/debug/abstract-devtools-channel.ts:75</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -148,7 +149,7 @@
 					<div class="tsd-signature tsd-kind-icon">channel<span class="tsd-signature-symbol">:</span> <a href="abstractdevtoolschannel.html" class="tsd-signature-type">AbstractDevtoolsChannel</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/85570dd/src/runtime/debug/abstract-devtools-channel.ts#L74">runtime/debug/abstract-devtools-channel.ts:74</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10ed49e/src/runtime/debug/abstract-devtools-channel.ts#L74">runtime/debug/abstract-devtools-channel.ts:74</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -165,7 +166,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/85570dd/src/runtime/debug/abstract-devtools-channel.ts#L89">runtime/debug/abstract-devtools-channel.ts:89</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10ed49e/src/runtime/debug/abstract-devtools-channel.ts#L89">runtime/debug/abstract-devtools-channel.ts:89</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -191,7 +192,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/85570dd/src/runtime/debug/abstract-devtools-channel.ts#L82">runtime/debug/abstract-devtools-channel.ts:82</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10ed49e/src/runtime/debug/abstract-devtools-channel.ts#L82">runtime/debug/abstract-devtools-channel.ts:82</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -201,6 +202,35 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="instantiatelistener" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> instantiate<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">instantiate<wbr>Listener<span class="tsd-signature-symbol">(</span>listenerClass<span class="tsd-signature-symbol">: </span><a href="../interfaces/arcdebuglistenerderived.html" class="tsd-signature-type">ArcDebugListenerDerived</a>, arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a>, channel<span class="tsd-signature-symbol">: </span><a href="arcdevtoolschannel.html" class="tsd-signature-type">ArcDevtoolsChannel</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="arcdebuglistener.html" class="tsd-signature-type">ArcDebugListener</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10ed49e/src/runtime/debug/abstract-devtools-channel.ts#L93">runtime/debug/abstract-devtools-channel.ts:93</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>listenerClass: <a href="../interfaces/arcdebuglistenerderived.html" class="tsd-signature-type">ArcDebugListenerDerived</a></h5>
+								</li>
+								<li>
+									<h5>arc: <a href="arc.html" class="tsd-signature-type">Arc</a></h5>
+								</li>
+								<li>
+									<h5>channel: <a href="arcdevtoolschannel.html" class="tsd-signature-type">ArcDevtoolsChannel</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="arcdebuglistener.html" class="tsd-signature-type">ArcDebugListener</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -235,6 +265,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="arcdevtoolschannel.html#send" class="tsd-kind-icon">send</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="arcdevtoolschannel.html#instantiatelistener" class="tsd-kind-icon">instantiate<wbr>Listener</a>
 							</li>
 						</ul>
 					</li>

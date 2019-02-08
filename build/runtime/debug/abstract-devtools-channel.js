@@ -72,5 +72,11 @@ export class ArcDevtoolsChannel {
     listen(messageType, callback) {
         this.channel.listen(this.arcId, messageType, callback);
     }
+    static instantiateListener(listenerClass, arc, channel) {
+        return new listenerClass(arc, channel);
+    }
+}
+export class ArcDebugListener {
+    constructor(arc, channel) { }
 }
 //# sourceMappingURL=abstract-devtools-channel.js.map

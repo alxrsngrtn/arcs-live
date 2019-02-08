@@ -13,6 +13,7 @@ import { CoalesceRecipes } from '../strategies/coalesce-recipes.js';
 import { Strategizer, Strategy } from '../strategizer.js';
 import * as Rulesets from '../strategies/rulesets.js';
 import { Manifest } from '../../runtime/manifest.js';
+import { ArcDebugListener } from '../../runtime/debug/abstract-devtools-channel.js';
 class InitialRecipe extends Strategy {
     constructor(recipe) {
         super();
@@ -31,8 +32,9 @@ class InitialRecipe extends Strategy {
             }];
     }
 }
-export class ArcPlannerInvoker {
+export class ArcPlannerInvoker extends ArcDebugListener {
     constructor(arc, arcDevtoolsChannel) {
+        super(arc, arcDevtoolsChannel);
         this.arc = arc;
         arcDevtoolsChannel.listen('fetch-strategies', () => arcDevtoolsChannel.send({
             messageType: 'fetch-strategies-result',
@@ -176,4 +178,8 @@ export class ArcPlannerInvoker {
         return depth;
     }
 }
+// TODO: This should move to the planning interface file when it exists. 
+export const defaultPlanningDebugListeners = [
+    ArcPlannerInvoker
+];
 //# sourceMappingURL=arc-planner-invoker.js.map

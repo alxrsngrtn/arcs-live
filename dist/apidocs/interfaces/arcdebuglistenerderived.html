@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Literalizer | arcs</title>
+	<title>ArcDebugListenerDerived | arcs</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="literalizer.html">Literalizer</a>
+					<a href="arcdebuglistenerderived.html">ArcDebugListenerDerived</a>
 				</li>
 			</ul>
-			<h1>Interface Literalizer</h1>
+			<h1>Interface ArcDebugListenerDerived</h1>
 		</div>
 	</div>
 </header>
@@ -70,7 +70,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Literalizer</span>
+						<a href="../classes/arcdebuglistener.html" class="tsd-signature-type">ArcDebugListener</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">ArcDebugListenerDerived</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -78,80 +83,43 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Properties</h3>
+						<section class="tsd-index-section tsd-is-inherited">
+							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="literalizer.html#fromliteral" class="tsd-kind-icon">from<wbr>Literal</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="literalizer.html#prototype" class="tsd-kind-icon">prototype</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-interface tsd-is-inherited"><a href="arcdebuglistenerderived.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="fromliteral" class="tsd-anchor"></a>
-					<h3>from<wbr>Literal</h3>
-					<div class="tsd-signature tsd-kind-icon">from<wbr>Literal<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10ed49e/src/runtime/api-channel.ts#L41">runtime/api-channel.ts:41</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-siganture">
-								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property tsd-is-not-exported">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span></li>
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-interface tsd-is-inherited">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Arc<wbr>Debug<wbr>Listener<wbr>Derived<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="../classes/arc.html" class="tsd-signature-type">Arc</a>, channel<span class="tsd-signature-symbol">: </span><a href="../classes/arcdevtoolschannel.html" class="tsd-signature-type">ArcDevtoolsChannel</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="arcdebuglistenerderived.html" class="tsd-signature-type">ArcDebugListenerDerived</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="../classes/arcdebuglistener.html">ArcDebugListener</a>.<a href="../classes/arcdebuglistener.html#constructor">constructor</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10ed49e/src/runtime/debug/abstract-devtools-channel.ts#L100">runtime/debug/abstract-devtools-channel.ts:100</a></li>
 								</ul>
-								<ul class="tsd-descriptions">
-									<li class="tsd-description">
-										<h4 class="tsd-parameters-title">Parameters</h4>
-										<ul class="tsd-parameters">
-											<li>
-												<h5>__namedParameters: <span class="tsd-signature-type">object</span></h5>
-												<ul class="tsd-parameters">
-												</ul>
-											</li>
-										</ul>
-										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">__type</span></h4>
-									</li>
-								</ul>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="prototype" class="tsd-anchor"></a>
-					<h3>prototype</h3>
-					<div class="tsd-signature tsd-kind-icon">prototype<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/10ed49e/src/runtime/api-channel.ts#L40">runtime/api-channel.ts:40</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter">
-								<h5>to<wbr>Literal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></h5>
-								<ul class="tsd-parameters">
-									<li class="tsd-parameter-siganture">
-										<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-variable tsd-is-not-exported">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span></li>
-										</ul>
-										<ul class="tsd-descriptions">
-											<li class="tsd-description">
-												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">__type</span></h4>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-						</ul>
-					</div>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>arc: <a href="../classes/arc.html" class="tsd-signature-type">Arc</a></h5>
+								</li>
+								<li>
+									<h5>channel: <a href="../classes/arcdevtoolschannel.html" class="tsd-signature-type">ArcDevtoolsChannel</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="arcdebuglistenerderived.html" class="tsd-signature-type">ArcDebugListenerDerived</a></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -167,14 +135,11 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-is-not-exported">
-						<a href="literalizer.html" class="tsd-kind-icon">Literalizer</a>
+					<li class="current tsd-kind-interface">
+						<a href="arcdebuglistenerderived.html" class="tsd-kind-icon">Arc<wbr>Debug<wbr>Listener<wbr>Derived</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="literalizer.html#fromliteral" class="tsd-kind-icon">from<wbr>Literal</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="literalizer.html#prototype" class="tsd-kind-icon">prototype</a>
+							<li class=" tsd-kind-constructor tsd-parent-kind-interface tsd-is-inherited">
+								<a href="arcdebuglistenerderived.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 						</ul>
 					</li>

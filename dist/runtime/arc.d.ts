@@ -22,6 +22,7 @@ import { Particle } from './recipe/particle.js';
 import { Slot } from './recipe/slot.js';
 import { SlotComposer } from './slot-composer.js';
 import { Modality } from './modality.js';
+import { ArcDebugListenerDerived } from './debug/abstract-devtools-channel.js';
 declare type ArcOptions = {
     id: string;
     context: Manifest;
@@ -33,6 +34,7 @@ declare type ArcOptions = {
     speculative?: boolean;
     innerArc?: boolean;
     stub?: boolean;
+    listenerClasses?: ArcDebugListenerDerived[];
 };
 declare type DeserializeArcOptions = {
     serialization: string;
@@ -41,6 +43,7 @@ declare type DeserializeArcOptions = {
     loader: Loader;
     fileName: string;
     context: Manifest;
+    listenerClasses?: ArcDebugListenerDerived[];
 };
 export declare type PlanCallback = (recipe: Recipe) => void;
 declare type SerializeContext = {
@@ -70,13 +73,14 @@ export declare class Arc {
     private waitForIdlePromise;
     private debugHandler;
     private innerArcsByParticle;
+    private listenerClasses;
     readonly id: Id;
     particleHandleMaps: Map<string, {
         spec: ParticleSpec;
         handles: Map<string, StorageProviderBase>;
     }>;
     pec: ParticleExecutionHost;
-    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub }: ArcOptions);
+    constructor({ id, context, pecFactory, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, listenerClasses }: ArcOptions);
     readonly loader: Loader;
     readonly modality: Modality;
     registerInstantiatePlanCallback(callback: PlanCallback): void;
@@ -94,7 +98,7 @@ export declare class Arc {
     _serializeStorageKey(): string;
     serialize(): Promise<string>;
     persistSerialization(serialization: string): Promise<void>;
-    static deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context }: DeserializeArcOptions): Promise<Arc>;
+    static deserialize({ serialization, pecFactory, slotComposer, loader, fileName, context, listenerClasses }: DeserializeArcOptions): Promise<Arc>;
     readonly context: Manifest;
     readonly activeRecipe: Recipe;
     readonly recipes: {

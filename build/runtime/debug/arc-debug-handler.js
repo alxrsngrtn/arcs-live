@@ -8,15 +8,15 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { enableTracingAdapter } from './tracing-adapter.js';
-import { ArcPlannerInvoker } from '../../planning/debug/arc-planner-invoker.js';
-import { ArcStoresFetcher } from './arc-stores-fetcher.js';
+import { ArcDevtoolsChannel } from '../../runtime/debug/abstract-devtools-channel.js';
 import { DevtoolsConnection } from './devtools-connection.js';
+import { ArcStoresFetcher } from './arc-stores-fetcher.js';
 // Arc-independent handlers for devtools logic.
 DevtoolsConnection.onceConnected.then(devtoolsChannel => {
     enableTracingAdapter(devtoolsChannel);
 });
 export class ArcDebugHandler {
-    constructor(arc) {
+    constructor(arc, listenerClasses) {
         this.arcDevtoolsChannel = null;
         if (arc.isStub)
             return;
@@ -29,9 +29,13 @@ export class ArcDebugHandler {
                 });
             }
             this.arcDevtoolsChannel = devtoolsChannel.forArc(arc);
-            // Message handles go here.
-            const arcPlannerInvoker = new ArcPlannerInvoker(arc, this.arcDevtoolsChannel);
-            const arcStoresFetcher = new ArcStoresFetcher(arc, this.arcDevtoolsChannel);
+            if (!!listenerClasses) { // undefined => false
+                // TODO: This should just be a foreach, as there is no need to keep
+                // the results.
+                const listeners = listenerClasses.map(l => {
+                    ArcDevtoolsChannel.instantiateListener(l, arc, this.arcDevtoolsChannel);
+                });
+            }
             this.arcDevtoolsChannel.send({
                 messageType: 'arc-available',
                 messageBody: {
@@ -60,4 +64,8 @@ export class ArcDebugHandler {
         });
     }
 }
+// TODO: This should move to the core interface file when it exists. 
+export const defaultCoreDebugListeners = [
+    ArcStoresFetcher
+];
 //# sourceMappingURL=arc-debug-handler.js.map

@@ -12,8 +12,8 @@ import { Descendant } from '../../runtime/recipe/walker.js';
 import { Strategy, StrategyDerived } from '../strategizer.js';
 import { Manifest } from '../../runtime/manifest.js';
 import { Recipe } from '../../runtime/recipe/recipe.js';
-import { ArcDevtoolsChannel } from '../../runtime/debug/abstract-devtools-channel.js';
-export declare class ArcPlannerInvoker {
+import { ArcDevtoolsChannel, ArcDebugListener, ArcDebugListenerDerived } from '../../runtime/debug/abstract-devtools-channel.js';
+export declare class ArcPlannerInvoker extends ArcDebugListener {
     private arc;
     private recipeIndex;
     constructor(arc: Arc, arcDevtoolsChannel: ArcDevtoolsChannel);
@@ -61,3 +61,4 @@ export declare class ArcPlannerInvoker {
     findManifestNames(manifest: Manifest, predicate: (_: Manifest) => boolean): string[];
     findManifestNamesRecursive(manifest: Manifest, predicate: (_: Manifest) => boolean, fileNames: Map<string, number>): number;
 }
+export declare const defaultPlanningDebugListeners: ArcDebugListenerDerived[];

@@ -26,4 +26,12 @@ export declare class ArcDevtoolsChannel {
     constructor(arc: Arc, channel: AbstractDevtoolsChannel);
     send(message: any): void;
     listen(messageType: any, callback: any): void;
+    static instantiateListener(listenerClass: ArcDebugListenerDerived, arc: Arc, channel: ArcDevtoolsChannel): ArcDebugListener;
 }
+export declare abstract class ArcDebugListener {
+    constructor(arc: Arc, channel: ArcDevtoolsChannel);
+}
+declare type ArcDebugListenerClass = typeof ArcDebugListener;
+export interface ArcDebugListenerDerived extends ArcDebugListenerClass {
+}
+export {};

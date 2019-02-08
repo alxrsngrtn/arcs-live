@@ -8,11 +8,13 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../arc.js';
+import { ArcDebugListenerDerived } from '../../runtime/debug/abstract-devtools-channel.js';
 import { Particle } from '../recipe/particle.js';
 export declare class ArcDebugHandler {
     private arcDevtoolsChannel;
-    constructor(arc: Arc);
+    constructor(arc: Arc, listenerClasses: ArcDebugListenerDerived[]);
     recipeInstantiated({ particles }: {
         particles: Particle[];
     }): void;
 }
+export declare const defaultCoreDebugListeners: ArcDebugListenerDerived[];

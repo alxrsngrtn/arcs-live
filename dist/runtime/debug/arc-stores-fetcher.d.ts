@@ -7,7 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export declare class ArcStoresFetcher {
+import { ArcDebugListener } from './abstract-devtools-channel.js';
+export declare class ArcStoresFetcher extends ArcDebugListener {
     private arc;
     constructor(arc: any, arcDevtoolsChannel: any);
     _listStores(): Promise<{

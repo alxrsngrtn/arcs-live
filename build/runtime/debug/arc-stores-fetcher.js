@@ -7,8 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export class ArcStoresFetcher {
+import { ArcDebugListener } from './abstract-devtools-channel.js';
+export class ArcStoresFetcher extends ArcDebugListener {
     constructor(arc, arcDevtoolsChannel) {
+        super(arc, arcDevtoolsChannel);
         this.arc = arc;
         arcDevtoolsChannel.listen('fetch-stores', async () => arcDevtoolsChannel.send({
             messageType: 'fetch-stores-result',

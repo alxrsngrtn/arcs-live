@@ -4000,6 +4000,7 @@ class DevtoolsChannel extends _runtime_debug_abstract_devtools_channel_js__WEBPA
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AbstractDevtoolsChannel", function() { return AbstractDevtoolsChannel; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcDevtoolsChannel", function() { return ArcDevtoolsChannel; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcDebugListener", function() { return ArcDebugListener; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
 /**
  * @license
@@ -4075,6 +4076,12 @@ class ArcDevtoolsChannel {
     listen(messageType, callback) {
         this.channel.listen(this.arcId, messageType, callback);
     }
+    static instantiateListener(listenerClass, arc, channel) {
+        return new listenerClass(arc, channel);
+    }
+}
+class ArcDebugListener {
+    constructor(arc, channel) { }
 }
 //# sourceMappingURL=abstract-devtools-channel.js.map
 
