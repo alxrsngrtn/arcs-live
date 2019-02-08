@@ -28141,9 +28141,10 @@ const init$1 = (root, urls) => {
 };
 
 const parse = async (content, options) => {
+  const id = `in-memory-${Math.floor((Math.random()+1)*1e6)}.manifest`;
   const localOptions = {
-    id: 'in-memory.manifest',
-    fileName: './in-memory.manifest',
+    id,
+    fileName: `./${id}`,
     loader: env.loader
   };
   if (options) {
@@ -28419,10 +28420,10 @@ const warn$2 = logFactory('UserArcs', '#4f0433', 'warn');
 
 class UserArcs {
   constructor(storage, userid) {
+    SyntheticStores.init();
     this.values = [];
     this.listeners = [];
     this.contextWait = 3000;
-    SyntheticStores.init();
     this.updateArcsStore(storage, userid);
   }
   async subscribe(listener) {

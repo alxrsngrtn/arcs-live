@@ -1,10 +1,43 @@
-commit 9925fc3310a433ab887043b25f3bd840b45d19c8
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Wed Feb 6 01:56:58 2019 -0800
+commit e56135425323d75d4b4a20c8e3f5686531974800
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Feb 7 16:03:19 2019 -0800
 
-    Write default data for pouch collection/variable storage keys (#2669)
+    Device-client-pipe work for Feb demos (#2673)
     
-    Note: the pouch driver keeps a consistent view of the underlying data, so
-    starting an async write in the constructor is okay.
+    * bring back BackgroundPipes arc
     
-    Fixes #2605
+    * plumb background-pipes arc to device-client-pipe
+    
+    * implement 'maps' pipe
+    
+    * `mops` hack so we can play with integration
+    
+    * use `com.google.android.apps.maps` instead of `mops`
+    
+    * Install timestamp if not provided, sort by timestamp, output all fields
+    
+    * plumb recipes from glitch project
+    
+    * distinct synthetic manifests must have distinct ids and fileNames
+    
+    * finish plumbing particle-based observed-entity query
+    
+    * fallback to entity.type for arc label if !entity.name
+    
+    * change a bunch of names to make the demo visualize nicely
+    
+    * more name updates
+    
+    * fix bad `spawned` state in device-client-pipe, add arc.id check for suggestion freshness
+    
+    * more work to ensure suggestions are correct
+    
+    * clean up factoring of EchoSuggestionText
+    
+    * fix dependency
+    
+    * plumb arcid into suggestions and verify in device-client
+    
+    * add TODO
+    
+    * update slot name
