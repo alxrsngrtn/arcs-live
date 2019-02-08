@@ -1,43 +1,5 @@
-commit e56135425323d75d4b4a20c8e3f5686531974800
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Feb 7 16:03:19 2019 -0800
+commit 85570dda480a255145eab99ebdc2ba83c3cc8d9c
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Fri Feb 8 11:18:21 2019 +1100
 
-    Device-client-pipe work for Feb demos (#2673)
-    
-    * bring back BackgroundPipes arc
-    
-    * plumb background-pipes arc to device-client-pipe
-    
-    * implement 'maps' pipe
-    
-    * `mops` hack so we can play with integration
-    
-    * use `com.google.android.apps.maps` instead of `mops`
-    
-    * Install timestamp if not provided, sort by timestamp, output all fields
-    
-    * plumb recipes from glitch project
-    
-    * distinct synthetic manifests must have distinct ids and fileNames
-    
-    * finish plumbing particle-based observed-entity query
-    
-    * fallback to entity.type for arc label if !entity.name
-    
-    * change a bunch of names to make the demo visualize nicely
-    
-    * more name updates
-    
-    * fix bad `spawned` state in device-client-pipe, add arc.id check for suggestion freshness
-    
-    * more work to ensure suggestions are correct
-    
-    * clean up factoring of EchoSuggestionText
-    
-    * fix dependency
-    
-    * plumb arcid into suggestions and verify in device-client
-    
-    * add TODO
-    
-    * update slot name
+    Small for to recipe-editor (#2674)

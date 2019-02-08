@@ -27270,7 +27270,7 @@ class ArcPlannerInvoker {
     }
     extractDerivation(result) {
         const found = [];
-        for (const deriv of result.derivation) {
+        for (const deriv of result.derivation || []) {
             if (!deriv.parent && deriv.strategy.constructor !== InitialRecipe) {
                 found.push(deriv.strategy.constructor.name);
             }
@@ -27318,7 +27318,7 @@ class ArcPlannerInvoker {
         for (const child of manifest.imports) {
             depth = Math.min(depth, this.findManifestNamesRecursive(child, predicate, fileNames) + 1);
         }
-        // http check to avoid listin shell created 'in-memory manifest'.
+        // http check to avoid listing shell created 'in-memory manifest'.
         if (depth < Number.MAX_SAFE_INTEGER && manifest.fileName.startsWith('http')) {
             fileNames.set(manifest.fileName, depth);
         }
