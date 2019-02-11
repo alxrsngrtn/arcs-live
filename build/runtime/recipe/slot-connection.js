@@ -6,6 +6,7 @@
 // http://polymer.github.io/PATENTS.txt
 import { assert } from '../../platform/assert-web.js';
 import { compareStrings, compareComparables } from './util.js';
+import { RequireSection } from './recipe.js';
 export class SlotConnection {
     constructor(name, particle) {
         this._targetSlot = undefined;
@@ -36,7 +37,7 @@ export class SlotConnection {
     connectToSlot(targetSlot) {
         assert(targetSlot);
         assert(!this.targetSlot);
-        assert(this.recipe === targetSlot.recipe, 'Cannot connect to slot from different recipe');
+        assert(this.recipe instanceof RequireSection || this.recipe === targetSlot.recipe, 'Cannot connect to slot from different recipe');
         this._targetSlot = targetSlot;
         targetSlot.consumeConnections.push(this);
     }

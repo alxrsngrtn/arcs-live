@@ -4,23 +4,33 @@
 // Code distributed by Google as part of this project is also
 // subject to an additional IP rights grant found at
 // http://polymer.github.io/PATENTS.txt
+import { RequireSection } from './recipe.js';
 import { assert } from '../../platform/assert-web.js';
 export class SlotUtils {
     // Helper methods.
+    static getClonedSlot(recipe, selectedSlot) {
+        let clonedSlot = recipe.updateToClone({ selectedSlot }).selectedSlot;
+        if (!clonedSlot) {
+            if (selectedSlot.id) {
+                clonedSlot = recipe.findSlotByID(selectedSlot.id);
+            }
+            if (clonedSlot == undefined) {
+                if (recipe instanceof RequireSection) {
+                    clonedSlot = recipe.parent.newSlot(selectedSlot.name);
+                }
+                else {
+                    clonedSlot = recipe.newSlot(selectedSlot.name);
+                }
+                clonedSlot.id = selectedSlot.id;
+            }
+        }
+        return clonedSlot;
+    }
     // Connect the given slot connection to the selectedSlot, create the slot, if needed.
     static connectSlotConnection(slotConnection, selectedSlot) {
         const recipe = slotConnection.recipe;
         if (!slotConnection.targetSlot) {
-            let clonedSlot = recipe.updateToClone({ selectedSlot }).selectedSlot;
-            if (!clonedSlot) {
-                if (selectedSlot.id) {
-                    clonedSlot = recipe.findSlotByID(selectedSlot.id);
-                }
-                if (clonedSlot == undefined) {
-                    clonedSlot = recipe.newSlot(selectedSlot.name);
-                    clonedSlot.id = selectedSlot.id;
-                }
-            }
+            const clonedSlot = SlotUtils.getClonedSlot(recipe, selectedSlot);
             slotConnection.connectToSlot(clonedSlot);
         }
         assert(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id === slotConnection.targetSlot.id), `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
@@ -86,6 +96,23 @@ export class SlotUtils {
             return true;
         }
         return consumeSlotSpec.name === (provideSlot ? provideSlot.name : provideSlotSpec.name);
+    }
+    static replaceOldSlot(recipe, oldSlot, newSlot) {
+        if (oldSlot && (!oldSlot.id || oldSlot.id !== newSlot.id)) {
+            if (oldSlot.sourceConnection !== undefined) {
+                if (newSlot.sourceConnection === undefined)
+                    return false;
+                const clonedSlot = SlotUtils.getClonedSlot(oldSlot.sourceConnection.recipe, newSlot);
+                oldSlot.sourceConnection.providedSlots[oldSlot.name] = clonedSlot;
+                clonedSlot.sourceConnection = oldSlot.sourceConnection;
+            }
+            while (oldSlot.consumeConnections.length > 0) {
+                const conn = oldSlot.consumeConnections[0];
+                conn.disconnectFromSlot();
+                SlotUtils.connectSlotConnection(conn, newSlot);
+            }
+        }
+        return true;
     }
 }
 //# sourceMappingURL=slot-utils.js.map

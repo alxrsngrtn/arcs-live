@@ -11780,7 +11780,7 @@ class SlotConnection {
     connectToSlot(targetSlot) {
         assert$1(targetSlot);
         assert$1(!this.targetSlot);
-        assert$1(this.recipe === targetSlot.recipe, 'Cannot connect to slot from different recipe');
+        assert$1(this.recipe instanceof RequireSection || this.recipe === targetSlot.recipe, 'Cannot connect to slot from different recipe');
         this._targetSlot = targetSlot;
         targetSlot.consumeConnections.push(this);
     }
@@ -12144,9 +12144,28 @@ class Particle {
         });
         particle._unnamedConnections = this._unnamedConnections.map(connection => connection._clone(particle, cloneMap));
         particle._cloneConnectionRawTypes();
-        Object.keys(this._consumedSlotConnections).forEach(key => {
-            particle._consumedSlotConnections[key] = this._consumedSlotConnections[key]._clone(particle, cloneMap);
-        });
+        for (const [key, slotConn] of Object.entries(this.consumedSlotConnections)) {
+            particle.consumedSlotConnections[key] = slotConn._clone(particle, cloneMap);
+            // if recipe is a requireSection, then slot may already exist in recipe.
+            if (cloneMap.has(slotConn.targetSlot)) {
+                assert$1(recipe instanceof RequireSection);
+                particle.consumedSlotConnections[key].connectToSlot(cloneMap.get(slotConn.targetSlot));
+                if (particle.recipe.slots.indexOf(cloneMap.get(slotConn.targetSlot)) === -1) {
+                    particle.recipe.slots.push(cloneMap.get(slotConn.targetSlot));
+                }
+            }
+            for (const [name, slot] of Object.entries(slotConn.providedSlots)) {
+                if (cloneMap.has(slot)) {
+                    assert$1(recipe instanceof RequireSection);
+                    const clonedSlot = cloneMap.get(slot);
+                    clonedSlot.sourceConnection = particle.consumedSlotConnections[key];
+                    particle.consumedSlotConnections[key].providedSlots[name] = clonedSlot;
+                    if (particle.recipe.slots.indexOf(clonedSlot) === -1) {
+                        particle.recipe.slots.push(clonedSlot);
+                    }
+                }
+            }
+        }
         return particle;
     }
     _cloneConnectionRawTypes() {
@@ -12194,6 +12213,29 @@ class Particle {
             return cmp;
         // TODO: slots
         return 0;
+    }
+    /**
+     * Param particle matches this particle if the names are the same and the slot and handle requirements this particle
+     * is a subset of the slot and handle requirements of the param particle.
+     * @param particle
+     */
+    matches(particle) {
+        if (this.name && particle.name && this.name !== particle.name)
+            return false;
+        for (const [name, slotConn] of Object.entries(this.consumedSlotConnections)) {
+            if (particle.consumedSlotConnections[name] == undefined
+                || particle.consumedSlotConnections[name].targetSlot == undefined)
+                return false;
+            if (slotConn.targetSlot && slotConn.targetSlot.id && slotConn.targetSlot.id !== particle.consumedSlotConnections[name].targetSlot.id)
+                return false;
+            for (const pname of Object.keys(slotConn.providedSlots)) {
+                const slot = slotConn.providedSlots[pname];
+                const pslot = particle.consumedSlotConnections[name].providedSlots[pname];
+                if (pslot == undefined || (slot.id && pslot.id && slot.id !== pslot.id))
+                    return false;
+            }
+        }
+        return true;
     }
     _isValid(options) {
         if (!this.spec) {
@@ -12506,6 +12548,9 @@ class Slot {
     }
     _copyInto(recipe, cloneMap) {
         let slot = undefined;
+        if (cloneMap.has(this)) {
+            return cloneMap.get(this);
+        }
         if (!this.sourceConnection && this.id) {
             slot = recipe.findSlot(this.id);
         }
@@ -12522,7 +12567,11 @@ class Slot {
             }
             this._handleConnections.forEach(connection => slot._handleConnections.push(cloneMap.get(connection)));
         }
-        this._consumeConnections.forEach(connection => cloneMap.get(connection).connectToSlot(slot));
+        this._consumeConnections.forEach(connection => {
+            if (cloneMap.get(connection) && cloneMap.get(connection).targetSlot == undefined) {
+                cloneMap.get(connection).connectToSlot(slot);
+            }
+        });
         return slot;
     }
     _startNormalize() {
@@ -12918,7 +12967,7 @@ class Recipe {
         this._connectionConstraints = [];
     }
     newRequireSection() {
-        const require = new Recipe();
+        const require = new RequireSection(this);
         this._requires.push(require);
         return require;
     }
@@ -12951,11 +13000,22 @@ class Recipe {
         this._slots.push(slot);
         return slot;
     }
+    addSlot(slot) {
+        if (this.slots.indexOf(slot) === -1) {
+            this.slots.push(slot);
+        }
+    }
     removeSlot(slot) {
         assert$1(slot.consumeConnections.length === 0);
-        const idx = this._slots.indexOf(slot);
+        let idx = this._slots.indexOf(slot);
         assert$1(idx > -1);
         this._slots.splice(idx, 1);
+        for (const requires of this.requires) {
+            idx = requires.slots.indexOf(slot);
+            if (idx !== -1) {
+                requires.slots.splice(idx, 1);
+            }
+        }
     }
     isResolved() {
         assert$1(Object.isFrozen(this), 'Recipe must be normalized to be resolved.');
@@ -13163,6 +13223,9 @@ class Recipe {
         if (this.search) {
             this.search._normalize();
         }
+        for (const require of this.requires) {
+            require.normalize();
+        }
         // Finish normalizing particles and handles with sorted connections.
         for (const particle of this._particles) {
             particle._finishNormalize();
@@ -13270,8 +13333,14 @@ class Recipe {
         if (this.search) {
             this.search._copyInto(recipe);
         }
+        for (const require of this.requires) {
+            const newRequires = recipe.newRequireSection();
+            require._copyInto(newRequires, cloneMap);
+            newRequires._cloneMap = cloneMap;
+        }
         recipe.patterns = recipe.patterns.concat(this.patterns);
     }
+    // tslint:disable-next-line: no-any
     updateToClone(dict) {
         const result = {};
         Object.keys(dict).forEach(key => result[key] = this._cloneMap.get(dict[key]));
@@ -13397,10 +13466,29 @@ class Recipe {
         return this.particles.filter(particle => particle.spec && files.has(particle.spec.implFile));
     }
     findSlotByID(id) {
-        return this.slots.find(s => s.id === id);
+        let slot = this.slots.find(s => s.id === id);
+        if (slot == undefined) {
+            if (this instanceof RequireSection) {
+                slot = this.parent.slots.find(s => s.id === id);
+            }
+            else {
+                for (const require of this.requires) {
+                    slot = require.slots.find(s => s.id === id);
+                    if (slot !== undefined)
+                        break;
+                }
+            }
+        }
+        return slot;
     }
     getDisconnectedConnections() {
         return this.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
+    }
+}
+class RequireSection extends Recipe {
+    constructor(parent = undefined, name = undefined) {
+        super(name);
+        this.parent = parent;
     }
 }
 
@@ -18283,12 +18371,14 @@ ${e.message}
             const particle = recipe.newParticle(item.ref.name);
             particle.tags = item.ref.tags;
             particle.verbs = item.ref.verbs;
-            if (item.ref.name) {
-                const spec = manifest.findParticleByName(item.ref.name);
-                if (!spec) {
-                    throw new ManifestError(item.location, `could not find particle ${item.ref.name}`);
+            if (!(recipe instanceof RequireSection)) {
+                if (item.ref.name) {
+                    const spec = manifest.findParticleByName(item.ref.name);
+                    if (!spec) {
+                        throw new ManifestError(item.location, `could not find particle ${item.ref.name}`);
+                    }
+                    particle.spec = spec.clone();
                 }
-                particle.spec = spec.clone();
             }
             if (item.name) {
                 // TODO: errors.
@@ -18327,6 +18417,14 @@ ${e.message}
                     if (ps.dependentSlotConnections.length !== 0) {
                         throw new ManifestError(item.location, `invalid slot connection: provide slot must not have dependencies`);
                     }
+                    if (recipe instanceof RequireSection) {
+                        // replace provided slot if it already exist in recipe. 
+                        const existingSlot = recipe.parent.slots.find(rslot => rslot.localName === ps.name);
+                        if (existingSlot !== undefined) {
+                            slotConn.providedSlots[ps.param] = existingSlot;
+                            existingSlot.sourceConnection = slotConn;
+                        }
+                    }
                     let providedSlot = slotConn.providedSlots[ps.param];
                     if (providedSlot) {
                         if (ps.name) {
@@ -18339,11 +18437,10 @@ ${e.message}
                                 assert$1(!theSlot.name && providedSlot);
                                 assert$1(!theSlot.sourceConnection && providedSlot.sourceConnection);
                                 assert$1(theSlot.handleConnections.length === 0);
-                                theSlot.name = providedSlot.name;
-                                theSlot.sourceConnection = providedSlot.sourceConnection;
-                                theSlot.sourceConnection.providedSlots[theSlot.name] = theSlot;
-                                theSlot._handleConnections = providedSlot.handleConnections.slice();
-                                theSlot.recipe.removeSlot(providedSlot);
+                                providedSlot.id = theSlot.id;
+                                providedSlot.tags = theSlot.tags;
+                                items.byName.set(ps.name, providedSlot);
+                                recipe.removeSlot(theSlot);
                             }
                             else {
                                 items.byName.set(ps.name, providedSlot);
@@ -18367,6 +18464,7 @@ ${e.message}
                     if (!slotConn.providedSlots[ps.param]) {
                         slotConn.providedSlots[ps.param] = providedSlot;
                     }
+                    providedSlot.localName = ps.name;
                 });
             }
         }
@@ -18472,12 +18570,22 @@ ${e.message}
                     assert$1(targetSlot === items.byName.get(slotConnectionItem.name), `Target slot ${targetSlot.name} doesn't match slot connection ${slotConnectionItem.param}`);
                 }
                 else if (slotConnectionItem.name) {
-                    targetSlot = recipe.newSlot(slotConnectionItem.param);
-                    targetSlot.localName = slotConnectionItem.name;
-                    if (slotConnectionItem.name) {
-                        items.byName.set(slotConnectionItem.name, targetSlot);
+                    // if this is a require section, check if slot exists in recipe. 
+                    if (recipe instanceof RequireSection) {
+                        targetSlot = recipe.parent.slots.find(slot => slot.localName === slotConnectionItem.name);
+                        if (targetSlot !== undefined) {
+                            items.bySlot.set(targetSlot, slotConnectionItem);
+                            if (slotConnectionItem.name) {
+                                items.byName.set(slotConnectionItem.name, targetSlot);
+                            }
+                        }
                     }
-                    items.bySlot.set(targetSlot, slotConnectionItem);
+                    if (targetSlot == undefined) {
+                        targetSlot = recipe.newSlot(slotConnectionItem.param);
+                        targetSlot.localName = slotConnectionItem.name;
+                        items.byName.set(slotConnectionItem.name, targetSlot);
+                        items.bySlot.set(targetSlot, slotConnectionItem);
+                    }
                 }
                 if (targetSlot) {
                     particle.consumedSlotConnections[slotConnectionItem.param].connectToSlot(targetSlot);
@@ -20143,8 +20251,8 @@ class RecipeWalker extends Walker {
                 updateList.push({ continuation: result });
             }
         }
-        for (const particle of recipe.particles) {
-            if (this.onParticle) {
+        if (this.onParticle) {
+            for (const particle of recipe.particles) {
                 const context = [particle];
                 const result = this.onParticle(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
@@ -20152,8 +20260,8 @@ class RecipeWalker extends Walker {
                 }
             }
         }
-        for (const handleConnection of recipe.handleConnections) {
-            if (this.onHandleConnection) {
+        if (this.onHandleConnection) {
+            for (const handleConnection of recipe.handleConnections) {
                 const context = [handleConnection];
                 const result = this.onHandleConnection(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
@@ -20161,8 +20269,8 @@ class RecipeWalker extends Walker {
                 }
             }
         }
-        for (const handle of recipe.handles) {
-            if (this.onHandle) {
+        if (this.onHandle) {
+            for (const handle of recipe.handles) {
                 const context = [handle];
                 const result = this.onHandle(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
@@ -20192,8 +20300,8 @@ class RecipeWalker extends Walker {
                 }
             }
         }
-        for (const slot of recipe.slots) {
-            if (this.onSlot) {
+        if (this.onSlot) {
+            for (const slot of recipe.slots) {
                 const context = [slot];
                 const result = this.onSlot(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
@@ -20201,12 +20309,23 @@ class RecipeWalker extends Walker {
                 }
             }
         }
-        for (const obligation of recipe.obligations) {
-            if (this.onObligation) {
+        if (this.onObligation) {
+            for (const obligation of recipe.obligations) {
                 const context = [obligation];
                 const result = this.onObligation(recipe, ...context);
                 if (!this.isEmptyResult(result)) {
                     updateList.push({ continuation: result, context });
+                }
+            }
+        }
+        if (this.onRequiredParticle) {
+            for (const require of recipe.requires) {
+                for (const particle of require.particles) {
+                    const context = [particle];
+                    const result = this.onRequiredParticle(recipe, ...context);
+                    if (!this.isEmptyResult(result)) {
+                        updateList.push({ continuation: result, context });
+                    }
                 }
             }
         }
@@ -20222,20 +20341,29 @@ class RecipeWalker extends Walker {
 // Copyright (c) 2019 Google Inc. All rights reserved.
 class SlotUtils {
     // Helper methods.
+    static getClonedSlot(recipe, selectedSlot) {
+        let clonedSlot = recipe.updateToClone({ selectedSlot }).selectedSlot;
+        if (!clonedSlot) {
+            if (selectedSlot.id) {
+                clonedSlot = recipe.findSlotByID(selectedSlot.id);
+            }
+            if (clonedSlot == undefined) {
+                if (recipe instanceof RequireSection) {
+                    clonedSlot = recipe.parent.newSlot(selectedSlot.name);
+                }
+                else {
+                    clonedSlot = recipe.newSlot(selectedSlot.name);
+                }
+                clonedSlot.id = selectedSlot.id;
+            }
+        }
+        return clonedSlot;
+    }
     // Connect the given slot connection to the selectedSlot, create the slot, if needed.
     static connectSlotConnection(slotConnection, selectedSlot) {
         const recipe = slotConnection.recipe;
         if (!slotConnection.targetSlot) {
-            let clonedSlot = recipe.updateToClone({ selectedSlot }).selectedSlot;
-            if (!clonedSlot) {
-                if (selectedSlot.id) {
-                    clonedSlot = recipe.findSlotByID(selectedSlot.id);
-                }
-                if (clonedSlot == undefined) {
-                    clonedSlot = recipe.newSlot(selectedSlot.name);
-                    clonedSlot.id = selectedSlot.id;
-                }
-            }
+            const clonedSlot = SlotUtils.getClonedSlot(recipe, selectedSlot);
             slotConnection.connectToSlot(clonedSlot);
         }
         assert$1(!selectedSlot.id || !slotConnection.targetSlot.id || (selectedSlot.id === slotConnection.targetSlot.id), `Cannot override slot id '${slotConnection.targetSlot.id}' with '${selectedSlot.id}'`);
@@ -20301,6 +20429,23 @@ class SlotUtils {
             return true;
         }
         return consumeSlotSpec.name === (provideSlot ? provideSlot.name : provideSlotSpec.name);
+    }
+    static replaceOldSlot(recipe, oldSlot, newSlot) {
+        if (oldSlot && (!oldSlot.id || oldSlot.id !== newSlot.id)) {
+            if (oldSlot.sourceConnection !== undefined) {
+                if (newSlot.sourceConnection === undefined)
+                    return false;
+                const clonedSlot = SlotUtils.getClonedSlot(oldSlot.sourceConnection.recipe, newSlot);
+                oldSlot.sourceConnection.providedSlots[oldSlot.name] = clonedSlot;
+                clonedSlot.sourceConnection = oldSlot.sourceConnection;
+            }
+            while (oldSlot.consumeConnections.length > 0) {
+                const conn = oldSlot.consumeConnections[0];
+                conn.disconnectFromSlot();
+                SlotUtils.connectSlotConnection(conn, newSlot);
+            }
+        }
+        return true;
     }
 }
 

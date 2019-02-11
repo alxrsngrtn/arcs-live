@@ -16,6 +16,7 @@ export declare class RecipeWalker extends Walker {
     onSlotConnection?(recipe: Recipe, slotConnection: SlotConnection): any;
     onSlot?(recipe: Recipe, slot: Slot): any;
     onObligation?(recipe: Recipe, obligation: ConnectionConstraint): any;
+    onRequiredParticle?(recipe: Recipe, particle: Particle): any;
     onResult(result: any): void;
     createDescendant(recipe: any, score: any): void;
 }

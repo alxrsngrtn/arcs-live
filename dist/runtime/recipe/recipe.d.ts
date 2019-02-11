@@ -26,12 +26,13 @@ export declare class Recipe {
     removeObligation(obligation: any): void;
     removeConstraint(constraint: any): void;
     clearConnectionConstraints(): void;
-    newRequireSection(): Recipe;
+    newRequireSection(): RequireSection;
     newParticle(name: any): Particle;
     removeParticle(particle: Particle): void;
     newHandle(): Handle;
     removeHandle(handle: any): void;
     newSlot(name: any): Slot;
+    addSlot(slot: Slot): void;
     removeSlot(slot: any): void;
     isResolved(): boolean;
     isCompatible(modality: Modality): boolean;
@@ -67,7 +68,9 @@ export declare class Recipe {
         cloneMap: Map<any, any>;
     };
     _copyInto(recipe: any, cloneMap: any): void;
-    updateToClone(dict: any): {};
+    updateToClone(dict: any): {
+        [index: string]: any;
+    };
     _makeLocalNameMap(): Map<any, any>;
     toString(options?: any): string;
     getFreeHandles(): Handle[];
@@ -78,4 +81,8 @@ export declare class Recipe {
     getParticlesByImplFile(files: Set<string>): Particle[];
     findSlotByID(id: any): Slot;
     getDisconnectedConnections(): HandleConnection[];
+}
+export declare class RequireSection extends Recipe {
+    parent: Recipe;
+    constructor(parent?: any, name?: any);
 }

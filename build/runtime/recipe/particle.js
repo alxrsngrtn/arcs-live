@@ -8,6 +8,7 @@ import { assert } from '../../platform/assert-web.js';
 import { SlotConnection } from './slot-connection.js';
 import { HandleConnection } from './handle-connection.js';
 import { compareComparables, compareStrings, compareArrays } from './util.js';
+import { RequireSection } from './recipe.js';
 export class Particle {
     constructor(recipe, name) {
         this._id = undefined;
@@ -33,9 +34,28 @@ export class Particle {
         });
         particle._unnamedConnections = this._unnamedConnections.map(connection => connection._clone(particle, cloneMap));
         particle._cloneConnectionRawTypes();
-        Object.keys(this._consumedSlotConnections).forEach(key => {
-            particle._consumedSlotConnections[key] = this._consumedSlotConnections[key]._clone(particle, cloneMap);
-        });
+        for (const [key, slotConn] of Object.entries(this.consumedSlotConnections)) {
+            particle.consumedSlotConnections[key] = slotConn._clone(particle, cloneMap);
+            // if recipe is a requireSection, then slot may already exist in recipe.
+            if (cloneMap.has(slotConn.targetSlot)) {
+                assert(recipe instanceof RequireSection);
+                particle.consumedSlotConnections[key].connectToSlot(cloneMap.get(slotConn.targetSlot));
+                if (particle.recipe.slots.indexOf(cloneMap.get(slotConn.targetSlot)) === -1) {
+                    particle.recipe.slots.push(cloneMap.get(slotConn.targetSlot));
+                }
+            }
+            for (const [name, slot] of Object.entries(slotConn.providedSlots)) {
+                if (cloneMap.has(slot)) {
+                    assert(recipe instanceof RequireSection);
+                    const clonedSlot = cloneMap.get(slot);
+                    clonedSlot.sourceConnection = particle.consumedSlotConnections[key];
+                    particle.consumedSlotConnections[key].providedSlots[name] = clonedSlot;
+                    if (particle.recipe.slots.indexOf(clonedSlot) === -1) {
+                        particle.recipe.slots.push(clonedSlot);
+                    }
+                }
+            }
+        }
         return particle;
     }
     _cloneConnectionRawTypes() {
@@ -83,6 +103,29 @@ export class Particle {
             return cmp;
         // TODO: slots
         return 0;
+    }
+    /**
+     * Param particle matches this particle if the names are the same and the slot and handle requirements this particle
+     * is a subset of the slot and handle requirements of the param particle.
+     * @param particle
+     */
+    matches(particle) {
+        if (this.name && particle.name && this.name !== particle.name)
+            return false;
+        for (const [name, slotConn] of Object.entries(this.consumedSlotConnections)) {
+            if (particle.consumedSlotConnections[name] == undefined
+                || particle.consumedSlotConnections[name].targetSlot == undefined)
+                return false;
+            if (slotConn.targetSlot && slotConn.targetSlot.id && slotConn.targetSlot.id !== particle.consumedSlotConnections[name].targetSlot.id)
+                return false;
+            for (const pname of Object.keys(slotConn.providedSlots)) {
+                const slot = slotConn.providedSlots[pname];
+                const pslot = particle.consumedSlotConnections[name].providedSlots[pname];
+                if (pslot == undefined || (slot.id && pslot.id && slot.id !== pslot.id))
+                    return false;
+            }
+        }
+        return true;
     }
     _isValid(options) {
         if (!this.spec) {

@@ -1,9 +1,7 @@
-commit 701df510fe6b7a40720301172af9d8da5f0bd2fd
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Fri Feb 8 13:22:24 2019 -0800
+commit 1fea68b94227ebe3e1054e9029099aab957604d1
+Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
+Date:   Tue Feb 12 09:53:42 2019 +1100
 
-    Introduce a testing class to verify the number of StorageProvider callbacks (#2678)
+    created onParticleRequire strategy (#2677)
     
-    - Still needs to be used in more tests
-    - Can be extended to verify that specific callbacks were called
-    - Eventually convert to ts-mockito when it's compatible with our environment
+    created onParticleRequire strategy and included require section in recipe clone

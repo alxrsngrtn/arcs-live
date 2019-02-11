@@ -1,8 +1,10 @@
+import { Recipe } from './recipe.js';
 import { SlotConnection } from './slot-connection.js';
 import { Particle } from './particle.js';
 import { SlotSpec, ProvidedSlotSpec } from '../particle-spec.js';
 import { Slot } from './slot.js';
 export declare class SlotUtils {
+    static getClonedSlot(recipe: any, selectedSlot: any): any;
     static connectSlotConnection(slotConnection: any, selectedSlot: any): void;
     static findAllSlotCandidates(particle: Particle, slotSpec: SlotSpec, arc: any): {
         local: any;
@@ -13,4 +15,5 @@ export declare class SlotUtils {
     static specMatch(slotSpec: any, providedSlotSpec: any): boolean;
     static handlesMatch(particle: Particle, slot: any): boolean;
     static tagsOrNameMatch(consumeSlotSpec: SlotSpec, provideSlotSpec: ProvidedSlotSpec, consumeSlotConn?: SlotConnection, provideSlot?: Slot): boolean;
+    static replaceOldSlot(recipe: Recipe, oldSlot: Slot, newSlot: Slot): boolean;
 }

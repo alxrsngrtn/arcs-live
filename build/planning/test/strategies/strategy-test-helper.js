@@ -17,7 +17,7 @@ export class StrategyTestHelper {
     static createTestArc(context, options = {}) {
         return new Arc({
             id: options.arcId || 'test-arc',
-            loader: new Loader(),
+            loader: options.loader || new Loader(),
             context,
             slotComposer: new FakeSlotComposer(options)
         });

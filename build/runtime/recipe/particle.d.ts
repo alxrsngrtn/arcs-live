@@ -21,6 +21,12 @@ export declare class Particle {
     _startNormalize(): void;
     _finishNormalize(): void;
     _compareTo(other: any): any;
+    /**
+     * Param particle matches this particle if the names are the same and the slot and handle requirements this particle
+     * is a subset of the slot and handle requirements of the param particle.
+     * @param particle
+     */
+    matches(particle: Particle): boolean;
     _isValid(options: any): boolean;
     isResolved(options?: any): boolean;
     readonly recipe: Recipe;

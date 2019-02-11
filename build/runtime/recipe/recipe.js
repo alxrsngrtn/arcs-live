@@ -64,7 +64,7 @@ export class Recipe {
         this._connectionConstraints = [];
     }
     newRequireSection() {
-        const require = new Recipe();
+        const require = new RequireSection(this);
         this._requires.push(require);
         return require;
     }
@@ -97,11 +97,22 @@ export class Recipe {
         this._slots.push(slot);
         return slot;
     }
+    addSlot(slot) {
+        if (this.slots.indexOf(slot) === -1) {
+            this.slots.push(slot);
+        }
+    }
     removeSlot(slot) {
         assert(slot.consumeConnections.length === 0);
-        const idx = this._slots.indexOf(slot);
+        let idx = this._slots.indexOf(slot);
         assert(idx > -1);
         this._slots.splice(idx, 1);
+        for (const requires of this.requires) {
+            idx = requires.slots.indexOf(slot);
+            if (idx !== -1) {
+                requires.slots.splice(idx, 1);
+            }
+        }
     }
     isResolved() {
         assert(Object.isFrozen(this), 'Recipe must be normalized to be resolved.');
@@ -309,6 +320,9 @@ export class Recipe {
         if (this.search) {
             this.search._normalize();
         }
+        for (const require of this.requires) {
+            require.normalize();
+        }
         // Finish normalizing particles and handles with sorted connections.
         for (const particle of this._particles) {
             particle._finishNormalize();
@@ -416,8 +430,14 @@ export class Recipe {
         if (this.search) {
             this.search._copyInto(recipe);
         }
+        for (const require of this.requires) {
+            const newRequires = recipe.newRequireSection();
+            require._copyInto(newRequires, cloneMap);
+            newRequires._cloneMap = cloneMap;
+        }
         recipe.patterns = recipe.patterns.concat(this.patterns);
     }
+    // tslint:disable-next-line: no-any
     updateToClone(dict) {
         const result = {};
         Object.keys(dict).forEach(key => result[key] = this._cloneMap.get(dict[key]));
@@ -543,10 +563,29 @@ export class Recipe {
         return this.particles.filter(particle => particle.spec && files.has(particle.spec.implFile));
     }
     findSlotByID(id) {
-        return this.slots.find(s => s.id === id);
+        let slot = this.slots.find(s => s.id === id);
+        if (slot == undefined) {
+            if (this instanceof RequireSection) {
+                slot = this.parent.slots.find(s => s.id === id);
+            }
+            else {
+                for (const require of this.requires) {
+                    slot = require.slots.find(s => s.id === id);
+                    if (slot !== undefined)
+                        break;
+                }
+            }
+        }
+        return slot;
     }
     getDisconnectedConnections() {
         return this.handleConnections.filter(hc => hc.handle == null && !hc.isOptional && hc.name !== 'descriptions' && hc.direction !== 'host');
+    }
+}
+export class RequireSection extends Recipe {
+    constructor(parent = undefined, name = undefined) {
+        super(name);
+        this.parent = parent;
     }
 }
 //# sourceMappingURL=recipe.js.map
