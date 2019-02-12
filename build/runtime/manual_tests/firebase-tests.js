@@ -568,7 +568,7 @@ describe('firebase', function () {
             await arc.instantiate(recipe);
             await arc.idle;
             const serialization = await arc.serialize();
-            arc.stop();
+            arc.dispose();
             // Update the stores between serializing and deserializing.
             await varStore.set({ id: 'i4', rawData: { value: 'v4' } });
             await colStore.store({ id: 'i5', rawData: { value: 'v5' } }, ['k5']);

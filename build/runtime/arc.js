@@ -79,7 +79,8 @@ export class Arc {
             innerArc.dispose();
         }
         this.instantiatePlanCallbacks = [];
-        // TODO: disconnect all assocated store event handlers
+        // TODO: disconnect all associated store event handlers
+        this.pec.stop();
         this.pec.close();
         // Slot contexts and consumers from inner and outer arcs can be interwoven. Slot composer
         // is therefore disposed in its entirety with an outer Arc's disposal.
@@ -599,9 +600,6 @@ ${this.activeRecipe.toString()}`;
     }
     keyForId(id) {
         return this.storageKeys[id];
-    }
-    stop() {
-        this.pec.stop();
     }
     toContextString(options) {
         const results = [];

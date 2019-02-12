@@ -61,7 +61,7 @@ export class Speculator {
             return this.awaitCompletion(relevance, speculativeArc);
         }
         else {
-            speculativeArc.stop();
+            speculativeArc.dispose();
             this.speculativeArcs.splice(this.speculativeArcs.indexOf(speculativeArc, 1));
             return relevance;
         }

@@ -203,7 +203,7 @@ describe('Arc', () => {
         assert.equal(barStore.version, 1);
         fooStoreCallbacks.verify();
         const serialization = await arc.serialize();
-        arc.stop();
+        arc.dispose();
         const newArc = await Arc.deserialize({ serialization, loader, fileName: '', slotComposer: new FakeSlotComposer(), context: undefined });
         fooStore = newArc.findStoreById(fooStore.id);
         barStore = newArc.findStoreById(barStore.id);
@@ -243,7 +243,6 @@ describe('Arc', () => {
         await arc.instantiate(recipe);
         await arc.idle;
         const serialization = await arc.serialize();
-        arc.stop();
         arc.dispose();
         const newArc = await Arc.deserialize({ serialization, loader, slotComposer, fileName: './manifest.manifest', context: manifest });
         await newArc.idle;
@@ -335,7 +334,7 @@ describe('Arc', () => {
         await arc.instantiate(recipe);
         await arc.idle;
         const serialization = await arc.serialize();
-        arc.stop();
+        arc.dispose();
         // Grab a snapshot of the current state from each store, then clear them.
         const varData = JSON.parse(JSON.stringify(await varStore.toLiteral()));
         const colData = JSON.parse(JSON.stringify(colStore.toLiteral()));

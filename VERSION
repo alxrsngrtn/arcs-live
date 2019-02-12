@@ -1,7 +1,7 @@
-commit c1703a7158a8b870943af193b26b2f16f7399bda
-Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
-Date:   Tue Feb 12 11:15:39 2019 +1100
+commit b5d93eaebcee308727cc31021cced4ffce780f45
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Tue Feb 12 14:59:07 2019 -0800
 
-    require section toString method (#2683)
+    stop the web worker before disposing the arc (#2686)
     
-    * require section toString method
+    and dispose speculative arcs (instead of stopping)

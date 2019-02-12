@@ -130,7 +130,6 @@ export declare class Arc {
         includeContext?: boolean;
     }): {};
     keyForId(id: string): string;
-    stop(): void;
     toContextString(options: any): string;
     readonly apiChannelMappingId: string;
 }
