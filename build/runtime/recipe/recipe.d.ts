@@ -40,7 +40,7 @@ export declare class Recipe {
     allRequiredSlotsPresent(): boolean;
     _findDuplicate(items: any, options: any): any;
     _isValid(options?: any): boolean;
-    readonly requires: Recipe[];
+    readonly requires: RequireSection[];
     name: string | undefined;
     localName: string;
     particles: Particle[];
@@ -85,4 +85,5 @@ export declare class Recipe {
 export declare class RequireSection extends Recipe {
     parent: Recipe;
     constructor(parent?: any, name?: any);
+    toString(nameMap?: any, options?: any): string;
 }

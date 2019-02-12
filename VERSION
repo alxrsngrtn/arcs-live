@@ -1,7 +1,7 @@
-commit 1fea68b94227ebe3e1054e9029099aab957604d1
+commit c1703a7158a8b870943af193b26b2f16f7399bda
 Author: AliceLetitia <AliceLetitia@users.noreply.github.com>
-Date:   Tue Feb 12 09:53:42 2019 +1100
+Date:   Tue Feb 12 11:15:39 2019 +1100
 
-    created onParticleRequire strategy (#2677)
+    require section toString method (#2683)
     
-    created onParticleRequire strategy and included require section in recipe clone
+    * require section toString method
