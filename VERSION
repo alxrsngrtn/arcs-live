@@ -1,51 +1,5 @@
-commit 410c67bbff6d015e3aa9d99173dff9d8c7985fc5
-Author: Paul Lindner <lindner@inuus.com>
-Date:   Tue Feb 12 17:37:56 2019 -0800
+commit 9fc47ffe76c5761b8608bbc58d32efcbd41c2f83
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Tue Feb 12 17:48:58 2019 -0800
 
-    Update outdated modules - February 2018 (#2682)
-    
-    * Update outdated modules - February 2018
-    
-    ```
-    Package                           Old        New
-    @types/debug                   0.0.31      4.1.0
-    @types/express                 4.16.0     4.16.1
-    @types/node                  10.12.10   10.12.24
-    @types/node-fetch               2.1.4      2.1.6
-    @types/pouchdb-core             7.0.0      7.0.1
-    @webcomponents/webcomponentsjs  2.1.3      2.2.7
-    chai-http                       4.2.0      4.2.1
-    chokidar                        2.0.4      2.1.0
-    chromedriver                   2.43.1     2.46.0
-    debug                           4.1.0      4.1.1
-    diff                            3.5.0      4.0.1
-    eslint                          5.9.0     5.13.0
-    eslint-config-google           0.11.0     0.12.0
-    esm                            3.0.84      3.2.4
-    firebase                        5.6.0      5.8.2
-    grammkit                        0.6.3      0.7.0
-    idb                             2.1.3      3.0.2
-    mocha-chrome                    1.1.0      2.0.0
-    node-webcrypto-ossl            1.0.38     1.0.39
-    npm-run-all                     4.1.3      4.1.5
-    prettier                       1.14.3     1.16.4
-    rimraf                          2.6.2      2.6.3
-    rollup                         0.67.4      1.1.2
-    rollup-plugin-ignore            1.0.4      1.0.5
-    rollup-plugin-multi-entry       2.0.2      2.1.0
-    rollup-plugin-node-resolve      3.4.0      4.0.0
-    rollup-plugin-typescript2      0.18.0     0.19.2
-    source-map-support              0.5.9     0.5.10
-    ts-loader                       5.3.0      5.3.3
-    ts-node                         7.0.1      8.0.2
-    ts-node-dev              1.0.0-pre.30  1.0.0-pre.32
-    tslint                         5.11.0     5.12.1
-    typedoc                        0.13.0     0.14.2
-    typescript                      3.1.6      3.3.3
-    wdio-chromedriver-service       0.1.3      5.0.0
-    webdriverio                    4.14.0     5.4.17
-    webpack                        4.27.0     4.29.3
-    webpack-cli                     3.1.2      3.2.3
-    ```
-    
-    also fix some unrelated lint issues.
+    Don't push node_modules/**/*.exe to arcs-live (#2689)
